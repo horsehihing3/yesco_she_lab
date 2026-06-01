@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.OdPlanMapper">
+    <resultMap id="rm" type="com.smartehs.model.OdPlan">
+        <id property="id" column="id"/>
+        <result property="half" column="half"/>
+        <result property="orgName" column="org_name"/>
+        <result property="method" column="method"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="targetCount" column="target_count"/>
+        <result property="hazardFactors" column="hazard_factors"/>
+        <result property="mgr" column="mgr"/>
+        <result property="status" column="status"/>
+        <result property="note" column="note"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="rm">
+        SELECT * FROM tb_od_plan WHERE deleted = 0
+        ORDER BY CASE half WHEN '상반기' THEN 0 WHEN '하반기' THEN 1 ELSE 2 END, start_date ASC, id DESC
+    </select>
+    <select id="findById" resultMap="rm">SELECT * FROM tb_od_plan WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_od_plan WHERE deleted = 0</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_od_plan WHERE deleted = 0 AND status = #{status}</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_od_plan (half, org_name, method, start_date, end_date, target_count,
+            hazard_factors, mgr, status, note, deleted, created_at, modified_at) VALUES (
+            #{half}, #{orgName}, #{method},
+            #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE},
+            <choose><when test="targetCount != null">#{targetCount}</when><otherwise>0</otherwise></choose>,
+            #{hazardFactors}, #{mgr},
+            <choose><when test="status != null">#{status}</when><otherwise>'계획'</otherwise></choose>,
+            #{note}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_od_plan SET half = #{half}, org_name = #{orgName}, method = #{method},
+            start_date = #{startDate,jdbcType=DATE}, end_date = #{endDate,jdbcType=DATE},
+            target_count = <choose><when test="targetCount != null">#{targetCount}</when><otherwise>0</otherwise></choose>,
+            hazard_factors = #{hazardFactors}, mgr = #{mgr},
+            status = #{status}, note = #{note}, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_od_plan SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

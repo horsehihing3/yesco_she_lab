@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.OdFitnessMapper">
+    <resultMap id="rm" type="com.smartehs.model.OdFitness">
+        <id property="id" column="id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="dept" column="dept"/>
+        <result property="disease" column="disease"/>
+        <result property="evalDate" column="eval_date"/>
+        <result property="evalOrg" column="eval_org"/>
+        <result property="evalResult" column="eval_result"/>
+        <result property="recommendation" column="recommendation"/>
+        <result property="doneStatus" column="done_status"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="rm">
+        SELECT * FROM tb_od_fitness WHERE deleted = 0 ORDER BY eval_date DESC, id DESC
+    </select>
+    <select id="findById" resultMap="rm">SELECT * FROM tb_od_fitness WHERE id = #{id} AND deleted = 0</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_od_fitness (worker_name, dept, disease, eval_date, eval_org,
+            eval_result, recommendation, done_status, deleted, created_at, modified_at) VALUES (
+            #{workerName}, #{dept}, #{disease}, #{evalDate,jdbcType=DATE}, #{evalOrg},
+            #{evalResult}, #{recommendation}, #{doneStatus},
+            0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_od_fitness SET worker_name = #{workerName}, dept = #{dept},
+            disease = #{disease}, eval_date = #{evalDate,jdbcType=DATE}, eval_org = #{evalOrg},
+            eval_result = #{evalResult}, recommendation = #{recommendation}, done_status = #{doneStatus},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_od_fitness SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

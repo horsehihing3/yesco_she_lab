@@ -1,0 +1,94 @@
+package com.smartehs.controller;
+
+import com.smartehs.dto.request.EhsAnnualPlanRequest;
+import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.dto.response.EhsAnnualPlanResponse;
+import com.smartehs.service.EhsAnnualPlanService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/ehs-plans")
+@RequiredArgsConstructor
+@Tag(name = "EHS Annual Plan", description = "EHS 연간 계획 관리 API")
+public class EhsAnnualPlanController {
+
+    private final EhsAnnualPlanService ehsAnnualPlanService;
+
+    @GetMapping
+    @Operation(summary = "List annual plans", description = "Get all EHS annual plans with optional year filter and pagination")
+    public ResponseEntity<ApiResponse<Page<EhsAnnualPlanResponse>>> findAll(
+            @RequestParam(required = false) Integer year,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<EhsAnnualPlanResponse> plans;
+        if (year != null) {
+            plans = ehsAnnualPlanService.findByYear(year, pageable);
+        } else {
+            plans = ehsAnnualPlanService.findAll(pageable);
+        }
+        return ResponseEntity.ok(ApiResponse.success(plans));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get plan by ID", description = "Get a specific EHS annual plan by ID")
+    public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> findById(@PathVariable Long id) {
+        EhsAnnualPlanResponse plan = ehsAnnualPlanService.findById(id);
+        return ResponseEntity.ok(ApiResponse.success(plan));
+    }
+
+    @PostMapping
+    @Operation(summary = "Create plan", description = "Create a new EHS annual plan")
+    public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> create(
+            @Valid @RequestBody EhsAnnualPlanRequest request) {
+        EhsAnnualPlanResponse plan = ehsAnnualPlanService.create(request);
+        return ResponseEntity.ok(ApiResponse.success("Plan created successfully", plan));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update plan", description = "Update an existing EHS annual plan")
+    public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> update(
+            @PathVariable Long id,
+            @Valid @RequestBody EhsAnnualPlanRequest request) {
+        EhsAnnualPlanResponse plan = ehsAnnualPlanService.update(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Plan updated successfully", plan));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete plan", description = "Delete an EHS annual plan")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
+        ehsAnnualPlanService.delete(id);
+        return ResponseEntity.ok(ApiResponse.success("Plan deleted successfully", null));
+    }
+
+    @GetMapping("/approved")
+    @Operation(summary = "List approved plans (KPI 현황)")
+    public ResponseEntity<ApiResponse<List<EhsAnnualPlanResponse>>> findApproved(@RequestParam Integer year) {
+        return ResponseEntity.ok(ApiResponse.success(ehsAnnualPlanService.findApprovedByYear(year)));
+    }
+
+    @PatchMapping("/{id}/transition")
+    @Operation(summary = "Transition plan status",
+               description = "action: submit / approve / reject / complete; rejectReason required when action=reject")
+    public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> transition(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> body,
+            Authentication authentication) {
+        String action = String.valueOf(body.get("action"));
+        String rejectReason = body.get("rejectReason") != null ? String.valueOf(body.get("rejectReason")) : null;
+        String username = authentication != null ? authentication.getName() : "system";
+        EhsAnnualPlanResponse plan = ehsAnnualPlanService.transition(id, action, username, rejectReason);
+        return ResponseEntity.ok(ApiResponse.success(plan));
+    }
+}

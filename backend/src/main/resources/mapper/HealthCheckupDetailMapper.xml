@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.HealthCheckupDetailMapper">
+
+    <resultMap id="HealthCheckupDetailResultMap" type="com.smartehs.model.HealthCheckupDetail">
+        <id property="id" column="id"/>
+        <result property="checkupId" column="checkup_id"/>
+        <result property="bodyPart" column="body_part"/>
+        <result property="category" column="category"/>
+        <result property="resultValue" column="result_value"/>
+        <result property="referenceRange" column="reference_range"/>
+        <result property="resultStatus" column="result_status"/>
+        <result property="notes" column="notes"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findByCheckupId" resultMap="HealthCheckupDetailResultMap">
+        SELECT * FROM tb_health_checkup_detail
+        WHERE checkup_id = #{checkupId}
+        ORDER BY body_part, category
+    </select>
+
+    <select id="findById" resultMap="HealthCheckupDetailResultMap">
+        SELECT * FROM tb_health_checkup_detail WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_health_checkup_detail (
+            checkup_id, body_part, category, result_value,
+            reference_range, result_status, notes, created_at
+        ) VALUES (
+            #{checkupId}, #{bodyPart}, #{category}, #{resultValue},
+            #{referenceRange}, #{resultStatus}, #{notes}, GETDATE()
+        )
+    </insert>
+
+    <delete id="deleteByCheckupId">
+        DELETE FROM tb_health_checkup_detail WHERE checkup_id = #{checkupId}
+    </delete>
+
+</mapper>

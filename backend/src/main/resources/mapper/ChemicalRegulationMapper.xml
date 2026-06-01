@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ChemicalRegulationMapper">
+
+    <resultMap id="ChemicalRegulationResultMap" type="com.smartehs.model.ChemicalRegulation">
+        <id property="id" column="id"/>
+        <result property="regCode" column="reg_code"/>
+        <result property="regName" column="reg_name"/>
+        <result property="regType" column="reg_type"/>
+        <result property="authority" column="authority"/>
+        <result property="applicableCount" column="applicable_count"/>
+        <result property="lastRevisionDate" column="last_revision_date"/>
+        <result property="nextReviewDate" column="next_review_date"/>
+        <result property="status" column="status"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="ChemicalRegulationResultMap">
+        SELECT * FROM tb_chemical_regulation
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical_regulation WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="ChemicalRegulationResultMap">
+        SELECT * FROM tb_chemical_regulation WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="search" resultMap="ChemicalRegulationResultMap">
+        SELECT * FROM tb_chemical_regulation
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (reg_code LIKE '%' + #{keyword} + '%'
+                 OR reg_name LIKE '%' + #{keyword} + '%'
+                 OR authority LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="regType != null and regType != ''">
+            AND reg_type = #{regType}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical_regulation
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (reg_code LIKE '%' + #{keyword} + '%'
+                 OR reg_name LIKE '%' + #{keyword} + '%'
+                 OR authority LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="regType != null and regType != ''">
+            AND reg_type = #{regType}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_chemical_regulation (
+            reg_code, reg_name, reg_type, authority,
+            applicable_count, last_revision_date, next_review_date,
+            status, deleted, created_at, modified_at
+        ) VALUES (
+            #{regCode}, #{regName}, #{regType}, #{authority},
+            #{applicableCount}, #{lastRevisionDate,jdbcType=DATE}, #{nextReviewDate,jdbcType=DATE},
+            #{status}, #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_chemical_regulation SET
+            reg_code = #{regCode},
+            reg_name = #{regName},
+            reg_type = #{regType},
+            authority = #{authority},
+            applicable_count = #{applicableCount},
+            last_revision_date = #{lastRevisionDate,jdbcType=DATE},
+            next_review_date = #{nextReviewDate,jdbcType=DATE},
+            status = #{status},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_chemical_regulation SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

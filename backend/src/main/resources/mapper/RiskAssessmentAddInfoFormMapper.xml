@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.RiskAssessmentAddInfoFormMapper">
+
+    <resultMap id="RiskAssessmentAddInfoFormResultMap" type="com.smartehs.model.RiskAssessmentAddInfoForm">
+        <id property="id" column="id"/>
+        <result property="riskId" column="risk_id"/>
+        <result property="detailAction" column="detail_action"/>
+        <result property="majorCategoryIdx" column="major_category_idx"/>
+        <result property="majorCategory" column="major_category"/>
+        <result property="middleCategory" column="middle_category"/>
+        <result property="facility" column="facility"/>
+        <result property="frequency" column="frequency"/>
+        <result property="workHours" column="work_hours"/>
+        <result property="worker" column="worker"/>
+        <result property="coWorker" column="co_worker"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="RiskAssessmentAddInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_add_info_form ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="RiskAssessmentAddInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_add_info_form WHERE id = #{id}
+    </select>
+
+    <select id="findByRiskId" resultMap="RiskAssessmentAddInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_add_info_form WHERE risk_id = #{riskId} ORDER BY major_category_idx ASC, created_at ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_risk_assessment_add_info_form (risk_id, detail_action, major_category_idx, major_category, middle_category, facility, frequency, work_hours, worker, co_worker, created_at)
+        VALUES (#{riskId}, #{detailAction}, #{majorCategoryIdx}, #{majorCategory}, #{middleCategory}, #{facility}, #{frequency}, #{workHours}, #{worker}, #{coWorker}, GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_risk_assessment_add_info_form
+        SET detail_action = #{detailAction},
+            major_category_idx = #{majorCategoryIdx},
+            major_category = #{majorCategory},
+            middle_category = #{middleCategory},
+            facility = #{facility},
+            frequency = #{frequency},
+            work_hours = #{workHours},
+            worker = #{worker},
+            co_worker = #{coWorker}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_risk_assessment_add_info_form WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByRiskId">
+        DELETE FROM tb_risk_assessment_add_info_form WHERE risk_id = #{riskId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.FireComplianceMapper">
+    <resultMap id="R" type="com.smartehs.model.FireCompliance">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="lawBasis" column="law_basis"/>
+        <result property="rate" column="rate"/>
+        <result property="items" column="items"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">SELECT * FROM tb_fire_compliance WHERE deleted = 0 ORDER BY id ASC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_fire_compliance WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_fire_compliance WHERE deleted = 0</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_fire_compliance (title, law_basis, rate, items, deleted, created_at, modified_at) VALUES (
+            #{title}, #{lawBasis},
+            <choose><when test="rate != null">#{rate}</when><otherwise>0</otherwise></choose>,
+            #{items}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_fire_compliance SET title = #{title}, law_basis = #{lawBasis},
+            rate = #{rate}, items = #{items}, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_fire_compliance SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

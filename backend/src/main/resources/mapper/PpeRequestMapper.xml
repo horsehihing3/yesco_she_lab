@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PpeRequestMapper">
+
+    <resultMap id="PpeRequestResultMap" type="com.smartehs.model.PpeRequest">
+        <id property="id" column="id"/>
+        <result property="requestId" column="request_id"/>
+        <result property="status" column="status"/>
+        <result property="equipmentId" column="equipment_id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="itemCategory" column="item_category"/>
+        <result property="itemModel" column="item_model"/>
+        <result property="quantity" column="quantity"/>
+        <result property="reason" column="reason"/>
+        <result property="requesterName" column="requester_name"/>
+        <result property="requesterDept" column="requester_dept"/>
+        <result property="requesterId" column="requester_id"/>
+        <result property="requestDate" column="request_date"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="approverDept" column="approver_dept"/>
+        <result property="approverId" column="approver_id"/>
+        <result property="approvedAt" column="approved_at"/>
+        <result property="issuedAt" column="issued_at"/>
+        <result property="returnedAt" column="returned_at"/>
+        <result property="rejectionReason" column="rejection_reason"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="PpeRequestResultMap">
+        SELECT * FROM tb_ppe_request WHERE deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_request WHERE deleted = 0
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="PpeRequestResultMap">
+        SELECT * FROM tb_ppe_request WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByStatusAndDeletedFalse" resultMap="PpeRequestResultMap">
+        SELECT * FROM tb_ppe_request WHERE status = #{status} AND deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatusAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_request WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="findByRequesterIdAndDeletedFalse" resultMap="PpeRequestResultMap">
+        SELECT * FROM tb_ppe_request WHERE requester_id = #{requesterId} AND deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByRequesterIdAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_request WHERE requester_id = #{requesterId} AND deleted = 0
+    </select>
+
+    <select id="countByRequestIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_request WHERE request_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_request (
+            request_id, status, equipment_id, item_name, item_category, item_model,
+            quantity, reason, requester_name, requester_dept, requester_id,
+            request_date, notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{requestId}, 'REQUESTED', #{equipmentId}, #{itemName}, #{itemCategory}, #{itemModel},
+            #{quantity}, #{reason}, #{requesterName}, #{requesterDept}, #{requesterId},
+            GETDATE(), #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ppe_request SET
+            item_name = #{itemName}, item_category = #{itemCategory}, item_model = #{itemModel},
+            quantity = #{quantity}, reason = #{reason}, notes = #{notes}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE tb_ppe_request SET
+            status = #{status},
+            approver_name = #{approverName}, approver_dept = #{approverDept},
+            approved_at = CASE WHEN #{status} IN ('APPROVED', 'REJECTED') THEN GETDATE() ELSE approved_at END,
+            rejection_reason = #{rejectionReason},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateIssued">
+        UPDATE tb_ppe_request SET status = 'ISSUED', issued_at = GETDATE(), modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="updateReturned">
+        UPDATE tb_ppe_request SET status = 'RETURNED', returned_at = GETDATE(), modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_request SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

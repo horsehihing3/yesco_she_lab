@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.OdWorkerMapper">
+    <resultMap id="rm" type="com.smartehs.model.OdWorker">
+        <id property="id" column="id"/>
+        <result property="employeeNo" column="employee_no"/>
+        <result property="name" column="name"/>
+        <result property="dept" column="dept"/>
+        <result property="job" column="job"/>
+        <result property="gender" column="gender"/>
+        <result property="birthDate" column="birth_date"/>
+        <result property="division" column="division"/>
+        <result property="factor" column="factor"/>
+        <result property="carcinogenicity" column="carcinogenicity"/>
+        <result property="exposurePeriod" column="exposure_period"/>
+        <result property="examOrg" column="exam_org"/>
+        <result property="examDate" column="exam_date"/>
+        <result property="judge" column="judge"/>
+        <result property="afterAction" column="after_action"/>
+        <result property="actionDone" column="action_done"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="rm">SELECT * FROM tb_od_worker WHERE deleted = 0 ORDER BY id ASC</select>
+    <select id="findById" resultMap="rm">SELECT * FROM tb_od_worker WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_od_worker WHERE deleted = 0</select>
+    <select id="countByJudge" resultType="int">SELECT COUNT(*) FROM tb_od_worker WHERE deleted = 0 AND judge = #{judge}</select>
+    <select id="countByDivision" resultType="int">SELECT COUNT(*) FROM tb_od_worker WHERE deleted = 0 AND division = #{division}</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_od_worker (employee_no, name, dept, job, gender, birth_date, division,
+            factor, carcinogenicity, exposure_period, exam_org, exam_date, judge, after_action, action_done,
+            deleted, created_at, modified_at) VALUES (
+            #{employeeNo}, #{name}, #{dept}, #{job}, #{gender}, #{birthDate,jdbcType=DATE},
+            <choose><when test="division != null">#{division}</when><otherwise>'정기'</otherwise></choose>,
+            #{factor}, #{carcinogenicity}, #{exposurePeriod}, #{examOrg},
+            #{examDate,jdbcType=DATE}, #{judge}, #{afterAction}, #{actionDone},
+            0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_od_worker SET employee_no = #{employeeNo}, name = #{name}, dept = #{dept},
+            job = #{job}, gender = #{gender}, birth_date = #{birthDate,jdbcType=DATE},
+            division = #{division}, factor = #{factor}, carcinogenicity = #{carcinogenicity},
+            exposure_period = #{exposurePeriod}, exam_org = #{examOrg},
+            exam_date = #{examDate,jdbcType=DATE}, judge = #{judge},
+            after_action = #{afterAction}, action_done = #{actionDone},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_od_worker SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

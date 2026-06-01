@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.WorkPlaceMapper">
+
+    <resultMap id="WorkPlaceResultMap" type="com.smartehs.model.WorkPlace">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="place" column="place"/>
+        <result property="floor" column="floor"/>
+        <result property="used" column="used"/>
+        <result property="company" column="company"/>
+        <result property="coordinate" column="coordinate"/>
+        <result property="imagePath" column="image_path"/>
+        <result property="existId" column="exist_id"/>
+        <result property="isExist" column="is_exist"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="WorkPlaceResultMap">
+        SELECT * FROM lb_work_place ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="WorkPlaceResultMap">
+        SELECT * FROM lb_work_place
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM lb_work_place
+    </select>
+
+    <select id="findById" resultMap="WorkPlaceResultMap">
+        SELECT * FROM lb_work_place WHERE id = #{id}
+    </select>
+
+    <select id="findByUsedTrue" resultMap="WorkPlaceResultMap">
+        SELECT * FROM lb_work_place WHERE used = 1 ORDER BY created_at DESC
+    </select>
+
+    <select id="findByUsedTrueWithPaging" resultMap="WorkPlaceResultMap">
+        SELECT * FROM lb_work_place WHERE used = 1
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByUsedTrue" resultType="int">
+        SELECT COUNT(*) FROM lb_work_place WHERE used = 1
+    </select>
+
+    <select id="findByPlaceContainingAndUsedTrue" resultMap="WorkPlaceResultMap">
+        SELECT * FROM lb_work_place
+        WHERE place LIKE '%' + #{place} + '%' AND used = 1
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByPlaceContainingAndUsedTrue" resultType="int">
+        SELECT COUNT(*) FROM lb_work_place
+        WHERE place LIKE '%' + #{place} + '%' AND used = 1
+    </select>
+
+    <select id="findByFloorAndUsedTrue" resultMap="WorkPlaceResultMap">
+        SELECT * FROM lb_work_place
+        WHERE floor = #{floor} AND used = 1
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByFloorAndUsedTrue" resultType="int">
+        SELECT COUNT(*) FROM lb_work_place
+        WHERE floor = #{floor} AND used = 1
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO lb_work_place (title, place, floor, used, company, coordinate, image_path, exist_id, is_exist, created_at, modified_at)
+        VALUES (#{title}, #{place}, #{floor}, #{used}, #{company}, #{coordinate}, #{imagePath}, #{existId}, #{isExist}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE lb_work_place
+        SET title = #{title},
+            place = #{place},
+            floor = #{floor},
+            used = #{used},
+            company = #{company},
+            coordinate = #{coordinate},
+            image_path = #{imagePath},
+            exist_id = #{existId},
+            is_exist = #{isExist},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM lb_work_place WHERE id = #{id}
+    </delete>
+
+</mapper>

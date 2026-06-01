@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.ChecklistMapper">
+
+    <!-- Template -->
+    <resultMap id="templateResultMap" type="com.smartehs.model.ChecklistTemplate">
+        <id property="id" column="id"/>
+        <result property="templateName" column="template_name"/>
+        <result property="description" column="description"/>
+        <result property="categoryType" column="category_type"/>
+        <result property="note" column="note"/>
+        <result property="resultOptions" column="result_options"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="isActive" column="is_active"/>
+        <result property="inspectorName" column="inspector_name"/>
+        <result property="inspectorSign" column="inspector_sign"/>
+        <result property="inspectorSignDate" column="inspector_sign_date"/>
+        <result property="reviewerName" column="reviewer_name"/>
+        <result property="reviewerSign" column="reviewer_sign"/>
+        <result property="reviewerSignDate" column="reviewer_sign_date"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="approverSign" column="approver_sign"/>
+        <result property="approverSignDate" column="approver_sign_date"/>
+        <result property="itemCount" column="item_count"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="modUser" column="mod_user"/>
+        <result property="isPrivate" column="is_private"/>
+        <result property="ownerType" column="owner_type"/>
+        <result property="ownerId" column="owner_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllTemplates" resultMap="templateResultMap">
+        SELECT t.*,
+            (SELECT COUNT(*) FROM tb_checklist_item i
+             JOIN tb_checklist_category c ON i.category_id = c.id
+             WHERE c.template_id = t.id) AS item_count
+        FROM tb_checklist_template t
+        WHERE t.is_active = 1 AND (t.is_private = 0 OR t.is_private IS NULL)
+        ORDER BY t.sort_order
+    </select>
+
+    <insert id="insertTemplateWithOwner" parameterType="com.smartehs.model.ChecklistTemplate" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_checklist_template (template_name, description, category_type, result_options, sort_order, is_active,
+            inspector_name, inspector_sign, inspector_sign_date,
+            reviewer_name, reviewer_sign, reviewer_sign_date,
+            approver_name, approver_sign, approver_sign_date,
+            is_private, owner_type, owner_id, created_at, modified_at)
+        VALUES (#{templateName}, #{description}, #{categoryType}, #{resultOptions}, #{sortOrder}, 1,
+            #{inspectorName}, #{inspectorSign}, #{inspectorSignDate},
+            #{reviewerName}, #{reviewerSign}, #{reviewerSignDate},
+            #{approverName}, #{approverSign}, #{approverSignDate},
+            #{isPrivate}, #{ownerType}, #{ownerId}, GETDATE(), GETDATE())
+    </insert>
+
+    <select id="findPrivateByOwner" resultMap="templateResultMap">
+        SELECT * FROM tb_checklist_template
+        WHERE is_private = 1 AND owner_type = #{ownerType} AND owner_id = #{ownerId}
+    </select>
+
+    <select id="findTemplateById" resultMap="templateResultMap">
+        SELECT * FROM tb_checklist_template WHERE id = #{id}
+    </select>
+
+    <insert id="insertTemplate" parameterType="com.smartehs.model.ChecklistTemplate" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_checklist_template (template_name, description, category_type, result_options, sort_order, is_active, created_at, modified_at)
+        VALUES (#{templateName}, #{description}, #{categoryType}, #{resultOptions}, #{sortOrder}, 1, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="updateTemplate" parameterType="com.smartehs.model.ChecklistTemplate">
+        UPDATE tb_checklist_template SET
+            template_name = #{templateName},
+            description = #{description},
+            inspector_name = #{inspectorName},
+            inspector_sign = #{inspectorSign},
+            inspector_sign_date = #{inspectorSignDate},
+            reviewer_name = #{reviewerName},
+            reviewer_sign = #{reviewerSign},
+            reviewer_sign_date = #{reviewerSignDate},
+            approver_name = #{approverName},
+            approver_sign = #{approverSign},
+            approver_sign_date = #{approverSignDate},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteTemplate">
+        DELETE FROM tb_checklist_template WHERE id = #{id}
+    </delete>
+
+
+    <!-- Category -->
+    <resultMap id="categoryResultMap" type="com.smartehs.model.ChecklistCategory">
+        <id property="id" column="id"/>
+        <result property="templateId" column="template_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findCategoriesByTemplateId" resultMap="categoryResultMap">
+        SELECT * FROM tb_checklist_category WHERE template_id = #{templateId} ORDER BY sort_order
+    </select>
+
+    <select id="findCategoryById" resultMap="categoryResultMap">
+        SELECT * FROM tb_checklist_category WHERE id = #{id}
+    </select>
+
+    <insert id="insertCategory" parameterType="com.smartehs.model.ChecklistCategory" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_checklist_category (template_id, category_name, sort_order)
+        VALUES (#{templateId}, #{categoryName}, #{sortOrder})
+    </insert>
+
+    <update id="updateCategory" parameterType="com.smartehs.model.ChecklistCategory">
+        UPDATE tb_checklist_category
+        SET category_name = #{categoryName}, sort_order = #{sortOrder}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteCategory">
+        DELETE FROM tb_checklist_category WHERE id = #{id}
+    </delete>
+
+    <!-- Item -->
+    <resultMap id="itemResultMap" type="com.smartehs.model.ChecklistItem">
+        <id property="id" column="id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="classification" column="classification"/>
+        <result property="checkItem" column="check_item"/>
+        <result property="legalBasis" column="legal_basis"/>
+        <result property="checkResult" column="check_result"/>
+        <result property="finding" column="finding"/>
+        <result property="actionDeadline" column="action_deadline"/>
+        <result property="actionComplete" column="action_complete"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findItemsByCategoryId" resultMap="itemResultMap">
+        SELECT * FROM tb_checklist_item WHERE category_id = #{categoryId} ORDER BY sort_order
+    </select>
+
+    <select id="findItemsByTemplateId" resultMap="itemResultMap">
+        SELECT i.* FROM tb_checklist_item i
+        JOIN tb_checklist_category c ON i.category_id = c.id
+        WHERE c.template_id = #{templateId}
+        ORDER BY c.sort_order, i.sort_order
+    </select>
+
+    <select id="findItemById" resultMap="itemResultMap">
+        SELECT * FROM tb_checklist_item WHERE id = #{id}
+    </select>
+
+    <insert id="insertItem" parameterType="com.smartehs.model.ChecklistItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_checklist_item (category_id, item_no, classification, check_item, legal_basis, check_result, finding, action_deadline, action_complete, sort_order)
+        VALUES (#{categoryId}, #{itemNo}, #{classification}, #{checkItem}, #{legalBasis}, #{checkResult}, #{finding}, #{actionDeadline}, #{actionComplete}, #{sortOrder})
+    </insert>
+
+    <update id="updateItem" parameterType="com.smartehs.model.ChecklistItem">
+        UPDATE tb_checklist_item
+        SET classification = #{classification}, check_item = #{checkItem}, legal_basis = #{legalBasis},
+            check_result = #{checkResult}, finding = #{finding}, action_deadline = #{actionDeadline},
+            action_complete = #{actionComplete}, sort_order = #{sortOrder}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteItem">
+        DELETE FROM tb_checklist_item WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteItemsByCategoryId">
+        DELETE FROM tb_checklist_item WHERE category_id = #{categoryId}
+    </delete>
+
+    <delete id="deleteResultsByTemplateId">
+        DELETE FROM tb_checklist_inspection_result WHERE item_id IN (
+            SELECT i.id FROM tb_checklist_item i
+            JOIN tb_checklist_category c ON i.category_id = c.id
+            WHERE c.template_id = #{templateId}
+        )
+    </delete>
+
+    <delete id="deleteItemsByTemplateId">
+        DELETE FROM tb_checklist_item WHERE category_id IN (SELECT id FROM tb_checklist_category WHERE template_id = #{templateId})
+    </delete>
+
+    <delete id="deleteCategoriesByTemplateId">
+        DELETE FROM tb_checklist_category WHERE template_id = #{templateId}
+    </delete>
+
+    <select id="findMaxItemNoByTemplateId" resultType="java.lang.Integer">
+        SELECT MAX(i.item_no) FROM tb_checklist_item i
+        JOIN tb_checklist_category c ON i.category_id = c.id
+        WHERE c.template_id = #{templateId}
+    </select>
+
+    <!-- Inspection -->
+    <resultMap id="inspectionResultMap" type="com.smartehs.model.ChecklistInspection">
+        <id property="id" column="id"/>
+        <result property="templateId" column="template_id"/>
+        <result property="riskAssessmentId" column="risk_assessment_id"/>
+        <result property="inspectionDate" column="inspection_date"/>
+        <result property="department" column="department"/>
+        <result property="inspector" column="inspector"/>
+        <result property="site" column="site"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="modUser" column="mod_user"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findInspectionsByTemplateId" resultMap="inspectionResultMap">
+        SELECT * FROM tb_checklist_inspection WHERE template_id = #{templateId} ORDER BY inspection_date DESC
+    </select>
+
+    <select id="findInspectionById" resultMap="inspectionResultMap">
+        SELECT * FROM tb_checklist_inspection WHERE id = #{id}
+    </select>
+
+    <select id="findInspectionByRiskAssessmentAndTemplate" resultMap="inspectionResultMap">
+        SELECT * FROM tb_checklist_inspection
+        WHERE risk_assessment_id = #{riskAssessmentId} AND template_id = #{templateId}
+    </select>
+
+    <insert id="insertInspection" parameterType="com.smartehs.model.ChecklistInspection" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_checklist_inspection (template_id, risk_assessment_id, inspection_date, department, inspector, site, status, remark, reg_user)
+        VALUES (#{templateId}, #{riskAssessmentId}, #{inspectionDate,jdbcType=DATE}, #{department}, #{inspector}, #{site}, #{status}, #{remark}, #{regUser})
+    </insert>
+
+    <update id="updateInspection" parameterType="com.smartehs.model.ChecklistInspection">
+        UPDATE tb_checklist_inspection
+        SET inspection_date = #{inspectionDate,jdbcType=DATE}, department = #{department}, inspector = #{inspector},
+            site = #{site}, status = #{status}, remark = #{remark}, mod_user = #{modUser}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteInspection">
+        DELETE FROM tb_checklist_inspection WHERE id = #{id}
+    </delete>
+
+    <!-- Inspection Result -->
+    <resultMap id="resultResultMap" type="com.smartehs.model.ChecklistInspectionResult">
+        <id property="id" column="id"/>
+        <result property="inspectionId" column="inspection_id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="result" column="result"/>
+        <result property="actionDeadline" column="action_deadline"/>
+        <result property="personInCharge" column="person_in_charge"/>
+        <result property="remark" column="remark"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findResultsByInspectionId" resultMap="resultResultMap">
+        SELECT * FROM tb_checklist_inspection_result WHERE inspection_id = #{inspectionId}
+    </select>
+
+    <insert id="insertResult" parameterType="com.smartehs.model.ChecklistInspectionResult" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_checklist_inspection_result (inspection_id, item_id, result, action_deadline, person_in_charge, remark)
+        VALUES (#{inspectionId}, #{itemId}, #{result}, #{actionDeadline,jdbcType=DATE}, #{personInCharge}, #{remark})
+    </insert>
+
+    <update id="updateResult" parameterType="com.smartehs.model.ChecklistInspectionResult">
+        UPDATE tb_checklist_inspection_result
+        SET result = #{result}, action_deadline = #{actionDeadline,jdbcType=DATE}, person_in_charge = #{personInCharge},
+            remark = #{remark}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteResultsByInspectionId">
+        DELETE FROM tb_checklist_inspection_result WHERE inspection_id = #{inspectionId}
+    </delete>
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.SafetyWorkTaskListMapper">
+
+    <resultMap id="SafetyWorkTaskListResultMap" type="com.smartehs.model.SafetyWorkTaskList">
+        <id property="id" column="id"/>
+        <result property="safetyTaskId" column="safety_task_id"/>
+        <result property="safetyWorkId" column="safety_work_id"/>
+        <result property="taskDate" column="task_date"/>
+        <result property="taskTime" column="task_time"/>
+        <result property="description" column="description"/>
+        <result property="detail" column="detail"/>
+        <result property="comment" column="comment"/>
+        <result property="workerCount" column="worker_count"/>
+        <result property="attendeeCount" column="attendee_count"/>
+        <result property="permitStatus" column="permit_status"/>
+        <result property="educationStatus" column="education_status"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorMail" column="author_mail"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorCompany" column="author_company"/>
+        <result property="status" column="status"/>
+        <result property="rejectComment" column="reject_comment"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="SafetyWorkTaskListResultMap">
+        SELECT * FROM tb_safety_work_task_list ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="SafetyWorkTaskListResultMap">
+        SELECT * FROM tb_safety_work_task_list WHERE id = #{id}
+    </select>
+
+    <select id="findBySafetyTaskId" resultMap="SafetyWorkTaskListResultMap">
+        SELECT * FROM tb_safety_work_task_list WHERE safety_task_id = #{safetyTaskId}
+    </select>
+
+    <select id="findBySafetyWorkId" resultMap="SafetyWorkTaskListResultMap">
+        SELECT * FROM tb_safety_work_task_list WHERE safety_work_id = #{safetyWorkId} ORDER BY task_date ASC, created_at ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_work_task_list (safety_task_id, safety_work_id, task_date, task_time, description, detail, comment, worker_count, attendee_count, permit_status, education_status, author_name, author_mail, author_dept, author_company, status, reject_comment, created_at, modified_at)
+        VALUES (#{safetyTaskId}, #{safetyWorkId}, #{taskDate}, #{taskTime}, #{description}, #{detail}, #{comment}, #{workerCount}, #{attendeeCount}, #{permitStatus}, #{educationStatus}, #{authorName}, #{authorMail}, #{authorDept}, #{authorCompany}, #{status}, #{rejectComment}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_safety_work_task_list
+        SET task_date = #{taskDate},
+            task_time = #{taskTime},
+            description = #{description},
+            detail = #{detail},
+            comment = #{comment},
+            worker_count = #{workerCount},
+            attendee_count = #{attendeeCount},
+            permit_status = #{permitStatus},
+            education_status = #{educationStatus},
+            author_name = #{authorName},
+            author_mail = #{authorMail},
+            author_dept = #{authorDept},
+            author_company = #{authorCompany},
+            status = #{status},
+            reject_comment = #{rejectComment},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_safety_work_task_list WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteBySafetyWorkId">
+        DELETE FROM tb_safety_work_task_list WHERE safety_work_id = #{safetyWorkId}
+    </delete>
+
+</mapper>

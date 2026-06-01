@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.RadHealthMapper">
+    <resultMap id="R" type="com.smartehs.model.RadHealth">
+        <id property="id" column="id"/>
+        <result property="employeeNo" column="employee_no"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="dept" column="dept"/>
+        <result property="examType" column="exam_type"/>
+        <result property="examDate" column="exam_date"/>
+        <result property="examOrg" column="exam_org"/>
+        <result property="judgment" column="judgment"/>
+        <result property="cbcWbc" column="cbc_wbc"/>
+        <result property="lensCheck" column="lens_check"/>
+        <result property="cumulativeDose" column="cumulative_dose"/>
+        <result property="afterAction" column="after_action"/>
+        <result property="nextExamDate" column="next_exam_date"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">SELECT * FROM tb_rad_health WHERE deleted = 0 ORDER BY exam_date DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_rad_health WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_rad_health WHERE deleted = 0</select>
+    <select id="countByJudgment" resultType="int">SELECT COUNT(*) FROM tb_rad_health WHERE deleted = 0 AND judgment = #{j}</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_rad_health (employee_no, worker_name, dept, exam_type, exam_date, exam_org,
+            judgment, cbc_wbc, lens_check, cumulative_dose, after_action, next_exam_date,
+            deleted, created_at, modified_at) VALUES (
+            #{employeeNo}, #{workerName}, #{dept}, #{examType},
+            #{examDate,jdbcType=DATE}, #{examOrg}, #{judgment}, #{cbcWbc}, #{lensCheck},
+            #{cumulativeDose}, #{afterAction}, #{nextExamDate,jdbcType=DATE},
+            0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_rad_health SET employee_no = #{employeeNo}, worker_name = #{workerName},
+            dept = #{dept}, exam_type = #{examType},
+            exam_date = #{examDate,jdbcType=DATE}, exam_org = #{examOrg},
+            judgment = #{judgment}, cbc_wbc = #{cbcWbc}, lens_check = #{lensCheck},
+            cumulative_dose = #{cumulativeDose}, after_action = #{afterAction},
+            next_exam_date = #{nextExamDate,jdbcType=DATE},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_rad_health SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

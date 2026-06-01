@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ChecklistTemplateItemMapper">
+
+    <resultMap id="ChecklistTemplateItemResultMap" type="com.smartehs.model.ChecklistTemplateItem">
+        <id property="id" column="id"/>
+        <result property="masterId" column="master_id"/>
+        <result property="category" column="category"/>
+        <result property="checkItem" column="check_item"/>
+        <result property="checkContent" column="check_content"/>
+        <result property="isNormal" column="is_normal"/>
+        <result property="isAbnormal" column="is_abnormal"/>
+        <result property="remarks" column="remarks"/>
+        <result property="checkStandard" column="check_standard"/>
+        <result property="actionTaken" column="action_taken"/>
+        <result property="confirm" column="confirm"/>
+    </resultMap>
+
+    <select id="findByMasterId" resultMap="ChecklistTemplateItemResultMap">
+        SELECT * FROM tb_checklist_template_item
+        WHERE master_id = #{masterId}
+        ORDER BY id
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_checklist_template_item (
+            master_id, category, check_item, check_content,
+            is_normal, is_abnormal, remarks, check_standard,
+            action_taken, confirm
+        ) VALUES (
+            #{masterId}, #{category}, #{checkItem}, #{checkContent},
+            #{isNormal}, #{isAbnormal}, #{remarks}, #{checkStandard},
+            #{actionTaken}, #{confirm}
+        )
+    </insert>
+
+    <delete id="deleteByMasterId">
+        DELETE FROM tb_checklist_template_item WHERE master_id = #{masterId}
+    </delete>
+
+</mapper>

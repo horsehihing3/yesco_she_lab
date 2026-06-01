@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.OSHCommitteeMapper">
+
+    <resultMap id="OSHCommitteeResultMap" type="com.smartehs.model.OSHCommittee">
+        <id property="id" column="id"/>
+        <result property="oshId" column="osh_id"/>
+        <result property="oshDate" column="osh_date"/>
+        <result property="oshYear" column="osh_year"/>
+        <result property="oshQuarter" column="osh_quarter"/>
+        <result property="oshLocation" column="osh_location"/>
+        <result property="oshLocationDetail" column="osh_location_detail"/>
+        <result property="attendeeCount" column="attendee_count"/>
+        <result property="mainAgenda" column="main_agenda"/>
+        <result property="comment" column="comment"/>
+        <result property="isFileCreated" column="is_file_created"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorMail" column="author_mail"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorCompany" column="author_company"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="OSHCommitteeResultMap">
+        SELECT * FROM tb_osh_committee_list ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="OSHCommitteeResultMap">
+        SELECT * FROM tb_osh_committee_list
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_osh_committee_list
+    </select>
+
+    <select id="findById" resultMap="OSHCommitteeResultMap">
+        SELECT * FROM tb_osh_committee_list WHERE id = #{id}
+    </select>
+
+    <select id="findByOshId" resultMap="OSHCommitteeResultMap">
+        SELECT * FROM tb_osh_committee_list WHERE osh_id = #{oshId}
+    </select>
+
+    <select id="findByOshYear" resultMap="OSHCommitteeResultMap">
+        SELECT * FROM tb_osh_committee_list
+        WHERE osh_year = #{oshYear}
+        ORDER BY osh_quarter ASC, created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByOshYear" resultType="int">
+        SELECT COUNT(*) FROM tb_osh_committee_list WHERE osh_year = #{oshYear}
+    </select>
+
+    <select id="findByOshYearAndOshQuarter" resultMap="OSHCommitteeResultMap">
+        SELECT * FROM tb_osh_committee_list
+        WHERE osh_year = #{oshYear} AND osh_quarter = #{oshQuarter}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByOshYearAndOshQuarter" resultType="int">
+        SELECT COUNT(*) FROM tb_osh_committee_list
+        WHERE osh_year = #{oshYear} AND osh_quarter = #{oshQuarter}
+    </select>
+
+    <select id="findByOshLocationContaining" resultMap="OSHCommitteeResultMap">
+        SELECT * FROM tb_osh_committee_list
+        WHERE osh_location LIKE '%' + #{oshLocation} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByOshLocationContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_osh_committee_list
+        WHERE osh_location LIKE '%' + #{oshLocation} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_osh_committee_list (osh_id, osh_date, osh_year, osh_quarter, osh_location, osh_location_detail, attendee_count, main_agenda, comment, is_file_created, author_name, author_mail, author_dept, author_company, created_at, modified_at)
+        VALUES (#{oshId}, #{oshDate}, #{oshYear}, #{oshQuarter}, #{oshLocation}, #{oshLocationDetail}, #{attendeeCount}, #{mainAgenda}, #{comment}, #{isFileCreated}, #{authorName}, #{authorMail}, #{authorDept}, #{authorCompany}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_osh_committee_list
+        SET osh_date = #{oshDate},
+            osh_year = #{oshYear},
+            osh_quarter = #{oshQuarter},
+            osh_location = #{oshLocation},
+            osh_location_detail = #{oshLocationDetail},
+            attendee_count = #{attendeeCount},
+            main_agenda = #{mainAgenda},
+            comment = #{comment},
+            is_file_created = #{isFileCreated},
+            author_name = #{authorName},
+            author_mail = #{authorMail},
+            author_dept = #{authorDept},
+            author_company = #{authorCompany},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_osh_committee_list WHERE id = #{id}
+    </delete>
+
+    <update id="updateAttendeeCount">
+        UPDATE tb_osh_committee_list SET attendee_count = #{count} WHERE osh_id = #{oshId}
+    </update>
+
+</mapper>

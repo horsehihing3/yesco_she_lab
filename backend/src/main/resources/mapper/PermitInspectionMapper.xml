@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PermitInspectionMapper">
+    <resultMap id="R" type="com.smartehs.model.PermitInspection">
+        <id property="id" column="id"/>
+        <result property="inspectionName" column="inspection_name"/>
+        <result property="inspectionType" column="inspection_type"/>
+        <result property="frequency" column="frequency"/>
+        <result property="targetFacility" column="target_facility"/>
+        <result property="legalBasis" column="legal_basis"/>
+        <result property="lastDate" column="last_date"/>
+        <result property="nextDate" column="next_date"/>
+        <result property="assignee" column="assignee"/>
+        <result property="lastResult" column="last_result"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">
+        SELECT * FROM tb_permit_inspection WHERE deleted = 0 ORDER BY next_date ASC, id DESC
+    </select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_permit_inspection WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_permit_inspection WHERE deleted = 0</select>
+    <select id="countOverdue" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_inspection WHERE deleted = 0 AND next_date &lt; CAST(GETDATE() AS DATE)
+    </select>
+    <select id="countDueSoon" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_inspection
+        WHERE deleted = 0 AND next_date &gt;= CAST(GETDATE() AS DATE)
+        AND next_date &lt;= DATEADD(day, #{days}, CAST(GETDATE() AS DATE))
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_permit_inspection (
+            inspection_name, inspection_type, frequency, target_facility, legal_basis,
+            last_date, next_date, assignee, last_result, notes,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{inspectionName}, #{inspectionType,jdbcType=NVARCHAR}, #{frequency},
+            #{targetFacility,jdbcType=NVARCHAR}, #{legalBasis,jdbcType=NVARCHAR},
+            #{lastDate,jdbcType=DATE}, #{nextDate,jdbcType=DATE},
+            #{assignee,jdbcType=NVARCHAR}, #{lastResult,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_permit_inspection SET
+            inspection_name = #{inspectionName}, inspection_type = #{inspectionType,jdbcType=NVARCHAR},
+            frequency = #{frequency}, target_facility = #{targetFacility,jdbcType=NVARCHAR},
+            legal_basis = #{legalBasis,jdbcType=NVARCHAR},
+            last_date = #{lastDate,jdbcType=DATE}, next_date = #{nextDate,jdbcType=DATE},
+            assignee = #{assignee,jdbcType=NVARCHAR}, last_result = #{lastResult,jdbcType=NVARCHAR},
+            notes = #{notes,jdbcType=NVARCHAR}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_permit_inspection SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

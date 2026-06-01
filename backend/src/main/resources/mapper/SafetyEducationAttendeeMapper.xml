@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.SafetyEducationAttendeeMapper">
+
+    <resultMap id="SafetyEducationAttendeeResultMap" type="com.smartehs.model.SafetyEducationAttendee">
+        <id property="id" column="id"/>
+        <result property="educationId" column="education_id"/>
+        <result property="attendeeName" column="attendee_name"/>
+        <result property="attendeeEmail" column="attendee_email"/>
+        <result property="attendeeDept" column="attendee_dept"/>
+        <result property="attendeeCompany" column="attendee_company"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="isSigned" column="is_signed"/>
+        <result property="signatureDate" column="signature_date"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findByEducationId" resultMap="SafetyEducationAttendeeResultMap">
+        SELECT * FROM tb_safety_education_attendee WHERE education_id = #{educationId} ORDER BY id ASC
+    </select>
+
+    <select id="findById" resultMap="SafetyEducationAttendeeResultMap">
+        SELECT * FROM tb_safety_education_attendee WHERE id = #{id}
+    </select>
+
+    <select id="countByEducationId" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_education_attendee WHERE education_id = #{educationId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_education_attendee (
+            education_id, attendee_name, attendee_email, attendee_dept,
+            attendee_company, employee_id, is_signed, signature_date, created_at
+        ) VALUES (
+            #{educationId}, #{attendeeName}, #{attendeeEmail}, #{attendeeDept},
+            #{attendeeCompany}, #{employeeId}, #{isSigned}, #{signatureDate}, GETDATE()
+        )
+    </insert>
+
+    <update id="updateSignature">
+        UPDATE tb_safety_education_attendee SET is_signed = 1, signature_date = GETDATE() WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_safety_education_attendee WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByEducationId">
+        DELETE FROM tb_safety_education_attendee WHERE education_id = #{educationId}
+    </delete>
+
+</mapper>

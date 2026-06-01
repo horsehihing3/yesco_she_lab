@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.RiskAssessmentFormItemMapper">
+
+    <resultMap id="RiskAssessmentFormItemResultMap" type="com.smartehs.model.RiskAssessmentFormItem">
+        <id property="id" column="id"/>
+        <result property="formId" column="form_id"/>
+        <result property="riskIdx" column="risk_idx"/>
+        <result property="detailAction" column="detail_action"/>
+        <result property="risk4M" column="risk_4m"/>
+        <result property="danger" column="danger"/>
+        <result property="expectedDisaster" column="expected_disaster"/>
+        <result property="target" column="target"/>
+        <result property="currentSafetyMeasures" column="current_safety_measures"/>
+        <result property="possibilityGrade" column="possibility_grade"/>
+        <result property="resultGrade" column="result_grade"/>
+        <result property="reductionMeasures" column="reduction_measures"/>
+        <result property="improvementManager" column="improvement_manager"/>
+        <result property="improvementDeadline" column="improvement_deadline"/>
+        <result property="improvedPossibilityGrade" column="improved_possibility_grade"/>
+        <result property="improvedResultGrade" column="improved_result_grade"/>
+        <result property="relatedLaw" column="related_law"/>
+        <result property="remark" column="remark"/>
+        <result property="reviewer" column="reviewer"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="currentFrequency" column="current_frequency"/>
+        <result property="currentSeverity" column="current_severity"/>
+        <result property="currentRisk" column="current_risk"/>
+        <result property="currentGrade" column="current_grade"/>
+        <result property="codeNumber" column="code_number"/>
+        <result property="improvedFrequency" column="improved_frequency"/>
+        <result property="improvedSeverity" column="improved_severity"/>
+        <result property="improvedRisk" column="improved_risk"/>
+        <result property="improvedGrade" column="improved_grade"/>
+    </resultMap>
+
+    <select id="findByFormId" resultMap="RiskAssessmentFormItemResultMap">
+        SELECT * FROM tb_risk_assessment_form_item
+        WHERE form_id = #{formId}
+        ORDER BY risk_idx
+    </select>
+
+    <select id="countByFormId" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_form_item WHERE form_id = #{formId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_risk_assessment_form_item (
+            form_id, risk_idx, detail_action, risk_4m, danger,
+            expected_disaster, target, current_safety_measures,
+            possibility_grade, result_grade, reduction_measures,
+            improvement_manager, improvement_deadline,
+            improved_possibility_grade, improved_result_grade,
+            related_law, remark, reviewer, approver_name,
+            current_frequency, current_severity, current_risk, current_grade,
+            code_number,
+            improved_frequency, improved_severity, improved_risk, improved_grade
+        ) VALUES (
+            #{formId}, #{riskIdx}, #{detailAction}, #{risk4M}, #{danger},
+            #{expectedDisaster}, #{target}, #{currentSafetyMeasures},
+            #{possibilityGrade}, #{resultGrade}, #{reductionMeasures},
+            #{improvementManager}, #{improvementDeadline},
+            #{improvedPossibilityGrade}, #{improvedResultGrade},
+            #{relatedLaw}, #{remark}, #{reviewer}, #{approverName},
+            #{currentFrequency}, #{currentSeverity}, #{currentRisk}, #{currentGrade},
+            #{codeNumber},
+            #{improvedFrequency}, #{improvedSeverity}, #{improvedRisk}, #{improvedGrade}
+        )
+    </insert>
+
+    <delete id="deleteByFormId">
+        DELETE FROM tb_risk_assessment_form_item WHERE form_id = #{formId}
+    </delete>
+
+</mapper>

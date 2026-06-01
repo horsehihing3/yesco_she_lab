@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.RiskAssessmentInfoFormMapper">
+
+    <resultMap id="RiskAssessmentInfoFormResultMap" type="com.smartehs.model.RiskAssessmentInfoForm">
+        <id property="id" column="id"/>
+        <result property="riskId" column="risk_id"/>
+        <result property="title" column="title"/>
+        <result property="completeDate" column="complete_date"/>
+        <result property="categoryNum" column="category_num"/>
+        <result property="regularOrOccasional" column="regular_or_occasional"/>
+        <result property="site" column="site"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorMail" column="author_mail"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorCompany" column="author_company"/>
+        <result property="approval" column="approval"/>
+        <result property="approvalMail" column="approval_mail"/>
+        <result property="comment" column="comment"/>
+        <result property="occManagerMail" column="occ_manager_mail"/>
+        <result property="status" column="status"/>
+        <result property="allowResubmit" column="allow_resubmit"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="riskCnt" column="risk_cnt"/>
+        <result property="cntOff" column="cnt_off"/>
+        <result property="cntVis" column="cnt_vis"/>
+        <result property="cntCow" column="cnt_cow"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_info_form
+    </select>
+
+    <select id="findById" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form WHERE id = #{id}
+    </select>
+
+    <select id="findByRiskId" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form WHERE risk_id = #{riskId}
+    </select>
+
+    <select id="findByTitleContaining" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form
+        WHERE title LIKE '%' + #{title} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_info_form WHERE title LIKE '%' + #{title} + '%'
+    </select>
+
+    <select id="findBySite" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form
+        WHERE site = #{site}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySite" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_info_form WHERE site = #{site}
+    </select>
+
+    <select id="findByApproval" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form
+        WHERE approval = #{approval}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByApproval" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_info_form WHERE approval = #{approval}
+    </select>
+
+    <select id="findByStatus" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form
+        WHERE status = #{status}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_info_form WHERE status = #{status}
+    </select>
+
+    <select id="findByDeletedFalse" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_info_form WHERE deleted = 0
+    </select>
+
+    <select id="findByAuthorMailAndDeletedFalse" resultMap="RiskAssessmentInfoFormResultMap">
+        SELECT * FROM tb_risk_assessment_info_form
+        WHERE author_mail = #{authorMail} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByAuthorMailAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_info_form WHERE author_mail = #{authorMail} AND deleted = 0
+    </select>
+
+    <select id="countByStatusAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_info_form WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_risk_assessment_info_form (risk_id, title, complete_date, category_num, regular_or_occasional, site, author_name, author_mail, author_dept, author_company, approval, approval_mail, comment, occ_manager_mail, status, allow_resubmit, reject_reason, risk_cnt, cnt_off, cnt_vis, cnt_cow, deleted, created_at, modified_at)
+        VALUES (#{riskId}, #{title}, #{completeDate}, #{categoryNum}, #{regularOrOccasional}, #{site}, #{authorName}, #{authorMail}, #{authorDept}, #{authorCompany}, #{approval}, #{approvalMail}, #{comment}, #{occManagerMail}, #{status}, #{allowResubmit}, #{rejectReason}, #{riskCnt}, #{cntOff}, #{cntVis}, #{cntCow}, #{deleted}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_risk_assessment_info_form
+        SET title = #{title},
+            complete_date = #{completeDate},
+            category_num = #{categoryNum},
+            regular_or_occasional = #{regularOrOccasional},
+            site = #{site},
+            author_name = #{authorName},
+            author_mail = #{authorMail},
+            author_dept = #{authorDept},
+            author_company = #{authorCompany},
+            approval = #{approval},
+            approval_mail = #{approvalMail},
+            comment = #{comment},
+            occ_manager_mail = #{occManagerMail},
+            status = #{status},
+            allow_resubmit = #{allowResubmit},
+            reject_reason = #{rejectReason},
+            risk_cnt = #{riskCnt},
+            cnt_off = #{cntOff},
+            cnt_vis = #{cntVis},
+            cnt_cow = #{cntCow},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_risk_assessment_info_form WHERE id = #{id}
+    </delete>
+
+    <update id="softDelete">
+        UPDATE tb_risk_assessment_info_form SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.DisposalCompanyMapper">
+
+    <resultMap id="DisposalCompanyResultMap" type="com.smartehs.model.DisposalCompany">
+        <id property="id" column="id"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="businessNumber" column="business_number"/>
+        <result property="ceoName" column="ceo_name"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="wasteTypes" column="waste_types"/>
+        <result property="licenseNumber" column="license_number"/>
+        <result property="licenseExpiry" column="license_expiry"/>
+        <result property="rating" column="rating"/>
+        <result property="status" column="status"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="DisposalCompanyResultMap">
+        SELECT * FROM tb_disposal_company
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_disposal_company
+    </select>
+
+    <select id="findById" resultMap="DisposalCompanyResultMap">
+        SELECT * FROM tb_disposal_company WHERE id = #{id}
+    </select>
+
+    <select id="findByCompanyNameContaining" resultMap="DisposalCompanyResultMap">
+        SELECT * FROM tb_disposal_company
+        WHERE company_name LIKE '%' + #{companyName} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByCompanyNameContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_disposal_company
+        WHERE company_name LIKE '%' + #{companyName} + '%'
+    </select>
+
+    <select id="findAllActive" resultMap="DisposalCompanyResultMap">
+        SELECT * FROM tb_disposal_company
+        WHERE status = 'ACTIVE'
+        ORDER BY company_name ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_disposal_company (company_name, company_code, business_number, ceo_name, phone, address,
+            waste_types, license_number, license_expiry, rating, status, reg_user, created_at, modified_at)
+        VALUES (#{companyName}, #{companyCode}, #{businessNumber}, #{ceoName}, #{phone}, #{address},
+            #{wasteTypes}, #{licenseNumber}, #{licenseExpiry}, #{rating}, #{status}, #{regUser}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_disposal_company
+        SET company_name = #{companyName},
+            company_code = #{companyCode},
+            business_number = #{businessNumber},
+            ceo_name = #{ceoName},
+            phone = #{phone},
+            address = #{address},
+            waste_types = #{wasteTypes},
+            license_number = #{licenseNumber},
+            license_expiry = #{licenseExpiry},
+            rating = #{rating},
+            status = #{status},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_disposal_company WHERE id = #{id}
+    </delete>
+
+</mapper>

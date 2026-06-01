@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.CodeGroupMapper">
+
+    <resultMap id="CodeGroupResultMap" type="com.smartehs.model.CodeGroup">
+        <id property="id" column="id"/>
+        <result property="groupCode" column="group_code"/>
+        <result property="groupName" column="group_name"/>
+        <result property="description" column="description"/>
+        <result property="isActive" column="is_active"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="CodeGroupResultMap">
+        SELECT * FROM tb_code_group
+        ORDER BY sort_order ASC, group_code ASC
+    </select>
+
+    <select id="findByKeyword" resultMap="CodeGroupResultMap">
+        SELECT * FROM tb_code_group
+        WHERE group_code LIKE '%' + #{keyword} + '%'
+           OR group_name LIKE '%' + #{keyword} + '%'
+        ORDER BY sort_order ASC, group_code ASC
+    </select>
+
+    <select id="findById" resultMap="CodeGroupResultMap">
+        SELECT * FROM tb_code_group WHERE id = #{id}
+    </select>
+
+    <select id="findByGroupCode" resultMap="CodeGroupResultMap">
+        SELECT * FROM tb_code_group WHERE group_code = #{groupCode}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_code_group (group_code, group_name, description, is_active, sort_order, created_at, modified_at)
+        VALUES (#{groupCode}, #{groupName}, #{description}, #{isActive}, #{sortOrder}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_code_group
+        SET group_name  = #{groupName},
+            description = #{description},
+            is_active   = #{isActive},
+            sort_order  = #{sortOrder},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_code_group WHERE id = #{id}
+    </delete>
+
+</mapper>

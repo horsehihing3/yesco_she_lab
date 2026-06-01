@@ -1,0 +1,94 @@
+server:
+  port: 7501
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: smart-ehs
+
+  web:
+    resources:
+      add-mappings: false
+
+  datasource:
+    url: jdbc:sqlserver://211.171.152.242:51084;databaseName=SmartEHS_com4in;encrypt=true;trustServerCertificate=true
+    username: com4in
+    password: com4in201!!
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  flyway:
+    enabled: false
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  mail:
+    host: ${MAIL_HOST:smtp.office365.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# MyBatis Configuration
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.smartehs.model
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-for-jwt-token-generation-minimum-32-characters}
+  expiration: 86400000  # 24 hours in milliseconds
+  refresh-expiration: 604800000  # 7 days in milliseconds
+
+# File Storage Configuration
+file:
+  upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+  max-size: 104857600  # 100MB
+
+# Microsoft Graph Configuration (for Teams/Email notifications)
+microsoft:
+  graph:
+    client-id: ${AZURE_CLIENT_ID:}
+    client-secret: ${AZURE_CLIENT_SECRET:}
+    tenant-id: ${AZURE_TENANT_ID:}
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.smartehs: DEBUG
+    com.smartehs.mapper: TRACE         # MyBatis SQL + parameters + result rows
+    jdbc.sqltiming: DEBUG
+    org.springframework.jdbc.core: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Translation Configuration
+translation:
+  enabled: true
+
+# Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method

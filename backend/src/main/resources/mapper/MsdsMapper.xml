@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.MsdsMapper">
+
+    <resultMap id="MsdsResultMap" type="com.smartehs.model.Msds">
+        <id property="id" column="id"/>
+        <result property="msdsType" column="msds_type"/>
+        <result property="itemName" column="item_name"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="casNumber" column="cas_number"/>
+        <result property="supplier" column="supplier"/>
+        <result property="version" column="version"/>
+        <result property="issueDate" column="issue_date"/>
+        <result property="retireDate" column="retire_date"/>
+        <result property="retireReason" column="retire_reason"/>
+        <result property="language" column="language"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileId" column="file_id"/>
+        <result property="exportCountries" column="export_countries"/>
+        <result property="isLatest" column="is_latest"/>
+        <result property="changeType" column="change_type"/>
+        <result property="changeSummary" column="change_summary"/>
+        <result property="registeredBy" column="registered_by"/>
+        <result property="status" column="status"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="MsdsResultMap">
+        SELECT * FROM tb_msds
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_msds WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="MsdsResultMap">
+        SELECT * FROM tb_msds WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByTypeAndLatest" resultMap="MsdsResultMap">
+        SELECT * FROM tb_msds
+        WHERE deleted = 0
+        <if test="msdsType != null and msdsType != ''">
+            AND msds_type = #{msdsType}
+        </if>
+        <if test="isLatest != null">
+            AND is_latest = #{isLatest}
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTypeAndLatest" resultType="int">
+        SELECT COUNT(*) FROM tb_msds
+        WHERE deleted = 0
+        <if test="msdsType != null and msdsType != ''">
+            AND msds_type = #{msdsType}
+        </if>
+        <if test="isLatest != null">
+            AND is_latest = #{isLatest}
+        </if>
+    </select>
+
+    <select id="search" resultMap="MsdsResultMap">
+        SELECT * FROM tb_msds
+        WHERE deleted = 0
+        <if test="msdsType != null and msdsType != ''">
+            AND msds_type = #{msdsType}
+        </if>
+        <if test="isLatest != null">
+            AND is_latest = #{isLatest}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (item_name LIKE '%' + #{keyword} + '%'
+                 OR cas_number LIKE '%' + #{keyword} + '%'
+                 OR item_code LIKE '%' + #{keyword} + '%')
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_msds
+        WHERE deleted = 0
+        <if test="msdsType != null and msdsType != ''">
+            AND msds_type = #{msdsType}
+        </if>
+        <if test="isLatest != null">
+            AND is_latest = #{isLatest}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (item_name LIKE '%' + #{keyword} + '%'
+                 OR cas_number LIKE '%' + #{keyword} + '%'
+                 OR item_code LIKE '%' + #{keyword} + '%')
+        </if>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_msds (
+            msds_type, item_name, item_code, cas_number,
+            supplier, version, issue_date, retire_date, retire_reason,
+            language, file_size, file_id, export_countries,
+            is_latest, change_type, change_summary, registered_by,
+            status, deleted, created_at, modified_at
+        ) VALUES (
+            #{msdsType}, #{itemName}, #{itemCode}, #{casNumber},
+            #{supplier}, #{version}, #{issueDate,jdbcType=DATE}, #{retireDate,jdbcType=DATE}, #{retireReason},
+            #{language}, #{fileSize}, #{fileId}, #{exportCountries},
+            #{isLatest}, #{changeType}, #{changeSummary}, #{registeredBy},
+            #{status}, #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_msds SET
+            msds_type = #{msdsType},
+            item_name = #{itemName},
+            item_code = #{itemCode},
+            cas_number = #{casNumber},
+            supplier = #{supplier},
+            version = #{version},
+            issue_date = #{issueDate,jdbcType=DATE},
+            retire_date = #{retireDate,jdbcType=DATE},
+            retire_reason = #{retireReason},
+            language = #{language},
+            file_size = #{fileSize},
+            file_id = #{fileId},
+            export_countries = #{exportCountries},
+            is_latest = #{isLatest},
+            change_type = #{changeType},
+            change_summary = #{changeSummary},
+            registered_by = #{registeredBy},
+            status = #{status},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_msds SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

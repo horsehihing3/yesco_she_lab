@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EmergencyResourceMapper">
+
+    <resultMap id="EmergencyResourceResultMap" type="com.smartehs.model.EmergencyResource">
+        <id property="id" column="id"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="resourceName" column="resource_name"/>
+        <result property="resourceType" column="resource_type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="availableQty" column="available_qty"/>
+        <result property="location" column="location"/>
+        <result property="disposalDate" column="disposal_date"/>
+        <result property="status" column="status"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="EmergencyResourceResultMap">
+        SELECT * FROM tb_emergency_resource
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_resource WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="EmergencyResourceResultMap">
+        SELECT * FROM tb_emergency_resource WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByResourceType" resultMap="EmergencyResourceResultMap">
+        SELECT * FROM tb_emergency_resource
+        WHERE resource_type = #{resourceType} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByResourceType" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_resource WHERE resource_type = #{resourceType} AND deleted = 0
+    </select>
+
+    <select id="countByResourceIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_resource WHERE resource_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_emergency_resource (
+            resource_id, resource_name, resource_type, quantity, available_qty,
+            location, disposal_date, status,
+            notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{resourceId}, #{resourceName}, #{resourceType}, #{quantity}, #{availableQty},
+            #{location}, #{disposalDate,jdbcType=DATE}, #{status},
+            #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_emergency_resource SET
+            resource_name = #{resourceName}, resource_type = #{resourceType},
+            quantity = #{quantity}, available_qty = #{availableQty},
+            location = #{location},
+            disposal_date = #{disposalDate,jdbcType=DATE},
+            status = #{status},
+            notes = #{notes}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_emergency_resource SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

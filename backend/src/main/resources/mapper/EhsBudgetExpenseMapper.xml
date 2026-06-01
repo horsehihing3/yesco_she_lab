@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EhsBudgetExpenseMapper">
+
+    <resultMap id="EhsBudgetExpenseResultMap" type="com.smartehs.model.EhsBudgetExpense">
+        <id property="id" column="id"/>
+        <result property="budgetYear" column="budget_year"/>
+        <result property="category" column="category"/>
+        <result property="itemName" column="item_name"/>
+        <result property="amount" column="amount"/>
+        <result property="expenseDate" column="expense_date"/>
+        <result property="department" column="department"/>
+        <result property="note" column="note"/>
+        <result property="writer" column="writer"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <sql id="cols">
+        id, budget_year, category, item_name, amount, expense_date, department, note, writer, created_at, modified_at
+    </sql>
+
+    <select id="findAll" resultMap="EhsBudgetExpenseResultMap">
+        SELECT <include refid="cols"/> FROM tb_ehs_budget_expense
+        <where>
+            <if test="budgetYear != null">
+                AND budget_year = #{budgetYear}
+            </if>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+        </where>
+        ORDER BY expense_date DESC, id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByYearAndCategory" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_budget_expense
+        <where>
+            <if test="budgetYear != null">
+                AND budget_year = #{budgetYear}
+            </if>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultMap="EhsBudgetExpenseResultMap">
+        SELECT <include refid="cols"/> FROM tb_ehs_budget_expense WHERE id = #{id}
+    </select>
+
+    <select id="findByYear" resultMap="EhsBudgetExpenseResultMap">
+        SELECT <include refid="cols"/> FROM tb_ehs_budget_expense
+        WHERE budget_year = #{budgetYear}
+        ORDER BY expense_date DESC, id DESC
+    </select>
+
+    <select id="findByYearAndCategory" resultMap="EhsBudgetExpenseResultMap">
+        SELECT <include refid="cols"/> FROM tb_ehs_budget_expense
+        WHERE budget_year = #{budgetYear} AND category = #{category}
+        ORDER BY expense_date DESC, id DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_budget_expense (budget_year, category, item_name, amount, expense_date, department, note, writer, created_at, modified_at)
+        VALUES (#{budgetYear}, #{category}, #{itemName}, #{amount}, #{expenseDate}, #{department}, #{note}, #{writer}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ehs_budget_expense
+        SET budget_year = #{budgetYear},
+            category = #{category},
+            item_name = #{itemName},
+            amount = #{amount},
+            expense_date = #{expenseDate},
+            department = #{department},
+            note = #{note},
+            writer = #{writer},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_ehs_budget_expense WHERE id = #{id}
+    </delete>
+
+</mapper>

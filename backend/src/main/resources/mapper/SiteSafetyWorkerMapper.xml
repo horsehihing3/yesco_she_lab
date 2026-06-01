@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.SiteSafetyWorkerMapper">
+    <resultMap id="R" type="com.smartehs.model.SiteSafetyWorker">
+        <id property="id" column="id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="workerPhone" column="worker_phone"/>
+        <result property="companyName" column="company_name"/>
+        <result property="notes" column="notes"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    <select id="findByPlanId" resultMap="R">
+        SELECT * FROM tb_site_safety_worker WHERE plan_id = #{planId} ORDER BY id ASC
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_site_safety_worker (plan_id, worker_name, worker_phone, company_name, notes, created_at)
+        VALUES (#{planId}, #{workerName}, #{workerPhone}, #{companyName}, #{notes}, GETDATE())
+    </insert>
+    <delete id="deleteByPlanId">DELETE FROM tb_site_safety_worker WHERE plan_id = #{planId}</delete>
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.DpMsdMapper">
+    <resultMap id="R" type="com.smartehs.model.DpMsd">
+        <id property="id" column="id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="department" column="department"/>
+        <result property="jobTitle" column="job_title"/>
+        <result property="taskName" column="task_name"/>
+        <result property="taskCategory" column="task_category"/>
+        <result property="rebaScore" column="reba_score"/>
+        <result property="owasScore" column="owas_score"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="affectedBodyParts" column="affected_body_parts"/>
+        <result property="symptoms" column="symptoms"/>
+        <result property="assessmentDate" column="assessment_date"/>
+        <result property="assessor" column="assessor"/>
+        <result property="status" column="status"/>
+        <result property="actionTaken" column="action_taken"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_dp_msd WHERE deleted = 0 ORDER BY reba_score DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_dp_msd WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_dp_msd WHERE deleted = 0</select>
+    <select id="countByRiskLevel" resultType="int">SELECT COUNT(*) FROM tb_dp_msd WHERE deleted = 0 AND risk_level = #{riskLevel}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_dp_msd (worker_name, department, job_title, task_name, task_category,
+            reba_score, owas_score, risk_level, affected_body_parts, symptoms,
+            assessment_date, assessor, status, action_taken, notes,
+            deleted, created_at, modified_at) VALUES (
+            #{workerName}, #{department,jdbcType=NVARCHAR}, #{jobTitle,jdbcType=NVARCHAR},
+            #{taskName,jdbcType=NVARCHAR}, #{taskCategory,jdbcType=NVARCHAR},
+            #{rebaScore,jdbcType=INTEGER}, #{owasScore,jdbcType=INTEGER}, #{riskLevel,jdbcType=NVARCHAR},
+            #{affectedBodyParts,jdbcType=NVARCHAR}, #{symptoms,jdbcType=NVARCHAR},
+            #{assessmentDate,jdbcType=DATE}, #{assessor,jdbcType=NVARCHAR}, #{status,jdbcType=NVARCHAR},
+            #{actionTaken,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_dp_msd SET worker_name = #{workerName}, department = #{department,jdbcType=NVARCHAR},
+            job_title = #{jobTitle,jdbcType=NVARCHAR}, task_name = #{taskName,jdbcType=NVARCHAR},
+            task_category = #{taskCategory,jdbcType=NVARCHAR},
+            reba_score = #{rebaScore,jdbcType=INTEGER}, owas_score = #{owasScore,jdbcType=INTEGER},
+            risk_level = #{riskLevel,jdbcType=NVARCHAR},
+            affected_body_parts = #{affectedBodyParts,jdbcType=NVARCHAR}, symptoms = #{symptoms,jdbcType=NVARCHAR},
+            assessment_date = #{assessmentDate,jdbcType=DATE}, assessor = #{assessor,jdbcType=NVARCHAR},
+            status = #{status,jdbcType=NVARCHAR}, action_taken = #{actionTaken,jdbcType=NVARCHAR},
+            notes = #{notes,jdbcType=NVARCHAR}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_dp_msd SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

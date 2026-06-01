@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.HealthCheckupMapper">
+
+    <resultMap id="HealthCheckupResultMap" type="com.smartehs.model.HealthCheckup">
+        <id property="id" column="id"/>
+        <result property="checkupId" column="checkup_id"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="employeeName" column="employee_name"/>
+        <result property="employeeDept" column="employee_dept"/>
+        <result property="employeeEmail" column="employee_email"/>
+        <result property="checkupYear" column="checkup_year"/>
+        <result property="checkupType" column="checkup_type"/>
+        <result property="isTarget" column="is_target"/>
+        <result property="checkupStatus" column="checkup_status"/>
+        <result property="checkupDate" column="checkup_date"/>
+        <result property="hospital" column="hospital"/>
+        <result property="overallResult" column="overall_result"/>
+        <result property="nextCheckupDate" column="next_checkup_date"/>
+        <result property="notes" column="notes"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_health_checkup WHERE deleted = 0
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByCheckupIdAndDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup WHERE checkup_id = #{checkupId} AND deleted = 0
+    </select>
+
+    <select id="findByEmployeeIdAndDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup
+        WHERE employee_id = #{employeeId} AND deleted = 0
+        ORDER BY checkup_year DESC, created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByEmployeeIdAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_health_checkup
+        WHERE employee_id = #{employeeId} AND deleted = 0
+    </select>
+
+    <select id="findAllByEmployeeEmailAndDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup
+        WHERE (employee_email = #{employeeEmail} OR employee_id = #{employeeEmail}) AND deleted = 0
+        ORDER BY checkup_date DESC, checkup_year DESC, created_at DESC
+    </select>
+
+    <select id="findByCheckupYearAndDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup
+        WHERE checkup_year = #{checkupYear} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByCheckupYearAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_health_checkup
+        WHERE checkup_year = #{checkupYear} AND deleted = 0
+    </select>
+
+    <select id="findByStatusAndDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup
+        WHERE checkup_status = #{status} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatusAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_health_checkup
+        WHERE checkup_status = #{status} AND deleted = 0
+    </select>
+
+    <select id="findTargetsByYearAndDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup
+        WHERE checkup_year = #{checkupYear} AND is_target = 1 AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countTargetsByYearAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_health_checkup
+        WHERE checkup_year = #{checkupYear} AND is_target = 1 AND deleted = 0
+    </select>
+
+    <select id="searchByEmployeeNameAndDeletedFalse" resultMap="HealthCheckupResultMap">
+        SELECT * FROM tb_health_checkup
+        WHERE employee_name LIKE '%' + #{name} + '%' AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByEmployeeNameAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_health_checkup
+        WHERE employee_name LIKE '%' + #{name} + '%' AND deleted = 0
+    </select>
+
+    <select id="countByCheckupIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_health_checkup WHERE checkup_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_health_checkup (
+            checkup_id, employee_id, employee_name, employee_dept, employee_email,
+            checkup_year, checkup_type, is_target, checkup_status, checkup_date,
+            hospital, overall_result, next_checkup_date, notes,
+            author_name, author_email, author_dept, deleted, created_at, modified_at
+        ) VALUES (
+            #{checkupId}, #{employeeId}, #{employeeName}, #{employeeDept}, #{employeeEmail},
+            #{checkupYear}, #{checkupType}, #{isTarget}, #{checkupStatus}, #{checkupDate,jdbcType=DATE},
+            #{hospital}, #{overallResult}, #{nextCheckupDate,jdbcType=DATE}, #{notes},
+            #{authorName}, #{authorEmail}, #{authorDept}, #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_health_checkup SET
+            employee_id = #{employeeId}, employee_name = #{employeeName},
+            employee_dept = #{employeeDept}, employee_email = #{employeeEmail},
+            checkup_year = #{checkupYear}, checkup_type = #{checkupType},
+            is_target = #{isTarget}, checkup_status = #{checkupStatus},
+            checkup_date = #{checkupDate,jdbcType=DATE}, hospital = #{hospital},
+            overall_result = #{overallResult}, next_checkup_date = #{nextCheckupDate,jdbcType=DATE},
+            notes = #{notes}, author_name = #{authorName}, author_email = #{authorEmail},
+            author_dept = #{authorDept}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_health_checkup SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

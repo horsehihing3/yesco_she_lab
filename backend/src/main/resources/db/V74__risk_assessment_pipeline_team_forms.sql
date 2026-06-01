@@ -1,0 +1,109 @@
+-- V74: 위험성 평가 체크리스트 (배관연구팀 양식 기반)
+
+-- 기존 양식 항목 + 마스터 모두 삭제
+DELETE FROM tb_risk_assessment_form_item;
+DELETE FROM tb_risk_assessment_form;
+
+-- 시퀀스 초기화 (Identity reset)
+DBCC CHECKIDENT ('tb_risk_assessment_form', RESEED, 0);
+DBCC CHECKIDENT ('tb_risk_assessment_form_item', RESEED, 0);
+
+-- ===== 배관설계연구(A) (6 items) =====
+INSERT INTO tb_risk_assessment_form (title, reg_user, mod_user, created_at, modified_at)
+VALUES (N'배관설계연구(A)', N'시스템', N'시스템', GETDATE(), GETDATE());
+DECLARE @fid_A BIGINT = SCOPE_IDENTITY();
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_A, 1, N'', N'', N'신축건물 공사현장 방문 시 낙하 위험', N'낙하,비래', NULL, N'공사현장 출입시 안전모 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_A, 2, N'', N'작업', N'현장조사 시 미끄러짐 발생', N'전도', NULL, N'위해요소 확인 및 안전화 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_A, 3, N'', N'환경', N'장시간 컴퓨터 사용', N'시력장애', NULL, N'작업 중 휴식');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_A, 4, N'', N'환경', N'장시간 PC작업시 손목 등 무리', N'무리한동작', NULL, N'가벼운 손풀기 운동, 스트레칭');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_A, 5, N'', N'환경', N'현장조사 시 추락 발생', N'추락', NULL, N'위해요소 확인');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_A, 6, N'', N'환경', N'출장(외근) 중 차량사고', N'기타', NULL, N'신호준수 및 방어운전');
+
+-- ===== 시설물연구(B) (5 items) =====
+INSERT INTO tb_risk_assessment_form (title, reg_user, mod_user, created_at, modified_at)
+VALUES (N'시설물연구(B)', N'시스템', N'시스템', GETDATE(), GETDATE());
+DECLARE @fid_B BIGINT = SCOPE_IDENTITY();
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_B, 1, N'검토방법 선정', N'', N'공기구 및 기기 운용', N'찔림', NULL, N'위해요소 확인 및 목장갑 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_B, 2, N'및 시설검토', N'기계적', N'공기구 및 기기 운용', N'배임', NULL, N'위해요소 확인 및 목장갑 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_B, 3, N'및 시설검토', N'기계적', N'현장조사 시 미끄러짐 발생', N'전도', NULL, N'위해요소 확인');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_B, 4, N'및 시설검토', N'기계적', N'무거운 물건 운반 및 접촉 시 허리 무리', N'무리한동작', NULL, N'개인능력 확인');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_B, 5, N'및 시설검토', N'기계적', N'출장(외근) 중 차량사고', N'기타', NULL, N'신호준수 및 방어운전');
+
+-- ===== 배관망분석연구(C) (7 items) =====
+INSERT INTO tb_risk_assessment_form (title, reg_user, mod_user, created_at, modified_at)
+VALUES (N'배관망분석연구(C)', N'시스템', N'시스템', GETDATE(), GETDATE());
+DECLARE @fid_C BIGINT = SCOPE_IDENTITY();
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_C, 1, N'배관망해석 검증', N'기계적 요인', N'관말 압력 장치 설치시 공기구 낙하', N'낙하,비래', NULL, N'올바른 공기구 사용 / 안전화 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_C, 2, N'배관망해석 검증', N'작업 환경', N'관말 압력 장치 설치 시 추락 우려', N'추락', NULL, N'안전지대 확보');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_C, 3, N'배관망해석 검증', N'작업 환경', N'관말 압력 장치 탈부착 시 미량 가스누출', N'화재', NULL, N'작업 인근 인화원 유무 확인 및 제거');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_C, 4, N'배관망해석 검증', N'인적', N'출장(외근) 중 차량사고', N'기타', NULL, N'신호준수 및 방어운전');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_C, 5, N'배관망해석 검증', N'작업', N'장시간 컴퓨터 사용', N'시력장애', NULL, N'작업 중 휴식');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_C, 6, N'배관망해석 검증', N'환경', N'장시간 PC작업시 손목 등 무리', N'무리한동작', NULL, N'가벼운 손풀기 운동, 스트레칭');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_C, 7, N'배관망해석 검증', N'인적', N'출장(외근) 중 차량사고', N'기타', NULL, N'신호준수 및 방어운전');
+
+-- ===== QA(품질보증)연구(D) (9 items) =====
+INSERT INTO tb_risk_assessment_form (title, reg_user, mod_user, created_at, modified_at)
+VALUES (N'QA(품질보증)연구(D)', N'시스템', N'시스템', GETDATE(), GETDATE());
+DECLARE @fid_QAD BIGINT = SCOPE_IDENTITY();
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 1, N'자재검수', N'', N'핀홀측정기 사용부주의', N'감전', NULL, N'매뉴얼 숙지 및 안전스위치 올바른 사용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 2, N'자재검수', N'작업', N'공사현장, 제작사방문 검수 시 미끄러짐', N'전도', NULL, N'기름, 물기 등 제거 / 안전화 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 3, N'자재검수', N'환경', N'제품압력시험 중 내부 이물질에 의한 상해', N'기타', NULL, N'제작사 사전검사여부 확인');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 4, N'자재검수', N'인적', N'제품검사 시 제품에 신체 부딪힘', N'충돌', NULL, N'위해요소 확인');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 5, N'자재검수', N'요인', N'출장(외근) 중 차량사고', N'기타', NULL, N'신호준수 및 방어운전');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 6, N'자재검수', N'작업', N'공사현장, 제작사방문 검수 시 미끄러짐', N'전도', NULL, N'기름, 물기 등 제거');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 7, N'자재검수', N'환경', N'제품압력시험 중 내부 이물질에 의한 상해', N'기타', NULL, N'제작사 사전검사여부 확인');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 8, N'자재검수', N'환경', N'제품검사 시 제품에 신체 부딪힘', N'충돌', NULL, N'위해요소 확인');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_QAD, 9, N'자재검수', N'환경', N'출장(외근) 중 차량사고', N'기타', NULL, N'신호준수 및 방어운전');
+
+-- ===== GIS정보향상연구(E) (5 items) =====
+INSERT INTO tb_risk_assessment_form (title, reg_user, mod_user, created_at, modified_at)
+VALUES (N'GIS정보향상연구(E)', N'시스템', N'시스템', GETDATE(), GETDATE());
+DECLARE @fid_GISE BIGINT = SCOPE_IDENTITY();
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_GISE, 1, N'배관 탐사 및 
+검수', N'', N'배관 매설 탐지기 운용시 미끄러짐', N'전도', NULL, N'안전화 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_GISE, 2, N'배관 탐사 및 
+검수', N'', N'현장샘플검수 시 차량사고 발생 우려', N'기타', NULL, N'안전라바콘 사용 등 안전수칙준수');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_GISE, 3, N'배관 탐사 및 
+검수', N'작업', N'장시간 컴퓨터 사용', N'시력장애', NULL, N'작업 중 휴식');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_GISE, 4, N'배관 탐사 및 
+검수', N'환경', N'RTK 측량폴대 낙하로 인한 상해', N'낙하', NULL, N'안전모 및 안전장갑 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_GISE, 5, N'배관 탐사 및 
+검수', N'환경', N'출장(외근) 중 차량사고', N'기타', NULL, N'신호준수 및 방어운전');
+
+-- ===== 기술자료 및  도면관리(F) (2 items) =====
+INSERT INTO tb_risk_assessment_form (title, reg_user, mod_user, created_at, modified_at)
+VALUES (N'기술자료 및  도면관리(F)', N'시스템', N'시스템', GETDATE(), GETDATE());
+DECLARE @fid_F BIGINT = SCOPE_IDENTITY();
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_F, 1, N'도면 및 서류', N'', N'모빌랙 작동시 손/발 등 끼임', N'협착', NULL, N'위해요소 확인');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_F, 2, N'도면 및 서류', N'', N'무거운 물건 운반 및 접촉 시 허리 무리', N'무리한동작', NULL, N'개인능력 확인');
+
+-- ===== 기타업무(I) (1 items) =====
+INSERT INTO tb_risk_assessment_form (title, reg_user, mod_user, created_at, modified_at)
+VALUES (N'기타업무(I)', N'시스템', N'시스템', GETDATE(), GETDATE());
+DECLARE @fid_I BIGINT = SCOPE_IDENTITY();
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_I, 1, N'', N'', N'출장(외근) 중 차량사고', N'기타', NULL, N'신호준수 및 방어운전');
+
+-- ===== 사무공통(J) (19 items) =====
+INSERT INTO tb_risk_assessment_form (title, reg_user, mod_user, created_at, modified_at)
+VALUES (N'사무공통(J)', N'시스템', N'시스템', GETDATE(), GETDATE());
+DECLARE @fid_J BIGINT = SCOPE_IDENTITY();
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 1, N'PC사용', N'작업', N'장시간 PC작업시 전자파 노출 및', N'시력장애', NULL, N'작업 중간에 휴식');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 2, N'PC사용', N'환경', N'시력 피로도 증가/시력장애', N'', N'N/A', N'');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 3, N'PC사용', N'인적.', N'장시간 PC작업시 손목 등 무리', N'무리한동작', NULL, N'가벼운 손풀기 운동, 스트레칭');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 4, N'PC사용', N'관리적', N'장시간 착석으로 허리,등 통증', N'무리한동작', NULL, N'중간중간 휴식, 움직임');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 5, N'복합기 사용', N'기계적', N'용지걸림으로 용지제거시 내부고온', N'화상', NULL, N'개인적인 안전 주의 습관');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 6, N'복합기 사용', N'기계적', N'접촉', N'', N'N/A', N'');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 7, N'복합기 사용', N'작업', N'커버 열고 복사시 유해광선 노출', N'시력장애', NULL, N'개인적인 안전 주의 습관');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 8, N'복합기 사용', N'인적', N'호치케스 철심 제거시 손가락 상해', N'찔림', NULL, N'개인적인 안전 주의습관');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 9, N'사무실 이동', N'인적', N'출입문 개폐시 반대편사람과 충돌', N'충돌', NULL, N'주위 확인후 출입문 개폐');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 10, N'사무실 이동', N'인적', N'보행시 미정리된 바닥전선으로 전도', N'전도', NULL, N'바닥 정리정돈 철저');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 11, N'사무실 이동', N'기계적', N'문서고 문서이관시 문서고내 먼지', N'기타', NULL, N'환기 및 마스크 착용');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 12, N'사무실 이동', N'기계적', N'습기로 인한 호흡기 질환', N'', N'N/A', N'');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 13, N'사무실 이동', N'기계적', N'문서고내 높은 곳 문서 낙하 사고', N'낙하/비래', NULL, N'작업자 주의');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 14, N'계단보행', N'작업', N'미끄럼방지테잎 파손부위 이동시', N'전도', NULL, N'미끄럼방지 테잎 부착상태');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 15, N'계단보행', N'환경', N'미끄러짐', N'', N'N/A', N'부착상태 점검활동');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 16, N'계단보행', N'인적', N'보행시 부주의로 인한 넘어짐, 실족', N'전도', NULL, N'주의 보행');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 17, N'계단보행', N'/관리적', N'물기 묻어있을 시 미끄러짐', N'전도', NULL, N'계단청소 철저');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 18, N'직무순환시', N'인적', N'협동에 의한 운반 않고 중량물 단독', N'무리한동작', NULL, N'단독 운반 지양');
+INSERT INTO tb_risk_assessment_form_item (form_id, risk_idx, detail_action, risk_4m, danger, expected_disaster, target, current_safety_measures) VALUES (@fid_J, 19, N'서랍장 옮기기', N'/관리적', N'운반, 허리부담', N'', N'N/A', N'');
+

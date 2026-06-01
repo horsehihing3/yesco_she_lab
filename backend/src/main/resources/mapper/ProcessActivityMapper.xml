@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ProcessActivityMapper">
+
+    <!-- Form -->
+    <resultMap id="FormResultMap" type="com.smartehs.model.ProcessActivityForm">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="divisionName" column="division_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="evaluator" column="evaluator"/>
+        <result property="creationDate" column="creation_date"/>
+        <result property="teamMembers" column="team_members"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllForms" resultMap="FormResultMap">
+        SELECT * FROM tb_process_activity_form
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAllForms" resultType="int">
+        SELECT COUNT(*) FROM tb_process_activity_form
+    </select>
+
+    <select id="findFormById" resultMap="FormResultMap">
+        SELECT * FROM tb_process_activity_form WHERE id = #{id}
+    </select>
+
+    <insert id="insertForm" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_process_activity_form
+            (title, description, division_name, department_name, evaluator, creation_date, team_members, created_at, modified_at)
+        VALUES
+            (#{title}, #{description}, #{divisionName}, #{departmentName}, #{evaluator}, #{creationDate}, #{teamMembers}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="updateForm">
+        UPDATE tb_process_activity_form SET
+            title = #{title},
+            description = #{description},
+            division_name = #{divisionName},
+            department_name = #{departmentName},
+            evaluator = #{evaluator},
+            creation_date = #{creationDate},
+            team_members = #{teamMembers},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteForm">
+        DELETE FROM tb_process_activity_form WHERE id = #{id}
+    </delete>
+
+    <!-- Process -->
+    <resultMap id="ProcessResultMap" type="com.smartehs.model.ProcessActivityProcess">
+        <id property="id" column="id"/>
+        <result property="formId" column="form_id"/>
+        <result property="majorCategory" column="major_category"/>
+        <result property="middleCategory" column="middle_category"/>
+        <result property="subCategory" column="sub_category"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findProcessesByFormId" resultMap="ProcessResultMap">
+        SELECT * FROM tb_process_activity_process WHERE form_id = #{formId} ORDER BY sort_order, id
+    </select>
+
+    <insert id="insertProcess" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_process_activity_process
+            (form_id, major_category, middle_category, sub_category, sort_order, created_at, modified_at)
+        VALUES
+            (#{formId}, #{majorCategory}, #{middleCategory}, #{subCategory}, #{sortOrder}, GETDATE(), GETDATE())
+    </insert>
+
+    <delete id="deleteProcessesByFormId">
+        DELETE FROM tb_process_activity_process WHERE form_id = #{formId}
+    </delete>
+
+    <!-- Item -->
+    <resultMap id="ItemResultMap" type="com.smartehs.model.ProcessActivityItem">
+        <id property="id" column="id"/>
+        <result property="processId" column="process_id"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="workContent" column="work_content"/>
+        <result property="excludeEval" column="exclude_eval"/>
+        <result property="applicableLaw" column="applicable_law"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findItemsByProcessIds" resultMap="ItemResultMap">
+        SELECT * FROM tb_process_activity_item
+        WHERE process_id IN
+        <foreach collection="processIds" item="pid" open="(" close=")" separator=",">#{pid}</foreach>
+        ORDER BY process_id, sort_order, id
+    </select>
+
+    <insert id="insertItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_process_activity_item
+            (process_id, item_no, work_content, exclude_eval, applicable_law, sort_order, created_at, modified_at)
+        VALUES
+            (#{processId}, #{itemNo}, #{workContent}, #{excludeEval}, #{applicableLaw}, #{sortOrder}, GETDATE(), GETDATE())
+    </insert>
+
+    <delete id="deleteItemsByProcessIds">
+        DELETE FROM tb_process_activity_item
+        WHERE process_id IN
+        <foreach collection="processIds" item="pid" open="(" close=")" separator=",">#{pid}</foreach>
+    </delete>
+
+    <delete id="deleteItemsByFormId">
+        DELETE FROM tb_process_activity_item
+        WHERE process_id IN (SELECT id FROM tb_process_activity_process WHERE form_id = #{formId})
+    </delete>
+
+</mapper>

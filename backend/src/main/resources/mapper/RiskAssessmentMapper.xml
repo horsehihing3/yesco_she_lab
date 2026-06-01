@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.RiskAssessmentMapper">
+
+    <resultMap id="RiskAssessmentResultMap" type="com.smartehs.model.RiskAssessment">
+        <id property="id" column="id"/>
+        <result property="formId" column="form_id"/>
+        <result property="formTitle" column="form_title"/>
+        <result property="detailCount" column="detail_count"/>
+        <result property="officeChecklistId" column="office_checklist_id"/>
+        <result property="sanupChecklistId" column="sanup_checklist_id"/>
+        <result property="jungdaeChecklistId" column="jungdae_checklist_id"/>
+        <result property="riskId" column="risk_id"/>
+        <result property="title" column="title"/>
+        <result property="titleEn" column="title_en"/>
+        <result property="titleZh" column="title_zh"/>
+        <result property="site" column="site"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorMail" column="author_mail"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="approverMail" column="approver_mail"/>
+        <result property="planApproverUserId" column="plan_approver_user_id"/>
+        <result property="planApproverTeam" column="plan_approver_team"/>
+        <result property="planApproverPosition" column="plan_approver_position"/>
+        <result property="planApproverName" column="plan_approver_name"/>
+        <result property="planApprovedAt" column="plan_approved_at"/>
+        <result property="planApprovedBy" column="plan_approved_by"/>
+        <result property="completionApproverUserId" column="completion_approver_user_id"/>
+        <result property="completionApproverTeam" column="completion_approver_team"/>
+        <result property="completionApproverPosition" column="completion_approver_position"/>
+        <result property="completionApproverName" column="completion_approver_name"/>
+        <result property="completionApprovedAt" column="completion_approved_at"/>
+        <result property="completionApprovedBy" column="completion_approved_by"/>
+        <result property="status" column="status"/>
+        <result property="riskRegisterCount" column="risk_register_count"/>
+        <result property="officeCount" column="office_count"/>
+        <result property="fieldCount" column="field_count"/>
+        <result property="completedDate" column="completed_date"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="allowResubmit" column="allow_resubmit"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <sql id="withDetailCount">
+        SELECT a.*,
+            (SELECT COUNT(*) FROM tb_risk_assessment_detail d WHERE d.risk_id = a.risk_id) AS detail_count
+        FROM tb_risk_assessment a
+    </sql>
+
+    <select id="findAll" resultMap="RiskAssessmentResultMap">
+        <include refid="withDetailCount"/>
+        ORDER BY a.created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="findBySite" resultMap="RiskAssessmentResultMap">
+        <include refid="withDetailCount"/>
+        WHERE a.site = #{site}
+        ORDER BY a.created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="findByStatus" resultMap="RiskAssessmentResultMap">
+        <include refid="withDetailCount"/>
+        WHERE a.status = #{status}
+        ORDER BY a.created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment
+    </select>
+
+    <select id="countBySite" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment WHERE site = #{site}
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment WHERE status = #{status}
+    </select>
+
+    <select id="countByFormId" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment WHERE form_id = #{formId}
+    </select>
+
+    <select id="findById" resultMap="RiskAssessmentResultMap">
+        <include refid="withDetailCount"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findByRiskId" resultMap="RiskAssessmentResultMap">
+        <include refid="withDetailCount"/>
+        WHERE a.risk_id = #{riskId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_risk_assessment (
+            form_id, form_title, risk_id, title, title_en, title_zh, site, author_name, author_dept, author_mail,
+            approver_name, approver_mail,
+            plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
+            completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+            status, risk_register_count, office_count,
+            field_count, allow_resubmit,
+            office_checklist_id, sanup_checklist_id, jungdae_checklist_id,
+            created_at, modified_at
+        ) VALUES (
+            #{formId,jdbcType=BIGINT}, #{formTitle}, #{riskId}, #{title}, #{titleEn}, #{titleZh}, #{site}, #{authorName}, #{authorDept}, #{authorMail},
+            #{approverName}, #{approverMail},
+            #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
+            #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+            #{status}, #{riskRegisterCount}, #{officeCount},
+            #{fieldCount}, #{allowResubmit},
+            #{officeChecklistId,jdbcType=BIGINT}, #{sanupChecklistId,jdbcType=BIGINT}, #{jungdaeChecklistId,jdbcType=BIGINT},
+            GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_risk_assessment
+        SET form_id = #{formId,jdbcType=BIGINT},
+            form_title = #{formTitle},
+            title = #{title},
+            title_en = #{titleEn},
+            title_zh = #{titleZh},
+            site = #{site},
+            author_name = #{authorName},
+            author_dept = #{authorDept},
+            author_mail = #{authorMail},
+            approver_name = #{approverName},
+            approver_mail = #{approverMail},
+            plan_approver_user_id = #{planApproverUserId,jdbcType=BIGINT},
+            plan_approver_team = #{planApproverTeam},
+            plan_approver_position = #{planApproverPosition},
+            plan_approver_name = #{planApproverName},
+            completion_approver_user_id = #{completionApproverUserId,jdbcType=BIGINT},
+            completion_approver_team = #{completionApproverTeam},
+            completion_approver_position = #{completionApproverPosition},
+            completion_approver_name = #{completionApproverName},
+            office_checklist_id = #{officeChecklistId,jdbcType=BIGINT},
+            sanup_checklist_id = #{sanupChecklistId,jdbcType=BIGINT},
+            jungdae_checklist_id = #{jungdaeChecklistId,jdbcType=BIGINT},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE tb_risk_assessment
+        SET status = #{status},
+            reject_reason = #{rejectReason},
+            allow_resubmit = #{allowResubmit},
+            completed_date = CASE WHEN #{status} = 'completed' THEN GETDATE() ELSE completed_date END,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="transition">
+        UPDATE tb_risk_assessment
+        SET status = #{status},
+            plan_approved_at      = CASE WHEN #{stage} = 'PLAN'       AND #{approved} = 1 THEN GETDATE() ELSE plan_approved_at END,
+            plan_approved_by      = CASE WHEN #{stage} = 'PLAN'       AND #{approved} = 1 THEN #{approvedBy} ELSE plan_approved_by END,
+            completion_approved_at = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN GETDATE() ELSE completion_approved_at END,
+            completion_approved_by = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN #{approvedBy} ELSE completion_approved_by END,
+            completed_date        = CASE WHEN #{status} = 'completed' THEN GETDATE() ELSE completed_date END,
+            reject_reason         = CASE WHEN #{status} = 'rejected' THEN #{rejectReason} ELSE reject_reason END,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateCounts">
+        UPDATE tb_risk_assessment
+        SET office_count = #{officeCount},
+            field_count = #{fieldCount},
+            modified_at = GETDATE()
+        WHERE risk_id = #{riskId}
+    </update>
+
+    <update id="updateRiskRegisterCount">
+        UPDATE tb_risk_assessment
+        SET risk_register_count = #{count},
+            modified_at = GETDATE()
+        WHERE risk_id = #{riskId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_risk_assessment WHERE id = #{id}
+    </delete>
+
+</mapper>

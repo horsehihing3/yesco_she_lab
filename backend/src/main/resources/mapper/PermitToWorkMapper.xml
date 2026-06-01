@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.PermitToWorkMapper">
+
+    <resultMap id="PermitToWorkResultMap" type="com.smartehs.model.PermitToWork">
+        <id property="id" column="id"/>
+        <result property="permitId" column="permit_id"/>
+        <result property="permitType" column="permit_type"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="status" column="status"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="workLocation" column="work_location"/>
+        <result property="workStartDate" column="work_start_date"/>
+        <result property="workEndDate" column="work_end_date"/>
+        <result property="requesterName" column="requester_name"/>
+        <result property="requesterDept" column="requester_dept"/>
+        <result property="requesterId" column="requester_id"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="approverDept" column="approver_dept"/>
+        <result property="approverId" column="approver_id"/>
+        <result property="approvedAt" column="approved_at"/>
+        <result property="safetyMeasures" column="safety_measures"/>
+        <result property="requiredPpe" column="required_ppe"/>
+        <result property="hazardFactors" column="hazard_factors"/>
+        <result property="emergencyContact" column="emergency_contact"/>
+        <result property="workersCount" column="workers_count"/>
+        <result property="rejectionReason" column="rejection_reason"/>
+        <result property="completedAt" column="completed_at"/>
+        <result property="notes" column="notes"/>
+        <result property="checklistTemplateId" column="checklist_template_id"/>
+        <result property="inspectorName" column="inspector_name"/>
+        <result property="isExternal" column="is_external"/>
+        <result property="totalChecklist" column="total_checklist"/>
+        <result property="completedChecklist" column="completed_checklist"/>
+        <result property="findingCount" column="finding_count"/>
+        <result property="modifiedBy" column="modified_by"/>
+        <result property="deleted" column="deleted"/>
+        <result property="planApproverUserId" column="plan_approver_user_id"/>
+        <result property="planApproverTeam" column="plan_approver_team"/>
+        <result property="planApproverPosition" column="plan_approver_position"/>
+        <result property="planApproverName" column="plan_approver_name"/>
+        <result property="planApprovedAt" column="plan_approved_at"/>
+        <result property="planApprovedBy" column="plan_approved_by"/>
+        <result property="completionApproverUserId" column="completion_approver_user_id"/>
+        <result property="completionApproverTeam" column="completion_approver_team"/>
+        <result property="completionApproverPosition" column="completion_approver_position"/>
+        <result property="completionApproverName" column="completion_approver_name"/>
+        <result property="completionApprovedAt" column="completion_approved_at"/>
+        <result property="completionApprovedBy" column="completion_approved_by"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="PermitToWorkResultMap">
+        SELECT * FROM tb_permit_to_work WHERE deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_to_work WHERE deleted = 0
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="PermitToWorkResultMap">
+        SELECT * FROM tb_permit_to_work WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByStatusAndDeletedFalse" resultMap="PermitToWorkResultMap">
+        SELECT * FROM tb_permit_to_work WHERE status = #{status} AND deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatusAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_to_work WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="findByPermitTypeAndDeletedFalse" resultMap="PermitToWorkResultMap">
+        SELECT * FROM tb_permit_to_work WHERE permit_type = #{permitType} AND deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByPermitTypeAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_to_work WHERE permit_type = #{permitType} AND deleted = 0
+    </select>
+
+    <select id="searchByTitleAndDeletedFalse" resultMap="PermitToWorkResultMap">
+        SELECT * FROM tb_permit_to_work WHERE title LIKE '%' + #{title} + '%' AND deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearchTitleAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_to_work WHERE title LIKE '%' + #{title} + '%' AND deleted = 0
+    </select>
+
+    <select id="findByRequesterIdAndDeletedFalse" resultMap="PermitToWorkResultMap">
+        SELECT * FROM tb_permit_to_work WHERE requester_id = #{requesterId} AND deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByRequesterIdAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_to_work WHERE requester_id = #{requesterId} AND deleted = 0
+    </select>
+
+    <select id="countByPermitIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_to_work WHERE permit_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_permit_to_work (
+            permit_id, permit_type, risk_level, status, title, description, work_location,
+            work_start_date, work_end_date, requester_name, requester_dept, requester_id,
+            approver_name, approver_dept, approver_id, safety_measures, required_ppe,
+            hazard_factors, emergency_contact, workers_count, notes,
+            checklist_template_id, inspector_name, is_external,
+            plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
+            completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{permitId}, #{permitType}, #{riskLevel}, #{status}, #{title}, #{description}, #{workLocation},
+            #{workStartDate}, #{workEndDate}, #{requesterName}, #{requesterDept}, #{requesterId},
+            #{approverName}, #{approverDept}, #{approverId}, #{safetyMeasures}, #{requiredPpe},
+            #{hazardFactors}, #{emergencyContact}, #{workersCount}, #{notes},
+            #{checklistTemplateId}, #{inspectorName}, #{isExternal},
+            #{planApproverUserId}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
+            #{completionApproverUserId}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_permit_to_work SET
+            permit_type = #{permitType}, risk_level = #{riskLevel}, status = #{status},
+            title = #{title}, description = #{description}, work_location = #{workLocation},
+            work_start_date = #{workStartDate}, work_end_date = #{workEndDate},
+            requester_name = #{requesterName}, requester_dept = #{requesterDept}, requester_id = #{requesterId},
+            approver_name = #{approverName}, approver_dept = #{approverDept}, approver_id = #{approverId},
+            safety_measures = #{safetyMeasures}, required_ppe = #{requiredPpe},
+            hazard_factors = #{hazardFactors}, emergency_contact = #{emergencyContact},
+            workers_count = #{workersCount}, rejection_reason = #{rejectionReason},
+            notes = #{notes}, checklist_template_id = #{checklistTemplateId},
+            inspector_name = #{inspectorName}, is_external = #{isExternal},
+            plan_approver_user_id = #{planApproverUserId},
+            plan_approver_team = #{planApproverTeam},
+            plan_approver_position = #{planApproverPosition},
+            plan_approver_name = #{planApproverName},
+            completion_approver_user_id = #{completionApproverUserId},
+            completion_approver_team = #{completionApproverTeam},
+            completion_approver_position = #{completionApproverPosition},
+            completion_approver_name = #{completionApproverName},
+            modified_by = #{modifiedBy}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="transitionStatus">
+        UPDATE tb_permit_to_work SET
+            status = #{status},
+            plan_approved_at = CASE WHEN #{action} = 'approve' THEN GETDATE() ELSE plan_approved_at END,
+            plan_approved_by = CASE WHEN #{action} = 'approve' AND #{actor} IS NOT NULL THEN #{actor} ELSE plan_approved_by END,
+            completion_approved_at = CASE WHEN #{action} = 'complete' THEN GETDATE() ELSE completion_approved_at END,
+            completion_approved_by = CASE WHEN #{action} = 'complete' AND #{actor} IS NOT NULL THEN #{actor} ELSE completion_approved_by END,
+            completed_at = CASE WHEN #{action} = 'complete' THEN GETDATE() ELSE completed_at END,
+            reject_reason = CASE WHEN #{action} = 'reject' THEN #{rejectReason}
+                                 WHEN #{action} = 'submit' OR #{action} = 'completionSubmit' THEN NULL
+                                 ELSE reject_reason END,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE tb_permit_to_work SET
+            status = #{status},
+            approved_at = CASE WHEN #{status} = 'APPROVED' THEN GETDATE() ELSE approved_at END,
+            completed_at = CASE WHEN #{status} = 'COMPLETED' THEN GETDATE() ELSE completed_at END,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_permit_to_work SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <select id="findByIsExternal" resultMap="PermitToWorkResultMap">
+        SELECT * FROM tb_permit_to_work WHERE is_external = #{isExternal} AND deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByIsExternal" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_to_work WHERE is_external = #{isExternal} AND deleted = 0
+    </select>
+
+    <update id="updateChecklistCounts">
+        UPDATE tb_permit_to_work SET
+            total_checklist = #{totalChecklist},
+            completed_checklist = #{completedChecklist},
+            finding_count = #{findingCount},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByChecklistTemplateId" resultMap="PermitToWorkResultMap">
+        SELECT * FROM tb_permit_to_work WHERE checklist_template_id = #{checklistTemplateId} AND deleted = 0
+    </select>
+
+</mapper>

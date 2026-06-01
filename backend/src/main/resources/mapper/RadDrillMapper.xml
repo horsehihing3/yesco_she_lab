@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.RadDrillMapper">
+    <resultMap id="R" type="com.smartehs.model.RadDrill">
+        <id property="id" column="id"/>
+        <result property="drillDate" column="drill_date"/>
+        <result property="drillType" column="drill_type"/>
+        <result property="scenario" column="scenario"/>
+        <result property="participants" column="participants"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="result" column="result"/>
+        <result property="improvement" column="improvement"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">SELECT * FROM tb_rad_drill WHERE deleted = 0 ORDER BY drill_date DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_rad_drill WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_rad_drill WHERE deleted = 0</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_rad_drill (drill_date, drill_type, scenario, participants, owner_name,
+            result, improvement, deleted, created_at, modified_at) VALUES (
+            #{drillDate,jdbcType=DATE}, #{drillType}, #{scenario}, #{participants}, #{ownerName},
+            #{result}, #{improvement}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_rad_drill SET drill_date = #{drillDate,jdbcType=DATE},
+            drill_type = #{drillType}, scenario = #{scenario}, participants = #{participants},
+            owner_name = #{ownerName}, result = #{result}, improvement = #{improvement},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_rad_drill SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

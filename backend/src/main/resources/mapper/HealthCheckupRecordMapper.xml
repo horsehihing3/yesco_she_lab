@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.HealthCheckupRecordMapper">
+
+    <resultMap id="HealthCheckupRecordResultMap" type="com.smartehs.model.HealthCheckupRecord">
+        <id property="id" column="id"/>
+        <result property="examDate" column="exam_date"/>
+        <result property="examPeriod" column="exam_period"/>
+        <result property="hospitalName" column="hospital_name"/>
+        <result property="department" column="department"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="bpSystolic" column="bp_systolic"/>
+        <result property="bpDiastolic" column="bp_diastolic"/>
+        <result property="bpMed" column="bp_med"/>
+        <result property="bpGrade" column="bp_grade"/>
+        <result property="bst" column="bst"/>
+        <result property="dmMed" column="dm_med"/>
+        <result property="dmGrade" column="dm_grade"/>
+        <result property="tc" column="tc"/>
+        <result property="tg" column="tg"/>
+        <result property="ldl" column="ldl"/>
+        <result property="hdl" column="hdl"/>
+        <result property="lipidMed" column="lipid_med"/>
+        <result property="lipidGrade" column="lipid_grade"/>
+        <result property="followUp" column="follow_up"/>
+        <result property="workFitness" column="work_fitness"/>
+        <result property="remark" column="remark"/>
+        <result property="pdfFileId" column="pdf_file_id"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="HealthCheckupRecordResultMap">
+        SELECT * FROM tb_health_checkup_record ORDER BY exam_date DESC, id DESC
+    </select>
+
+    <select id="findByName" resultMap="HealthCheckupRecordResultMap">
+        SELECT * FROM tb_health_checkup_record WHERE name = #{name} ORDER BY exam_date DESC
+    </select>
+
+    <select id="findById" resultMap="HealthCheckupRecordResultMap">
+        SELECT * FROM tb_health_checkup_record WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_health_checkup_record
+            (exam_date, exam_period, hospital_name, department, name, age,
+             bp_systolic, bp_diastolic, bp_med, bp_grade,
+             bst, dm_med, dm_grade,
+             tc, tg, ldl, hdl, lipid_med, lipid_grade,
+             follow_up, work_fitness, remark, pdf_file_id, created_by,
+             created_at, modified_at)
+        VALUES
+            (#{examDate}, #{examPeriod}, #{hospitalName}, #{department}, #{name}, #{age},
+             #{bpSystolic}, #{bpDiastolic}, #{bpMed}, #{bpGrade},
+             #{bst}, #{dmMed}, #{dmGrade},
+             #{tc}, #{tg}, #{ldl}, #{hdl}, #{lipidMed}, #{lipidGrade},
+             #{followUp}, #{workFitness}, #{remark}, #{pdfFileId}, #{createdBy},
+             GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_health_checkup_record
+        SET exam_date = #{examDate}, exam_period = #{examPeriod},
+            hospital_name = #{hospitalName}, department = #{department},
+            name = #{name}, age = #{age},
+            bp_systolic = #{bpSystolic}, bp_diastolic = #{bpDiastolic},
+            bp_med = #{bpMed}, bp_grade = #{bpGrade},
+            bst = #{bst}, dm_med = #{dmMed}, dm_grade = #{dmGrade},
+            tc = #{tc}, tg = #{tg}, ldl = #{ldl}, hdl = #{hdl},
+            lipid_med = #{lipidMed}, lipid_grade = #{lipidGrade},
+            follow_up = #{followUp}, work_fitness = #{workFitness},
+            remark = #{remark}, pdf_file_id = #{pdfFileId},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_health_checkup_record WHERE id = #{id}
+    </delete>
+
+</mapper>

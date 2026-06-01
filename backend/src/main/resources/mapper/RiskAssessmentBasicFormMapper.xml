@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.RiskAssessmentBasicFormMapper">
+
+    <resultMap id="RiskAssessmentBasicFormResultMap" type="com.smartehs.model.RiskAssessmentBasicForm">
+        <id property="id" column="id"/>
+        <result property="formCategory" column="form_category"/>
+        <result property="formCategoryIdx" column="form_category_idx"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="danger" column="danger"/>
+        <result property="expectedDisaster" column="expected_disaster"/>
+        <result property="target" column="target"/>
+        <result property="risk4m" column="risk_4m"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="RiskAssessmentBasicFormResultMap">
+        SELECT * FROM tb_risk_assessment_basic_form ORDER BY form_category_idx ASC, sort_no ASC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="RiskAssessmentBasicFormResultMap">
+        SELECT * FROM tb_risk_assessment_basic_form
+        ORDER BY form_category_idx ASC, sort_no ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_basic_form
+    </select>
+
+    <select id="findById" resultMap="RiskAssessmentBasicFormResultMap">
+        SELECT * FROM tb_risk_assessment_basic_form WHERE id = #{id}
+    </select>
+
+    <select id="findByFormCategory" resultMap="RiskAssessmentBasicFormResultMap">
+        SELECT * FROM tb_risk_assessment_basic_form WHERE form_category = #{formCategory} ORDER BY sort_no ASC
+    </select>
+
+    <select id="findByFormCategoryOrderBySortNoAsc" resultMap="RiskAssessmentBasicFormResultMap">
+        SELECT * FROM tb_risk_assessment_basic_form WHERE form_category = #{formCategory} ORDER BY sort_no ASC
+    </select>
+
+    <select id="findByFormCategoryContaining" resultMap="RiskAssessmentBasicFormResultMap">
+        SELECT * FROM tb_risk_assessment_basic_form
+        WHERE form_category LIKE '%' + #{formCategory} + '%'
+        ORDER BY form_category_idx ASC, sort_no ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByFormCategoryContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment_basic_form
+        WHERE form_category LIKE '%' + #{formCategory} + '%'
+    </select>
+
+    <select id="findByFormCategoryIdx" resultMap="RiskAssessmentBasicFormResultMap">
+        SELECT * FROM tb_risk_assessment_basic_form WHERE form_category_idx = #{formCategoryIdx} ORDER BY sort_no ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_risk_assessment_basic_form (form_category, form_category_idx, sort_no, danger, expected_disaster, target, risk_4m, created_at, modified_at)
+        VALUES (#{formCategory}, #{formCategoryIdx}, #{sortNo}, #{danger}, #{expectedDisaster}, #{target}, #{risk4m}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_risk_assessment_basic_form
+        SET form_category = #{formCategory},
+            form_category_idx = #{formCategoryIdx},
+            sort_no = #{sortNo},
+            danger = #{danger},
+            expected_disaster = #{expectedDisaster},
+            target = #{target},
+            risk_4m = #{risk4m},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_risk_assessment_basic_form WHERE id = #{id}
+    </delete>
+
+</mapper>

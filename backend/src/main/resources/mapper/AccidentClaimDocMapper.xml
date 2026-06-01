@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.AccidentClaimDocMapper">
+
+    <resultMap id="AccidentClaimDocResultMap" type="com.smartehs.model.AccidentClaimDoc">
+        <id property="id" column="id"/>
+        <result property="claimId" column="claim_id"/>
+        <result property="docType" column="doc_type"/>
+        <result property="docName" column="doc_name"/>
+        <result property="isRequired" column="is_required"/>
+        <result property="isSubmitted" column="is_submitted"/>
+        <result property="fileId" column="file_id"/>
+        <result property="notes" column="notes"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findByClaimId" resultMap="AccidentClaimDocResultMap">
+        SELECT * FROM tb_accident_claim_doc
+        WHERE claim_id = #{claimId}
+        ORDER BY id ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_accident_claim_doc (
+            claim_id, doc_type, doc_name, is_required, is_submitted, file_id, notes, created_at
+        ) VALUES (
+            #{claimId}, #{docType}, #{docName}, #{isRequired}, #{isSubmitted}, #{fileId}, #{notes}, GETDATE()
+        )
+    </insert>
+
+    <update id="updateSubmitted">
+        UPDATE tb_accident_claim_doc SET is_submitted = #{isSubmitted} WHERE id = #{id}
+    </update>
+
+    <update id="toggleSubmitted">
+        UPDATE tb_accident_claim_doc
+        SET is_submitted = CASE WHEN is_submitted = 1 THEN 0 ELSE 1 END
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByClaimId">
+        DELETE FROM tb_accident_claim_doc WHERE claim_id = #{claimId}
+    </delete>
+
+</mapper>

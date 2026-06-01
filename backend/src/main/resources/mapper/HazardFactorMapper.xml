@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.HazardFactorMapper">
+
+    <resultMap id="HazardFactorResultMap" type="com.smartehs.model.HazardFactor">
+        <id property="id" column="id"/>
+        <result property="hazardType" column="hazard_type"/>
+        <result property="factorName" column="factor_name"/>
+        <result property="category" column="category"/>
+        <result property="process" column="process"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="measuredValue" column="measured_value"/>
+        <result property="exposureStandard" column="exposure_standard"/>
+        <result property="assessmentMethod" column="assessment_method"/>
+        <result property="assessmentScore" column="assessment_score"/>
+        <result property="casNumber" column="cas_number"/>
+        <result property="exposureRoute" column="exposure_route"/>
+        <result property="vaccinationStatus" column="vaccination_status"/>
+        <result property="targetGroup" column="target_group"/>
+        <result property="targetCount" column="target_count"/>
+        <result property="highRiskCount" column="high_risk_count"/>
+        <result property="preventionStatus" column="prevention_status"/>
+        <result property="preventionDetail" column="prevention_detail"/>
+        <result property="preventionRate" column="prevention_rate"/>
+        <result property="lastCheckDate" column="last_check_date"/>
+        <result property="managerName" column="manager_name"/>
+        <result property="managerDept" column="manager_dept"/>
+        <result property="remarks" column="remarks"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllByType" resultMap="HazardFactorResultMap">
+        SELECT * FROM tb_hazard_factor
+        WHERE hazard_type = #{hazardType}
+        ORDER BY risk_level ASC, created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByType" resultType="int">
+        SELECT COUNT(*) FROM tb_hazard_factor
+        WHERE hazard_type = #{hazardType}
+    </select>
+
+    <select id="findById" resultMap="HazardFactorResultMap">
+        SELECT * FROM tb_hazard_factor WHERE id = #{id}
+    </select>
+
+    <select id="findByTypeAndRiskLevel" resultMap="HazardFactorResultMap">
+        SELECT * FROM tb_hazard_factor
+        WHERE hazard_type = #{hazardType} AND risk_level = #{riskLevel}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTypeAndRiskLevel" resultType="int">
+        SELECT COUNT(*) FROM tb_hazard_factor
+        WHERE hazard_type = #{hazardType} AND risk_level = #{riskLevel}
+    </select>
+
+    <select id="searchByName" resultMap="HazardFactorResultMap">
+        SELECT * FROM tb_hazard_factor
+        WHERE hazard_type = #{hazardType} AND factor_name LIKE '%' + #{name} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearchName" resultType="int">
+        SELECT COUNT(*) FROM tb_hazard_factor
+        WHERE hazard_type = #{hazardType} AND factor_name LIKE '%' + #{name} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_hazard_factor (
+            hazard_type, factor_name, category, process, risk_level,
+            measured_value, exposure_standard, assessment_method, assessment_score,
+            cas_number,
+            exposure_route, vaccination_status,
+            target_group, target_count, high_risk_count,
+            prevention_status, prevention_detail, prevention_rate,
+            last_check_date, manager_name, manager_dept, remarks,
+            created_at, modified_at
+        ) VALUES (
+            #{hazardType}, #{factorName}, #{category}, #{process}, #{riskLevel},
+            #{measuredValue}, #{exposureStandard}, #{assessmentMethod}, #{assessmentScore},
+            #{casNumber},
+            #{exposureRoute}, #{vaccinationStatus},
+            #{targetGroup}, #{targetCount}, #{highRiskCount},
+            #{preventionStatus}, #{preventionDetail}, #{preventionRate},
+            #{lastCheckDate}, #{managerName}, #{managerDept}, #{remarks},
+            GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_hazard_factor
+        SET hazard_type = #{hazardType},
+            factor_name = #{factorName},
+            category = #{category},
+            process = #{process},
+            risk_level = #{riskLevel},
+            measured_value = #{measuredValue},
+            exposure_standard = #{exposureStandard},
+            assessment_method = #{assessmentMethod},
+            assessment_score = #{assessmentScore},
+            cas_number = #{casNumber},
+            exposure_route = #{exposureRoute},
+            vaccination_status = #{vaccinationStatus},
+            target_group = #{targetGroup},
+            target_count = #{targetCount},
+            high_risk_count = #{highRiskCount},
+            prevention_status = #{preventionStatus},
+            prevention_detail = #{preventionDetail},
+            prevention_rate = #{preventionRate},
+            last_check_date = #{lastCheckDate},
+            manager_name = #{managerName},
+            manager_dept = #{managerDept},
+            remarks = #{remarks},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_hazard_factor WHERE id = #{id}
+    </delete>
+
+</mapper>

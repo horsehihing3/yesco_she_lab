@@ -1,0 +1,3 @@
+-- V45: 감사 실시 수정자 컬럼 추가
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='tb_audit' AND COLUMN_NAME='modified_by')
+    ALTER TABLE tb_audit ADD modified_by NVARCHAR(50) NULL;

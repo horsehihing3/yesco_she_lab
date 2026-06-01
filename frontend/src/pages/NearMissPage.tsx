@@ -1,0 +1,2024 @@
+import { useState, useRef, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  TextField,
+  CircularProgress,
+  Alert,
+  Chip,
+  MenuItem,
+  Pagination,
+  FormControl,
+  Select,
+  SelectChangeEvent,
+  Grid,
+  Card,
+  CardMedia,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItemButton,
+  ListItemText,
+  InputAdornment,
+  Tabs,
+  Tab,
+} from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import DrawIcon from '@mui/icons-material/Draw'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import SearchIcon from '@mui/icons-material/Search'
+import PersonSearchIcon from '@mui/icons-material/PersonSearch'
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
+import NavigateNextIcon from '@mui/icons-material/NavigateNext'
+import { useForm, Controller } from 'react-hook-form'
+import DatePickerField from '../components/common/DatePickerField'
+import { useAlert } from '../contexts/AlertContext'
+import axiosInstance from '../api/axiosInstance'
+import { floorDrawingApi } from '../api/floorDrawingApi'
+import { FloorDrawing } from '../types/floorDrawing.types'
+import { ApiResponse, PageResponse } from '../types/common.types'
+import { NearMiss, NearMissRequest, NearMissActionRequest, NearMissStatus } from '../types/nearMiss.types'
+import useCodeMap from '../hooks/useCodeMap'
+import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
+import { FileMetadata } from '../types/file.types'
+import AccidentReportTab from '../components/ehs/AccidentReportTab'
+import NearMissDashboardTab from '../components/ehs/NearMissDashboardTab'
+
+const fetchNearMisses = async (page: number, size: number, incidentType: string): Promise<PageResponse<NearMiss>> => {
+  const response = await axiosInstance.get<ApiResponse<PageResponse<NearMiss>>>(`/near-miss/type/${incidentType}`, {
+    params: { page, size, sort: 'createdAt,desc' },
+  })
+  return response.data.data
+}
+
+const statusColors: Record<NearMissStatus, 'default' | 'warning' | 'info' | 'success' | 'error'> = {
+  PENDING: 'warning',
+  IN_PROGRESS: 'info',
+  COMPLETED: 'success',
+  REJECTED: 'error',
+}
+
+
+// 강도 등급 키
+const intensityLevelKeys = [
+  { value: 1, labelKey: 'nearMiss.intensityLevels.noImpact', descKey: 'nearMiss.intensityLevels.noDamage' },
+  { value: 2, labelKey: 'nearMiss.intensityLevels.nonOccupational', descKey: 'nearMiss.intensityLevels.minorInjury' },
+  { value: 3, labelKey: 'nearMiss.intensityLevels.occupational', descKey: 'nearMiss.intensityLevels.injuryRequiringLeave' },
+  { value: 4, labelKey: 'nearMiss.intensityLevels.seriousAccident', descKey: 'nearMiss.intensityLevels.deathOrSerious' },
+]
+
+// 빈도 등급 키
+const frequencyLevelKeys = [
+  { value: 1, labelKey: 'nearMiss.frequencyLevels.rare', descKey: 'nearMiss.frequencyLevels.rarelyOccurs' },
+  { value: 2, labelKey: 'nearMiss.frequencyLevels.sometimes', descKey: 'nearMiss.frequencyLevels.moderate' },
+  { value: 3, labelKey: 'nearMiss.frequencyLevels.often', descKey: 'nearMiss.frequencyLevels.frequentlyOccurs' },
+  { value: 4, labelKey: 'nearMiss.frequencyLevels.veryOften', descKey: 'nearMiss.frequencyLevels.constantlyOccurs' },
+]
+
+// 조치사항 인터페이스
+interface MeasureItem {
+  id: number
+  content: string
+  department: string
+  responsible: string
+  dueDate: string
+  completedDate: string
+}
+
+type ViewMode = 'list' | 'detail' | 'create' | 'edit'
+
+const NearMissPage: React.FC = () => {
+  const { t, i18n } = useTranslation()
+  const queryClient = useQueryClient()
+  const theme = useTheme()
+  const { showConfirm, showSuccess } = useAlert()
+  const { codeMap: statusKeys } = useCodeMap('NEAR_MISS_STATUS')
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT' | 'REPORT'>((searchParams.get('incidentType') as 'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT' | 'REPORT') || 'NEAR_MISS')
+  const [page, setPage] = useState(1)
+  const [rowsPerPage] = useState(10)
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [editingNearMiss, setEditingNearMiss] = useState<NearMiss | null>(null)
+  const [viewNearMiss, setViewNearMiss] = useState<NearMiss | null>(null)
+  const [siteFilter, setSiteFilter] = useState('')
+  const [startDateFilter, setStartDateFilter] = useState('')
+  const [endDateFilter, setEndDateFilter] = useState('')
+  const [markerPosition, setMarkerPosition] = useState<{ x: number; y: number } | null>(null)
+  const [measures, setMeasures] = useState<MeasureItem[]>([])
+  const [newMeasure, setNewMeasure] = useState({ content: '', department: '', responsible: '', dueDate: '' })
+  const [responsibleModalOpen, setResponsibleModalOpen] = useState(false)
+  const [selectedResponsible, setSelectedResponsible] = useState<UserInfo | null>(null)
+  const [beforeImage, setBeforeImage] = useState<string | null>(null)
+  const [afterImage, setAfterImage] = useState<string | null>(null)
+  const [beforeFile, setBeforeFile] = useState<File | null>(null)
+  const [afterFile, setAfterFile] = useState<File | null>(null)
+  const [beforeDeleted, setBeforeDeleted] = useState(false)
+  const [afterDeleted, setAfterDeleted] = useState(false)
+  const [overviewFiles, setOverviewFiles] = useState<File[]>([])
+  const [existingOverviewFiles, setExistingOverviewFiles] = useState<FileMetadata[]>([])
+  const [deletedOverviewFileIds, setDeletedOverviewFileIds] = useState<number[]>([])
+
+  const drawingImageRef = useRef<HTMLImageElement>(null)
+  const beforeFileRef = useRef<HTMLInputElement>(null)
+  const afterFileRef = useRef<HTMLInputElement>(null)
+  const overviewFileRef = useRef<HTMLInputElement>(null)
+
+  // Fetch floor drawings from API
+  const { data: floorDrawingsData } = useQuery({
+    queryKey: ['floorDrawings'],
+    queryFn: () => floorDrawingApi.getAll(),
+    staleTime: 1000 * 60 * 5,
+  })
+  const floorDrawings = floorDrawingsData || []
+  const [selectedDrawing, setSelectedDrawing] = useState<FloorDrawing | null>(null)
+  const [selectedDrawingImageIndex, setSelectedDrawingImageIndex] = useState(0)
+  const [drawingSelectModalOpen, setDrawingSelectModalOpen] = useState(false)
+  const [modalPreviewDrawingId, setModalPreviewDrawingId] = useState<number | null>(null)
+  const [modalPreviewImageIndex, setModalPreviewImageIndex] = useState(0)
+
+  // Fetch selected drawing's images
+  const { data: drawingImageFiles, isLoading: isLoadingDrawingImage } = useQuery({
+    queryKey: ['floorDrawingImages', selectedDrawing?.id],
+    queryFn: () => floorDrawingApi.getImages(selectedDrawing!.id),
+    enabled: !!selectedDrawing?.id,
+  })
+  const drawingImageUrl = drawingImageFiles && drawingImageFiles.length > selectedDrawingImageIndex
+    ? `/api/files/${drawingImageFiles[selectedDrawingImageIndex].id}`
+    : (drawingImageFiles && drawingImageFiles.length > 0 ? `/api/files/${drawingImageFiles[0].id}` : null)
+
+  // Modal preview drawing images
+  const { data: modalPreviewImages } = useQuery({
+    queryKey: ['floorDrawingImages', modalPreviewDrawingId],
+    queryFn: () => floorDrawingApi.getImages(modalPreviewDrawingId!),
+    enabled: !!modalPreviewDrawingId,
+  })
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['nearMisses', page - 1, rowsPerPage, activeTab],
+    queryFn: () => fetchNearMisses(page - 1, rowsPerPage, activeTab),
+    enabled: activeTab !== 'REPORT' && activeTab !== 'DASHBOARD',
+  })
+
+  const { register, handleSubmit, reset, control, setValue } = useForm<NearMissRequest>()
+
+  const createMutation = useMutation({
+    mutationFn: async (data: NearMissRequest) => {
+      const res = await axiosInstance.post<ApiResponse<NearMiss>>('/near-miss', data)
+      return res.data.data
+    },
+    onSuccess: async (created) => {
+      await uploadImages(created.nearMissId)
+      queryClient.invalidateQueries({ queryKey: ['nearMisses'] })
+      await showSuccess(t('common.saveSuccess'))
+      handleBackToList()
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: NearMissRequest }) => {
+      const res = await axiosInstance.put<ApiResponse<NearMiss>>(`/near-miss/${id}`, data)
+      return res.data.data
+    },
+    onSuccess: async (updated) => {
+      await uploadImages(updated.nearMissId)
+      queryClient.invalidateQueries({ queryKey: ['nearMisses'] })
+      await showSuccess(t('common.saveSuccess'))
+      handleBackToList()
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => axiosInstance.delete(`/near-miss/${id}`),
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ['nearMisses'] })
+      await showSuccess(t('common.deleteSuccess'))
+      handleBackToList()
+    },
+  })
+
+  // 도면 이미지 클릭으로 위치 표시
+  const handleDrawingImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
+    // 마커가 부모 컨테이너(position:relative) 기준 %로 배치되므로 컨테이너 기준으로 계산
+    const container = e.currentTarget.parentElement
+    if (!container) return
+    const rect = container.getBoundingClientRect()
+
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+
+    setMarkerPosition({ x, y })
+  }
+
+  const handleReset = () => {
+    setSiteFilter('')
+    setStartDateFilter('')
+    setEndDateFilter('')
+  }
+
+  // 필터링된 데이터
+  const filteredContent = useMemo(() => {
+    if (!data?.content) return []
+    return data.content.filter((item) => {
+      // 사업장 필터 (siteFilter는 floorDrawing id)
+      if (siteFilter) {
+        const drawing = floorDrawings.find((d) => d.id.toString() === siteFilter)
+        if (drawing) {
+          const matchSite = item.occSite === drawing.site
+          const matchFloor = !drawing.floor || item.occFloor === drawing.floor
+          if (!matchSite || !matchFloor) return false
+        }
+      }
+      // 날짜 범위 필터
+      if (startDateFilter && item.occDate) {
+        if (item.occDate < startDateFilter) return false
+      }
+      if (endDateFilter && item.occDate) {
+        if (item.occDate > endDateFilter + 'T23:59:59') return false
+      }
+      return true
+    })
+  }, [data?.content, siteFilter, startDateFilter, endDateFilter, floorDrawings])
+
+  const handleSiteChange = (event: SelectChangeEvent<string>) => {
+    setSiteFilter(event.target.value)
+  }
+
+  const handleBackToList = () => {
+    setViewMode('list')
+    setEditingNearMiss(null)
+    setViewNearMiss(null)
+    setMarkerPosition(null)
+    setMeasures([])
+    setBeforeImage(null)
+    setAfterImage(null)
+    setBeforeFile(null)
+    setAfterFile(null)
+    setBeforeDeleted(false)
+    setAfterDeleted(false)
+    setOverviewFiles([])
+    setExistingOverviewFiles([])
+    setDeletedOverviewFileIds([])
+    setSelectedDrawing(null)
+    setSelectedDrawingImageIndex(0)
+    reset({})
+  }
+
+  const handleNewClick = () => {
+    setMarkerPosition(null)
+    setMeasures([])
+    setBeforeImage(null)
+    setAfterImage(null)
+    setOverviewFiles([])
+    setExistingOverviewFiles([])
+    setDeletedOverviewFileIds([])
+    setSelectedDrawing(null)
+    setSelectedDrawingImageIndex(0)
+    setEditingNearMiss(null)
+    reset({
+      incidentType: (activeTab === 'NEAR_MISS' || activeTab === 'ACCIDENT') ? activeTab : 'NEAR_MISS',
+      occTitle: '',
+      occInfo: '',
+      occSite: '',
+      occSiteInfo: '',
+      company: '',
+      authorName: '',
+      authorEmail: '',
+      authorDept: '',
+      status: 'PENDING',
+    })
+    setViewMode('create')
+  }
+
+  const handleEditClick = (nearMiss: NearMiss) => {
+    setEditingNearMiss(nearMiss)
+    // 수정 시 floor drawing 찾기 (site명 + floor로 매칭)
+    const drawing = floorDrawings.find((d) => d.site === nearMiss.occSite && d.floor === nearMiss.occFloor)
+    setSelectedDrawing(drawing || null)
+    setSelectedDrawingImageIndex(0)
+    // 마커 위치 로드
+    if (nearMiss.occSiteX != null && nearMiss.occSiteY != null) {
+      setMarkerPosition({ x: nearMiss.occSiteX, y: nearMiss.occSiteY })
+    } else {
+      setMarkerPosition(null)
+    }
+    reset({
+      incidentType: nearMiss.incidentType || ((activeTab === 'NEAR_MISS' || activeTab === 'ACCIDENT') ? activeTab : 'NEAR_MISS'),
+      occTitle: nearMiss.occTitle,
+      occInfo: nearMiss.occInfo,
+      occSite: nearMiss.occSite,
+      occSiteInfo: nearMiss.occSiteInfo,
+      company: nearMiss.company,
+      authorName: nearMiss.authorName,
+      authorEmail: nearMiss.authorEmail,
+      authorDept: nearMiss.authorDept,
+      intensity: nearMiss.intensity,
+      frequency: nearMiss.frequency,
+      status: nearMiss.status,
+    })
+    // 기존 조치사항 로드
+    if (nearMiss.actions && nearMiss.actions.length > 0) {
+      setMeasures(nearMiss.actions.map((a) => ({
+        id: a.id,
+        content: a.improvementMeasures || '',
+        department: a.manageDept || '',
+        responsible: a.responsiblePerson || '',
+        dueDate: a.planDate ? a.planDate.substring(0, 10) : '',
+        completedDate: a.completeDate ? a.completeDate.substring(0, 10) : '',
+      })))
+    } else {
+      setMeasures([])
+    }
+    // 기존 이미지 로드
+    setBeforeImage(null)
+    setAfterImage(null)
+    setBeforeFile(null)
+    setAfterFile(null)
+    setBeforeDeleted(false)
+    setAfterDeleted(false)
+    setOverviewFiles([])
+    setExistingOverviewFiles([])
+    setDeletedOverviewFileIds([])
+    if (nearMiss.nearMissId) {
+      loadExistingImages(nearMiss.nearMissId)
+    }
+    setViewMode('edit')
+  }
+
+  const handleRowClick = async (nearMiss: NearMiss) => {
+    let detail = nearMiss
+    try {
+      const res = await axiosInstance.get<ApiResponse<NearMiss>>(`/near-miss/${nearMiss.id}`)
+      detail = res.data.data
+      setViewNearMiss(detail)
+    } catch {
+      setViewNearMiss(nearMiss)
+    }
+    // 도면 매칭
+    const drawing = floorDrawings.find((d) => d.site === detail.occSite && d.floor === detail.occFloor)
+    setSelectedDrawing(drawing || null)
+    setSelectedDrawingImageIndex(0)
+    // 마커 위치 로드
+    if (detail.occSiteX != null && detail.occSiteY != null) {
+      setMarkerPosition({ x: detail.occSiteX, y: detail.occSiteY })
+    } else {
+      setMarkerPosition(null)
+    }
+    // 이미지 로드
+    setBeforeImage(null)
+    setAfterImage(null)
+    setBeforeFile(null)
+    setAfterFile(null)
+    setExistingOverviewFiles([])
+    if (nearMiss.nearMissId) {
+      loadExistingImages(nearMiss.nearMissId)
+    }
+    setViewMode('detail')
+  }
+
+  const onSubmit = async (formData: NearMissRequest) => {
+    const confirmed = await showConfirm(t('common.confirmSave'))
+    if (!confirmed) return
+
+    const actions: NearMissActionRequest[] = measures.map((m) => ({
+      improvementMeasures: m.content,
+      manageDept: m.department,
+      responsiblePerson: m.responsible,
+      planDate: m.dueDate || undefined,
+      completeDate: m.completedDate || undefined,
+    }))
+    const currentImageFileId = drawingImageFiles && drawingImageFiles.length > selectedDrawingImageIndex
+      ? drawingImageFiles[selectedDrawingImageIndex].id
+      : undefined
+    const payload = {
+      ...formData,
+      actions,
+      occSiteX: markerPosition?.x ?? undefined,
+      occSiteY: markerPosition?.y ?? undefined,
+      occImageFileId: currentImageFileId,
+    }
+    if (editingNearMiss) {
+      updateMutation.mutate({ id: editingNearMiss.id, data: payload })
+    } else {
+      createMutation.mutate(payload)
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    const confirmed = await showConfirm(t('nearMiss.confirmDelete'))
+    if (confirmed) {
+      deleteMutation.mutate(id)
+    }
+  }
+
+  const getResponsibleDisplayName = (user: UserInfo | null) => {
+    if (!user) return ''
+    if (i18n.language === 'en') return user.nameEn || user.name
+    if (i18n.language === 'zh') return user.nameZh || user.name
+    return user.name
+  }
+
+  const handleResponsibleConfirm = (users: UserInfo[]) => {
+    if (users.length > 0) {
+      const user = users[0]
+      setSelectedResponsible(user)
+      setNewMeasure({ ...newMeasure, responsible: getResponsibleDisplayName(user) })
+    }
+  }
+
+  const handleAddMeasure = () => {
+    if (!newMeasure.content) return
+    setMeasures([
+      ...measures,
+      {
+        id: Date.now(),
+        content: newMeasure.content,
+        department: newMeasure.department,
+        responsible: selectedResponsible ? getResponsibleDisplayName(selectedResponsible) : newMeasure.responsible,
+        dueDate: newMeasure.dueDate,
+        completedDate: '',
+      },
+    ])
+    setNewMeasure({ content: '', department: '', responsible: '', dueDate: '' })
+    setSelectedResponsible(null)
+  }
+
+  const handleRemoveMeasure = (id: number) => {
+    setMeasures(measures.filter((m) => m.id !== id))
+  }
+
+  const handleImageUpload = (type: 'before' | 'after', e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (type === 'before') {
+      setBeforeFile(file)
+    } else {
+      setAfterFile(file)
+    }
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        if (type === 'before') {
+          setBeforeImage(event.target.result as string)
+        } else {
+          setAfterImage(event.target.result as string)
+        }
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const deleteExistingImages = async (entityType: string, nearMissId: string) => {
+    try {
+      const res = await axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/${entityType}/${nearMissId}`)
+      const files = res.data.data
+      if (files && files.length > 0) {
+        for (const f of files) {
+          await axiosInstance.delete(`/files/${f.id}`)
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  const uploadImages = async (nearMissId: string) => {
+    // 삭제된 이미지 서버에서도 삭제
+    if (beforeDeleted || beforeFile) {
+      await deleteExistingImages('NEAR_MISS_BEFORE', nearMissId)
+    }
+    if (afterDeleted || afterFile) {
+      await deleteExistingImages('NEAR_MISS_AFTER', nearMissId)
+    }
+    // 새 이미지 업로드
+    if (beforeFile) {
+      const fd = new FormData()
+      fd.append('file', beforeFile)
+      fd.append('entityType', 'NEAR_MISS_BEFORE')
+      fd.append('entityId', nearMissId)
+      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+    }
+    if (afterFile) {
+      const fd = new FormData()
+      fd.append('file', afterFile)
+      fd.append('entityType', 'NEAR_MISS_AFTER')
+      fd.append('entityId', nearMissId)
+      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+    }
+    // 삭제된 개요 첨부파일 서버에서 삭제
+    for (const fileId of deletedOverviewFileIds) {
+      try {
+        await axiosInstance.delete(`/files/${fileId}`)
+      } catch {
+        // ignore
+      }
+    }
+    // 새 개요 첨부파일 업로드
+    for (const file of overviewFiles) {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('entityType', 'NEAR_MISS_OVERVIEW')
+      fd.append('entityId', nearMissId)
+      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+    }
+  }
+
+  const loadExistingImages = async (nearMissId: string) => {
+    try {
+      const [beforeRes, afterRes, overviewRes] = await Promise.all([
+        axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/NEAR_MISS_BEFORE/${nearMissId}`),
+        axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/NEAR_MISS_AFTER/${nearMissId}`),
+        axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/NEAR_MISS_OVERVIEW/${nearMissId}`),
+      ])
+      const beforeFiles = beforeRes.data.data
+      const afterFiles = afterRes.data.data
+      const overviewFilesList = overviewRes.data.data
+      if (beforeFiles && beforeFiles.length > 0) {
+        setBeforeImage(`/api/files/${beforeFiles[0].id}`)
+      }
+      if (afterFiles && afterFiles.length > 0) {
+        setAfterImage(`/api/files/${afterFiles[0].id}`)
+      }
+      if (overviewFilesList && overviewFilesList.length > 0) {
+        setExistingOverviewFiles(overviewFilesList)
+      } else {
+        setExistingOverviewFiles([])
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // drawingImageFiles 로드 후 저장된 occImageFileId에 맞는 이미지 인덱스 자동 설정
+  const targetOccImageFileId = viewNearMiss?.occImageFileId ?? editingNearMiss?.occImageFileId
+  useEffect(() => {
+    if (!drawingImageFiles || drawingImageFiles.length === 0 || !targetOccImageFileId) return
+    const idx = drawingImageFiles.findIndex((f: FileMetadata) => f.id === targetOccImageFileId)
+    if (idx >= 0 && idx !== selectedDrawingImageIndex) {
+      setSelectedDrawingImageIndex(idx)
+    }
+  }, [drawingImageFiles, targetOccImageFileId])
+
+  // 도면 선택 모달 열기
+  const handleOpenDrawingSelectModal = () => {
+    setModalPreviewDrawingId(selectedDrawing?.id || (floorDrawings.length > 0 ? floorDrawings[0].id : null))
+    setModalPreviewImageIndex(0)
+    setDrawingSelectModalOpen(true)
+  }
+
+  // 모달에서 도면 선택 확인
+  const handleConfirmDrawingSelect = () => {
+    const drawing = floorDrawings.find((d) => d.id === modalPreviewDrawingId)
+    if (drawing) {
+      setSelectedDrawing(drawing)
+      setSelectedDrawingImageIndex(modalPreviewImageIndex)
+      setMarkerPosition(null)
+      // 폼 필드에 값 설정 (create/edit 모드일 때만)
+      if (viewMode === 'create' || viewMode === 'edit') {
+        setValue('occSite', drawing.site)
+        setValue('occFloor', drawing.floor || '')
+        setValue('workPlaceId', drawing.workPlaceId)
+      }
+    }
+    setDrawingSelectModalOpen(false)
+  }
+
+  const handleOverviewFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+
+    const MAX_FILE_SIZE = 30 * 1024 * 1024 // 30MB
+    const MAX_FILES = 5
+
+    const newFiles: File[] = []
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      if (file.size > MAX_FILE_SIZE) {
+        continue // 30MB 초과 파일은 무시
+      }
+      newFiles.push(file)
+    }
+
+    // 최대 5개 제한
+    const totalFiles = [...overviewFiles, ...newFiles].slice(0, MAX_FILES)
+    setOverviewFiles(totalFiles)
+
+    // input 초기화
+    e.target.value = ''
+  }
+
+  const handleRemoveOverviewFile = (index: number) => {
+    setOverviewFiles(overviewFiles.filter((_, i) => i !== index))
+  }
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return ''
+    return new Date(dateString).toISOString().substring(0, 10)
+  }
+
+  const totalPages = data ? Math.ceil(data.totalElements / rowsPerPage) : 0
+
+  if (isLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (error) {
+    return <Alert severity="error">{t('nearMiss.loadFailed')}</Alert>
+  }
+
+  // 목록 화면
+  const renderListView = () => (
+    <Box sx={{ overflow: 'hidden' }}>
+      {/* Filters - PC */}
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <Select value={siteFilter} onChange={handleSiteChange} displayEmpty>
+              <MenuItem value="">{t('nearMiss.occSite')}</MenuItem>
+              {floorDrawings.map((drawing) => (
+                <MenuItem key={drawing.id} value={drawing.id.toString()}>
+                  {drawing.site}{drawing.floor ? ` - ${drawing.floor}` : ''}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <DatePickerField
+            label=""
+            value={startDateFilter}
+            onChange={setStartDateFilter}
+            placeholder={t('common.periodOccurrence')}
+            size="small"
+          />
+          <Typography>~</Typography>
+          <DatePickerField
+            label=""
+            value={endDateFilter}
+            onChange={setEndDateFilter}
+            placeholder={t('common.periodOccurrence')}
+            size="small"
+          />
+          <IconButton onClick={handleReset} size="small">
+            <RefreshIcon />
+          </IconButton>
+        </Box>
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNewClick}>
+          New
+        </Button>
+      </Box>
+
+      {/* Filters - Mobile */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
+        <FormControl size="small" fullWidth>
+          <Select value={siteFilter} onChange={handleSiteChange} displayEmpty>
+            <MenuItem value="">{t('nearMiss.occSite')}</MenuItem>
+            {floorDrawings.map((drawing) => (
+              <MenuItem key={drawing.id} value={drawing.id.toString()}>
+                {drawing.site}{drawing.floor ? ` - ${drawing.floor}` : ''}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <DatePickerField
+            label=""
+            value={startDateFilter}
+            onChange={setStartDateFilter}
+            placeholder={t('common.startDate')}
+            size="small"
+          />
+          <Typography>~</Typography>
+          <DatePickerField
+            label=""
+            value={endDateFilter}
+            onChange={setEndDateFilter}
+            placeholder={t('common.endDate')}
+            size="small"
+          />
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" onClick={handleReset} startIcon={<RefreshIcon />} sx={{ flex: 1 }}>{t('common.reset')}</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNewClick} sx={{ flex: 1 }}>New</Button>
+        </Box>
+      </Box>
+
+      {/* Table - PC */}
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+          <TableHead>
+            <TableRow sx={{ bgcolor: 'grey.100' }}>
+              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.occWorkplace')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.author')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.department')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 110, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.occDateTime')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.progressStatus')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.manager')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.scheduledDate')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 100 }} align="center">{t('nearMiss.completedDate')}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredContent.map((nearMiss) => (
+              <TableRow key={nearMiss.id} hover onClick={() => handleRowClick(nearMiss)} sx={{ cursor: 'pointer' }}>
+                <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.occSite ? `${nearMiss.occSite}${nearMiss.occFloor ? ` - ${nearMiss.occFloor}` : ''}` : nearMiss.workPlaceName || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.authorName || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.authorDept || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(nearMiss.createdAt)}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                  <Chip label={statusKeys[nearMiss.status] || nearMiss.status} size="small" color={statusColors[nearMiss.status]} />
+                </TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.managerName || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.dueDate ? formatDate(nearMiss.dueDate) : ''}</TableCell>
+                <TableCell align="center">{nearMiss.completedDate ? formatDate(nearMiss.completedDate) : ''}</TableCell>
+              </TableRow>
+            ))}
+            {filteredContent.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} align="center" sx={{ py: 4 }}>
+                  <Typography color="text.secondary">{t('nearMiss.noNearMiss')}</Typography>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Mobile Card List */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
+        {filteredContent.length === 0 ? (
+          <Paper sx={{ p: 3, textAlign: 'center' }}>
+            <Typography color="text.secondary">{t('nearMiss.noNearMiss')}</Typography>
+          </Paper>
+        ) : (
+          filteredContent.map((nearMiss) => (
+            <Paper key={nearMiss.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(nearMiss)}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', mb: 1 }}>
+                <Chip label={statusKeys[nearMiss.status] || nearMiss.status} size="small" color={statusColors[nearMiss.status]} />
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 60 }}>{t('nearMiss.occWorkplace')}</Typography>
+                  <Typography variant="body2">{nearMiss.occSite ? `${nearMiss.occSite}${nearMiss.occFloor ? ` - ${nearMiss.occFloor}` : ''}` : nearMiss.workPlaceName || ''}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 60 }}>{t('nearMiss.author')}</Typography>
+                  <Typography variant="body2">{nearMiss.authorName || ''} ({nearMiss.authorDept || ''})</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 60 }}>{t('nearMiss.occDateTime')}</Typography>
+                  <Typography variant="body2">{formatDate(nearMiss.createdAt)}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 60 }}>{t('nearMiss.manager')}</Typography>
+                  <Typography variant="body2">{nearMiss.managerName || ''}</Typography>
+                </Box>
+              </Box>
+            </Paper>
+          ))
+        )}
+      </Box>
+
+      {/* Pagination */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Pagination count={totalPages || 1} page={page || 1} onChange={(_, newPage) => setPage(newPage)} color="primary" />
+      </Box>
+    </Box>
+  )
+
+  // 상세 보기 화면
+  const renderDetailView = () => {
+    if (!viewNearMiss) return null
+
+    return (
+      <Box>
+        {/* Header */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+          <Typography variant="h6" fontWeight="bold">{t(`nearMiss.nearMissInfoByType.${viewNearMiss.incidentType || activeTab}`)}</Typography>
+          <Chip label={statusKeys[viewNearMiss.status] || viewNearMiss.status} color={statusColors[viewNearMiss.status]} />
+        </Box>
+
+        {/* 아차사고/사고 정보 */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          {t(`nearMiss.nearMissInfoByType.${viewNearMiss.incidentType || activeTab}`)}
+        </Typography>
+        <Box sx={{ mb: 3 }}>
+          {/* PC용 테이블 레이아웃 */}
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+              {/* Row 0: 발생일시 | 성명 | 소속 */}
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  {t('nearMiss.occDateTimeLabel')}
+                </Typography>
+                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                  {formatDate(viewNearMiss.createdAt)}
+                </Typography>
+                <Typography sx={{ width: 80, minWidth: 80, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  {t('nearMiss.name')}
+                </Typography>
+                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                  {viewNearMiss.authorName || ''}
+                </Typography>
+                <Typography sx={{ width: 80, minWidth: 80, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  {t('nearMiss.department')}
+                </Typography>
+                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                  {viewNearMiss.authorDept || ''}
+                </Typography>
+              </Box>
+              {/* Row 2-3: 발생장소 + 발생개요 (왼쪽) / 도면 영역 (오른쪽) */}
+              <Box sx={{ display: 'flex' }}>
+                {/* 왼쪽 영역: 발생장소 + 발생개요 */}
+                <Box sx={{ flex: 1, borderRight: 1, borderColor: 'grey.300', display: 'flex', flexDirection: 'column' }}>
+                  {/* 발생장소 */}
+                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                    <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                      {t('nearMiss.occLocation')}
+                    </Typography>
+                    <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>
+                      {viewNearMiss.occSite}{viewNearMiss.occFloor ? ` - ${viewNearMiss.occFloor}` : ''} {viewNearMiss.occSiteInfo || ''}
+                    </Typography>
+                  </Box>
+                  {/* 발생개요 */}
+                  <Box sx={{ display: 'flex', flex: 1 }}>
+                    <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                      {t('nearMiss.occOverview')}
+                    </Typography>
+                    <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }}>
+                      <Typography sx={{ fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
+                        {viewNearMiss.occInfo || t('nearMiss.noContent')}
+                      </Typography>
+                      {existingOverviewFiles.length > 0 && (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
+                          {existingOverviewFiles.map((file) => (
+                            <Chip
+                              key={file.id}
+                              label={file.originalFilename}
+                              size="small"
+                              component="a"
+                              href={`/api/files/${file.id}`}
+                              target="_blank"
+                              clickable
+                              sx={{ maxWidth: 250, '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' } }}
+                            />
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+                {/* 오른쪽 영역: 도면 이미지 */}
+                <Box sx={{ width: '50%', bgcolor: 'background.paper', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', p: 1 }}>
+                  {isLoadingDrawingImage ? (
+                    <Box sx={{ width: '100%', height: '100%', minHeight: 200, bgcolor: 'grey.200', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
+                      <CircularProgress size={40} />
+                      <Typography color="text.secondary" fontSize="0.75rem" sx={{ mt: 1 }}>{t('common.loading')}</Typography>
+                    </Box>
+                  ) : drawingImageUrl ? (
+                    <Box sx={{ width: '100%', minHeight: 200, maxHeight: 500, bgcolor: 'grey.200', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
+                      <img
+                        src={drawingImageUrl}
+                        alt={t('nearMiss.drawing')}
+                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                      />
+                      {markerPosition && (
+                        <Box sx={{ position: 'absolute', left: `${markerPosition.x}%`, top: `${markerPosition.y}%`, width: 20, height: 20, bgcolor: 'error.main', borderRadius: '50%', transform: 'translate(-50%, -50%)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                          <Typography sx={{ color: 'white', fontSize: '0.75rem', fontWeight: 'bold' }}>!</Typography>
+                        </Box>
+                      )}
+                    </Box>
+                  ) : (
+                    <Box sx={{ width: '100%', height: '100%', minHeight: 200, bgcolor: 'grey.200', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
+                      <Typography color="text.secondary" fontSize="0.875rem">{t('nearMiss.drawingArea')}</Typography>
+                    </Box>
+                  )}
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* 모바일용 레이아웃 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occDateTimeLabel')}</Typography>
+              <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatDate(viewNearMiss.createdAt)}</Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.name')}</Typography>
+              <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewNearMiss.authorName || ''}</Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.department')}</Typography>
+              <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewNearMiss.authorDept || ''}</Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occLocation')}</Typography>
+              <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>
+                {viewNearMiss.occSite}{viewNearMiss.occFloor ? ` - ${viewNearMiss.occFloor}` : ''} {viewNearMiss.occSiteInfo || ''}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occOverview')}</Typography>
+              <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', px: 1.5, py: 0.5 }}>
+                {viewNearMiss.occInfo || t('nearMiss.noContent')}
+              </Typography>
+              {existingOverviewFiles.length > 0 && (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, px: 1.5, py: 0.5 }}>
+                  {existingOverviewFiles.map((file) => (
+                    <Chip
+                      key={file.id}
+                      label={file.originalFilename}
+                      size="small"
+                      component="a"
+                      href={`/api/files/${file.id}`}
+                      target="_blank"
+                      clickable
+                      sx={{ maxWidth: 250, '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' } }}
+                    />
+                  ))}
+                </Box>
+              )}
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.drawing')}</Typography>
+              {isLoadingDrawingImage ? (
+                <Box sx={{ height: 150, bgcolor: 'grey.200', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
+                  <CircularProgress size={32} />
+                  <Typography color="text.secondary" fontSize="0.75rem" sx={{ mt: 1 }}>{t('common.loading')}</Typography>
+                </Box>
+              ) : drawingImageUrl ? (
+                <Box sx={{ width: '100%', minHeight: 150, maxHeight: 400, bgcolor: 'grey.200', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 1, overflow: 'hidden', position: 'relative' }}>
+                  <img
+                    src={drawingImageUrl}
+                    alt={t('nearMiss.drawing')}
+                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                  />
+                  {markerPosition && (
+                    <Box sx={{ position: 'absolute', left: `${markerPosition.x}%`, top: `${markerPosition.y}%`, width: 20, height: 20, bgcolor: 'error.main', borderRadius: '50%', transform: 'translate(-50%, -50%)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                      <Typography sx={{ color: 'white', fontSize: '0.75rem', fontWeight: 'bold' }}>!</Typography>
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Box sx={{ height: 150, bgcolor: 'grey.200', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
+                  <Typography color="text.secondary" fontSize="0.875rem">{t('nearMiss.drawingArea')}</Typography>
+                </Box>
+              )}
+            </Box>
+          </Box>
+        </Box>
+
+        {/* 위험성 파악 */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          {t('nearMiss.riskIdentification')}
+        </Typography>
+        <Box sx={{ mb: 3 }}>
+          {/* PC용 테이블 레이아웃 */}
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.intensity')}</TableCell>
+                    <TableCell>
+                      <RadioGroup row value={viewNearMiss.intensity || ''}>
+                        {intensityLevelKeys.map((level) => (
+                          <FormControlLabel
+                            key={level.value}
+                            value={level.value}
+                            control={<Radio size="small" disabled sx={{ p: 0.5, '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} />}
+                            label={t(level.labelKey)}
+                            sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' }, mr: 2 }}
+                          />
+                        ))}
+                      </RadioGroup>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.frequency')}</TableCell>
+                    <TableCell>
+                      <RadioGroup row value={viewNearMiss.frequency || ''}>
+                        {frequencyLevelKeys.map((level) => (
+                          <FormControlLabel
+                            key={level.value}
+                            value={level.value}
+                            control={<Radio size="small" disabled sx={{ p: 0.5, '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} />}
+                            label={t(level.labelKey)}
+                            sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' }, mr: 2 }}
+                          />
+                        ))}
+                      </RadioGroup>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+
+          {/* 모바일용 레이아웃 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.intensity')}</Typography>
+              <RadioGroup value={viewNearMiss.intensity || ''} sx={{ px: 1 }}>
+                {intensityLevelKeys.map((level) => (
+                  <FormControlLabel
+                    key={level.value}
+                    value={level.value}
+                    control={<Radio size="small" disabled sx={{ p: 0.5, '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} />}
+                    label={t(level.labelKey)}
+                    sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' } }}
+                  />
+                ))}
+              </RadioGroup>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.frequency')}</Typography>
+              <RadioGroup value={viewNearMiss.frequency || ''} sx={{ px: 1 }}>
+                {frequencyLevelKeys.map((level) => (
+                  <FormControlLabel
+                    key={level.value}
+                    value={level.value}
+                    control={<Radio size="small" disabled sx={{ p: 0.5, '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} />}
+                    label={t(level.labelKey)}
+                    sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' } }}
+                  />
+                ))}
+              </RadioGroup>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* 조치사항 */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          {t('nearMiss.measures')}
+        </Typography>
+        <Box sx={{ mb: 3 }}>
+        <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <TableHead>
+              <TableRow sx={{ bgcolor: 'grey.100' }}>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.measures')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.responsibleDept')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.responsiblePerson')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.scheduledDate')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', width: 120, textAlign: 'center' }}>{t('nearMiss.completedDate')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {viewNearMiss.actions && viewNearMiss.actions.length > 0 ? (
+                viewNearMiss.actions.map((action, idx) => (
+                  <TableRow key={action.id || idx}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{action.improvementMeasures || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{action.manageDept || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{action.responsiblePerson || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{action.planDate ? action.planDate.substring(0, 10) : ''}</TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>{action.completeDate ? action.completeDate.substring(0, 10) : ''}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                    <Typography color="text.secondary">{t('nearMiss.noMeasures')}</Typography>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        </Box>
+
+        {/* 이미지 - 반응형 */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          {t('nearMiss.images')}
+        </Typography>
+        <Paper sx={{ p: 3, bgcolor: 'grey.50', border: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, alignItems: 'stretch' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.beforeAction')}</Typography>
+              {beforeImage ? (
+                <Card sx={{ flex: 1 }}>
+                  <CardMedia component="img" image={beforeImage} alt={t('nearMiss.beforeAction')} sx={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} />
+                </Card>
+              ) : (
+                <Paper sx={{ minHeight: 200, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}>
+                  <Typography color="text.secondary">{t('nearMiss.noImage')}</Typography>
+                </Paper>
+              )}
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.afterAction')}</Typography>
+              {afterImage ? (
+                <Card sx={{ flex: 1 }}>
+                  <CardMedia component="img" image={afterImage} alt={t('nearMiss.afterAction')} sx={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} />
+                </Card>
+              ) : (
+                <Paper sx={{ minHeight: 200, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}>
+                  <Typography color="text.secondary">{t('nearMiss.noImage')}</Typography>
+                </Paper>
+              )}
+            </Box>
+          </Box>
+        </Paper>
+
+        {/* 하단 버튼 */}
+        <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+            {t('common.list')}
+          </Button>
+          <Button variant="contained" onClick={() => handleEditClick(viewNearMiss)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+            {t('common.edit')}
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+            onClick={async () => {
+              const confirmed = await showConfirm(t('nearMiss.confirmDelete'))
+              if (confirmed) {
+                deleteMutation.mutate(viewNearMiss.id, {
+                  onSuccess: () => {
+                    handleBackToList()
+                    showSuccess(t('common.deleted'))
+                  },
+                })
+              }
+            }}
+          >
+            {t('common.delete')}
+          </Button>
+        </Box>
+      </Box>
+    )
+  }
+
+  // 등록/수정 화면
+  const renderFormView = () => (
+    <Box>
+      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+        {t(`nearMiss.registerInfoByType.${activeTab}`)}
+      </Typography>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* 아차사고/사고 정보 섹션 */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          {t(`nearMiss.nearMissInfoByType.${activeTab}`)}
+        </Typography>
+        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+          {/* PC용 테이블 레이아웃 */}
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+            {/* Row 0: 발생일시 | 성명 */}
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                {t('nearMiss.occDateTimeLabel')}
+              </Typography>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Controller
+                  name="occDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePickerField
+                      label=""
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                      size="small"
+                    />
+                  )}
+                />
+                <Controller
+                  name="occHour"
+                  control={control}
+                  defaultValue="10"
+                  render={({ field }) => (
+                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                      <Select {...field}>
+                        {Array.from({ length: 24 }, (_, i) => (
+                          <MenuItem key={i} value={i.toString().padStart(2, '0')}>{i.toString().padStart(2, '0')}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+                <Controller
+                  name="occMinute"
+                  control={control}
+                  defaultValue="00"
+                  render={({ field }) => (
+                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                      <Select {...field}>
+                        {Array.from({ length: 60 }, (_, i) => (
+                          <MenuItem key={i} value={i.toString().padStart(2, '0')}>{i.toString().padStart(2, '0')}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+              </Box>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                {t('nearMiss.name')}
+              </Typography>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+                <TextField fullWidth size="small" placeholder={t('nearMiss.name')} {...register('authorName')} />
+              </Box>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                {t('nearMiss.department')}
+              </Typography>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
+                <TextField fullWidth size="small" placeholder={t('nearMiss.department')} {...register('authorDept')} />
+              </Box>
+            </Box>
+            {/* Row 1: 발생장소 + 발생개요 (왼쪽) / 도면 영역 (오른쪽) */}
+            <Box sx={{ display: 'flex' }}>
+              {/* 왼쪽 영역: 발생장소 + 발생개요 */}
+              <Box sx={{ flex: 1, borderRight: 1, borderColor: 'grey.300' }}>
+                {/* 발생장소 */}
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                  <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                    {t('nearMiss.occLocation')}
+                  </Typography>
+                  <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
+                    <Box sx={{ display: 'flex', gap: 1, px: 2, py: 1, borderBottom: 1, borderColor: 'grey.300' }}>
+                      <TextField
+                        size="small"
+                        sx={{ cursor: 'pointer', '& input': { cursor: 'pointer' }, minWidth: 250 }}
+                        value={selectedDrawing ? `${selectedDrawing.site}${selectedDrawing.floor ? ` - ${selectedDrawing.floor}` : ''}` : ''}
+                        placeholder={t('nearMiss.siteNamePlaceholder')}
+                        InputProps={{
+                          readOnly: true,
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton size="small" onClick={handleOpenDrawingSelectModal}>
+                                <SearchIcon fontSize="small" />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                        onClick={handleOpenDrawingSelectModal}
+                      />
+                    </Box>
+                    <Box sx={{ px: 2, py: 1 }}>
+                      <TextField fullWidth size="small" placeholder={t('nearMiss.placeDescription')} {...register('occSiteInfo')} />
+                    </Box>
+                  </Box>
+                </Box>
+                {/* 발생개요 */}
+                <Box sx={{ display: 'flex' }}>
+                  <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                    {t('nearMiss.occOverview')}
+                  </Typography>
+                  <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
+                    <Box sx={{ px: 2, py: 1, borderBottom: 1, borderColor: 'grey.300' }}>
+                      <TextField fullWidth size="small" placeholder={t('nearMiss.incidentDescription')} multiline rows={3} {...register('occInfo')} />
+                    </Box>
+                    <Box sx={{ px: 2, py: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: (existingOverviewFiles.length > 0 || overviewFiles.length > 0) ? 1 : 0 }}>
+                        <Typography variant="caption" color="text.secondary">
+                          {t('nearMiss.fileSizeNote')}
+                        </Typography>
+                        <Button
+                          variant="text"
+                          size="small"
+                          startIcon={<CloudUploadIcon />}
+                          onClick={() => overviewFileRef.current?.click()}
+                          sx={{ p: 0, minWidth: 'auto' }}
+                        >
+                          {t('nearMiss.fileAttach')}
+                        </Button>
+                      </Box>
+                      {(existingOverviewFiles.length > 0 || overviewFiles.length > 0) && (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {existingOverviewFiles.map((file) => (
+                            <Chip
+                              key={`existing-${file.id}`}
+                              label={file.originalFilename}
+                              size="small"
+                              onDelete={() => {
+                                setDeletedOverviewFileIds((prev) => [...prev, file.id])
+                                setExistingOverviewFiles((prev) => prev.filter((f) => f.id !== file.id))
+                              }}
+                              sx={{ maxWidth: 200, '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' } }}
+                            />
+                          ))}
+                          {overviewFiles.map((file, index) => (
+                            <Chip
+                              key={`new-${index}`}
+                              label={`${file.name} (${formatFileSize(file.size)})`}
+                              size="small"
+                              onDelete={() => handleRemoveOverviewFile(index)}
+                              sx={{ maxWidth: 200, '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' } }}
+                            />
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+              {/* 오른쪽 영역: 도면 이미지 - 클릭하여 위치 표시 */}
+              <Box sx={{ width: '50%', bgcolor: 'background.paper', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', p: 1 }}>
+                {isLoadingDrawingImage ? (
+                  <Box sx={{ width: '100%', height: '100%', minHeight: 200, bgcolor: 'grey.200', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
+                    <CircularProgress size={40} />
+                    <Typography color="text.secondary" fontSize="0.75rem" sx={{ mt: 1 }}>{t('common.loading')}</Typography>
+                  </Box>
+                ) : drawingImageUrl ? (
+                  <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>{t('nearMiss.clickToMark')}</Typography>
+                    <Box sx={{ width: '100%', minHeight: 200, maxHeight: 500, bgcolor: 'grey.200', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 1, position: 'relative', overflow: 'hidden' }}>
+                      <img
+                        ref={drawingImageRef}
+                        src={drawingImageUrl}
+                        alt={t('nearMiss.drawing')}
+                        onClick={handleDrawingImageClick}
+                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', cursor: 'crosshair' }}
+                      />
+                      {markerPosition && (
+                        <Box sx={{ position: 'absolute', left: `${markerPosition.x}%`, top: `${markerPosition.y}%`, width: 20, height: 20, bgcolor: 'error.main', borderRadius: '50%', transform: 'translate(-50%, -50%)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                          <Typography sx={{ color: 'white', fontSize: '0.75rem', fontWeight: 'bold' }}>!</Typography>
+                        </Box>
+                      )}
+                    </Box>
+                    {markerPosition && (
+                      <Typography variant="caption" color="success.main" sx={{ mt: 0.5 }}>{t('nearMiss.locationMarked')}</Typography>
+                    )}
+                  </Box>
+                ) : (
+                  <Box sx={{ width: '100%', height: '100%', minHeight: 200, bgcolor: 'grey.200', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
+                    <DrawIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
+                    <Typography color="text.secondary" fontSize="0.75rem">{t('nearMiss.selectWorkplaceToShowDrawing')}</Typography>
+                  </Box>
+                )}
+              </Box>
+            </Box>
+          </Box>
+
+          {/* 모바일용 레이아웃 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occDateTimeLabel')}</Typography>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap', px: 0.5 }}>
+                <Controller
+                  name="occDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePickerField label="" value={field.value || ''} onChange={field.onChange} size="small" />
+                  )}
+                />
+                <Controller
+                  name="occHour"
+                  control={control}
+                  defaultValue="10"
+                  render={({ field }) => (
+                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                      <Select {...field}>
+                        {Array.from({ length: 24 }, (_, i) => (
+                          <MenuItem key={i} value={i.toString().padStart(2, '0')}>{i.toString().padStart(2, '0')}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+                <Typography variant="body2">:</Typography>
+                <Controller
+                  name="occMinute"
+                  control={control}
+                  defaultValue="00"
+                  render={({ field }) => (
+                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                      <Select {...field}>
+                        {Array.from({ length: 60 }, (_, i) => (
+                          <MenuItem key={i} value={i.toString().padStart(2, '0')}>{i.toString().padStart(2, '0')}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+              </Box>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.name')}</Typography>
+              <TextField fullWidth size="small" placeholder={t('nearMiss.name')} {...register('authorName')} />
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.department')}</Typography>
+              <TextField fullWidth size="small" placeholder={t('nearMiss.department')} {...register('authorDept')} />
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occLocation')}</Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <TextField
+                  size="small"
+                  fullWidth
+                  value={selectedDrawing ? `${selectedDrawing.site}${selectedDrawing.floor ? ` - ${selectedDrawing.floor}` : ''}` : ''}
+                  placeholder={t('nearMiss.siteNamePlaceholder')}
+                  InputProps={{
+                    readOnly: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton size="small" onClick={handleOpenDrawingSelectModal}>
+                          <SearchIcon fontSize="small" />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  onClick={handleOpenDrawingSelectModal}
+                  sx={{ cursor: 'pointer', '& input': { cursor: 'pointer' } }}
+                />
+                <TextField fullWidth size="small" placeholder={t('nearMiss.locationDescription')} {...register('occSiteInfo')} />
+              </Box>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occOverview')}</Typography>
+              <TextField fullWidth size="small" placeholder={t('nearMiss.incidentDescriptionShort')} multiline rows={3} {...register('occInfo')} />
+              <Box sx={{ mt: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: (existingOverviewFiles.length > 0 || overviewFiles.length > 0) ? 1 : 0 }}>
+                  <Typography variant="caption" color="text.secondary">{t('nearMiss.fileSizeNoteShort')}</Typography>
+                  <Button
+                    variant="text"
+                    size="small"
+                    startIcon={<CloudUploadIcon />}
+                    onClick={() => overviewFileRef.current?.click()}
+                    sx={{ ml: 1 }}
+                  >
+                    {t('nearMiss.fileAttach')}
+                  </Button>
+                </Box>
+                {(existingOverviewFiles.length > 0 || overviewFiles.length > 0) && (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {existingOverviewFiles.map((file) => (
+                      <Chip
+                        key={`existing-${file.id}`}
+                        label={file.originalFilename}
+                        size="small"
+                        onDelete={() => {
+                          setDeletedOverviewFileIds((prev) => [...prev, file.id])
+                          setExistingOverviewFiles((prev) => prev.filter((f) => f.id !== file.id))
+                        }}
+                        sx={{ maxWidth: 200, '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' } }}
+                      />
+                    ))}
+                    {overviewFiles.map((file, index) => (
+                      <Chip
+                        key={`new-${index}`}
+                        label={`${file.name} (${formatFileSize(file.size)})`}
+                        size="small"
+                        onDelete={() => handleRemoveOverviewFile(index)}
+                        sx={{ maxWidth: 200, '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' } }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            </Box>
+            {/* 도면 이미지 - 클릭하여 위치 표시 */}
+            <Box sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 1, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+              {isLoadingDrawingImage ? (
+                <Box sx={{ width: '100%', minHeight: 150, bgcolor: 'grey.200', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
+                  <CircularProgress size={32} />
+                  <Typography color="text.secondary" fontSize="0.75rem" sx={{ mt: 1 }}>{t('common.loading')}</Typography>
+                </Box>
+              ) : drawingImageUrl ? (
+                <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>{t('nearMiss.clickToMark')}</Typography>
+                  <Box sx={{ width: '100%', minHeight: 150, bgcolor: 'grey.200', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 1, position: 'relative' }}>
+                    <img
+                      src={drawingImageUrl}
+                      alt={t('nearMiss.drawing')}
+                      onClick={handleDrawingImageClick}
+                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', cursor: 'crosshair' }}
+                    />
+                    {markerPosition && (
+                      <Box sx={{ position: 'absolute', left: `${markerPosition.x}%`, top: `${markerPosition.y}%`, width: 20, height: 20, bgcolor: 'error.main', borderRadius: '50%', transform: 'translate(-50%, -50%)', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                        <Typography sx={{ color: 'white', fontSize: '0.75rem', fontWeight: 'bold' }}>!</Typography>
+                      </Box>
+                    )}
+                  </Box>
+                  {markerPosition && (
+                    <Typography variant="caption" color="success.main" sx={{ mt: 0.5 }}>{t('nearMiss.locationMarked')}</Typography>
+                  )}
+                </Box>
+              ) : (
+                <Box sx={{ width: '100%', minHeight: 150, bgcolor: 'grey.200', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
+                  <DrawIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
+                  <Typography color="text.secondary" fontSize="0.75rem">{t('nearMiss.selectWorkplaceToShowDrawing')}</Typography>
+                </Box>
+              )}
+            </Box>
+          </Box>
+        </Paper>
+
+        {/* 위험성 파악 섹션 - 반응형 */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          {t('nearMiss.riskIdentification')}
+        </Typography>
+        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+          {/* PC용 테이블 레이아웃 */}
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.intensity')}</TableCell>
+                    <TableCell>
+                      <Controller
+                        name="intensity"
+                        control={control}
+                        defaultValue={1}
+                        render={({ field }) => (
+                          <RadioGroup row {...field} value={field.value?.toString()}>
+                            {intensityLevelKeys.map((level) => (
+                              <FormControlLabel
+                                key={level.value}
+                                value={level.value.toString()}
+                                control={<Radio size="small" sx={{ p: 0.5, '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} />}
+                                label={`(${level.value}) ${t(level.labelKey)}`}
+                                sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' }, mr: 2 }}
+                              />
+                            ))}
+                          </RadioGroup>
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.frequency')}</TableCell>
+                    <TableCell>
+                      <Controller
+                        name="frequency"
+                        control={control}
+                        defaultValue={1}
+                        render={({ field }) => (
+                          <RadioGroup row {...field} value={field.value?.toString()}>
+                            {frequencyLevelKeys.map((level) => (
+                              <FormControlLabel
+                                key={level.value}
+                                value={level.value.toString()}
+                                control={<Radio size="small" sx={{ p: 0.5, '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} />}
+                                label={`(${level.value}) ${t(level.labelKey)}`}
+                                sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' }, mr: 2 }}
+                              />
+                            ))}
+                          </RadioGroup>
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+
+          {/* 모바일용 레이아웃 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.intensity')}</Typography>
+              <Controller
+                name="intensity"
+                control={control}
+                defaultValue={1}
+                render={({ field }) => (
+                  <RadioGroup {...field} value={field.value?.toString()} sx={{ px: 1 }}>
+                    {intensityLevelKeys.map((level) => (
+                      <FormControlLabel
+                        key={level.value}
+                        value={level.value.toString()}
+                        control={<Radio size="small" sx={{ p: 0.5, '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} />}
+                        label={`(${level.value}) ${t(level.labelKey)}`}
+                        sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' } }}
+                      />
+                    ))}
+                  </RadioGroup>
+                )}
+              />
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.frequency')}</Typography>
+              <Controller
+                name="frequency"
+                control={control}
+                defaultValue={1}
+                render={({ field }) => (
+                  <RadioGroup {...field} value={field.value?.toString()} sx={{ px: 1 }}>
+                    {frequencyLevelKeys.map((level) => (
+                      <FormControlLabel
+                        key={level.value}
+                        value={level.value.toString()}
+                        control={<Radio size="small" sx={{ p: 0.5, '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} />}
+                        label={`(${level.value}) ${t(level.labelKey)}`}
+                        sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' } }}
+                      />
+                    ))}
+                  </RadioGroup>
+                )}
+              />
+            </Box>
+          </Box>
+        </Paper>
+
+        {/* 조치사항 섹션 - 반응형 */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          {t('nearMiss.measures')}
+        </Typography>
+        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+          {/* PC용 테이블 레이아웃 */}
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+            {/* Row 1: 조치사항 */}
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                {t('nearMiss.measures')}
+              </Typography>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
+                <TextField fullWidth size="small" placeholder={t('nearMiss.enterMeasure')} value={newMeasure.content} onChange={(e) => setNewMeasure({ ...newMeasure, content: e.target.value })} />
+              </Box>
+            </Box>
+            {/* Row 2: 담당부서 | 책임자 */}
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                {t('nearMiss.responsibleDept')}
+              </Typography>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+                <TextField fullWidth size="small" placeholder={t('nearMiss.responsibleDept')} value={newMeasure.department} onChange={(e) => setNewMeasure({ ...newMeasure, department: e.target.value })} />
+              </Box>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                {t('nearMiss.responsiblePerson')}
+              </Typography>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
+                <TextField fullWidth size="small" placeholder={t('nearMiss.responsiblePerson')} value={selectedResponsible ? getResponsibleDisplayName(selectedResponsible) : newMeasure.responsible} InputProps={{ readOnly: true }} />
+                <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setResponsibleModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
+              </Box>
+            </Box>
+            {/* Row 3: 예정일 | 추가 버튼 */}
+            <Box sx={{ display: 'flex' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                {t('nearMiss.scheduledDate')}
+              </Typography>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2 }}>
+                <DatePickerField
+                  label=""
+                  value={newMeasure.dueDate}
+                  onChange={(value) => setNewMeasure({ ...newMeasure, dueDate: value })}
+                  placeholder={t('nearMiss.scheduledDate')}
+                />
+                <Button variant="contained" size="small" onClick={handleAddMeasure} startIcon={<AddIcon />} sx={{ minWidth: 80, whiteSpace: 'nowrap' }}>
+                  {t('common.add')}
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* 모바일용 레이아웃 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 2 }}>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.measures')}</Typography>
+              <TextField fullWidth size="small" placeholder={t('nearMiss.enterMeasure')} value={newMeasure.content} onChange={(e) => setNewMeasure({ ...newMeasure, content: e.target.value })} />
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.responsibleDept')}</Typography>
+              <TextField fullWidth size="small" placeholder={t('nearMiss.responsibleDept')} value={newMeasure.department} onChange={(e) => setNewMeasure({ ...newMeasure, department: e.target.value })} />
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.responsiblePerson')}</Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <TextField fullWidth size="small" placeholder={t('nearMiss.responsiblePerson')} value={selectedResponsible ? getResponsibleDisplayName(selectedResponsible) : newMeasure.responsible} InputProps={{ readOnly: true }} />
+                <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setResponsibleModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.scheduledDate')}</Typography>
+                <DatePickerField
+                  label=""
+                  value={newMeasure.dueDate}
+                  onChange={(value) => setNewMeasure({ ...newMeasure, dueDate: value })}
+                  placeholder={t('nearMiss.scheduledDate')}
+                />
+              </Box>
+              <Button variant="contained" size="small" onClick={handleAddMeasure} startIcon={<AddIcon />} sx={{ minWidth: 80, whiteSpace: 'nowrap', height: 40 }}>
+                {t('common.add')}
+              </Button>
+            </Box>
+          </Box>
+
+          <TableContainer sx={{ border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+              <TableHead>
+                <TableRow sx={{ bgcolor: 'grey.100' }}>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.measures')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.responsibleDept')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.responsiblePerson')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.scheduledDate')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.completedDate')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 60, textAlign: 'center' }}>{t('common.delete')}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {measures.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center" sx={{ py: 2 }}>
+                      <Typography variant="body2" color="text.secondary">{t('nearMiss.noMeasures')}</Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  measures.map((measure) => (
+                    <TableRow key={measure.id}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{measure.content}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{measure.department}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{measure.responsible}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{measure.dueDate}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{measure.completedDate || ''}</TableCell>
+                      <TableCell align="center">
+                        <IconButton size="small" onClick={() => handleRemoveMeasure(measure.id)}>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+
+        {/* 이미지 섹션 */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          {t('nearMiss.images')}
+        </Typography>
+        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+          <input ref={beforeFileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('before', e)} />
+          <input ref={afterFileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('after', e)} />
+          <input ref={overviewFileRef} type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.txt" style={{ display: 'none' }} onChange={handleOverviewFileSelect} />
+
+          <Grid container spacing={0} sx={{ border: 1, borderColor: 'grey.300', alignItems: 'stretch' }}>
+            <Grid item xs={12} sm={6} sx={{ p: 2, borderRight: { xs: 0, sm: 1 }, borderBottom: { xs: 1, sm: 0 }, borderColor: 'grey.300', display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.beforeAction')}</Typography>
+              {beforeImage ? (
+                <Card sx={{ position: 'relative', flex: 1 }}>
+                  <CardMedia component="img" image={beforeImage} alt={t('nearMiss.beforeAction')} sx={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} />
+                  <IconButton
+                    size="small"
+                    sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                    onClick={async () => { if (await showConfirm(t('nearMiss.confirmImageDelete'))) { setBeforeImage(null); setBeforeFile(null); setBeforeDeleted(true) } }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Card>
+              ) : (
+                <Paper
+                  sx={{ minHeight: 200, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}
+                  onClick={() => beforeFileRef.current?.click()}
+                >
+                  <PhotoCameraIcon sx={{ fontSize: 48, color: '#ccc', mb: 1 }} />
+                  <Button variant="outlined" size="small" startIcon={<CloudUploadIcon />}>
+                    {t('nearMiss.imageUpload')}
+                  </Button>
+                </Paper>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.afterAction')}</Typography>
+              {afterImage ? (
+                <Card sx={{ position: 'relative', flex: 1 }}>
+                  <CardMedia component="img" image={afterImage} alt={t('nearMiss.afterAction')} sx={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} />
+                  <IconButton
+                    size="small"
+                    sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                    onClick={async () => { if (await showConfirm(t('nearMiss.confirmImageDelete'))) { setAfterImage(null); setAfterFile(null); setAfterDeleted(true) } }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Card>
+              ) : (
+                <Paper
+                  sx={{ minHeight: 200, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}
+                  onClick={() => afterFileRef.current?.click()}
+                >
+                  <PhotoCameraIcon sx={{ fontSize: 48, color: '#ccc', mb: 1 }} />
+                  <Button variant="outlined" size="small" startIcon={<CloudUploadIcon />}>
+                    {t('nearMiss.imageUpload')}
+                  </Button>
+                </Paper>
+              )}
+            </Grid>
+          </Grid>
+        </Paper>
+
+        {/* Actions */}
+        <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {/* 작성/수정 폼에서는 항상 '취소' 라벨 (목록 아님) */}
+          <Button variant="outlined" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }} onClick={() => {
+            if (editingNearMiss && viewNearMiss) {
+              setViewMode('detail')
+              setEditingNearMiss(null)
+              setMeasures([])
+            } else {
+              handleBackToList()
+            }
+          }}>
+            {t('common.cancel')}
+          </Button>
+          <Button type="submit" variant="contained" disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+            {t('common.save')}
+          </Button>
+        </Box>
+      </form>
+    </Box>
+  )
+
+  const modalPreviewUrl = modalPreviewImages && modalPreviewImages.length > modalPreviewImageIndex
+    ? `/api/files/${modalPreviewImages[modalPreviewImageIndex].id}`
+    : (modalPreviewImages && modalPreviewImages.length > 0 ? `/api/files/${modalPreviewImages[0].id}` : null)
+
+  return (
+    <Box>
+      {/* 탭 메뉴: 아차사고 / 사고 / 레포트 */}
+      {viewMode === 'list' && (
+        <>
+          <Box sx={{ mb: 2 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(_, newValue) => { setActiveTab(newValue); setPage(1) }}
+            >
+              <Tab label={t('common.dashboard', '대시보드')} value="DASHBOARD" />
+              <Tab label={t('nearMiss.incidentTypes.nearMiss')} value="NEAR_MISS" />
+              <Tab label={t('nearMiss.incidentTypes.accident')} value="ACCIDENT" />
+              <Tab label={t('nearMiss.incidentTypes.report', '레포트')} value="REPORT" />
+            </Tabs>
+          </Box>
+          {activeTab !== 'REPORT' && activeTab !== 'DASHBOARD' && (
+            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+              {activeTab === 'NEAR_MISS' ? t('nearMiss.incidentTypes.nearMiss') : t('nearMiss.incidentTypes.accident')}
+            </Typography>
+          )}
+        </>
+      )}
+      {viewMode === 'list' && activeTab === 'DASHBOARD' && <NearMissDashboardTab />}
+      {viewMode === 'list' && activeTab === 'REPORT' && <AccidentReportTab />}
+      {viewMode === 'list' && activeTab !== 'REPORT' && activeTab !== 'DASHBOARD' && renderListView()}
+      {viewMode === 'detail' && renderDetailView()}
+      {(viewMode === 'create' || viewMode === 'edit') && renderFormView()}
+
+      {/* 도면 선택 모달 */}
+      <Dialog open={drawingSelectModalOpen} onClose={() => setDrawingSelectModalOpen(false)} maxWidth="md" fullWidth sx={{ '& .MuiDialog-paper': { mx: { xs: 1, sm: 2 } } }}>
+        <DialogTitle>{t('nearMiss.selectDrawing')}</DialogTitle>
+        <DialogContent>
+          {/* PC 레이아웃 */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, mt: 1, minHeight: 400 }}>
+            {/* 왼쪽: 도면 목록 */}
+            <Paper sx={{ width: 260, flexShrink: 0, overflow: 'auto', maxHeight: 450 }}>
+              <List sx={{ p: 0 }}>
+                {floorDrawings.map((drawing, index) => (
+                  <ListItemButton
+                    key={drawing.id}
+                    selected={modalPreviewDrawingId === drawing.id}
+                    onClick={() => { setModalPreviewDrawingId(drawing.id); setModalPreviewImageIndex(0) }}
+                    sx={{
+                      borderBottom: index < floorDrawings.length - 1 ? 1 : 'none',
+                      borderColor: 'grey.300',
+                      '&.Mui-selected': { bgcolor: 'primary.light', color: 'primary.contrastText', '&:hover': { bgcolor: 'primary.main' } },
+                    }}
+                  >
+                    <ListItemText
+                      primary={drawing.name}
+                      secondary={`${drawing.site}${drawing.floor ? ` - ${drawing.floor}` : ''}`}
+                      primaryTypographyProps={{ fontWeight: modalPreviewDrawingId === drawing.id ? 'bold' : 'normal', fontSize: 14 }}
+                      secondaryTypographyProps={{ fontSize: 12, color: modalPreviewDrawingId === drawing.id ? 'inherit' : 'text.secondary' }}
+                    />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Paper>
+            {/* 오른쪽: 도면 프리뷰 */}
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              {modalPreviewUrl ? (
+                <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  {modalPreviewImages && modalPreviewImages.length > 1 && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <IconButton size="small" onClick={() => setModalPreviewImageIndex(prev => Math.max(0, prev - 1))} disabled={modalPreviewImageIndex === 0}>
+                        <NavigateBeforeIcon fontSize="small" />
+                      </IconButton>
+                      {modalPreviewImages.map((_, idx) => (
+                        <Box key={idx} onClick={() => setModalPreviewImageIndex(idx)} sx={{ width: 10, height: 10, borderRadius: '50%', cursor: 'pointer', bgcolor: idx === modalPreviewImageIndex ? 'primary.main' : 'grey.400' }} />
+                      ))}
+                      <IconButton size="small" onClick={() => setModalPreviewImageIndex(prev => Math.min((modalPreviewImages?.length || 1) - 1, prev + 1))} disabled={modalPreviewImageIndex >= (modalPreviewImages?.length || 1) - 1}>
+                        <NavigateNextIcon fontSize="small" />
+                      </IconButton>
+                      <Typography variant="caption" color="text.secondary">({modalPreviewImageIndex + 1}/{modalPreviewImages.length})</Typography>
+                    </Box>
+                  )}
+                  <Box sx={{ width: '100%', height: 380, bgcolor: 'grey.100', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    <img src={modalPreviewUrl} alt="preview" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                  </Box>
+                </Box>
+              ) : (
+                <Box sx={{ width: '100%', height: 380, bgcolor: 'grey.100', borderRadius: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <DrawIcon sx={{ fontSize: 48, color: 'grey.400', mb: 1 }} />
+                  <Typography color="text.secondary" fontSize="0.875rem">{t('nearMiss.selectDrawingToPreview')}</Typography>
+                </Box>
+              )}
+            </Box>
+          </Box>
+          {/* 모바일 레이아웃 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mt: 1 }}>
+            {/* 프리뷰 영역 */}
+            {modalPreviewUrl && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 1 }}>
+                {modalPreviewImages && modalPreviewImages.length > 1 && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                    <IconButton size="small" onClick={() => setModalPreviewImageIndex(prev => Math.max(0, prev - 1))} disabled={modalPreviewImageIndex === 0}>
+                      <NavigateBeforeIcon fontSize="small" />
+                    </IconButton>
+                    {modalPreviewImages.map((_, idx) => (
+                      <Box key={idx} onClick={() => setModalPreviewImageIndex(idx)} sx={{ width: 8, height: 8, borderRadius: '50%', cursor: 'pointer', bgcolor: idx === modalPreviewImageIndex ? 'primary.main' : 'grey.400' }} />
+                    ))}
+                    <IconButton size="small" onClick={() => setModalPreviewImageIndex(prev => Math.min((modalPreviewImages?.length || 1) - 1, prev + 1))} disabled={modalPreviewImageIndex >= (modalPreviewImages?.length || 1) - 1}>
+                      <NavigateNextIcon fontSize="small" />
+                    </IconButton>
+                    <Typography variant="caption" color="text.secondary">({modalPreviewImageIndex + 1}/{modalPreviewImages.length})</Typography>
+                  </Box>
+                )}
+                <Box sx={{ width: '100%', height: 200, bgcolor: 'grey.100', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  <img src={modalPreviewUrl} alt="preview" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                </Box>
+              </Box>
+            )}
+            {/* 도면 목록 */}
+            <Paper variant="outlined" sx={{ maxHeight: 250, overflow: 'auto' }}>
+              <List sx={{ p: 0 }}>
+                {floorDrawings.map((drawing, index) => (
+                  <ListItemButton
+                    key={drawing.id}
+                    selected={modalPreviewDrawingId === drawing.id}
+                    onClick={() => { setModalPreviewDrawingId(drawing.id); setModalPreviewImageIndex(0) }}
+                    sx={{
+                      borderBottom: index < floorDrawings.length - 1 ? 1 : 'none',
+                      borderColor: 'grey.300',
+                      '&.Mui-selected': { bgcolor: 'primary.light', color: 'primary.contrastText' },
+                    }}
+                    dense
+                  >
+                    <ListItemText
+                      primary={drawing.name}
+                      secondary={`${drawing.site}${drawing.floor ? ` - ${drawing.floor}` : ''}`}
+                      primaryTypographyProps={{ fontSize: 13 }}
+                      secondaryTypographyProps={{ fontSize: 11 }}
+                    />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDrawingSelectModalOpen(false)}>{t('common.cancel')}</Button>
+          <Button variant="contained" onClick={handleConfirmDrawingSelect} disabled={!modalPreviewDrawingId}>{t('common.select')}</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Responsible Person Select Modal */}
+      <UserSelectModal
+        open={responsibleModalOpen}
+        onClose={() => setResponsibleModalOpen(false)}
+        selectedUsers={[]}
+        onConfirm={handleResponsibleConfirm}
+        title={t('nearMiss.selectResponsiblePerson')}
+        singleSelect
+        useCompanyTree
+      />
+    </Box>
+  )
+}
+
+export default NearMissPage

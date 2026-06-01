@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.OSHCommitteeAttendeeMapper">
+
+    <resultMap id="OSHCommitteeAttendeeResultMap" type="com.smartehs.model.OSHCommitteeAttendee">
+        <id property="id" column="id"/>
+        <result property="oshId" column="osh_id"/>
+        <result property="attendeeName" column="attendee_name"/>
+        <result property="attendeeMail" column="attendee_mail"/>
+        <result property="attendeeDept" column="attendee_dept"/>
+        <result property="attendeeCompany" column="attendee_company"/>
+        <result property="attendeePhone" column="attendee_phone"/>
+        <result property="isExternal" column="is_external"/>
+        <result property="isSigned" column="is_signed"/>
+        <result property="signatureDate" column="signature_date"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="OSHCommitteeAttendeeResultMap">
+        SELECT * FROM tb_osh_committee_attendee ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="OSHCommitteeAttendeeResultMap">
+        SELECT * FROM tb_osh_committee_attendee WHERE id = #{id}
+    </select>
+
+    <select id="findByOshId" resultMap="OSHCommitteeAttendeeResultMap">
+        SELECT * FROM tb_osh_committee_attendee WHERE osh_id = #{oshId} ORDER BY created_at ASC
+    </select>
+
+    <select id="findByOshIdAndAttendeeMail" resultMap="OSHCommitteeAttendeeResultMap">
+        SELECT * FROM tb_osh_committee_attendee WHERE osh_id = #{oshId} AND attendee_mail = #{attendeeMail}
+    </select>
+
+    <select id="countByOshId" resultType="int">
+        SELECT COUNT(*) FROM tb_osh_committee_attendee WHERE osh_id = #{oshId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_osh_committee_attendee (
+            osh_id, attendee_name, attendee_mail, attendee_dept, attendee_company,
+            attendee_phone, is_external, is_signed, signature_date, created_at
+        )
+        VALUES (
+            #{oshId}, #{attendeeName}, #{attendeeMail},
+            #{attendeeDept,jdbcType=NVARCHAR}, #{attendeeCompany,jdbcType=NVARCHAR},
+            #{attendeePhone,jdbcType=NVARCHAR},
+            <choose><when test="isExternal != null">#{isExternal}</when><otherwise>0</otherwise></choose>,
+            #{isSigned}, #{signatureDate,jdbcType=TIMESTAMP}, GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_osh_committee_attendee
+        SET attendee_name = #{attendeeName},
+            attendee_mail = #{attendeeMail},
+            attendee_dept = #{attendeeDept,jdbcType=NVARCHAR},
+            attendee_company = #{attendeeCompany,jdbcType=NVARCHAR},
+            attendee_phone = #{attendeePhone,jdbcType=NVARCHAR},
+            is_external = <choose><when test="isExternal != null">#{isExternal}</when><otherwise>0</otherwise></choose>,
+            is_signed = #{isSigned},
+            signature_date = #{signatureDate,jdbcType=TIMESTAMP}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_osh_committee_attendee WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByOshId">
+        DELETE FROM tb_osh_committee_attendee WHERE osh_id = #{oshId}
+    </delete>
+
+</mapper>

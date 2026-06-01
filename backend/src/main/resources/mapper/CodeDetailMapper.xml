@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.CodeDetailMapper">
+
+    <resultMap id="CodeDetailResultMap" type="com.smartehs.model.CodeDetail">
+        <id property="id" column="id"/>
+        <result property="groupId" column="group_id"/>
+        <result property="code" column="code"/>
+        <result property="codeValue" column="code_value"/>
+        <result property="codeNameKo" column="code_name_ko"/>
+        <result property="codeNameEn" column="code_name_en"/>
+        <result property="codeNameZh" column="code_name_zh"/>
+        <result property="descriptionKo" column="description_ko"/>
+        <result property="descriptionEn" column="description_en"/>
+        <result property="descriptionZh" column="description_zh"/>
+        <result property="isActive" column="is_active"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByGroupId" resultMap="CodeDetailResultMap">
+        SELECT * FROM tb_code_detail
+        WHERE group_id = #{groupId}
+        ORDER BY sort_order ASC, code ASC
+    </select>
+
+    <select id="findByGroupIdAndKeyword" resultMap="CodeDetailResultMap">
+        SELECT * FROM tb_code_detail
+        WHERE group_id = #{groupId}
+          AND (code LIKE '%' + #{keyword} + '%'
+               OR code_name_ko LIKE '%' + #{keyword} + '%'
+               OR code_name_en LIKE '%' + #{keyword} + '%'
+               OR code_name_zh LIKE '%' + #{keyword} + '%')
+        ORDER BY sort_order ASC, code ASC
+    </select>
+
+    <select id="findById" resultMap="CodeDetailResultMap">
+        SELECT * FROM tb_code_detail WHERE id = #{id}
+    </select>
+
+    <select id="findByGroupIdAndCode" resultMap="CodeDetailResultMap">
+        SELECT * FROM tb_code_detail WHERE group_id = #{groupId} AND code = #{code}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_code_detail (group_id, code, code_value, code_name_ko, code_name_en, code_name_zh, description_ko, description_en, description_zh, is_active, sort_order, created_at, modified_at)
+        VALUES (#{groupId}, #{code}, #{codeValue}, #{codeNameKo}, #{codeNameEn}, #{codeNameZh}, #{descriptionKo}, #{descriptionEn}, #{descriptionZh}, #{isActive}, #{sortOrder}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_code_detail
+        SET code_value     = #{codeValue},
+            code_name_ko   = #{codeNameKo},
+            code_name_en   = #{codeNameEn},
+            code_name_zh   = #{codeNameZh},
+            description_ko = #{descriptionKo},
+            description_en = #{descriptionEn},
+            description_zh = #{descriptionZh},
+            is_active      = #{isActive},
+            sort_order     = #{sortOrder},
+            modified_at    = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_code_detail WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByGroupId">
+        DELETE FROM tb_code_detail WHERE group_id = #{groupId}
+    </delete>
+
+    <select id="findByGroupCode" resultMap="CodeDetailResultMap">
+        SELECT d.* FROM tb_code_detail d
+        INNER JOIN tb_code_group g ON d.group_id = g.id
+        WHERE g.group_code = #{groupCode} AND d.is_active = 1
+        ORDER BY d.sort_order ASC, d.code ASC
+    </select>
+
+</mapper>

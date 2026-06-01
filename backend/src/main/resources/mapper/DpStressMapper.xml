@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.DpStressMapper">
+    <resultMap id="R" type="com.smartehs.model.DpStress">
+        <id property="id" column="id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="department" column="department"/>
+        <result property="physicalEnv" column="physical_env"/>
+        <result property="jobDemand" column="job_demand"/>
+        <result property="autonomy" column="autonomy"/>
+        <result property="relationship" column="relationship"/>
+        <result property="jobInsecurity" column="job_insecurity"/>
+        <result property="systemFairness" column="system_fairness"/>
+        <result property="reward" column="reward"/>
+        <result property="workCulture" column="work_culture"/>
+        <result property="totalScore" column="total_score"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="assessmentDate" column="assessment_date"/>
+        <result property="hasCounseling" column="has_counseling"/>
+        <result property="counselingNotes" column="counseling_notes"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_dp_stress WHERE deleted = 0 ORDER BY total_score DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_dp_stress WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_dp_stress WHERE deleted = 0</select>
+    <select id="countByRiskLevel" resultType="int">SELECT COUNT(*) FROM tb_dp_stress WHERE deleted = 0 AND risk_level = #{riskLevel}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_dp_stress (worker_name, department, physical_env, job_demand, autonomy, relationship,
+            job_insecurity, system_fairness, reward, work_culture, total_score, risk_level,
+            assessment_date, has_counseling, counseling_notes, notes,
+            deleted, created_at, modified_at) VALUES (
+            #{workerName}, #{department,jdbcType=NVARCHAR},
+            #{physicalEnv,jdbcType=INTEGER}, #{jobDemand,jdbcType=INTEGER}, #{autonomy,jdbcType=INTEGER},
+            #{relationship,jdbcType=INTEGER}, #{jobInsecurity,jdbcType=INTEGER},
+            #{systemFairness,jdbcType=INTEGER}, #{reward,jdbcType=INTEGER}, #{workCulture,jdbcType=INTEGER},
+            #{totalScore,jdbcType=INTEGER}, #{riskLevel,jdbcType=NVARCHAR},
+            #{assessmentDate,jdbcType=DATE},
+            <choose><when test="hasCounseling != null">#{hasCounseling}</when><otherwise>0</otherwise></choose>,
+            #{counselingNotes,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_dp_stress SET worker_name = #{workerName}, department = #{department,jdbcType=NVARCHAR},
+            physical_env = #{physicalEnv,jdbcType=INTEGER}, job_demand = #{jobDemand,jdbcType=INTEGER},
+            autonomy = #{autonomy,jdbcType=INTEGER}, relationship = #{relationship,jdbcType=INTEGER},
+            job_insecurity = #{jobInsecurity,jdbcType=INTEGER}, system_fairness = #{systemFairness,jdbcType=INTEGER},
+            reward = #{reward,jdbcType=INTEGER}, work_culture = #{workCulture,jdbcType=INTEGER},
+            total_score = #{totalScore,jdbcType=INTEGER}, risk_level = #{riskLevel,jdbcType=NVARCHAR},
+            assessment_date = #{assessmentDate,jdbcType=DATE},
+            has_counseling = <choose><when test="hasCounseling != null">#{hasCounseling}</when><otherwise>0</otherwise></choose>,
+            counseling_notes = #{counselingNotes,jdbcType=NVARCHAR}, notes = #{notes,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_dp_stress SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

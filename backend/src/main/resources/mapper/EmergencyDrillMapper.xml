@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EmergencyDrillMapper">
+
+    <resultMap id="EmergencyDrillResultMap" type="com.smartehs.model.EmergencyDrill">
+        <id property="id" column="id"/>
+        <result property="drillId" column="drill_id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="drillName" column="drill_name"/>
+        <result property="drillType" column="drill_type"/>
+        <result property="targetDept" column="target_dept"/>
+        <result property="scheduledDate" column="scheduled_date"/>
+        <result property="participantCount" column="participant_count"/>
+        <result property="evacuationTime" column="evacuation_time"/>
+        <result property="status" column="status"/>
+        <result property="score" column="score"/>
+        <result property="location" column="location"/>
+        <result property="targetTime" column="target_time"/>
+        <result property="scenario" column="scenario"/>
+        <result property="notes" column="notes"/>
+        <result property="totalChecklist" column="total_checklist"/>
+        <result property="completedChecklist" column="completed_checklist"/>
+        <result property="findingCount" column="finding_count"/>
+        <result property="modifiedBy" column="modified_by"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="EmergencyDrillResultMap">
+        SELECT * FROM tb_emergency_drill
+        WHERE deleted = 0
+        ORDER BY scheduled_date DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_drill WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="EmergencyDrillResultMap">
+        SELECT * FROM tb_emergency_drill WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByStatus" resultMap="EmergencyDrillResultMap">
+        SELECT * FROM tb_emergency_drill
+        WHERE status = #{status} AND deleted = 0
+        ORDER BY scheduled_date DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_drill WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="findByDrillType" resultMap="EmergencyDrillResultMap">
+        SELECT * FROM tb_emergency_drill
+        WHERE drill_type = #{drillType} AND deleted = 0
+        ORDER BY scheduled_date DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDrillType" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_drill WHERE drill_type = #{drillType} AND deleted = 0
+    </select>
+
+    <select id="countByDrillIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_drill WHERE drill_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_emergency_drill (
+            drill_id, plan_id, drill_name, drill_type, target_dept, scheduled_date,
+            participant_count, evacuation_time, status, score, location,
+            target_time, scenario, notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{drillId}, #{planId}, #{drillName}, #{drillType}, #{targetDept}, #{scheduledDate,jdbcType=DATE},
+            #{participantCount}, #{evacuationTime}, #{status}, #{score}, #{location},
+            #{targetTime}, #{scenario}, #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_emergency_drill SET
+            plan_id = #{planId}, drill_name = #{drillName}, drill_type = #{drillType},
+            target_dept = #{targetDept}, scheduled_date = #{scheduledDate,jdbcType=DATE},
+            participant_count = #{participantCount}, evacuation_time = #{evacuationTime},
+            status = #{status}, score = #{score}, location = #{location},
+            target_time = #{targetTime}, scenario = #{scenario},
+            notes = #{notes}, modified_by = #{modifiedBy}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_emergency_drill SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="updateChecklistCounts">
+        UPDATE tb_emergency_drill SET
+            total_checklist = #{totalChecklist},
+            completed_checklist = #{completedChecklist},
+            finding_count = #{findingCount},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByPlanId" resultMap="EmergencyDrillResultMap">
+        SELECT * FROM tb_emergency_drill WHERE plan_id = #{planId} AND deleted = 0
+    </select>
+
+</mapper>

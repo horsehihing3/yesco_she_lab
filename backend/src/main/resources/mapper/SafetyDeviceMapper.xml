@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.SafetyDeviceMapper">
+
+    <resultMap id="SafetyDeviceResultMap" type="com.smartehs.model.SafetyDevice">
+        <id property="id" column="id"/>
+        <result property="floorDrawingId" column="floor_drawing_id"/>
+        <result property="imageFileId" column="image_file_id"/>
+        <result property="deviceType" column="device_type"/>
+        <result property="name" column="name"/>
+        <result property="positionX" column="position_x"/>
+        <result property="positionY" column="position_y"/>
+        <result property="description" column="description"/>
+        <result property="active" column="active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="SafetyDeviceResultMap">
+        SELECT * FROM tb_safety_device ORDER BY floor_drawing_id, name
+    </select>
+
+    <select id="findByFloorDrawingId" resultMap="SafetyDeviceResultMap">
+        SELECT * FROM tb_safety_device WHERE floor_drawing_id = #{floorDrawingId} ORDER BY name
+    </select>
+
+    <select id="findByFloorDrawingIdAndActive" resultMap="SafetyDeviceResultMap">
+        SELECT * FROM tb_safety_device WHERE floor_drawing_id = #{floorDrawingId} AND active = 1 ORDER BY name
+    </select>
+
+    <select id="findById" resultMap="SafetyDeviceResultMap">
+        SELECT * FROM tb_safety_device WHERE id = #{id}
+    </select>
+
+    <select id="findByDeviceType" resultMap="SafetyDeviceResultMap">
+        SELECT * FROM tb_safety_device WHERE device_type = #{deviceType} AND active = 1 ORDER BY name
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_device (floor_drawing_id, image_file_id, device_type, name, position_x, position_y, description, active, created_at, modified_at)
+        VALUES (#{floorDrawingId}, #{imageFileId}, #{deviceType}, #{name}, #{positionX}, #{positionY}, #{description}, COALESCE(#{active}, 1), GETDATE(), GETDATE())
+    </insert>
+
+    <insert id="insertBatch">
+        <foreach collection="devices" item="device" separator=";">
+            INSERT INTO tb_safety_device (floor_drawing_id, image_file_id, device_type, name, position_x, position_y, description, active, created_at, modified_at)
+            VALUES (#{device.floorDrawingId}, #{device.imageFileId}, #{device.deviceType}, #{device.name}, #{device.positionX}, #{device.positionY}, #{device.description}, COALESCE(#{device.active}, 1), GETDATE(), GETDATE())
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE tb_safety_device
+        SET floor_drawing_id = #{floorDrawingId},
+            image_file_id = #{imageFileId},
+            device_type = #{deviceType},
+            name = #{name},
+            position_x = #{positionX},
+            position_y = #{positionY},
+            description = #{description},
+            active = #{active},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_safety_device WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByFloorDrawingId">
+        DELETE FROM tb_safety_device WHERE floor_drawing_id = #{floorDrawingId}
+    </delete>
+
+    <update id="softDelete">
+        UPDATE tb_safety_device SET active = 0, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ErgonomicsAssessmentMapper">
+
+    <resultMap id="ErgoResultMap" type="com.smartehs.model.ErgonomicsAssessment">
+        <id property="id" column="id"/>
+        <result property="assessmentId" column="assessment_id"/>
+        <result property="assessType" column="assess_type"/>
+        <result property="department" column="department"/>
+        <result property="workProcess" column="work_process"/>
+        <result property="workDescription" column="work_description"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="workerId" column="worker_id"/>
+        <result property="assessDate" column="assess_date"/>
+        <result property="assessorName" column="assessor_name"/>
+        <result property="score" column="score"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="affectedBodyParts" column="affected_body_parts"/>
+        <result property="symptoms" column="symptoms"/>
+        <result property="improvementAction" column="improvement_action"/>
+        <result property="improvementDeadline" column="improvement_deadline"/>
+        <result property="improvementStatus" column="improvement_status"/>
+        <result property="photoFileId" column="photo_file_id"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="ErgoResultMap">
+        SELECT * FROM tb_ergonomics_assessment WHERE deleted = 0 ORDER BY assess_date DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">SELECT COUNT(*) FROM tb_ergonomics_assessment WHERE deleted = 0</select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="ErgoResultMap">
+        SELECT * FROM tb_ergonomics_assessment WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByRiskLevelAndDeletedFalse" resultMap="ErgoResultMap">
+        SELECT * FROM tb_ergonomics_assessment WHERE risk_level = #{riskLevel} AND deleted = 0 ORDER BY assess_date DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByRiskLevelAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ergonomics_assessment WHERE risk_level = #{riskLevel} AND deleted = 0
+    </select>
+
+    <select id="searchAndDeletedFalse" resultMap="ErgoResultMap">
+        SELECT * FROM tb_ergonomics_assessment
+        WHERE (work_process LIKE '%' + #{keyword} + '%' OR worker_name LIKE '%' + #{keyword} + '%') AND deleted = 0
+        ORDER BY assess_date DESC OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearchAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ergonomics_assessment
+        WHERE (work_process LIKE '%' + #{keyword} + '%' OR worker_name LIKE '%' + #{keyword} + '%') AND deleted = 0
+    </select>
+
+    <select id="countByAssessmentIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_ergonomics_assessment WHERE assessment_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ergonomics_assessment (
+            assessment_id, assess_type, department, work_process, work_description,
+            worker_name, worker_id, assess_date, assessor_name, score, risk_level,
+            affected_body_parts, symptoms, improvement_action, improvement_deadline,
+            improvement_status, photo_file_id, notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{assessmentId}, #{assessType}, #{department}, #{workProcess}, #{workDescription},
+            #{workerName}, #{workerId}, #{assessDate,jdbcType=DATE}, #{assessorName}, #{score}, #{riskLevel},
+            #{affectedBodyParts}, #{symptoms}, #{improvementAction}, #{improvementDeadline,jdbcType=DATE},
+            #{improvementStatus}, #{photoFileId}, #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ergonomics_assessment SET
+            assess_type = #{assessType}, department = #{department}, work_process = #{workProcess},
+            work_description = #{workDescription}, worker_name = #{workerName}, worker_id = #{workerId},
+            assess_date = #{assessDate,jdbcType=DATE}, assessor_name = #{assessorName}, score = #{score},
+            risk_level = #{riskLevel}, affected_body_parts = #{affectedBodyParts}, symptoms = #{symptoms},
+            improvement_action = #{improvementAction}, improvement_deadline = #{improvementDeadline,jdbcType=DATE},
+            improvement_status = #{improvementStatus}, photo_file_id = #{photoFileId},
+            notes = #{notes}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ergonomics_assessment SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

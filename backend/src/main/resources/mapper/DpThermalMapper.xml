@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.DpThermalMapper">
+    <resultMap id="R" type="com.smartehs.model.DpThermal">
+        <id property="id" column="id"/>
+        <result property="thermalType" column="thermal_type"/>
+        <result property="occurDate" column="occur_date"/>
+        <result property="location" column="location"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="department" column="department"/>
+        <result property="weatherCondition" column="weather_condition"/>
+        <result property="perceivedTemp" column="perceived_temp"/>
+        <result property="symptoms" column="symptoms"/>
+        <result property="severity" column="severity"/>
+        <result property="treatment" column="treatment"/>
+        <result property="outcome" column="outcome"/>
+        <result property="preventionAction" column="prevention_action"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_dp_thermal WHERE deleted = 0 ORDER BY occur_date DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_dp_thermal WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_dp_thermal WHERE deleted = 0</select>
+    <select id="countByType" resultType="int">SELECT COUNT(*) FROM tb_dp_thermal WHERE deleted = 0 AND thermal_type = #{thermalType}</select>
+    <select id="countBySeverity" resultType="int">SELECT COUNT(*) FROM tb_dp_thermal WHERE deleted = 0 AND severity = #{severity}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_dp_thermal (thermal_type, occur_date, location, worker_name, department,
+            weather_condition, perceived_temp, symptoms, severity, treatment, outcome,
+            prevention_action, notes, deleted, created_at, modified_at) VALUES (
+            #{thermalType}, #{occurDate,jdbcType=DATE}, #{location,jdbcType=NVARCHAR},
+            #{workerName,jdbcType=NVARCHAR}, #{department,jdbcType=NVARCHAR},
+            #{weatherCondition,jdbcType=NVARCHAR}, #{perceivedTemp,jdbcType=DECIMAL},
+            #{symptoms,jdbcType=NVARCHAR}, #{severity,jdbcType=NVARCHAR},
+            #{treatment,jdbcType=NVARCHAR}, #{outcome,jdbcType=NVARCHAR},
+            #{preventionAction,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_dp_thermal SET thermal_type = #{thermalType}, occur_date = #{occurDate,jdbcType=DATE},
+            location = #{location,jdbcType=NVARCHAR}, worker_name = #{workerName,jdbcType=NVARCHAR},
+            department = #{department,jdbcType=NVARCHAR},
+            weather_condition = #{weatherCondition,jdbcType=NVARCHAR}, perceived_temp = #{perceivedTemp,jdbcType=DECIMAL},
+            symptoms = #{symptoms,jdbcType=NVARCHAR}, severity = #{severity,jdbcType=NVARCHAR},
+            treatment = #{treatment,jdbcType=NVARCHAR}, outcome = #{outcome,jdbcType=NVARCHAR},
+            prevention_action = #{preventionAction,jdbcType=NVARCHAR}, notes = #{notes,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_dp_thermal SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

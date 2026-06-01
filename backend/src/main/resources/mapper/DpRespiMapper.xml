@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.DpRespiMapper">
+    <resultMap id="R" type="com.smartehs.model.DpRespi">
+        <id property="id" column="id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="department" column="department"/>
+        <result property="exposureType" column="exposure_type"/>
+        <result property="exposureSubstance" column="exposure_substance"/>
+        <result property="exposureLevel" column="exposure_level"/>
+        <result property="ppeType" column="ppe_type"/>
+        <result property="fitTestDate" column="fit_test_date"/>
+        <result property="fitTestResult" column="fit_test_result"/>
+        <result property="pftFvc" column="pft_fvc"/>
+        <result property="pftFev1" column="pft_fev1"/>
+        <result property="skinCondition" column="skin_condition"/>
+        <result property="patchTestResult" column="patch_test_result"/>
+        <result property="status" column="status"/>
+        <result property="examDate" column="exam_date"/>
+        <result property="examiner" column="examiner"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_dp_respi WHERE deleted = 0 ORDER BY exam_date DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_dp_respi WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_dp_respi WHERE deleted = 0</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_dp_respi WHERE deleted = 0 AND status = #{status}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_dp_respi (worker_name, department, exposure_type, exposure_substance, exposure_level,
+            ppe_type, fit_test_date, fit_test_result, pft_fvc, pft_fev1,
+            skin_condition, patch_test_result, status, exam_date, examiner, notes,
+            deleted, created_at, modified_at) VALUES (
+            #{workerName}, #{department,jdbcType=NVARCHAR}, #{exposureType},
+            #{exposureSubstance,jdbcType=NVARCHAR}, #{exposureLevel,jdbcType=NVARCHAR},
+            #{ppeType,jdbcType=NVARCHAR}, #{fitTestDate,jdbcType=DATE}, #{fitTestResult,jdbcType=NVARCHAR},
+            #{pftFvc,jdbcType=DECIMAL}, #{pftFev1,jdbcType=DECIMAL},
+            #{skinCondition,jdbcType=NVARCHAR}, #{patchTestResult,jdbcType=NVARCHAR}, #{status,jdbcType=NVARCHAR},
+            #{examDate,jdbcType=DATE}, #{examiner,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_dp_respi SET worker_name = #{workerName}, department = #{department,jdbcType=NVARCHAR},
+            exposure_type = #{exposureType}, exposure_substance = #{exposureSubstance,jdbcType=NVARCHAR},
+            exposure_level = #{exposureLevel,jdbcType=NVARCHAR}, ppe_type = #{ppeType,jdbcType=NVARCHAR},
+            fit_test_date = #{fitTestDate,jdbcType=DATE}, fit_test_result = #{fitTestResult,jdbcType=NVARCHAR},
+            pft_fvc = #{pftFvc,jdbcType=DECIMAL}, pft_fev1 = #{pftFev1,jdbcType=DECIMAL},
+            skin_condition = #{skinCondition,jdbcType=NVARCHAR}, patch_test_result = #{patchTestResult,jdbcType=NVARCHAR},
+            status = #{status,jdbcType=NVARCHAR}, exam_date = #{examDate,jdbcType=DATE},
+            examiner = #{examiner,jdbcType=NVARCHAR}, notes = #{notes,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_dp_respi SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

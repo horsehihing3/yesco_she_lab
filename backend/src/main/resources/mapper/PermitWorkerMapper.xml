@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.PermitWorkerMapper">
+
+    <resultMap id="PermitWorkerResultMap" type="com.smartehs.model.PermitWorker">
+        <id property="id" column="id"/>
+        <result property="permitId" column="permit_id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="workerCompany" column="worker_company"/>
+        <result property="workerPhone" column="worker_phone"/>
+        <result property="workerType" column="worker_type"/>
+        <result property="notes" column="notes"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_permit_worker (
+            permit_id, worker_name, worker_company, worker_phone, worker_type, notes, created_at
+        ) VALUES (
+            #{permitId}, #{workerName}, #{workerCompany}, #{workerPhone}, #{workerType}, #{notes}, GETDATE()
+        )
+    </insert>
+
+    <select id="findByPermitId" resultMap="PermitWorkerResultMap">
+        SELECT * FROM tb_permit_worker WHERE permit_id = #{permitId} ORDER BY created_at ASC
+    </select>
+
+    <delete id="deleteByPermitId">
+        DELETE FROM tb_permit_worker WHERE permit_id = #{permitId}
+    </delete>
+
+</mapper>

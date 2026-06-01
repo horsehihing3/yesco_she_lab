@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.AccidentClaimMapper">
+
+    <resultMap id="AccidentClaimResultMap" type="com.smartehs.model.AccidentClaim">
+        <id property="id" column="id"/>
+        <result property="claimId" column="claim_id"/>
+        <result property="status" column="status"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="workerSsn" column="worker_ssn"/>
+        <result property="workerPhone" column="worker_phone"/>
+        <result property="workerAddress" column="worker_address"/>
+        <result property="workerJobType" column="worker_job_type"/>
+        <result property="workerJoinDate" column="worker_join_date"/>
+        <result property="workerDept" column="worker_dept"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companyRepName" column="company_rep_name"/>
+        <result property="companyBizNo" column="company_biz_no"/>
+        <result property="companyAddress" column="company_address"/>
+        <result property="companyPhone" column="company_phone"/>
+        <result property="companyIndustry" column="company_industry"/>
+        <result property="companyWorkersCount" column="company_workers_count"/>
+        <result property="diseaseName" column="disease_name"/>
+        <result property="diseaseCode" column="disease_code"/>
+        <result property="onsetDate" column="onset_date"/>
+        <result property="diagnosisDate" column="diagnosis_date"/>
+        <result property="exposurePeriod" column="exposure_period"/>
+        <result property="exposureFactor" column="exposure_factor"/>
+        <result property="workHistory" column="work_history"/>
+        <result property="hospitalName" column="hospital_name"/>
+        <result property="hospitalDept" column="hospital_dept"/>
+        <result property="treatmentStartDate" column="treatment_start_date"/>
+        <result property="treatmentEndDate" column="treatment_end_date"/>
+        <result property="treatmentType" column="treatment_type"/>
+        <result property="applicantName" column="applicant_name"/>
+        <result property="applicantRelation" column="applicant_relation"/>
+        <result property="applyDate" column="apply_date"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="AccidentClaimResultMap">
+        SELECT * FROM tb_accident_claim
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_accident_claim WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="AccidentClaimResultMap">
+        SELECT * FROM tb_accident_claim WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByStatus" resultMap="AccidentClaimResultMap">
+        SELECT * FROM tb_accident_claim
+        WHERE status = #{status} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_accident_claim WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="findByCreatedBy" resultMap="AccidentClaimResultMap">
+        SELECT * FROM tb_accident_claim
+        WHERE created_by = #{createdBy} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByCreatedBy" resultType="int">
+        SELECT COUNT(*) FROM tb_accident_claim WHERE created_by = #{createdBy} AND deleted = 0
+    </select>
+
+    <select id="countByClaimIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_accident_claim WHERE claim_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_accident_claim (
+            claim_id, status,
+            worker_name, worker_ssn, worker_phone, worker_address, worker_job_type, worker_join_date, worker_dept,
+            company_name, company_rep_name, company_biz_no, company_address, company_phone, company_industry, company_workers_count,
+            disease_name, disease_code, onset_date, diagnosis_date, exposure_period, exposure_factor, work_history,
+            hospital_name, hospital_dept, treatment_start_date, treatment_end_date, treatment_type,
+            applicant_name, applicant_relation, apply_date, notes,
+            deleted, created_by, created_at, modified_at
+        ) VALUES (
+            #{claimId}, #{status},
+            #{workerName}, #{workerSsn}, #{workerPhone}, #{workerAddress}, #{workerJobType}, #{workerJoinDate,jdbcType=DATE}, #{workerDept},
+            #{companyName}, #{companyRepName}, #{companyBizNo}, #{companyAddress}, #{companyPhone}, #{companyIndustry}, #{companyWorkersCount},
+            #{diseaseName}, #{diseaseCode}, #{onsetDate,jdbcType=DATE}, #{diagnosisDate,jdbcType=DATE}, #{exposurePeriod}, #{exposureFactor}, #{workHistory},
+            #{hospitalName}, #{hospitalDept}, #{treatmentStartDate,jdbcType=DATE}, #{treatmentEndDate,jdbcType=DATE}, #{treatmentType},
+            #{applicantName}, #{applicantRelation}, #{applyDate,jdbcType=DATE}, #{notes},
+            0, #{createdBy}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_accident_claim SET
+            worker_name = #{workerName}, worker_ssn = #{workerSsn}, worker_phone = #{workerPhone},
+            worker_address = #{workerAddress}, worker_job_type = #{workerJobType},
+            worker_join_date = #{workerJoinDate,jdbcType=DATE}, worker_dept = #{workerDept},
+            company_name = #{companyName}, company_rep_name = #{companyRepName}, company_biz_no = #{companyBizNo},
+            company_address = #{companyAddress}, company_phone = #{companyPhone},
+            company_industry = #{companyIndustry}, company_workers_count = #{companyWorkersCount},
+            disease_name = #{diseaseName}, disease_code = #{diseaseCode},
+            onset_date = #{onsetDate,jdbcType=DATE}, diagnosis_date = #{diagnosisDate,jdbcType=DATE},
+            exposure_period = #{exposurePeriod}, exposure_factor = #{exposureFactor}, work_history = #{workHistory},
+            hospital_name = #{hospitalName}, hospital_dept = #{hospitalDept},
+            treatment_start_date = #{treatmentStartDate,jdbcType=DATE}, treatment_end_date = #{treatmentEndDate,jdbcType=DATE},
+            treatment_type = #{treatmentType},
+            applicant_name = #{applicantName}, applicant_relation = #{applicantRelation},
+            apply_date = #{applyDate,jdbcType=DATE}, notes = #{notes},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE tb_accident_claim SET status = #{status}, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_accident_claim SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

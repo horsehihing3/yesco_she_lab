@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EhsAlertMapper">
+
+    <resultMap id="EhsAlertResultMap" type="com.smartehs.model.EhsAlert">
+        <id property="id" column="id"/>
+        <result property="alertId" column="alert_id"/>
+        <result property="title" column="title"/>
+        <result property="titleEn" column="title_en"/>
+        <result property="titleZh" column="title_zh"/>
+        <result property="detail" column="detail"/>
+        <result property="detailEn" column="detail_en"/>
+        <result property="detailZh" column="detail_zh"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="authorCompany" column="author_company"/>
+        <result property="isAutoRegistration" column="is_auto_registration"/>
+        <result property="views" column="views"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="EhsAlertResultMap">
+        SELECT * FROM tb_ehs_alert ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="EhsAlertResultMap">
+        SELECT * FROM tb_ehs_alert
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_alert
+    </select>
+
+    <select id="findById" resultMap="EhsAlertResultMap">
+        SELECT * FROM tb_ehs_alert WHERE id = #{id}
+    </select>
+
+    <select id="findByAlertId" resultMap="EhsAlertResultMap">
+        SELECT * FROM tb_ehs_alert WHERE alert_id = #{alertId}
+    </select>
+
+    <select id="findByTitleContaining" resultMap="EhsAlertResultMap">
+        SELECT * FROM tb_ehs_alert
+        WHERE title LIKE '%' + #{title} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_alert
+        WHERE title LIKE '%' + #{title} + '%'
+    </select>
+
+    <update id="incrementViews">
+        UPDATE tb_ehs_alert SET views = views + 1 WHERE id = #{id}
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_alert (alert_id, title, title_en, title_zh, detail, detail_en, detail_zh, author_name, author_dept, author_email, author_company, is_auto_registration, views, created_at, modified_at)
+        VALUES (#{alertId}, #{title}, #{titleEn}, #{titleZh}, #{detail}, #{detailEn}, #{detailZh}, #{authorName}, #{authorDept}, #{authorEmail}, #{authorCompany}, #{isAutoRegistration}, #{views}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ehs_alert
+        SET title = #{title},
+            title_en = #{titleEn},
+            title_zh = #{titleZh},
+            detail = #{detail},
+            detail_en = #{detailEn},
+            detail_zh = #{detailZh},
+            author_name = #{authorName},
+            author_dept = #{authorDept},
+            author_email = #{authorEmail},
+            author_company = #{authorCompany},
+            is_auto_registration = #{isAutoRegistration},
+            views = #{views},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_ehs_alert WHERE id = #{id}
+    </delete>
+
+</mapper>

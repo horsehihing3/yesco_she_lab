@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EhsAnnualPlanGoalMapper">
+
+    <resultMap id="EhsAnnualPlanGoalResultMap" type="com.smartehs.model.EhsAnnualPlanGoal">
+        <id property="id" column="id"/>
+        <result property="planId"      column="plan_id"/>
+        <result property="goalText"    column="goal_text"/>
+        <result property="subGoal"     column="sub_goal"/>
+        <result property="task"        column="task"/>
+        <result property="kpi"         column="kpi"/>
+        <result property="prevResult"  column="prev_result"/>
+        <result property="targetValue" column="target_value"/>
+        <result property="ownerUserId" column="owner_user_id"/>
+        <result property="ownerTeam"   column="owner_team"/>
+        <result property="ownerName"   column="owner_name"/>
+        <result property="q1"          column="q1"/>
+        <result property="q2"          column="q2"/>
+        <result property="q3"          column="q3"/>
+        <result property="q4"          column="q4"/>
+        <result property="q1Status"    column="q1_status"/>
+        <result property="q2Status"    column="q2_status"/>
+        <result property="q3Status"    column="q3_status"/>
+        <result property="q4Status"    column="q4_status"/>
+        <result property="sortOrder"   column="sort_order"/>
+        <result property="createdAt"   column="created_at"/>
+        <result property="modifiedAt"  column="modified_at"/>
+    </resultMap>
+
+    <select id="findByPlanId" resultMap="EhsAnnualPlanGoalResultMap">
+        SELECT * FROM tb_ehs_annual_plan_goal
+         WHERE plan_id = #{planId}
+         ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_annual_plan_goal
+            (plan_id, goal_text, sub_goal, task, kpi, prev_result, target_value,
+             owner_user_id, owner_team, owner_name,
+             q1, q2, q3, q4, q1_status, q2_status, q3_status, q4_status,
+             sort_order, created_at, modified_at)
+        VALUES
+            (#{planId}, #{goalText}, #{subGoal}, #{task}, #{kpi}, #{prevResult}, #{targetValue},
+             #{ownerUserId}, #{ownerTeam}, #{ownerName},
+             <choose><when test="q1 != null">#{q1}</when><otherwise>0</otherwise></choose>,
+             <choose><when test="q2 != null">#{q2}</when><otherwise>0</otherwise></choose>,
+             <choose><when test="q3 != null">#{q3}</when><otherwise>0</otherwise></choose>,
+             <choose><when test="q4 != null">#{q4}</when><otherwise>0</otherwise></choose>,
+             #{q1Status}, #{q2Status}, #{q3Status}, #{q4Status},
+             <choose><when test="sortOrder != null">#{sortOrder}</when><otherwise>0</otherwise></choose>,
+             GETDATE(), GETDATE())
+    </insert>
+
+    <delete id="deleteByPlanId">
+        DELETE FROM tb_ehs_annual_plan_goal WHERE plan_id = #{planId}
+    </delete>
+
+</mapper>

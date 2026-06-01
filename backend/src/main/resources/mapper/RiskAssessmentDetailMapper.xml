@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.RiskAssessmentDetailMapper">
+
+    <resultMap id="RiskAssessmentDetailResultMap" type="com.smartehs.model.RiskAssessmentDetail">
+        <id property="id" column="id"/>
+        <result property="riskId" column="risk_id"/>
+        <result property="activityProcessId" column="activity_process_id"/>
+        <result property="riskIdx" column="risk_idx"/>
+        <result property="majorCategory" column="major_category"/>
+        <result property="detailAction" column="detail_action"/>
+        <result property="risk4M" column="risk_4m"/>
+        <result property="danger" column="danger"/>
+        <result property="expectedDisaster" column="expected_disaster"/>
+        <result property="target" column="target"/>
+        <result property="currentSafetyMeasures" column="current_safety_measures"/>
+        <result property="possibilityGrade" column="possibility_grade"/>
+        <result property="resultGrade" column="result_grade"/>
+        <result property="riskScore" column="risk_score"/>
+        <result property="riskGrade" column="risk_grade"/>
+        <result property="isRegistered" column="is_registered"/>
+        <result property="reductionMeasures" column="reduction_measures"/>
+        <result property="improvedPossibilityGrade" column="improved_possibility_grade"/>
+        <result property="improvedResultGrade" column="improved_result_grade"/>
+        <result property="improvedRiskScore" column="improved_risk_score"/>
+        <result property="improvedRiskGrade" column="improved_risk_grade"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findByRiskId" resultMap="RiskAssessmentDetailResultMap">
+        SELECT *
+        FROM tb_risk_assessment_detail
+        WHERE risk_id = #{riskId}
+        ORDER BY risk_idx ASC
+    </select>
+
+    <select id="findByRiskIdAndMajorCategory" resultMap="RiskAssessmentDetailResultMap">
+        SELECT *
+        FROM tb_risk_assessment_detail
+        WHERE risk_id = #{riskId} AND major_category = #{majorCategory}
+        ORDER BY risk_idx ASC
+    </select>
+
+    <select id="findByRiskIdAndMinScore" resultMap="RiskAssessmentDetailResultMap">
+        SELECT *
+        FROM tb_risk_assessment_detail
+        WHERE risk_id = #{riskId} AND risk_score >= #{minScore}
+        ORDER BY risk_score DESC
+    </select>
+
+    <select id="findByRiskIdAndIsRegistered" resultMap="RiskAssessmentDetailResultMap">
+        SELECT *
+        FROM tb_risk_assessment_detail
+        WHERE risk_id = #{riskId} AND is_registered = 1
+        ORDER BY risk_idx ASC
+    </select>
+
+    <select id="findById" resultMap="RiskAssessmentDetailResultMap">
+        SELECT * FROM tb_risk_assessment_detail WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_risk_assessment_detail (
+            risk_id, activity_process_id, risk_idx, major_category, detail_action, risk_4m,
+            danger, expected_disaster, target, current_safety_measures,
+            possibility_grade, result_grade, risk_score, risk_grade, is_registered,
+            reduction_measures,
+            improved_possibility_grade, improved_result_grade,
+            improved_risk_score, improved_risk_grade,
+            created_at
+        ) VALUES (
+            #{riskId}, #{activityProcessId}, #{riskIdx}, #{majorCategory}, #{detailAction}, #{risk4M},
+            #{danger}, #{expectedDisaster}, #{target}, #{currentSafetyMeasures},
+            #{possibilityGrade}, #{resultGrade}, #{riskScore}, #{riskGrade}, #{isRegistered},
+            #{reductionMeasures},
+            #{improvedPossibilityGrade}, #{improvedResultGrade},
+            #{improvedRiskScore}, #{improvedRiskGrade},
+            GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_risk_assessment_detail
+        SET activity_process_id = #{activityProcessId},
+            risk_idx = #{riskIdx},
+            major_category = #{majorCategory},
+            detail_action = #{detailAction},
+            risk_4m = #{risk4M},
+            danger = #{danger},
+            expected_disaster = #{expectedDisaster},
+            target = #{target},
+            current_safety_measures = #{currentSafetyMeasures},
+            possibility_grade = #{possibilityGrade},
+            result_grade = #{resultGrade},
+            risk_score = #{riskScore},
+            risk_grade = #{riskGrade},
+            is_registered = #{isRegistered},
+            reduction_measures = #{reductionMeasures},
+            improved_possibility_grade = #{improvedPossibilityGrade},
+            improved_result_grade = #{improvedResultGrade},
+            improved_risk_score = #{improvedRiskScore},
+            improved_risk_grade = #{improvedRiskGrade}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_risk_assessment_detail WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByRiskId">
+        DELETE FROM tb_risk_assessment_detail WHERE risk_id = #{riskId}
+    </delete>
+
+</mapper>

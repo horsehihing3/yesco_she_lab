@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EhsMessageMapper">
+
+    <resultMap id="EhsMessageResultMap" type="com.smartehs.model.EhsMessage">
+        <id property="id" column="id"/>
+        <result property="messageId" column="message_id"/>
+        <result property="title" column="title"/>
+        <result property="titleEn" column="title_en"/>
+        <result property="titleZh" column="title_zh"/>
+        <result property="category" column="category"/>
+        <result property="subCategory" column="sub_category"/>
+        <result property="recipient" column="recipient"/>
+        <result property="recipientGroup" column="recipient_group"/>
+        <result property="referrer" column="referrer"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorRole" column="author_role"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorCompany" column="author_company"/>
+        <result property="views" column="views"/>
+        <result property="sendDate" column="send_date"/>
+        <result property="detail" column="detail"/>
+        <result property="detailEn" column="detail_en"/>
+        <result property="detailZh" column="detail_zh"/>
+        <result property="entireOrNot" column="entire_or_not"/>
+        <result property="isExist" column="is_exist"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="EhsMessageResultMap">
+        SELECT * FROM tb_ehs_message ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="EhsMessageResultMap">
+        SELECT * FROM tb_ehs_message
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_message
+    </select>
+
+    <select id="findById" resultMap="EhsMessageResultMap">
+        SELECT * FROM tb_ehs_message WHERE id = #{id}
+    </select>
+
+    <select id="findByMessageId" resultMap="EhsMessageResultMap">
+        SELECT * FROM tb_ehs_message WHERE message_id = #{messageId}
+    </select>
+
+    <select id="findByTitleContaining" resultMap="EhsMessageResultMap">
+        SELECT * FROM tb_ehs_message
+        WHERE title LIKE '%' + #{title} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_message
+        WHERE title LIKE '%' + #{title} + '%'
+    </select>
+
+    <select id="findByCategory" resultMap="EhsMessageResultMap">
+        SELECT * FROM tb_ehs_message
+        WHERE category = #{category}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByCategory" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_message WHERE category = #{category}
+    </select>
+
+    <update id="incrementViews">
+        UPDATE tb_ehs_message SET views = views + 1 WHERE id = #{id}
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_message (message_id, title, title_en, title_zh, category, sub_category, recipient, recipient_group, referrer, author_name, author_role, author_email, author_dept, author_company, views, send_date, detail, detail_en, detail_zh, entire_or_not, is_exist, created_at, modified_at)
+        VALUES (#{messageId}, #{title}, #{titleEn}, #{titleZh}, #{category}, #{subCategory}, #{recipient}, #{recipientGroup}, #{referrer}, #{authorName}, #{authorRole}, #{authorEmail}, #{authorDept}, #{authorCompany}, #{views}, #{sendDate,jdbcType=TIMESTAMP}, #{detail}, #{detailEn}, #{detailZh}, #{entireOrNot,jdbcType=BIT}, #{isExist,jdbcType=BIT}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ehs_message
+        SET title = #{title},
+            title_en = #{titleEn},
+            title_zh = #{titleZh},
+            category = #{category},
+            sub_category = #{subCategory},
+            recipient = #{recipient},
+            recipient_group = #{recipientGroup},
+            referrer = #{referrer},
+            author_name = #{authorName},
+            author_role = #{authorRole},
+            author_email = #{authorEmail},
+            author_dept = #{authorDept},
+            author_company = #{authorCompany},
+            views = #{views},
+            send_date = #{sendDate,jdbcType=TIMESTAMP},
+            detail = #{detail},
+            detail_en = #{detailEn},
+            detail_zh = #{detailZh},
+            entire_or_not = #{entireOrNot,jdbcType=BIT},
+            is_exist = #{isExist,jdbcType=BIT},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_ehs_message WHERE id = #{id}
+    </delete>
+
+</mapper>

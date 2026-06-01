@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.WemFactorMapper">
+
+    <resultMap id="WemFactorResultMap" type="com.smartehs.model.WemFactor">
+        <id property="id" column="id"/>
+        <result property="factorName" column="factor_name"/>
+        <result property="factorNameEn" column="factor_name_en"/>
+        <result property="casNumber" column="cas_number"/>
+        <result property="factorType" column="factor_type"/>
+        <result property="twa" column="twa"/>
+        <result property="stel" column="stel"/>
+        <result property="ceilingValue" column="ceiling_value"/>
+        <result property="unit" column="unit"/>
+        <result property="msdsLinked" column="msds_linked"/>
+        <result property="isPermitted" column="is_permitted"/>
+        <result property="usedProcess" column="used_process"/>
+        <result property="remarks" column="remarks"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="WemFactorResultMap">
+        SELECT * FROM tb_wem_factor
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_wem_factor
+    </select>
+
+    <select id="findByFactorType" resultMap="WemFactorResultMap">
+        SELECT * FROM tb_wem_factor
+        WHERE factor_type = #{factorType}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByFactorType" resultType="int">
+        SELECT COUNT(*) FROM tb_wem_factor WHERE factor_type = #{factorType}
+    </select>
+
+    <select id="searchByName" resultMap="WemFactorResultMap">
+        SELECT * FROM tb_wem_factor
+        WHERE factor_name LIKE '%' + #{keyword} + '%' OR factor_name_en LIKE '%' + #{keyword} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByName" resultType="int">
+        SELECT COUNT(*) FROM tb_wem_factor
+        WHERE factor_name LIKE '%' + #{keyword} + '%' OR factor_name_en LIKE '%' + #{keyword} + '%'
+    </select>
+
+    <select id="findById" resultMap="WemFactorResultMap">
+        SELECT * FROM tb_wem_factor WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_wem_factor (factor_name, factor_name_en, cas_number, factor_type, twa, stel, ceiling_value, unit, msds_linked, is_permitted, used_process, remarks, created_at, modified_at)
+        VALUES (#{factorName}, #{factorNameEn}, #{casNumber}, #{factorType}, #{twa}, #{stel}, #{ceilingValue}, #{unit}, #{msdsLinked}, #{isPermitted}, #{usedProcess}, #{remarks}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_wem_factor
+        SET factor_name = #{factorName},
+            factor_name_en = #{factorNameEn},
+            cas_number = #{casNumber},
+            factor_type = #{factorType},
+            twa = #{twa},
+            stel = #{stel},
+            ceiling_value = #{ceilingValue},
+            unit = #{unit},
+            msds_linked = #{msdsLinked},
+            is_permitted = #{isPermitted},
+            used_process = #{usedProcess},
+            remarks = #{remarks},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_wem_factor WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,32 @@
+# .claudeignore
+# Claude Code가 컨텍스트 탐색 시 제외할 파일/폴더
+
+# 빌드 산출물
+frontend/dist/
+frontend/node_modules/
+backend/build/
+backend/.gradle/
+
+# 업로드 파일 (바이너리)
+backend/uploads/
+
+# DB 마이그레이션 (191개 — 필요 시 직접 지정해서 읽을 것)
+backend/src/main/resources/db/
+
+# 로그
+*.log
+logs/
+
+# IDE 설정
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 환경변수 (보안)
+.env
+.env.*
+application-local.yml

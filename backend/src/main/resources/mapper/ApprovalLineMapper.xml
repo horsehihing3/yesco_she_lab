@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ApprovalLineMapper">
+
+    <resultMap id="ApprovalLineResultMap" type="com.smartehs.model.ApprovalLine">
+        <id property="id" column="id"/>
+        <result property="approvalItemCode" column="approval_item_code"/>
+        <result property="deptCode" column="dept_code"/>
+        <result property="lineOrder" column="line_order"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="approverPosition" column="approver_position"/>
+        <result property="approverEmail" column="approver_email"/>
+        <result property="approverPhone" column="approver_phone"/>
+        <result property="approverDept" column="approver_dept"/>
+        <result property="hasFinalAuthority" column="has_final_authority"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByApprovalItemCodeAndDeptCode" resultMap="ApprovalLineResultMap">
+        SELECT * FROM tb_approval_line
+        WHERE approval_item_code = #{approvalItemCode}
+          AND dept_code = #{deptCode}
+        ORDER BY line_order ASC
+    </select>
+
+    <select id="findById" resultMap="ApprovalLineResultMap">
+        SELECT * FROM tb_approval_line WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_approval_line (approval_item_code, dept_code, line_order, approver_name, approver_position, approver_email, approver_phone, approver_dept, has_final_authority, created_at, modified_at)
+        VALUES (#{approvalItemCode}, #{deptCode}, #{lineOrder}, #{approverName}, #{approverPosition}, #{approverEmail}, #{approverPhone}, #{approverDept}, #{hasFinalAuthority}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_approval_line
+        SET approval_item_code = #{approvalItemCode},
+            dept_code = #{deptCode},
+            line_order = #{lineOrder},
+            approver_name = #{approverName},
+            approver_position = #{approverPosition},
+            approver_email = #{approverEmail},
+            approver_phone = #{approverPhone},
+            approver_dept = #{approverDept},
+            has_final_authority = #{hasFinalAuthority},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_approval_line WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByApprovalItemCodeAndDeptCode">
+        DELETE FROM tb_approval_line
+        WHERE approval_item_code = #{approvalItemCode}
+          AND dept_code = #{deptCode}
+    </delete>
+
+</mapper>

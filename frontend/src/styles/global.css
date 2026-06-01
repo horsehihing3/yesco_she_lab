@@ -1,0 +1,290 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Custom Scrollbar - Light Mode */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.7);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+/* Dark Mode Scrollbar */
+body[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(113, 113, 122, 0.6);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+body[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(161, 161, 170, 0.8);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+body[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: rgba(39, 39, 42, 0.3);
+}
+
+body[data-theme="dark"] {
+  scrollbar-color: rgba(113, 113, 122, 0.6) rgba(39, 39, 42, 0.3);
+}
+
+/* Light Mode explicit (optional, for clarity) */
+body[data-theme="light"] ::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.5);
+}
+
+body[data-theme="light"] {
+  scrollbar-color: rgba(156, 163, 175, 0.5) rgba(241, 245, 249, 0.5);
+}
+
+/* ===== Handsontable Dark Mode ===== */
+body[data-theme="dark"] .ht-theme-main-dark .ht_master .htCore th {
+  background-color: #2a2a2a !important;
+  color: #ccc !important;
+  border-color: #444 !important;
+}
+body[data-theme="dark"] .ht-theme-main-dark .ht_master .htCore td {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+body[data-theme="dark"] .ht-theme-main-dark .ht_master .htCore .ht__highlight td {
+  background-color: #252525 !important;
+}
+body[data-theme="dark"] .ht-theme-main-dark .ht_master .htCore .ht__active_highlight td {
+  background-color: rgba(37, 99, 235, 0.2) !important;
+}
+body[data-theme="dark"] .ht-theme-main-dark .handsontableInput,
+body[data-theme="dark"] .ht-theme-main-dark .handsontableInputHolder textarea {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+}
+body[data-theme="dark"] .htContextMenu .ht_master .htCore td {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border: none !important;
+}
+body[data-theme="dark"] .htContextMenu .ht_master .htCore td:hover,
+body[data-theme="dark"] .htContextMenu .ht_master .htCore .current td {
+  background-color: #444 !important;
+  color: #fff !important;
+}
+body[data-theme="dark"] .htContextMenu .ht_master .htCore .htSeparator td {
+  background-color: #333 !important;
+}
+body[data-theme="dark"] .htContextMenu .ht_master .htCore .htDisabled td {
+  color: #666 !important;
+}
+body[data-theme="dark"] .htContextMenu {
+  border-color: #444 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
+}
+body[data-theme="dark"] .htContextMenu .htSubmenu::after {
+  color: #e0e0e0 !important;
+}
+
+/* ===== Print Styles - A4 Optimized ===== */
+@media print {
+  /* Hide non-print elements */
+  .no-print,
+  .MuiTabs-root,
+  .MuiDrawer-root,
+  .MuiAppBar-root,
+  aside,
+  header,
+  nav {
+    display: none !important;
+  }
+
+  /* Page setup - A4 */
+  @page {
+    size: A4;
+    margin: 15mm 12mm;
+  }
+
+  /* Reset body */
+  html, body {
+    width: 210mm;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11px;
+    line-height: 1.4;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Layout 컨테이너의 100vh / overflow 제한을 해제 — 모든 페이지 출력 보장 */
+  html, body, #root, #root > * {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  main, main > * {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* 스크롤바 자체를 인쇄 영역에서 숨김 */
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  /* Report area full width */
+  #report-printable-area {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Force ALL elements to white bg / black text */
+  *, *::before, *::after {
+    background-color: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Remove MUI Paper elevation/border */
+  .MuiPaper-root {
+    box-shadow: none !important;
+    border: none !important;
+    background: #fff !important;
+  }
+
+  /* Table styling for print */
+  .MuiTableCell-root {
+    color: #000 !important;
+    background-color: #fff !important;
+    border-color: #999 !important;
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+    line-height: 1.3 !important;
+  }
+
+  .MuiTableCell-head {
+    background-color: #f5f5f5 !important;
+    font-weight: 700 !important;
+    font-size: 10px !important;
+    color: #000 !important;
+  }
+
+  .MuiTable-root {
+    border-collapse: collapse !important;
+  }
+
+  .MuiTableContainer-root {
+    overflow: visible !important;
+  }
+
+  /* Typography adjustments */
+  .MuiTypography-h5 {
+    font-size: 18px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .MuiTypography-subtitle1 {
+    font-size: 13px !important;
+    margin-top: 12px !important;
+    margin-bottom: 6px !important;
+    border-bottom: 2px solid #333;
+    padding-bottom: 3px;
+  }
+
+  .MuiTypography-body2 {
+    font-size: 10px !important;
+  }
+
+  /* Report header - compact */
+  #report-printable-area > div:first-child {
+    margin-bottom: 16px !important;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  /* Report footer */
+  #report-printable-area > div:last-child {
+    margin-top: 20px !important;
+    padding-top: 8px !important;
+    border-top: 1px solid #999 !important;
+  }
+
+  /* Chip/Badge in print */
+  .MuiChip-root {
+    border: 1px solid #999 !important;
+    background: transparent !important;
+    color: #000 !important;
+    font-size: 9px !important;
+    height: 20px !important;
+  }
+
+  /* Avoid page break inside table rows */
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Summary table header cells */
+  .MuiTableCell-root[style*="background"] {
+    background-color: #f0f0f0 !important;
+  }
+}

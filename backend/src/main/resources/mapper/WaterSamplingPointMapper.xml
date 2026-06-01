@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.WaterSamplingPointMapper">
+
+    <resultMap id="WaterSamplingPointResultMap" type="com.smartehs.model.WaterSamplingPoint">
+        <id property="id" column="id"/>
+        <result property="workplaceId" column="workplace_id"/>
+        <result property="pointName" column="point_name"/>
+        <result property="location" column="location"/>
+        <result property="remark" column="remark"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="WaterSamplingPointResultMap">
+        SELECT * FROM tb_water_sampling_point
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_water_sampling_point
+    </select>
+
+    <select id="findById" resultMap="WaterSamplingPointResultMap">
+        SELECT * FROM tb_water_sampling_point WHERE id = #{id}
+    </select>
+
+    <select id="findByNameContaining" resultMap="WaterSamplingPointResultMap">
+        SELECT * FROM tb_water_sampling_point
+        WHERE point_name LIKE '%' + #{keyword} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByNameContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_water_sampling_point
+        WHERE point_name LIKE '%' + #{keyword} + '%'
+    </select>
+
+    <select id="findByWorkplaceId" resultMap="WaterSamplingPointResultMap">
+        SELECT * FROM tb_water_sampling_point
+        WHERE workplace_id = #{workplaceId}
+        ORDER BY created_at DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_water_sampling_point (workplace_id, point_name, location, remark, reg_user, created_at, modified_at)
+        VALUES (#{workplaceId}, #{pointName}, #{location}, #{remark}, #{regUser}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_water_sampling_point
+        SET workplace_id = #{workplaceId},
+            point_name = #{pointName},
+            location = #{location},
+            remark = #{remark},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_water_sampling_point WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.FileMetadataMapper">
+
+    <resultMap id="FileMetadataResultMap" type="com.smartehs.model.FileMetadata">
+        <id property="id" column="id"/>
+        <result property="originalFilename" column="original_filename"/>
+        <result property="storedFilename" column="stored_filename"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="contentType" column="content_type"/>
+        <result property="entityType" column="entity_type"/>
+        <result property="entityId" column="entity_id"/>
+        <result property="uploadedBy" column="uploaded_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="language" column="language"/>
+        <result property="parentFileId" column="parent_file_id"/>
+        <result property="translationStatus" column="translation_status"/>
+        <result property="displayOrder" column="display_order"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="FileMetadataResultMap">
+        SELECT * FROM tb_file_metadata ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="FileMetadataResultMap">
+        SELECT * FROM tb_file_metadata WHERE id = #{id}
+    </select>
+
+    <select id="findByEntityTypeAndEntityId" resultMap="FileMetadataResultMap">
+        SELECT * FROM tb_file_metadata
+        WHERE entity_type = #{entityType} AND entity_id = #{entityId}
+        ORDER BY ISNULL(display_order, 2147483647) ASC, created_at ASC
+    </select>
+
+    <select id="findByEntityTypeAndEntityIdOrderByCreatedAtDesc" resultMap="FileMetadataResultMap">
+        SELECT * FROM tb_file_metadata
+        WHERE entity_type = #{entityType} AND entity_id = #{entityId}
+        ORDER BY created_at DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_file_metadata (original_filename, stored_filename, file_path, file_size, content_type, entity_type, entity_id, uploaded_by, created_at, language, parent_file_id, translation_status)
+        VALUES (#{originalFilename}, #{storedFilename}, #{filePath}, #{fileSize}, #{contentType}, #{entityType}, #{entityId}, #{uploadedBy}, GETDATE(), #{language}, #{parentFileId}, #{translationStatus})
+    </insert>
+
+    <update id="update">
+        UPDATE tb_file_metadata
+        SET original_filename = #{originalFilename},
+            stored_filename = #{storedFilename},
+            file_path = #{filePath},
+            file_size = #{fileSize},
+            content_type = #{contentType},
+            entity_type = #{entityType},
+            entity_id = #{entityId},
+            uploaded_by = #{uploadedBy},
+            display_order = #{displayOrder}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateDisplayOrder">
+        UPDATE tb_file_metadata
+        SET display_order = #{displayOrder}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_file_metadata WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByEntityTypeAndEntityId">
+        DELETE FROM tb_file_metadata WHERE entity_type = #{entityType} AND entity_id = #{entityId}
+    </delete>
+
+    <select id="findByParentFileId" resultMap="FileMetadataResultMap">
+        SELECT * FROM tb_file_metadata
+        WHERE parent_file_id = #{parentFileId}
+        ORDER BY language
+    </select>
+
+    <select id="findByParentFileIdAndLanguage" resultMap="FileMetadataResultMap">
+        SELECT * FROM tb_file_metadata
+        WHERE parent_file_id = #{parentFileId} AND language = #{language}
+    </select>
+
+    <update id="updateTranslationStatus">
+        UPDATE tb_file_metadata
+        SET translation_status = #{translationStatus}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ContractorPlanMapper">
+
+    <resultMap id="ContractorPlanResultMap" type="com.smartehs.model.ContractorPlan">
+        <id property="id" column="id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="title" column="title"/>
+        <result property="workType" column="work_type"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="workLocation" column="work_location"/>
+        <result property="workersCount" column="workers_count"/>
+        <result property="workStartDate" column="work_start_date"/>
+        <result property="workEndDate" column="work_end_date"/>
+        <result property="workDescription" column="work_description"/>
+        <result property="safetyMeasures" column="safety_measures"/>
+        <result property="requiredPpe" column="required_ppe"/>
+        <result property="hazardFactors" column="hazard_factors"/>
+        <result property="emergencyContact" column="emergency_contact"/>
+        <result property="notes" column="notes"/>
+        <result property="checklistTemplateId" column="checklist_template_id"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="planApproverUserId" column="plan_approver_user_id"/>
+        <result property="planApproverTeam" column="plan_approver_team"/>
+        <result property="planApproverPosition" column="plan_approver_position"/>
+        <result property="planApproverName" column="plan_approver_name"/>
+        <result property="planApprovedAt" column="plan_approved_at"/>
+        <result property="planApprovedBy" column="plan_approved_by"/>
+        <result property="completionApproverUserId" column="completion_approver_user_id"/>
+        <result property="completionApproverTeam" column="completion_approver_team"/>
+        <result property="completionApproverPosition" column="completion_approver_position"/>
+        <result property="completionApproverName" column="completion_approver_name"/>
+        <result property="completionApprovedAt" column="completion_approved_at"/>
+        <result property="completionApprovedBy" column="completion_approved_by"/>
+        <result property="repeatType" column="repeat_type"/>
+        <result property="repeatInterval" column="repeat_interval"/>
+        <result property="repeatDays" column="repeat_days"/>
+        <result property="status" column="status"/>
+        <result property="approvedBy" column="approved_by"/>
+        <result property="approvedAt" column="approved_at"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="totalChecklist" column="total_checklist"/>
+        <result property="completedChecklist" column="completed_checklist"/>
+        <result property="findingCount" column="finding_count"/>
+        <result property="modifiedBy" column="modified_by"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="editingUserId" column="editing_user_id"/>
+        <result property="editingUserName" column="editing_user_name"/>
+        <result property="editingStartedAt" column="editing_started_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="ContractorPlanResultMap">
+        SELECT * FROM tb_contractor_plan
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_contractor_plan WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="ContractorPlanResultMap">
+        SELECT * FROM tb_contractor_plan WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByStatus" resultMap="ContractorPlanResultMap">
+        SELECT * FROM tb_contractor_plan
+        WHERE status = #{status} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_contractor_plan WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="countByPlanIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_contractor_plan WHERE plan_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_contractor_plan (
+            plan_id, title, work_type, risk_level, work_location,
+            workers_count, work_start_date, work_end_date, work_description, safety_measures,
+            required_ppe, hazard_factors, emergency_contact, notes,
+            checklist_template_id, approver_name,
+            plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
+            completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+            repeat_type, repeat_interval, repeat_days,
+            status, total_checklist, completed_checklist, finding_count,
+            modified_by, deleted, created_at, modified_at
+        ) VALUES (
+            #{planId}, #{title}, #{workType}, #{riskLevel}, #{workLocation},
+            #{workersCount}, #{workStartDate,jdbcType=DATE}, #{workEndDate,jdbcType=DATE}, #{workDescription}, #{safetyMeasures},
+            #{requiredPpe}, #{hazardFactors}, #{emergencyContact}, #{notes},
+            #{checklistTemplateId}, #{approverName},
+            #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
+            #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+            #{repeatType}, #{repeatInterval}, #{repeatDays},
+            #{status}, 0, 0, 0,
+            #{modifiedBy}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_contractor_plan SET
+            title = #{title}, work_type = #{workType}, risk_level = #{riskLevel},
+            work_location = #{workLocation}, workers_count = #{workersCount},
+            work_start_date = #{workStartDate,jdbcType=DATE}, work_end_date = #{workEndDate,jdbcType=DATE},
+            work_description = #{workDescription}, safety_measures = #{safetyMeasures},
+            required_ppe = #{requiredPpe}, hazard_factors = #{hazardFactors},
+            emergency_contact = #{emergencyContact}, notes = #{notes},
+            checklist_template_id = #{checklistTemplateId}, approver_name = #{approverName},
+            plan_approver_user_id  = #{planApproverUserId,jdbcType=BIGINT},
+            plan_approver_team     = #{planApproverTeam},
+            plan_approver_position = #{planApproverPosition},
+            plan_approver_name     = #{planApproverName},
+            completion_approver_user_id  = #{completionApproverUserId,jdbcType=BIGINT},
+            completion_approver_team     = #{completionApproverTeam},
+            completion_approver_position = #{completionApproverPosition},
+            completion_approver_name     = #{completionApproverName},
+            repeat_type = #{repeatType}, repeat_interval = #{repeatInterval}, repeat_days = #{repeatDays},
+            status = COALESCE(#{status}, status, 'DRAFT'),
+            modified_by = #{modifiedBy}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="approvePlan">
+        UPDATE tb_contractor_plan SET approved_by = #{approvedBy}, approved_at = GETDATE(), status = 'APPROVED', modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="transition">
+        UPDATE tb_contractor_plan
+        SET status = #{status},
+            plan_approved_at      = CASE WHEN #{stage} = 'PLAN'       AND #{approved} = 1 THEN GETDATE() ELSE plan_approved_at END,
+            plan_approved_by      = CASE WHEN #{stage} = 'PLAN'       AND #{approved} = 1 THEN #{approvedBy} ELSE plan_approved_by END,
+            completion_approved_at = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN GETDATE() ELSE completion_approved_at END,
+            completion_approved_by = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN #{approvedBy} ELSE completion_approved_by END,
+            approved_by  = CASE WHEN #{stage} = 'PLAN'       AND #{approved} = 1 THEN #{approvedBy} ELSE approved_by END,
+            approved_at  = CASE WHEN #{stage} = 'PLAN'       AND #{approved} = 1 THEN GETDATE()    ELSE approved_at END,
+            reject_reason = CASE WHEN #{rejectReason} IS NOT NULL THEN #{rejectReason} ELSE reject_reason END,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_contractor_plan SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="updateChecklistCounts">
+        UPDATE tb_contractor_plan SET
+            total_checklist = #{totalChecklist},
+            completed_checklist = #{completedChecklist},
+            finding_count = #{findingCount},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByChecklistTemplateId" resultMap="ContractorPlanResultMap">
+        SELECT * FROM tb_contractor_plan WHERE checklist_template_id = #{checklistTemplateId} AND deleted = 0
+    </select>
+
+    <update id="acquireEditLock">
+        UPDATE tb_contractor_plan
+        SET editing_user_id = #{userId},
+            editing_user_name = #{userName},
+            editing_started_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="releaseEditLock">
+        UPDATE tb_contractor_plan
+        SET editing_user_id = NULL,
+            editing_user_name = NULL,
+            editing_started_at = NULL
+        WHERE id = #{id} AND (editing_user_id = #{userId} OR editing_user_id IS NULL)
+    </update>
+
+</mapper>

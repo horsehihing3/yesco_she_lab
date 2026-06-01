@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.QnaPostMapper">
+
+    <resultMap id="QnaPostResultMap" type="com.smartehs.model.QnaPost">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="category" column="category"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="views" column="views"/>
+        <result property="isAnswered" column="is_answered"/>
+        <result property="answer" column="answer"/>
+        <result property="answerAuthorName" column="answer_author_name"/>
+        <result property="answerAuthorDept" column="answer_author_dept"/>
+        <result property="answerDate" column="answer_date"/>
+        <result property="isPublic" column="is_public"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="QnaPostResultMap">
+        SELECT * FROM tb_qna_post
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_qna_post
+    </select>
+
+    <select id="findById" resultMap="QnaPostResultMap">
+        SELECT * FROM tb_qna_post WHERE id = #{id}
+    </select>
+
+    <select id="findByTitleContaining" resultMap="QnaPostResultMap">
+        SELECT * FROM tb_qna_post
+        WHERE title LIKE '%' + #{title} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_qna_post
+        WHERE title LIKE '%' + #{title} + '%'
+    </select>
+
+    <select id="findByCategory" resultMap="QnaPostResultMap">
+        SELECT * FROM tb_qna_post
+        WHERE category = #{category}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByCategory" resultType="int">
+        SELECT COUNT(*) FROM tb_qna_post WHERE category = #{category}
+    </select>
+
+    <update id="incrementViews">
+        UPDATE tb_qna_post SET views = views + 1 WHERE id = #{id}
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_qna_post (title, content, category, author_name, author_dept, author_email, views, is_answered, is_public, created_at, modified_at)
+        VALUES (#{title}, #{content}, #{category}, #{authorName}, #{authorDept}, #{authorEmail}, 0, 0, #{isPublic,jdbcType=BIT}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_qna_post
+        SET title = #{title},
+            content = #{content},
+            category = #{category},
+            is_public = #{isPublic,jdbcType=BIT},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateAnswer">
+        UPDATE tb_qna_post
+        SET answer = #{answer},
+            answer_author_name = #{answerAuthorName},
+            answer_author_dept = #{answerAuthorDept},
+            answer_date = GETDATE(),
+            is_answered = 1,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_qna_post WHERE id = #{id}
+    </delete>
+
+</mapper>

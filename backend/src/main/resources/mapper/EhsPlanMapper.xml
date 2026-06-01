@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EhsPlanMapper">
+
+    <resultMap id="EhsPlanResultMap" type="com.smartehs.model.EhsPlan">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="titleEn" column="title_en"/>
+        <result property="titleZh" column="title_zh"/>
+        <result property="planDetail" column="plan_detail"/>
+        <result property="planDetailEn" column="plan_detail_en"/>
+        <result property="planDetailZh" column="plan_detail_zh"/>
+        <result property="planCompany" column="plan_company"/>
+        <result property="planCategory" column="plan_category"/>
+        <result property="planDate" column="plan_date"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="isAutoRegistration" column="is_auto_registration"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="recipients" column="recipients"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="EhsPlanResultMap">
+        SELECT * FROM tb_ehs_plan ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="EhsPlanResultMap">
+        SELECT * FROM tb_ehs_plan
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_plan
+    </select>
+
+    <select id="findById" resultMap="EhsPlanResultMap">
+        SELECT * FROM tb_ehs_plan WHERE id = #{id}
+    </select>
+
+    <select id="findByTitleContaining" resultMap="EhsPlanResultMap">
+        SELECT * FROM tb_ehs_plan
+        WHERE title LIKE '%' + #{title} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_plan
+        WHERE title LIKE '%' + #{title} + '%'
+    </select>
+
+    <select id="findByPlanCategory" resultMap="EhsPlanResultMap">
+        SELECT * FROM tb_ehs_plan
+        WHERE plan_category = #{planCategory}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByPlanCategory" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_plan
+        WHERE plan_category = #{planCategory}
+    </select>
+
+    <select id="findByDateRange" resultMap="EhsPlanResultMap">
+        SELECT * FROM tb_ehs_plan
+        WHERE plan_date >= #{startDate} AND plan_date &lt;= #{endDate}
+        ORDER BY plan_date ASC
+    </select>
+
+    <select id="findOverlappingPlans" resultMap="EhsPlanResultMap">
+        SELECT * FROM tb_ehs_plan
+        WHERE plan_date &lt;= #{endDate} AND plan_end_date >= #{startDate}
+        ORDER BY plan_date ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_plan (title, title_en, title_zh, plan_detail, plan_detail_en, plan_detail_zh, plan_company, plan_category, plan_date, plan_end_date, is_auto_registration, author_email, recipients, created_at, modified_at)
+        VALUES (#{title}, #{titleEn}, #{titleZh}, #{planDetail}, #{planDetailEn}, #{planDetailZh}, #{planCompany}, #{planCategory}, #{planDate}, #{planEndDate}, #{isAutoRegistration}, #{authorEmail}, #{recipients}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ehs_plan
+        SET title = #{title},
+            title_en = #{titleEn},
+            title_zh = #{titleZh},
+            plan_detail = #{planDetail},
+            plan_detail_en = #{planDetailEn},
+            plan_detail_zh = #{planDetailZh},
+            plan_company = #{planCompany},
+            plan_category = #{planCategory},
+            plan_date = #{planDate},
+            plan_end_date = #{planEndDate},
+            is_auto_registration = #{isAutoRegistration},
+            author_email = #{authorEmail},
+            recipients = #{recipients},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_ehs_plan WHERE id = #{id}
+    </delete>
+
+</mapper>

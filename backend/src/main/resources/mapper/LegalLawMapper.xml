@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.LegalLawMapper">
+
+    <resultMap id="LegalLawResultMap" type="com.smartehs.model.LegalLaw">
+        <id property="id" column="id"/>
+        <result property="category" column="category"/>
+        <result property="lawName" column="law_name"/>
+        <result property="clause" column="clause"/>
+        <result property="amendType" column="amend_type"/>
+        <result property="promulgateDate" column="promulgate_date"/>
+        <result property="enforceDate" column="enforce_date"/>
+        <result property="reviewer" column="reviewer"/>
+        <result property="reviewDueDate" column="review_due_date"/>
+        <result property="reviewStatus" column="review_status"/>
+        <result property="applyYn" column="apply_yn"/>
+        <result property="followUpAction" column="follow_up_action"/>
+        <result property="amendSummary" column="amend_summary"/>
+        <result property="urgent" column="urgent"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="LegalLawResultMap">
+        SELECT * FROM tb_legal_law
+        WHERE deleted = 0
+        ORDER BY CASE WHEN urgent = 1 THEN 0 ELSE 1 END, enforce_date ASC, id DESC
+    </select>
+
+    <select id="findById" resultMap="LegalLawResultMap">
+        SELECT * FROM tb_legal_law WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_law WHERE deleted = 0
+    </select>
+
+    <select id="countByReviewStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_law WHERE deleted = 0 AND review_status = #{status}
+    </select>
+
+    <select id="countByApplyYn" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_law WHERE deleted = 0 AND apply_yn = #{apply}
+    </select>
+
+    <select id="countUrgent" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_law WHERE deleted = 0 AND urgent = 1
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_legal_law (
+            category, law_name, clause, amend_type, promulgate_date, enforce_date,
+            reviewer, review_due_date, review_status, apply_yn, follow_up_action,
+            amend_summary, urgent, deleted, created_at, modified_at
+        ) VALUES (
+            #{category}, #{lawName}, #{clause}, #{amendType},
+            #{promulgateDate,jdbcType=DATE}, #{enforceDate,jdbcType=DATE},
+            #{reviewer}, #{reviewDueDate,jdbcType=DATE},
+            #{reviewStatus}, #{applyYn}, #{followUpAction},
+            #{amendSummary},
+            <choose><when test="urgent != null">#{urgent}</when><otherwise>0</otherwise></choose>,
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_legal_law SET
+            category = #{category},
+            law_name = #{lawName},
+            clause = #{clause},
+            amend_type = #{amendType},
+            promulgate_date = #{promulgateDate,jdbcType=DATE},
+            enforce_date = #{enforceDate,jdbcType=DATE},
+            reviewer = #{reviewer},
+            review_due_date = #{reviewDueDate,jdbcType=DATE},
+            review_status = #{reviewStatus},
+            apply_yn = #{applyYn},
+            follow_up_action = #{followUpAction},
+            amend_summary = #{amendSummary},
+            urgent = <choose><when test="urgent != null">#{urgent}</when><otherwise>0</otherwise></choose>,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_legal_law SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

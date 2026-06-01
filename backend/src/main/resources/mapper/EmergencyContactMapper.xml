@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EmergencyContactMapper">
+
+    <resultMap id="EmergencyContactResultMap" type="com.smartehs.model.EmergencyContact">
+        <id property="id" column="id"/>
+        <result property="contactId" column="contact_id"/>
+        <result property="organization" column="organization"/>
+        <result property="contactName" column="contact_name"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="email" column="email"/>
+        <result property="contactType" column="contact_type"/>
+        <result property="isEmergency" column="is_emergency"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="EmergencyContactResultMap">
+        SELECT * FROM tb_emergency_contact
+        WHERE deleted = 0
+        ORDER BY sort_order ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_contact WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="EmergencyContactResultMap">
+        SELECT * FROM tb_emergency_contact WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByContactType" resultMap="EmergencyContactResultMap">
+        SELECT * FROM tb_emergency_contact
+        WHERE contact_type = #{contactType} AND deleted = 0
+        ORDER BY sort_order ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByContactType" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_contact WHERE contact_type = #{contactType} AND deleted = 0
+    </select>
+
+    <select id="countByContactIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_emergency_contact WHERE contact_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_emergency_contact (
+            contact_id, organization, contact_name, phone_number, email,
+            contact_type, is_emergency, sort_order,
+            notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{contactId}, #{organization}, #{contactName}, #{phoneNumber}, #{email},
+            #{contactType}, #{isEmergency}, #{sortOrder},
+            #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_emergency_contact SET
+            organization = #{organization}, contact_name = #{contactName},
+            phone_number = #{phoneNumber}, email = #{email},
+            contact_type = #{contactType}, is_emergency = #{isEmergency},
+            sort_order = #{sortOrder}, notes = #{notes},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_emergency_contact SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

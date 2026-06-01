@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.PpeEquipmentMapper">
+
+    <resultMap id="PpeEquipmentResultMap" type="com.smartehs.model.PpeEquipment">
+        <id property="id" column="id"/>
+        <result property="equipmentId" column="equipment_id"/>
+        <result property="name" column="name"/>
+        <result property="nameEn" column="name_en"/>
+        <result property="nameZh" column="name_zh"/>
+        <result property="category" column="category"/>
+        <result property="categoryEn" column="category_en"/>
+        <result property="categoryZh" column="category_zh"/>
+        <result property="model" column="model"/>
+        <result property="certification" column="certification"/>
+        <result property="stockQuantity" column="stock_quantity"/>
+        <result property="minStock" column="min_stock"/>
+        <result property="wearRate" column="wear_rate"/>
+        <result property="expiryDate" column="expiry_date"/>
+        <result property="inspectCycle" column="inspect_cycle"/>
+        <result property="lastInspectDate" column="last_inspect_date"/>
+        <result property="nextInspectDate" column="next_inspect_date"/>
+        <result property="storageLocation" column="storage_location"/>
+        <result property="department" column="department"/>
+        <result property="status" column="status"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="PpeEquipmentResultMap">
+        SELECT * FROM tb_ppe_equipment
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_equipment WHERE deleted = 0
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="PpeEquipmentResultMap">
+        SELECT * FROM tb_ppe_equipment WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByCategoryAndDeletedFalse" resultMap="PpeEquipmentResultMap">
+        SELECT * FROM tb_ppe_equipment
+        WHERE category = #{category} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByCategoryAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_equipment WHERE category = #{category} AND deleted = 0
+    </select>
+
+    <select id="searchByNameAndDeletedFalse" resultMap="PpeEquipmentResultMap">
+        SELECT * FROM tb_ppe_equipment
+        WHERE (name LIKE '%' + #{name} + '%' OR model LIKE '%' + #{name} + '%') AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearchNameAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_equipment
+        WHERE (name LIKE '%' + #{name} + '%' OR model LIKE '%' + #{name} + '%') AND deleted = 0
+    </select>
+
+    <select id="findByStatusAndDeletedFalse" resultMap="PpeEquipmentResultMap">
+        SELECT * FROM tb_ppe_equipment
+        WHERE status = #{status} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatusAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_equipment WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="countByEquipmentIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_equipment WHERE equipment_id LIKE #{prefix} + '%'
+    </select>
+
+    <select id="countTotalItems" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_equipment WHERE deleted = 0
+    </select>
+
+    <select id="countByStatusEquals" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_equipment WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="getAverageWearRate" resultType="map">
+        SELECT AVG(wear_rate) as avgWearRate FROM tb_ppe_equipment WHERE deleted = 0
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_equipment (
+            equipment_id, name, name_en, name_zh,
+            category, category_en, category_zh,
+            model, certification, stock_quantity, min_stock, wear_rate,
+            expiry_date, inspect_cycle, last_inspect_date, next_inspect_date,
+            storage_location, department, status, notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{equipmentId}, #{name}, #{nameEn}, #{nameZh},
+            #{category}, #{categoryEn}, #{categoryZh},
+            #{model}, #{certification}, #{stockQuantity}, #{minStock}, #{wearRate},
+            #{expiryDate,jdbcType=DATE}, #{inspectCycle}, #{lastInspectDate,jdbcType=DATE}, #{nextInspectDate,jdbcType=DATE},
+            #{storageLocation}, #{department}, #{status}, #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ppe_equipment SET
+            name = #{name}, name_en = #{nameEn}, name_zh = #{nameZh},
+            category = #{category}, category_en = #{categoryEn}, category_zh = #{categoryZh},
+            model = #{model}, certification = #{certification},
+            stock_quantity = #{stockQuantity}, min_stock = #{minStock}, wear_rate = #{wearRate},
+            expiry_date = #{expiryDate,jdbcType=DATE}, inspect_cycle = #{inspectCycle},
+            last_inspect_date = #{lastInspectDate,jdbcType=DATE}, next_inspect_date = #{nextInspectDate,jdbcType=DATE},
+            storage_location = #{storageLocation}, department = #{department},
+            status = #{status}, notes = #{notes}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_equipment SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

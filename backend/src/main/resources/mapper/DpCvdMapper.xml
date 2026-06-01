@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.DpCvdMapper">
+    <resultMap id="R" type="com.smartehs.model.DpCvd">
+        <id property="id" column="id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="department" column="department"/>
+        <result property="age" column="age"/>
+        <result property="gender" column="gender"/>
+        <result property="bmi" column="bmi"/>
+        <result property="bpSys" column="bp_sys"/>
+        <result property="bpDia" column="bp_dia"/>
+        <result property="fastingGlucose" column="fasting_glucose"/>
+        <result property="ldl" column="ldl"/>
+        <result property="hdl" column="hdl"/>
+        <result property="smoking" column="smoking"/>
+        <result property="drinking" column="drinking"/>
+        <result property="exercise" column="exercise"/>
+        <result property="nightShift" column="night_shift"/>
+        <result property="overtime" column="overtime"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="assessmentDate" column="assessment_date"/>
+        <result property="assessor" column="assessor"/>
+        <result property="managementPlan" column="management_plan"/>
+        <result property="nextCheckup" column="next_checkup"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_dp_cvd WHERE deleted = 0 ORDER BY assessment_date DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_dp_cvd WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_dp_cvd WHERE deleted = 0</select>
+    <select id="countByRiskLevel" resultType="int">SELECT COUNT(*) FROM tb_dp_cvd WHERE deleted = 0 AND risk_level = #{riskLevel}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_dp_cvd (worker_name, department, age, gender, bmi, bp_sys, bp_dia,
+            fasting_glucose, ldl, hdl, smoking, drinking, exercise, night_shift, overtime,
+            risk_level, assessment_date, assessor, management_plan, next_checkup, notes,
+            deleted, created_at, modified_at) VALUES (
+            #{workerName}, #{department,jdbcType=NVARCHAR}, #{age,jdbcType=INTEGER}, #{gender,jdbcType=NVARCHAR},
+            #{bmi,jdbcType=DECIMAL}, #{bpSys,jdbcType=INTEGER}, #{bpDia,jdbcType=INTEGER},
+            #{fastingGlucose,jdbcType=INTEGER}, #{ldl,jdbcType=INTEGER}, #{hdl,jdbcType=INTEGER},
+            #{smoking,jdbcType=NVARCHAR}, #{drinking,jdbcType=NVARCHAR}, #{exercise,jdbcType=NVARCHAR},
+            #{nightShift,jdbcType=NVARCHAR}, #{overtime,jdbcType=NVARCHAR},
+            #{riskLevel}, #{assessmentDate,jdbcType=DATE}, #{assessor,jdbcType=NVARCHAR},
+            #{managementPlan,jdbcType=NVARCHAR}, #{nextCheckup,jdbcType=DATE}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_dp_cvd SET worker_name = #{workerName}, department = #{department,jdbcType=NVARCHAR},
+            age = #{age,jdbcType=INTEGER}, gender = #{gender,jdbcType=NVARCHAR},
+            bmi = #{bmi,jdbcType=DECIMAL}, bp_sys = #{bpSys,jdbcType=INTEGER}, bp_dia = #{bpDia,jdbcType=INTEGER},
+            fasting_glucose = #{fastingGlucose,jdbcType=INTEGER}, ldl = #{ldl,jdbcType=INTEGER}, hdl = #{hdl,jdbcType=INTEGER},
+            smoking = #{smoking,jdbcType=NVARCHAR}, drinking = #{drinking,jdbcType=NVARCHAR},
+            exercise = #{exercise,jdbcType=NVARCHAR}, night_shift = #{nightShift,jdbcType=NVARCHAR},
+            overtime = #{overtime,jdbcType=NVARCHAR},
+            risk_level = #{riskLevel}, assessment_date = #{assessmentDate,jdbcType=DATE},
+            assessor = #{assessor,jdbcType=NVARCHAR}, management_plan = #{managementPlan,jdbcType=NVARCHAR},
+            next_checkup = #{nextCheckup,jdbcType=DATE}, notes = #{notes,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_dp_cvd SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

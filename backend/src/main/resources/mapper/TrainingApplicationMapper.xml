@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.TrainingApplicationMapper">
+
+    <resultMap id="ResultMap" type="com.smartehs.model.TrainingApplication">
+        <id property="id" column="id"/>
+        <result property="applicationNo" column="application_no"/>
+        <result property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseDate" column="course_date"/>
+        <result property="applicantName" column="applicant_name"/>
+        <result property="applicantDept" column="applicant_dept"/>
+        <result property="applicantEmpNo" column="applicant_emp_no"/>
+        <result property="applicantPhone" column="applicant_phone"/>
+        <result property="applicantUsername" column="applicant_username"/>
+        <result property="applyDate" column="apply_date"/>
+        <result property="status" column="status"/>
+        <result property="reason" column="reason"/>
+        <result property="mealOption" column="meal_option"/>
+        <result property="transportOption" column="transport_option"/>
+        <result property="approvedBy" column="approved_by"/>
+        <result property="approvedAt" column="approved_at"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="completionDate" column="completion_date"/>
+        <result property="completionScore" column="completion_score"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <sql id="filterWhere">
+        <where>
+            AND deleted = 0
+            <if test="status != null and status != ''">AND status = #{status}</if>
+            <if test="dept != null and dept != ''">AND applicant_dept LIKE '%' + #{dept} + '%'</if>
+            <if test="courseId != null">AND course_id = #{courseId}</if>
+            <if test="username != null and username != ''">AND applicant_username = #{username}</if>
+            <if test="name != null and name != ''">AND applicant_name LIKE '%' + #{name} + '%'</if>
+            <if test="courseName != null and courseName != ''">AND course_name LIKE '%' + #{courseName} + '%'</if>
+            <if test="keyword != null and keyword != ''">
+                AND (applicant_name LIKE '%' + #{keyword} + '%' OR course_name LIKE '%' + #{keyword} + '%' OR applicant_dept LIKE '%' + #{keyword} + '%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="findAllWithPaging" resultMap="ResultMap">
+        SELECT * FROM tb_training_application
+        <include refid="filterWhere"/>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_training_application
+        <include refid="filterWhere"/>
+    </select>
+
+    <select id="findById" resultMap="ResultMap">
+        SELECT * FROM tb_training_application WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countByApplicationNoStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_training_application WHERE application_no LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_training_application
+        (application_no, course_id, course_name, course_date, applicant_name, applicant_dept, applicant_emp_no, applicant_phone, applicant_username,
+         apply_date, status, reason, meal_option, transport_option, deleted, created_at, modified_at)
+        VALUES
+        (#{applicationNo}, #{courseId}, #{courseName}, #{courseDate}, #{applicantName}, #{applicantDept}, #{applicantEmpNo}, #{applicantPhone}, #{applicantUsername},
+         #{applyDate}, #{status}, #{reason}, #{mealOption}, #{transportOption}, 0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_training_application
+        SET applicant_name  = #{applicantName},
+            applicant_dept  = #{applicantDept},
+            applicant_phone = #{applicantPhone},
+            reason          = #{reason},
+            meal_option     = #{mealOption},
+            transport_option= #{transportOption},
+            modified_at     = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE tb_training_application
+        SET status         = #{status},
+            approved_by    = COALESCE(#{approvedBy}, approved_by),
+            approved_at    = CASE WHEN #{status} = 'APPROVED' THEN GETDATE() ELSE approved_at END,
+            reject_reason  = CASE WHEN #{status} = 'REJECTED' THEN #{rejectReason} ELSE reject_reason END,
+            completion_date= CASE WHEN #{status} = 'COMPLETED' THEN #{completionDate} ELSE completion_date END,
+            modified_at    = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE tb_training_application SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </delete>
+
+</mapper>

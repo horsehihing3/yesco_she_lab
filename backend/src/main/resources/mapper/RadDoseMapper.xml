@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.RadDoseMapper">
+    <resultMap id="R" type="com.smartehs.model.RadDose">
+        <id property="id" column="id"/>
+        <result property="workerId" column="worker_id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="dept" column="dept"/>
+        <result property="measureMonth" column="measure_month"/>
+        <result property="dosimeterType" column="dosimeter_type"/>
+        <result property="effectiveDose" column="effective_dose"/>
+        <result property="handDose" column="hand_dose"/>
+        <result property="lensDose" column="lens_dose"/>
+        <result property="measureOrg" column="measure_org"/>
+        <result property="confirmNo" column="confirm_no"/>
+        <result property="note" column="note"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">SELECT * FROM tb_rad_dose WHERE deleted = 0 ORDER BY measure_month DESC, worker_name ASC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_rad_dose WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_rad_dose WHERE deleted = 0</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_rad_dose (worker_id, worker_name, dept, measure_month, dosimeter_type,
+            effective_dose, hand_dose, lens_dose, measure_org, confirm_no, note,
+            deleted, created_at, modified_at) VALUES (
+            #{workerId}, #{workerName}, #{dept}, #{measureMonth}, #{dosimeterType},
+            #{effectiveDose}, #{handDose}, #{lensDose}, #{measureOrg}, #{confirmNo}, #{note},
+            0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_rad_dose SET worker_id = #{workerId}, worker_name = #{workerName}, dept = #{dept},
+            measure_month = #{measureMonth}, dosimeter_type = #{dosimeterType},
+            effective_dose = #{effectiveDose}, hand_dose = #{handDose}, lens_dose = #{lensDose},
+            measure_org = #{measureOrg}, confirm_no = #{confirmNo}, note = #{note},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_rad_dose SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

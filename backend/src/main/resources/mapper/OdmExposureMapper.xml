@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.OdmExposureMapper">
+
+    <resultMap id="OdmExposureResultMap" type="com.smartehs.model.OdmExposure">
+        <id property="id" column="id"/>
+        <result property="employeeName" column="employee_name"/>
+        <result property="employeeNo" column="employee_no"/>
+        <result property="department" column="department"/>
+        <result property="hazardFactor" column="hazard_factor"/>
+        <result property="exposureLevel" column="exposure_level"/>
+        <result property="exposureStandard" column="exposure_standard"/>
+        <result property="exposurePeriod" column="exposure_period"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="exceedCount" column="exceed_count"/>
+        <result property="exposedWorkers" column="exposed_workers"/>
+        <result property="measurementDate" column="measurement_date"/>
+        <result property="remarks" column="remarks"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="OdmExposureResultMap">
+        SELECT * FROM tb_odm_exposure
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_odm_exposure
+    </select>
+
+    <select id="findByRiskLevel" resultMap="OdmExposureResultMap">
+        SELECT * FROM tb_odm_exposure
+        WHERE risk_level = #{riskLevel}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByRiskLevel" resultType="int">
+        SELECT COUNT(*) FROM tb_odm_exposure WHERE risk_level = #{riskLevel}
+    </select>
+
+    <select id="findById" resultMap="OdmExposureResultMap">
+        SELECT * FROM tb_odm_exposure WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_odm_exposure (employee_name, employee_no, department, hazard_factor, exposure_level, exposure_standard, exposure_period, risk_level, exceed_count, exposed_workers, measurement_date, remarks, created_at, modified_at)
+        VALUES (#{employeeName}, #{employeeNo}, #{department}, #{hazardFactor}, #{exposureLevel}, #{exposureStandard}, #{exposurePeriod}, #{riskLevel}, #{exceedCount}, #{exposedWorkers}, #{measurementDate}, #{remarks}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_odm_exposure
+        SET employee_name = #{employeeName},
+            employee_no = #{employeeNo},
+            department = #{department},
+            hazard_factor = #{hazardFactor},
+            exposure_level = #{exposureLevel},
+            exposure_standard = #{exposureStandard},
+            exposure_period = #{exposurePeriod},
+            risk_level = #{riskLevel},
+            exceed_count = #{exceedCount},
+            exposed_workers = #{exposedWorkers},
+            measurement_date = #{measurementDate},
+            remarks = #{remarks},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_odm_exposure WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Maps 3D</title>
+  <meta charset="utf-8">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    gmp-map-3d {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Exact pattern from Google's official documentation -->
+  <gmp-map-3d
+    id="map3d"
+    mode="hybrid"
+    center="36.5, 127.5"
+    range="300000"
+    tilt="45"
+    heading="0">
+  </gmp-map-3d>
+
+  <script>
+    const factories = [
+      { id: 'factory-1', name: '곡성 공장', lat: 35.2820, lng: 127.2880, hasAlarm: true },
+      { id: 'factory-2', name: '광주 공장', lat: 35.1595, lng: 126.8526, hasAlarm: false },
+      { id: 'factory-3', name: '중앙연구소', lat: 37.2754, lng: 127.0796, hasAlarm: true },
+      { id: 'factory-4', name: '평택 공장', lat: 36.9830, lng: 126.8320, hasAlarm: false },
+    ];
+
+    let map3dElement = null;
+
+    // Wait for the custom element to be ready
+    customElements.whenDefined('gmp-map-3d').then(() => {
+      console.log('[map3d.html] gmp-map-3d is defined');
+      map3dElement = document.getElementById('map3d');
+
+      // Check map readiness periodically
+      let checkCount = 0;
+      const checkReady = () => {
+        checkCount++;
+        console.log('[map3d.html] Check #' + checkCount + ', flyCameraTo:', typeof map3dElement.flyCameraTo);
+
+        if (typeof map3dElement.flyCameraTo === 'function') {
+          console.log('[map3d.html] Map is ready!');
+          window.parent.postMessage({ type: 'map3d-ready' }, '*');
+          addMarkers();
+        } else if (checkCount < 30) {
+          setTimeout(checkReady, 1000);
+        } else {
+          console.log('[map3d.html] Timeout waiting for map');
+          window.parent.postMessage({ type: 'map3d-ready' }, '*');
+          addMarkers();
+        }
+      };
+      setTimeout(checkReady, 1000);
+    });
+
+    // Store markers for click detection
+    const markerMap = new Map();
+
+    function addMarkers() {
+      console.log('[map3d.html] Adding internal 3D markers...');
+
+      factories.forEach(factory => {
+        const color = factory.hasAlarm ? '#F44336' : '#4CAF50';
+
+        const marker = document.createElement('gmp-marker-3d');
+        marker.setAttribute('position', factory.lat + ',' + factory.lng + ',200');
+        marker.setAttribute('altitude-mode', 'relative-to-ground');
+        marker.setAttribute('extruded', 'true');
+        marker.setAttribute('label', factory.name);
+
+        // Use innerHTML with slot for custom marker appearance
+        marker.innerHTML = `
+          <div slot="default" style="cursor: pointer; padding: 10px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="60" viewBox="0 0 24 30">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 9 12 18 12 18s12-9 12-18c0-6.63-5.37-12-12-12z" fill="${color}"/>
+              <circle cx="12" cy="12" r="6" fill="white"/>
+              <circle cx="12" cy="12" r="3" fill="${color}"/>
+            </svg>
+          </div>
+        `;
+
+        // Store reference for later access
+        markerMap.set(marker, factory);
+
+        map3dElement.appendChild(marker);
+      });
+
+      console.log('[map3d.html] Internal markers added, count:', markerMap.size);
+    }
+
+    function flyToFactory(factory, closeView) {
+      console.log('[map3d.html] ====== flyToFactory START ======');
+      console.log('[map3d.html] factory:', factory);
+      console.log('[map3d.html] closeView:', closeView);
+      console.log('[map3d.html] map3dElement:', map3dElement);
+      console.log('[map3d.html] flyCameraTo type:', typeof map3dElement?.flyCameraTo);
+
+      if (!map3dElement || !map3dElement.flyCameraTo) {
+        console.error('[map3d.html] ERROR: flyCameraTo not available!');
+        return;
+      }
+
+      const targetRange = closeView ? 400 : 1500;
+      console.log('[map3d.html] Flying to range:', targetRange);
+      console.log('[map3d.html] Target center:', factory.lat, factory.lng);
+
+      try {
+        map3dElement.flyCameraTo({
+          endCamera: {
+            center: { lat: factory.lat, lng: factory.lng, altitude: 50 },
+            tilt: 65,
+            heading: 30,
+            range: targetRange,
+          },
+          durationMillis: 2000,
+        });
+        console.log('[map3d.html] flyCameraTo called successfully');
+      } catch (err) {
+        console.error('[map3d.html] flyCameraTo ERROR:', err);
+      }
+
+      if (closeView) {
+        console.log('[map3d.html] Setting timeout for show-floorplan (2.5s)...');
+        setTimeout(() => {
+          console.log('[map3d.html] ====== POSTING show-floorplan ======');
+          console.log('[map3d.html] factoryId:', factory.id);
+          window.parent.postMessage({ type: 'show-floorplan', factoryId: factory.id }, '*');
+          console.log('[map3d.html] Message posted!');
+        }, 2500);
+      }
+      console.log('[map3d.html] ====== flyToFactory END ======');
+    }
+
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'fly-to-factory') {
+        const factory = factories.find(f => f.id === e.data.factoryId);
+        if (factory) flyToFactory(factory, false);
+      } else if (e.data && e.data.type === 'zoom-and-show-floorplan') {
+        console.log('[map3d.html] Received zoom-and-show-floorplan for:', e.data.factoryId);
+        const factory = factories.find(f => f.id === e.data.factoryId);
+        if (factory) {
+          console.log('[map3d.html] Found factory, triggering flyToFactory with closeView=true');
+          flyToFactory(factory, true);
+        }
+      }
+    });
+  </script>
+
+  <!-- Google Maps API - exact pattern from official docs -->
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDM4JX9WhpyselkU6lD0vPAK9HSUOPHwwQ&v=beta&libraries=maps3d"></script>
+</body>
+</html>

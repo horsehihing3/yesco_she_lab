@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ApprovalMapper">
+
+    <resultMap id="ApprovalResultMap" type="com.smartehs.model.Approval">
+        <id property="id" column="id"/>
+        <result property="approvalId" column="approval_id"/>
+        <result property="type" column="type"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="applicantName" column="applicant_name"/>
+        <result property="applicantDept" column="applicant_dept"/>
+        <result property="applicantEmail" column="applicant_email"/>
+        <result property="requestDate" column="request_date"/>
+        <result property="status" column="status"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="approvalDate" column="approval_date"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="ApprovalResultMap">
+        SELECT * FROM tb_approval
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_approval
+    </select>
+
+    <select id="findById" resultMap="ApprovalResultMap">
+        SELECT * FROM tb_approval WHERE id = #{id}
+    </select>
+
+    <select id="findByStatus" resultMap="ApprovalResultMap">
+        SELECT * FROM tb_approval
+        WHERE status = #{status}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_approval WHERE status = #{status}
+    </select>
+
+    <select id="search" resultMap="ApprovalResultMap">
+        SELECT * FROM tb_approval
+        WHERE title LIKE '%' + #{keyword} + '%'
+           OR applicant_name LIKE '%' + #{keyword} + '%'
+           OR applicant_dept LIKE '%' + #{keyword} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearch" resultType="int">
+        SELECT COUNT(*) FROM tb_approval
+        WHERE title LIKE '%' + #{keyword} + '%'
+           OR applicant_name LIKE '%' + #{keyword} + '%'
+           OR applicant_dept LIKE '%' + #{keyword} + '%'
+    </select>
+
+    <select id="findByStatusAndSearch" resultMap="ApprovalResultMap">
+        SELECT * FROM tb_approval
+        WHERE status = #{status}
+          AND (title LIKE '%' + #{keyword} + '%'
+               OR applicant_name LIKE '%' + #{keyword} + '%'
+               OR applicant_dept LIKE '%' + #{keyword} + '%')
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatusAndSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_approval
+        WHERE status = #{status}
+          AND (title LIKE '%' + #{keyword} + '%'
+               OR applicant_name LIKE '%' + #{keyword} + '%'
+               OR applicant_dept LIKE '%' + #{keyword} + '%')
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_approval (approval_id, type, title, content, applicant_name, applicant_dept, applicant_email, request_date, status, approver_name, approval_date, reject_reason, created_at, modified_at)
+        VALUES (#{approvalId}, #{type}, #{title}, #{content}, #{applicantName}, #{applicantDept}, #{applicantEmail}, #{requestDate}, #{status}, #{approverName}, #{approvalDate}, #{rejectReason}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_approval
+        SET type = #{type},
+            title = #{title},
+            content = #{content},
+            applicant_name = #{applicantName},
+            applicant_dept = #{applicantDept},
+            applicant_email = #{applicantEmail},
+            request_date = #{requestDate},
+            status = #{status},
+            approver_name = #{approverName},
+            approval_date = #{approvalDate},
+            reject_reason = #{rejectReason},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_approval WHERE id = #{id}
+    </delete>
+
+    <select id="findByApplicantEmail" resultMap="ApprovalResultMap">
+        SELECT * FROM tb_approval
+        WHERE applicant_email = #{email}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByApplicantEmail" resultType="int">
+        SELECT COUNT(*) FROM tb_approval WHERE applicant_email = #{email}
+    </select>
+
+    <select id="findHistory" resultMap="ApprovalResultMap">
+        SELECT * FROM tb_approval
+        WHERE (applicant_email = #{email} OR approver_name IN (SELECT approver_name FROM tb_approval WHERE applicant_email = #{email}))
+          AND status IN ('APPROVED', 'REJECTED', 'COMPLETED')
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countHistory" resultType="int">
+        SELECT COUNT(*) FROM tb_approval
+        WHERE (applicant_email = #{email} OR approver_name IN (SELECT approver_name FROM tb_approval WHERE applicant_email = #{email}))
+          AND status IN ('APPROVED', 'REJECTED', 'COMPLETED')
+    </select>
+
+</mapper>

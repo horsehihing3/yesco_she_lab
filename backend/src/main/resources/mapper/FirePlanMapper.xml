@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.FirePlanMapper">
+    <resultMap id="R" type="com.smartehs.model.FirePlan">
+        <id property="id" column="id"/>
+        <result property="planType" column="plan_type"/>
+        <result property="lawBasis" column="law_basis"/>
+        <result property="cycle" column="cycle"/>
+        <result property="planDate" column="plan_date"/>
+        <result property="org" column="org"/>
+        <result property="target" column="target"/>
+        <result property="cost" column="cost"/>
+        <result property="status" column="status"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">SELECT * FROM tb_fire_plan WHERE deleted = 0 ORDER BY plan_date ASC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_fire_plan WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_fire_plan WHERE deleted = 0</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_fire_plan (plan_type, law_basis, cycle, plan_date, org, target, cost, status,
+            deleted, created_at, modified_at) VALUES (
+            #{planType}, #{lawBasis}, #{cycle}, #{planDate,jdbcType=DATE},
+            #{org}, #{target}, #{cost}, #{status}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_fire_plan SET plan_type = #{planType}, law_basis = #{lawBasis}, cycle = #{cycle},
+            plan_date = #{planDate,jdbcType=DATE}, org = #{org}, target = #{target}, cost = #{cost},
+            status = #{status}, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_fire_plan SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

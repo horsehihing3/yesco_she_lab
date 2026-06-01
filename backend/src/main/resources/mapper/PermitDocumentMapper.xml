@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PermitDocumentMapper">
+    <resultMap id="R" type="com.smartehs.model.PermitDocument">
+        <id property="id" column="id"/>
+        <result property="docName" column="doc_name"/>
+        <result property="docType" column="doc_type"/>
+        <result property="category" column="category"/>
+        <result property="relatedPermit" column="related_permit"/>
+        <result property="issueDate" column="issue_date"/>
+        <result property="retentionYears" column="retention_years"/>
+        <result property="fileLocation" column="file_location"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_permit_document WHERE deleted = 0 ORDER BY issue_date DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_permit_document WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_permit_document WHERE deleted = 0</select>
+    <select id="countByType" resultType="int">SELECT COUNT(*) FROM tb_permit_document WHERE deleted = 0 AND doc_type = #{docType}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_permit_document (
+            doc_name, doc_type, category, related_permit, issue_date,
+            retention_years, file_location, notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{docName}, #{docType}, #{category,jdbcType=NVARCHAR}, #{relatedPermit,jdbcType=NVARCHAR},
+            #{issueDate,jdbcType=DATE},
+            <choose><when test="retentionYears != null">#{retentionYears}</when><otherwise>5</otherwise></choose>,
+            #{fileLocation,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_permit_document SET
+            doc_name = #{docName}, doc_type = #{docType}, category = #{category,jdbcType=NVARCHAR},
+            related_permit = #{relatedPermit,jdbcType=NVARCHAR},
+            issue_date = #{issueDate,jdbcType=DATE},
+            retention_years = #{retentionYears},
+            file_location = #{fileLocation,jdbcType=NVARCHAR}, notes = #{notes,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_permit_document SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

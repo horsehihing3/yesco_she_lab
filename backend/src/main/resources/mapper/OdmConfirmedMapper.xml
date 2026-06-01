@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.OdmConfirmedMapper">
+
+    <resultMap id="OdmConfirmedResultMap" type="com.smartehs.model.OdmConfirmed">
+        <id property="id" column="id"/>
+        <result property="employeeName" column="employee_name"/>
+        <result property="diseaseName" column="disease_name"/>
+        <result property="hazardFactor" column="hazard_factor"/>
+        <result property="diagnosisAgency" column="diagnosis_agency"/>
+        <result property="confirmedDate" column="confirmed_date"/>
+        <result property="claimStatus" column="claim_status"/>
+        <result property="approvalStatus" column="approval_status"/>
+        <result property="remarks" column="remarks"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="OdmConfirmedResultMap">
+        SELECT * FROM tb_odm_confirmed
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_odm_confirmed
+    </select>
+
+    <select id="findByApprovalStatus" resultMap="OdmConfirmedResultMap">
+        SELECT * FROM tb_odm_confirmed
+        WHERE approval_status = #{approvalStatus}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByApprovalStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_odm_confirmed WHERE approval_status = #{approvalStatus}
+    </select>
+
+    <select id="findById" resultMap="OdmConfirmedResultMap">
+        SELECT * FROM tb_odm_confirmed WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_odm_confirmed (employee_name, disease_name, hazard_factor, diagnosis_agency, confirmed_date, claim_status, approval_status, remarks, created_at, modified_at)
+        VALUES (#{employeeName}, #{diseaseName}, #{hazardFactor}, #{diagnosisAgency}, #{confirmedDate}, #{claimStatus}, #{approvalStatus}, #{remarks}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_odm_confirmed
+        SET employee_name = #{employeeName},
+            disease_name = #{diseaseName},
+            hazard_factor = #{hazardFactor},
+            diagnosis_agency = #{diagnosisAgency},
+            confirmed_date = #{confirmedDate},
+            claim_status = #{claimStatus},
+            approval_status = #{approvalStatus},
+            remarks = #{remarks},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_odm_confirmed WHERE id = #{id}
+    </delete>
+
+</mapper>

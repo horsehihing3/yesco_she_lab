@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.FireFacilityMapper">
+    <resultMap id="R" type="com.smartehs.model.FireFacility">
+        <id property="id" column="id"/>
+        <result property="mgmtNo" column="mgmt_no"/>
+        <result property="name" column="name"/>
+        <result property="category" column="category"/>
+        <result property="spec" column="spec"/>
+        <result property="qty" column="qty"/>
+        <result property="location" column="location"/>
+        <result property="installDate" column="install_date"/>
+        <result property="maker" column="maker"/>
+        <result property="makerNo" column="maker_no"/>
+        <result property="installer" column="installer"/>
+        <result property="lawBasis" column="law_basis"/>
+        <result property="checkCycle" column="check_cycle"/>
+        <result property="lastCheck" column="last_check"/>
+        <result property="nextCheck" column="next_check"/>
+        <result property="status" column="status"/>
+        <result property="mgrName" column="mgr_name"/>
+        <result property="acquirePrice" column="acquire_price"/>
+        <result property="note" column="note"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">
+        SELECT * FROM tb_fire_facility WHERE deleted = 0
+        ORDER BY CASE status WHEN '불량' THEN 0 WHEN '수리중' THEN 1 WHEN '점검필요' THEN 2 ELSE 3 END, next_check ASC, id DESC
+    </select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_fire_facility WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_fire_facility WHERE deleted = 0</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_fire_facility WHERE deleted = 0 AND status = #{status}</select>
+    <select id="countByCategory" resultType="int">SELECT COUNT(*) FROM tb_fire_facility WHERE deleted = 0 AND category = #{category}</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_fire_facility (mgmt_no, name, category, spec, qty, location, install_date, maker, maker_no, installer,
+            law_basis, check_cycle, last_check, next_check, status, mgr_name, acquire_price, note,
+            deleted, created_at, modified_at) VALUES (
+            #{mgmtNo}, #{name}, #{category}, #{spec}, #{qty}, #{location},
+            #{installDate,jdbcType=DATE}, #{maker}, #{makerNo}, #{installer},
+            #{lawBasis}, #{checkCycle}, #{lastCheck,jdbcType=DATE}, #{nextCheck,jdbcType=DATE},
+            <choose><when test="status != null">#{status}</when><otherwise>'정상'</otherwise></choose>,
+            #{mgrName}, #{acquirePrice}, #{note}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_fire_facility SET mgmt_no = #{mgmtNo}, name = #{name}, category = #{category},
+            spec = #{spec}, qty = #{qty}, location = #{location}, install_date = #{installDate,jdbcType=DATE},
+            maker = #{maker}, maker_no = #{makerNo}, installer = #{installer},
+            law_basis = #{lawBasis}, check_cycle = #{checkCycle},
+            last_check = #{lastCheck,jdbcType=DATE}, next_check = #{nextCheck,jdbcType=DATE},
+            status = #{status}, mgr_name = #{mgrName}, acquire_price = #{acquirePrice}, note = #{note},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_fire_facility SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

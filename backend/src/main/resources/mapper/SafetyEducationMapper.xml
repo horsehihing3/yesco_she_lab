@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.SafetyEducationMapper">
+
+    <resultMap id="SafetyEducationResultMap" type="com.smartehs.model.SafetyEducation">
+        <id property="id" column="id"/>
+        <result property="educationId" column="education_id"/>
+        <result property="workPlaceId" column="work_place_id"/>
+        <result property="title" column="title"/>
+        <result property="titleEn" column="title_en"/>
+        <result property="titleZh" column="title_zh"/>
+        <result property="educationType" column="education_type"/>
+        <result property="educationCategory" column="education_category"/>
+        <result property="educationDate" column="education_date"/>
+        <result property="educationHours" column="education_hours"/>
+        <result property="location" column="location"/>
+        <result property="instructorName" column="instructor_name"/>
+        <result property="instructorOrg" column="instructor_org"/>
+        <result property="hazardousFactors" column="hazardous_factors"/>
+        <result property="educationContent" column="education_content"/>
+        <result property="attendeeCount" column="attendee_count"/>
+        <result property="status" column="status"/>
+        <result property="notes" column="notes"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="SafetyEducationResultMap">
+        SELECT * FROM tb_safety_education
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_education WHERE deleted = 0
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="SafetyEducationResultMap">
+        SELECT * FROM tb_safety_education WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByEducationIdAndDeletedFalse" resultMap="SafetyEducationResultMap">
+        SELECT * FROM tb_safety_education WHERE education_id = #{educationId} AND deleted = 0
+    </select>
+
+    <select id="findByYearAndDeletedFalse" resultMap="SafetyEducationResultMap">
+        SELECT * FROM tb_safety_education
+        WHERE YEAR(education_date) = #{year} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByYearAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_education WHERE YEAR(education_date) = #{year} AND deleted = 0
+    </select>
+
+    <select id="findByTypeAndDeletedFalse" resultMap="SafetyEducationResultMap">
+        SELECT * FROM tb_safety_education
+        WHERE education_type = #{educationType} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTypeAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_education WHERE education_type = #{educationType} AND deleted = 0
+    </select>
+
+    <select id="searchByTitleAndDeletedFalse" resultMap="SafetyEducationResultMap">
+        SELECT * FROM tb_safety_education
+        WHERE title LIKE '%' + #{title} + '%' AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_education WHERE title LIKE '%' + #{title} + '%' AND deleted = 0
+    </select>
+
+    <select id="countByEducationIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_education WHERE education_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_education (
+            education_id, work_place_id, title, title_en, title_zh,
+            education_type, education_category, education_date, education_hours,
+            location, instructor_name, instructor_org, hazardous_factors,
+            education_content, attendee_count, status, notes,
+            author_name, author_email, author_dept, deleted, created_at, modified_at
+        ) VALUES (
+            #{educationId}, #{workPlaceId}, #{title}, #{titleEn}, #{titleZh},
+            #{educationType}, #{educationCategory}, #{educationDate,jdbcType=DATE}, #{educationHours},
+            #{location}, #{instructorName}, #{instructorOrg}, #{hazardousFactors},
+            #{educationContent}, #{attendeeCount}, #{status}, #{notes},
+            #{authorName}, #{authorEmail}, #{authorDept}, #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_safety_education SET
+            work_place_id = #{workPlaceId}, title = #{title}, title_en = #{titleEn}, title_zh = #{titleZh},
+            education_type = #{educationType}, education_category = #{educationCategory},
+            education_date = #{educationDate,jdbcType=DATE}, education_hours = #{educationHours},
+            location = #{location}, instructor_name = #{instructorName}, instructor_org = #{instructorOrg},
+            hazardous_factors = #{hazardousFactors}, education_content = #{educationContent},
+            status = #{status}, notes = #{notes},
+            author_name = #{authorName}, author_email = #{authorEmail}, author_dept = #{authorDept},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateAttendeeCount">
+        UPDATE tb_safety_education SET attendee_count = #{count}, modified_at = GETDATE()
+        WHERE education_id = #{educationId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE tb_safety_education SET status = #{status}, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_safety_education SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

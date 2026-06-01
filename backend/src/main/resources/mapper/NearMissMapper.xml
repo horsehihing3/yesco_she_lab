@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.NearMissMapper">
+
+    <resultMap id="NearMissResultMap" type="com.smartehs.model.NearMiss">
+        <id property="id" column="id"/>
+        <result property="nearMissId" column="near_miss_id"/>
+        <result property="incidentType" column="incident_type"/>
+        <result property="workPlaceId" column="work_place_id"/>
+        <result property="workPlaceName" column="work_place_name"/>
+        <result property="occTitle" column="occ_title"/>
+        <result property="occTitleEn" column="occ_title_en"/>
+        <result property="occTitleZh" column="occ_title_zh"/>
+        <result property="occDate" column="occ_date"/>
+        <result property="occSite" column="occ_site"/>
+        <result property="occFloor" column="occ_floor"/>
+        <result property="occSiteInfo" column="occ_site_info"/>
+        <result property="occSiteX" column="occ_site_x"/>
+        <result property="occSiteY" column="occ_site_y"/>
+        <result property="occImageFileId" column="occ_image_file_id"/>
+        <result property="occInfo" column="occ_info"/>
+        <result property="occInfoEn" column="occ_info_en"/>
+        <result property="occInfoZh" column="occ_info_zh"/>
+        <result property="company" column="company"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="intensity" column="intensity"/>
+        <result property="frequency" column="frequency"/>
+        <result property="status" column="status"/>
+        <result property="deleted" column="deleted"/>
+        <result property="isExist" column="is_exist"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="NearMissResultMap">
+        SELECT * FROM tb_near_miss_list ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="NearMissResultMap">
+        SELECT * FROM tb_near_miss_list
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_near_miss_list
+    </select>
+
+    <select id="findById" resultMap="NearMissResultMap">
+        SELECT * FROM tb_near_miss_list WHERE id = #{id}
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="NearMissResultMap">
+        SELECT n.*, w.place as work_place_name
+        FROM tb_near_miss_list n
+        LEFT JOIN lb_work_place w ON n.work_place_id = w.id
+        WHERE n.id = #{id} AND n.deleted = 0
+    </select>
+
+    <select id="findByNearMissIdAndDeletedFalse" resultMap="NearMissResultMap">
+        SELECT n.*, w.place as work_place_name
+        FROM tb_near_miss_list n
+        LEFT JOIN lb_work_place w ON n.work_place_id = w.id
+        WHERE n.near_miss_id = #{nearMissId} AND n.deleted = 0
+    </select>
+
+    <select id="findByDeletedFalse" resultMap="NearMissResultMap">
+        SELECT n.*, w.place as work_place_name
+        FROM tb_near_miss_list n
+        LEFT JOIN lb_work_place w ON n.work_place_id = w.id
+        WHERE n.deleted = 0
+        ORDER BY n.created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_near_miss_list WHERE deleted = 0
+    </select>
+
+    <select id="findByOccTitleContainingAndDeletedFalse" resultMap="NearMissResultMap">
+        SELECT * FROM tb_near_miss_list
+        WHERE occ_title LIKE '%' + #{occTitle} + '%' AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByOccTitleContainingAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_near_miss_list
+        WHERE occ_title LIKE '%' + #{occTitle} + '%' AND deleted = 0
+    </select>
+
+    <select id="findByStatusAndDeletedFalse" resultMap="NearMissResultMap">
+        SELECT * FROM tb_near_miss_list
+        WHERE status = #{status} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatusAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_near_miss_list
+        WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="findByWorkPlaceIdAndDeletedFalse" resultMap="NearMissResultMap">
+        SELECT * FROM tb_near_miss_list
+        WHERE work_place_id = #{workPlaceId} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByWorkPlaceIdAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_near_miss_list
+        WHERE work_place_id = #{workPlaceId} AND deleted = 0
+    </select>
+
+    <select id="findByIncidentTypeAndDeletedFalse" resultMap="NearMissResultMap">
+        SELECT n.*, w.place as work_place_name
+        FROM tb_near_miss_list n
+        LEFT JOIN lb_work_place w ON n.work_place_id = w.id
+        WHERE n.incident_type = #{incidentType} AND n.deleted = 0
+        ORDER BY n.created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByIncidentTypeAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_near_miss_list WHERE incident_type = #{incidentType} AND deleted = 0
+    </select>
+
+    <select id="countByNearMissIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_near_miss_list WHERE near_miss_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_near_miss_list (near_miss_id, incident_type, work_place_id, occ_title, occ_title_en, occ_title_zh, occ_date, occ_site, occ_floor, occ_site_info, occ_site_x, occ_site_y, occ_image_file_id, occ_info, occ_info_en, occ_info_zh, company, author_name, author_email, author_dept, intensity, frequency, status, deleted, is_exist, created_at, modified_at)
+        VALUES (#{nearMissId}, #{incidentType}, #{workPlaceId,jdbcType=BIGINT}, #{occTitle}, #{occTitleEn}, #{occTitleZh}, #{occDate,jdbcType=TIMESTAMP}, #{occSite}, #{occFloor}, #{occSiteInfo}, #{occSiteX,jdbcType=DOUBLE}, #{occSiteY,jdbcType=DOUBLE}, #{occImageFileId,jdbcType=BIGINT}, #{occInfo}, #{occInfoEn}, #{occInfoZh}, #{company}, #{authorName}, #{authorEmail}, #{authorDept}, #{intensity,jdbcType=INTEGER}, #{frequency,jdbcType=INTEGER}, #{status}, #{deleted}, #{isExist}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_near_miss_list
+        SET incident_type = #{incidentType},
+            work_place_id = #{workPlaceId,jdbcType=BIGINT},
+            occ_title = #{occTitle},
+            occ_title_en = #{occTitleEn},
+            occ_title_zh = #{occTitleZh},
+            occ_date = #{occDate,jdbcType=TIMESTAMP},
+            occ_site = #{occSite},
+            occ_floor = #{occFloor},
+            occ_site_info = #{occSiteInfo},
+            occ_site_x = #{occSiteX,jdbcType=DOUBLE},
+            occ_site_y = #{occSiteY,jdbcType=DOUBLE},
+            occ_image_file_id = #{occImageFileId,jdbcType=BIGINT},
+            occ_info = #{occInfo},
+            occ_info_en = #{occInfoEn},
+            occ_info_zh = #{occInfoZh},
+            company = #{company},
+            author_name = #{authorName},
+            author_email = #{authorEmail},
+            author_dept = #{authorDept},
+            intensity = #{intensity,jdbcType=INTEGER},
+            frequency = #{frequency,jdbcType=INTEGER},
+            status = #{status},
+            is_exist = #{isExist},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_near_miss_list WHERE id = #{id}
+    </delete>
+
+    <update id="softDelete">
+        UPDATE tb_near_miss_list SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

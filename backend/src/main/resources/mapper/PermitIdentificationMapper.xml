@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PermitIdentificationMapper">
+    <resultMap id="R" type="com.smartehs.model.PermitIdentification">
+        <id property="id" column="id"/>
+        <result property="equipmentName" column="equipment_name"/>
+        <result property="equipmentType" column="equipment_type"/>
+        <result property="location" column="location"/>
+        <result property="installDate" column="install_date"/>
+        <result property="applicableCategories" column="applicable_categories"/>
+        <result property="applicablePermits" column="applicable_permits"/>
+        <result property="status" column="status"/>
+        <result property="assessor" column="assessor"/>
+        <result property="assessmentDate" column="assessment_date"/>
+        <result property="linkedPermits" column="linked_permits"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_permit_identification WHERE deleted = 0 ORDER BY id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_permit_identification WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_permit_identification WHERE deleted = 0</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_permit_identification WHERE deleted = 0 AND status = #{status}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_permit_identification (
+            equipment_name, equipment_type, location, install_date,
+            applicable_categories, applicable_permits, status, assessor,
+            assessment_date, linked_permits, notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{equipmentName}, #{equipmentType,jdbcType=NVARCHAR}, #{location,jdbcType=NVARCHAR},
+            #{installDate,jdbcType=DATE},
+            #{applicableCategories,jdbcType=NVARCHAR}, #{applicablePermits,jdbcType=NVARCHAR},
+            <choose><when test="status != null">#{status}</when><otherwise>N'검토중'</otherwise></choose>,
+            #{assessor,jdbcType=NVARCHAR}, #{assessmentDate,jdbcType=DATE},
+            #{linkedPermits,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_permit_identification SET
+            equipment_name = #{equipmentName},
+            equipment_type = #{equipmentType,jdbcType=NVARCHAR},
+            location = #{location,jdbcType=NVARCHAR},
+            install_date = #{installDate,jdbcType=DATE},
+            applicable_categories = #{applicableCategories,jdbcType=NVARCHAR},
+            applicable_permits = #{applicablePermits,jdbcType=NVARCHAR},
+            status = #{status},
+            assessor = #{assessor,jdbcType=NVARCHAR},
+            assessment_date = #{assessmentDate,jdbcType=DATE},
+            linked_permits = #{linkedPermits,jdbcType=NVARCHAR},
+            notes = #{notes,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_permit_identification SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

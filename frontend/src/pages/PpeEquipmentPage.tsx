@@ -1,0 +1,913 @@
+import React, { useState, useMemo } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
+import {
+  Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
+  TableHead, TableRow, Button, TextField, Select, MenuItem,
+  FormControl, Chip, LinearProgress, Pagination, CircularProgress, Alert,
+} from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import Divider from '@mui/material/Divider'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import InventoryIcon from '@mui/icons-material/Inventory'
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'
+import CategoryIcon from '@mui/icons-material/Category'
+import EventNoteIcon from '@mui/icons-material/EventNote'
+import HistoryIcon from '@mui/icons-material/History'
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
+import DatePickerField from '../components/common/DatePickerField'
+import NumberField from '../components/common/NumberField'
+import { useAlert } from '../contexts/AlertContext'
+import { useAuth } from '../context/AuthContext'
+import { ppeEquipmentApi, ppeHistoryApi } from '../api/ppeEquipmentApi'
+import { PpeEquipment, PpeEquipmentRequest, PpeEquipmentStatus, PpeActionType } from '../types/ppeEquipment.types'
+import useCodeMap from '../hooks/useCodeMap'
+import { Tabs, Tab } from '@mui/material'
+import PpeRequestTab from '../components/environment/PpeRequestTab'
+
+const STATUS_CHIP: Record<PpeEquipmentStatus, { color: 'success' | 'warning' | 'error' | 'info'; label: string }> = {
+  NORMAL: { color: 'success', label: 'ppe.statusNormal' },
+  EXPIRY_SOON: { color: 'warning', label: 'ppe.statusExpirySoon' },
+  EXPIRED: { color: 'error', label: 'ppe.statusExpired' },
+  LOW_STOCK: { color: 'info', label: 'ppe.statusLowStock' },
+}
+
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+
+type ViewMode = 'list' | 'detail' | 'create' | 'edit'
+
+const PpeEquipmentPage: React.FC = () => {
+  const { t } = useTranslation()
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+  const { showSuccess, showError, showConfirm } = useAlert()
+  const canCreate = user?.role === 'SYSTEM_ADMIN' || user?.role === 'PPE_ADMIN'
+  const { codeList: categoryCodes, getLabel: getCategoryLabel } = useCodeMap('PPE_CATEGORY')
+  const { codeList: inspectCycleCodes, getLabel: getInspectCycleLabel } = useCodeMap('INSPECT_CYCLE')
+
+  const [activeTab, setActiveTab] = useState(0)
+
+  const [page, setPage] = useState(0)
+  const [searchText, setSearchText] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('')
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [selectedItem, setSelectedItem] = useState<PpeEquipment | null>(null)
+  const [form, setForm] = useState<PpeEquipmentRequest>({
+    name: '', category: '', stockQuantity: 1,
+  })
+
+  const pageSize = 10
+
+  // Queries
+  const { data: kpi } = useQuery({
+    queryKey: ['ppeEquipmentKpi'],
+    queryFn: ppeEquipmentApi.getKpi,
+  })
+
+  // 전체 데이터 (알림/분류/점검 패널용 - 페이징 무관)
+  const { data: allData } = useQuery({
+    queryKey: ['ppeEquipmentAll'],
+    queryFn: () => ppeEquipmentApi.getAll(0, 500),
+  })
+  const allItems = allData?.content || []
+
+  const { data: historyData } = useQuery({
+    queryKey: ['ppeHistory'],
+    queryFn: () => ppeHistoryApi.getAll(0, 10),
+  })
+
+  const ACTION_TYPE_CHIP: Record<PpeActionType, { color: 'primary' | 'warning' | 'error'; label: string }> = {
+    ISSUE: { color: 'primary', label: t('ppe.actionIssue') },
+    RETURN: { color: 'warning', label: t('ppe.actionReturn') },
+    DISPOSE: { color: 'error', label: t('ppe.actionDispose') },
+  }
+
+  const queryKey = searchText
+    ? ['ppeEquipmentSearch', searchText, page]
+    : statusFilter
+    ? ['ppeEquipmentStatus', statusFilter, page]
+    : categoryFilter
+    ? ['ppeEquipmentCategory', categoryFilter, page]
+    : ['ppeEquipment', page]
+
+  const queryFn = () => {
+    if (searchText) return ppeEquipmentApi.search(searchText, page, pageSize)
+    if (statusFilter) return ppeEquipmentApi.getByStatus(statusFilter, page, pageSize)
+    if (categoryFilter) return ppeEquipmentApi.getByCategory(categoryFilter, page, pageSize)
+    return ppeEquipmentApi.getAll(page, pageSize)
+  }
+
+  const { data, isLoading } = useQuery({ queryKey, queryFn, enabled: viewMode === 'list' })
+
+  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null) }
+
+  const createMutation = useMutation({
+    mutationFn: (req: PpeEquipmentRequest) => ppeEquipmentApi.create(req),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ppeEquipment'] })
+      queryClient.invalidateQueries({ queryKey: ['ppeEquipmentKpi'] })
+      showSuccess(t('common.saved'))
+      handleBackToList()
+    },
+    onError: () => showError(t('common.error')),
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, req }: { id: number; req: PpeEquipmentRequest }) => ppeEquipmentApi.update(id, req),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ppeEquipment'] })
+      queryClient.invalidateQueries({ queryKey: ['ppeEquipmentKpi'] })
+      showSuccess(t('common.saved'))
+      handleBackToList()
+    },
+    onError: () => showError(t('common.error')),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => ppeEquipmentApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ppeEquipment'] })
+      queryClient.invalidateQueries({ queryKey: ['ppeEquipmentKpi'] })
+      showSuccess(t('common.deleted'))
+      handleBackToList()
+    },
+    onError: () => showError(t('common.error')),
+  })
+
+  const handleOpenCreate = () => {
+    setSelectedItem(null)
+    setForm({ name: '', category: '', stockQuantity: 1 })
+    setViewMode('create')
+  }
+
+  const handleOpenEdit = (item: PpeEquipment) => {
+    setSelectedItem(item)
+    setForm({
+      name: item.name, nameEn: item.nameEn, nameZh: item.nameZh,
+      category: item.category, categoryEn: item.categoryEn, categoryZh: item.categoryZh,
+      model: item.model, certification: item.certification,
+      stockQuantity: item.stockQuantity, minStock: item.minStock,
+      wearRate: item.wearRate, expiryDate: item.expiryDate,
+      inspectCycle: item.inspectCycle, lastInspectDate: item.lastInspectDate,
+      nextInspectDate: item.nextInspectDate, storageLocation: item.storageLocation,
+      department: item.department, status: item.status, notes: item.notes,
+    })
+    setViewMode('edit')
+  }
+
+  const handleRowClick = (item: PpeEquipment) => { setSelectedItem(item); setViewMode('detail') }
+
+  const handleSave = () => {
+    if (selectedItem) {
+      updateMutation.mutate({ id: selectedItem.id, req: form })
+    } else {
+      createMutation.mutate(form)
+    }
+  }
+
+  const handleDelete = async (item: PpeEquipment) => {
+    const confirmed = await showConfirm(`${item.name}\n${t('common.delete')}하시겠습니까?`)
+    if (confirmed) deleteMutation.mutate(item.id)
+  }
+
+  const getWearRateColor = (rate?: number) => {
+    if (!rate) return 'inherit'
+    if (rate >= 90) return 'success'
+    if (rate >= 80) return 'warning'
+    return 'error'
+  }
+
+  const items = data?.content || []
+  const totalPages = data?.totalPages || 0
+
+  const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
+
+  // 알림 목록: 만료/만료임박/재고부족 항목
+  const alertItems = useMemo(() => {
+    return allItems.filter((i) => i.status !== 'NORMAL').map((i) => ({
+      name: i.name,
+      status: i.status,
+      department: i.department || '',
+      notes: i.notes || '',
+      severity: i.status === 'EXPIRED' ? 'error' : i.status === 'LOW_STOCK' ? 'warning' : 'warning',
+    }))
+  }, [allItems])
+
+  // 분류별 현황
+  const categoryStats = useMemo(() => {
+    const map: Record<string, { count: number; totalWear: number; wearCount: number }> = {}
+    allItems.forEach((i) => {
+      if (!map[i.category]) map[i.category] = { count: 0, totalWear: 0, wearCount: 0 }
+      map[i.category].count += i.stockQuantity
+      if (i.wearRate) { map[i.category].totalWear += i.wearRate; map[i.category].wearCount++ }
+    })
+    const total = Object.values(map).reduce((s, v) => s + v.count, 0) || 1
+    return Object.entries(map).map(([code, v]) => ({
+      code,
+      label: getCategoryLabel(code),
+      count: v.count,
+      pct: Math.round((v.count / total) * 100),
+      avgWear: v.wearCount ? Math.round(v.totalWear / v.wearCount) : 0,
+    }))
+  }, [allItems, getCategoryLabel])
+
+  // 점검 예정 일정: nextInspectDate 기준
+  const scheduleItems = useMemo(() => {
+    return allItems
+      .filter((i) => i.nextInspectDate)
+      .sort((a, b) => (a.nextInspectDate || '').localeCompare(b.nextInspectDate || ''))
+      .slice(0, 6)
+      .map((i) => ({
+        name: i.name,
+        date: i.nextInspectDate || '',
+        department: i.department || '',
+        cycle: getInspectCycleLabel(i.inspectCycle || ''),
+        isPast: new Date(i.nextInspectDate || '') < new Date(),
+      }))
+  }, [allItems, getInspectCycleLabel])
+
+  const CATEGORY_COLORS = ['primary.main', 'secondary.main', 'success.main', 'warning.main', 'info.main']
+
+  /* ── DETAIL VIEW ── */
+  const renderDetailView = () => {
+    if (!selectedItem) return null
+    const sc = STATUS_CHIP[selectedItem.status] || STATUS_CHIP.NORMAL
+    return (
+      <>
+        {/* PC Detail */}
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.itemName')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.name}</Typography></Box>
+            <Typography sx={labelSx}>{t('ppe.category')}</Typography>
+            <Box sx={valSx}><Typography variant="body2">{getCategoryLabel(selectedItem.category)}</Typography></Box>
+          </Box>
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.model')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.model || ''}</Typography></Box>
+            <Typography sx={labelSx}>{t('ppe.certification')}</Typography>
+            <Box sx={valSx}><Typography variant="body2">{selectedItem.certification || ''}</Typography></Box>
+          </Box>
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.stock')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.stockQuantity}</Typography></Box>
+            <Typography sx={labelSx}>{t('ppe.minStock')}</Typography>
+            <Box sx={valSx}><Typography variant="body2">{selectedItem.minStock ?? ''}</Typography></Box>
+          </Box>
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.wearRate')}</Typography>
+            <Box sx={valBorderSx}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                <LinearProgress
+                  variant="determinate"
+                  value={selectedItem.wearRate || 0}
+                  color={getWearRateColor(selectedItem.wearRate) as 'success' | 'warning' | 'error' | 'inherit'}
+                  sx={{ flex: 1, height: 8, borderRadius: 4, maxWidth: 200 }}
+                />
+                <Typography variant="body2" fontFamily="monospace">{selectedItem.wearRate || 0}%</Typography>
+              </Box>
+            </Box>
+            <Typography sx={labelSx}>{t('ppe.expiryDate')}</Typography>
+            <Box sx={valSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.expiryDate || ''}</Typography></Box>
+          </Box>
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.inspectCycle')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2">{getInspectCycleLabel(selectedItem.inspectCycle || '') || ''}</Typography></Box>
+            <Typography sx={labelSx}>{t('ppe.lastInspectDate')}</Typography>
+            <Box sx={valSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.lastInspectDate || ''}</Typography></Box>
+          </Box>
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.nextInspectDate')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.nextInspectDate || ''}</Typography></Box>
+            <Typography sx={labelSx}>{t('ppe.storageLocation')}</Typography>
+            <Box sx={valSx}><Typography variant="body2">{selectedItem.storageLocation || ''}</Typography></Box>
+          </Box>
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.department')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.department || ''}</Typography></Box>
+            <Typography sx={labelSx}>{t('ppe.status')}</Typography>
+            <Box sx={valSx}><Chip label={t(sc.label)} color={sc.color} size="small" /></Box>
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={labelSx}>{t('ppe.notes')}</Typography>
+            <Box sx={valSx}><Typography variant="body2">{selectedItem.notes || ''}</Typography></Box>
+          </Box>
+        </Paper>
+
+        {/* Mobile Detail */}
+        <Paper sx={{ display: { xs: 'block', md: 'none' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+          {[
+            [t('ppe.itemName'), selectedItem.name],
+            [t('ppe.category'), getCategoryLabel(selectedItem.category)],
+            [t('ppe.model'), selectedItem.model || ''],
+            [t('ppe.certification'), selectedItem.certification || ''],
+            [t('ppe.stock'), String(selectedItem.stockQuantity)],
+            [t('ppe.minStock'), String(selectedItem.minStock ?? '')],
+            [t('ppe.expiryDate'), selectedItem.expiryDate || ''],
+            [t('ppe.storageLocation'), selectedItem.storageLocation || ''],
+            [t('ppe.department'), selectedItem.department || ''],
+            [t('ppe.notes'), selectedItem.notes || ''],
+          ].map(([label, value], i) => (
+            <Box key={i} sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{label}</Typography>
+              <Box sx={valSx}><Typography variant="body2">{value}</Typography></Box>
+            </Box>
+          ))}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{t('ppe.wearRate')}</Typography>
+            <Box sx={valSx}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <LinearProgress
+                  variant="determinate"
+                  value={selectedItem.wearRate || 0}
+                  color={getWearRateColor(selectedItem.wearRate) as 'success' | 'warning' | 'error' | 'inherit'}
+                  sx={{ flex: 1, height: 8, borderRadius: 4, maxWidth: 120 }}
+                />
+                <Typography variant="body2" fontFamily="monospace">{selectedItem.wearRate || 0}%</Typography>
+              </Box>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{t('ppe.status')}</Typography>
+            <Box sx={valSx}><Chip label={t(sc.label)} color={sc.color} size="small" /></Box>
+          </Box>
+        </Paper>
+
+        {/* Buttons */}
+        <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', sm: 'flex-end' } }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.list')}</Button>
+          {canCreate && (
+            <>
+              <Button variant="contained" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit')}</Button>
+              <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete')}</Button>
+            </>
+          )}
+        </Box>
+      </>
+    )
+  }
+
+  /* ── FORM VIEW (create / edit) ── */
+  const renderFormView = () => {
+    return (
+      <>
+        {/* PC Form */}
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+          {/* Row 1: 항목명 + 분류 */}
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>
+              {t('ppe.itemName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+            </Typography>
+            <Box sx={valBorderSx}>
+              <TextField fullWidth size="small" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </Box>
+            <Typography sx={labelSx}>
+              {t('ppe.category')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+            </Typography>
+            <Box sx={valSx}>
+              <Select fullWidth size="small" displayEmpty value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                <MenuItem value="" disabled>{t('ppe.selectCategory')}</MenuItem>
+                {categoryCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
+              </Select>
+            </Box>
+          </Box>
+          {/* Row 2: 모델/규격 + KCs 인증번호 */}
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.model')}</Typography>
+            <Box sx={valBorderSx}>
+              <TextField fullWidth size="small" value={form.model || ''} onChange={(e) => setForm({ ...form, model: e.target.value })} />
+            </Box>
+            <Typography sx={labelSx}>{t('ppe.certification')}</Typography>
+            <Box sx={valSx}>
+              <TextField fullWidth size="small" value={form.certification || ''} onChange={(e) => setForm({ ...form, certification: e.target.value })} />
+            </Box>
+          </Box>
+          {/* Row 3: 재고 + 최소 재고 */}
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>
+              {t('ppe.stock')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+            </Typography>
+            <Box sx={valBorderSx}>
+              <NumberField fullWidth size="small" min={0} step={1} value={form.stockQuantity} onChange={(v) => setForm({ ...form, stockQuantity: Math.max(1, v ?? 0) })} />
+            </Box>
+            <Typography sx={labelSx}>{t('ppe.minStock')}</Typography>
+            <Box sx={valSx}>
+              <NumberField fullWidth size="small" min={0} step={1} value={form.minStock || 0} onChange={(v) => setForm({ ...form, minStock: v ?? 0 })} />
+            </Box>
+          </Box>
+          {/* Row 4: 유효기간 + 점검 주기 */}
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.expiryDate')}</Typography>
+            <Box sx={valBorderSx}>
+              <DatePickerField value={form.expiryDate || null} onChange={(v) => setForm({ ...form, expiryDate: v })} size="small" />
+            </Box>
+            <Typography sx={labelSx}>{t('ppe.inspectCycle')}</Typography>
+            <Box sx={valSx}>
+              <Select fullWidth size="small" displayEmpty value={form.inspectCycle || ''} onChange={(e) => setForm({ ...form, inspectCycle: e.target.value })}>
+                <MenuItem value="">{t('ppe.inspectCycle')}</MenuItem>
+                {inspectCycleCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getInspectCycleLabel(c.code)}</MenuItem>)}
+              </Select>
+            </Box>
+          </Box>
+          {/* Row 5: 보관 위치 + 담당 부서 */}
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('ppe.storageLocation')}</Typography>
+            <Box sx={valBorderSx}>
+              <TextField fullWidth size="small" value={form.storageLocation || ''} onChange={(e) => setForm({ ...form, storageLocation: e.target.value })} />
+            </Box>
+            <Typography sx={labelSx}>{t('ppe.department')}</Typography>
+            <Box sx={valSx}>
+              <TextField fullWidth size="small" value={form.department || ''} onChange={(e) => setForm({ ...form, department: e.target.value })} />
+            </Box>
+          </Box>
+          {/* Row 6: 비고 */}
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={labelSx}>{t('ppe.notes')}</Typography>
+            <Box sx={valSx}>
+              <TextField fullWidth size="small" value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+            </Box>
+          </Box>
+        </Paper>
+
+        {/* Mobile Form */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 2 }}>
+          <TextField fullWidth size="small" label={t('ppe.itemName')} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <FormControl fullWidth size="small">
+            <Select displayEmpty value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+              <MenuItem value="" disabled>{t('ppe.selectCategory')}</MenuItem>
+              {categoryCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <TextField fullWidth size="small" label={t('ppe.model')} value={form.model || ''} onChange={(e) => setForm({ ...form, model: e.target.value })} />
+          <TextField fullWidth size="small" label={t('ppe.certification')} value={form.certification || ''} onChange={(e) => setForm({ ...form, certification: e.target.value })} />
+          <NumberField fullWidth size="small" label={t('ppe.stock')} min={0} step={1} value={form.stockQuantity} onChange={(v) => setForm({ ...form, stockQuantity: Math.max(1, v ?? 0) })} />
+          <NumberField fullWidth size="small" label={t('ppe.minStock')} min={0} step={1} value={form.minStock || 0} onChange={(v) => setForm({ ...form, minStock: v ?? 0 })} />
+          <DatePickerField label={t('ppe.expiryDate')} value={form.expiryDate || null} onChange={(v) => setForm({ ...form, expiryDate: v })} size="small" />
+          <TextField fullWidth size="small" label={t('ppe.storageLocation')} value={form.storageLocation || ''} onChange={(e) => setForm({ ...form, storageLocation: e.target.value })} />
+          <TextField fullWidth size="small" label={t('ppe.department')} value={form.department || ''} onChange={(e) => setForm({ ...form, department: e.target.value })} />
+          <TextField fullWidth size="small" label={t('ppe.notes')} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+        </Box>
+
+        {/* Buttons */}
+        <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', sm: 'flex-end' } }}>
+          <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.cancel')}</Button>
+          <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.save')}</Button>
+        </Box>
+      </>
+    )
+  }
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      {/* Tabs */}
+      <Tabs value={activeTab} onChange={(_, v) => { setActiveTab(v); if (v !== activeTab) handleBackToList() }} variant="scrollable" scrollButtons="auto"
+        sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+        <Tab label={t('ppe.tabs.inventory')} />
+        <Tab label={t('ppe.tabs.request')} />
+      </Tabs>
+      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, flexShrink: 0 }}>
+        {activeTab === 0 ? t('ppe.tabs.inventory') : t('ppe.tabs.request')}
+      </Typography>
+
+      {activeTab === 1 && <PpeRequestTab />}
+
+      {activeTab === 0 && <>
+      {/* Detail View */}
+      {viewMode === 'detail' && renderDetailView()}
+
+      {/* Create / Edit Form View */}
+      {(viewMode === 'create' || viewMode === 'edit') && renderFormView()}
+
+      {/* List View */}
+      {viewMode === 'list' && <>
+      {/* KPI Cards */}
+      {kpi && (
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3, flexShrink: 0 }}>
+          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'primary.main' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <InventoryIcon color="primary" fontSize="small" />
+              <Typography variant="caption" color="text.secondary">{t('ppe.totalItems')}</Typography>
+            </Box>
+            <Typography variant="h4" fontWeight="bold" color="primary">{kpi.totalItems}</Typography>
+          </Paper>
+          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'success.main' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <VerifiedUserIcon color="success" fontSize="small" />
+              <Typography variant="caption" color="text.secondary">{t('ppe.avgWearRate')}</Typography>
+            </Box>
+            <Typography variant="h4" fontWeight="bold" color="success.main">{Number(kpi.avgWearRate || 0).toFixed(1)}%</Typography>
+          </Paper>
+          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'warning.main' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <WarningAmberIcon color="warning" fontSize="small" />
+              <Typography variant="caption" color="text.secondary">{t('ppe.expirySoon')}</Typography>
+            </Box>
+            <Typography variant="h4" fontWeight="bold" color="warning.main">{kpi.expirySoonCount}</Typography>
+          </Paper>
+          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'error.main' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <ErrorOutlineIcon color="error" fontSize="small" />
+              <Typography variant="caption" color="text.secondary">{t('ppe.expiredOrLow')}</Typography>
+            </Box>
+            <Typography variant="h4" fontWeight="bold" color="error.main">{kpi.expiredCount + kpi.lowStockCount}</Typography>
+          </Paper>
+        </Box>
+      )}
+
+      {/* Search & Filter Bar - PC */}
+      <Paper sx={{ p: 2, mb: 2, flexShrink: 0, display: { xs: 'none', md: 'block' } }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <TextField
+            size="small"
+            placeholder={t('ppe.searchPlaceholder')}
+            value={searchText}
+            onChange={(e) => { setSearchText(e.target.value); setPage(0); setStatusFilter(''); setCategoryFilter('') }}
+            sx={{ minWidth: 220 }}
+          />
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <Select
+              displayEmpty
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText(''); setCategoryFilter('') }}
+            >
+              <MenuItem value="">{t('ppe.allStatus')}</MenuItem>
+              <MenuItem value="NORMAL">{t('ppe.statusNormal')}</MenuItem>
+              <MenuItem value="EXPIRY_SOON">{t('ppe.statusExpirySoon')}</MenuItem>
+              <MenuItem value="EXPIRED">{t('ppe.statusExpired')}</MenuItem>
+              <MenuItem value="LOW_STOCK">{t('ppe.statusLowStock')}</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <Select
+              displayEmpty
+              value={categoryFilter}
+              onChange={(e) => { setCategoryFilter(e.target.value); setPage(0); setSearchText(''); setStatusFilter('') }}
+            >
+              <MenuItem value="">{t('ppe.allCategory')}</MenuItem>
+              {categoryCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Box sx={{ flex: 1 }} />
+          {canCreate && (
+            <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreate}>
+              {t('ppe.register')}
+            </Button>
+          )}
+        </Box>
+      </Paper>
+      {/* Search & Filter Bar - Mobile */}
+      <Paper sx={{ p: 2, mb: 2, flexShrink: 0, display: { xs: 'block', md: 'none' } }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <TextField
+            size="small"
+            fullWidth
+            placeholder={t('ppe.searchPlaceholder')}
+            value={searchText}
+            onChange={(e) => { setSearchText(e.target.value); setPage(0); setStatusFilter(''); setCategoryFilter('') }}
+          />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <FormControl size="small" sx={{ flex: 1 }}>
+              <Select
+                displayEmpty
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText(''); setCategoryFilter('') }}
+              >
+                <MenuItem value="">{t('ppe.allStatus')}</MenuItem>
+                <MenuItem value="NORMAL">{t('ppe.statusNormal')}</MenuItem>
+                <MenuItem value="EXPIRY_SOON">{t('ppe.statusExpirySoon')}</MenuItem>
+                <MenuItem value="EXPIRED">{t('ppe.statusExpired')}</MenuItem>
+                <MenuItem value="LOW_STOCK">{t('ppe.statusLowStock')}</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ flex: 1 }}>
+              <Select
+                displayEmpty
+                value={categoryFilter}
+                onChange={(e) => { setCategoryFilter(e.target.value); setPage(0); setSearchText(''); setStatusFilter('') }}
+              >
+                <MenuItem value="">{t('ppe.allCategory')}</MenuItem>
+                {categoryCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </Box>
+          {canCreate && (
+            <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleOpenCreate}>
+              {t('ppe.register')}
+            </Button>
+          )}
+        </Box>
+      </Paper>
+
+      {/* Table */}
+      <Paper sx={{ px: 2, pt: 2 }}>
+        {isLoading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
+        ) : items.length === 0 ? (
+          <Alert severity="info" sx={{ m: 2 }}>{t('common.noData')}</Alert>
+        ) : (
+          <>
+            {/* PC Table */}
+            <TableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
+              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={headerCellSx}>{t('ppe.itemName')}</TableCell>
+                    <TableCell sx={headerCellSx}>{t('ppe.category')}</TableCell>
+                    <TableCell sx={headerCellSx}>{t('ppe.model')}</TableCell>
+                    <TableCell sx={headerCellSx} align="center">{t('ppe.stock')}</TableCell>
+                    <TableCell sx={headerCellSx} align="center">{t('ppe.wearRate')}</TableCell>
+                    <TableCell sx={headerCellSx}>{t('ppe.expiryDate')}</TableCell>
+                    <TableCell sx={headerCellSx} align="center">{t('ppe.status')}</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {items.map((item) => {
+                    const sc = STATUS_CHIP[item.status] || STATUS_CHIP.NORMAL
+                    return (
+                      <TableRow key={item.id} hover onClick={() => handleRowClick(item)} sx={{ cursor: 'pointer' }}>
+                        <TableCell><Typography fontWeight={600} variant="body2">{item.name}</Typography></TableCell>
+                        <TableCell align="center">{getCategoryLabel(item.category)}</TableCell>
+                        <TableCell align="center" sx={{ color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.8rem' }}>{item.model || ''}</TableCell>
+                        <TableCell align="center" sx={{ color: item.stockQuantity < item.minStock ? 'warning.main' : 'inherit', fontFamily: 'monospace' }}>
+                          {item.stockQuantity}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
+                            <LinearProgress
+                              variant="determinate"
+                              value={item.wearRate || 0}
+                              color={getWearRateColor(item.wearRate) as 'success' | 'warning' | 'error' | 'inherit'}
+                              sx={{ width: 60, height: 6, borderRadius: 3 }}
+                            />
+                            <Typography variant="caption" fontFamily="monospace">{item.wearRate || 0}%</Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="center" sx={{
+                          fontFamily: 'monospace', fontSize: '0.8rem',
+                          color: item.status === 'EXPIRED' ? 'error.main' : item.status === 'EXPIRY_SOON' ? 'warning.main' : 'text.secondary'
+                        }}>
+                          {item.expiryDate || ''}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Chip label={t(sc.label)} color={sc.color} size="small" />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* Mobile Cards */}
+            <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, pb: 1 }}>
+              {items.map((item) => {
+                const sc = STATUS_CHIP[item.status] || STATUS_CHIP.NORMAL
+                return (
+                  <Paper
+                    key={item.id}
+                    variant="outlined"
+                    sx={{ p: 2, cursor: 'pointer' }}
+                    onClick={() => handleRowClick(item)}
+                  >
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1, flexWrap: 'wrap' }}>
+                      <Chip label={getCategoryLabel(item.category)} size="small" variant="outlined" />
+                      <Box sx={{ flex: 1 }} />
+                      <Chip label={t(sc.label)} color={sc.color} size="small" />
+                    </Box>
+                    <Typography fontWeight="bold" color="primary" sx={{ mb: 0.25 }}>{item.name}</Typography>
+                    {item.model && (
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontFamily: 'monospace', mb: 0.75 }}>
+                        {item.model}
+                      </Typography>
+                    )}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                        <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 70 }}>{t('ppe.stock')}</Typography>
+                        <Typography variant="body2" fontFamily="monospace" sx={{ color: item.stockQuantity < item.minStock ? 'warning.main' : 'inherit', fontWeight: item.stockQuantity < item.minStock ? 'bold' : 'normal' }}>
+                          {item.stockQuantity}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                        <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 70 }}>{t('ppe.wearRate')}</Typography>
+                        <LinearProgress
+                          variant="determinate"
+                          value={item.wearRate || 0}
+                          color={getWearRateColor(item.wearRate) as 'success' | 'warning' | 'error' | 'inherit'}
+                          sx={{ flex: 1, height: 6, borderRadius: 3 }}
+                        />
+                        <Typography variant="caption" fontFamily="monospace">{item.wearRate || 0}%</Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                        <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 70 }}>{t('ppe.expiryDate')}</Typography>
+                        <Typography variant="body2" fontFamily="monospace" sx={{
+                          color: item.status === 'EXPIRED' ? 'error.main' : item.status === 'EXPIRY_SOON' ? 'warning.main' : 'text.secondary'
+                        }}>
+                          {item.expiryDate || ''}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Paper>
+                )
+              })}
+            </Box>
+            {totalPages > 1 && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+                <Pagination count={totalPages} page={page + 1} onChange={(_, p) => setPage(p - 1)} color="primary" />
+              </Box>
+            )}
+          </>
+        )}
+      </Paper>
+
+      {/* 3-Column Panels: 알림 + 분류별 현황 + 점검 일정 */}
+      {allItems.length > 0 && (
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 2, mt: 2, flexShrink: 0 }}>
+
+          {/* 교체·점검 알림 */}
+          <Paper>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2, borderBottom: 1, borderColor: 'divider' }}>
+              <NotificationsActiveIcon color="warning" fontSize="small" />
+              <Typography variant="subtitle2" fontWeight="bold" sx={{ flex: 1 }}>{t('ppe.alertTitle')}</Typography>
+              <Chip label={`${alertItems.length}${t('ppe.count')}`} size="small" color={alertItems.length > 0 ? 'error' : 'default'} />
+            </Box>
+            <List dense sx={{ maxHeight: 280, overflow: 'auto' }}>
+              {alertItems.length === 0 ? (
+                <ListItem><ListItemText secondary={t('ppe.noAlerts')} /></ListItem>
+              ) : alertItems.map((a, i) => (
+                <ListItem key={i} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <ListItemIcon sx={{ minWidth: 32 }}>
+                    <FiberManualRecordIcon sx={{ fontSize: 10, color: a.severity === 'error' ? 'error.main' : 'warning.main' }} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={<Typography variant="body2" fontWeight={500}>{a.name}</Typography>}
+                    secondary={`${a.department} · ${t(`ppe.status${a.status === 'EXPIRED' ? 'Expired' : a.status === 'LOW_STOCK' ? 'LowStock' : 'ExpirySoon'}`)}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+
+          {/* 분류별 보호구 현황 */}
+          <Paper>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2, borderBottom: 1, borderColor: 'divider' }}>
+              <CategoryIcon color="info" fontSize="small" />
+              <Typography variant="subtitle2" fontWeight="bold">{t('ppe.categoryStats')}</Typography>
+            </Box>
+            <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              {categoryStats.map((cat, i) => (
+                <Box key={cat.code}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ width: 90, flexShrink: 0 }}>{cat.label}</Typography>
+                    <Box sx={{ flex: 1 }}>
+                      <LinearProgress variant="determinate" value={cat.pct} sx={{ height: 8, borderRadius: 4, bgcolor: 'action.hover', '& .MuiLinearProgress-bar': { bgcolor: CATEGORY_COLORS[i % CATEGORY_COLORS.length] } }} />
+                    </Box>
+                    <Typography variant="body2" fontFamily="monospace" sx={{ width: 30, textAlign: 'right' }}>{cat.count}</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ width: 36, textAlign: 'right' }}>{cat.pct}%</Typography>
+                  </Box>
+                </Box>
+              ))}
+              {categoryStats.length > 0 && (
+                <>
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>{t('ppe.wearRateByCategory')}</Typography>
+                  {categoryStats.map((cat) => (
+                    <Box key={`wr-${cat.code}`} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ width: 90, flexShrink: 0 }}>{cat.label}</Typography>
+                      <LinearProgress
+                        variant="determinate"
+                        value={cat.avgWear}
+                        color={cat.avgWear >= 90 ? 'success' : cat.avgWear >= 80 ? 'warning' : 'error'}
+                        sx={{ flex: 1, height: 5, borderRadius: 3 }}
+                      />
+                      <Typography variant="body2" fontFamily="monospace" sx={{ width: 36, textAlign: 'right', color: cat.avgWear >= 90 ? 'success.main' : cat.avgWear >= 80 ? 'warning.main' : 'error.main' }}>
+                        {cat.avgWear}%
+                      </Typography>
+                    </Box>
+                  ))}
+                </>
+              )}
+            </Box>
+          </Paper>
+
+          {/* 점검·교체 일정 */}
+          <Paper>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2, borderBottom: 1, borderColor: 'divider' }}>
+              <EventNoteIcon color="success" fontSize="small" />
+              <Typography variant="subtitle2" fontWeight="bold">{t('ppe.scheduleTitle')}</Typography>
+            </Box>
+            <List dense sx={{ maxHeight: 280, overflow: 'auto' }}>
+              {scheduleItems.length === 0 ? (
+                <ListItem><ListItemText secondary={t('ppe.noSchedule')} /></ListItem>
+              ) : scheduleItems.map((s, i) => (
+                <ListItem key={i} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <ListItemIcon sx={{ minWidth: 24 }}>
+                    <FiberManualRecordIcon sx={{ fontSize: 8, color: s.isPast ? 'error.main' : 'success.main' }} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={<Typography variant="body2" fontWeight={500}>{s.name}</Typography>}
+                    secondary={`${s.department} · ${s.cycle}`}
+                  />
+                  <Typography variant="caption" fontFamily="monospace" color={s.isPast ? 'error.main' : 'text.secondary'}>{s.date}</Typography>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Box>
+      )}
+
+      {/* 최근 지급·반납 이력 (PPE Issuance) */}
+      {allItems.length > 0 && (
+        <Paper sx={{ mt: 2, px: 2, pb: 2, flexShrink: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 1.5 }}>
+            <HistoryIcon color="secondary" fontSize="small" />
+            <Typography variant="subtitle2" fontWeight="bold" sx={{ flex: 1 }}>{t('ppe.issuanceHistory')}</Typography>
+            <Chip label={t('ppe.recent30days')} size="small" variant="outlined" />
+          </Box>
+          {/* PC Table */}
+          <TableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={headerCellSx}>{t('ppe.issuanceDate')}</TableCell>
+                  <TableCell sx={headerCellSx}>{t('ppe.issuanceType')}</TableCell>
+                  <TableCell sx={headerCellSx}>{t('ppe.itemName')}</TableCell>
+                  <TableCell sx={headerCellSx} align="center">{t('ppe.quantity')}</TableCell>
+                  <TableCell sx={headerCellSx}>{t('ppe.recipient')}</TableCell>
+                  <TableCell sx={headerCellSx}>{t('ppe.department')}</TableCell>
+                  <TableCell sx={headerCellSx}>{t('ppe.notes')}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {(historyData?.content || []).length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center" sx={{ py: 3, color: 'text.secondary' }}>{t('common.noData')}</TableCell>
+                  </TableRow>
+                ) : (historyData?.content || []).map((h) => {
+                  const ac = ACTION_TYPE_CHIP[h.actionType as PpeActionType] || ACTION_TYPE_CHIP.ISSUE
+                  return (
+                    <TableRow key={h.id} hover>
+                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{h.actionDate?.replace('T', ' ').substring(0, 16)}</TableCell>
+                      <TableCell align="center"><Chip label={ac.label} color={ac.color} size="small" /></TableCell>
+                      <TableCell>{h.itemName}</TableCell>
+                      <TableCell align="center">{h.quantity}</TableCell>
+                      <TableCell align="center">{h.recipientName || ''}</TableCell>
+                      <TableCell align="center">{h.recipientDept || ''}</TableCell>
+                      <TableCell sx={{ color: h.actionType === 'DISPOSE' ? 'error.main' : 'text.secondary' }}>{h.notes || ''}</TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* Mobile Cards */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1 }}>
+            {(historyData?.content || []).length === 0 ? (
+              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>{t('common.noData')}</Typography>
+            ) : (historyData?.content || []).map((h) => {
+              const ac = ACTION_TYPE_CHIP[h.actionType as PpeActionType] || ACTION_TYPE_CHIP.ISSUE
+              return (
+                <Paper key={h.id} variant="outlined" sx={{ p: 1.5 }}>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 0.75 }}>
+                    <Chip label={ac.label} color={ac.color} size="small" />
+                    <Box sx={{ flex: 1 }} />
+                    <Typography variant="caption" fontFamily="monospace" color="text.secondary">
+                      {h.actionDate?.replace('T', ' ').substring(0, 16)}
+                    </Typography>
+                  </Box>
+                  <Typography fontWeight="bold" color="primary" sx={{ mb: 0.5 }}>
+                    {h.itemName} <Typography component="span" variant="body2" fontFamily="monospace">× {h.quantity}</Typography>
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 70 }}>{t('ppe.recipient')}</Typography>
+                      <Typography variant="body2">{h.recipientName || ''} {h.recipientDept ? `(${h.recipientDept})` : ''}</Typography>
+                    </Box>
+                    {h.notes && (
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 70 }}>{t('ppe.notes')}</Typography>
+                        <Typography variant="body2" sx={{ color: h.actionType === 'DISPOSE' ? 'error.main' : 'inherit' }}>{h.notes}</Typography>
+                      </Box>
+                    )}
+                  </Box>
+                </Paper>
+              )
+            })}
+          </Box>
+        </Paper>
+      )}
+      </>}
+      </>}
+    </Box>
+  )
+}
+
+export default PpeEquipmentPage

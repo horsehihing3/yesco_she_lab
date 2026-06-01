@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PermitChangeMapper">
+    <resultMap id="R" type="com.smartehs.model.PermitChange">
+        <id property="id" column="id"/>
+        <result property="changeType" column="change_type"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="requestDate" column="request_date"/>
+        <result property="plannedDate" column="planned_date"/>
+        <result property="initiator" column="initiator"/>
+        <result property="approver" column="approver"/>
+        <result property="impactAssessment" column="impact_assessment"/>
+        <result property="status" column="status"/>
+        <result property="affectedPermits" column="affected_permits"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_permit_change WHERE deleted = 0 ORDER BY id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_permit_change WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_permit_change WHERE deleted = 0</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_permit_change WHERE deleted = 0 AND status = #{status}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_permit_change (
+            change_type, title, description, request_date, planned_date,
+            initiator, approver, impact_assessment, status, affected_permits, notes,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{changeType}, #{title}, #{description,jdbcType=NVARCHAR},
+            #{requestDate,jdbcType=DATE}, #{plannedDate,jdbcType=DATE},
+            #{initiator,jdbcType=NVARCHAR}, #{approver,jdbcType=NVARCHAR},
+            #{impactAssessment,jdbcType=NVARCHAR},
+            <choose><when test="status != null">#{status}</when><otherwise>N'검토중'</otherwise></choose>,
+            #{affectedPermits,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_permit_change SET
+            change_type = #{changeType}, title = #{title}, description = #{description,jdbcType=NVARCHAR},
+            request_date = #{requestDate,jdbcType=DATE}, planned_date = #{plannedDate,jdbcType=DATE},
+            initiator = #{initiator,jdbcType=NVARCHAR}, approver = #{approver,jdbcType=NVARCHAR},
+            impact_assessment = #{impactAssessment,jdbcType=NVARCHAR}, status = #{status},
+            affected_permits = #{affectedPermits,jdbcType=NVARCHAR}, notes = #{notes,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_permit_change SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

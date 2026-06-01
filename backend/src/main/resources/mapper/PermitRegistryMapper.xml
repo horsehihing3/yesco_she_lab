@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PermitRegistryMapper">
+    <resultMap id="R" type="com.smartehs.model.PermitRegistry">
+        <id property="id" column="id"/>
+        <result property="category" column="category"/>
+        <result property="permitType" column="permit_type"/>
+        <result property="name" column="name"/>
+        <result property="law" column="law"/>
+        <result property="agency" column="agency"/>
+        <result property="permitNumber" column="permit_number"/>
+        <result property="issuedDate" column="issued_date"/>
+        <result property="expiryDate" column="expiry_date"/>
+        <result property="cycle" column="cycle"/>
+        <result property="facility" column="facility"/>
+        <result property="location" column="location"/>
+        <result property="manager" column="manager"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">
+        SELECT * FROM tb_permit_registry WHERE deleted = 0
+        ORDER BY CASE WHEN expiry_date IS NULL THEN 1 ELSE 0 END, expiry_date ASC, id DESC
+    </select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_permit_registry WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_permit_registry WHERE deleted = 0</select>
+    <select id="countByCategory" resultType="int">SELECT COUNT(*) FROM tb_permit_registry WHERE deleted = 0 AND category = #{category}</select>
+    <select id="countExpired" resultType="int">SELECT COUNT(*) FROM tb_permit_registry WHERE deleted = 0 AND expiry_date IS NOT NULL AND expiry_date &lt; CAST(GETDATE() AS DATE)</select>
+    <select id="countExpiringWithin" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_registry
+        WHERE deleted = 0 AND expiry_date IS NOT NULL
+        AND expiry_date &gt;= CAST(GETDATE() AS DATE)
+        AND expiry_date &lt;= DATEADD(day, #{days}, CAST(GETDATE() AS DATE))
+    </select>
+    <select id="countValid" resultType="int">
+        SELECT COUNT(*) FROM tb_permit_registry
+        WHERE deleted = 0
+        AND (expiry_date IS NULL OR expiry_date &gt; DATEADD(day, 90, CAST(GETDATE() AS DATE)))
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_permit_registry (
+            category, permit_type, name, law, agency, permit_number,
+            issued_date, expiry_date, cycle, facility, location, manager, notes,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{category}, #{permitType,jdbcType=NVARCHAR}, #{name},
+            #{law,jdbcType=NVARCHAR}, #{agency,jdbcType=NVARCHAR}, #{permitNumber,jdbcType=NVARCHAR},
+            #{issuedDate,jdbcType=DATE}, #{expiryDate,jdbcType=DATE}, #{cycle,jdbcType=NVARCHAR},
+            #{facility,jdbcType=NVARCHAR}, #{location,jdbcType=NVARCHAR}, #{manager,jdbcType=NVARCHAR},
+            #{notes,jdbcType=NVARCHAR}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_permit_registry SET
+            category = #{category}, permit_type = #{permitType,jdbcType=NVARCHAR}, name = #{name},
+            law = #{law,jdbcType=NVARCHAR}, agency = #{agency,jdbcType=NVARCHAR}, permit_number = #{permitNumber,jdbcType=NVARCHAR},
+            issued_date = #{issuedDate,jdbcType=DATE}, expiry_date = #{expiryDate,jdbcType=DATE},
+            cycle = #{cycle,jdbcType=NVARCHAR}, facility = #{facility,jdbcType=NVARCHAR},
+            location = #{location,jdbcType=NVARCHAR}, manager = #{manager,jdbcType=NVARCHAR},
+            notes = #{notes,jdbcType=NVARCHAR}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_permit_registry SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

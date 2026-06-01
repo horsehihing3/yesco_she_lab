@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ChemicalReachMapper">
+
+    <resultMap id="ChemicalReachResultMap" type="com.smartehs.model.ChemicalReach">
+        <id property="id" column="id"/>
+        <result property="chemicalName" column="chemical_name"/>
+        <result property="casNumber" column="cas_number"/>
+        <result property="registrationNo" column="registration_no"/>
+        <result property="svhc" column="svhc"/>
+        <result property="authorizationRequired" column="authorization_required"/>
+        <result property="restrictionNote" column="restriction_note"/>
+        <result property="registrationDate" column="registration_date"/>
+        <result property="status" column="status"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="ChemicalReachResultMap">
+        SELECT * FROM tb_chemical_reach
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical_reach WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="ChemicalReachResultMap">
+        SELECT * FROM tb_chemical_reach WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="search" resultMap="ChemicalReachResultMap">
+        SELECT * FROM tb_chemical_reach
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (chemical_name LIKE '%' + #{keyword} + '%'
+                 OR cas_number LIKE '%' + #{keyword} + '%'
+                 OR registration_no LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical_reach
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (chemical_name LIKE '%' + #{keyword} + '%'
+                 OR cas_number LIKE '%' + #{keyword} + '%'
+                 OR registration_no LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_chemical_reach (
+            chemical_name, cas_number, registration_no, svhc,
+            authorization_required, restriction_note, registration_date,
+            status, deleted, created_at, modified_at
+        ) VALUES (
+            #{chemicalName}, #{casNumber}, #{registrationNo}, #{svhc},
+            #{authorizationRequired}, #{restrictionNote}, #{registrationDate,jdbcType=DATE},
+            #{status}, #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_chemical_reach SET
+            chemical_name = #{chemicalName},
+            cas_number = #{casNumber},
+            registration_no = #{registrationNo},
+            svhc = #{svhc},
+            authorization_required = #{authorizationRequired},
+            restriction_note = #{restrictionNote},
+            registration_date = #{registrationDate,jdbcType=DATE},
+            status = #{status},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_chemical_reach SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

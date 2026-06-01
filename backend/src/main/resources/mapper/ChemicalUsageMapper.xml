@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ChemicalUsageMapper">
+
+    <resultMap id="ChemicalUsageResultMap" type="com.smartehs.model.ChemicalUsage">
+        <id property="id" column="id"/>
+        <result property="usageDate" column="usage_date"/>
+        <result property="chemicalName" column="chemical_name"/>
+        <result property="department" column="department"/>
+        <result property="purpose" column="purpose"/>
+        <result property="usageQuantity" column="usage_quantity"/>
+        <result property="unit" column="unit"/>
+        <result property="handler" column="handler"/>
+        <result property="remainingStock" column="remaining_stock"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="ChemicalUsageResultMap">
+        SELECT * FROM tb_chemical_usage
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical_usage WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="ChemicalUsageResultMap">
+        SELECT * FROM tb_chemical_usage WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="search" resultMap="ChemicalUsageResultMap">
+        SELECT * FROM tb_chemical_usage
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (chemical_name LIKE '%' + #{keyword} + '%'
+                 OR department LIKE '%' + #{keyword} + '%'
+                 OR handler LIKE '%' + #{keyword} + '%')
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical_usage
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (chemical_name LIKE '%' + #{keyword} + '%'
+                 OR department LIKE '%' + #{keyword} + '%'
+                 OR handler LIKE '%' + #{keyword} + '%')
+        </if>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_chemical_usage (
+            usage_date, chemical_name, department, purpose,
+            usage_quantity, unit, handler, remaining_stock,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{usageDate,jdbcType=DATE}, #{chemicalName}, #{department}, #{purpose},
+            #{usageQuantity}, #{unit}, #{handler}, #{remainingStock},
+            #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_chemical_usage SET
+            usage_date = #{usageDate,jdbcType=DATE},
+            chemical_name = #{chemicalName},
+            department = #{department},
+            purpose = #{purpose},
+            usage_quantity = #{usageQuantity},
+            unit = #{unit},
+            handler = #{handler},
+            remaining_stock = #{remainingStock},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_chemical_usage SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

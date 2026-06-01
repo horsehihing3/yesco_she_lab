@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EmissionSourceMapper">
+
+    <resultMap id="EmissionSourceResultMap" type="com.smartehs.model.EmissionSource">
+        <id property="id" column="id"/>
+        <result property="sourceCode" column="source_code"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="sourceType" column="source_type"/>
+        <result property="scope" column="scope"/>
+        <result property="location" column="location"/>
+        <result property="status" column="status"/>
+        <result property="annualEmission" column="annual_emission"/>
+        <result property="remark" column="remark"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="EmissionSourceResultMap">
+        SELECT * FROM tb_emission_source
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_emission_source
+    </select>
+
+    <select id="findById" resultMap="EmissionSourceResultMap">
+        SELECT * FROM tb_emission_source WHERE id = #{id}
+    </select>
+
+    <select id="findBySourceNameContaining" resultMap="EmissionSourceResultMap">
+        SELECT * FROM tb_emission_source
+        WHERE source_name LIKE '%' + #{sourceName} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySourceNameContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_emission_source
+        WHERE source_name LIKE '%' + #{sourceName} + '%'
+    </select>
+
+    <select id="findAllActive" resultMap="EmissionSourceResultMap">
+        SELECT * FROM tb_emission_source
+        WHERE status = 'OPERATING'
+        ORDER BY created_at DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_emission_source (source_code, source_name, source_type, scope, location,
+            status, annual_emission, remark, reg_user, created_at, modified_at)
+        VALUES (#{sourceCode}, #{sourceName}, #{sourceType}, #{scope}, #{location},
+            #{status}, #{annualEmission}, #{remark}, #{regUser}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_emission_source
+        SET source_code = #{sourceCode},
+            source_name = #{sourceName},
+            source_type = #{sourceType},
+            scope = #{scope},
+            location = #{location},
+            status = #{status},
+            annual_emission = #{annualEmission},
+            remark = #{remark},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_emission_source WHERE id = #{id}
+    </delete>
+
+</mapper>

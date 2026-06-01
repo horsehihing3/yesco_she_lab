@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.RiskAssessmentDetailFormMapper">
+
+    <resultMap id="RiskAssessmentDetailFormResultMap" type="com.smartehs.model.RiskAssessmentDetailForm">
+        <id property="id" column="id"/>
+        <result property="riskId" column="risk_id"/>
+        <result property="basicId" column="basic_id"/>
+        <result property="riskIdx" column="risk_idx"/>
+        <result property="majorCategory" column="major_category"/>
+        <result property="detailAction" column="detail_action"/>
+        <result property="risk4m" column="risk_4m"/>
+        <result property="danger" column="danger"/>
+        <result property="expectedDisaster" column="expected_disaster"/>
+        <result property="target" column="target"/>
+        <result property="currSafetyMeasures" column="curr_safety_measures"/>
+        <result property="possibility" column="possibility"/>
+        <result property="result" column="result"/>
+        <result property="riskScore" column="risk_score"/>
+        <result property="riskGrade" column="risk_grade"/>
+        <result property="registStatus" column="regist_status"/>
+        <result property="managePlan" column="manage_plan"/>
+        <result property="managePossibility" column="manage_possibility"/>
+        <result property="manageResult" column="manage_result"/>
+        <result property="manageRiskScore" column="manage_risk_score"/>
+        <result property="manageRiskGrade" column="manage_risk_grade"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="RiskAssessmentDetailFormResultMap">
+        SELECT * FROM tb_risk_assessment_detail_form ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="RiskAssessmentDetailFormResultMap">
+        SELECT * FROM tb_risk_assessment_detail_form WHERE id = #{id}
+    </select>
+
+    <select id="findByRiskId" resultMap="RiskAssessmentDetailFormResultMap">
+        SELECT * FROM tb_risk_assessment_detail_form WHERE risk_id = #{riskId} ORDER BY sort_no ASC
+    </select>
+
+    <select id="findByRiskIdOrderBySortNoAsc" resultMap="RiskAssessmentDetailFormResultMap">
+        SELECT * FROM tb_risk_assessment_detail_form WHERE risk_id = #{riskId} ORDER BY sort_no ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_risk_assessment_detail_form (risk_id, basic_id, risk_idx, major_category, detail_action, risk_4m, danger, expected_disaster, target, curr_safety_measures, possibility, result, risk_score, risk_grade, regist_status, manage_plan, manage_possibility, manage_result, manage_risk_score, manage_risk_grade, sort_no, created_at, modified_at)
+        VALUES (#{riskId}, #{basicId}, #{riskIdx}, #{majorCategory}, #{detailAction}, #{risk4m}, #{danger}, #{expectedDisaster}, #{target}, #{currSafetyMeasures}, #{possibility}, #{result}, #{riskScore}, #{riskGrade}, #{registStatus}, #{managePlan}, #{managePossibility}, #{manageResult}, #{manageRiskScore}, #{manageRiskGrade}, #{sortNo}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_risk_assessment_detail_form
+        SET basic_id = #{basicId},
+            risk_idx = #{riskIdx},
+            major_category = #{majorCategory},
+            detail_action = #{detailAction},
+            risk_4m = #{risk4m},
+            danger = #{danger},
+            expected_disaster = #{expectedDisaster},
+            target = #{target},
+            curr_safety_measures = #{currSafetyMeasures},
+            possibility = #{possibility},
+            result = #{result},
+            risk_score = #{riskScore},
+            risk_grade = #{riskGrade},
+            regist_status = #{registStatus},
+            manage_plan = #{managePlan},
+            manage_possibility = #{managePossibility},
+            manage_result = #{manageResult},
+            manage_risk_score = #{manageRiskScore},
+            manage_risk_grade = #{manageRiskGrade},
+            sort_no = #{sortNo},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_risk_assessment_detail_form WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByRiskId">
+        DELETE FROM tb_risk_assessment_detail_form WHERE risk_id = #{riskId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.AuditMapper">
+
+    <resultMap id="AuditResultMap" type="com.smartehs.model.Audit">
+        <id property="id" column="id"/>
+        <result property="auditId" column="audit_id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="auditName" column="audit_name"/>
+        <result property="auditType" column="audit_type"/>
+        <result property="targetDept" column="target_dept"/>
+        <result property="targetSite" column="target_site"/>
+        <result property="auditorName" column="auditor_name"/>
+        <result property="auditorDept" column="auditor_dept"/>
+        <result property="auditStartDate" column="audit_start_date"/>
+        <result property="auditEndDate" column="audit_end_date"/>
+        <result property="grade" column="grade"/>
+        <result property="totalChecklist" column="total_checklist"/>
+        <result property="completedChecklist" column="completed_checklist"/>
+        <result property="findingCount" column="finding_count"/>
+        <result property="status" column="status"/>
+        <result property="summary" column="summary"/>
+        <result property="notes" column="notes"/>
+        <result property="modifiedBy" column="modified_by"/>
+        <result property="planApproverUserId" column="plan_approver_user_id"/>
+        <result property="planApproverTeam" column="plan_approver_team"/>
+        <result property="planApproverPosition" column="plan_approver_position"/>
+        <result property="planApproverName" column="plan_approver_name"/>
+        <result property="planApprovedAt" column="plan_approved_at"/>
+        <result property="planApprovedBy" column="plan_approved_by"/>
+        <result property="completionApproverUserId" column="completion_approver_user_id"/>
+        <result property="completionApproverTeam" column="completion_approver_team"/>
+        <result property="completionApproverPosition" column="completion_approver_position"/>
+        <result property="completionApproverName" column="completion_approver_name"/>
+        <result property="completionApprovedAt" column="completion_approved_at"/>
+        <result property="completionApprovedBy" column="completion_approved_by"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="AuditResultMap">
+        SELECT * FROM tb_audit
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_audit WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="AuditResultMap">
+        SELECT * FROM tb_audit WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByStatus" resultMap="AuditResultMap">
+        SELECT * FROM tb_audit
+        WHERE status = #{status} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_audit WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="countByAuditIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_audit WHERE audit_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_audit (
+            audit_id, plan_id, audit_name, audit_type, target_dept, target_site,
+            auditor_name, auditor_dept, audit_start_date, audit_end_date,
+            grade, total_checklist, completed_checklist, finding_count,
+            status, summary, notes,
+            plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
+            completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+            created_by_user_id, created_by_name,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{auditId}, #{planId}, #{auditName}, #{auditType}, #{targetDept}, #{targetSite},
+            #{auditorName}, #{auditorDept}, #{auditStartDate,jdbcType=DATE}, #{auditEndDate,jdbcType=DATE},
+            #{grade}, #{totalChecklist}, #{completedChecklist}, #{findingCount},
+            #{status}, #{summary}, #{notes},
+            #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
+            #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_audit SET
+            audit_name = #{auditName}, audit_type = #{auditType},
+            target_dept = #{targetDept}, target_site = #{targetSite},
+            auditor_name = #{auditorName}, auditor_dept = #{auditorDept},
+            audit_start_date = #{auditStartDate,jdbcType=DATE}, audit_end_date = #{auditEndDate,jdbcType=DATE},
+            grade = #{grade}, total_checklist = #{totalChecklist},
+            completed_checklist = #{completedChecklist}, finding_count = #{findingCount},
+            status = #{status}, summary = #{summary}, notes = #{notes},
+            modified_by = #{modifiedBy},
+            plan_approver_user_id  = #{planApproverUserId,jdbcType=BIGINT},
+            plan_approver_team     = #{planApproverTeam},
+            plan_approver_position = #{planApproverPosition},
+            plan_approver_name     = #{planApproverName},
+            completion_approver_user_id  = #{completionApproverUserId,jdbcType=BIGINT},
+            completion_approver_team     = #{completionApproverTeam},
+            completion_approver_position = #{completionApproverPosition},
+            completion_approver_name     = #{completionApproverName},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="completeAudit">
+        UPDATE tb_audit
+        SET status = 'COMPLETED',
+            completion_approved_by = #{approvedBy},
+            completion_approved_at = GETDATE(),
+            reject_reason = NULL,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="rejectAudit">
+        UPDATE tb_audit
+        SET status = 'IN_PROGRESS',
+            completion_approved_by = NULL,
+            completion_approved_at = NULL,
+            reject_reason = #{rejectReason},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateGrade">
+        UPDATE tb_audit SET grade = #{grade}, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_audit SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="updateChecklistCounts">
+        UPDATE tb_audit SET
+            total_checklist = #{totalChecklist},
+            completed_checklist = #{completedChecklist},
+            finding_count = #{findingCount},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByPlanId" resultMap="AuditResultMap">
+        SELECT * FROM tb_audit WHERE plan_id = #{planId} AND deleted = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.PpeHistoryMapper">
+
+    <resultMap id="PpeHistoryResultMap" type="com.smartehs.model.PpeHistory">
+        <id property="id" column="id"/>
+        <result property="historyId" column="history_id"/>
+        <result property="actionType" column="action_type"/>
+        <result property="itemName" column="item_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="recipientName" column="recipient_name"/>
+        <result property="recipientDept" column="recipient_dept"/>
+        <result property="handlerName" column="handler_name"/>
+        <result property="actionDate" column="action_date"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="PpeHistoryResultMap">
+        SELECT * FROM tb_ppe_history
+        WHERE deleted = 0
+        ORDER BY action_date DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_history WHERE deleted = 0
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="PpeHistoryResultMap">
+        SELECT * FROM tb_ppe_history WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countByHistoryIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_history WHERE history_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_history (
+            history_id, action_type, item_name, quantity,
+            recipient_name, recipient_dept, handler_name,
+            action_date, notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{historyId}, #{actionType}, #{itemName}, #{quantity},
+            #{recipientName}, #{recipientDept}, #{handlerName},
+            #{actionDate}, #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ppe_history SET
+            action_type = #{actionType}, item_name = #{itemName}, quantity = #{quantity},
+            recipient_name = #{recipientName}, recipient_dept = #{recipientDept},
+            handler_name = #{handlerName}, action_date = #{actionDate},
+            notes = #{notes}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_history SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

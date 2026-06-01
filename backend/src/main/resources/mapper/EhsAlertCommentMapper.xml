@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.EhsAlertCommentMapper">
+
+    <resultMap id="R" type="com.smartehs.model.EhsAlertComment">
+        <id property="id" column="id"/>
+        <result property="alertId" column="alert_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="content" column="content"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByAlertId" resultMap="R">
+        SELECT * FROM tb_ehs_alert_comment
+        WHERE alert_id = #{alertId} AND deleted = 0
+        ORDER BY
+            CASE WHEN parent_id IS NULL THEN id ELSE parent_id END ASC,
+            CASE WHEN parent_id IS NULL THEN 0 ELSE 1 END ASC,
+            created_at ASC
+    </select>
+
+    <select id="findById" resultMap="R">
+        SELECT * FROM tb_ehs_alert_comment WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countByAlertId" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_alert_comment WHERE alert_id = #{alertId} AND deleted = 0
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_alert_comment
+            (alert_id, parent_id, content, author_name, author_dept, author_email, deleted, created_at, modified_at)
+        VALUES
+            (#{alertId}, #{parentId,jdbcType=BIGINT}, #{content}, #{authorName}, #{authorDept}, #{authorEmail},
+             0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ehs_alert_comment
+        SET content = #{content}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ehs_alert_comment SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <update id="softDeleteWithChildren">
+        UPDATE tb_ehs_alert_comment
+        SET deleted = 1, modified_at = GETDATE()
+        WHERE id = #{id} OR parent_id = #{id}
+    </update>
+
+    <update id="softDeleteByAlertId">
+        UPDATE tb_ehs_alert_comment
+        SET deleted = 1, modified_at = GETDATE()
+        WHERE alert_id = #{alertId}
+    </update>
+</mapper>

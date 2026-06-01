@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.SafetyWorkListMapper">
+
+    <resultMap id="SafetyWorkListResultMap" type="com.smartehs.model.SafetyWorkList">
+        <id property="id" column="id"/>
+        <result property="safetyWorkId" column="safety_work_id"/>
+        <result property="title" column="title"/>
+        <result property="titleEn" column="title_en"/>
+        <result property="titleZh" column="title_zh"/>
+        <result property="location" column="location"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="partners" column="partners"/>
+        <result property="partnersName" column="partners_name"/>
+        <result property="managerName" column="manager_name"/>
+        <result property="managerDept" column="manager_dept"/>
+        <result property="approverName" column="approver_name"/>
+        <result property="approverMail" column="approver_mail"/>
+        <result property="approverDept" column="approver_dept"/>
+        <result property="approveDate" column="approve_date"/>
+        <result property="status" column="status"/>
+        <result property="rejectComment" column="reject_comment"/>
+        <result property="rejectBy" column="reject_by"/>
+        <result property="rejectDate" column="reject_date"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorMail" column="author_mail"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="authorCompany" column="author_company"/>
+        <result property="completedDate" column="completed_date"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="SafetyWorkListResultMap">
+        SELECT * FROM tb_safety_work_list ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="SafetyWorkListResultMap">
+        SELECT * FROM tb_safety_work_list
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_work_list
+    </select>
+
+    <select id="findById" resultMap="SafetyWorkListResultMap">
+        SELECT * FROM tb_safety_work_list WHERE id = #{id}
+    </select>
+
+    <select id="findBySafetyWorkId" resultMap="SafetyWorkListResultMap">
+        SELECT * FROM tb_safety_work_list WHERE safety_work_id = #{safetyWorkId}
+    </select>
+
+    <select id="findByTitleContaining" resultMap="SafetyWorkListResultMap">
+        SELECT * FROM tb_safety_work_list
+        WHERE title LIKE '%' + #{title} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_work_list WHERE title LIKE '%' + #{title} + '%'
+    </select>
+
+    <select id="findByLocationContaining" resultMap="SafetyWorkListResultMap">
+        SELECT * FROM tb_safety_work_list
+        WHERE location LIKE '%' + #{location} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByLocationContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_work_list WHERE location LIKE '%' + #{location} + '%'
+    </select>
+
+    <select id="findByStatus" resultMap="SafetyWorkListResultMap">
+        SELECT * FROM tb_safety_work_list
+        WHERE status = #{status}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_work_list WHERE status = #{status}
+    </select>
+
+    <select id="findByTitleContainingAndLocationContaining" resultMap="SafetyWorkListResultMap">
+        SELECT * FROM tb_safety_work_list
+        WHERE title LIKE '%' + #{title} + '%' AND location LIKE '%' + #{location} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleContainingAndLocationContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_work_list
+        WHERE title LIKE '%' + #{title} + '%' AND location LIKE '%' + #{location} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_work_list (safety_work_id, title, title_en, title_zh, location, start_date, end_date, partners, partners_name, manager_name, manager_dept, approver_name, approver_mail, approver_dept, approve_date, status, reject_comment, reject_by, reject_date, author_name, author_mail, author_dept, author_company, completed_date, created_at, modified_at)
+        VALUES (#{safetyWorkId}, #{title}, #{titleEn}, #{titleZh}, #{location}, #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, #{partners}, #{partnersName}, #{managerName}, #{managerDept}, #{approverName}, #{approverMail}, #{approverDept}, #{approveDate,jdbcType=DATE}, #{status}, #{rejectComment}, #{rejectBy}, #{rejectDate,jdbcType=DATE}, #{authorName}, #{authorMail}, #{authorDept}, #{authorCompany}, #{completedDate,jdbcType=DATE}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_safety_work_list
+        SET title = #{title},
+            title_en = #{titleEn},
+            title_zh = #{titleZh},
+            location = #{location},
+            start_date = #{startDate,jdbcType=DATE},
+            end_date = #{endDate,jdbcType=DATE},
+            partners = #{partners},
+            partners_name = #{partnersName},
+            manager_name = #{managerName},
+            manager_dept = #{managerDept},
+            approver_name = #{approverName},
+            approver_mail = #{approverMail},
+            approver_dept = #{approverDept},
+            approve_date = #{approveDate,jdbcType=DATE},
+            status = #{status},
+            reject_comment = #{rejectComment},
+            reject_by = #{rejectBy},
+            reject_date = #{rejectDate,jdbcType=DATE},
+            author_name = #{authorName},
+            author_mail = #{authorMail},
+            author_dept = #{authorDept},
+            author_company = #{authorCompany},
+            completed_date = #{completedDate,jdbcType=DATE},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_safety_work_list WHERE id = #{id}
+    </delete>
+
+</mapper>

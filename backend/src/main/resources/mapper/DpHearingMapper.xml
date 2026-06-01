@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.DpHearingMapper">
+    <resultMap id="R" type="com.smartehs.model.DpHearing">
+        <id property="id" column="id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="department" column="department"/>
+        <result property="noiseLevel" column="noise_level"/>
+        <result property="exposureHours" column="exposure_hours"/>
+        <result property="right4k" column="right_4k"/>
+        <result property="right6k" column="right_6k"/>
+        <result property="left4k" column="left_4k"/>
+        <result property="left6k" column="left_6k"/>
+        <result property="stsResult" column="sts_result"/>
+        <result property="ppeType" column="ppe_type"/>
+        <result property="ppeNrr" column="ppe_nrr"/>
+        <result property="examDate" column="exam_date"/>
+        <result property="examType" column="exam_type"/>
+        <result property="status" column="status"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_dp_hearing WHERE deleted = 0 ORDER BY noise_level DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_dp_hearing WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_dp_hearing WHERE deleted = 0</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_dp_hearing WHERE deleted = 0 AND status = #{status}</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_dp_hearing (worker_name, department, noise_level, exposure_hours,
+            right_4k, right_6k, left_4k, left_6k, sts_result, ppe_type, ppe_nrr,
+            exam_date, exam_type, status, notes,
+            deleted, created_at, modified_at) VALUES (
+            #{workerName}, #{department,jdbcType=NVARCHAR},
+            #{noiseLevel,jdbcType=INTEGER}, #{exposureHours,jdbcType=INTEGER},
+            #{right4k,jdbcType=INTEGER}, #{right6k,jdbcType=INTEGER},
+            #{left4k,jdbcType=INTEGER}, #{left6k,jdbcType=INTEGER},
+            #{stsResult,jdbcType=NVARCHAR}, #{ppeType,jdbcType=NVARCHAR}, #{ppeNrr,jdbcType=INTEGER},
+            #{examDate,jdbcType=DATE}, #{examType,jdbcType=NVARCHAR}, #{status,jdbcType=NVARCHAR},
+            #{notes,jdbcType=NVARCHAR}, 0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_dp_hearing SET worker_name = #{workerName}, department = #{department,jdbcType=NVARCHAR},
+            noise_level = #{noiseLevel,jdbcType=INTEGER}, exposure_hours = #{exposureHours,jdbcType=INTEGER},
+            right_4k = #{right4k,jdbcType=INTEGER}, right_6k = #{right6k,jdbcType=INTEGER},
+            left_4k = #{left4k,jdbcType=INTEGER}, left_6k = #{left6k,jdbcType=INTEGER},
+            sts_result = #{stsResult,jdbcType=NVARCHAR}, ppe_type = #{ppeType,jdbcType=NVARCHAR},
+            ppe_nrr = #{ppeNrr,jdbcType=INTEGER},
+            exam_date = #{examDate,jdbcType=DATE}, exam_type = #{examType,jdbcType=NVARCHAR},
+            status = #{status,jdbcType=NVARCHAR}, notes = #{notes,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_dp_hearing SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

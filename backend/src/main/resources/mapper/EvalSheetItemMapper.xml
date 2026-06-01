@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EvalSheetItemMapper">
+
+    <resultMap id="EvalSheetItemResultMap" type="com.smartehs.model.EvalSheetItem">
+        <id property="id" column="id"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="category" column="category"/>
+        <result property="evalItem" column="eval_item"/>
+        <result property="evalContent" column="eval_content"/>
+        <result property="maxScore" column="max_score"/>
+        <result property="score" column="score"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="EvalSheetItemResultMap">
+        SELECT * FROM tb_eval_sheet_item ORDER BY sort_order ASC
+    </select>
+
+    <select id="findById" resultMap="EvalSheetItemResultMap">
+        SELECT * FROM tb_eval_sheet_item WHERE id = #{id}
+    </select>
+
+    <update id="updateScore">
+        UPDATE tb_eval_sheet_item
+        SET score = #{score}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <select id="nextSortOrder" resultType="int">
+        SELECT ISNULL(MAX(sort_order), 0) + 1 FROM tb_eval_sheet_item
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_eval_sheet_item
+            (sort_order, category, eval_item, eval_content, max_score, score, created_at, modified_at)
+        VALUES
+            (#{sortOrder}, #{category}, #{evalItem}, #{evalContent}, #{maxScore}, #{score}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_eval_sheet_item
+        SET sort_order = #{sortOrder},
+            category = #{category},
+            eval_item = #{evalItem},
+            eval_content = #{evalContent},
+            max_score = #{maxScore},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_eval_sheet_item WHERE id = #{id}
+    </delete>
+
+</mapper>

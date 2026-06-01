@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.smartehs.model.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="email" column="email"/>
+        <result property="name" column="name"/>
+        <result property="department" column="department"/>
+        <result property="company" column="company"/>
+        <result property="role" column="role"/>
+        <result property="password" column="password"/>
+        <result property="active" column="active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <!-- department 경로에서 마지막 세그먼트 추출: "A - B - C" → "C" -->
+    <sql id="userColumns">
+        id, username, email, name,
+        PARSENAME(REPLACE(department, N' - ', N'.'), 1) as department,
+        company, role, password, active, created_at, modified_at
+    </sql>
+
+    <select id="findAll" resultMap="UserResultMap">
+        SELECT <include refid="userColumns"/> FROM tb_user ORDER BY created_at DESC
+    </select>
+
+    <select id="findAllWithPaging" resultMap="UserResultMap">
+        SELECT <include refid="userColumns"/> FROM tb_user
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_user
+    </select>
+
+    <select id="findById" resultMap="UserResultMap">
+        SELECT <include refid="userColumns"/> FROM tb_user WHERE id = #{id}
+    </select>
+
+    <select id="findByUsername" resultMap="UserResultMap">
+        SELECT <include refid="userColumns"/> FROM tb_user WHERE username = #{username}
+    </select>
+
+    <select id="findByEmail" resultMap="UserResultMap">
+        SELECT <include refid="userColumns"/> FROM tb_user WHERE email = #{email}
+    </select>
+
+    <select id="existsByUsername" resultType="int">
+        SELECT CASE WHEN EXISTS (SELECT 1 FROM tb_user WHERE username = #{username}) THEN 1 ELSE 0 END
+    </select>
+
+    <select id="existsByEmail" resultType="int">
+        SELECT CASE WHEN EXISTS (SELECT 1 FROM tb_user WHERE email = #{email}) THEN 1 ELSE 0 END
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_user (username, email, name, department, company, role, password, active, created_at, modified_at)
+        VALUES (#{username}, #{email}, #{name}, #{department}, #{company}, #{role}, #{password}, #{active}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_user
+        SET username = #{username},
+            email = #{email},
+            name = #{name},
+            department = #{department},
+            company = #{company},
+            role = #{role},
+            password = #{password},
+            active = #{active},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_user WHERE id = #{id}
+    </delete>
+
+    <update id="updateRole">
+        UPDATE tb_user
+        SET role = #{role},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

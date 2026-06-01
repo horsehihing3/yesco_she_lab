@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.FireInspectionMapper">
+    <resultMap id="R" type="com.smartehs.model.FireInspection">
+        <id property="id" column="id"/>
+        <result property="inspNo" column="insp_no"/>
+        <result property="inspName" column="insp_name"/>
+        <result property="inspType" column="insp_type"/>
+        <result property="org" column="org"/>
+        <result property="applyDate" column="apply_date"/>
+        <result property="inspDate" column="insp_date"/>
+        <result property="inspector" column="inspector"/>
+        <result property="result" column="result"/>
+        <result property="cost" column="cost"/>
+        <result property="submitStatus" column="submit_status"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="summary" column="summary"/>
+        <result property="issue" column="issue"/>
+        <result property="plan" column="plan"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">
+        SELECT id, insp_no, insp_name, insp_type, org, apply_date, insp_date, inspector, result, cost,
+               submit_status, submit_date, summary, issue, [plan] AS [plan], deleted, created_at, modified_at
+        FROM tb_fire_inspection WHERE deleted = 0 ORDER BY insp_date DESC, id DESC
+    </select>
+    <select id="findById" resultMap="R">
+        SELECT id, insp_no, insp_name, insp_type, org, apply_date, insp_date, inspector, result, cost,
+               submit_status, submit_date, summary, issue, [plan] AS [plan], deleted, created_at, modified_at
+        FROM tb_fire_inspection WHERE id = #{id} AND deleted = 0
+    </select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_fire_inspection WHERE deleted = 0</select>
+    <select id="countByResult" resultType="int">SELECT COUNT(*) FROM tb_fire_inspection WHERE deleted = 0 AND result = #{result}</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_fire_inspection (insp_no, insp_name, insp_type, org, apply_date, insp_date, inspector, result, cost,
+            submit_status, submit_date, summary, issue, [plan], deleted, created_at, modified_at) VALUES (
+            #{inspNo}, #{inspName}, #{inspType}, #{org}, #{applyDate,jdbcType=DATE}, #{inspDate,jdbcType=DATE},
+            #{inspector}, #{result}, #{cost}, #{submitStatus}, #{submitDate,jdbcType=DATE},
+            #{summary}, #{issue}, #{plan}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_fire_inspection SET insp_no = #{inspNo}, insp_name = #{inspName}, insp_type = #{inspType},
+            org = #{org}, apply_date = #{applyDate,jdbcType=DATE}, insp_date = #{inspDate,jdbcType=DATE},
+            inspector = #{inspector}, result = #{result}, cost = #{cost},
+            submit_status = #{submitStatus}, submit_date = #{submitDate,jdbcType=DATE},
+            summary = #{summary}, issue = #{issue}, [plan] = #{plan},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_fire_inspection SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

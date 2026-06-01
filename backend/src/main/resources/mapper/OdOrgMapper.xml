@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.OdOrgMapper">
+    <resultMap id="rm" type="com.smartehs.model.OdOrg">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="doctor" column="doctor"/>
+        <result property="orgType" column="org_type"/>
+        <result property="factors" column="factors"/>
+        <result property="costPerPerson" column="cost_per_person"/>
+        <result property="contractEnd" column="contract_end"/>
+        <result property="targetCount" column="target_count"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="rm">SELECT * FROM tb_od_org WHERE deleted = 0 ORDER BY id ASC</select>
+    <select id="findById" resultMap="rm">SELECT * FROM tb_od_org WHERE id = #{id} AND deleted = 0</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_od_org (name, doctor, org_type, factors, cost_per_person,
+            contract_end, target_count, deleted, created_at, modified_at) VALUES (
+            #{name}, #{doctor}, #{orgType}, #{factors}, #{costPerPerson},
+            #{contractEnd,jdbcType=DATE}, #{targetCount},
+            0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_od_org SET name = #{name}, doctor = #{doctor}, org_type = #{orgType},
+            factors = #{factors}, cost_per_person = #{costPerPerson},
+            contract_end = #{contractEnd,jdbcType=DATE},
+            target_count = #{targetCount},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_od_org SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

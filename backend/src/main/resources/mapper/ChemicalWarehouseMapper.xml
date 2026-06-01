@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ChemicalWarehouseMapper">
+
+    <resultMap id="ChemicalWarehouseResultMap" type="com.smartehs.model.ChemicalWarehouse">
+        <id property="id" column="id"/>
+        <result property="warehouseCode" column="warehouse_code"/>
+        <result property="warehouseName" column="warehouse_name"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="location" column="location"/>
+        <result property="storedItemsCount" column="stored_items_count"/>
+        <result property="totalStock" column="total_stock"/>
+        <result property="temperature" column="temperature"/>
+        <result property="humidity" column="humidity"/>
+        <result property="status" column="status"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="ChemicalWarehouseResultMap">
+        SELECT * FROM tb_chemical_warehouse
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical_warehouse WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="ChemicalWarehouseResultMap">
+        SELECT * FROM tb_chemical_warehouse WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="search" resultMap="ChemicalWarehouseResultMap">
+        SELECT * FROM tb_chemical_warehouse
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (warehouse_code LIKE '%' + #{keyword} + '%'
+                 OR warehouse_name LIKE '%' + #{keyword} + '%'
+                 OR location LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical_warehouse
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (warehouse_code LIKE '%' + #{keyword} + '%'
+                 OR warehouse_name LIKE '%' + #{keyword} + '%'
+                 OR location LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_chemical_warehouse (
+            warehouse_code, warehouse_name, storage_type, location,
+            stored_items_count, total_stock, temperature, humidity,
+            status, deleted, created_at, modified_at
+        ) VALUES (
+            #{warehouseCode}, #{warehouseName}, #{storageType}, #{location},
+            #{storedItemsCount}, #{totalStock}, #{temperature}, #{humidity},
+            #{status}, #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_chemical_warehouse SET
+            warehouse_code = #{warehouseCode},
+            warehouse_name = #{warehouseName},
+            storage_type = #{storageType},
+            location = #{location},
+            stored_items_count = #{storedItemsCount},
+            total_stock = #{totalStock},
+            temperature = #{temperature},
+            humidity = #{humidity},
+            status = #{status},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_chemical_warehouse SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

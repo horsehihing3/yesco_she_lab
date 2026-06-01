@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.TrainingCourseMapper">
+
+    <resultMap id="TrainingCourseResultMap" type="com.smartehs.model.TrainingCourse">
+        <id property="id" column="id"/>
+        <result property="courseCode" column="course_code"/>
+        <result property="courseName" column="course_name"/>
+        <result property="category" column="category"/>
+        <result property="catType" column="cat_type"/>
+        <result property="targetAudience" column="target_audience"/>
+        <result property="durationHours" column="duration_hours"/>
+        <result property="cycle" column="cycle"/>
+        <result property="legalRequired" column="legal_required"/>
+        <result property="instructor" column="instructor"/>
+        <result property="description" column="description"/>
+        <result property="dateStart" column="date_start"/>
+        <result property="dateEnd" column="date_end"/>
+        <result property="location" column="location"/>
+        <result property="mode" column="mode"/>
+        <result property="status" column="status"/>
+        <result property="totalSeats" column="total_seats"/>
+        <result property="currentSeats" column="current_seats"/>
+        <result property="lawBasis" column="law_basis"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <sql id="filterWhere">
+        <where>
+            <if test="category != null and category != ''">AND category = #{category}</if>
+            <if test="isActive != null">AND is_active = #{isActive}</if>
+            <if test="keyword != null and keyword != ''">
+                AND (course_name LIKE '%' + #{keyword} + '%' OR course_code LIKE '%' + #{keyword} + '%' OR instructor LIKE '%' + #{keyword} + '%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="findAllWithPaging" resultMap="TrainingCourseResultMap">
+        SELECT * FROM tb_training_course
+        <include refid="filterWhere"/>
+        ORDER BY is_active DESC, course_code ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_training_course
+        <include refid="filterWhere"/>
+    </select>
+
+    <select id="findById" resultMap="TrainingCourseResultMap">
+        SELECT * FROM tb_training_course WHERE id = #{id}
+    </select>
+
+    <select id="findByCourseCode" resultMap="TrainingCourseResultMap">
+        SELECT * FROM tb_training_course WHERE course_code = #{courseCode}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_training_course
+        (course_code, course_name, category, cat_type, target_audience, duration_hours, cycle, legal_required,
+         instructor, description, date_start, date_end, location, mode, status, total_seats, current_seats, law_basis,
+         is_active, created_by, created_at, modified_at)
+        VALUES
+        (#{courseCode}, #{courseName}, #{category}, #{catType}, #{targetAudience}, #{durationHours}, #{cycle}, #{legalRequired},
+         #{instructor}, #{description}, #{dateStart}, #{dateEnd}, #{location}, #{mode}, #{status}, #{totalSeats}, #{currentSeats}, #{lawBasis},
+         #{isActive}, #{createdBy}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_training_course
+        SET course_code     = #{courseCode},
+            course_name     = #{courseName},
+            category        = #{category},
+            cat_type        = #{catType},
+            target_audience = #{targetAudience},
+            duration_hours  = #{durationHours},
+            cycle           = #{cycle},
+            legal_required  = #{legalRequired},
+            instructor      = #{instructor},
+            description     = #{description},
+            date_start      = #{dateStart},
+            date_end        = #{dateEnd},
+            location        = #{location},
+            mode            = #{mode},
+            status          = #{status},
+            total_seats     = #{totalSeats},
+            current_seats   = #{currentSeats},
+            law_basis       = #{lawBasis},
+            is_active       = #{isActive},
+            modified_at     = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="incrementCurrentSeats">
+        UPDATE tb_training_course
+        SET current_seats = ISNULL(current_seats, 0) + #{delta}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_training_course WHERE id = #{id}
+    </delete>
+
+</mapper>

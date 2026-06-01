@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.IdmMapper">
+
+    <!-- IDM 테이블은 PascalCase 컬럼이므로 명시적 resultMap 필요 -->
+
+    <resultMap id="IdmCompanyResultMap" type="com.smartehs.model.IdmCompany">
+        <result column="CompanyCode" property="companyCode"/>
+        <result column="Name" property="name"/>
+        <result column="Status" property="status"/>
+    </resultMap>
+
+    <resultMap id="IdmGroupResultMap" type="com.smartehs.model.IdmGroup">
+        <result column="CompanyCode" property="companyCode"/>
+        <result column="GroupCode" property="groupCode"/>
+        <result column="UpperGroupCode" property="upperGroupCode"/>
+        <result column="GroupName" property="groupName"/>
+        <result column="GroupLevel" property="groupLevel"/>
+        <result column="GroupStatus" property="groupStatus"/>
+    </resultMap>
+
+    <resultMap id="IdmUserResultMap" type="com.smartehs.model.IdmUser">
+        <result column="UIDNumber" property="uidNumber"/>
+        <result column="CompanyCode" property="companyCode"/>
+        <result column="DeptCode" property="deptCode"/>
+        <result column="UserName" property="userName"/>
+        <result column="Email" property="email"/>
+        <result column="UID" property="uid"/>
+        <result column="UserStatus" property="userStatus"/>
+        <result column="ObjectCategory" property="objectCategory"/>
+        <result column="Password" property="password"/>
+        <result column="UserRole" property="userRole"/>
+    </resultMap>
+
+    <select id="findActiveCompanies" resultMap="IdmCompanyResultMap">
+        SELECT CompanyCode, Name, Status
+        FROM T_IDM_COMPANY
+        WHERE Status = '10'
+          AND CompanyCode = '0100004'
+        ORDER BY Name
+    </select>
+
+    <select id="findActiveGroups" resultMap="IdmGroupResultMap">
+        SELECT CompanyCode, GroupCode, UpperGroupCode, GroupName, GroupLevel, GroupStatus
+        FROM T_IDM_GROUP
+        WHERE GroupStatus = '10'
+          AND CompanyCode = '0100004'
+        ORDER BY CompanyCode, GroupLevel, GroupName
+    </select>
+
+    <select id="findActiveEmployees" resultMap="IdmUserResultMap">
+        SELECT UIDNumber, CompanyCode, DeptCode, UserName,
+               Email, UID, UserStatus, ObjectCategory, Password, UserRole
+        FROM T_IDM_USER
+        WHERE UserStatus = '10'
+          AND CompanyCode = '0100004'
+        ORDER BY CompanyCode, DeptCode, UserName
+    </select>
+
+    <select id="findByUid" resultMap="IdmUserResultMap">
+        SELECT UIDNumber, CompanyCode, DeptCode, UserName,
+               Email, UID, UserStatus, ObjectCategory, Password, UserRole
+        FROM T_IDM_USER
+        WHERE UID = #{uid}
+          AND UserStatus = '10'
+    </select>
+
+    <select id="findAllWithPassword" resultMap="IdmUserResultMap">
+        SELECT UIDNumber, CompanyCode, DeptCode, UserName,
+               Email, UID, UserStatus, ObjectCategory, Password, UserRole
+        FROM T_IDM_USER
+        WHERE UserStatus = '10'
+          AND Password IS NOT NULL
+          AND Password != ''
+        ORDER BY UserName
+    </select>
+
+    <update id="updateUserRole">
+        UPDATE T_IDM_USER
+        SET UserRole = #{userRole}
+        WHERE UID = #{uid}
+    </update>
+
+</mapper>

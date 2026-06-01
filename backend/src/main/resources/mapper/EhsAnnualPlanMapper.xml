@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EhsAnnualPlanMapper">
+
+    <resultMap id="EhsAnnualPlanResultMap" type="com.smartehs.model.EhsAnnualPlan">
+        <id property="id" column="id"/>
+        <result property="planYear"        column="plan_year"/>
+        <result property="planName"        column="plan_name"/>
+        <result property="description"     column="description"/>
+        <result property="status"          column="status"/>
+        <result property="priority"        column="priority"/>
+        <result property="remarks"         column="remarks"/>
+        <result property="writerUserId"    column="writer_user_id"/>
+        <result property="writerTeam"      column="writer_team"/>
+        <result property="writerPosition"  column="writer_position"/>
+        <result property="writerName"      column="writer_name"/>
+        <result property="planApproverUserId"        column="plan_approver_user_id"/>
+        <result property="planApproverTeam"          column="plan_approver_team"/>
+        <result property="planApproverPosition"      column="plan_approver_position"/>
+        <result property="planApproverName"          column="plan_approver_name"/>
+        <result property="planApprovedAt"            column="plan_approved_at"/>
+        <result property="planApprovedBy"            column="plan_approved_by"/>
+        <result property="completionApproverUserId"  column="completion_approver_user_id"/>
+        <result property="completionApproverTeam"    column="completion_approver_team"/>
+        <result property="completionApproverPosition" column="completion_approver_position"/>
+        <result property="completionApproverName"    column="completion_approver_name"/>
+        <result property="completionApprovedAt"      column="completion_approved_at"/>
+        <result property="completionApprovedBy"      column="completion_approved_by"/>
+        <result property="isApproved"      column="is_approved"/>
+        <result property="rejectReason"    column="reject_reason"/>
+        <result property="createdAt"       column="created_at"/>
+        <result property="modifiedAt"      column="modified_at"/>
+    </resultMap>
+
+    <sql id="cols">
+        id, plan_year, plan_name, description, status, priority, remarks,
+        writer_user_id, writer_team, writer_position, writer_name,
+        plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
+        plan_approved_at, plan_approved_by,
+        completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+        completion_approved_at, completion_approved_by,
+        is_approved, reject_reason, created_at, modified_at
+    </sql>
+
+    <!-- 연간 계획 탭은 승인되지 않은 항목(is_approved=0/NULL)만 노출.
+         승인된 항목은 KPI 현황 탭에서만 보임 -->
+    <select id="findAllWithPaging" resultMap="EhsAnnualPlanResultMap">
+        SELECT <include refid="cols"/> FROM tb_ehs_annual_plan
+        WHERE COALESCE(is_approved, 0) = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_annual_plan
+        WHERE COALESCE(is_approved, 0) = 0
+    </select>
+
+    <select id="findByYear" resultMap="EhsAnnualPlanResultMap">
+        SELECT <include refid="cols"/> FROM tb_ehs_annual_plan
+        WHERE plan_year = #{planYear} AND COALESCE(is_approved, 0) = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByYear" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_annual_plan
+        WHERE plan_year = #{planYear} AND COALESCE(is_approved, 0) = 0
+    </select>
+
+    <select id="findById" resultMap="EhsAnnualPlanResultMap">
+        SELECT <include refid="cols"/> FROM tb_ehs_annual_plan WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_annual_plan
+            (plan_year, plan_name, description, status, priority, remarks,
+             writer_user_id, writer_team, writer_position, writer_name,
+             plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
+             completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+             created_at, modified_at)
+        VALUES
+            (#{planYear}, #{planName}, #{description}, #{status}, #{priority}, #{remarks},
+             #{writerUserId}, #{writerTeam}, #{writerPosition}, #{writerName},
+             #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
+             #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+             GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ehs_annual_plan
+           SET plan_year         = #{planYear},
+               plan_name         = #{planName},
+               description       = #{description},
+               status            = #{status},
+               priority          = #{priority},
+               remarks           = #{remarks},
+               writer_user_id    = #{writerUserId},
+               writer_team       = #{writerTeam},
+               writer_position   = #{writerPosition},
+               writer_name       = #{writerName},
+               plan_approver_user_id  = #{planApproverUserId,jdbcType=BIGINT},
+               plan_approver_team     = #{planApproverTeam},
+               plan_approver_position = #{planApproverPosition},
+               plan_approver_name     = #{planApproverName},
+               completion_approver_user_id  = #{completionApproverUserId,jdbcType=BIGINT},
+               completion_approver_team     = #{completionApproverTeam},
+               completion_approver_position = #{completionApproverPosition},
+               completion_approver_name     = #{completionApproverName},
+               modified_at       = GETDATE()
+         WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_ehs_annual_plan WHERE id = #{id}
+    </delete>
+
+    <select id="findApprovedByYear" resultMap="EhsAnnualPlanResultMap">
+        SELECT <include refid="cols"/> FROM tb_ehs_annual_plan
+        WHERE plan_year = #{planYear} AND is_approved = 1
+        ORDER BY created_at DESC
+    </select>
+
+    <update id="transition">
+        UPDATE tb_ehs_annual_plan
+        SET status = #{status},
+            is_approved = #{approved},
+            plan_approved_at = CASE WHEN #{stage} = 'PLAN' AND #{approved} = 1 THEN GETDATE() ELSE plan_approved_at END,
+            plan_approved_by = CASE WHEN #{stage} = 'PLAN' AND #{approved} = 1 THEN #{approvedBy} ELSE plan_approved_by END,
+            completion_approved_at = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN GETDATE() ELSE completion_approved_at END,
+            completion_approved_by = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN #{approvedBy} ELSE completion_approved_by END,
+            reject_reason = CASE WHEN #{status} = 'DRAFT' AND #{rejectReason} IS NOT NULL THEN #{rejectReason} ELSE reject_reason END,
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

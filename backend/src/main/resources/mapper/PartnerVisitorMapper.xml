@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PartnerVisitorMapper">
+
+    <resultMap id="R" type="com.smartehs.model.PartnerVisitor">
+        <id property="id" column="id"/>
+        <result property="visitDt" column="visit_dt"/>
+        <result property="visitorName" column="visitor_name"/>
+        <result property="companyName" column="company_name"/>
+        <result property="position" column="position"/>
+        <result property="contact" column="contact"/>
+        <result property="purpose" column="purpose"/>
+        <result property="area" column="area"/>
+        <result property="education" column="education"/>
+        <result property="ppe" column="ppe"/>
+        <result property="checkInTime" column="check_in_time"/>
+        <result property="checkOutTime" column="check_out_time"/>
+        <result property="stayHours" column="stay_hours"/>
+        <result property="mgrName" column="mgr_name"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="status" column="status"/>
+        <result property="note" column="note"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_partner_visitor WHERE deleted = 0 ORDER BY visit_dt DESC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_partner_visitor WHERE id = #{id} AND deleted = 0</select>
+    <select id="countToday" resultType="int">SELECT COUNT(*) FROM tb_partner_visitor WHERE deleted = 0 AND CAST(visit_dt AS DATE) = CAST(GETDATE() AS DATE)</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_partner_visitor WHERE deleted = 0 AND status = #{status}</select>
+    <select id="countMonth" resultType="int">SELECT COUNT(*) FROM tb_partner_visitor WHERE deleted = 0 AND YEAR(visit_dt) = YEAR(GETDATE()) AND MONTH(visit_dt) = MONTH(GETDATE())</select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_partner_visitor (visit_dt, visitor_name, company_name, position, contact, purpose, area,
+            education, ppe, check_in_time, check_out_time, stay_hours, mgr_name, id_number, status, note,
+            deleted, created_at, modified_at) VALUES (
+            <choose><when test="visitDt != null">#{visitDt}</when><otherwise>GETDATE()</otherwise></choose>,
+            #{visitorName}, #{companyName}, #{position}, #{contact}, #{purpose}, #{area},
+            #{education}, #{ppe}, #{checkInTime}, #{checkOutTime}, #{stayHours},
+            #{mgrName}, #{idNumber},
+            <choose><when test="status != null">#{status}</when><otherwise>'입장중'</otherwise></choose>,
+            #{note}, 0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_partner_visitor SET
+            visit_dt = #{visitDt}, visitor_name = #{visitorName}, company_name = #{companyName},
+            position = #{position}, contact = #{contact}, purpose = #{purpose}, area = #{area},
+            education = #{education}, ppe = #{ppe}, check_in_time = #{checkInTime},
+            check_out_time = #{checkOutTime}, stay_hours = #{stayHours}, mgr_name = #{mgrName},
+            id_number = #{idNumber}, status = #{status}, note = #{note}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">UPDATE tb_partner_visitor SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

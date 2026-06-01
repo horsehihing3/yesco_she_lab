@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.WaterStandardMapper">
+
+    <resultMap id="WaterStandardResultMap" type="com.smartehs.model.WaterStandard">
+        <id property="id" column="id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="unit" column="unit"/>
+        <result property="minValue" column="min_value"/>
+        <result property="maxValue" column="max_value"/>
+        <result property="remark" column="remark"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="WaterStandardResultMap">
+        SELECT * FROM tb_water_standard
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_water_standard
+    </select>
+
+    <select id="findAll" resultMap="WaterStandardResultMap">
+        SELECT * FROM tb_water_standard
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="WaterStandardResultMap">
+        SELECT * FROM tb_water_standard WHERE id = #{id}
+    </select>
+
+    <select id="findByNameContaining" resultMap="WaterStandardResultMap">
+        SELECT * FROM tb_water_standard
+        WHERE item_name LIKE '%' + #{keyword} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByNameContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_water_standard
+        WHERE item_name LIKE '%' + #{keyword} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_water_standard (item_name, unit, min_value, max_value, remark, reg_user, created_at, modified_at)
+        VALUES (#{itemName}, #{unit}, #{minValue}, #{maxValue}, #{remark}, #{regUser}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_water_standard
+        SET item_name = #{itemName},
+            unit = #{unit},
+            min_value = #{minValue},
+            max_value = #{maxValue},
+            remark = #{remark},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_water_standard WHERE id = #{id}
+    </delete>
+
+</mapper>

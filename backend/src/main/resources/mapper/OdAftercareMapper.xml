@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.OdAftercareMapper">
+    <resultMap id="rm" type="com.smartehs.model.OdAftercare">
+        <id property="id" column="id"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="dept" column="dept"/>
+        <result property="factor" column="factor"/>
+        <result property="judge" column="judge"/>
+        <result property="disease" column="disease"/>
+        <result property="actionsText" column="actions_text"/>
+        <result property="status" column="status"/>
+        <result property="urgent" column="urgent"/>
+        <result property="dueDate" column="due_date"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="rm">
+        SELECT * FROM tb_od_aftercare WHERE deleted = 0
+        ORDER BY urgent DESC, due_date ASC, id DESC
+    </select>
+    <select id="findById" resultMap="rm">SELECT * FROM tb_od_aftercare WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_od_aftercare WHERE deleted = 0</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_od_aftercare WHERE deleted = 0 AND status = #{status}</select>
+    <select id="countUrgent" resultType="int">SELECT COUNT(*) FROM tb_od_aftercare WHERE deleted = 0 AND urgent = 1</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_od_aftercare (worker_name, dept, factor, judge, disease, actions_text,
+            status, urgent, due_date, deleted, created_at, modified_at) VALUES (
+            #{workerName}, #{dept}, #{factor}, #{judge}, #{disease}, #{actionsText},
+            #{status},
+            <choose><when test="urgent != null">#{urgent}</when><otherwise>0</otherwise></choose>,
+            #{dueDate,jdbcType=DATE}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_od_aftercare SET worker_name = #{workerName}, dept = #{dept},
+            factor = #{factor}, judge = #{judge}, disease = #{disease},
+            actions_text = #{actionsText}, status = #{status},
+            urgent = <choose><when test="urgent != null">#{urgent}</when><otherwise>0</otherwise></choose>,
+            due_date = #{dueDate,jdbcType=DATE},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_od_aftercare SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

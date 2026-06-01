@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.FireReportMapper">
+    <resultMap id="R" type="com.smartehs.model.FireReport">
+        <id property="id" column="id"/>
+        <result property="reportType" column="report_type"/>
+        <result property="lawBasis" column="law_basis"/>
+        <result property="deadlineText" column="deadline_text"/>
+        <result property="targetOrg" column="target_org"/>
+        <result property="lastSubmit" column="last_submit"/>
+        <result property="nextSubmit" column="next_submit"/>
+        <result property="status" column="status"/>
+        <result property="note" column="note"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">SELECT * FROM tb_fire_report WHERE deleted = 0 ORDER BY next_submit ASC, id DESC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_fire_report WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_fire_report WHERE deleted = 0</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_fire_report (report_type, law_basis, deadline_text, target_org,
+            last_submit, next_submit, status, note, deleted, created_at, modified_at) VALUES (
+            #{reportType}, #{lawBasis}, #{deadlineText}, #{targetOrg},
+            #{lastSubmit,jdbcType=DATE}, #{nextSubmit,jdbcType=DATE},
+            #{status}, #{note}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_fire_report SET report_type = #{reportType}, law_basis = #{lawBasis},
+            deadline_text = #{deadlineText}, target_org = #{targetOrg},
+            last_submit = #{lastSubmit,jdbcType=DATE}, next_submit = #{nextSubmit,jdbcType=DATE},
+            status = #{status}, note = #{note}, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_fire_report SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

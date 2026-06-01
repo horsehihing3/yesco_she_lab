@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ContractorRegistrationMapper">
+
+    <resultMap id="ContractorRegistrationResultMap" type="com.smartehs.model.ContractorRegistration">
+        <id     property="id"                column="id"/>
+        <result property="regNo"             column="reg_no"/>
+        <result property="bizNum"            column="biz_num"/>
+        <result property="corpNum"           column="corp_num"/>
+        <result property="companyName"       column="company_name"/>
+        <result property="ceoName"           column="ceo_name"/>
+        <result property="bizType"           column="biz_type"/>
+        <result property="bizCategory"       column="biz_category"/>
+        <result property="zipCode"           column="zip_code"/>
+        <result property="addr1"             column="addr1"/>
+        <result property="addr2"             column="addr2"/>
+        <result property="tel"               column="tel"/>
+        <result property="fax"               column="fax"/>
+        <result property="email"             column="email"/>
+        <result property="homepage"          column="homepage"/>
+        <result property="empSize"           column="emp_size"/>
+        <result property="oshApply"          column="osh_apply"/>
+        <result property="safetyMgrStatus"   column="safety_mgr_status"/>
+        <result property="healthMgrStatus"   column="health_mgr_status"/>
+        <result property="accRate"           column="acc_rate"/>
+        <result property="certifications"    column="certifications"/>
+        <result property="riskEval"          column="risk_eval"/>
+        <result property="riskEvalDate"      column="risk_eval_date"/>
+        <result property="hazardFactors"     column="hazard_factors"/>
+        <result property="safetyRating"      column="safety_rating"/>
+        <result property="envRating"         column="env_rating"/>
+        <result property="regStatus"         column="reg_status"/>
+        <result property="safetyMgrName"     column="safety_mgr_name"/>
+        <result property="safetyMgrPosition" column="safety_mgr_position"/>
+        <result property="safetyMgrDept"     column="safety_mgr_dept"/>
+        <result property="safetyMgrTel"      column="safety_mgr_tel"/>
+        <result property="safetyMgrOfficeTel" column="safety_mgr_office_tel"/>
+        <result property="safetyMgrEmail"    column="safety_mgr_email"/>
+        <result property="healthMgrName"     column="health_mgr_name"/>
+        <result property="healthMgrPosition" column="health_mgr_position"/>
+        <result property="healthMgrCert"     column="health_mgr_cert"/>
+        <result property="healthMgrTel"      column="health_mgr_tel"/>
+        <result property="healthMgrEmail"    column="health_mgr_email"/>
+        <result property="internalDept"      column="internal_dept"/>
+        <result property="internalName"      column="internal_name"/>
+        <result property="internalTel"       column="internal_tel"/>
+        <result property="memo"              column="memo"/>
+        <result property="contractStart"     column="contract_start"/>
+        <result property="contractEnd"       column="contract_end"/>
+        <result property="contractType"      column="contract_type"/>
+        <result property="contractAmount"    column="contract_amount"/>
+        <result property="workZone"          column="work_zone"/>
+        <result property="deleted"           column="deleted"/>
+        <result property="createdAt"         column="created_at"/>
+        <result property="modifiedAt"        column="modified_at"/>
+        <result property="modifiedBy"        column="modified_by"/>
+    </resultMap>
+
+    <sql id="allColumns">
+        id, reg_no, biz_num, corp_num, company_name, ceo_name, biz_type, biz_category,
+        zip_code, addr1, addr2, tel, fax, email, homepage, emp_size,
+        osh_apply, safety_mgr_status, health_mgr_status, acc_rate, certifications,
+        risk_eval, risk_eval_date, hazard_factors, safety_rating, env_rating, reg_status,
+        safety_mgr_name, safety_mgr_position, safety_mgr_dept, safety_mgr_tel, safety_mgr_office_tel, safety_mgr_email,
+        health_mgr_name, health_mgr_position, health_mgr_cert, health_mgr_tel, health_mgr_email,
+        internal_dept, internal_name, internal_tel, memo,
+        contract_start, contract_end, contract_type, contract_amount, work_zone,
+        deleted, created_at, modified_at, modified_by
+    </sql>
+
+    <select id="findByDeletedFalse" resultMap="ContractorRegistrationResultMap">
+        SELECT <include refid="allColumns"/>
+        FROM tb_contractor_registration
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_contractor_registration WHERE deleted = 0
+    </select>
+
+    <select id="search" resultMap="ContractorRegistrationResultMap">
+        SELECT <include refid="allColumns"/>
+        FROM tb_contractor_registration
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (company_name LIKE '%' + #{keyword} + '%'
+                 OR biz_num LIKE '%' + #{keyword} + '%'
+                 OR reg_no LIKE '%' + #{keyword} + '%'
+                 OR ceo_name LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="regStatus != null and regStatus != ''">
+            AND reg_status = #{regStatus}
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_contractor_registration
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (company_name LIKE '%' + #{keyword} + '%'
+                 OR biz_num LIKE '%' + #{keyword} + '%'
+                 OR reg_no LIKE '%' + #{keyword} + '%'
+                 OR ceo_name LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="regStatus != null and regStatus != ''">
+            AND reg_status = #{regStatus}
+        </if>
+    </select>
+
+    <select id="findById" resultMap="ContractorRegistrationResultMap">
+        SELECT <include refid="allColumns"/>
+        FROM tb_contractor_registration WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByRegNo" resultMap="ContractorRegistrationResultMap">
+        SELECT <include refid="allColumns"/>
+        FROM tb_contractor_registration WHERE reg_no = #{regNo} AND deleted = 0
+    </select>
+
+    <select id="countByRegNoStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_contractor_registration WHERE reg_no LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_contractor_registration (
+            reg_no, biz_num, corp_num, company_name, ceo_name, biz_type, biz_category,
+            zip_code, addr1, addr2, tel, fax, email, homepage, emp_size,
+            osh_apply, safety_mgr_status, health_mgr_status, acc_rate, certifications,
+            risk_eval, risk_eval_date, hazard_factors, safety_rating, env_rating, reg_status,
+            safety_mgr_name, safety_mgr_position, safety_mgr_dept, safety_mgr_tel, safety_mgr_office_tel, safety_mgr_email,
+            health_mgr_name, health_mgr_position, health_mgr_cert, health_mgr_tel, health_mgr_email,
+            internal_dept, internal_name, internal_tel, memo,
+            contract_start, contract_end, contract_type, contract_amount, work_zone,
+            deleted, created_at, modified_at, modified_by
+        ) VALUES (
+            #{regNo}, #{bizNum}, #{corpNum}, #{companyName}, #{ceoName}, #{bizType}, #{bizCategory},
+            #{zipCode}, #{addr1}, #{addr2}, #{tel}, #{fax}, #{email}, #{homepage}, #{empSize},
+            #{oshApply}, #{safetyMgrStatus}, #{healthMgrStatus}, #{accRate}, #{certifications},
+            #{riskEval}, #{riskEvalDate,jdbcType=DATE}, #{hazardFactors}, #{safetyRating}, #{envRating}, #{regStatus},
+            #{safetyMgrName}, #{safetyMgrPosition}, #{safetyMgrDept}, #{safetyMgrTel}, #{safetyMgrOfficeTel}, #{safetyMgrEmail},
+            #{healthMgrName}, #{healthMgrPosition}, #{healthMgrCert}, #{healthMgrTel}, #{healthMgrEmail},
+            #{internalDept}, #{internalName}, #{internalTel}, #{memo},
+            #{contractStart,jdbcType=DATE}, #{contractEnd,jdbcType=DATE}, #{contractType}, #{contractAmount}, #{workZone},
+            0, GETDATE(), GETDATE(), #{modifiedBy}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_contractor_registration SET
+            biz_num = #{bizNum}, corp_num = #{corpNum}, company_name = #{companyName}, ceo_name = #{ceoName},
+            biz_type = #{bizType}, biz_category = #{bizCategory},
+            zip_code = #{zipCode}, addr1 = #{addr1}, addr2 = #{addr2},
+            tel = #{tel}, fax = #{fax}, email = #{email}, homepage = #{homepage}, emp_size = #{empSize},
+            osh_apply = #{oshApply}, safety_mgr_status = #{safetyMgrStatus}, health_mgr_status = #{healthMgrStatus},
+            acc_rate = #{accRate}, certifications = #{certifications},
+            risk_eval = #{riskEval}, risk_eval_date = #{riskEvalDate,jdbcType=DATE}, hazard_factors = #{hazardFactors},
+            safety_rating = #{safetyRating}, env_rating = #{envRating}, reg_status = #{regStatus},
+            safety_mgr_name = #{safetyMgrName}, safety_mgr_position = #{safetyMgrPosition}, safety_mgr_dept = #{safetyMgrDept},
+            safety_mgr_tel = #{safetyMgrTel}, safety_mgr_office_tel = #{safetyMgrOfficeTel}, safety_mgr_email = #{safetyMgrEmail},
+            health_mgr_name = #{healthMgrName}, health_mgr_position = #{healthMgrPosition}, health_mgr_cert = #{healthMgrCert},
+            health_mgr_tel = #{healthMgrTel}, health_mgr_email = #{healthMgrEmail},
+            internal_dept = #{internalDept}, internal_name = #{internalName}, internal_tel = #{internalTel}, memo = #{memo},
+            contract_start = #{contractStart,jdbcType=DATE}, contract_end = #{contractEnd,jdbcType=DATE},
+            contract_type = #{contractType}, contract_amount = #{contractAmount}, work_zone = #{workZone},
+            modified_at = GETDATE(), modified_by = #{modifiedBy}
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <update id="updateRegStatus">
+        UPDATE tb_contractor_registration
+        SET reg_status = #{regStatus}, modified_at = GETDATE()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_contractor_registration
+        SET deleted = 1, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

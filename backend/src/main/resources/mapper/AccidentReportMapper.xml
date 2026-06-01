@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.AccidentReportMapper">
+
+    <resultMap id="AccidentReportResultMap" type="com.smartehs.model.AccidentReport">
+        <id property="id" column="id"/>
+        <result property="caseDescription" column="case_description"/>
+        <result property="disasterType" column="disaster_type"/>
+        <result property="isNearMiss" column="is_near_miss"/>
+        <result property="isFatal" column="is_fatal"/>
+        <result property="leaveOverMonth" column="leave_over_month"/>
+        <result property="leaveUnderMonth" column="leave_under_month"/>
+        <result property="freqNone" column="freq_none"/>
+        <result property="occurrenceCycle" column="occurrence_cycle"/>
+        <result property="relatedProcess" column="related_process"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="AccidentReportResultMap">
+        SELECT * FROM tb_accident_report ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="findById" resultMap="AccidentReportResultMap">
+        SELECT * FROM tb_accident_report WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_accident_report (
+            case_description, disaster_type, is_near_miss, is_fatal,
+            leave_over_month, leave_under_month, freq_none,
+            occurrence_cycle, related_process, sort_order,
+            created_at, modified_at
+        ) VALUES (
+            #{caseDescription}, #{disasterType}, #{isNearMiss}, #{isFatal},
+            #{leaveOverMonth}, #{leaveUnderMonth}, #{freqNone},
+            #{occurrenceCycle}, #{relatedProcess}, #{sortOrder},
+            GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_accident_report
+        SET case_description = #{caseDescription},
+            disaster_type = #{disasterType},
+            is_near_miss = #{isNearMiss},
+            is_fatal = #{isFatal},
+            leave_over_month = #{leaveOverMonth},
+            leave_under_month = #{leaveUnderMonth},
+            freq_none = #{freqNone},
+            occurrence_cycle = #{occurrenceCycle},
+            related_process = #{relatedProcess},
+            sort_order = #{sortOrder},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_accident_report WHERE id = #{id}
+    </delete>
+
+</mapper>

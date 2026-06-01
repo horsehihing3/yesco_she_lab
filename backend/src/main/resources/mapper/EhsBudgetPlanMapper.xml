@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EhsBudgetPlanMapper">
+
+    <resultMap id="EhsBudgetPlanResultMap" type="com.smartehs.model.EhsBudgetPlan">
+        <id property="id" column="id"/>
+        <result property="budgetYear" column="budget_year"/>
+        <result property="category" column="category"/>
+        <result property="itemName" column="item_name"/>
+        <result property="planAmount" column="plan_amount"/>
+        <result property="note" column="note"/>
+        <result property="writer" column="writer"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="EhsBudgetPlanResultMap">
+        SELECT * FROM tb_ehs_budget_plan
+        <where>
+            <if test="budgetYear != null">
+                AND budget_year = #{budgetYear}
+            </if>
+        </where>
+        ORDER BY category ASC, id ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByYear" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_budget_plan
+        <where>
+            <if test="budgetYear != null">
+                AND budget_year = #{budgetYear}
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultMap="EhsBudgetPlanResultMap">
+        SELECT * FROM tb_ehs_budget_plan WHERE id = #{id}
+    </select>
+
+    <select id="findByYearAndCategory" resultMap="EhsBudgetPlanResultMap">
+        SELECT * FROM tb_ehs_budget_plan
+        WHERE budget_year = #{budgetYear} AND category = #{category}
+        ORDER BY id ASC
+    </select>
+
+    <select id="findByYear" resultMap="EhsBudgetPlanResultMap">
+        SELECT * FROM tb_ehs_budget_plan
+        WHERE budget_year = #{budgetYear}
+        ORDER BY category ASC, id ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_budget_plan (budget_year, category, item_name, plan_amount, note, writer, created_at, modified_at)
+        VALUES (#{budgetYear}, #{category}, #{itemName}, #{planAmount}, #{note}, #{writer}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ehs_budget_plan
+        SET budget_year = #{budgetYear},
+            category = #{category},
+            item_name = #{itemName},
+            plan_amount = #{planAmount},
+            note = #{note},
+            writer = #{writer},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_ehs_budget_plan WHERE id = #{id}
+    </delete>
+
+</mapper>

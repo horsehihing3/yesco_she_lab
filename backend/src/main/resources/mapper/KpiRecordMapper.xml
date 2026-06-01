@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.KpiRecordMapper">
+    <resultMap id="KpiRecordResultMap" type="com.smartehs.model.KpiRecord">
+        <id property="id" column="id"/>
+        <result property="kpiType" column="kpi_type"/>
+        <result property="recordYear" column="record_year"/>
+        <result property="recordMonth" column="record_month"/>
+        <result property="targetValue" column="target_value"/>
+        <result property="actualValue" column="actual_value"/>
+        <result property="unit" column="unit"/>
+        <result property="department" column="department"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByYearAndDeletedFalse" resultMap="KpiRecordResultMap">
+        SELECT * FROM tb_kpi_record WHERE record_year = #{year} AND deleted = 0 ORDER BY kpi_type, record_month
+    </select>
+    <select id="findByTypeAndYearAndDeletedFalse" resultMap="KpiRecordResultMap">
+        SELECT * FROM tb_kpi_record WHERE kpi_type = #{kpiType} AND record_year = #{year} AND deleted = 0 ORDER BY record_month
+    </select>
+    <select id="findByIdAndDeletedFalse" resultMap="KpiRecordResultMap">
+        SELECT * FROM tb_kpi_record WHERE id = #{id} AND deleted = 0
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_kpi_record (kpi_type, record_year, record_month, target_value, actual_value, unit, department, notes, deleted, created_at, modified_at)
+        VALUES (#{kpiType}, #{recordYear}, #{recordMonth}, #{targetValue}, #{actualValue}, #{unit}, #{department}, #{notes}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_kpi_record SET target_value=#{targetValue}, actual_value=#{actualValue}, unit=#{unit}, department=#{department}, notes=#{notes}, modified_at=GETDATE() WHERE id=#{id}
+    </update>
+    <update id="softDelete">UPDATE tb_kpi_record SET deleted=1, modified_at=GETDATE() WHERE id=#{id}</update>
+</mapper>

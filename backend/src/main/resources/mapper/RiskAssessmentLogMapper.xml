@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.RiskAssessmentLogMapper">
+
+    <resultMap id="RiskAssessmentLogResultMap" type="com.smartehs.model.RiskAssessmentLog">
+        <id property="id" column="id"/>
+        <result property="assessmentId" column="assessment_id"/>
+        <result property="riskId" column="risk_id"/>
+        <result property="action" column="action"/>
+        <result property="changedBy" column="changed_by"/>
+        <result property="actorRole" column="actor_role"/>
+        <result property="detail" column="detail"/>
+        <result property="fieldChanges" column="field_changes"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_risk_assessment_log
+            (assessment_id, risk_id, action, changed_by, actor_role, detail, field_changes, reject_reason, created_at)
+        VALUES
+            (#{assessmentId}, #{riskId}, #{action}, #{changedBy}, #{actorRole}, #{detail}, #{fieldChanges}, #{rejectReason}, GETDATE())
+    </insert>
+
+    <select id="findByAssessmentId" resultMap="RiskAssessmentLogResultMap">
+        SELECT * FROM tb_risk_assessment_log WHERE assessment_id = #{assessmentId} ORDER BY created_at DESC
+    </select>
+
+</mapper>

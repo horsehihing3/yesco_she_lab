@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.MessageSendListMapper">
+
+    <resultMap id="MessageSendListResultMap" type="com.smartehs.model.MessageSendList">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="groupName" column="group_name"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="MessageSendListResultMap">
+        SELECT * FROM message_send_list ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="MessageSendListResultMap">
+        SELECT * FROM message_send_list WHERE id = #{id}
+    </select>
+
+    <select id="findByGroupName" resultMap="MessageSendListResultMap">
+        SELECT * FROM message_send_list WHERE group_name = #{groupName} ORDER BY created_at DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO message_send_list (title, group_name, created_at)
+        VALUES (#{title}, #{groupName}, GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE message_send_list
+        SET title = #{title},
+            group_name = #{groupName}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM message_send_list WHERE id = #{id}
+    </delete>
+
+</mapper>

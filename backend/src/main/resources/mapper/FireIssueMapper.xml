@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.FireIssueMapper">
+    <resultMap id="R" type="com.smartehs.model.FireIssue">
+        <id property="id" column="id"/>
+        <result property="issueNo" column="issue_no"/>
+        <result property="facility" column="facility"/>
+        <result property="issueType" column="issue_type"/>
+        <result property="foundDate" column="found_date"/>
+        <result property="issueContent" column="issue_content"/>
+        <result property="actionContent" column="action_content"/>
+        <result property="dueDate" column="due_date"/>
+        <result property="progressPct" column="progress_pct"/>
+        <result property="status" column="status"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+    <select id="findAll" resultMap="R">
+        SELECT * FROM tb_fire_issue WHERE deleted = 0
+        ORDER BY CASE status WHEN '진행중' THEN 0 WHEN '지연' THEN 1 ELSE 2 END, due_date ASC, id DESC
+    </select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_fire_issue WHERE id = #{id} AND deleted = 0</select>
+    <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_fire_issue WHERE deleted = 0</select>
+    <select id="countByStatus" resultType="int">SELECT COUNT(*) FROM tb_fire_issue WHERE deleted = 0 AND status = #{status}</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_fire_issue (issue_no, facility, issue_type, found_date, issue_content, action_content,
+            due_date, progress_pct, status, owner_name, deleted, created_at, modified_at) VALUES (
+            #{issueNo}, #{facility}, #{issueType}, #{foundDate,jdbcType=DATE},
+            #{issueContent}, #{actionContent}, #{dueDate,jdbcType=DATE},
+            <choose><when test="progressPct != null">#{progressPct}</when><otherwise>0</otherwise></choose>,
+            #{status}, #{ownerName}, 0, GETDATE(), GETDATE())
+    </insert>
+    <update id="update">
+        UPDATE tb_fire_issue SET issue_no = #{issueNo}, facility = #{facility}, issue_type = #{issueType},
+            found_date = #{foundDate,jdbcType=DATE}, issue_content = #{issueContent},
+            action_content = #{actionContent}, due_date = #{dueDate,jdbcType=DATE},
+            progress_pct = #{progressPct}, status = #{status}, owner_name = #{ownerName},
+            modified_at = GETDATE() WHERE id = #{id}
+    </update>
+    <update id="softDelete">UPDATE tb_fire_issue SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
+</mapper>

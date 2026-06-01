@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.EhsKpiPlanMapper">
+
+    <resultMap id="EhsKpiPlanResultMap" type="com.smartehs.model.EhsKpiPlan">
+        <id property="id" column="id"/>
+        <result property="planYear" column="plan_year"/>
+        <result property="indicatorType" column="indicator_type"/>
+        <result property="indicatorName" column="indicator_name"/>
+        <result property="description" column="description"/>
+        <result property="department" column="department"/>
+        <result property="responsiblePerson" column="responsible_person"/>
+        <result property="measurementPeriod" column="measurement_period"/>
+        <result property="unit" column="unit"/>
+        <result property="targetValue" column="target_value"/>
+        <result property="currentValue" column="current_value"/>
+        <result property="achievementRate" column="achievement_rate"/>
+        <result property="status" column="status"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="EhsKpiPlanResultMap">
+        SELECT * FROM tb_ehs_kpi_plan
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_kpi_plan WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="EhsKpiPlanResultMap">
+        SELECT * FROM tb_ehs_kpi_plan WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="search" resultMap="EhsKpiPlanResultMap">
+        SELECT * FROM tb_ehs_kpi_plan
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (indicator_name LIKE '%' + #{keyword} + '%'
+                OR department LIKE '%' + #{keyword} + '%'
+                OR responsible_person LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="indicatorType != null and indicatorType != ''">
+            AND indicator_type = #{indicatorType}
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_ehs_kpi_plan
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (indicator_name LIKE '%' + #{keyword} + '%'
+                OR department LIKE '%' + #{keyword} + '%'
+                OR responsible_person LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="indicatorType != null and indicatorType != ''">
+            AND indicator_type = #{indicatorType}
+        </if>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ehs_kpi_plan (
+            plan_year, indicator_type, indicator_name, description,
+            department, responsible_person, measurement_period, unit,
+            target_value, current_value, achievement_rate, status,
+            start_date, end_date, notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{planYear}, #{indicatorType}, #{indicatorName}, #{description},
+            #{department}, #{responsiblePerson}, #{measurementPeriod}, #{unit},
+            #{targetValue}, #{currentValue}, #{achievementRate}, #{status},
+            #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE},
+            #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_ehs_kpi_plan SET
+            plan_year = #{planYear}, indicator_type = #{indicatorType},
+            indicator_name = #{indicatorName}, description = #{description},
+            department = #{department}, responsible_person = #{responsiblePerson},
+            measurement_period = #{measurementPeriod}, unit = #{unit},
+            target_value = #{targetValue}, current_value = #{currentValue},
+            achievement_rate = #{achievementRate}, status = #{status},
+            start_date = #{startDate,jdbcType=DATE}, end_date = #{endDate,jdbcType=DATE},
+            notes = #{notes}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ehs_kpi_plan SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

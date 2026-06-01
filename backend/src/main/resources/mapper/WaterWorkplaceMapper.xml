@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.WaterWorkplaceMapper">
+
+    <resultMap id="WaterWorkplaceResultMap" type="com.smartehs.model.WaterWorkplace">
+        <id property="id" column="id"/>
+        <result property="workplaceName" column="workplace_name"/>
+        <result property="region" column="region"/>
+        <result property="manager" column="manager"/>
+        <result property="remark" column="remark"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="WaterWorkplaceResultMap">
+        SELECT * FROM tb_water_workplace
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_water_workplace
+    </select>
+
+    <select id="findById" resultMap="WaterWorkplaceResultMap">
+        SELECT * FROM tb_water_workplace WHERE id = #{id}
+    </select>
+
+    <select id="findByNameContaining" resultMap="WaterWorkplaceResultMap">
+        SELECT * FROM tb_water_workplace
+        WHERE workplace_name LIKE '%' + #{keyword} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByNameContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_water_workplace
+        WHERE workplace_name LIKE '%' + #{keyword} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_water_workplace (workplace_name, region, manager, remark, reg_user, created_at, modified_at)
+        VALUES (#{workplaceName}, #{region}, #{manager}, #{remark}, #{regUser}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_water_workplace
+        SET workplace_name = #{workplaceName},
+            region = #{region},
+            manager = #{manager},
+            remark = #{remark},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_water_workplace WHERE id = #{id}
+    </delete>
+
+</mapper>

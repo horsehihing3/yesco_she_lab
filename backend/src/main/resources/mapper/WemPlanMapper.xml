@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.WemPlanMapper">
+
+    <resultMap id="WemPlanResultMap" type="com.smartehs.model.WemPlan">
+        <id property="id" column="id"/>
+        <result property="planYear" column="plan_year"/>
+        <result property="processName" column="process_name"/>
+        <result property="department" column="department"/>
+        <result property="hazardType" column="hazard_type"/>
+        <result property="measurementCycle" column="measurement_cycle"/>
+        <result property="lastMeasurementDate" column="last_measurement_date"/>
+        <result property="nextMeasurementDate" column="next_measurement_date"/>
+        <result property="status" column="status"/>
+        <result property="measurementAgency" column="measurement_agency"/>
+        <result property="agencyCode" column="agency_code"/>
+        <result property="contractPeriod" column="contract_period"/>
+        <result property="remarks" column="remarks"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="WemPlanResultMap">
+        SELECT * FROM tb_wem_plan
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_wem_plan
+    </select>
+
+    <select id="findByStatus" resultMap="WemPlanResultMap">
+        SELECT * FROM tb_wem_plan
+        WHERE status = #{status}
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_wem_plan WHERE status = #{status}
+    </select>
+
+    <select id="findById" resultMap="WemPlanResultMap">
+        SELECT * FROM tb_wem_plan WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_wem_plan (plan_year, process_name, department, hazard_type, measurement_cycle, last_measurement_date, next_measurement_date, status, measurement_agency, agency_code, contract_period, remarks, created_at, modified_at)
+        VALUES (#{planYear}, #{processName}, #{department}, #{hazardType}, #{measurementCycle}, #{lastMeasurementDate}, #{nextMeasurementDate}, #{status}, #{measurementAgency}, #{agencyCode}, #{contractPeriod}, #{remarks}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_wem_plan
+        SET plan_year = #{planYear},
+            process_name = #{processName},
+            department = #{department},
+            hazard_type = #{hazardType},
+            measurement_cycle = #{measurementCycle},
+            last_measurement_date = #{lastMeasurementDate},
+            next_measurement_date = #{nextMeasurementDate},
+            status = #{status},
+            measurement_agency = #{measurementAgency},
+            agency_code = #{agencyCode},
+            contract_period = #{contractPeriod},
+            remarks = #{remarks},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_wem_plan WHERE id = #{id}
+    </delete>
+
+</mapper>

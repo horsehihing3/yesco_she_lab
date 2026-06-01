@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ChemicalMapper">
+
+    <resultMap id="ChemicalResultMap" type="com.smartehs.model.Chemical">
+        <id property="id" column="id"/>
+        <result property="chemicalId" column="chemical_id"/>
+        <result property="chemicalNameKo" column="chemical_name_ko"/>
+        <result property="chemicalNameEn" column="chemical_name_en"/>
+        <result property="casNumber" column="cas_number"/>
+        <result property="hazardClass" column="hazard_class"/>
+        <result property="status" column="status"/>
+        <result property="msdsFileId" column="msds_file_id"/>
+        <result property="storageLocation" column="storage_location"/>
+        <result property="storageQuantity" column="storage_quantity"/>
+        <result property="unit" column="unit"/>
+        <result property="maxStorageLimit" column="max_storage_limit"/>
+        <result property="supplier" column="supplier"/>
+        <result property="department" column="department"/>
+        <result property="handlerName" column="handler_name"/>
+        <result property="emergencyProcedure" column="emergency_procedure"/>
+        <result property="lastInspectionDate" column="last_inspection_date"/>
+        <result property="nextInspectionDate" column="next_inspection_date"/>
+        <result property="ghsPictogram" column="ghs_pictogram"/>
+        <result property="signalWord" column="signal_word"/>
+        <result property="hazardStatements" column="hazard_statements"/>
+        <result property="precautionaryStatements" column="precautionary_statements"/>
+        <result property="molecularFormula" column="molecular_formula"/>
+        <result property="applicableRegulation" column="applicable_regulation"/>
+        <result property="ghsClassification" column="ghs_classification"/>
+        <result property="exposureLimit" column="exposure_limit"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="ChemicalResultMap">
+        SELECT * FROM tb_chemical
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical WHERE deleted = 0
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="ChemicalResultMap">
+        SELECT * FROM tb_chemical WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="searchByKeywordAndDeletedFalse" resultMap="ChemicalResultMap">
+        SELECT * FROM tb_chemical
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (chemical_name_ko LIKE '%' + #{keyword} + '%'
+                 OR chemical_name_en LIKE '%' + #{keyword} + '%'
+                 OR cas_number LIKE '%' + #{keyword} + '%'
+                 OR chemical_id LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="hazardClass != null and hazardClass != ''">
+            AND hazard_class = #{hazardClass}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByKeywordAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (chemical_name_ko LIKE '%' + #{keyword} + '%'
+                 OR chemical_name_en LIKE '%' + #{keyword} + '%'
+                 OR cas_number LIKE '%' + #{keyword} + '%'
+                 OR chemical_id LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="hazardClass != null and hazardClass != ''">
+            AND hazard_class = #{hazardClass}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <select id="countByChemicalIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_chemical WHERE chemical_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_chemical (
+            chemical_id, chemical_name_ko, chemical_name_en, cas_number,
+            hazard_class, status, msds_file_id, storage_location,
+            storage_quantity, unit, max_storage_limit, supplier,
+            department, handler_name, emergency_procedure,
+            last_inspection_date, next_inspection_date,
+            ghs_pictogram, signal_word, hazard_statements, precautionary_statements,
+            molecular_formula, applicable_regulation, ghs_classification, exposure_limit,
+            notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{chemicalId}, #{chemicalNameKo}, #{chemicalNameEn}, #{casNumber},
+            #{hazardClass}, #{status}, #{msdsFileId}, #{storageLocation},
+            #{storageQuantity}, #{unit}, #{maxStorageLimit}, #{supplier},
+            #{department}, #{handlerName}, #{emergencyProcedure},
+            #{lastInspectionDate,jdbcType=DATE}, #{nextInspectionDate,jdbcType=DATE},
+            #{ghsPictogram}, #{signalWord}, #{hazardStatements}, #{precautionaryStatements},
+            #{molecularFormula}, #{applicableRegulation}, #{ghsClassification}, #{exposureLimit},
+            #{notes}, #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_chemical SET
+            chemical_name_ko = #{chemicalNameKo},
+            chemical_name_en = #{chemicalNameEn},
+            cas_number = #{casNumber},
+            hazard_class = #{hazardClass},
+            status = #{status},
+            msds_file_id = #{msdsFileId},
+            storage_location = #{storageLocation},
+            storage_quantity = #{storageQuantity},
+            unit = #{unit},
+            max_storage_limit = #{maxStorageLimit},
+            supplier = #{supplier},
+            department = #{department},
+            handler_name = #{handlerName},
+            emergency_procedure = #{emergencyProcedure},
+            last_inspection_date = #{lastInspectionDate,jdbcType=DATE},
+            next_inspection_date = #{nextInspectionDate,jdbcType=DATE},
+            ghs_pictogram = #{ghsPictogram},
+            signal_word = #{signalWord},
+            hazard_statements = #{hazardStatements},
+            precautionary_statements = #{precautionaryStatements},
+            molecular_formula = #{molecularFormula},
+            applicable_regulation = #{applicableRegulation},
+            ghs_classification = #{ghsClassification},
+            exposure_limit = #{exposureLimit},
+            notes = #{notes},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_chemical SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

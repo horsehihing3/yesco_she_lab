@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.AuditChecklistMapper">
+
+    <resultMap id="TemplateResultMap" type="com.smartehs.model.AuditChecklistTemplate">
+        <id property="id" column="id"/>
+        <result property="templateId" column="template_id"/>
+        <result property="auditType" column="audit_type"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="isActive" column="is_active"/>
+        <result property="content" column="content"/>
+        <result property="inspectionDate" column="inspection_date"/>
+        <result property="inspectionLocation" column="inspection_location"/>
+        <result property="inspectionDept" column="inspection_dept"/>
+        <result property="personInCharge" column="person_in_charge"/>
+        <result property="inspector" column="inspector"/>
+        <result property="reviewer" column="reviewer"/>
+        <result property="inspectionType" column="inspection_type"/>
+        <result property="inspectionCount" column="inspection_count"/>
+        <result property="overallResult" column="overall_result"/>
+        <result property="totalScore" column="total_score"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <resultMap id="ItemResultMap" type="com.smartehs.model.AuditChecklistItem">
+        <id property="id" column="id"/>
+        <result property="templateId" column="template_id"/>
+        <result property="section" column="section"/>
+        <result property="itemText" column="item_text"/>
+        <result property="legalRef" column="legal_ref"/>
+        <result property="isCritical" column="is_critical"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <resultMap id="ResultResultMap" type="com.smartehs.model.AuditChecklistResult">
+        <id property="id" column="id"/>
+        <result property="auditId" column="audit_id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="checkStatus" column="check_status"/>
+        <result property="checkedBy" column="checked_by"/>
+        <result property="checkedAt" column="checked_at"/>
+        <result property="remarks" column="remarks"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="section" column="section"/>
+        <result property="itemText" column="item_text"/>
+        <result property="legalRef" column="legal_ref"/>
+        <result property="isCritical" column="is_critical"/>
+        <result property="sortOrder" column="sort_order"/>
+    </resultMap>
+
+    <!-- Template queries -->
+    <select id="findAllTemplates" resultMap="TemplateResultMap">
+        SELECT * FROM tb_audit_checklist_template
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAllTemplates" resultType="int">
+        SELECT COUNT(*) FROM tb_audit_checklist_template WHERE deleted = 0
+    </select>
+
+    <select id="findTemplateById" resultMap="TemplateResultMap">
+        SELECT * FROM tb_audit_checklist_template WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findTemplatesByAuditType" resultMap="TemplateResultMap">
+        SELECT * FROM tb_audit_checklist_template
+        WHERE audit_type = #{auditType} AND deleted = 0 AND is_active = 1
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="countByTemplateIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_audit_checklist_template WHERE template_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insertTemplate" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_audit_checklist_template (
+            template_id, audit_type, title, description, content,
+            inspection_date, inspection_location, inspection_dept, person_in_charge,
+            inspector, reviewer, inspection_type, inspection_count, overall_result, total_score,
+            is_active, deleted, created_at, modified_at
+        ) VALUES (
+            #{templateId}, #{auditType}, #{title}, #{description}, #{content},
+            #{inspectionDate}, #{inspectionLocation}, #{inspectionDept}, #{personInCharge},
+            #{inspector}, #{reviewer}, #{inspectionType}, #{inspectionCount}, #{overallResult}, #{totalScore},
+            #{isActive}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="updateTemplate">
+        UPDATE tb_audit_checklist_template SET
+            audit_type = #{auditType}, title = #{title}, description = #{description},
+            content = #{content},
+            inspection_date = #{inspectionDate}, inspection_location = #{inspectionLocation},
+            inspection_dept = #{inspectionDept}, person_in_charge = #{personInCharge},
+            inspector = #{inspector}, reviewer = #{reviewer},
+            inspection_type = #{inspectionType}, inspection_count = #{inspectionCount},
+            overall_result = #{overallResult}, total_score = #{totalScore},
+            is_active = COALESCE(#{isActive}, is_active), modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDeleteTemplate">
+        UPDATE tb_audit_checklist_template SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <!-- Item queries -->
+    <select id="findItemsByTemplateId" resultMap="ItemResultMap">
+        SELECT * FROM tb_audit_checklist_item
+        WHERE template_id = #{templateId} AND deleted = 0
+        ORDER BY sort_order ASC
+    </select>
+
+    <select id="findItemById" resultMap="ItemResultMap">
+        SELECT * FROM tb_audit_checklist_item WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <insert id="insertItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_audit_checklist_item (
+            template_id, section, item_text, legal_ref, is_critical, sort_order, deleted, created_at, modified_at
+        ) VALUES (
+            #{templateId}, #{section}, #{itemText}, #{legalRef}, #{isCritical}, #{sortOrder}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="updateItem">
+        UPDATE tb_audit_checklist_item SET
+            section = #{section}, item_text = #{itemText}, legal_ref = #{legalRef},
+            is_critical = #{isCritical}, sort_order = #{sortOrder}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDeleteItem">
+        UPDATE tb_audit_checklist_item SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <delete id="deleteItemsByTemplateId">
+        DELETE FROM tb_audit_checklist_item WHERE template_id = #{templateId}
+    </delete>
+
+    <!-- Result queries -->
+    <insert id="initResults">
+        INSERT INTO tb_audit_checklist_result (audit_id, item_id, check_status, created_at, modified_at)
+        SELECT #{auditId}, i.id, 'UNCHECKED', GETDATE(), GETDATE()
+        FROM tb_audit_checklist_item i
+        WHERE i.template_id = #{templateId} AND i.deleted = 0
+    </insert>
+
+    <select id="findResultsByAuditId" resultMap="ResultResultMap">
+        SELECT r.*, i.section, i.item_text, i.legal_ref, i.is_critical, i.sort_order
+        FROM tb_audit_checklist_result r
+        INNER JOIN tb_audit_checklist_item i ON r.item_id = i.id
+        WHERE r.audit_id = #{auditId}
+        ORDER BY i.sort_order ASC
+    </select>
+
+    <update id="updateResult">
+        UPDATE tb_audit_checklist_result SET
+            check_status = #{checkStatus}, checked_by = #{checkedBy},
+            checked_at = #{checkedAt}, remarks = #{remarks}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

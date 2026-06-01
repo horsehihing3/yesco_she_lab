@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.PrePlacementExamMapper">
+
+    <resultMap id="PrePlacementExamResultMap" type="com.smartehs.model.PrePlacementExam">
+        <id property="id" column="id"/>
+        <result property="examId" column="exam_id"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="employeeName" column="employee_name"/>
+        <result property="employeeDept" column="employee_dept"/>
+        <result property="employeeEmail" column="employee_email"/>
+        <result property="workPlaceId" column="work_place_id"/>
+        <result property="examDate" column="exam_date"/>
+        <result property="examYear" column="exam_year"/>
+        <result property="targetJob" column="target_job"/>
+        <result property="hazardousFactors" column="hazardous_factors"/>
+        <result property="hospital" column="hospital"/>
+        <result property="examResult" column="exam_result"/>
+        <result property="resultDetail" column="result_detail"/>
+        <result property="restrictionDetail" column="restriction_detail"/>
+        <result property="followUpRequired" column="follow_up_required"/>
+        <result property="followUpDate" column="follow_up_date"/>
+        <result property="status" column="status"/>
+        <result property="notes" column="notes"/>
+        <result property="authorName" column="author_name"/>
+        <result property="authorEmail" column="author_email"/>
+        <result property="authorDept" column="author_dept"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="PrePlacementExamResultMap">
+        SELECT * FROM tb_pre_placement_exam
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_pre_placement_exam WHERE deleted = 0
+    </select>
+
+    <select id="findByIdAndDeletedFalse" resultMap="PrePlacementExamResultMap">
+        SELECT * FROM tb_pre_placement_exam WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByExamIdAndDeletedFalse" resultMap="PrePlacementExamResultMap">
+        SELECT * FROM tb_pre_placement_exam WHERE exam_id = #{examId} AND deleted = 0
+    </select>
+
+    <select id="findByEmployeeIdAndDeletedFalse" resultMap="PrePlacementExamResultMap">
+        SELECT * FROM tb_pre_placement_exam
+        WHERE employee_id = #{employeeId} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByEmployeeIdAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_pre_placement_exam WHERE employee_id = #{employeeId} AND deleted = 0
+    </select>
+
+    <select id="findByYearAndDeletedFalse" resultMap="PrePlacementExamResultMap">
+        SELECT * FROM tb_pre_placement_exam
+        WHERE exam_year = #{examYear} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByYearAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_pre_placement_exam WHERE exam_year = #{examYear} AND deleted = 0
+    </select>
+
+    <select id="findByStatusAndDeletedFalse" resultMap="PrePlacementExamResultMap">
+        SELECT * FROM tb_pre_placement_exam
+        WHERE status = #{status} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatusAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_pre_placement_exam WHERE status = #{status} AND deleted = 0
+    </select>
+
+    <select id="searchByEmployeeNameAndDeletedFalse" resultMap="PrePlacementExamResultMap">
+        SELECT * FROM tb_pre_placement_exam
+        WHERE employee_name LIKE '%' + #{name} + '%' AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByEmployeeNameAndDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_pre_placement_exam WHERE employee_name LIKE '%' + #{name} + '%' AND deleted = 0
+    </select>
+
+    <select id="countByExamIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_pre_placement_exam WHERE exam_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_pre_placement_exam (
+            exam_id, employee_id, employee_name, employee_dept, employee_email,
+            work_place_id, exam_date, exam_year, target_job, hazardous_factors,
+            hospital, exam_result, result_detail, restriction_detail,
+            follow_up_required, follow_up_date, status, notes,
+            author_name, author_email, author_dept, deleted, created_at, modified_at
+        ) VALUES (
+            #{examId}, #{employeeId}, #{employeeName}, #{employeeDept}, #{employeeEmail},
+            #{workPlaceId}, #{examDate,jdbcType=DATE}, #{examYear}, #{targetJob}, #{hazardousFactors},
+            #{hospital}, #{examResult}, #{resultDetail}, #{restrictionDetail},
+            #{followUpRequired}, #{followUpDate,jdbcType=DATE}, #{status}, #{notes},
+            #{authorName}, #{authorEmail}, #{authorDept}, #{deleted}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_pre_placement_exam SET
+            employee_id = #{employeeId}, employee_name = #{employeeName},
+            employee_dept = #{employeeDept}, employee_email = #{employeeEmail},
+            work_place_id = #{workPlaceId}, exam_date = #{examDate,jdbcType=DATE},
+            exam_year = #{examYear}, target_job = #{targetJob}, hazardous_factors = #{hazardousFactors},
+            hospital = #{hospital}, exam_result = #{examResult}, result_detail = #{resultDetail},
+            restriction_detail = #{restrictionDetail}, follow_up_required = #{followUpRequired},
+            follow_up_date = #{followUpDate,jdbcType=DATE}, status = #{status}, notes = #{notes},
+            author_name = #{authorName}, author_email = #{authorEmail}, author_dept = #{authorDept},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_pre_placement_exam SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ChecklistResultMasterMapper">
+
+    <resultMap id="ChecklistResultMasterResultMap" type="com.smartehs.model.ChecklistResultMaster">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="checkDate" column="check_date"/>
+        <result property="checker" column="checker"/>
+        <result property="checkManager" column="check_manager"/>
+        <result property="facilityManager" column="facility_manager"/>
+        <result property="templateId" column="template_id"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="modUser" column="mod_user"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="ChecklistResultMasterResultMap">
+        SELECT * FROM tb_checklist_result_master
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_checklist_result_master
+    </select>
+
+    <select id="findById" resultMap="ChecklistResultMasterResultMap">
+        SELECT * FROM tb_checklist_result_master WHERE id = #{id}
+    </select>
+
+    <select id="findByTitleContaining" resultMap="ChecklistResultMasterResultMap">
+        SELECT * FROM tb_checklist_result_master
+        WHERE title LIKE '%' + #{title} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByTitleContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_checklist_result_master
+        WHERE title LIKE '%' + #{title} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_checklist_result_master (
+            title, check_date, checker, check_manager, facility_manager,
+            template_id, reg_user, mod_user, created_at, modified_at
+        ) VALUES (
+            #{title}, #{checkDate,jdbcType=DATE}, #{checker}, #{checkManager}, #{facilityManager},
+            #{templateId}, #{regUser}, #{modUser}, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_checklist_result_master
+        SET title = #{title},
+            check_date = #{checkDate,jdbcType=DATE},
+            checker = #{checker},
+            check_manager = #{checkManager},
+            facility_manager = #{facilityManager},
+            template_id = #{templateId},
+            mod_user = #{modUser},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_checklist_result_master WHERE id = #{id}
+    </delete>
+
+</mapper>

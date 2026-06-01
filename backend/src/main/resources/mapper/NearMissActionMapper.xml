@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.NearMissActionMapper">
+
+    <resultMap id="NearMissActionResultMap" type="com.smartehs.model.NearMissAction">
+        <id property="id" column="id"/>
+        <result property="nearMissId" column="near_miss_id"/>
+        <result property="improvementMeasures" column="improvement_measures"/>
+        <result property="improvementMeasuresEn" column="improvement_measures_en"/>
+        <result property="improvementMeasuresZh" column="improvement_measures_zh"/>
+        <result property="manageDept" column="manage_dept"/>
+        <result property="responsiblePerson" column="responsible_person"/>
+        <result property="responsiblePersonMail" column="responsible_person_mail"/>
+        <result property="responsiblePersonCompany" column="responsible_person_company"/>
+        <result property="planDate" column="plan_date"/>
+        <result property="completeDate" column="complete_date"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="NearMissActionResultMap">
+        SELECT * FROM tb_near_miss_action_list ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultMap="NearMissActionResultMap">
+        SELECT * FROM tb_near_miss_action_list WHERE id = #{id}
+    </select>
+
+    <select id="findByNearMissId" resultMap="NearMissActionResultMap">
+        SELECT * FROM tb_near_miss_action_list WHERE near_miss_id = #{nearMissId} ORDER BY created_at ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_near_miss_action_list (near_miss_id, improvement_measures, improvement_measures_en, improvement_measures_zh, manage_dept, responsible_person, responsible_person_mail, responsible_person_company, plan_date, complete_date, created_at)
+        VALUES (#{nearMissId}, #{improvementMeasures}, #{improvementMeasuresEn}, #{improvementMeasuresZh}, #{manageDept}, #{responsiblePerson}, #{responsiblePersonMail}, #{responsiblePersonCompany}, #{planDate,jdbcType=TIMESTAMP}, #{completeDate,jdbcType=TIMESTAMP}, GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_near_miss_action_list
+        SET improvement_measures = #{improvementMeasures},
+            improvement_measures_en = #{improvementMeasuresEn},
+            improvement_measures_zh = #{improvementMeasuresZh},
+            manage_dept = #{manageDept},
+            responsible_person = #{responsiblePerson},
+            responsible_person_mail = #{responsiblePersonMail},
+            responsible_person_company = #{responsiblePersonCompany},
+            plan_date = #{planDate,jdbcType=TIMESTAMP},
+            complete_date = #{completeDate,jdbcType=TIMESTAMP}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_near_miss_action_list WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByNearMissId">
+        DELETE FROM tb_near_miss_action_list WHERE near_miss_id = #{nearMissId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.IncidentResponseMapper">
+    <resultMap id="R" type="com.smartehs.model.IncidentResponse">
+        <id property="id" column="id"/>
+        <result property="responseId" column="response_id"/>
+        <result property="title" column="title"/>
+        <result property="incidentType" column="incident_type"/>
+        <result property="status" column="status"/>
+        <result property="severity" column="severity"/>
+        <result property="location" column="location"/>
+        <result property="reportedAt" column="reported_at"/>
+        <result property="isDrill" column="is_drill"/>
+        <result property="reporter" column="reporter"/>
+        <result property="description" column="description"/>
+        <result property="actionTaken" column="action_taken"/>
+        <result property="casualtyInfo" column="casualty_info"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="R">
+        SELECT * FROM tb_incident_response WHERE deleted = 0
+        ORDER BY reported_at DESC, id DESC
+    </select>
+    <select id="findById" resultMap="R">
+        SELECT * FROM tb_incident_response WHERE id = #{id} AND deleted = 0
+    </select>
+    <select id="findByResponseId" resultMap="R">
+        SELECT * FROM tb_incident_response WHERE response_id = #{responseId} AND deleted = 0
+    </select>
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_incident_response WHERE deleted = 0
+    </select>
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_incident_response WHERE deleted = 0 AND status = #{status}
+    </select>
+    <select id="countByIsDrill" resultType="int">
+        SELECT COUNT(*) FROM tb_incident_response WHERE deleted = 0 AND is_drill = #{isDrill}
+    </select>
+    <select id="maxResponseIdByYear" resultType="string">
+        SELECT MAX(response_id) FROM tb_incident_response WHERE response_id LIKE #{yearPrefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_incident_response (
+            response_id, title, incident_type, status, severity, location,
+            reported_at, is_drill, reporter, description, action_taken, casualty_info,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{responseId}, #{title}, #{incidentType},
+            <choose><when test="status != null">#{status}</when><otherwise>'ISSUED'</otherwise></choose>,
+            <choose><when test="severity != null">#{severity}</when><otherwise>'MODERATE'</otherwise></choose>,
+            #{location}, #{reportedAt,jdbcType=TIMESTAMP},
+            <choose><when test="isDrill != null">#{isDrill}</when><otherwise>0</otherwise></choose>,
+            #{reporter,jdbcType=NVARCHAR}, #{description,jdbcType=NVARCHAR},
+            #{actionTaken,jdbcType=NVARCHAR}, #{casualtyInfo,jdbcType=NVARCHAR},
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_incident_response SET
+            title = #{title},
+            incident_type = #{incidentType},
+            status = #{status},
+            severity = #{severity,jdbcType=NVARCHAR},
+            location = #{location},
+            reported_at = #{reportedAt,jdbcType=TIMESTAMP},
+            is_drill = <choose><when test="isDrill != null">#{isDrill}</when><otherwise>0</otherwise></choose>,
+            reporter = #{reporter,jdbcType=NVARCHAR},
+            description = #{description,jdbcType=NVARCHAR},
+            action_taken = #{actionTaken,jdbcType=NVARCHAR},
+            casualty_info = #{casualtyInfo,jdbcType=NVARCHAR},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_incident_response SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+</mapper>

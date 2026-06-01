@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.DiseasePreventionMapper">
+
+    <resultMap id="DiseasePreventionResultMap" type="com.smartehs.model.DiseasePrevention">
+        <id property="id" column="id"/>
+        <result property="caseId" column="case_id"/>
+        <result property="hazardType" column="hazard_type"/>
+        <result property="hazardName" column="hazard_name"/>
+        <result property="description" column="description"/>
+        <result property="affectedArea" column="affected_area"/>
+        <result property="affectedWorkers" column="affected_workers"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="exposureLevel" column="exposure_level"/>
+        <result property="preventionMeasure" column="prevention_measure"/>
+        <result property="responsiblePerson" column="responsible_person"/>
+        <result property="responsibleDept" column="responsible_dept"/>
+        <result property="assessmentDate" column="assessment_date"/>
+        <result property="nextAssessment" column="next_assessment"/>
+        <result property="status" column="status"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="DiseasePreventionResultMap">
+        SELECT * FROM tb_disease_prevention
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_disease_prevention WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="DiseasePreventionResultMap">
+        SELECT * FROM tb_disease_prevention WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="search" resultMap="DiseasePreventionResultMap">
+        SELECT * FROM tb_disease_prevention
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (case_id LIKE '%' + #{keyword} + '%'
+                OR hazard_name LIKE '%' + #{keyword} + '%'
+                OR affected_area LIKE '%' + #{keyword} + '%'
+                OR responsible_person LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="hazardType != null and hazardType != ''">
+            AND hazard_type = #{hazardType}
+        </if>
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countSearch" resultType="int">
+        SELECT COUNT(*) FROM tb_disease_prevention
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (case_id LIKE '%' + #{keyword} + '%'
+                OR hazard_name LIKE '%' + #{keyword} + '%'
+                OR affected_area LIKE '%' + #{keyword} + '%'
+                OR responsible_person LIKE '%' + #{keyword} + '%')
+        </if>
+        <if test="hazardType != null and hazardType != ''">
+            AND hazard_type = #{hazardType}
+        </if>
+    </select>
+
+    <select id="countByCaseIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_disease_prevention WHERE case_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_disease_prevention (
+            case_id, hazard_type, hazard_name, description,
+            affected_area, affected_workers, risk_level, exposure_level,
+            prevention_measure, responsible_person, responsible_dept,
+            assessment_date, next_assessment, status,
+            notes, deleted, created_at, modified_at
+        ) VALUES (
+            #{caseId}, #{hazardType}, #{hazardName}, #{description},
+            #{affectedArea}, #{affectedWorkers}, #{riskLevel}, #{exposureLevel},
+            #{preventionMeasure}, #{responsiblePerson}, #{responsibleDept},
+            #{assessmentDate,jdbcType=DATE}, #{nextAssessment,jdbcType=DATE}, #{status},
+            #{notes}, 0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_disease_prevention SET
+            hazard_type = #{hazardType}, hazard_name = #{hazardName},
+            description = #{description}, affected_area = #{affectedArea},
+            affected_workers = #{affectedWorkers}, risk_level = #{riskLevel},
+            exposure_level = #{exposureLevel}, prevention_measure = #{preventionMeasure},
+            responsible_person = #{responsiblePerson}, responsible_dept = #{responsibleDept},
+            assessment_date = #{assessmentDate,jdbcType=DATE},
+            next_assessment = #{nextAssessment,jdbcType=DATE},
+            status = #{status}, notes = #{notes}, modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_disease_prevention SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

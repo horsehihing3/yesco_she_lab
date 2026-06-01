@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.AirEmissionMapper">
+
+    <resultMap id="AirEmissionResultMap" type="com.smartehs.model.AirEmission">
+        <id property="id" column="id"/>
+        <result property="measurementDate" column="measurement_date"/>
+        <result property="facility" column="facility"/>
+        <result property="pollutant" column="pollutant"/>
+        <result property="emissionConcentration" column="emission_concentration"/>
+        <result property="unit" column="unit"/>
+        <result property="emissionStandard" column="emission_standard"/>
+        <result property="compliance" column="compliance"/>
+        <result property="manager" column="manager"/>
+        <result property="remark" column="remark"/>
+        <result property="regUser" column="reg_user"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllWithPaging" resultMap="AirEmissionResultMap">
+        SELECT * FROM tb_air_emission
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_air_emission
+    </select>
+
+    <select id="findAllList" resultMap="AirEmissionResultMap">
+        SELECT * FROM tb_air_emission
+        ORDER BY measurement_date DESC
+    </select>
+
+    <select id="findById" resultMap="AirEmissionResultMap">
+        SELECT * FROM tb_air_emission WHERE id = #{id}
+    </select>
+
+    <select id="findByFacilityContaining" resultMap="AirEmissionResultMap">
+        SELECT * FROM tb_air_emission
+        WHERE facility LIKE '%' + #{facility} + '%'
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByFacilityContaining" resultType="int">
+        SELECT COUNT(*) FROM tb_air_emission
+        WHERE facility LIKE '%' + #{facility} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_air_emission (measurement_date, facility, pollutant, emission_concentration, unit, emission_standard, compliance, manager, remark, reg_user, created_at, modified_at)
+        VALUES (#{measurementDate}, #{facility}, #{pollutant}, #{emissionConcentration}, #{unit}, #{emissionStandard}, #{compliance}, #{manager}, #{remark}, #{regUser}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_air_emission
+        SET measurement_date = #{measurementDate},
+            facility = #{facility},
+            pollutant = #{pollutant},
+            emission_concentration = #{emissionConcentration},
+            unit = #{unit},
+            emission_standard = #{emissionStandard},
+            compliance = #{compliance},
+            manager = #{manager},
+            remark = #{remark},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tb_air_emission WHERE id = #{id}
+    </delete>
+
+</mapper>
