@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.AuditMapper;
 import com.smartehs.mapper.AuditLogMapper;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.Audit;
 import com.smartehs.model.AuditLog;
-import com.smartehs.model.User;
+import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,7 +35,7 @@ public class AuditService {
 
     private final AuditMapper auditMapper;
     private final AuditLogMapper auditLogMapper;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN", "EHS_ADMIN", "AUDIT_ADMIN");
 
@@ -191,13 +191,13 @@ public class AuditService {
 
     private void ensureCanCompleteAudit(Audit audit, String username) {
         if (username == null || username.isEmpty() || "system".equals(username)) return;
-        User u;
-        try { u = userMapper.findByUsername(username); } catch (Exception e) { u = null; }
+        IdmUser u;
+        try { u = idmMapper.findByUid(username); } catch (Exception e) { u = null; }
         if (u == null) throw new AccessDeniedException("승인 권한이 없습니다.");
-        if (u.getRole() != null && ADMIN_ROLES.contains(u.getRole())) return;
-        if (audit.getCompletionApproverUserId() != null && audit.getCompletionApproverUserId().equals(u.getId())) return;
+        if (u.getUserRole() != null && ADMIN_ROLES.contains(u.getUserRole())) return;
+        if (audit.getCompletionApproverUserId() != null && audit.getCompletionApproverUserId().equals(u.getUidNumber())) return;
         if (audit.getCompletionApproverName() != null
-            && audit.getCompletionApproverName().equalsIgnoreCase(u.getName())) return;
+            && audit.getCompletionApproverName().equalsIgnoreCase(u.getUserName())) return;
         throw new AccessDeniedException("지정된 완료 승인자만 작업 완료 처리할 수 있습니다.");
     }
 

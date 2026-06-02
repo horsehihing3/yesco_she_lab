@@ -1,9 +1,9 @@
 package com.smartehs.service;
 
 import com.smartehs.dto.response.UserInfoResponse;
-import com.smartehs.model.User;
 import com.smartehs.exception.ResourceNotFoundException;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,75 +22,69 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @Transactional(readOnly = true)
     public List<UserInfoResponse> findAll() {
-        return userMapper.findAll().stream()
-                .filter(user -> Boolean.TRUE.equals(user.getActive()))
-                .map(UserInfoResponse::from)
+        return idmMapper.findAllWithPassword().stream()
+                .map(UserInfoResponse::fromIdmUser)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public Page<UserInfoResponse> findAll(Pageable pageable) {
-        int offset = (int) pageable.getOffset();
-        int limit = pageable.getPageSize();
-
-        List<UserInfoResponse> content = userMapper.findAllWithPaging(offset, limit).stream()
-                .map(UserInfoResponse::from)
+        List<UserInfoResponse> all = idmMapper.findAllWithPassword().stream()
+                .map(UserInfoResponse::fromIdmUser)
                 .collect(Collectors.toList());
-        int total = userMapper.countAll();
-
+        int total = all.size();
+        int start = (int) pageable.getOffset();
+        int end   = Math.min(start + pageable.getPageSize(), total);
+        List<UserInfoResponse> content = (start >= total) ? List.of() : all.subList(start, end);
         return new PageImpl<>(content, pageable, total);
     }
 
     @Transactional(readOnly = true)
-    public UserInfoResponse findById(Long id) {
-        User user = userMapper.findById(id);
+    public UserInfoResponse findById(Long uidNumber) {
+        IdmUser user = idmMapper.findByUidNumber(uidNumber);
         if (user == null) {
-            throw new ResourceNotFoundException("User", "id", id);
+            throw new ResourceNotFoundException("User", "uidNumber", uidNumber);
         }
-        return UserInfoResponse.from(user);
+        return UserInfoResponse.fromIdmUser(user);
     }
 
     @Transactional(readOnly = true)
     public UserInfoResponse findByUsername(String username) {
-        User user = userMapper.findByUsername(username);
+        IdmUser user = idmMapper.findByUid(username);
         if (user == null) {
             throw new ResourceNotFoundException("User", "username", username);
         }
-        return UserInfoResponse.from(user);
+        return UserInfoResponse.fromIdmUser(user);
     }
 
     @Transactional(readOnly = true)
     public UserInfoResponse findByEmail(String email) {
-        User user = userMapper.findByEmail(email);
+        IdmUser user = idmMapper.findByEmail(email);
         if (user == null) {
             throw new ResourceNotFoundException("User", "email", email);
         }
-        return UserInfoResponse.from(user);
+        return UserInfoResponse.fromIdmUser(user);
     }
 
     @Transactional
-    public void updateRole(Long id, String role) {
-        User user = userMapper.findById(id);
+    public void updateRole(Long uidNumber, String role) {
+        IdmUser user = idmMapper.findByUidNumber(uidNumber);
         if (user == null) {
-            throw new ResourceNotFoundException("User", "id", id);
+            throw new ResourceNotFoundException("User", "uidNumber", uidNumber);
         }
-        userMapper.updateRole(id, role);
+        idmMapper.updateUserRole(user.getUid(), role);
     }
 
     @Transactional(readOnly = true)
     public Map<String, List<UserInfoResponse>> findAllGroupedByDepartment() {
-        List<User> users = userMapper.findAll().stream()
-                .filter(user -> Boolean.TRUE.equals(user.getActive()))
-                .collect(Collectors.toList());
-
-        return users.stream()
-                .map(UserInfoResponse::from)
+        return idmMapper.findAllWithPassword().stream()
+                .map(UserInfoResponse::fromIdmUser)
                 .collect(Collectors.groupingBy(
-                        user -> user.getDepartment() != null ? user.getDepartment() : "기타",
+                        u -> u.getDepartment() != null ? u.getDepartment() : "기타",
                         LinkedHashMap::new,
                         Collectors.toList()
                 ));

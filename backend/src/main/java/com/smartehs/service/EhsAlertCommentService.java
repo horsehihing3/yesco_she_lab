@@ -3,8 +3,8 @@ package com.smartehs.service;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.EhsAlertCommentMapper;
 import com.smartehs.model.EhsAlertComment;
-import com.smartehs.model.User;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.model.IdmUser;
+import com.smartehs.mapper.IdmMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ import java.util.List;
 public class EhsAlertCommentService {
 
     private final EhsAlertCommentMapper commentMapper;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @Transactional(readOnly = true)
     public List<EhsAlertComment> findByAlertId(Long alertId) {
@@ -32,10 +32,10 @@ public class EhsAlertCommentService {
 
         // 인증된 사용자 정보 우선, fallback 으로 요청 본문 사용
         if (username != null && !"system".equals(username)) {
-            User u = userMapper.findByUsername(username);
+            IdmUser u = idmMapper.findByUid(username);
             if (u != null) {
-                c.setAuthorName(u.getName() != null ? u.getName() : u.getUsername());
-                c.setAuthorDept(u.getDepartment());
+                c.setAuthorName(u.getUserName() != null ? u.getUserName() : u.getUid());
+                c.setAuthorDept(u.getGroupName() != null ? u.getGroupName() : u.getDeptCode());
                 c.setAuthorEmail(u.getEmail());
             }
         }

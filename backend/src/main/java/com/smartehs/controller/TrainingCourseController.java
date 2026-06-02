@@ -3,8 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.TrainingCourseRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.TrainingCourseResponse;
-import com.smartehs.mapper.UserMapper;
-import com.smartehs.model.User;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.TrainingCourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class TrainingCourseController {
 
     private final TrainingCourseService service;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "교육과정 목록")
@@ -47,7 +47,7 @@ public class TrainingCourseController {
     public ResponseEntity<ApiResponse<TrainingCourseResponse>> create(
             @Valid @RequestBody TrainingCourseRequest request,
             Authentication authentication) {
-        User currentUser = authentication != null ? userMapper.findByUsername(authentication.getName()) : null;
+        IdmUser currentUser = authentication != null ? idmMapper.findByUid(authentication.getName()) : null;
         return ResponseEntity.ok(ApiResponse.success("Training course created", service.create(request, currentUser)));
     }
 

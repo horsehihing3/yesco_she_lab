@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem,
-  FormControl, Chip, Pagination, CircularProgress, Alert, IconButton,
+  FormControl, Chip, Pagination, CircularProgress, Alert, IconButton, Checkbox,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -125,6 +125,7 @@ const AuditPlanTab: React.FC = () => {
   const { user } = useAuth()
   const { codeList: auditTypeCodes, getLabel: getAuditTypeLabel } = useCodeMap('AUDIT_TYPE')
   const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'AUDIT_ADMIN' || user?.role === 'EHS_ADMIN'
+  const canEditDraft = (item: { createdByUserId?: number | null }) => isAdmin || item.createdByUserId === user?.id
   // 계획 승인 권한: admin 또는 지정된 plan_approver 본인만
   const canApprovePlan = (p: { planApproverUserId?: number | null; planApproverName?: string | null }) => {
     if (isAdmin) return true
@@ -146,6 +147,7 @@ const AuditPlanTab: React.FC = () => {
   // 계획 결재 반려 사유 입력 다이얼로그
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
   const [showCompletionApproverModal, setShowCompletionApproverModal] = useState(false)
+  const [sameAsPlan, setSameAsPlan] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selectedItem, setSelectedItem] = useState<AuditPlan | null>(null)
   const [form, setForm] = useState<AuditPlanRequest>({ ...emptyForm })
@@ -199,7 +201,7 @@ const AuditPlanTab: React.FC = () => {
     onError: () => showError(t('common.error')),
   })
 
-  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ ...emptyForm }) }
+  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ ...emptyForm }); setSameAsPlan(false) }
   const handleOpenCreate = () => {
     setSelectedItem(null)
     // 작성자(createdByName) 로그인 사용자 자동 입력
@@ -214,6 +216,7 @@ const AuditPlanTab: React.FC = () => {
   const handleOpenEdit = (item?: AuditPlan) => {
     const target = item || selectedItem
     if (!target) return
+    setSameAsPlan(false)
     setSelectedItem(target)
     setForm({
       auditName: target.auditName, auditType: target.auditType,
@@ -624,7 +627,7 @@ const AuditPlanTab: React.FC = () => {
             {t('common.list')}
           </Button>
           {/* 계획 결재 상신 — 작성중(PLAN) 상태에서 작성자/일반 사용자가 결재 요청 */}
-          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && (
+          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && canEditDraft(selectedItem) && (
             <Button variant="contained" color="info"
               onClick={handleSubmit}
               sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
@@ -642,8 +645,8 @@ const AuditPlanTab: React.FC = () => {
               </Button>
             </>
           )}
-          {/* 수정 / 삭제 — 작성중(PLAN) 상태에서만 (결재 진행/승인 후 차단) */}
-          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && (
+          {/* 수정 / 삭제 — 작성중(PLAN) 상태 + 작성자/admin */}
+          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && canEditDraft(selectedItem) && (
             <>
               <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                 {t('common.edit')}
@@ -744,10 +747,13 @@ const AuditPlanTab: React.FC = () => {
             <Typography sx={labelSx}>
               {t('audit.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
-            <Box sx={{ ...valueSx, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
+            <Box sx={{ ...valueSx, display: 'flex', gap: 0.5, alignItems: 'center' }}>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('audit.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowCompletionApproverModal(true)}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setShowCompletionApproverModal(true)}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>
@@ -837,12 +843,17 @@ const AuditPlanTab: React.FC = () => {
             </Box>
           </Box>
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('audit.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ flex: 1 }}>
+                {t('audit.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
+              </Typography>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ color: 'text.secondary', ml: 0.25, whiteSpace: 'nowrap' }}>계획과 동일</Typography>
+            </Box>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField size="small" fullWidth value={form.completionApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('audit.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowCompletionApproverModal(true)}><PersonSearchIcon fontSize="small" /></Button>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setShowCompletionApproverModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <Box>
@@ -884,12 +895,13 @@ const AuditPlanTab: React.FC = () => {
           onConfirm={(users) => {
             if (users.length > 0) {
               const u = users[0]
-              setForm({
-                ...form,
+              setForm(prev => ({
+                ...prev,
                 planApproverUserId: u.id,
                 planApproverTeam: u.department || '',
                 planApproverName: u.name,
-              })
+                ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}),
+              }))
             }
             setShowPlanApproverModal(false)
           }}

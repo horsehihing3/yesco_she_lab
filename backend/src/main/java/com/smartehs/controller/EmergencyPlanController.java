@@ -1,7 +1,9 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.EmergencyPlan;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.EmergencyPlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +24,7 @@ import java.util.Map;
 public class EmergencyPlanController {
 
     private final EmergencyPlanService emergencyPlanService;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "비상 대응 계획 전체 목록 조회")
@@ -46,7 +49,16 @@ public class EmergencyPlanController {
 
     @PostMapping
     @Operation(summary = "비상 대응 계획 등록")
-    public ResponseEntity<ApiResponse<EmergencyPlan>> create(@RequestBody EmergencyPlan emergencyPlan) {
+    public ResponseEntity<ApiResponse<EmergencyPlan>> create(
+            @RequestBody EmergencyPlan emergencyPlan,
+            Authentication authentication) {
+        if (authentication != null) {
+            IdmUser idmUser = idmMapper.findByUid(authentication.getName());
+            if (idmUser != null) {
+                emergencyPlan.setWriterUserId(idmUser.getUidNumber());
+                emergencyPlan.setWriterName(idmUser.getUserName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(emergencyPlanService.create(emergencyPlan)));
     }
 

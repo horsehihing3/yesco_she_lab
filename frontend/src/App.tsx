@@ -78,6 +78,7 @@ import IncidentResponsePage from './pages/IncidentResponsePage'
 import PermitLifecyclePage from './pages/PermitLifecyclePage'
 import DiseasePreventionMgmtPage from './pages/DiseasePreventionMgmtPage'
 import ContractorRegistrationPage from './pages/ContractorRegistrationPage'
+import ButtonManagePage from './pages/ButtonManagePage'
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -120,6 +121,9 @@ function App() {
           <PartnerSafetyExecutePage />
         </ProtectedRoute>
       } />
+
+      {/* DEV — 버튼 관리 독립 페이지 (납품 전 삭제) */}
+      <Route path="/dev/button-manage" element={<ButtonManagePage />} />
 
       {/* Protected Routes */}
       <Route

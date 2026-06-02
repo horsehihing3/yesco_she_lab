@@ -5,7 +5,7 @@ import com.smartehs.dto.response.TrainingCourseResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.TrainingCourseMapper;
 import com.smartehs.model.TrainingCourse;
-import com.smartehs.model.User;
+import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -43,7 +43,7 @@ public class TrainingCourseService {
     }
 
     @Transactional
-    public TrainingCourseResponse create(TrainingCourseRequest req, User currentUser) {
+    public TrainingCourseResponse create(TrainingCourseRequest req, IdmUser currentUser) {
         if (mapper.findByCourseCode(req.getCourseCode()) != null) {
             throw new IllegalArgumentException("Course code already exists: " + req.getCourseCode());
         }
@@ -67,7 +67,7 @@ public class TrainingCourseService {
                 .currentSeats(req.getCurrentSeats() != null ? req.getCurrentSeats() : 0)
                 .lawBasis(req.getLawBasis())
                 .isActive(req.getIsActive() != null ? req.getIsActive() : true)
-                .createdBy(currentUser != null ? currentUser.getUsername() : null)
+                .createdBy(currentUser != null ? currentUser.getUid() : null)
                 .build();
         mapper.insert(c);
         log.info("Created TrainingCourse id={} code={}", c.getId(), c.getCourseCode());

@@ -3,8 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.HealthCheckupPlanRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.HealthCheckupPlanResponse;
-import com.smartehs.mapper.UserMapper;
-import com.smartehs.model.User;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.HealthCheckupPlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class HealthCheckupPlanController {
 
     private final HealthCheckupPlanService service;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "검진계획 목록", description = "checkupType / planYear / status 필터 + 페이징")
@@ -50,7 +50,7 @@ public class HealthCheckupPlanController {
     public ResponseEntity<ApiResponse<HealthCheckupPlanResponse>> create(
             @Valid @RequestBody HealthCheckupPlanRequest request,
             Authentication authentication) {
-        User currentUser = authentication != null ? userMapper.findByUsername(authentication.getName()) : null;
+        IdmUser currentUser = authentication != null ? idmMapper.findByUid(authentication.getName()) : null;
         return ResponseEntity.ok(ApiResponse.success("Health checkup plan created", service.create(request, currentUser)));
     }
 

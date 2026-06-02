@@ -32,7 +32,15 @@
         <result column="ObjectCategory" property="objectCategory"/>
         <result column="Password" property="password"/>
         <result column="UserRole" property="userRole"/>
+        <result column="GroupName" property="groupName"/>
     </resultMap>
+
+    <!-- 부서명(GroupName)을 포함한 사용자 조회용 공통 SELECT -->
+    <sql id="userWithGroupCols">
+        i.UIDNumber, i.CompanyCode, i.DeptCode, i.UserName,
+        i.Email, i.UID, i.UserStatus, i.ObjectCategory, i.Password, i.UserRole,
+        g.GroupName
+    </sql>
 
     <select id="findActiveCompanies" resultMap="IdmCompanyResultMap">
         SELECT CompanyCode, Name, Status
@@ -47,7 +55,9 @@
         FROM T_IDM_GROUP
         WHERE GroupStatus = '10'
           AND CompanyCode = '0100004'
-        ORDER BY CompanyCode, GroupLevel, GroupName
+        ORDER BY CompanyCode, GroupLevel,
+                 CASE WHEN GroupCode IN ('11647', '12173') THEN 0 ELSE 1 END,
+                 GroupName
     </select>
 
     <select id="findActiveEmployees" resultMap="IdmUserResultMap">
@@ -60,21 +70,37 @@
     </select>
 
     <select id="findByUid" resultMap="IdmUserResultMap">
-        SELECT UIDNumber, CompanyCode, DeptCode, UserName,
-               Email, UID, UserStatus, ObjectCategory, Password, UserRole
-        FROM T_IDM_USER
-        WHERE UID = #{uid}
-          AND UserStatus = '10'
+        SELECT <include refid="userWithGroupCols"/>
+        FROM T_IDM_USER i
+        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
+        WHERE i.UID = #{uid}
+          AND i.UserStatus = '10'
+    </select>
+
+    <select id="findByUidNumber" resultMap="IdmUserResultMap">
+        SELECT <include refid="userWithGroupCols"/>
+        FROM T_IDM_USER i
+        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
+        WHERE i.UIDNumber = #{uidNumber}
+          AND i.UserStatus = '10'
+    </select>
+
+    <select id="findByEmail" resultMap="IdmUserResultMap">
+        SELECT <include refid="userWithGroupCols"/>
+        FROM T_IDM_USER i
+        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
+        WHERE i.Email = #{email}
+          AND i.UserStatus = '10'
     </select>
 
     <select id="findAllWithPassword" resultMap="IdmUserResultMap">
-        SELECT UIDNumber, CompanyCode, DeptCode, UserName,
-               Email, UID, UserStatus, ObjectCategory, Password, UserRole
-        FROM T_IDM_USER
-        WHERE UserStatus = '10'
-          AND Password IS NOT NULL
-          AND Password != ''
-        ORDER BY UserName
+        SELECT <include refid="userWithGroupCols"/>
+        FROM T_IDM_USER i
+        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
+        WHERE i.UserStatus = '10'
+          AND i.Password IS NOT NULL
+          AND i.Password != ''
+        ORDER BY i.UserName
     </select>
 
     <update id="updateUserRole">

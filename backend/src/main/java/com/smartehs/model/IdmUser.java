@@ -14,4 +14,6 @@ public class IdmUser {
     private String objectCategory;
     private String password;
     private String userRole;
+    // T_IDM_GROUP JOIN으로 조회되는 부서명 (DeptCode → GroupName)
+    private String groupName;
 }

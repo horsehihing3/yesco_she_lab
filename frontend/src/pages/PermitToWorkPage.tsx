@@ -109,6 +109,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   const [userPickTarget, setUserPickTarget] = useState<'planApprover' | 'completionApprover' | 'inspector' | null>(null)
   // 결재 반려 사유 입력 다이얼로그
   const [rejectDialogStage, setRejectDialogStage] = useState<'plan' | 'completion' | null>(null)
+  const [sameAsPlan, setSameAsPlan] = useState(false)
 
   // PPE inventory list for multi-select
   const [ppeList, setPpeList] = useState<PpeEquipment[]>([])
@@ -249,6 +250,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     setExistingFiles([])
     setDeletedFileIds([])
     setWorkers([])
+    setSameAsPlan(false)
   }
 
   const handleRowClick = (item: PermitToWork) => {
@@ -264,6 +266,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     setExistingFiles([])
     setDeletedFileIds([])
     setWorkers([])
+    setSameAsPlan(false)
     setViewMode('create')
   }
 
@@ -318,7 +321,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     if (users.length > 0) {
       const u = users[0]
       if (userPickTarget === 'planApprover') {
-        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name }))
+        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name, ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}) }))
       } else if (userPickTarget === 'completionApprover') {
         setForm(f => ({ ...f, completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name }))
       } else {
@@ -849,11 +852,14 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => { setUserPickTarget('planApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
             <Typography sx={labelSx}>{t('common.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
-            <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField size="small" fullWidth InputProps={{ readOnly: true }}
+            <Box sx={{ ...valSx, display: 'flex', gap: 0.5, alignItems: 'center' }}>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
                 placeholder={t('common.selectFromOrg', '조직도에서 선택')}
                 value={form.completionApproverName || ''} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => { setUserPickTarget('completionApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => { setUserPickTarget('completionApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
         </Paper>

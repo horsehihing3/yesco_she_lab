@@ -116,7 +116,9 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 | 🟡 중간 | 도면 이미지 로컬 미존재 | FileStorageService | 운영서버 uploads 폴더 동기화 필요 |
 | 🔵 낮음 | preferred_language 컬럼 미사용 | tb_user | User.java 모델에 추가 또는 제거 |
 | 🔵 낮음 | SSO UI만 존재, 백엔드 미구현 | AuthManageTab.tsx | 예스코 요구 시 구현 |
-| 🟡 중간 | 계획 결재상신·수정·삭제 버튼 — 작성자 무관 DRAFT 상태면 누구나 노출 | AnnualPlanTab, AuditPlanTab, EmrPlanTab 등 전체 계획 탭 공통 | `isAdmin \|\| writerUserId === authUser.id` 조건 추가 필요 (예스코 요구사항 확인 후 일괄 수정) |
+| ✅ 완료 | 계획 결재상신·수정·삭제 버튼 — 작성자/Admin만 노출로 수정 | AnnualPlanTab, AuditPlanTab, EmrPlanTab — canEditDraft() 헬퍼 추가 |
+| ✅ 완료 | tb_user/T_IDM_USER 이중 구조로 인한 ID 불일치 버그 (승인 권한 체크 항상 실패) | T_IDM_USER 단일화 완료 — planApproverUserId == UidNumber 정상 비교 |
+| ✅ 완료 | 연간계획 반려 버튼 클릭 시 무반응 | RejectReasonDialog를 Detail 뷰 return 블록에 추가 |
 | 🟡 중간 | 긴급 발송(이메일·문자) 기능 미구현 — 버튼 클릭 시 2초 대기 후 성공 메시지만 표시 | EmergencyNotificationTab.tsx | 백엔드 발송 API + SMTP 연동 신규 개발 필요, SMS는 게이트웨이 계정 별도 필요 |
 | 🟡 중간 | 계획승인·완료승인 버튼 권한 체크 누락 (2개 탭) — PENDING 상태면 누구나 승인 가능 | HealthCheckupPlanTab.tsx (프론트), SiteSafetyPlanService.java (백엔드) — 둘 다 승인자 확인 없음 | 지정 승인자 or Admin 체크 추가 필요 (다른 탭과 동일 패턴 적용) |
 | 🔵 낮음 | 감사 실시에서 체크리스트 직접 연결 불가 — 계획 단계에서 미연결 시 실시에서 추가 방법 없음 | AuditExecutionTab.tsx — checklistTemplateId를 연결된 감사계획에서만 가져옴, 실시 수정화면에 선택 UI 없음 | 감사 실시 수정 화면에 체크리스트 선택 드롭다운 추가 필요 |
@@ -136,6 +138,28 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - [x] T_IDM_USER 참조 파일 전체 목록 추출 (전환 범위 확정)
 - [x] 백엔드 보안 이슈 및 하드코딩 문제 식별
 - [x] 예스코 적용 작업 범위 및 일정 추정
+
+### 세션 2 (2026-06-01) — 예스코 커스터마이징 초기 작업
+- [x] 계획 결재상신·수정·삭제 버튼 — 작성자/Admin만 노출 (canEditDraft 헬퍼)
+- [x] 완료승인자 "계획과 동일" 체크박스 — 6개 탭 적용
+- [x] 백엔드 작성자 자동 매핑 수정 (IdmMapper로 UidNumber 세팅)
+
+### 세션 3 (2026-06-02) — tb_user 전환 · DEV 도구 · 버그 수정
+- [x] **연간계획 반려 버튼 버그 수정** — RejectReasonDialog를 Detail 뷰에 추가
+- [x] **버튼관리 페이지** — 드래그 플로팅 패널 → `/dev/button-manage` 독립 URL로 분리
+- [x] **버튼관리 데이터** — 전체 상태 추가, 인터랙티브 체크박스, 26개 메뉴 커버
+- [x] **tb_user → T_IDM_USER 전환** (핵심 리팩토링)
+  - IdmUser에 groupName 필드 추가 (T_IDM_GROUP JOIN)
+  - IdmMapper에 findByUidNumber, findByEmail 추가
+  - 승인 권한 체크 서비스 7개 전환 (getId→getUidNumber, ID 불일치 버그 수정)
+  - UserService, UserController IdmMapper 기반으로 교체
+  - TrainingApplication/HealthCheckupPlan/TrainingCourse 컨트롤러·서비스 전환
+  - DataInitializer 삭제
+  - tb_user는 코드 참조 제거 완료 (드랍 가능 상태)
+- [x] **헤더 DEV 계정 전환** — 아바타 드롭다운에서 즉시 계정 전환, 현재 페이지 유지
+- [x] **글로벌경영관리팀 사용자 이동** — 정경석·홍길동 DeptCode 변경, 트리 최상단 고정
+- [x] **DEV 계정 비밀번호 설정** — yeseo.moon·jungho.yoo·yujeong.jung → com4in!!
+- [x] **부서 트리 팀장 정보 확인** — T_IDM_GROUP.ManagerEmployeeID 활용 가능 확인
 
 ---
 

@@ -7,7 +7,7 @@ import com.smartehs.mapper.TrainingApplicationMapper;
 import com.smartehs.mapper.TrainingCourseMapper;
 import com.smartehs.model.TrainingApplication;
 import com.smartehs.model.TrainingCourse;
-import com.smartehs.model.User;
+import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -47,7 +47,7 @@ public class TrainingApplicationService {
     }
 
     @Transactional
-    public TrainingApplicationResponse create(TrainingApplicationRequest req, User currentUser) {
+    public TrainingApplicationResponse create(TrainingApplicationRequest req, IdmUser currentUser) {
         TrainingCourse course = courseMapper.findById(req.getCourseId());
         if (course == null) throw new ResourceNotFoundException("TrainingCourse", "id", req.getCourseId());
 
@@ -63,11 +63,11 @@ public class TrainingApplicationService {
                 .courseId(course.getId())
                 .courseName(course.getCourseName())
                 .courseDate(course.getDateStart() != null ? course.getDateStart().toString() : null)
-                .applicantName(currentUser != null && req.getApplicantName() == null ? currentUser.getName() : req.getApplicantName())
-                .applicantDept(currentUser != null && req.getApplicantDept() == null ? currentUser.getDepartment() : req.getApplicantDept())
+                .applicantName(currentUser != null && req.getApplicantName() == null ? currentUser.getUserName() : req.getApplicantName())
+                .applicantDept(currentUser != null && req.getApplicantDept() == null ? (currentUser.getGroupName() != null ? currentUser.getGroupName() : currentUser.getDeptCode()) : req.getApplicantDept())
                 .applicantEmpNo(req.getApplicantEmpNo())
                 .applicantPhone(req.getApplicantPhone())
-                .applicantUsername(currentUser != null ? currentUser.getUsername() : null)
+                .applicantUsername(currentUser != null ? currentUser.getUid() : null)
                 .applyDate(LocalDate.now())
                 .status("PENDING")
                 .reason(req.getReason())

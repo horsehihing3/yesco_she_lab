@@ -3,6 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.EhsAnnualPlanRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.EhsAnnualPlanResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.EhsAnnualPlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +28,7 @@ import java.util.Map;
 public class EhsAnnualPlanController {
 
     private final EhsAnnualPlanService ehsAnnualPlanService;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "List annual plans", description = "Get all EHS annual plans with optional year filter and pagination")
@@ -51,7 +54,15 @@ public class EhsAnnualPlanController {
     @PostMapping
     @Operation(summary = "Create plan", description = "Create a new EHS annual plan")
     public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> create(
-            @Valid @RequestBody EhsAnnualPlanRequest request) {
+            @Valid @RequestBody EhsAnnualPlanRequest request,
+            Authentication authentication) {
+        if (authentication != null) {
+            IdmUser idmUser = idmMapper.findByUid(authentication.getName());
+            if (idmUser != null) {
+                request.setWriterUserId(idmUser.getUidNumber());
+                request.setWriterName(idmUser.getUserName());
+            }
+        }
         EhsAnnualPlanResponse plan = ehsAnnualPlanService.create(request);
         return ResponseEntity.ok(ApiResponse.success("Plan created successfully", plan));
     }

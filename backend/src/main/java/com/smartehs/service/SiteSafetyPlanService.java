@@ -3,10 +3,10 @@ package com.smartehs.service;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.SiteSafetyPlanMapper;
 import com.smartehs.mapper.SiteSafetyWorkerMapper;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.SiteSafetyPlan;
 import com.smartehs.model.SiteSafetyWorker;
-import com.smartehs.model.User;
+import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,7 @@ public class SiteSafetyPlanService {
 
     private final SiteSafetyPlanMapper planMapper;
     private final SiteSafetyWorkerMapper workerMapper;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @Transactional(readOnly = true)
     public Page<SiteSafetyPlan> findAll(String planType, Pageable pageable) {
@@ -166,17 +166,17 @@ public class SiteSafetyPlanService {
 
     @Transactional
     public Map<String, Object> tryAcquireEditLock(Long planId, String username) {
-        User user = userMapper.findByUsername(username);
+        IdmUser user = idmMapper.findByUid(username);
         if (user == null) throw new ResourceNotFoundException("User", "username", username);
         SiteSafetyPlan plan = findById(planId);
         Long lockUserId = plan.getEditingUserId();
         LocalDateTime startedAt = plan.getEditingStartedAt();
         boolean isStale = startedAt == null || startedAt.isBefore(LocalDateTime.now().minusMinutes(LOCK_STALE_MINUTES));
-        boolean isCurrentUser = user.getId().equals(lockUserId);
+        boolean isCurrentUser = user.getUidNumber().equals(lockUserId);
 
         Map<String, Object> result = new HashMap<>();
         if (lockUserId == null || isStale || isCurrentUser) {
-            planMapper.acquireEditLock(planId, user.getId(), user.getName());
+            planMapper.acquireEditLock(planId, user.getUidNumber(), user.getUserName());
             result.put("acquired", true);
             result.put("currentEditor", null);
         } else {
@@ -188,8 +188,8 @@ public class SiteSafetyPlanService {
 
     @Transactional
     public void releaseEditLock(Long planId, String username) {
-        User user = userMapper.findByUsername(username);
+        IdmUser user = idmMapper.findByUid(username);
         if (user == null) return;
-        planMapper.releaseEditLock(planId, user.getId());
+        planMapper.releaseEditLock(planId, user.getUidNumber());
     }
 }

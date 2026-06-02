@@ -3,8 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.TrainingApplicationRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.TrainingApplicationResponse;
-import com.smartehs.mapper.UserMapper;
-import com.smartehs.model.User;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.TrainingApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +26,7 @@ import java.time.LocalDate;
 public class TrainingApplicationController {
 
     private final TrainingApplicationService service;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "교육신청 목록")
@@ -53,7 +53,7 @@ public class TrainingApplicationController {
     public ResponseEntity<ApiResponse<TrainingApplicationResponse>> create(
             @Valid @RequestBody TrainingApplicationRequest request,
             Authentication authentication) {
-        User currentUser = authentication != null ? userMapper.findByUsername(authentication.getName()) : null;
+        IdmUser currentUser = authentication != null ? idmMapper.findByUid(authentication.getName()) : null;
         return ResponseEntity.ok(ApiResponse.success("Created", service.create(request, currentUser)));
     }
 

@@ -26,6 +26,7 @@ import {
   CircularProgress,
   Alert,
   Chip,
+  Checkbox,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
@@ -112,6 +113,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   const [approverPickTarget, setApproverPickTarget] = useState<'plan' | 'completion' | null>(null)
   // 결재 반려 사유 입력 다이얼로그 (단계: 'plan' = 계획 결재 반려, 'completion' = 완료 결재 반려)
   const [rejectDialogStage, setRejectDialogStage] = useState<'plan' | 'completion' | null>(null)
+  const [sameAsPlan, setSameAsPlan] = useState(false)
 
   const handleApproverPicked = (users: UserInfo[]) => {
     if (users.length > 0 && approverPickTarget) {
@@ -122,6 +124,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           planApproverUserId: u.id,
           planApproverTeam: u.department || '',
           planApproverName: u.name,
+          ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}),
         }))
       } else {
         setFormData(f => ({
@@ -281,6 +284,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     })
     setActivityProcesses([])
     setAssessmentDetails([])
+    setSameAsPlan(false)
   }
 
   const handleBackToDetail = () => {
@@ -1198,10 +1202,13 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               {t('riskAssessment.completionApprover', '완료 승인자')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', gap: 0.5, alignItems: 'center' }}>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setFormData(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('riskAssessment.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>
@@ -1284,13 +1291,18 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             </Box>
           </Box>
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('riskAssessment.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ flex: 1 }}>
+                {t('riskAssessment.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+              </Typography>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setFormData(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ color: 'text.secondary', ml: 0.25, whiteSpace: 'nowrap' }}>계획과 동일</Typography>
+            </Box>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('riskAssessment.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>

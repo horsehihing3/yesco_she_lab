@@ -4,7 +4,7 @@ import {
   Box, TextField, Button, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Paper, Typography, Pagination,
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
-  FormControl,
+  FormControl, Checkbox,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -127,6 +127,7 @@ const AnnualPlanTab: React.FC = () => {
   const [userPickTarget, setUserPickTarget] = useState<UserPickTarget | null>(null)
   // 결재 반려 사유 입력 다이얼로그
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
+  const [sameAsPlan, setSameAsPlan] = useState(false)
 
   // ===== Queries =====
   const { data, isLoading } = useQuery({
@@ -190,6 +191,7 @@ const AnnualPlanTab: React.FC = () => {
     setViewMode('list')
     setSelectedItem(null)
     setFormData(buildEmptyForm(year))
+    setSameAsPlan(false)
   }
 
   const handleReset = () => {
@@ -211,6 +213,7 @@ const AnnualPlanTab: React.FC = () => {
   const handleAddClick = () => {
     setSelectedItem(null)
     setFormData(buildEmptyForm(year))
+    setSameAsPlan(false)
     setViewMode('create')
   }
 
@@ -295,6 +298,7 @@ const AnnualPlanTab: React.FC = () => {
           planApproverUserId: u.id,
           planApproverTeam: u.department || '',
           planApproverName: u.name,
+          ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}),
         }))
       } else if (userPickTarget === 'completionApprover') {
         setFormData(f => ({
@@ -317,6 +321,7 @@ const AnnualPlanTab: React.FC = () => {
 
   // 권한 헬퍼: 계획 승인자 본인 또는 admin 만 계획 승인/반려 가능
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
+  const canEditDraft = (d: { writerUserId?: number | null }) => isAdmin || d.writerUserId === authUser?.id
   const canApprovePlan = (d: { planApproverUserId?: number | null; planApproverName?: string | null }) => {
     if (isAdmin) return true
     if (d.planApproverUserId && authUser?.id && d.planApproverUserId === authUser.id) return true
@@ -527,7 +532,7 @@ const AnnualPlanTab: React.FC = () => {
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ width: 'auto' }}>{t('common.backToList')}</Button>
-          {selectedItem && d.status === 'DRAFT' && (
+          {selectedItem && d.status === 'DRAFT' && canEditDraft(d) && (
             <Button variant="contained" color="info"
               onClick={() => transitionMutation.mutate({ id: selectedItem.id, action: 'submit' })}
               sx={{ width: 'auto' }}>
@@ -553,12 +558,26 @@ const AnnualPlanTab: React.FC = () => {
             </>
           )}
           {/* 완료 승인은 KPI현황 탭에서 처리하도록 분리됨 */}
-          <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
-          {/* 삭제는 결재 상신 전(DRAFT)에만 노출 */}
-          {d.status === 'DRAFT' && (
+          {d.status === 'DRAFT' && canEditDraft(d) && (
+            <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
+          )}
+          {d.status === 'DRAFT' && canEditDraft(d) && (
             <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>
           )}
         </Box>
+
+        <RejectReasonDialog
+          open={rejectDialogOpen}
+          stage={t('pkg.planReject', '계획 결재 반려')}
+          onClose={() => setRejectDialogOpen(false)}
+          onConfirm={(reason) => {
+            if (selectedItem) {
+              transitionMutation.mutate({ id: selectedItem.id, action: 'reject', rejectReason: reason })
+            }
+            setRejectDialogOpen(false)
+          }}
+          loading={transitionMutation.isPending}
+        />
       </Box>
     )
   }
@@ -623,10 +642,13 @@ const AnnualPlanTab: React.FC = () => {
           </Box>
           <Box sx={labelSx}>{t('pkg.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
           <Box sx={valSx}>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
-              <TextField size="small" fullWidth InputProps={{ readOnly: true }}
+            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', width: '100%' }}>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setFormData(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
                 value={formData.completionApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setUserPickTarget('completionApprover')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>

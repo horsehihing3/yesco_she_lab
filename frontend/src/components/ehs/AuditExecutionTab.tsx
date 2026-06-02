@@ -5,7 +5,7 @@ import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, TextField, Select, MenuItem,
   FormControl, Chip, Pagination, CircularProgress, Alert, IconButton,
-  LinearProgress, Button, Dialog, DialogTitle, DialogContent, DialogActions,
+  LinearProgress, Button, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -59,6 +59,7 @@ const AuditExecutionTab: React.FC = () => {
   }
   const [showCompletionApproverModal, setShowCompletionApproverModal] = useState(false)
   const [showPlanApproverModal, setShowPlanApproverModal] = useState(false)
+  const [sameAsPlan, setSameAsPlan] = useState(false)
   // 완료 결재 반려 사유 입력 다이얼로그
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
 
@@ -126,11 +127,11 @@ const AuditExecutionTab: React.FC = () => {
   const updateMut = useMutation({ mutationFn: ({ id, r }: { id: number; r: AuditRequest }) => auditApi.update(id, r), onSuccess: () => { invalidate(); showSuccess(t('common.saved')); handleBackToList() }, onError: () => showError(t('common.error')) })
   const deleteMut = useMutation({ mutationFn: (id: number) => auditApi.delete(id), onSuccess: () => { invalidate(); showSuccess(t('common.deleted')); handleBackToList() }, onError: () => showError(t('common.error')) })
 
-  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm) }
+  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm); setSameAsPlan(false) }
   const handleRowClick = (item: Audit) => { setSelectedItem(item); setViewMode('detail') }
   const handleOpenCreate = () => {
     setSelectedItem(null)
-    // 작성자(createdByName) 로그인 사용자 자동 입력
+    setSameAsPlan(false)
     setForm({
       ...emptyForm,
       createdByUserId: authUser?.id ?? null,
@@ -139,6 +140,7 @@ const AuditExecutionTab: React.FC = () => {
     setViewMode('create')
   }
   const handleOpenEdit = (item: Audit) => {
+    setSameAsPlan(false)
     setSelectedItem(item)
     setForm({
       planId: item.planId, auditName: item.auditName, auditType: item.auditType,
@@ -651,10 +653,13 @@ const AuditExecutionTab: React.FC = () => {
               </Select>
             </Box>
             <Typography sx={labelSx}>{t('audit.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
-            <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
+            <Box sx={{ ...valSx, display: 'flex', gap: 0.5, alignItems: 'center' }}>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('audit.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowCompletionApproverModal(true)}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setShowCompletionApproverModal(true)}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>
@@ -729,13 +734,18 @@ const AuditExecutionTab: React.FC = () => {
             </Box>
           </Box>
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('audit.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ flex: 1 }}>
+                {t('audit.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
+              </Typography>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ color: 'text.secondary', ml: 0.25, whiteSpace: 'nowrap' }}>계획과 동일</Typography>
+            </Box>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField size="small" fullWidth value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('audit.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowCompletionApproverModal(true)}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setShowCompletionApproverModal(true)}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>
@@ -784,12 +794,13 @@ const AuditExecutionTab: React.FC = () => {
           onConfirm={(users) => {
             if (users.length > 0) {
               const u = users[0]
-              setForm({
-                ...form,
+              setForm(prev => ({
+                ...prev,
                 planApproverUserId: u.id,
                 planApproverTeam: u.department || '',
                 planApproverName: u.name,
-              })
+                ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}),
+              }))
             }
             setShowPlanApproverModal(false)
           }}

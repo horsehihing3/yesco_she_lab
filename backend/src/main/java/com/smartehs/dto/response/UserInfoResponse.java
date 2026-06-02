@@ -1,7 +1,6 @@
 package com.smartehs.dto.response;
 
 import com.smartehs.model.IdmUser;
-import com.smartehs.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,25 +20,13 @@ public class UserInfoResponse {
     private String company;
     private String role;
 
-    public static UserInfoResponse from(User user) {
-        return UserInfoResponse.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .name(user.getName())
-                .department(user.getDepartment())
-                .company(user.getCompany())
-                .role(user.getRole())
-                .build();
-    }
-
     public static UserInfoResponse fromIdmUser(IdmUser user) {
         return UserInfoResponse.builder()
                 .id(user.getUidNumber())
                 .username(user.getUid())
                 .email(user.getEmail())
                 .name(user.getUserName())
-                .department(user.getDeptCode())
+                .department(user.getGroupName() != null ? user.getGroupName() : user.getDeptCode())
                 .company(user.getCompanyCode())
                 .role(user.getUserRole() != null ? user.getUserRole() : "TEAM_MEMBER")
                 .build();

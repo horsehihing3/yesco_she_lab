@@ -4,7 +4,7 @@ import {
   Box, TextField, Button, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Paper, Typography, Pagination,
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
-  FormControl, Grid,
+  FormControl, Grid, Checkbox,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -169,6 +169,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   }
   const [formData, setFormData] = useState<HealthCheckupPlanRequest>(emptyForm)
   const [approverPickTarget, setApproverPickTarget] = useState<'plan' | 'completion' | null>(null)
+  const [sameAsPlan, setSameAsPlan] = useState(false)
   // 등록(create) 모드에서는 plan id 가 없어 즉시 업로드 불가 — 클라이언트에서 staging 후 저장 직후 일괄 업로드
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
 
@@ -258,6 +259,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
     setSelectedItem(null)
     setFormData({ ...emptyForm })
     setPendingFiles([])
+    setSameAsPlan(false)
   }
   const handleReset = () => {
     setSearchText(''); setTypeFilter(''); setYearFilter(''); setStatusFilter(''); setPage(0)
@@ -266,7 +268,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
     setSelectedItem(item); setViewMode('detail')
   }
   const handleAddClick = () => {
-    setSelectedItem(null); setFormData({ ...emptyForm, writer: currentWriter }); setPendingFiles([]); setViewMode('create')
+    setSelectedItem(null); setFormData({ ...emptyForm, writer: currentWriter }); setPendingFiles([]); setSameAsPlan(false); setViewMode('create')
   }
   const handleEditClick = () => {
     if (!detail) return
@@ -299,7 +301,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
     if (users[0]) {
       const u = users[0]
       if (approverPickTarget === 'plan') {
-        setFormData(f => ({ ...f, planApproverUserId: u.id, planApproverName: u.name, planApproverTeam: u.department || '', planApproverPosition: '' }))
+        setFormData(f => ({ ...f, planApproverUserId: u.id, planApproverName: u.name, planApproverTeam: u.department || '', planApproverPosition: '', ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverName: u.name, completionApproverTeam: u.department || '' } : {}) }))
       } else if (approverPickTarget === 'completion') {
         setFormData(f => ({ ...f, completionApproverUserId: u.id, completionApproverName: u.name, completionApproverTeam: u.department || '', completionApproverPosition: '' }))
       }
@@ -720,10 +722,13 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           </Box>
           <Box sx={labelSx}>{t('healthCheckupPlan.completionApprover', '완료 승인자')}</Box>
           <Box sx={valSx}>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
-              <TextField fullWidth size="small" InputProps={{ readOnly: true }}
+            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', width: '100%' }}>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setFormData(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
                 value={formData.completionApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>

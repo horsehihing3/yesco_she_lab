@@ -8,22 +8,41 @@ import {
   Avatar,
   Divider,
   Tooltip,
+  Button,
+  CircularProgress,
 } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import LogoutIcon from '@mui/icons-material/Logout'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import ExploreIcon from '@mui/icons-material/Explore'
+import TableViewIcon from '@mui/icons-material/TableView'
 import { useTranslation } from 'react-i18next'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../context/AuthContext'
 import { useThemeMode } from '../../context/ThemeContext'
 import LanguageSelector from './LanguageSelector'
 
+// DEV ONLY — 납품 전 삭제
+const DEV_ACCOUNTS = [
+  { id: 'jiwan.nam',     name: '남지완' },
+  { id: 'yeseo.moon',    name: '문예서' },
+  { id: 'jungho.yoo',    name: '유정호' },
+  { id: 'horsehihing3',  name: '정경석' },
+  { id: 'yujeong.jung',  name: '정유정' },
+  { id: 'gs5655',        name: '홍길동' },
+  { id: 'yuhyun.ha',     name: '하유현' },
+  { id: 'com4in',        name: 'com4in' },
+]
+
 const Header: React.FC = () => {
   const { t } = useTranslation()
-  const { user, logout } = useAuth()
+  const { user, login, logout } = useAuth()
   const { isDarkMode, toggleTheme } = useThemeMode()
+  const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [switchingTo, setSwitchingTo] = useState<string | null>(null)
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -38,9 +57,45 @@ const Header: React.FC = () => {
     logout()
   }
 
+  const handleDevLogin = async (id: string) => {
+    handleMenuClose()
+    setSwitchingTo(id)
+    setLoginError(null)
+    try {
+      await login({ username: id, password: 'com4in!!' })
+      queryClient.clear()  // 이전 사용자 캐시 전체 삭제
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '로그인 실패'
+      setLoginError(`${id}: ${msg}`)
+    } finally {
+      setSwitchingTo(null)
+    }
+  }
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {/* 버튼관리 — DEV ONLY (납품 전 삭제) */}
+        <Tooltip title="버튼 노출 조건 관리">
+          <Button
+            size="small"
+            startIcon={<TableViewIcon fontSize="small" />}
+            onClick={() => window.open('/dev/button-manage', '_blank')}
+            sx={{
+              color: 'white',
+              borderColor: 'rgba(255,255,255,0.5)',
+              border: '1px solid',
+              px: 1,
+              py: 0.5,
+              fontSize: '0.75rem',
+              minWidth: 0,
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', borderColor: 'white' },
+            }}
+          >
+            버튼관리
+          </Button>
+        </Tooltip>
+
         {/* Emergency Exit Compass */}
         <Tooltip title={t('dashboard.emergencyExit')}>
           <IconButton
@@ -79,11 +134,16 @@ const Header: React.FC = () => {
           </IconButton>
         </Tooltip>
 
-        <IconButton onClick={handleMenuOpen} size="small">
-          <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
-            {user?.name?.charAt(0) || user?.username?.charAt(0) || 'U'}
-          </Avatar>
-        </IconButton>
+        <Tooltip title={loginError ?? ''} open={!!loginError} arrow>
+          <IconButton onClick={(e) => { setLoginError(null); handleMenuOpen(e) }} size="small">
+            <Avatar sx={{ width: 32, height: 32, bgcolor: loginError ? 'error.main' : 'primary.main' }}>
+              {switchingTo
+                ? <CircularProgress size={16} sx={{ color: 'white' }} />
+                : user?.name?.charAt(0) || user?.username?.charAt(0) || 'U'
+              }
+            </Avatar>
+          </IconButton>
+        </Tooltip>
 
         <Menu
           anchorEl={anchorEl}
@@ -109,6 +169,32 @@ const Header: React.FC = () => {
             <LogoutIcon sx={{ mr: 1 }} fontSize="small" />
             {t('auth.logout')}
           </MenuItem>
+
+          {/* DEV ONLY — 빠른 계정 전환 (납품 전 삭제) */}
+          <Divider />
+          <Box sx={{ px: 2, pt: 0.5, pb: 0.25 }}>
+            <Typography variant="caption" color="text.disabled">DEV 계정 전환</Typography>
+          </Box>
+          {DEV_ACCOUNTS.map(({ id, name }) => (
+            <MenuItem
+              key={id}
+              onClick={() => handleDevLogin(id)}
+              disabled={switchingTo !== null}
+              selected={user?.username === id}
+              sx={{ py: 0.5, minHeight: 0 }}
+            >
+              {switchingTo === id
+                ? <CircularProgress size={14} sx={{ mr: 1 }} />
+                : <Avatar sx={{ width: 18, height: 18, fontSize: '0.6rem', mr: 1, bgcolor: user?.username === id ? 'primary.main' : 'grey.400' }}>
+                    {name.charAt(0)}
+                  </Avatar>
+              }
+              <Typography variant="body2">{name}</Typography>
+              <Typography variant="caption" color="text.disabled" sx={{ ml: 0.75 }}>
+                {id}
+              </Typography>
+            </MenuItem>
+          ))}
         </Menu>
       </Box>
 

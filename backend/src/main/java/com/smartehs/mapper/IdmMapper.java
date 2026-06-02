@@ -15,6 +15,8 @@ public interface IdmMapper {
     List<IdmUser> findActiveEmployees();
 
     IdmUser findByUid(@Param("uid") String uid);
+    IdmUser findByUidNumber(@Param("uidNumber") Long uidNumber);
+    IdmUser findByEmail(@Param("email") String email);
     List<IdmUser> findAllWithPassword();
     void updateUserRole(@Param("uid") String uid, @Param("userRole") String userRole);
 }

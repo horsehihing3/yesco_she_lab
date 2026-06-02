@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem,
-  FormControl, Chip, Pagination, CircularProgress, Alert, IconButton,
+  FormControl, Chip, Pagination, CircularProgress, Alert, IconButton, Checkbox,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -62,6 +62,7 @@ const EmrPlanTab: React.FC = () => {
   const { showSuccess, showError, showConfirm, showWarning } = useAlert()
   const { user: authUser } = useAuth()
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
+  const canEditDraft = (item: { writerUserId?: number | null }) => isAdmin || item.writerUserId === authUser?.id
   const { codeList: planTypeCodes, getLabel: getPlanTypeLabel } = useCodeMap('EMERGENCY_PLAN_TYPE')
   const { getLabel: getStatusLabel } = useCodeMap('PLAN_STATUS')
 
@@ -89,7 +90,7 @@ const EmrPlanTab: React.FC = () => {
     if (users.length > 0 && userPickTarget) {
       const u = users[0]
       if (userPickTarget === 'planApprover') {
-        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name }))
+        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name, ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}) }))
       } else if (userPickTarget === 'completionApprover') {
         setForm(f => ({ ...f, completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name }))
       }
@@ -147,6 +148,7 @@ const EmrPlanTab: React.FC = () => {
   })
 
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
+  const [sameAsPlan, setSameAsPlan] = useState(false)
   const transitionMutation = useMutation({
     mutationFn: ({ id, action, rejectReason }: { id: number; action: 'submit' | 'approve' | 'reject' | 'complete'; rejectReason?: string }) =>
       emergencyPlanApi.transition(id, action, rejectReason),
@@ -159,12 +161,13 @@ const EmrPlanTab: React.FC = () => {
     onError: () => showError(t('common.error')),
   })
 
-  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(buildEmptyForm(authUser)) }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm(buildEmptyForm(authUser)); setViewMode('create') }
+  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(buildEmptyForm(authUser)); setSameAsPlan(false) }
+  const handleOpenCreate = () => { setSelectedItem(null); setForm(buildEmptyForm(authUser)); setSameAsPlan(false); setViewMode('create') }
   const handleOpenDetail = (item: EmergencyPlan) => { setSelectedItem(item); setViewMode('detail') }
   const handleOpenEdit = (item?: EmergencyPlan) => {
     const target = item || selectedItem
     if (!target) return
+    setSameAsPlan(false)
     setSelectedItem(target)
     setForm({
       planName: target.planName, planType: target.planType,
@@ -506,7 +509,7 @@ const EmrPlanTab: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
           {/* DRAFT → 계획 결재 상신 */}
-          {isDraft && (
+          {isDraft && canEditDraft(selectedItem) && (
             <Button variant="contained" color="info"
               onClick={async () => {
                 const ok = await showConfirm(t('emr.confirmSubmit', '계획 결재를 상신하시겠습니까?'))
@@ -534,8 +537,8 @@ const EmrPlanTab: React.FC = () => {
               </Button>
             </>
           )}
-          {/* DRAFT 상태에서만 수정/삭제 */}
-          {isDraft && (
+          {/* DRAFT 상태 + 작성자/admin만 수정/삭제 */}
+          {isDraft && canEditDraft(selectedItem) && (
             <>
               <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
               <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
@@ -605,9 +608,12 @@ const EmrPlanTab: React.FC = () => {
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('planApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
             <Typography sx={labelSx}>{t('emr.completionApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
-            <Box sx={{ ...valueSx, gap: 1, display: 'flex', alignItems: 'center' }}>
-              <TextField size="small" fullWidth placeholder={t('pkg.fullName', '성명')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
+            <Box sx={{ ...valueSx, gap: 0.5, display: 'flex', alignItems: 'center' }}>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} placeholder={t('pkg.fullName', '성명')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
@@ -699,12 +705,17 @@ const EmrPlanTab: React.FC = () => {
             </Box>
           </Box>
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('emr.completionApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ flex: 1 }}>
+                {t('emr.completionApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
+              </Typography>
+              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0 }}
+                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
+              <Typography variant="caption" sx={{ color: 'text.secondary', ml: 0.25, whiteSpace: 'nowrap' }}>계획과 동일</Typography>
+            </Box>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <TextField size="small" fullWidth placeholder={t('pkg.fullName', '성명')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <Box>

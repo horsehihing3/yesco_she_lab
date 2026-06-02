@@ -121,6 +121,40 @@ const LoginPage: React.FC = () => {
               {isLoading ? <CircularProgress size={24} /> : 'Sign In'}
             </Button>
           </form>
+
+          {/* DEV ONLY — 테스트 계정 빠른 로그인 (납품 전 삭제) */}
+          <Box sx={{ mt: 3, pt: 2, borderTop: '1px dashed', borderColor: 'divider' }}>
+            <Typography variant="caption" color="text.disabled" display="block" sx={{ mb: 1, textAlign: 'center' }}>
+              DEV 빠른 로그인
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, justifyContent: 'center' }}>
+              {['jiwan.nam', 'yeseo.moon', 'jungho.yoo', 'horsehihing3', 'yujeong.jung', 'gs5655', 'yuhyun.ha', 'com4in'].map((id) => (
+                <Button
+                  key={id}
+                  size="small"
+                  variant="outlined"
+                  color="inherit"
+                  disabled={isLoading}
+                  onClick={async () => {
+                    setError(null)
+                    setIsLoading(true)
+                    try {
+                      await login({ username: id, password: 'com4in!!' })
+                      navigate('/', { replace: true })
+                    } catch (err: unknown) {
+                      setError(err instanceof Error ? err.message : 'Login failed.')
+                    } finally {
+                      setIsLoading(false)
+                    }
+                  }}
+                  sx={{ fontSize: '0.7rem', px: 1, py: 0.5, color: 'text.secondary', borderColor: 'divider' }}
+                >
+                  {id}
+                </Button>
+              ))}
+            </Box>
+          </Box>
+          {/* /DEV ONLY */}
         </CardContent>
       </Card>
     </Box>

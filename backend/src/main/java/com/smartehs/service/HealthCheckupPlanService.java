@@ -5,7 +5,7 @@ import com.smartehs.dto.response.HealthCheckupPlanResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.HealthCheckupPlanMapper;
 import com.smartehs.model.HealthCheckupPlan;
-import com.smartehs.model.User;
+import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -45,9 +45,9 @@ public class HealthCheckupPlanService {
     }
 
     @Transactional
-    public HealthCheckupPlanResponse create(HealthCheckupPlanRequest req, User currentUser) {
+    public HealthCheckupPlanResponse create(HealthCheckupPlanRequest req, IdmUser currentUser) {
         String writer = req.getWriter();
-        if (writer == null || writer.isBlank()) writer = currentUser != null ? currentUser.getName() : null;
+        if (writer == null || writer.isBlank()) writer = currentUser != null ? currentUser.getUserName() : null;
         HealthCheckupPlan plan = HealthCheckupPlan.builder()
                 .planYear(req.getPlanYear())
                 .checkupType(req.getCheckupType())
@@ -61,9 +61,9 @@ public class HealthCheckupPlanService {
                 .planEndDate(req.getPlanEndDate())
                 .status(req.getStatus() != null ? req.getStatus() : "PLANNED")
                 .notes(req.getNotes())
-                .createdBy(currentUser != null ? currentUser.getUsername() : null)
-                .createdByName(currentUser != null ? currentUser.getName() : null)
-                .createdByDept(currentUser != null ? currentUser.getDepartment() : null)
+                .createdBy(currentUser != null ? currentUser.getUid() : null)
+                .createdByName(currentUser != null ? currentUser.getUserName() : null)
+                .createdByDept(currentUser != null ? (currentUser.getGroupName() != null ? currentUser.getGroupName() : currentUser.getDeptCode()) : null)
                 .planApproverUserId(req.getPlanApproverUserId())
                 .planApproverTeam(req.getPlanApproverTeam())
                 .planApproverPosition(req.getPlanApproverPosition())

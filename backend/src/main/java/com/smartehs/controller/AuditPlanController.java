@@ -1,9 +1,9 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.AuditPlan;
-import com.smartehs.model.User;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.AuditPlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuditPlanController {
 
     private final AuditPlanService auditPlanService;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "감사 계획 전체 목록 조회")
@@ -50,12 +50,12 @@ public class AuditPlanController {
     public ResponseEntity<ApiResponse<AuditPlan>> create(
             @RequestBody AuditPlan auditPlan,
             Authentication authentication) {
-        // 작성자 자동 매핑 (로그인 사용자)
+        // 작성자 자동 매핑 — T_IDM_USER.uidNumber를 사용해야 프론트 user.id와 일치
         if (authentication != null) {
-            User u = userMapper.findByUsername(authentication.getName());
-            if (u != null) {
-                auditPlan.setCreatedByUserId(u.getId());
-                auditPlan.setCreatedByName(u.getName());
+            IdmUser idmUser = idmMapper.findByUid(authentication.getName());
+            if (idmUser != null) {
+                auditPlan.setCreatedByUserId(idmUser.getUidNumber());
+                auditPlan.setCreatedByName(idmUser.getUserName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(auditPlanService.create(auditPlan)));

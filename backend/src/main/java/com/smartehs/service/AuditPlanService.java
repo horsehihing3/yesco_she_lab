@@ -3,10 +3,10 @@ package com.smartehs.service;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.AuditMapper;
 import com.smartehs.mapper.AuditPlanMapper;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.Audit;
 import com.smartehs.model.AuditPlan;
-import com.smartehs.model.User;
+import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,7 @@ public class AuditPlanService {
     private final AuditPlanMapper auditPlanMapper;
     private final AuditMapper auditMapper;
     private final ChecklistSnapshotService checklistSnapshotService;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN", "EHS_ADMIN", "AUDIT_ADMIN");
 
@@ -194,12 +194,12 @@ public class AuditPlanService {
      */
     private void ensureCanApprovePlan(AuditPlan plan, String username) {
         if (username == null || username.isEmpty() || "system".equals(username)) return;
-        User u;
-        try { u = userMapper.findByUsername(username); } catch (Exception e) { u = null; }
+        IdmUser u;
+        try { u = idmMapper.findByUid(username); } catch (Exception e) { u = null; }
         if (u == null) throw new AccessDeniedException("승인 권한이 없습니다.");
-        if (u.getRole() != null && ADMIN_ROLES.contains(u.getRole())) return;
-        if (plan.getPlanApproverUserId() != null && plan.getPlanApproverUserId().equals(u.getId())) return;
-        if (plan.getPlanApproverName() != null && plan.getPlanApproverName().equalsIgnoreCase(u.getName())) return;
+        if (u.getUserRole() != null && ADMIN_ROLES.contains(u.getUserRole())) return;
+        if (plan.getPlanApproverUserId() != null && plan.getPlanApproverUserId().equals(u.getUidNumber())) return;
+        if (plan.getPlanApproverName() != null && plan.getPlanApproverName().equalsIgnoreCase(u.getUserName())) return;
         throw new AccessDeniedException("지정된 계획 승인자만 승인/반려할 수 있습니다.");
     }
 
