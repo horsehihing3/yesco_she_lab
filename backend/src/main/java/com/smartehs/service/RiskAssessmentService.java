@@ -104,6 +104,33 @@ public class RiskAssessmentService {
         return new PageImpl<>(content, pageable, total);
     }
 
+    public Page<RiskAssessmentResponse> findAllOfficeOnly(Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        List<RiskAssessment> list = riskAssessmentMapper.findAllOfficeOnly(offset, limit);
+        int total = riskAssessmentMapper.countAllOfficeOnly();
+        List<RiskAssessmentResponse> content = list.stream().map(this::toResponse).collect(Collectors.toList());
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    public Page<RiskAssessmentResponse> findBySiteOfficeOnly(String site, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        List<RiskAssessment> list = riskAssessmentMapper.findBySiteOfficeOnly(site, offset, limit);
+        int total = riskAssessmentMapper.countBySiteOfficeOnly(site);
+        List<RiskAssessmentResponse> content = list.stream().map(this::toResponse).collect(Collectors.toList());
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    public Page<RiskAssessmentResponse> findByStatusOfficeOnly(String status, Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        List<RiskAssessment> list = riskAssessmentMapper.findByStatusOfficeOnly(status, offset, limit);
+        int total = riskAssessmentMapper.countByStatusOfficeOnly(status);
+        List<RiskAssessmentResponse> content = list.stream().map(this::toResponse).collect(Collectors.toList());
+        return new PageImpl<>(content, pageable, total);
+    }
+
     public RiskAssessmentResponse findById(Long id) {
         RiskAssessment assessment = riskAssessmentMapper.findById(id);
         if (assessment == null) {

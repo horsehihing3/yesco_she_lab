@@ -29,6 +29,10 @@
         <result property="intensity" column="intensity"/>
         <result property="frequency" column="frequency"/>
         <result property="status" column="status"/>
+        <result property="emergencyType" column="emergency_type"/>
+        <result property="responseStatus" column="response_status"/>
+        <result property="isDrill" column="is_drill"/>
+        <result property="severity" column="severity"/>
         <result property="deleted" column="deleted"/>
         <result property="isExist" column="is_exist"/>
         <result property="createdAt" column="created_at"/>
@@ -134,8 +138,8 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tb_near_miss_list (near_miss_id, incident_type, work_place_id, occ_title, occ_title_en, occ_title_zh, occ_date, occ_site, occ_floor, occ_site_info, occ_site_x, occ_site_y, occ_image_file_id, occ_info, occ_info_en, occ_info_zh, company, author_name, author_email, author_dept, intensity, frequency, status, deleted, is_exist, created_at, modified_at)
-        VALUES (#{nearMissId}, #{incidentType}, #{workPlaceId,jdbcType=BIGINT}, #{occTitle}, #{occTitleEn}, #{occTitleZh}, #{occDate,jdbcType=TIMESTAMP}, #{occSite}, #{occFloor}, #{occSiteInfo}, #{occSiteX,jdbcType=DOUBLE}, #{occSiteY,jdbcType=DOUBLE}, #{occImageFileId,jdbcType=BIGINT}, #{occInfo}, #{occInfoEn}, #{occInfoZh}, #{company}, #{authorName}, #{authorEmail}, #{authorDept}, #{intensity,jdbcType=INTEGER}, #{frequency,jdbcType=INTEGER}, #{status}, #{deleted}, #{isExist}, GETDATE(), GETDATE())
+        INSERT INTO tb_near_miss_list (near_miss_id, incident_type, work_place_id, occ_title, occ_title_en, occ_title_zh, occ_date, occ_site, occ_floor, occ_site_info, occ_site_x, occ_site_y, occ_image_file_id, occ_info, occ_info_en, occ_info_zh, company, author_name, author_email, author_dept, intensity, frequency, status, emergency_type, response_status, is_drill, severity, deleted, is_exist, created_at, modified_at)
+        VALUES (#{nearMissId}, #{incidentType}, #{workPlaceId,jdbcType=BIGINT}, #{occTitle}, #{occTitleEn}, #{occTitleZh}, #{occDate,jdbcType=TIMESTAMP}, #{occSite}, #{occFloor}, #{occSiteInfo}, #{occSiteX,jdbcType=DOUBLE}, #{occSiteY,jdbcType=DOUBLE}, #{occImageFileId,jdbcType=BIGINT}, #{occInfo}, #{occInfoEn}, #{occInfoZh}, #{company}, #{authorName}, #{authorEmail}, #{authorDept}, #{intensity,jdbcType=INTEGER}, #{frequency,jdbcType=INTEGER}, #{status}, #{emergencyType}, #{responseStatus}, #{isDrill,jdbcType=BIT}, #{severity}, #{deleted}, #{isExist}, GETDATE(), GETDATE())
     </insert>
 
     <update id="update">
@@ -162,6 +166,10 @@
             intensity = #{intensity,jdbcType=INTEGER},
             frequency = #{frequency,jdbcType=INTEGER},
             status = #{status},
+            emergency_type = #{emergencyType},
+            response_status = #{responseStatus},
+            is_drill = #{isDrill,jdbcType=BIT},
+            severity = #{severity},
             is_exist = #{isExist},
             modified_at = GETDATE()
         WHERE id = #{id}

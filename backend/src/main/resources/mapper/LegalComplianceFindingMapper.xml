@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.LegalComplianceFindingMapper">
+
+    <resultMap id="R" type="com.smartehs.model.LegalComplianceFinding">
+        <id property="id" column="id"/>
+        <result property="findingId" column="finding_id"/>
+        <result property="auditId" column="audit_id"/>
+        <result property="severity" column="severity"/>
+        <result property="description" column="description"/>
+        <result property="legalRef" column="legal_ref"/>
+        <result property="responsibleName" column="responsible_name"/>
+        <result property="responsibleDept" column="responsible_dept"/>
+        <result property="dueDate" column="due_date"/>
+        <result property="status" column="status"/>
+        <result property="notes" column="notes"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findByDeletedFalse" resultMap="R">
+        SELECT * FROM tb_legal_compliance_finding WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDeletedFalse" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_compliance_finding WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="R">
+        SELECT * FROM tb_legal_compliance_finding WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findByAuditId" resultMap="R">
+        SELECT * FROM tb_legal_compliance_finding
+        WHERE audit_id = #{auditId} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByAuditId" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_compliance_finding WHERE audit_id = #{auditId} AND deleted = 0
+    </select>
+
+    <select id="findBySeverity" resultMap="R">
+        SELECT * FROM tb_legal_compliance_finding
+        WHERE severity = #{severity} AND deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySeverity" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_compliance_finding WHERE severity = #{severity} AND deleted = 0
+    </select>
+
+    <select id="countByFindingIdStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_compliance_finding WHERE finding_id LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_legal_compliance_finding (
+            finding_id, audit_id, severity, description, legal_ref,
+            responsible_name, responsible_dept, due_date, status, notes,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{findingId}, #{auditId}, #{severity}, #{description}, #{legalRef},
+            #{responsibleName}, #{responsibleDept}, #{dueDate,jdbcType=DATE}, #{status}, #{notes},
+            0, GETDATE(), GETDATE()
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tb_legal_compliance_finding SET
+            severity = #{severity}, description = #{description}, legal_ref = #{legalRef},
+            responsible_name = #{responsibleName}, responsible_dept = #{responsibleDept},
+            due_date = #{dueDate,jdbcType=DATE}, status = #{status}, notes = #{notes},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_legal_compliance_finding SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+</mapper>

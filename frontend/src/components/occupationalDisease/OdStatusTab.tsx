@@ -3,16 +3,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, CircularProgress, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, InputAdornment,
+  Dialog, DialogTitle, DialogContent, DialogActions, IconButton,
 } from '@mui/material'
+import ListSearchBar from '../common/ListSearchBar'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import SearchIcon from '@mui/icons-material/Search'
 import { workerApi, odStatsApi } from '../../api/occupationalDiseaseApi'
 import type { OdWorker } from '../../types/occupationalDisease.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -42,7 +44,13 @@ const OdStatusTab: React.FC = () => {
   const { data: items = [], isLoading } = useQuery({ queryKey: ['odWorkers'], queryFn: workerApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [judgeFilter, setJudgeFilter] = useState('')
   const [divFilter, setDivFilter] = useState('')
 
@@ -77,7 +85,7 @@ const OdStatusTab: React.FC = () => {
     return Object.entries(m).map(([dept, v]) => ({ dept, total: v.total, done: v.done, d: v.d, pct: v.total > 0 ? Math.round(v.done / v.total * 100) : 0 }))
   }, [items])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, examDate: todayStr() }); setOpen(true) }
   const openEdit = (w: OdWorker) => { setEditing(w); setForm(w); setOpen(true) }
   const submit = () => { if (editing) updateMut.mutate({ id: editing.id, e: form }); else createMut.mutate(form) }
 
@@ -111,8 +119,7 @@ const OdStatusTab: React.FC = () => {
       </Box>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField size="small" fullWidth placeholder="성명/사번/부서/유해인자..." value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }} />
+        <ListSearchBar fullWidth placeholder="성명/사번/부서/유해인자..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ minWidth: 130 }} label="판정" value={judgeFilter} onChange={e => setJudgeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {JUDGES.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}
@@ -121,6 +128,7 @@ const OdStatusTab: React.FC = () => {
           <MenuItem value="">전체</MenuItem>
           {DIVISIONS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
         </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
@@ -224,7 +232,7 @@ const OdStatusTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.name || !form.employeeNo}>{editing ? '수정' : '추가'}</Button>
         </DialogActions>
       </Dialog>

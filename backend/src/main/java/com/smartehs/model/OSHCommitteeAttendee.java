@@ -19,5 +19,6 @@ public class OSHCommitteeAttendee {
     private Boolean isExternal;
     private Boolean isSigned;
     private LocalDateTime signatureDate;
+    private String signatureImage;
     private LocalDateTime createdAt;
 }

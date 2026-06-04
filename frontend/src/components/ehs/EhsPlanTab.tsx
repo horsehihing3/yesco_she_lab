@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import {
   Box,
   Typography,
@@ -180,7 +181,7 @@ const EhsPlanTab: React.FC = () => {
       setRecipientChips(parseRecipients(plan.recipients || ''))
     } else {
       setEditingPlan(null)
-      reset({ planCategory: 'schedule' })
+      reset({ planCategory: 'schedule', planDate: todayStr(), planEndDate: weekFromTodayStr() })
       setRecipientChips([])
     }
     setRecipientInput('')
@@ -753,9 +754,9 @@ const EhsPlanTab: React.FC = () => {
               </Box>
             </Box>
           </DialogContent>
-          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'grey.300', display: 'flex', '& > :not(style) ~ :not(style)': { ml: { xs: 0 } }, gap: 1 }}>
-            <Button type="button" onClick={handleCancelDialog} sx={{ flex: { xs: 1, md: 0 }, minWidth: { xs: 0 } }}>{t('common.cancel')}</Button>
-            <Button type="submit" variant="contained" disabled={isProcessing} sx={{ flex: { xs: 1, md: 0 }, minWidth: { xs: 0 } }}>
+          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'grey.300', gap: 1 }}>
+            <Button type="button" variant="outlined" onClick={handleCancelDialog}>{t('common.cancel')}</Button>
+            <Button type="submit" variant="contained" disabled={isProcessing}>
               {t('common.save')}
             </Button>
           </DialogActions>

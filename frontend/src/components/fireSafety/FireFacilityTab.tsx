@@ -5,14 +5,16 @@ import {
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
 } from '@mui/material'
+import ListSearchBar from '../common/ListSearchBar'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import SearchIcon from '@mui/icons-material/Search'
 import { fireFacilityApi, fireStatsApi } from '../../api/fireSafetyApi'
 import type { FireFacility } from '../../types/fireSafety.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
@@ -32,7 +34,13 @@ const FireFacilityTab: React.FC = () => {
   const { data: items = [], isLoading } = useQuery({ queryKey: ['fireFacilities'], queryFn: fireFacilityApi.list })
   const { data: stats } = useQuery({ queryKey: ['fireStats'], queryFn: fireStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [catFilter, setCatFilter] = useState('')
   const [stFilter, setStFilter] = useState('')
 
@@ -62,7 +70,7 @@ const FireFacilityTab: React.FC = () => {
 
   const badItems = items.filter(v => v.status === '불량' || v.status === '수리중')
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, installDate: todayStr(), lastCheck: todayStr(), nextCheck: todayStr() }); setOpen(true) }
   const openEdit = (v: FireFacility) => { setEditing(v); setForm({ ...v }); setOpen(true) }
   const submit = () => {
     if (editing) updateMut.mutate({ id: editing.id, e: form })
@@ -89,8 +97,7 @@ const FireFacilityTab: React.FC = () => {
       )}
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField size="small" fullWidth placeholder="시설명/관리번호/위치/법령 검색..." value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }} />
+        <ListSearchBar fullWidth placeholder="시설명/관리번호/위치/법령 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ minWidth: 150 }} label="분류" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
@@ -99,6 +106,7 @@ const FireFacilityTab: React.FC = () => {
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
@@ -215,8 +223,8 @@ const FireFacilityTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.mgmtNo || !form.name}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={!form.mgmtNo || !form.name}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

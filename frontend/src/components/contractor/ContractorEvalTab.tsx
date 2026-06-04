@@ -25,6 +25,7 @@ import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import NumberField from '../common/NumberField'
 import SignaturePad from '../common/SignaturePad'
 import DatePickerField from '../common/DatePickerField'
@@ -87,7 +88,10 @@ const ContractorEvalTab = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selectedTemplate, setSelectedTemplate] = useState<ContractorEvalTemplate | null>(null)
   const [items, setItems] = useState<ContractorEvalItem[]>([])
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => setKeyword(keywordInput)
+  const handleResetSearch = () => { setKeywordInput(''); setKeyword('') }
   const [templateName, setTemplateName] = useState('')
   const [templateDesc, setTemplateDesc] = useState('')
   const [evaluatorName, setEvaluatorName] = useState('')
@@ -156,7 +160,7 @@ const ContractorEvalTab = () => {
     setViewMode('list')
     setSelectedTemplate(null)
     setItems([])
-    setKeyword('')
+    setKeywordInput(''); setKeyword('')
     setEvaluatorName(''); setEvaluatorSign(''); setApproverName(''); setApproverSign(''); setSignDate('')
   }
 
@@ -227,16 +231,14 @@ const ContractorEvalTab = () => {
         {/* Search - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')} value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
+            <ListSearchBar placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
               sx={{ minWidth: 250 }} />
-            <IconButton onClick={() => setKeyword('')} size="small"><RefreshIcon /></IconButton>
+            <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
         </Box>
         {/* Search - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')} value={keyword}
-            onChange={(e) => setKeyword(e.target.value)} />
+          <ListSearchBar fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
         </Box>
 
         {templatesLoading ? (

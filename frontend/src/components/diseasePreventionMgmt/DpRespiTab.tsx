@@ -5,6 +5,8 @@ import {
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
 } from '@mui/material'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -12,6 +14,7 @@ import { dpRespiApi, dpMgmtStatsApi } from '../../api/diseasePreventionMgmtApi'
 import type { DpRespi } from '../../types/diseasePreventionMgmt.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
@@ -32,7 +35,13 @@ const DpRespiTab: React.FC = () => {
   const { data: list = [], isLoading } = useQuery({ queryKey: ['dpRespi'], queryFn: dpRespiApi.list })
   const { data: stats } = useQuery({ queryKey: ['dpMgmtStats'], queryFn: dpMgmtStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [filterExp, setFilterExp] = useState('all')
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<DpRespi | null>(null)
@@ -53,7 +62,7 @@ const DpRespiTab: React.FC = () => {
     return true
   }), [list, filterExp, search])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, fitTestDate: todayStr(), examDate: todayStr() }); setOpen(true) }
   const openEdit = (item: DpRespi) => { setEditing(item); setForm({ ...item }); setOpen(true) }
   const handleSave = () => {
     if (!form.workerName || !form.exposureType) { showError('근로자명·노출 유형 필수'); return }
@@ -72,11 +81,12 @@ const DpRespiTab: React.FC = () => {
 
       <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <TextField size="small" placeholder="근로자·물질 검색" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ flex: 1, minWidth: 200 }} />
+          <ListSearchBar placeholder="근로자·물질 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ flex: 1, minWidth: 200 }} />
           <TextField select size="small" label="노출 유형" value={filterExp} onChange={(e) => setFilterExp(e.target.value)} sx={{ minWidth: 130 }}>
             <MenuItem value="all">전체</MenuItem>
             {EXPOSURE_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
           </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Stack>
       </Paper>
 
@@ -200,7 +210,7 @@ const DpRespiTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
         </DialogActions>
       </Dialog>

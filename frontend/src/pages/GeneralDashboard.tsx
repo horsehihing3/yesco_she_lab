@@ -387,7 +387,8 @@ const AreaStacked = () => {
             borderRadius: '8px',
             minWidth: 100,
           }}
-        >
+         displayEmpty>
+          <MenuItem value="" disabled>선택</MenuItem>
           {periodOptions.map((opt) => (
             <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: '0.8rem' }}>{opt.label}</MenuItem>
           ))}

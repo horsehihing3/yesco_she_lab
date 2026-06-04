@@ -38,15 +38,22 @@ public class RiskAssessmentController {
     public ResponseEntity<ApiResponse<Page<RiskAssessmentResponse>>> findAll(
             @RequestParam(required = false) String site,
             @RequestParam(required = false) String status,
+            @RequestParam(name = "officeOnly", required = false, defaultValue = "false") boolean officeOnly,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<RiskAssessmentResponse> result;
         if (site != null && !site.isEmpty()) {
-            result = riskAssessmentService.findBySite(site, pageable);
+            result = officeOnly
+                    ? riskAssessmentService.findBySiteOfficeOnly(site, pageable)
+                    : riskAssessmentService.findBySite(site, pageable);
         } else if (status != null && !status.isEmpty()) {
-            result = riskAssessmentService.findByStatus(status, pageable);
+            result = officeOnly
+                    ? riskAssessmentService.findByStatusOfficeOnly(status, pageable)
+                    : riskAssessmentService.findByStatus(status, pageable);
         } else {
-            result = riskAssessmentService.findAll(pageable);
+            result = officeOnly
+                    ? riskAssessmentService.findAllOfficeOnly(pageable)
+                    : riskAssessmentService.findAll(pageable);
         }
         return ResponseEntity.ok(ApiResponse.success(result));
     }

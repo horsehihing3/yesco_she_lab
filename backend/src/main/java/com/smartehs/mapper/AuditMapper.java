@@ -37,4 +37,10 @@ public interface AuditMapper {
                                @Param("completedChecklist") int completedChecklist, @Param("findingCount") int findingCount);
 
     List<Audit> findByPlanId(@Param("planId") Long planId);
+
+    /**
+     * 모든 audit 의 total/completed/finding_count 를 plan→template 의 현재 체크리스트 항목으로 재계산.
+     * AuditFindingTab 로딩 시 호출되어 stale 한 카운트를 보정한다.
+     */
+    int recalcAllChecklistCounts();
 }

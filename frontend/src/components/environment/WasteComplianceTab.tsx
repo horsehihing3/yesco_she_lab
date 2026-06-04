@@ -7,9 +7,11 @@ import {
   Paper, Typography, Pagination, IconButton, FormControl, Select, MenuItem, SelectChangeEvent, Chip,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import UserSelectModal from '../common/UserSelectModal'
 import type { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
@@ -101,6 +103,8 @@ const WasteComplianceTab: React.FC = () => {
     setFormData({
       status: statusCodes[0]?.code || '',
       actionStatus: actionStatusCodes[0]?.code || '',
+      checkDate: todayStr(),
+      actionDeadline: todayStr(),
     })
     setViewMode('create')
   }
@@ -158,9 +162,9 @@ const WasteComplianceTab: React.FC = () => {
     return (
       <Box>
         <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-          <TextField size="small" placeholder={t('waste.compliance.search')} value={searchText}
-            onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            sx={{ width: { xs: '100%', md: 250 } }} />
+          <ListSearchBar placeholder={t('waste.compliance.search')}
+          value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: { xs: '100%', md: 250 } }}  />
           <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
           <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
@@ -335,7 +339,8 @@ const WasteComplianceTab: React.FC = () => {
           <Typography sx={labelSx}>{t('waste.compliance.status')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })}>
+              <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {statusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -368,7 +373,8 @@ const WasteComplianceTab: React.FC = () => {
           <Typography sx={labelSx}>{t('waste.compliance.actionStatus')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.actionStatus || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, actionStatus: e.target.value })}>
+              <Select value={formData.actionStatus || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, actionStatus: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {actionStatusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getActionStatusLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -392,7 +398,8 @@ const WasteComplianceTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('waste.compliance.status')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })}>
+            <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {statusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -419,7 +426,8 @@ const WasteComplianceTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('waste.compliance.actionStatus')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.actionStatus || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, actionStatus: e.target.value })}>
+            <Select value={formData.actionStatus || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, actionStatus: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {actionStatusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getActionStatusLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>

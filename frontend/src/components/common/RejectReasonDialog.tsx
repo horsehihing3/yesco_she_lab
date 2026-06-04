@@ -74,7 +74,7 @@ const RejectReasonDialog: React.FC<RejectReasonDialogProps> = ({
         </Box>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} disabled={loading}>{t('common.cancel', '취소')}</Button>
+        <Button variant="outlined" onClick={onClose} disabled={loading}>{t('common.cancel', '취소')}</Button>
         <Button variant="contained" color="warning" onClick={handleConfirm} disabled={!canSubmit}>
           {loading ? t('common.processing', '처리 중...') : t('common.rejectConfirm', '반려 처리')}
         </Button>

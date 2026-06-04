@@ -52,7 +52,8 @@ const KpiDashboardPage: React.FC = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h6" fontWeight="bold">{t('nav.kpiDashboard')}</Typography>
         <FormControl size="small" sx={{ minWidth: 100 }}>
-          <Select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+          <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
+            <MenuItem value="" disabled>선택</MenuItem>
             {[2024, 2025, 2026].map((y) => <MenuItem key={y} value={y}>{y}년</MenuItem>)}
           </Select>
         </FormControl>

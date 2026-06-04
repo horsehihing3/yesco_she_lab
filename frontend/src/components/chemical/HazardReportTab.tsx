@@ -7,9 +7,11 @@ import {
   CircularProgress, Alert, Grid, Select, MenuItem, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useAlert } from '../../contexts/AlertContext'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { chemicalHazardReportApi } from '../../api/chemicalApi'
 import { ChemicalHazardReport } from '../../types/chemical.types'
@@ -39,7 +41,9 @@ const HazardReportTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<ChemicalHazardReport | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [page, setPage] = useState(0)
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => { setKeyword(keywordInput); setPage(0) }
 
   const { data, isLoading } = useQuery({
     queryKey: ['chemicalHazardReports', page, keyword],
@@ -62,7 +66,7 @@ const HazardReportTab: React.FC = () => {
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm) }
   const handleRowClick = (item: ChemicalHazardReport) => { setSelectedItem(item); setViewMode('detail') }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm(emptyForm); setViewMode('create') }
+  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm, reportDeadline: todayStr(), submitDate: todayStr() }); setViewMode('create') }
   const handleOpenEdit = (item: ChemicalHazardReport) => {
     setSelectedItem(item)
     setForm({ reportYear: item.reportYear, chemicalName: item.chemicalName || '', casNumber: item.casNumber || '', hazardClass: item.hazardClass || '', annualHandling: item.annualHandling || '', handlingFacility: item.handlingFacility || '', reportDeadline: item.reportDeadline || '', submitDate: item.submitDate || '', status: item.status || 'COLLECTING' })
@@ -71,7 +75,7 @@ const HazardReportTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: ChemicalHazardReport) => { const ok = await showConfirm(`${item.chemicalName}\n${t('common.delete')}하시겠습니까?`); if (ok) deleteMut.mutate(item.id) }
 
-  const handleReset = () => { setKeyword(''); setPage(0) }
+  const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
 
   const getHazardClassChip = (cls?: string) => {
     if (!cls) return ''
@@ -155,7 +159,8 @@ const HazardReportTab: React.FC = () => {
           <Box sx={{ display: 'flex' }}>
             <Typography sx={labelSx}>{t('chem.status')}</Typography>
             <Box sx={valSx}>
-              <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+              <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="COLLECTING">{t('chem.hazardReport.statusCollecting')}</MenuItem>
                 <MenuItem value="SUBMITTED">{t('chem.hazardReport.statusSubmitted')}</MenuItem>
               </Select>
@@ -200,7 +205,8 @@ const HazardReportTab: React.FC = () => {
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.status')}</Typography>
-            <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+            <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="COLLECTING">{t('chem.hazardReport.statusCollecting')}</MenuItem>
               <MenuItem value="SUBMITTED">{t('chem.hazardReport.statusSubmitted')}</MenuItem>
             </Select>
@@ -248,8 +254,8 @@ const HazardReportTab: React.FC = () => {
       {/* Search - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('chem.hazardReport.searchPlaceholder')} value={keyword}
-            onChange={(e) => { setKeyword(e.target.value); setPage(0) }}
+          <ListSearchBar placeholder={t('chem.hazardReport.searchPlaceholder')}
+            value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
             sx={{ minWidth: 250 }} />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
@@ -257,8 +263,8 @@ const HazardReportTab: React.FC = () => {
       </Box>
       {/* Search - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('chem.hazardReport.searchPlaceholder')} value={keyword}
-          onChange={(e) => { setKeyword(e.target.value); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('chem.hazardReport.searchPlaceholder')}
+          value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleReset} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>

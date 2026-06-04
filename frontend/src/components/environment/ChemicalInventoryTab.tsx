@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem,
@@ -33,9 +34,11 @@ const ChemicalInventoryTab: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selectedItem, setSelectedItem] = useState<Chemical | null>(null)
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [hazardFilter, setHazardFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
   const [form, setForm] = useState<ChemicalRequest>({ chemicalNameKo: '', hazardClass: '' })
 
   const { data, isLoading } = useQuery({
@@ -59,7 +62,7 @@ const ChemicalInventoryTab: React.FC = () => {
   }
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: Chemical) => { const ok = await showConfirm(`${item.chemicalNameKo}\n${t('common.delete')}하시겠습니까?`); if (ok) deleteMut.mutate(item.id) }
-  const handleReset = () => { setSearchText(''); setHazardFilter(''); setStatusFilter(''); setPage(0) }
+  const handleReset = () => { setSearchInput(''); setSearchText(''); setHazardFilter(''); setStatusFilter(''); setPage(0) }
 
   const items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -188,8 +191,8 @@ const ChemicalInventoryTab: React.FC = () => {
       {/* 검색 - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('chem.searchPlaceholder')} value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0) }} sx={{ minWidth: 200 }} />
+          <ListSearchBar placeholder={t('chem.searchPlaceholder')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ minWidth: 200 }} />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select displayEmpty value={hazardFilter} onChange={(e) => { setHazardFilter(e.target.value); setPage(0) }}>
               <MenuItem value="">{t('chem.allHazard')}</MenuItem>
@@ -208,8 +211,8 @@ const ChemicalInventoryTab: React.FC = () => {
       </Box>
       {/* 검색 - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('chem.searchPlaceholder')} value={searchText}
-          onChange={(e) => { setSearchText(e.target.value); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('chem.searchPlaceholder')}
+          value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <FormControl size="small" sx={{ flex: 1 }}>
             <Select displayEmpty value={hazardFilter} onChange={(e) => { setHazardFilter(e.target.value); setPage(0) }}>

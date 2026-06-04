@@ -5,6 +5,8 @@ import {
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
 } from '@mui/material'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -12,6 +14,7 @@ import { dpThermalApi, dpMgmtStatsApi } from '../../api/diseasePreventionMgmtApi
 import type { DpThermal } from '../../types/diseasePreventionMgmt.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
@@ -33,7 +36,13 @@ const DpThermalTab: React.FC = () => {
   const { data: list = [], isLoading } = useQuery({ queryKey: ['dpThermal'], queryFn: dpThermalApi.list })
   const { data: stats } = useQuery({ queryKey: ['dpMgmtStats'], queryFn: dpMgmtStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [filterType, setFilterType] = useState('all')
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<DpThermal | null>(null)
@@ -54,7 +63,7 @@ const DpThermalTab: React.FC = () => {
     return true
   }), [list, filterType, search])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, occurDate: todayStr() }); setOpen(true) }
   const openEdit = (item: DpThermal) => { setEditing(item); setForm({ ...item }); setOpen(true) }
   const handleSave = () => {
     if (!form.thermalType || !form.occurDate) { showError('유형·발생일 필수'); return }
@@ -73,11 +82,12 @@ const DpThermalTab: React.FC = () => {
 
       <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <TextField size="small" placeholder="발생 위치·증상 검색" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ flex: 1, minWidth: 200 }} />
+          <ListSearchBar placeholder="발생 위치·증상 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ flex: 1, minWidth: 200 }} />
           <TextField select size="small" label="유형" value={filterType} onChange={(e) => setFilterType(e.target.value)} sx={{ minWidth: 120 }}>
             <MenuItem value="all">전체</MenuItem>
             {TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
           </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Stack>
       </Paper>
 
@@ -188,7 +198,7 @@ const DpThermalTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
         </DialogActions>
       </Dialog>

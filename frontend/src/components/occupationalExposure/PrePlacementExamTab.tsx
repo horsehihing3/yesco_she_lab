@@ -26,8 +26,7 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
-import SearchIcon from '@mui/icons-material/Search'
-import InputAdornment from '@mui/material/InputAdornment'
+import ListSearchBar from '../common/ListSearchBar'
 import { useForm, Controller } from 'react-hook-form'
 import DatePickerField from '../common/DatePickerField'
 import { useAlert } from '../../contexts/AlertContext'
@@ -375,20 +374,12 @@ const PrePlacementExamTab: React.FC = () => {
       {/* Filters - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder={t('occupationalExposure.prePlacementExam.searchByName')}
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={setSearchInput}
+            onSearch={handleSearch}
             sx={{ width: 200 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleSearch} edge="end"><SearchIcon /></IconButton>
-                </InputAdornment>
-              ),
-            }}
           />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select value={filterYear} onChange={handleYearChange} displayEmpty>
@@ -417,20 +408,12 @@ const PrePlacementExamTab: React.FC = () => {
 
       {/* Filters - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           fullWidth
           placeholder={t('occupationalExposure.prePlacementExam.searchByName')}
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleSearch} edge="end"><SearchIcon /></IconButton>
-              </InputAdornment>
-            ),
-          }}
+          onChange={setSearchInput}
+          onSearch={handleSearch}
         />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <FormControl size="small" sx={{ flex: 1 }}>
@@ -838,7 +821,8 @@ const PrePlacementExamTab: React.FC = () => {
                     ref={field.ref}
                     size="small"
                     fullWidth
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     {years.map((y) => (
                       <MenuItem key={y} value={y}>{y}</MenuItem>
                     ))}
@@ -909,7 +893,8 @@ const PrePlacementExamTab: React.FC = () => {
                     ref={field.ref}
                     size="small"
                     fullWidth
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     {examResultCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -931,7 +916,8 @@ const PrePlacementExamTab: React.FC = () => {
                     ref={field.ref}
                     size="small"
                     fullWidth
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     {examStatusCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -1043,7 +1029,8 @@ const PrePlacementExamTab: React.FC = () => {
               {t('occupationalExposure.prePlacementExam.examYear')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Controller name="examYear" control={control} rules={{ required: true }} render={({ field }) => (
-              <Select value={field.value || currentYear} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth>
+              <Select value={field.value || currentYear} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {years.map((y) => (<MenuItem key={y} value={y}>{y}</MenuItem>))}
               </Select>
             )} />
@@ -1085,7 +1072,8 @@ const PrePlacementExamTab: React.FC = () => {
               {t('occupationalExposure.prePlacementExam.examResult')}
             </Typography>
             <Controller name="examResult" control={control} render={({ field }) => (
-              <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth>
+              <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {examResultCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}
@@ -1131,7 +1119,8 @@ const PrePlacementExamTab: React.FC = () => {
               {t('occupationalExposure.prePlacementExam.status')}
             </Typography>
             <Controller name="status" control={control} render={({ field }) => (
-              <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth>
+              <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {examStatusCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}

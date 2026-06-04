@@ -26,9 +26,8 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import RefreshIcon from '@mui/icons-material/Refresh'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../common/ListSearchBar'
 import EditNoteIcon from '@mui/icons-material/EditNote'
-import InputAdornment from '@mui/material/InputAdornment'
 import { useForm, Controller } from 'react-hook-form'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
@@ -445,20 +444,12 @@ const SafetyEducationTab: React.FC = () => {
       {/* Filters - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder={t('occupationalExposure.safetyEducation.searchByTitle')}
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={setSearchInput}
+            onSearch={handleSearch}
             sx={{ width: 200 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleSearch} edge="end"><SearchIcon /></IconButton>
-                </InputAdornment>
-              ),
-            }}
           />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select value={filterYear} onChange={handleYearChange} displayEmpty>
@@ -487,20 +478,12 @@ const SafetyEducationTab: React.FC = () => {
 
       {/* Filters - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           fullWidth
           placeholder={t('occupationalExposure.safetyEducation.searchByTitle')}
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleSearch} edge="end"><SearchIcon /></IconButton>
-              </InputAdornment>
-            ),
-          }}
+          onChange={setSearchInput}
+          onSearch={handleSearch}
         />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <FormControl size="small" sx={{ flex: 1 }}>
@@ -938,7 +921,8 @@ const SafetyEducationTab: React.FC = () => {
                     size="small"
                     fullWidth
                     error={!!fieldState.error}
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     {educationTypeCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -1062,7 +1046,8 @@ const SafetyEducationTab: React.FC = () => {
                     ref={field.ref}
                     size="small"
                     fullWidth
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     {statusCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -1098,7 +1083,8 @@ const SafetyEducationTab: React.FC = () => {
               {t('occupationalExposure.safetyEducation.educationType')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Controller name="educationType" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
-              <Select value={field.value || 'REGULAR'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error}>
+              <Select value={field.value || 'REGULAR'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {educationTypeCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}
@@ -1180,7 +1166,8 @@ const SafetyEducationTab: React.FC = () => {
               {t('occupationalExposure.safetyEducation.status')}
             </Typography>
             <Controller name="status" control={control} render={({ field }) => (
-              <Select value={field.value || 'PLANNED'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth>
+              <Select value={field.value || 'PLANNED'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {statusCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}

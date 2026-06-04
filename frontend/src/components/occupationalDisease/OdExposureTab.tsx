@@ -12,6 +12,7 @@ import { exposureApi, odStatsApi } from '../../api/occupationalDiseaseApi'
 import type { OdExposure } from '../../types/occupationalDisease.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
@@ -45,7 +46,7 @@ const OdExposureTab: React.FC = () => {
   const deleteMut = useMutation({ mutationFn: (id: number) => exposureApi.remove(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['odExposures'] }); qc.invalidateQueries({ queryKey: ['odStats'] }) } })
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, measureDate: todayStr() }); setOpen(true) }
   const openEdit = (e: OdExposure) => { setEditing(e); setForm(e); setOpen(true) }
   const submit = () => { if (editing) updateMut.mutate({ id: editing.id, e: form }); else createMut.mutate(form) }
 
@@ -161,8 +162,8 @@ const OdExposureTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.factorName}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={!form.factorName}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

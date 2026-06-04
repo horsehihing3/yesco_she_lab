@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Paper, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, IconButton, CircularProgress, Stack, Chip, Tooltip,
-  TextField, Alert,
+  TextField, Alert, Radio,
 } from '@mui/material'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 import CloseIcon from '@mui/icons-material/Close'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { useAlert } from '../../contexts/AlertContext'
 import NumberField from '../common/NumberField'
 import LoadingOverlay from '../common/LoadingOverlay'
@@ -37,7 +39,10 @@ const EvalSheetTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => setKeyword(keywordInput)
+  const handleResetSearch = () => { setKeywordInput(''); setKeyword('') }
   const [isEditing, setIsEditing] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -46,16 +51,27 @@ const EvalSheetTab: React.FC = () => {
   const [drafts, setDrafts] = useState<DraftItem[]>([])
   const [removedIds, setRemovedIds] = useState<number[]>([])
   const [metaDraft, setMetaDraft] = useState<{ title: string; description: string }>({ title: '', description: '' })
+  // multi-instance — list 의 라디오 선택, detail 진입시 보고 있는 평가표
+  const [copyTargetId, setCopyTargetId] = useState<number | null>(null)
+  const [selectedMetaId, setSelectedMetaId] = useState<number | null>(null)
+
+  // 평가표(meta) 전체 목록 — 최신 생성순
+  const { data: metas = [], isLoading: isLoadingMetas } = useQuery({
+    queryKey: ['evalSheetMetas'],
+    queryFn: () => evalSheetApi.listMetas(),
+  })
 
   const { data: items, isLoading } = useQuery({
-    queryKey: ['evalSheetItems'],
-    queryFn: () => evalSheetApi.getAll(),
+    queryKey: ['evalSheetItems', selectedMetaId],
+    queryFn: () => evalSheetApi.getAll(selectedMetaId || undefined),
+    enabled: viewMode === 'detail' && selectedMetaId != null,
   })
 
-  const { data: meta } = useQuery({
-    queryKey: ['evalSheetMeta'],
-    queryFn: () => evalSheetApi.getMeta(),
-  })
+  // 선택된 평가표의 meta 정보
+  const meta = useMemo(() => {
+    if (selectedMetaId == null) return undefined
+    return metas.find(m => m.id === selectedMetaId)
+  }, [metas, selectedMetaId])
 
   const { data: attachmentsMap, isFetching: isFetchingAttachments } = useQuery({
     queryKey: ['evalSheetAttachments', items?.map(i => i.id).join(',')],
@@ -153,12 +169,33 @@ const EvalSheetTab: React.FC = () => {
   }
 
   const handleNew = () => {
+    setSelectedMetaId(null)   // 신규 평가표 — 저장 시 backend 가 새 meta 생성
     setDrafts([])
     setRemovedIds([])
     setMetaDraft({ title: t('evalSheet.evalTitle', '수급업체 평가표'), description: '' })
     setIsCreating(true)
     setIsEditing(true)
     setViewMode('detail')
+  }
+
+  // 평가표 복사 — 백엔드에서 meta + 항목까지 일괄 복제
+  const handleCopy = async () => {
+    if (copyTargetId == null) return
+    try {
+      await evalSheetApi.copyMeta(copyTargetId)
+      queryClient.invalidateQueries({ queryKey: ['evalSheetMetas'] })
+      setCopyTargetId(null)
+      showSuccess(t('common.saved', '복사되었습니다.'))
+    } catch { showError(t('common.error', '실패했습니다.')) }
+  }
+
+  const handleDeleteMeta = async (id: number) => {
+    if (!(await showConfirm(t('common.confirmDelete', '정말 삭제하시겠습니까?')))) return
+    try {
+      await evalSheetApi.deleteMeta(id)
+      queryClient.invalidateQueries({ queryKey: ['evalSheetMetas'] })
+      showSuccess(t('common.deleted', '삭제되었습니다'))
+    } catch { showError(t('common.error')) }
   }
 
   const handleEdit = () => {
@@ -192,8 +229,12 @@ const EvalSheetTab: React.FC = () => {
     if (isSaving) return
     setIsSaving(true)
     try {
-      await evalSheetApi.saveAll({
-        meta: { title: metaDraft.title, description: metaDraft.description },
+      const saved = await evalSheetApi.saveAll({
+        meta: {
+          id: selectedMetaId == null ? undefined : selectedMetaId,
+          title: metaDraft.title,
+          description: metaDraft.description,
+        },
         items: drafts.map(d => ({
           id: d.id,
           category: d.category,
@@ -203,6 +244,10 @@ const EvalSheetTab: React.FC = () => {
         })),
         removedIds,
       })
+      // 신규 등록 후 selectedMetaId 갱신 — 후속 첨부파일/편집이 새 meta 와 연결
+      if (selectedMetaId == null && saved.meta?.id) {
+        setSelectedMetaId(saved.meta.id)
+      }
       // 보류된 첨부파일 처리
       for (const fileId of pendingDeletes) {
         try { await evalSheetApi.deleteAttachment(fileId) } catch { /* skip */ }
@@ -215,8 +260,8 @@ const EvalSheetTab: React.FC = () => {
       }
       setPendingUploads({})
       setPendingDeletes([])
+      queryClient.invalidateQueries({ queryKey: ['evalSheetMetas'] })
       queryClient.invalidateQueries({ queryKey: ['evalSheetItems'] })
-      queryClient.invalidateQueries({ queryKey: ['evalSheetMeta'] })
       queryClient.invalidateQueries({ queryKey: ['evalSheetAttachments'] })
       showSuccess(t('common.saved'))
       setIsEditing(false)
@@ -229,15 +274,16 @@ const EvalSheetTab: React.FC = () => {
   }
 
   const handleDeleteAll = async () => {
+    if (selectedMetaId == null) return
     const ok = await showConfirm(t('common.confirmDelete', '정말 삭제하시겠습니까?'))
     if (!ok) return
     try {
-      for (const it of items || []) {
-        await evalSheetApi.delete(it.id)
-      }
+      await evalSheetApi.deleteMeta(selectedMetaId)
+      queryClient.invalidateQueries({ queryKey: ['evalSheetMetas'] })
       queryClient.invalidateQueries({ queryKey: ['evalSheetItems'] })
       showSuccess(t('common.deleted', '삭제되었습니다'))
       setIsEditing(false)
+      setSelectedMetaId(null)
       setViewMode('list')
     } catch { showError(t('common.error')) }
   }
@@ -265,16 +311,21 @@ const EvalSheetTab: React.FC = () => {
     })
   }
 
+  // 전체 평가표(meta) 목록 — 최신 생성순 + 검색어 필터
   const listRows = useMemo(() => {
-    const title = meta?.title || t('evalSheet.evalTitle', '수급업체 평가표')
-    const createdAt = meta?.createdAt || items?.[0]?.createdAt
-    const exists = (items?.length || 0) > 0
-    if (!exists) return []
-    if (!keyword.trim()) return [{ title, count: items?.length || 0, createdAt }]
-    return title.toLowerCase().includes(keyword.toLowerCase()) ? [{ title, count: items?.length || 0, createdAt }] : []
-  }, [keyword, items, meta, t])
+    let rows = metas.map(m => ({
+      id: m.id,
+      title: m.title || t('evalSheet.evalTitle', '수급업체 평가표'),
+      createdAt: m.createdAt,
+    }))
+    if (keyword.trim()) {
+      const k = keyword.toLowerCase()
+      rows = rows.filter(r => r.title.toLowerCase().includes(k))
+    }
+    return rows
+  }, [metas, keyword, t])
 
-  if (isLoading) {
+  if (isLoadingMetas) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
   }
 
@@ -285,23 +336,34 @@ const EvalSheetTab: React.FC = () => {
         {/* Search - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')}
-              value={keyword} onChange={e => setKeyword(e.target.value)} sx={{ minWidth: 250 }} />
-            <IconButton onClick={() => setKeyword('')} size="small"><RefreshIcon /></IconButton>
+            <ListSearchBar placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')}
+              value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} sx={{ minWidth: 250 }} />
+            <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNew}>
-            {t('common.new', '신규')}
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="contained" size="small" startIcon={<ContentCopyIcon />}
+              disabled={copyTargetId == null} onClick={handleCopy}>
+              {t('common.copy', '복사')}
+            </Button>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNew}>
+              {t('common.new', '신규')}
+            </Button>
+          </Box>
         </Box>
         {/* Search - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')}
-            value={keyword} onChange={e => setKeyword(e.target.value)} />
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={() => setKeyword('')} sx={{ flex: 1 }}>
+          <ListSearchBar fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')}
+            value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: '1 1 calc(50% - 4px)' }}>
               {t('common.reset', '초기화')}
             </Button>
-            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNew} sx={{ flex: 1 }}>
+            <Button variant="contained" size="small" startIcon={<ContentCopyIcon />}
+              disabled={copyTargetId == null} onClick={handleCopy}
+              sx={{ flex: '1 1 calc(50% - 4px)' }}>
+              {t('common.copy', '복사')}
+            </Button>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNew} sx={{ flex: '1 1 calc(50% - 4px)' }}>
               {t('common.new', '신규')}
             </Button>
           </Box>
@@ -316,18 +378,22 @@ const EvalSheetTab: React.FC = () => {
               <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
+                    <TableCell sx={{ ...headerCellSx, width: 48, p: 0 }} align="center"></TableCell>
                     <TableCell sx={{ ...headerCellSx, width: 40 }} align="center">{t('common.no', 'No')}</TableCell>
                     <TableCell sx={headerCellSx}>{t('common.title', '제목')}</TableCell>
-                    <TableCell sx={{ ...headerCellSx, width: 80 }} align="center">{t('checklist.itemCount', '항목 수')}</TableCell>
                     <TableCell sx={{ ...headerCellSx, width: 120 }} align="center">{t('common.createdAt', '작성일')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {listRows.map((row, idx) => (
-                    <TableRow key={idx} hover sx={{ cursor: 'pointer' }} onClick={() => { setIsEditing(false); setViewMode('detail') }}>
+                    <TableRow key={row.id} hover sx={{ cursor: 'pointer' }}
+                      onClick={() => { setSelectedMetaId(row.id); setIsEditing(false); setIsCreating(false); setViewMode('detail') }}>
+                      <TableCell align="center" sx={{ width: 48, p: 0 }} onClick={(e) => e.stopPropagation()}>
+                        <Radio size="small" checked={copyTargetId === row.id}
+                          onChange={() => setCopyTargetId(row.id)} value={row.id} name="eval-sheet-copy-radio" />
+                      </TableCell>
                       <TableCell align="center" sx={{ fontWeight: 'bold' }}>{idx + 1}</TableCell>
                       <TableCell><Typography variant="body2" fontWeight={600} color="primary">{row.title}</Typography></TableCell>
-                      <TableCell align="center">{row.count}</TableCell>
                       <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
                         {row.createdAt?.substring(0, 10) || ''}
                       </TableCell>
@@ -338,12 +404,16 @@ const EvalSheetTab: React.FC = () => {
             </TableContainer>
             {/* Mobile Cards */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
-              {listRows.map((row, idx) => (
-                <Paper key={idx} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => { setIsEditing(false); setViewMode('detail') }}>
-                  <Typography fontWeight="bold" color="primary" sx={{ mb: 0.5 }}>{row.title}</Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                    {t('checklist.itemCount', '항목 수')}: {row.count}
-                  </Typography>
+              {listRows.map((row) => (
+                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }}
+                  onClick={() => { setSelectedMetaId(row.id); setIsEditing(false); setIsCreating(false); setViewMode('detail') }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Box onClick={(e) => e.stopPropagation()}>
+                      <Radio size="small" checked={copyTargetId === row.id}
+                        onChange={() => setCopyTargetId(row.id)} value={row.id} name="eval-sheet-copy-radio-mobile" />
+                    </Box>
+                    <Typography fontWeight="bold" color="primary" sx={{ flex: 1 }}>{row.title}</Typography>
+                  </Box>
                   <Typography variant="caption" color="text.secondary">
                     {t('common.createdAt', '작성일')}: {row.createdAt?.substring(0, 10) || ''}
                   </Typography>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.LegalComplianceLogMapper">
+
+    <resultMap id="LR" type="com.smartehs.model.LegalComplianceLog">
+        <id property="id" column="id"/>
+        <result property="auditId" column="audit_id"/>
+        <result property="action" column="action"/>
+        <result property="changedBy" column="changed_by"/>
+        <result property="detail" column="detail"/>
+        <result property="totalCount" column="total_count"/>
+        <result property="passCount" column="pass_count"/>
+        <result property="failCount" column="fail_count"/>
+        <result property="naCount" column="na_count"/>
+        <result property="fieldChanges" column="field_changes"/>
+        <result property="approvalId" column="approval_id"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="actorRole" column="actor_role"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <resultMap id="LIR" type="com.smartehs.model.LegalComplianceLogItem">
+        <id property="id" column="id"/>
+        <result property="logId" column="log_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="classification" column="classification"/>
+        <result property="checkItem" column="check_item"/>
+        <result property="legalBasis" column="legal_basis"/>
+        <result property="checkResult" column="check_result"/>
+        <result property="finding" column="finding"/>
+        <result property="actionDeadline" column="action_deadline"/>
+        <result property="actionComplete" column="action_complete"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_legal_compliance_log (audit_id, action, changed_by, detail, total_count, pass_count, fail_count, na_count,
+                                             field_changes, approval_id, reject_reason, actor_role, created_at)
+        VALUES (#{auditId}, #{action}, #{changedBy}, #{detail}, #{totalCount}, #{passCount}, #{failCount}, #{naCount},
+                #{fieldChanges}, #{approvalId}, #{rejectReason}, #{actorRole}, GETDATE())
+    </insert>
+
+    <insert id="insertItem">
+        INSERT INTO tb_legal_compliance_log_item (log_id, category_name, item_no, classification, check_item, legal_basis, check_result, finding, action_deadline, action_complete)
+        VALUES (#{logId}, #{categoryName}, #{itemNo}, #{classification}, #{checkItem}, #{legalBasis}, #{checkResult}, #{finding}, #{actionDeadline}, #{actionComplete})
+    </insert>
+
+    <select id="findByAuditId" resultMap="LR">
+        SELECT * FROM tb_legal_compliance_log WHERE audit_id = #{auditId} ORDER BY created_at DESC
+    </select>
+
+    <select id="findItemsByLogId" resultMap="LIR">
+        SELECT * FROM tb_legal_compliance_log_item WHERE log_id = #{logId} ORDER BY item_no
+    </select>
+
+</mapper>

@@ -8,9 +8,11 @@ import {
 } from '@mui/material'
 import NumberField from '../common/NumberField'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
 import { carbonEmissionApi } from '../../api/carbonApi'
@@ -103,7 +105,7 @@ const CarbonEmissionTab: React.FC = () => {
   const handleAddClick = () => {
     setSelectedItem(null)
     setFormData({
-      recordDate: '',
+      recordDate: todayStr(),
       sourceName: '',
       scope: 1,
       energyUsage: null,
@@ -161,10 +163,8 @@ const CarbonEmissionTab: React.FC = () => {
   const renderListView = () => (
     <Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <TextField size="small" placeholder={t('carbon.searchEmission')} value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          sx={{ width: { xs: '100%', md: 250 } }} />
-        <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
+        <ListSearchBar placeholder={t('carbon.searchEmission')} value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: { xs: '100%', md: 250 } }}  />
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
@@ -316,7 +316,8 @@ const CarbonEmissionTab: React.FC = () => {
           <Typography sx={labelSx}>{t('carbon.scopeLabel')}</Typography>
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
-              <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })}>
+              <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {scopeCodes.length > 0 ? scopeCodes.map((c) => (
                   <MenuItem key={c.code} value={c.code}>{getScopeLabel(c.code)}</MenuItem>
                 )) : [1, 2, 3].map((s) => (
@@ -338,8 +339,8 @@ const CarbonEmissionTab: React.FC = () => {
           <Typography sx={labelSx}>{t('carbon.energyUnit')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.energyUnit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, energyUnit: e.target.value || null })}>
-                <MenuItem value=""></MenuItem>
+              <Select value={formData.energyUnit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, energyUnit: e.target.value || null })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {unitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -372,7 +373,8 @@ const CarbonEmissionTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.scopeLabel')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })}>
+            <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {scopeCodes.length > 0 ? scopeCodes.map((c) => (
                 <MenuItem key={c.code} value={c.code}>{getScopeLabel(c.code)}</MenuItem>
               )) : [1, 2, 3].map((s) => (
@@ -388,8 +390,8 @@ const CarbonEmissionTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.energyUnit')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.energyUnit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, energyUnit: e.target.value || null })}>
-              <MenuItem value=""></MenuItem>
+            <Select value={formData.energyUnit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, energyUnit: e.target.value || null })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {unitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>

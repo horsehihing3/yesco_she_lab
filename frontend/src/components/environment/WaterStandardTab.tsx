@@ -6,7 +6,6 @@ import {
   Box, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Typography, Pagination, IconButton,
 } from '@mui/material'
-import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import NumberField from '../common/NumberField'
 import { waterStandardApi } from '../../api/environmentApi'

@@ -21,6 +21,19 @@ public interface RiskAssessmentMapper {
 
     int countByStatus(@Param("status") String status);
 
+    /** office_count > 0 인 평가만 — 사무업무 탭용 */
+    List<RiskAssessment> findAllOfficeOnly(@Param("offset") int offset, @Param("limit") int limit);
+
+    List<RiskAssessment> findBySiteOfficeOnly(@Param("site") String site, @Param("offset") int offset, @Param("limit") int limit);
+
+    List<RiskAssessment> findByStatusOfficeOnly(@Param("status") String status, @Param("offset") int offset, @Param("limit") int limit);
+
+    int countAllOfficeOnly();
+
+    int countBySiteOfficeOnly(@Param("site") String site);
+
+    int countByStatusOfficeOnly(@Param("status") String status);
+
     int countByFormId(@Param("formId") Long formId);
 
     RiskAssessment findById(@Param("id") Long id);

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, CircularProgress, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
@@ -92,7 +93,7 @@ const OdPlanTab: React.FC = () => {
   })
 
   const closeDialog = () => { setOpen(false); setPendingFiles([]); setEditing(null); setForm(emptyForm) }
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setPendingFiles([]); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, startDate: todayStr(), endDate: weekFromTodayStr() }); setPendingFiles([]); setOpen(true) }
   const openEdit = (p: OdPlan) => { setEditing(p); setForm(p); setPendingFiles([]); setOpen(true) }
   const submit = async () => {
     if (editing) {
@@ -283,8 +284,8 @@ const OdPlanTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDialog}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.orgName}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={closeDialog}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={!form.orgName}>저장</Button>
         </DialogActions>
       </Dialog>
 

@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import {
-  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography,
+  Box, Grid, Paper, TextField, MenuItem, Button, Chip, Alert, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress, Tooltip,
+  IconButton, CircularProgress, FormControl, Select,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import DeleteIcon from '@mui/icons-material/Delete'
-import EditIcon from '@mui/icons-material/Edit'
-import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import { lawApi } from '../../api/legalComplianceApi'
 import type { LegalLaw, LegalLawRequest } from '../../types/legalCompliance.types'
@@ -22,6 +21,8 @@ const CATEGORIES = ['안전', '환경', '보건', '화학물질', '소방', '전
 const REVIEW_STATUSES = ['검토대기', '검토중', '완료-적용', '완료-불해당']
 const APPLY_YN = ['적용', '불해당', '검토중']
 const AMEND_TYPES = ['일부개정', '전부개정', '신규제정', '폐지']
+
+type ViewMode = 'list' | 'create' | 'detail' | 'edit'
 
 const catColor = (c: string): 'primary' | 'success' | 'secondary' | 'warning' | 'error' | 'default' => {
   switch (c) {
@@ -64,8 +65,8 @@ const LegalLawTab: React.FC = () => {
   const [catFilter, setCatFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
 
-  const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<LegalLaw | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [selectedItem, setSelectedItem] = useState<LegalLaw | null>(null)
   const [form, setForm] = useState<LegalLawRequest>(emptyForm)
   const [pickerOpen, setPickerOpen] = useState(false)
 
@@ -79,15 +80,17 @@ const LegalLawTab: React.FC = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['legalLaws'] })
       qc.invalidateQueries({ queryKey: ['legalLawsStats'] })
-      setOpen(false)
+      setViewMode('list')
+      setSelectedItem(null)
     },
   })
   const updateMut = useMutation({
     mutationFn: ({ id, req }: { id: number; req: LegalLawRequest }) => lawApi.update(id, req),
-    onSuccess: () => {
+    onSuccess: (updated) => {
       qc.invalidateQueries({ queryKey: ['legalLaws'] })
       qc.invalidateQueries({ queryKey: ['legalLawsStats'] })
-      setOpen(false)
+      setSelectedItem(updated)
+      setViewMode('detail')
     },
   })
   const deleteMut = useMutation({
@@ -95,6 +98,8 @@ const LegalLawTab: React.FC = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['legalLaws'] })
       qc.invalidateQueries({ queryKey: ['legalLawsStats'] })
+      setViewMode('list')
+      setSelectedItem(null)
     },
   })
 
@@ -107,202 +112,309 @@ const LegalLawTab: React.FC = () => {
 
   const urgentList = useMemo(() => laws.filter(l => l.urgent), [laws])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
-  const openEdit = (l: LegalLaw) => {
-    setEditing(l)
+  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm, promulgateDate: todayStr(), enforceDate: weekFromTodayStr() }); setViewMode('create') }
+  const handleOpenDetail = (l: LegalLaw) => { setSelectedItem(l); setViewMode('detail') }
+  const handleOpenEdit = (l: LegalLaw) => {
+    setSelectedItem(l)
     setForm({
       category: l.category, lawName: l.lawName, clause: l.clause, amendType: l.amendType,
       promulgateDate: l.promulgateDate, enforceDate: l.enforceDate, reviewer: l.reviewer,
       reviewDueDate: l.reviewDueDate, reviewStatus: l.reviewStatus, applyYn: l.applyYn,
       followUpAction: l.followUpAction, amendSummary: l.amendSummary, urgent: l.urgent,
     })
-    setOpen(true)
+    setViewMode('edit')
   }
-  const submit = () => {
-    if (editing) updateMut.mutate({ id: editing.id, req: form })
+  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null) }
+  const handleSave = () => {
+    if (viewMode === 'edit' && selectedItem) updateMut.mutate({ id: selectedItem.id, req: form })
     else createMut.mutate(form)
   }
+  const handleDelete = async () => {
+    if (!selectedItem) return
+    if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selectedItem.id)
+  }
+  const handleReset = () => { setSearch(''); setCatFilter(''); setStatusFilter('') }
 
+  // ──────────────────── LIST VIEW ────────────────────
+  if (viewMode === 'list') {
+    return (
+      <Box>
+        {/* Stat cards */}
+        <Grid container spacing={1.5} sx={{ mb: 2 }}>
+          <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}             label="적용 법령 총계" /></Grid>
+          <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.pendingCount ?? 0}           label="검토 대기/검토중" /></Grid>
+          <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.doneCount ?? 0}              label="검토 완료" sub={`적용 ${stats?.doneApplyCount ?? 0} · 불해당 ${stats?.doneNotApplicableCount ?? 0}`} /></Grid>
+          <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.urgentCount ?? 0}            label="즉시 조치 필요" sub="시행일 임박" /></Grid>
+        </Grid>
+
+        {/* Urgent banner */}
+        {urgentList.length > 0 && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            <strong>긴급 검토 필요 — {urgentList.length}건</strong>
+            {' · '}
+            {urgentList.map(l => `「${l.lawName}」`).join(' / ')}
+          </Alert>
+        )}
+
+        {/* PC Search */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <TextField size="small" placeholder="법령명/조항/키워드 검색..." value={search}
+              onChange={e => setSearch(e.target.value)}
+              sx={{ minWidth: 240 }} />
+            <FormControl size="small" sx={{ minWidth: 130 }}>
+              <Select displayEmpty value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+                <MenuItem value="">분류 전체</MenuItem>
+                {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ minWidth: 140 }}>
+              <Select displayEmpty value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+                <MenuItem value="">검토상태 전체</MenuItem>
+                {REVIEW_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
+          </Box>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+        </Box>
+
+        {/* Mobile Search */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+          <TextField size="small" fullWidth placeholder="법령명/조항/키워드 검색..." value={search}
+            onChange={e => setSearch(e.target.value)} />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <FormControl size="small" sx={{ flex: 1 }}>
+              <Select displayEmpty value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+                <MenuItem value="">분류 전체</MenuItem>
+                {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ flex: 1 }}>
+              <Select displayEmpty value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+                <MenuItem value="">검토상태 전체</MenuItem>
+                {REVIEW_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+          </Box>
+        </Box>
+
+        {/* Table */}
+        <Paper variant="outlined">
+          {isLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}><CircularProgress /></Box>
+          ) : (
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>분류</TableCell>
+                    <TableCell>법령명/조항</TableCell>
+                    <TableCell>시행일</TableCell>
+                    <TableCell>검토 담당</TableCell>
+                    <TableCell>검토 상태</TableCell>
+                    <TableCell>적용 여부</TableCell>
+                    <TableCell>후속 조치</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filtered.map(l => (
+                    <TableRow key={l.id} hover sx={{ cursor: 'pointer', bgcolor: l.urgent ? 'rgba(239,68,68,0.05)' : undefined }}
+                      onClick={() => handleOpenDetail(l)}>
+                      <TableCell><Chip size="small" label={l.category} color={catColor(l.category)} variant="outlined" /></TableCell>
+                      <TableCell>
+                        <Box sx={{ fontWeight: 600 }}>{l.lawName}{l.urgent && <Chip size="small" label="긴급" color="error" sx={{ ml: 1 }} />}</Box>
+                        <Typography variant="caption" sx={{ color: 'info.main' }}>{l.clause}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        {l.enforceDate && (
+                          <Chip size="small" label={l.enforceDate} color={l.urgent ? 'error' : 'default'} variant="outlined" />
+                        )}
+                      </TableCell>
+                      <TableCell>{l.reviewer || '-'}</TableCell>
+                      <TableCell><Chip size="small" label={l.reviewStatus} color={statusColor(l.reviewStatus)} /></TableCell>
+                      <TableCell><Chip size="small" label={l.applyYn || '-'} color={applyColor(l.applyYn)} variant="outlined" /></TableCell>
+                      <TableCell sx={{ color: 'text.secondary' }}>{l.followUpAction || '-'}</TableCell>
+                    </TableRow>
+                  ))}
+                  {filtered.length === 0 && (
+                    <TableRow><TableCell colSpan={7} align="center" sx={{ color: 'text.disabled', py: 6 }}>등록된 법령이 없습니다</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Paper>
+      </Box>
+    )
+  }
+
+  // ──────────────────── DETAIL VIEW ────────────────────
+  if (viewMode === 'detail' && selectedItem) {
+    return (
+      <Box>
+        <FormTable>
+          <FormRow>
+            <FormLabel>분류</FormLabel>
+            <FormCell borderRight>
+              <Chip size="small" label={selectedItem.category} color={catColor(selectedItem.category)} variant="outlined" />
+            </FormCell>
+            <FormLabel>개정 유형</FormLabel>
+            <FormCell><Typography variant="body2">{selectedItem.amendType || '-'}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>법령명</FormLabel>
+            <FormCell>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2" fontWeight={600}>{selectedItem.lawName}</Typography>
+                {selectedItem.urgent && <Chip size="small" label="긴급" color="error" />}
+              </Box>
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>개정 조항</FormLabel>
+            <FormCell><Typography variant="body2">{selectedItem.clause || '-'}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>공포일</FormLabel>
+            <FormCell borderRight><Typography variant="body2">{selectedItem.promulgateDate || '-'}</Typography></FormCell>
+            <FormLabel>시행일</FormLabel>
+            <FormCell><Typography variant="body2">{selectedItem.enforceDate || '-'}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>검토 담당자</FormLabel>
+            <FormCell borderRight><Typography variant="body2">{selectedItem.reviewer || '-'}</Typography></FormCell>
+            <FormLabel>검토 기한</FormLabel>
+            <FormCell><Typography variant="body2">{selectedItem.reviewDueDate || '-'}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>검토 상태</FormLabel>
+            <FormCell borderRight>
+              <Chip size="small" label={selectedItem.reviewStatus} color={statusColor(selectedItem.reviewStatus)} />
+            </FormCell>
+            <FormLabel>적용 여부</FormLabel>
+            <FormCell>
+              <Chip size="small" label={selectedItem.applyYn || '-'} color={applyColor(selectedItem.applyYn)} variant="outlined" />
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>후속 조치</FormLabel>
+            <FormCell><Typography variant="body2">{selectedItem.followUpAction || '-'}</Typography></FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>개정 내용</FormLabel>
+            <FormCell><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.amendSummary || '-'}</Typography></FormCell>
+          </FormRow>
+        </FormTable>
+
+        <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
+            목록
+          </Button>
+          <Button variant="contained" color="primary" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
+            수정
+          </Button>
+          <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
+            삭제
+          </Button>
+        </Box>
+      </Box>
+    )
+  }
+
+  // ──────────────────── CREATE / EDIT VIEW ────────────────────
   return (
     <Box>
-      {/* Stat cards */}
-      <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}             label="적용 법령 총계" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.pendingCount ?? 0}           label="검토 대기/검토중" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.doneCount ?? 0}              label="검토 완료" sub={`적용 ${stats?.doneApplyCount ?? 0} · 불해당 ${stats?.doneNotApplicableCount ?? 0}`} /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.urgentCount ?? 0}            label="즉시 조치 필요" sub="시행일 임박" /></Grid>
-      </Grid>
+      <FormTable>
+        <FormRow>
+          <FormLabel required>분류</FormLabel>
+          <FormCell borderRight>
+            <TextField select fullWidth size="small" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
+              <MenuItem value="">선택</MenuItem>
+              {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+            </TextField>
+          </FormCell>
+          <FormLabel>개정 유형</FormLabel>
+          <FormCell>
+            <TextField select fullWidth size="small" value={form.amendType || ''} onChange={e => setForm({ ...form, amendType: e.target.value })}>
+              <MenuItem value="">선택</MenuItem>
+              {AMEND_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+            </TextField>
+          </FormCell>
+        </FormRow>
+        <FormRow>
+          <FormLabel required>법령명</FormLabel>
+          <FormCell><TextField fullWidth size="small" value={form.lawName} onChange={e => setForm({ ...form, lawName: e.target.value })} /></FormCell>
+        </FormRow>
+        <FormRow>
+          <FormLabel>개정 조항</FormLabel>
+          <FormCell><TextField fullWidth size="small" placeholder="예) 제29조(안전보건교육)" value={form.clause || ''} onChange={e => setForm({ ...form, clause: e.target.value })} /></FormCell>
+        </FormRow>
+        <FormRow>
+          <FormLabel>공포일</FormLabel>
+          <FormCell borderRight><DatePickerField value={form.promulgateDate || null} onChange={d => setForm({ ...form, promulgateDate: d })} /></FormCell>
+          <FormLabel>시행일</FormLabel>
+          <FormCell><DatePickerField value={form.enforceDate || null} onChange={d => setForm({ ...form, enforceDate: d })} /></FormCell>
+        </FormRow>
+        <FormRow>
+          <FormLabel>검토 담당자</FormLabel>
+          <FormCell borderRight>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+              <TextField fullWidth size="small" InputProps={{ readOnly: true }}
+                value={form.reviewer || ''} placeholder="조직도에서 선택" />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setPickerOpen(true)}>
+                <PersonSearchIcon fontSize="small" />
+              </Button>
+            </Box>
+          </FormCell>
+          <FormLabel>검토 기한</FormLabel>
+          <FormCell><DatePickerField value={form.reviewDueDate || null} onChange={d => setForm({ ...form, reviewDueDate: d })} /></FormCell>
+        </FormRow>
+        <FormRow>
+          <FormLabel>검토 상태</FormLabel>
+          <FormCell borderRight>
+            <TextField select fullWidth size="small" value={form.reviewStatus || '검토대기'} onChange={e => setForm({ ...form, reviewStatus: e.target.value })}>
+              <MenuItem value="">선택</MenuItem>
+              {REVIEW_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+            </TextField>
+          </FormCell>
+          <FormLabel>적용 여부</FormLabel>
+          <FormCell>
+            <TextField select fullWidth size="small" value={form.applyYn || '검토중'} onChange={e => setForm({ ...form, applyYn: e.target.value })}>
+              <MenuItem value="">선택</MenuItem>
+              {APPLY_YN.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}
+            </TextField>
+          </FormCell>
+        </FormRow>
+        <FormRow>
+          <FormLabel>후속 조치</FormLabel>
+          <FormCell><TextField fullWidth size="small" value={form.followUpAction || ''} onChange={e => setForm({ ...form, followUpAction: e.target.value })} /></FormCell>
+        </FormRow>
+        <FormRow>
+          <FormLabel>개정 내용</FormLabel>
+          <FormCell><TextField fullWidth size="small" multiline minRows={3} value={form.amendSummary || ''} onChange={e => setForm({ ...form, amendSummary: e.target.value })} /></FormCell>
+        </FormRow>
+        <FormRow last>
+          <FormLabel>긴급 여부</FormLabel>
+          <FormCell>
+            <TextField select fullWidth size="small" value={form.urgent ? '1' : '0'} onChange={e => setForm({ ...form, urgent: e.target.value === '1' })}>
+              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="0">일반</MenuItem>
+              <MenuItem value="1">긴급</MenuItem>
+            </TextField>
+          </FormCell>
+        </FormRow>
+      </FormTable>
 
-      {/* Urgent banner */}
-      {urgentList.length > 0 && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          <strong>긴급 검토 필요 — {urgentList.length}건</strong>
-          {' · '}
-          {urgentList.map(l => `「${l.lawName}」`).join(' / ')}
-        </Alert>
-      )}
-
-      {/* Toolbar */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField
-          size="small" fullWidth placeholder="법령명/조항/키워드 검색..."
-          value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }}
-        />
-        <TextField select size="small" sx={{ minWidth: 130 }} label="분류" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
-          <MenuItem value="">전체</MenuItem>
-          {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-        </TextField>
-        <TextField select size="small" sx={{ minWidth: 140 }} label="검토상태" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-          <MenuItem value="">전체</MenuItem>
-          {REVIEW_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-        </TextField>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
-      </Stack>
-
-      {/* Table */}
-      <Paper variant="outlined">
-        {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}><CircularProgress /></Box>
-        ) : (
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>분류</TableCell>
-                  <TableCell>법령명/조항</TableCell>
-                  <TableCell>시행일</TableCell>
-                  <TableCell>검토 담당</TableCell>
-                  <TableCell>검토 상태</TableCell>
-                  <TableCell>적용 여부</TableCell>
-                  <TableCell>후속 조치</TableCell>
-                  <TableCell align="right">액션</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filtered.map(l => (
-                  <TableRow key={l.id} hover sx={{ bgcolor: l.urgent ? 'rgba(239,68,68,0.05)' : undefined }}>
-                    <TableCell><Chip size="small" label={l.category} color={catColor(l.category)} variant="outlined" /></TableCell>
-                    <TableCell>
-                      <Box sx={{ fontWeight: 600 }}>{l.lawName}{l.urgent && <Chip size="small" label="긴급" color="error" sx={{ ml: 1 }} />}</Box>
-                      <Typography variant="caption" sx={{ color: 'info.main' }}>{l.clause}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      {l.enforceDate && (
-                        <Chip size="small" label={l.enforceDate} color={l.urgent ? 'error' : 'default'} variant="outlined" />
-                      )}
-                    </TableCell>
-                    <TableCell>{l.reviewer || '-'}</TableCell>
-                    <TableCell><Chip size="small" label={l.reviewStatus} color={statusColor(l.reviewStatus)} /></TableCell>
-                    <TableCell><Chip size="small" label={l.applyYn || '-'} color={applyColor(l.applyYn)} variant="outlined" /></TableCell>
-                    <TableCell sx={{ color: 'text.secondary' }}>{l.followUpAction || '-'}</TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="수정"><IconButton size="small" onClick={() => openEdit(l)}><EditIcon fontSize="inherit" /></IconButton></Tooltip>
-                      <Tooltip title="삭제"><IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(l.id) }}><DeleteIcon fontSize="inherit" /></IconButton></Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {filtered.length === 0 && (
-                  <TableRow><TableCell colSpan={8} align="center" sx={{ color: 'text.disabled', py: 6 }}>등록된 법령이 없습니다</TableCell></TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </Paper>
-
-      {/* Modal */}
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editing ? '법령 수정' : '법령 등록'}</DialogTitle>
-        <DialogContent dividers>
-          <FormTable>
-            <FormRow>
-              <FormLabel required>분류</FormLabel>
-              <FormCell borderRight>
-                <TextField select fullWidth size="small" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
-                  {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-                </TextField>
-              </FormCell>
-              <FormLabel>개정 유형</FormLabel>
-              <FormCell>
-                <TextField select fullWidth size="small" value={form.amendType || ''} onChange={e => setForm({ ...form, amendType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
-                  {AMEND_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
-                </TextField>
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel required>법령명</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.lawName} onChange={e => setForm({ ...form, lawName: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>개정 조항</FormLabel>
-              <FormCell><TextField fullWidth size="small" placeholder="예) 제29조(안전보건교육)" value={form.clause || ''} onChange={e => setForm({ ...form, clause: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>공포일</FormLabel>
-              <FormCell borderRight><DatePickerField value={form.promulgateDate || null} onChange={d => setForm({ ...form, promulgateDate: d })} /></FormCell>
-              <FormLabel>시행일</FormLabel>
-              <FormCell><DatePickerField value={form.enforceDate || null} onChange={d => setForm({ ...form, enforceDate: d })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>검토 담당자</FormLabel>
-              <FormCell borderRight>
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                  <TextField fullWidth size="small" InputProps={{ readOnly: true }}
-                    value={form.reviewer || ''} placeholder="조직도에서 선택" />
-                  <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setPickerOpen(true)}>
-                    <PersonSearchIcon fontSize="small" />
-                  </Button>
-                </Box>
-              </FormCell>
-              <FormLabel>검토 기한</FormLabel>
-              <FormCell><DatePickerField value={form.reviewDueDate || null} onChange={d => setForm({ ...form, reviewDueDate: d })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>검토 상태</FormLabel>
-              <FormCell borderRight>
-                <TextField select fullWidth size="small" value={form.reviewStatus || '검토대기'} onChange={e => setForm({ ...form, reviewStatus: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
-                  {REVIEW_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-                </TextField>
-              </FormCell>
-              <FormLabel>적용 여부</FormLabel>
-              <FormCell>
-                <TextField select fullWidth size="small" value={form.applyYn || '검토중'} onChange={e => setForm({ ...form, applyYn: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
-                  {APPLY_YN.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}
-                </TextField>
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>후속 조치</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.followUpAction || ''} onChange={e => setForm({ ...form, followUpAction: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>개정 내용</FormLabel>
-              <FormCell><TextField fullWidth size="small" multiline minRows={3} value={form.amendSummary || ''} onChange={e => setForm({ ...form, amendSummary: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow last>
-              <FormLabel>긴급 여부</FormLabel>
-              <FormCell>
-                <TextField select fullWidth size="small" value={form.urgent ? '1' : '0'} onChange={e => setForm({ ...form, urgent: e.target.value === '1' })}>
-                  <MenuItem value="">선택</MenuItem>
-                  <MenuItem value="0">일반</MenuItem>
-                  <MenuItem value="1">긴급</MenuItem>
-                </TextField>
-              </FormCell>
-            </FormRow>
-          </FormTable>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.lawName || createMut.isPending || updateMut.isPending}>
-            {editing ? '수정' : '등록'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+        <Button variant="outlined" onClick={viewMode === 'edit' && selectedItem ? () => { setViewMode('detail') } : handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+          취소
+        </Button>
+        <Button variant="contained" onClick={handleSave} disabled={!form.lawName || createMut.isPending || updateMut.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+          저장
+        </Button>
+      </Box>
 
       <UserSelectModal open={pickerOpen} onClose={() => setPickerOpen(false)} selectedUsers={[]} onConfirm={onPicked} singleSelect useCompanyTree title="검토 담당자 선택 (조직도)" />
     </Box>

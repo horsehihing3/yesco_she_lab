@@ -218,6 +218,7 @@ const EmrPlanTab: React.FC = () => {
     if (!form.planType) { showWarning(t('emr.planType') + ' ' + t('common.required', '필수입니다')); return }
     if (!form.planApproverName?.trim()) { showWarning(t('emr.planApprover') + ' ' + t('common.required', '필수입니다')); return }
     if (!form.completionApproverName?.trim()) { showWarning(t('emr.completionApprover') + ' ' + t('common.required', '필수입니다')); return }
+    if (!form.checklistTemplateId) { showWarning(t('audit.checklist', '체크리스트') + ' ' + t('common.required', '필수입니다')); return }
     const ok = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!ok) return
     if (selectedItem) updateMutation.mutate({ id: selectedItem.id, req: form })

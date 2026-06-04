@@ -15,6 +15,14 @@
         SELECT TOP 1 * FROM tb_eval_sheet_meta ORDER BY id ASC
     </select>
 
+    <select id="findAll" resultMap="EvalSheetMetaResultMap">
+        SELECT * FROM tb_eval_sheet_meta ORDER BY created_at DESC, id DESC
+    </select>
+
+    <select id="findById" resultMap="EvalSheetMetaResultMap">
+        SELECT * FROM tb_eval_sheet_meta WHERE id = #{id}
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_eval_sheet_meta (title, description, created_at, modified_at)
         VALUES (#{title}, #{description}, GETDATE(), GETDATE())
@@ -27,5 +35,9 @@
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>
+
+    <delete id="delete">
+        DELETE FROM tb_eval_sheet_meta WHERE id = #{id}
+    </delete>
 
 </mapper>

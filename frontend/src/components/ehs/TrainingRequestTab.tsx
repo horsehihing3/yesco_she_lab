@@ -8,7 +8,9 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
@@ -83,8 +85,11 @@ const TrainingRequestTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<SafetyEducation | null>(null)
   const [form, setForm] = useState<SafetyEducationRequest>({ ...emptyForm })
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const pageSize = 10
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
+  const handleResetSearch = () => { setSearchInput(''); setSearchText(''); setPage(0) }
 
   const { data, isLoading } = useQuery({
     queryKey: ['trainingRequest', page],
@@ -115,7 +120,7 @@ const TrainingRequestTab: React.FC = () => {
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ ...emptyForm }) }
   const handleOpenCreate = () => {
     setSelectedItem(null)
-    setForm({ ...emptyForm, authorName: user?.name, authorEmail: user?.email, authorDept: user?.department })
+    setForm({ ...emptyForm, educationDate: todayStr(), authorName: user?.name, authorEmail: user?.email, authorDept: user?.department })
     setViewMode('create')
   }
   const handleOpenDetail = async (item: SafetyEducation) => {
@@ -159,17 +164,17 @@ const TrainingRequestTab: React.FC = () => {
         {/* PC Search */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('common.search')} value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+            <ListSearchBar placeholder={t('common.search')}
+              value={searchInput} onChange={setSearchInput} onSearch={applySearch}
               sx={{ minWidth: 200 }} />
-            <IconButton onClick={() => { setSearchText(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
+            <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
         </Box>
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('common.search')} value={searchText}
-            onChange={(e) => setSearchText(e.target.value)} />
+          <ListSearchBar fullWidth placeholder={t('common.search')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} fullWidth>{t('common.new')}</Button>
         </Box>
 
@@ -334,7 +339,8 @@ const TrainingRequestTab: React.FC = () => {
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationType')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
-              <Select fullWidth size="small" value={form.educationType} onChange={(e) => setForm({ ...form, educationType: e.target.value as any })}>
+              <Select fullWidth size="small" value={form.educationType} onChange={(e) => setForm({ ...form, educationType: e.target.value as any })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {typeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -375,7 +381,7 @@ const TrainingRequestTab: React.FC = () => {
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 3 }}>
           {[
             { label: t('common.title'), required: true, node: <TextField size="small" fullWidth value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /> },
-            { label: t('occupationalExposure.safetyEducation.educationType'), required: true, node: <FormControl fullWidth size="small"><Select value={form.educationType} onChange={(e) => setForm({ ...form, educationType: e.target.value as any })}>{typeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getTypeLabel(c.code)}</MenuItem>)}</Select></FormControl> },
+            { label: t('occupationalExposure.safetyEducation.educationType'), required: true, node: <FormControl fullWidth size="small"><Select value={form.educationType} onChange={(e) => setForm({ ...form, educationType: e.target.value as any })} displayEmpty><MenuItem value="" disabled>선택</MenuItem>{typeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getTypeLabel(c.code)}</MenuItem>)}</Select></FormControl> },
             { label: t('occupationalExposure.safetyEducation.educationDate'), required: true, node: <DatePickerField value={form.educationDate || null} onChange={(v) => setForm({ ...form, educationDate: v || '' })} size="small" /> },
             { label: t('occupationalExposure.safetyEducation.educationHours'), node: <NumberField size="small" fullWidth value={form.educationHours || ''} onChange={(v) => setForm({ ...form, educationHours: v ?? undefined })} /> },
             { label: t('occupationalExposure.safetyEducation.location'), node: <TextField size="small" fullWidth value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} /> },

@@ -7,6 +7,7 @@ import {
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import { trainingApplicationApi, trainingCourseApi } from '../../api/trainingApi'
 import { TrainingApplication } from '../../types/trainingApplication.types'
 import { TrainingCourse } from '../../types/trainingCourse.types'
@@ -20,7 +21,10 @@ const TrainingHistoryTab: React.FC = () => {
 
   const [yearFilter, setYearFilter] = useState('')
   const [catFilter, setCatFilter] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
+  const applySearch = () => setSearchText(searchInput)
+  const handleResetSearch = () => { setSearchInput(''); setSearchText(''); setYearFilter(''); setCatFilter('') }
 
   // 본인이 들었던 모든 교육 (수료 완료) — username 으로 본인 데이터만 조회
   const { data: histData, isLoading } = useQuery({
@@ -98,11 +102,11 @@ const TrainingHistoryTab: React.FC = () => {
 
       {/* Filter */}
       <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           placeholder={t('training.searchHistPh', '교육과정명 검색')}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={applySearch}
           sx={{ minWidth: 220 }}
         />
         <FormControl size="small" sx={{ minWidth: 110 }}>
@@ -123,7 +127,7 @@ const TrainingHistoryTab: React.FC = () => {
             <MenuItem value="OTHER">{getCategoryLabel('OTHER')}</MenuItem>
           </Select>
         </FormControl>
-        <IconButton size="small" onClick={() => { setSearchText(''); setYearFilter(''); setCatFilter('') }}>
+        <IconButton size="small" onClick={handleResetSearch}>
           <RefreshIcon />
         </IconButton>
       </Box>

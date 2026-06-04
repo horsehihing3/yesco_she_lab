@@ -14,6 +14,7 @@
         <result property="isExternal" column="is_external"/>
         <result property="isSigned" column="is_signed"/>
         <result property="signatureDate" column="signature_date"/>
+        <result property="signatureImage" column="signature_image"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>
 
@@ -40,14 +41,23 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_osh_committee_attendee (
             osh_id, attendee_name, attendee_mail, attendee_dept, attendee_company,
-            attendee_phone, is_external, is_signed, signature_date, created_at
+            attendee_phone, is_external, is_signed, signature_date, signature_image, created_at
         )
         VALUES (
             #{oshId}, #{attendeeName}, #{attendeeMail},
             #{attendeeDept,jdbcType=NVARCHAR}, #{attendeeCompany,jdbcType=NVARCHAR},
             #{attendeePhone,jdbcType=NVARCHAR},
             <choose><when test="isExternal != null">#{isExternal}</when><otherwise>0</otherwise></choose>,
-            #{isSigned}, #{signatureDate,jdbcType=TIMESTAMP}, GETDATE()
+            <choose>
+                <when test="signatureImage != null and signatureImage != ''">1</when>
+                <otherwise><choose><when test="isSigned != null">#{isSigned}</when><otherwise>0</otherwise></choose></otherwise>
+            </choose>,
+            <choose>
+                <when test="signatureImage != null and signatureImage != ''">GETDATE()</when>
+                <otherwise>#{signatureDate,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,
+            #{signatureImage,jdbcType=NVARCHAR},
+            GETDATE()
         )
     </insert>
 
@@ -59,8 +69,15 @@
             attendee_company = #{attendeeCompany,jdbcType=NVARCHAR},
             attendee_phone = #{attendeePhone,jdbcType=NVARCHAR},
             is_external = <choose><when test="isExternal != null">#{isExternal}</when><otherwise>0</otherwise></choose>,
-            is_signed = #{isSigned},
-            signature_date = #{signatureDate,jdbcType=TIMESTAMP}
+            is_signed = <choose>
+                <when test="signatureImage != null and signatureImage != ''">1</when>
+                <otherwise><choose><when test="isSigned != null">#{isSigned}</when><otherwise>0</otherwise></choose></otherwise>
+            </choose>,
+            signature_date = <choose>
+                <when test="signatureImage != null and signatureImage != ''">GETDATE()</when>
+                <otherwise>#{signatureDate,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,
+            signature_image = #{signatureImage,jdbcType=NVARCHAR}
         WHERE id = #{id}
     </update>
 

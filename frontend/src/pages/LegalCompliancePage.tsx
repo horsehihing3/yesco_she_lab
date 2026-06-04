@@ -17,8 +17,8 @@ const LegalCompliancePage: React.FC = () => {
 
   const tabs = useMemo(() => [
     { menuKey: 'lc.tabs.law',       label: t('lc.tabs.law', '법규검토시스템'),        component: <LegalLawTab /> },
-    { menuKey: 'lc.tabs.plan',      label: t('lc.tabs.plan', '법규 대응 계획'),       component: <AuditPlanTab      menuPath="EHS경영 › 법규 대응 › 법규 대응 계획" /> },
-    { menuKey: 'lc.tabs.execution', label: t('lc.tabs.execution', '법규 대응 실시'),  component: <AuditExecutionTab menuPath="EHS경영 › 법규 대응 › 법규 대응 실시" /> },
+    { menuKey: 'lc.tabs.plan',      label: t('lc.tabs.plan', '법규 대응 계획'),       component: <AuditPlanTab      variant="legal-compliance" menuPath="EHS경영 › 법규 대응 › 법규 대응 계획" /> },
+    { menuKey: 'lc.tabs.execution', label: t('lc.tabs.execution', '법규 대응 실시'),  component: <AuditExecutionTab variant="legal-compliance" menuPath="EHS경영 › 법규 대응 › 법규 대응 실시" /> },
     { menuKey: 'lc.tabs.findings',  label: t('audit.tabs.findings', '부적합 사항'),   component: <AuditFindingTab /> },
     { menuKey: 'lc.tabs.corrective',label: t('audit.tabs.corrective', '시정 조치'),   component: <AuditCorrectiveTab /> },
   ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])

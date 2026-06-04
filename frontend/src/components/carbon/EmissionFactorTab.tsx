@@ -8,6 +8,7 @@ import {
 } from '@mui/material'
 import NumberField from '../common/NumberField'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useCodeMap } from '../../hooks/useCodeMap'
 import { emissionFactorApi } from '../../api/carbonApi'
@@ -139,10 +140,8 @@ const EmissionFactorTab: React.FC = () => {
   const renderListView = () => (
     <Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <TextField size="small" placeholder={t('carbon.factor.searchFactor')} value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          sx={{ width: { xs: '100%', md: 250 } }} />
-        <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
+        <ListSearchBar placeholder={t('carbon.factor.searchFactor')} value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: { xs: '100%', md: 250 } }}  />
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
@@ -285,7 +284,8 @@ const EmissionFactorTab: React.FC = () => {
           <Typography sx={labelSx}>{t('carbon.factor.unit')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })}>
+              <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {unitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -309,7 +309,8 @@ const EmissionFactorTab: React.FC = () => {
           <Typography sx={labelSx}>{t('carbon.factor.scope')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: parseInt(e.target.value) })}>
+              <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: parseInt(e.target.value) })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="1">Scope 1</MenuItem>
                 <MenuItem value="2">Scope 2</MenuItem>
                 <MenuItem value="3">Scope 3</MenuItem>
@@ -333,7 +334,8 @@ const EmissionFactorTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.factor.unit')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })}>
+            <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {unitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -353,7 +355,8 @@ const EmissionFactorTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.factor.scope')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: parseInt(e.target.value) })}>
+            <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: parseInt(e.target.value) })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="1">Scope 1</MenuItem>
               <MenuItem value="2">Scope 2</MenuItem>
               <MenuItem value="3">Scope 3</MenuItem>

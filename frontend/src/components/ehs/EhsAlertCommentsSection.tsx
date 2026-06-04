@@ -118,7 +118,7 @@ const CommentRow: React.FC<CommentRowProps> = ({
           <Box sx={{ mt: 1 }}>
             <TextField fullWidth multiline minRows={2} size="small" value={editText} onChange={(e) => onEditTextChange(e.target.value)} />
             <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 1 }}>
-              <Button size="small" onClick={() => onEditToggle(null)}>취소</Button>
+              <Button size="small" variant="outlined" onClick={() => onEditToggle(null)}>취소</Button>
               <Button size="small" variant="contained" disabled={!editText.trim() || pending} onClick={() => onSubmitEdit(comment.id)}>저장</Button>
             </Stack>
           </Box>
@@ -133,7 +133,7 @@ const CommentRow: React.FC<CommentRowProps> = ({
             <TextField fullWidth multiline minRows={2} size="small" placeholder={`@${comment.authorName} 님에게 답글...`}
               value={replyText} onChange={(e) => onReplyTextChange(e.target.value)} />
             <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 1 }}>
-              <Button size="small" onClick={() => onReplyToggle(null)}>취소</Button>
+              <Button size="small" variant="outlined" onClick={() => onReplyToggle(null)}>취소</Button>
               <Button size="small" variant="contained" disabled={!replyText.trim() || pending} onClick={() => onSubmitReply(comment.id)}>답글 등록</Button>
             </Stack>
           </Box>

@@ -8,11 +8,13 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import { radMeasurementApi, radStatsApi } from '../../api/radiationApi'
 import type { RadMeasurement } from '../../types/radiation.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
@@ -35,7 +37,13 @@ const RadMeasurementTab: React.FC = () => {
   const { data: items = [], isLoading } = useQuery({ queryKey: ['radMeasurements'], queryFn: radMeasurementApi.list })
   const { data: stats } = useQuery({ queryKey: ['radStats'], queryFn: radStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [evalFilter, setEvalFilter] = useState('')
 
   const [open, setOpen] = useState(false)
@@ -61,7 +69,7 @@ const RadMeasurementTab: React.FC = () => {
     return true
   }), [items, evalFilter, search])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, measureDate: todayStr() }); setOpen(true) }
   const openEdit = (v: RadMeasurement) => { setEditing(v); setForm({ ...v }); setOpen(true) }
   const submit = () => {
     if (editing) updateMut.mutate({ id: editing.id, e: form })
@@ -82,12 +90,12 @@ const RadMeasurementTab: React.FC = () => {
       </Alert>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField size="small" fullWidth placeholder="구역/지점/측정자 검색..." value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }} />
+        <ListSearchBar fullWidth placeholder="구역/지점/측정자 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ minWidth: 130 }} label="평가" value={evalFilter} onChange={e => setEvalFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {EVALS.map(e => <MenuItem key={e} value={e}>{e}</MenuItem>)}
         </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
@@ -172,8 +180,8 @@ const RadMeasurementTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.measureDate}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={!form.measureDate}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

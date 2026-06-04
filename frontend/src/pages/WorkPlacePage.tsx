@@ -217,7 +217,7 @@ const WorkPlacePage: React.FC = () => {
             <TextField fullWidth label="Image Path" margin="normal" {...register('imagePath')} />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button variant="outlined" onClick={handleCloseDialog}>Cancel</Button>
             <Button type="submit" variant="contained" disabled={createMutation.isPending || updateMutation.isPending}>
               {editingWorkPlace ? 'Update' : 'Create'}
             </Button>

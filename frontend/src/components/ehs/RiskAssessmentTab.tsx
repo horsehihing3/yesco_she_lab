@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useButtonRules } from '../../hooks/useButtonRules'
-import { Role } from '../../data/buttonManageData'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
+import { fetchTeamLeader } from '../../api/approvalApi'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box,
   TextField,
@@ -40,7 +41,6 @@ import DepartmentSelectModal from '../common/DepartmentSelectModal'
 import DatePickerField from '../common/DatePickerField'
 import { useAuth } from '../../context/AuthContext'
 import { riskAssessmentApi } from '../../api/riskAssessmentApi'
-import { fetchTeamLeader } from '../../api/approvalApi'
 import { workplaceApi } from '../../api/workplaceApi'
 import {
   RiskAssessment,
@@ -87,8 +87,11 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   // List filters
   const [siteFilter, setSiteFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [searchText, setSearchText] = useState('')
   const [page, setPage] = useState(0)
   const rowsPerPage = 10
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
 
   // Form state
   const [formData, setFormData] = useState<RiskAssessmentRequest>({
@@ -313,6 +316,8 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   }
 
   const handleReset = () => {
+    setSearchInput('')
+    setSearchText('')
     setSiteFilter('')
     setStatusFilter('')
     setPage(0)
@@ -337,7 +342,6 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       formId: typeof firstFormId === 'number' ? firstFormId : undefined,
       ...(leader ? {
         planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
-        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
       } : {}),
     })
     setActivityProcesses([
@@ -439,6 +443,10 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     // 사업장 또는 부서 둘 중 하나는 반드시 입력
     if (!(formData.site || '').trim() && !(formData.authorDept || '').trim()) {
       showWarning(t('riskAssessment.siteOrDeptRequired', '사업장 또는 부서 중 하나는 반드시 선택해야 합니다.'))
+      return
+    }
+    if (!formData.formId) {
+      showWarning(t('common.checklist', '체크리스트') + ' ' + t('common.required', '필수입니다'))
       return
     }
 
@@ -695,11 +703,15 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   const userDept = (user?.department || '').trim()
   const filtered = allAssessments.filter(a => {
     const s = (a.status || '').toLowerCase()
-    if (isPlanMode) return planStatuses.has(s)
-    if (!managementStatuses.has(s)) return false
-    // 관리(관리자)는 전체, 관리는 본인 소속만
-    if (isAdminMode) return true
-    return userDept !== '' && (a.authorDept || '').trim() === userDept
+    if (isPlanMode) {
+      if (!planStatuses.has(s)) return false
+    } else {
+      if (!managementStatuses.has(s)) return false
+      // 관리(관리자)는 전체, 관리는 본인 소속만
+      if (!isAdminMode && !(userDept !== '' && (a.authorDept || '').trim() === userDept)) return false
+    }
+    if (searchText && !(a.title || '').toLowerCase().includes(searchText.toLowerCase())) return false
+    return true
   })
   const pageStart = page * rowsPerPage
   const assessments = filtered.slice(pageStart, pageStart + rowsPerPage)
@@ -712,9 +724,11 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       {/* Filters - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder={t('common.title')}
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={applySearch}
             sx={{ width: 200 }}
           />
           <FormControl size="small" sx={{ minWidth: 150 }}>
@@ -726,7 +740,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {isPlanMode && canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          {canSee(MENU, 'LIST', 'New', myRoles) && isPlanMode && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>
               New
             </Button>
@@ -736,7 +750,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
 
       {/* Filters - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField size="small" placeholder={t('common.title')} fullWidth />
+        <ListSearchBar fullWidth placeholder={t('common.title')} value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <FormControl size="small" fullWidth>
           <Select value={siteFilter} onChange={(e: SelectChangeEvent) => { setSiteFilter(e.target.value); setPage(0) }} displayEmpty>
             <MenuItem value="">{t('riskAssessment.siteFilter')}</MenuItem>
@@ -745,7 +759,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
         </FormControl>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" onClick={handleReset} sx={{ flex: 1 }}>{t('common.reset')}</Button>
-          {isPlanMode && canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          {canSee(MENU, 'LIST', 'New', myRoles) && isPlanMode && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
           )}
         </Box>
@@ -1034,49 +1048,78 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             const canApprovePlan = isAdmin || isPlanApprover
             const canApproveCompletion = isAdmin || isCompletionApprover
 
-            const itemR = assessmentDetail ? getItemRoles(assessmentDetail) : myRoles
-
             const buttons: React.ReactNode[] = []
+
+            // 계획 모드: draft/rejected → 결재 상신, submitted → 승인/반려
             if (isPlanMode) {
-              if ((status === 'draft' || status === 'rejected') && canSee(MENU, status, '계획 결재 상신', itemR))
-                buttons.push(<Button key="planSubmit" variant="contained" color="info" onClick={handleSubmitForApproval}>{t('riskAssessment.planSubmit', '계획 결재 상신')}</Button>)
-              if (status === 'submitted' && canSee(MENU, 'submitted', '반려', itemR))
-                buttons.push(<Button key="reject" variant="contained" color="warning" onClick={handleReject}>{t('common.reject', '반려')}</Button>)
-              if (status === 'submitted' && canSee(MENU, 'submitted', '계획 결재 승인', itemR))
-                buttons.push(<Button key="planApprove" variant="contained" color="success" onClick={handleApprove}>{t('riskAssessment.planApprove', '계획 결재 승인')}</Button>)
+              if (status === 'draft' || status === 'rejected') {
+                buttons.push(
+                  <Button key="planSubmit" variant="contained" color="info" onClick={handleSubmitForApproval}>
+                    {t('riskAssessment.planSubmit', '계획 결재 상신')}
+                  </Button>
+                )
+              }
+              if (status === 'submitted' && canApprovePlan) {
+                buttons.push(
+                  <Button key="reject" variant="contained" color="warning" onClick={handleReject}>
+                    {t('common.reject', '반려')}
+                  </Button>,
+                  <Button key="planApprove" variant="contained" color="success" onClick={handleApprove}>
+                    {t('riskAssessment.planApprove', '계획 결재 승인')}
+                  </Button>
+                )
+              }
             }
+
+            // 관리 모드: approved → 완료 결재 상신, completion_submitted → 완료 결재 승인/반려
             if (isManagementMode) {
-              if (status === 'approved' && canSee(MENU, 'approved', '저장 (실시 내용)', itemR))
-                buttons.push(<Button key="saveDetails" variant="contained" onClick={handleSaveDetails}>{t('common.save', '저장')}</Button>)
-              if (status === 'approved' && canSee(MENU, 'approved', '완료 결재 상신', itemR))
-                buttons.push(<Button key="completionSubmit" variant="contained" color="info" onClick={handleSubmitForCompletion}>{t('riskAssessment.completionSubmit', '완료 결재 상신')}</Button>)
-              if (status === 'completion_submitted' && canSee(MENU, 'completion_submitted', '반려 (완료)', itemR))
-                buttons.push(<Button key="completionReject" variant="contained" color="warning" onClick={handleCompletionReject}>{t('common.reject', '반려')}</Button>)
-              if (status === 'completion_submitted' && canSee(MENU, 'completion_submitted', '완료 결재 승인', itemR))
-                buttons.push(<Button key="completionApprove" variant="contained" color="success" onClick={handleComplete}>{t('riskAssessment.completionApprove', '완료 결재 승인')}</Button>)
+              if (status === 'approved') {
+                buttons.push(
+                  <Button key="saveDetails" variant="contained" onClick={handleSaveDetails}>
+                    {t('common.save', '저장')}
+                  </Button>,
+                  <Button key="completionSubmit" variant="contained" color="info" onClick={handleSubmitForCompletion}>
+                    {t('riskAssessment.completionSubmit', '완료 결재 상신')}
+                  </Button>
+                )
+              }
+              if (status === 'completion_submitted' && canApproveCompletion) {
+                buttons.push(
+                  <Button key="completionReject" variant="contained" color="warning" onClick={handleCompletionReject}>
+                    {t('common.reject', '반려')}
+                  </Button>,
+                  <Button key="completionApprove" variant="contained" color="success" onClick={handleComplete}>
+                    {t('riskAssessment.completionApprove', '완료 결재 승인')}
+                  </Button>
+                )
+              }
             }
 
             return (
               <>
+                {/* PC — 순서: 목록 / (결재 상신/승인/반려 등) / 수정 / 삭제 */}
                 <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mt: 3, justifyContent: 'flex-end' }}>
                   <Button variant="outlined" onClick={handleBackToList}>{t('common.list')}</Button>
                   {buttons}
-                  {isPlanMode && (status === 'draft' || status === 'rejected') && canSee(MENU, status, '수정', itemR) && (
+                  {canSee(MENU, 'DETAIL', '수정', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'draft' || status === 'rejected') && (
                     <Button variant="contained" onClick={handleEditClick}>{t('common.edit')}</Button>
                   )}
-                  {isPlanMode && (status === 'draft' || status === 'rejected') && canSee(MENU, status, '삭제', itemR) && (
+                  {/* 삭제는 결재 상신 전(draft/rejected)에만 노출 */}
+                  {canSee(MENU, 'DETAIL', '삭제', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'draft' || status === 'rejected') && (
                     <Button variant="contained" color="error" onClick={handleDeleteClick}>{t('common.delete')}</Button>
                   )}
                 </Box>
+                {/* Mobile */}
                 <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3, flexWrap: 'wrap' }}>
                   <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1, minWidth: 0 }}>{t('common.list')}</Button>
                   {buttons.map((btn, i) => (
                     <Box key={i} sx={{ flex: 1, minWidth: 0, '& > button': { width: '100%' } }}>{btn}</Box>
                   ))}
-                  {isPlanMode && (status === 'draft' || status === 'rejected') && canSee(MENU, status, '수정', itemR) && (
+                  {canSee(MENU, 'DETAIL', '수정', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'draft' || status === 'rejected') && (
                     <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1, minWidth: 0 }}>{t('common.edit')}</Button>
                   )}
-                  {isPlanMode && (status === 'draft' || status === 'rejected') && canSee(MENU, status, '삭제', itemR) && (
+                  {/* 삭제는 결재 상신 전(draft/rejected)에만 노출 */}
+                  {canSee(MENU, 'DETAIL', '삭제', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'draft' || status === 'rejected') && (
                     <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1, minWidth: 0 }}>{t('common.delete')}</Button>
                   )}
                 </Box>
@@ -1130,15 +1173,8 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.author')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder={t('riskAssessment.author')}
-                value={formData.authorName || ''}
-                onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                disabled={viewMode === 'create'}
-              />
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2">{formData.authorName || user?.name || user?.username || ''}</Typography>
             </Box>
             <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.department')}
@@ -1189,8 +1225,8 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               {t('riskAssessment.completionApprover', '완료 승인자')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', gap: 0.5, alignItems: 'center' }}>
-              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', gap: 1, alignItems: 'center' }}>
+              <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('riskAssessment.selectCompletionApprover', '완료 승인자 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
@@ -1227,14 +1263,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.author')}</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder={t('riskAssessment.author')}
-              value={formData.authorName || ''}
-              onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-              disabled={viewMode === 'create'}
-            />
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formData.authorName || user?.name || user?.username || ''}</Typography>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.department')}</Typography>
@@ -1308,7 +1337,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center',
             }}
           >
-            {t('common.checklist', '체크리스트')}
+            {t('common.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
           </Typography>
           <Box sx={{ flex: 1, px: 2, py: 1 }}>
             <FormControl fullWidth size="small">
@@ -1328,7 +1357,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
         {/* 체크리스트 - 모바일 */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', p: 2, gap: 1, borderTop: 1, borderColor: 'grey.300' }}>
           <Typography variant="body2" fontWeight="bold" sx={{ bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-            {t('common.checklist', '체크리스트')}
+            {t('common.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
           </Typography>
           <FormControl fullWidth size="small">
             <Select
@@ -1524,6 +1553,19 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           .map((d, gIdx) => ({ d, gIdx }))
           .filter(x => x.d.majorCategory === category || (category === '사무업무' && !x.d.majorCategory))
       : assessmentDetails.map((d, gIdx) => ({ d, gIdx }))
+
+    // 평균위험도 — 개선 전/후 평균(빈도×강도)
+    const beforeScores = filteredItems
+      .map(({ d }) => (d.possibilityGrade && d.resultGrade) ? calculateRiskScore(d.possibilityGrade, d.resultGrade) : null)
+      .filter((v): v is number => v != null)
+    const afterScores = filteredItems
+      .map(({ d }) => (d.improvedPossibilityGrade && d.improvedResultGrade) ? calculateRiskScore(d.improvedPossibilityGrade, d.improvedResultGrade) : null)
+      .filter((v): v is number => v != null)
+    const avg = (arr: number[]) => arr.length === 0 ? null : arr.reduce((s, n) => s + n, 0) / arr.length
+    const beforeAvg = avg(beforeScores)
+    const afterAvg = avg(afterScores)
+    const fmtAvg = (n: number | null) => n == null ? '-' : n.toFixed(2)
+
     return (
     <Box>
       {onFormChange && (
@@ -1543,6 +1585,38 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           </FormControl>
         </Box>
       )}
+
+      {/* 평균위험도 요약 — 개선 전/후 */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+        <Paper variant="outlined" sx={{ border: 1, borderColor: 'grey.400', overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex' }}>
+            <Box sx={{
+              minWidth: 120, px: 2, py: 0.5,
+              bgcolor: 'grey.100', borderRight: 1, borderColor: 'grey.400',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 'bold', fontSize: '0.875rem',
+            }}>평균위험도</Box>
+            <Box sx={{ minWidth: 80 }}>
+              <Box sx={{
+                px: 2, py: 0.25, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.400',
+                textAlign: 'center', fontWeight: 'bold', fontSize: '0.8rem',
+              }}>개선전</Box>
+              <Box sx={{ px: 2, py: 0.5, textAlign: 'center', fontWeight: 'bold' }}>
+                {fmtAvg(beforeAvg)}
+              </Box>
+            </Box>
+            <Box sx={{ minWidth: 80, borderLeft: 1, borderColor: 'grey.400' }}>
+              <Box sx={{
+                px: 2, py: 0.25, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.400',
+                textAlign: 'center', fontWeight: 'bold', fontSize: '0.8rem',
+              }}>개선후</Box>
+              <Box sx={{ px: 2, py: 0.5, textAlign: 'center', fontWeight: 'bold' }}>
+                {fmtAvg(afterAvg)}
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
 
       <TableContainer component={Paper} sx={{ overflowX: 'auto', border: 1, borderColor: 'grey.300' }}>
         <Table size="small" sx={{ minWidth: 1900, '& td, & th': { borderRight: '1px solid', borderColor: 'grey.300', wordBreak: 'keep-all' } }}>
@@ -1635,7 +1709,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {readOnly ? (detail.possibilityGrade ?? '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.possibilityGrade ?? ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(gIdx, 'possibilityGrade', Number(e.target.value))} displayEmpty>
-                            <MenuItem value=""></MenuItem>
+                            <MenuItem value="" disabled>선택</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1646,7 +1720,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {readOnly ? (detail.resultGrade ?? '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.resultGrade ?? ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(gIdx, 'resultGrade', Number(e.target.value))} displayEmpty>
-                            <MenuItem value=""></MenuItem>
+                            <MenuItem value="" disabled>선택</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1673,7 +1747,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {readOnly ? (detail.improvedPossibilityGrade ?? '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.improvedPossibilityGrade ?? ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(gIdx, 'improvedPossibilityGrade', e.target.value ? Number(e.target.value) : undefined)} displayEmpty>
-                            <MenuItem value=""></MenuItem>
+                            <MenuItem value="" disabled>선택</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1684,7 +1758,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {readOnly ? (detail.improvedResultGrade ?? '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.improvedResultGrade ?? ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(gIdx, 'improvedResultGrade', e.target.value ? Number(e.target.value) : undefined)} displayEmpty>
-                            <MenuItem value=""></MenuItem>
+                            <MenuItem value="" disabled>선택</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>

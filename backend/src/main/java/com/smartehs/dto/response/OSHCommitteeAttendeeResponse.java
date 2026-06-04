@@ -24,6 +24,7 @@ public class OSHCommitteeAttendeeResponse {
     private Boolean isExternal;
     private Boolean isSigned;
     private LocalDateTime signatureDate;
+    private String signatureImage;
     private LocalDateTime createdAt;
 
     public static OSHCommitteeAttendeeResponse from(OSHCommitteeAttendee entity) {
@@ -38,6 +39,7 @@ public class OSHCommitteeAttendeeResponse {
                 .isExternal(entity.getIsExternal())
                 .isSigned(entity.getIsSigned())
                 .signatureDate(entity.getSignatureDate())
+                .signatureImage(entity.getSignatureImage())
                 .createdAt(entity.getCreatedAt())
                 .build();
     }

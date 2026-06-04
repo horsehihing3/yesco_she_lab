@@ -9,11 +9,13 @@ import {
   Autocomplete, Chip as MuiChip,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useAlert } from '../../contexts/AlertContext'
 import { msdsApi } from '../../api/chemicalApi'
 import { Msds } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -40,7 +42,9 @@ const MsdsProductLatestTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<Msds | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [page, setPage] = useState(0)
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => { setKeyword(keywordInput); setPage(0) }
 
   const { data, isLoading } = useQuery({
     queryKey: ['msds-product-latest', page],
@@ -58,7 +62,7 @@ const MsdsProductLatestTab: React.FC = () => {
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm) }
   const handleRowClick = (item: Msds) => { setSelectedItem(item); setViewMode('detail') }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm(emptyForm); setViewMode('create') }
+  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm, issueDate: todayStr() }); setViewMode('create') }
   const handleOpenEdit = (item: Msds) => {
     setSelectedItem(item)
     setForm({ itemName: item.itemName || '', itemCode: item.itemCode || '', version: item.version || '', issueDate: item.issueDate || '', language: item.language || '', exportCountries: item.exportCountries || '', fileSize: item.fileSize || '', status: item.status || 'VALID', msdsType: 'PRODUCT', isLatest: true })
@@ -66,7 +70,7 @@ const MsdsProductLatestTab: React.FC = () => {
   }
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: Msds) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
-  const handleReset = () => { setKeyword(''); setPage(0) }
+  const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -165,7 +169,8 @@ const MsdsProductLatestTab: React.FC = () => {
             <Box sx={valBorderSx}><TextField fullWidth size="small" value={form.fileSize} onChange={e => setForm({ ...form, fileSize: e.target.value })} /></Box>
             <Typography sx={labelSx}>{t('chem.msds.status', '상태')}</Typography>
             <Box sx={valSx}>
-              <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+              <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {msdsStatusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getMsdsStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -215,7 +220,8 @@ const MsdsProductLatestTab: React.FC = () => {
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.msds.status', '상태')}</Typography>
-            <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+            <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {msdsStatusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getMsdsStatusLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -238,8 +244,8 @@ const MsdsProductLatestTab: React.FC = () => {
       {/* Search - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('chem.msds.searchProductPlaceholder')} value={keyword}
-            onChange={(e) => { setKeyword(e.target.value); setPage(0) }}
+          <ListSearchBar placeholder={t('chem.msds.searchProductPlaceholder')}
+            value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
             sx={{ minWidth: 250 }} />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
@@ -247,8 +253,8 @@ const MsdsProductLatestTab: React.FC = () => {
       </Box>
       {/* Search - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('chem.msds.searchProductPlaceholder')} value={keyword}
-          onChange={(e) => { setKeyword(e.target.value); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('chem.msds.searchProductPlaceholder')}
+          value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleReset} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>

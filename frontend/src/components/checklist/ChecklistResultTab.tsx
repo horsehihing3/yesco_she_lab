@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
   TextField,
-  InputAdornment,
   Button,
   Table,
   TableBody,
@@ -18,7 +17,7 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
@@ -168,23 +167,7 @@ const ChecklistResultTab: React.FC = () => {
       {/* Filters - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
-            placeholder={t('common.searchByTitle')}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            sx={{ width: 300 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleSearch}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+          <ListSearchBar placeholder={t('common.searchByTitle')} value={searchText} onChange={setSearchText} onSearch={handleSearch} sx={{ width: 300 }} />
           <IconButton onClick={handleReset} size="small">
             <RefreshIcon />
           </IconButton>
@@ -193,22 +176,12 @@ const ChecklistResultTab: React.FC = () => {
 
       {/* Filters - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           placeholder={t('common.searchByTitle')}
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onChange={setSearchText}
+          onSearch={handleSearch}
           fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleSearch}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
         />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" onClick={handleReset} startIcon={<RefreshIcon />} sx={{ flex: 1 }}>

@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
   TextField,
-  InputAdornment,
   Button,
   Table,
   TableBody,
@@ -22,7 +21,7 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -312,23 +311,7 @@ const ChecklistTemplateTab: React.FC = () => {
       {/* Filters - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
-            placeholder={t('common.searchByTitle')}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            sx={{ width: 300 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleSearch}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+          <ListSearchBar placeholder={t('common.searchByTitle')} value={searchText} onChange={setSearchText} onSearch={handleSearch} sx={{ width: 300 }} />
           <IconButton onClick={handleReset} size="small">
             <RefreshIcon />
           </IconButton>
@@ -346,22 +329,12 @@ const ChecklistTemplateTab: React.FC = () => {
 
       {/* Filters - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           placeholder={t('common.searchByTitle')}
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onChange={setSearchText}
+          onSearch={handleSearch}
           fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleSearch}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
         />
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Button variant="outlined" size="small" onClick={handleReset} startIcon={<RefreshIcon />} sx={{ flex: '1 1 calc(50% - 4px)' }}>
@@ -824,7 +797,7 @@ const ChecklistTemplateTab: React.FC = () => {
       {/* Form Actions */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={viewMode === 'edit' ? () => setViewMode('detail') : handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.cancel') : t('common.backToList')}
+          {t('common.cancel', '취소')}
         </Button>
         <Button
           variant="outlined"
@@ -840,7 +813,7 @@ const ChecklistTemplateTab: React.FC = () => {
           disabled={!formTitle.trim() || isProcessing}
           sx={{ flex: { xs: 1, sm: 'none' } }}
         >
-          {viewMode === 'edit' ? t('common.save') : t('common.register')}
+          {t('common.save', '저장')}
         </Button>
       </Box>
     </>

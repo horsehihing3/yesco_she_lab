@@ -12,6 +12,7 @@ import { odOrgApi } from '../../api/occupationalDiseaseApi'
 import type { OdOrg } from '../../types/occupationalDisease.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
@@ -36,7 +37,7 @@ const OdManageTab: React.FC = () => {
   const deleteMut = useMutation({ mutationFn: (id: number) => odOrgApi.remove(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['odOrgs'] }) } })
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, contractEnd: todayStr() }); setOpen(true) }
   const openEdit = (o: OdOrg) => { setEditing(o); setForm(o); setOpen(true) }
   const submit = () => { if (editing) updateMut.mutate({ id: editing.id, e: form }); else createMut.mutate(form) }
 
@@ -120,8 +121,8 @@ const OdManageTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.name}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={!form.name}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

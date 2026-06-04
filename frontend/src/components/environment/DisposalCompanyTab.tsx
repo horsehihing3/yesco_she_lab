@@ -8,8 +8,10 @@ import {
   Grid, Chip,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { useCodeMap } from '../../hooks/useCodeMap'
 import { disposalCompanyApi } from '../../api/environmentApi'
 import { DisposalCompany, DisposalCompanyRequest } from '../../types/environment.types'
@@ -78,6 +80,7 @@ const DisposalCompanyTab: React.FC = () => {
     setFormData({
       rating: ratingCodes[0]?.code || '',
       status: 'ACTIVE',
+      licenseExpiry: todayStr(),
     })
     setViewMode('create')
   }
@@ -140,9 +143,9 @@ const DisposalCompanyTab: React.FC = () => {
   const renderListView = () => (
     <Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <TextField size="small" placeholder={t('waste.company.searchPlaceholder')} value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          sx={{ width: { xs: '100%', md: 250 } }} />
+        <ListSearchBar placeholder={t('waste.company.searchPlaceholder')}
+          value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: { xs: '100%', md: 250 } }}  />
         <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1, display: { xs: 'none', md: 'block' } }} />
@@ -335,7 +338,8 @@ const DisposalCompanyTab: React.FC = () => {
           <Typography sx={labelSx}>{t('waste.company.rating')}</Typography>
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.rating || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, rating: e.target.value })}>
+              <Select value={formData.rating || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, rating: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {ratingCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getRatingLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -343,7 +347,8 @@ const DisposalCompanyTab: React.FC = () => {
           <Typography sx={labelSx}>{t('waste.company.status')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })}>
+              <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="ACTIVE">{t('waste.company.statusActive')}</MenuItem>
                 <MenuItem value="INACTIVE">{t('waste.company.statusInactive')}</MenuItem>
               </Select>
@@ -393,7 +398,8 @@ const DisposalCompanyTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('waste.company.rating')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.rating || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, rating: e.target.value })}>
+            <Select value={formData.rating || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, rating: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {ratingCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getRatingLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -401,7 +407,8 @@ const DisposalCompanyTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('waste.company.status')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })}>
+            <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="ACTIVE">{t('waste.company.statusActive')}</MenuItem>
               <MenuItem value="INACTIVE">{t('waste.company.statusInactive')}</MenuItem>
             </Select>

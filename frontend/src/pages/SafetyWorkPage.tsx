@@ -1456,7 +1456,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setRejectDialogOpen(false)}>{t('common.cancel')}</Button>
+          <Button variant="outlined" onClick={() => setRejectDialogOpen(false)}>{t('common.cancel')}</Button>
           <Button variant="contained" color="error" onClick={handleRejectConfirm} disabled={statusMutation.isPending}>
             {statusMutation.isPending ? <CircularProgress size={20} /> : t('common.reject')}
           </Button>
@@ -1499,7 +1499,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
           <Box component="img" src={photoPreviewUrl} alt="preview" sx={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { setPhotoPreviewOpen(false); if (photoPreviewUrl.startsWith('blob:') && !pendingPhotoUrls.includes(photoPreviewUrl)) URL.revokeObjectURL(photoPreviewUrl); setPhotoPreviewUrl('') }}>
+          <Button variant="outlined" onClick={() => { setPhotoPreviewOpen(false); if (photoPreviewUrl.startsWith('blob:') && !pendingPhotoUrls.includes(photoPreviewUrl)) URL.revokeObjectURL(photoPreviewUrl); setPhotoPreviewUrl('') }}>
             {t('common.close')}
           </Button>
         </DialogActions>

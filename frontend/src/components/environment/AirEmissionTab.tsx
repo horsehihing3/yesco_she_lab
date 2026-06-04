@@ -9,9 +9,11 @@ import {
   Paper, Typography, Pagination, IconButton, FormControl, Select, MenuItem, SelectChangeEvent, Chip,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
@@ -79,6 +81,7 @@ const AirEmissionTab: React.FC = () => {
       pollutant: pollutantCodes[0]?.code || '',
       unit: emissionUnitCodes[0]?.code || '',
       compliance: complianceCodes[0]?.code || '',
+      measurementDate: todayStr(),
     })
     setSelectedManager(null)
     setViewMode('create')
@@ -124,9 +127,9 @@ const AirEmissionTab: React.FC = () => {
   const renderListView = () => (
     <Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <TextField size="small" placeholder={t('environment.searchAirEmission')} value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          sx={{ width: { xs: '100%', md: 250 } }} />
+        <ListSearchBar placeholder={t('environment.searchAirEmission')}
+          value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: { xs: '100%', md: 250 } }}  />
         <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
@@ -272,7 +275,8 @@ const AirEmissionTab: React.FC = () => {
           <Typography sx={labelSx}>{t('environment.pollutant')}</Typography>
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.pollutant || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, pollutant: e.target.value })}>
+              <Select value={formData.pollutant || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, pollutant: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {pollutantCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getPollutantLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -280,7 +284,8 @@ const AirEmissionTab: React.FC = () => {
           <Typography sx={labelSx}>{t('environment.unit')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })}>
+              <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {emissionUnitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getEmissionUnitLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -300,7 +305,8 @@ const AirEmissionTab: React.FC = () => {
           <Typography sx={labelSx}>{t('environment.compliance')}</Typography>
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.compliance || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, compliance: e.target.value })}>
+              <Select value={formData.compliance || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, compliance: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {complianceCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getComplianceLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -331,7 +337,8 @@ const AirEmissionTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('environment.pollutant')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.pollutant || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, pollutant: e.target.value })}>
+            <Select value={formData.pollutant || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, pollutant: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {pollutantCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getPollutantLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -339,7 +346,8 @@ const AirEmissionTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('environment.unit')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })}>
+            <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {emissionUnitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getEmissionUnitLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -355,7 +363,8 @@ const AirEmissionTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('environment.compliance')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.compliance || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, compliance: e.target.value })}>
+            <Select value={formData.compliance || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, compliance: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {complianceCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getComplianceLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>

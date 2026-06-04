@@ -1,0 +1,69 @@
+package com.smartehs.service;
+
+import com.smartehs.exception.ResourceNotFoundException;
+import com.smartehs.mapper.QnaPostCommentMapper;
+import com.smartehs.mapper.UserMapper;
+import com.smartehs.model.QnaPostComment;
+import com.smartehs.model.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class QnaPostCommentService {
+
+    private final QnaPostCommentMapper commentMapper;
+    private final UserMapper userMapper;
+
+    @Transactional(readOnly = true)
+    public List<QnaPostComment> findByQnaId(Long qnaId) {
+        return commentMapper.findByQnaId(qnaId);
+    }
+
+    @Transactional
+    public QnaPostComment create(Long qnaId, QnaPostComment input, String username) {
+        QnaPostComment c = new QnaPostComment();
+        c.setQnaId(qnaId);
+        c.setParentId(input.getParentId());
+        c.setContent(input.getContent());
+
+        if (username != null && !"system".equals(username)) {
+            User u = userMapper.findByUsername(username);
+            if (u != null) {
+                c.setAuthorName(u.getName() != null ? u.getName() : u.getUsername());
+                c.setAuthorDept(u.getDepartment());
+                c.setAuthorEmail(u.getEmail());
+            }
+        }
+        if (c.getAuthorName() == null) c.setAuthorName(input.getAuthorName());
+        if (c.getAuthorDept() == null) c.setAuthorDept(input.getAuthorDept());
+        if (c.getAuthorEmail() == null) c.setAuthorEmail(input.getAuthorEmail());
+
+        c.setDeleted(false);
+        commentMapper.insert(c);
+        return commentMapper.findById(c.getId());
+    }
+
+    @Transactional
+    public QnaPostComment update(Long id, QnaPostComment input) {
+        QnaPostComment existing = commentMapper.findById(id);
+        if (existing == null) throw new ResourceNotFoundException("QnaPostComment", "id", id);
+        existing.setContent(input.getContent());
+        commentMapper.update(existing);
+        return commentMapper.findById(id);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        QnaPostComment existing = commentMapper.findById(id);
+        if (existing == null) throw new ResourceNotFoundException("QnaPostComment", "id", id);
+        if (existing.getParentId() == null) {
+            commentMapper.softDeleteWithChildren(id);
+        } else {
+            commentMapper.softDelete(id);
+        }
+    }
+}

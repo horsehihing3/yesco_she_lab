@@ -6,8 +6,8 @@ import {
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
   FormControl, Checkbox,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
@@ -19,6 +19,7 @@ import { useAlert } from '../../contexts/AlertContext'
 import { accidentClaimApi } from '../../api/accidentClaimApi'
 import { AccidentClaim, AccidentClaimRequest, AccidentClaimDoc } from '../../types/accidentClaim.types'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import useCodeMap from '../../hooks/useCodeMap'
@@ -233,7 +234,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
   const handleAddClick = () => {
     setSelectedItem(null)
-    setFormData({ ...emptyForm })
+    setFormData({ ...emptyForm, workerJoinDate: todayStr(), onsetDate: todayStr(), diagnosisDate: todayStr(), applyDate: todayStr() })
     setViewMode('create')
   }
 
@@ -358,15 +359,13 @@ const OdmAccidentClaimTab: React.FC = () => {
               ))}
             </Select>
           </FormControl>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder="근로자명/직업병명 검색"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={setSearchText}
+            onSearch={handleSearch}
             sx={{ minWidth: 200 }}
           />
-          <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
@@ -388,15 +387,13 @@ const OdmAccidentClaimTab: React.FC = () => {
                 ))}
               </Select>
             </FormControl>
-            <TextField
-              size="small"
+            <ListSearchBar
               placeholder="근로자명/직업병명 검색"
               value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              onChange={setSearchText}
+              onSearch={handleSearch}
               sx={{ flex: 1 }}
             />
-            <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
             <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleAddClick} size="small">
@@ -1024,10 +1021,10 @@ const OdmAccidentClaimTab: React.FC = () => {
       {/* Buttons */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.cancel', '취소') : t('common.backToList', '목록')}
+          {t('common.cancel', '취소')}
         </Button>
         <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.save', '저장') : t('common.register', '등록')}
+          {t('common.save', '저장')}
         </Button>
       </Box>
     </Box>

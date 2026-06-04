@@ -7,7 +7,8 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ScheduleIcon from '@mui/icons-material/Schedule'
 import WarningIcon from '@mui/icons-material/Warning'
@@ -34,6 +35,7 @@ import type { LegalObligation, LegalObligationRequest } from '../../types/legalC
 import StatCard from './StatCard'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
@@ -76,9 +78,12 @@ const LegalObligationTab: React.FC = () => {
   const { data: items = [], isLoading } = useQuery({ queryKey: ['legalObligations'], queryFn: obligationApi.list })
   const { data: stats } = useQuery({ queryKey: ['legalObligationsStats'], queryFn: obligationApi.stats })
 
+  const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const applySearch = () => setSearch(searchInput)
+  const handleReset = () => { setSearchInput(''); setSearch(''); setTypeFilter(''); setStatusFilter('') }
 
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<LegalObligation | null>(null)
@@ -129,7 +134,7 @@ const LegalObligationTab: React.FC = () => {
 
   const overallRate = stats ? (stats.totalCount > 0 ? Math.round(stats.doneCount / stats.totalCount * 100) : 0) : 0
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, nextDueDate: todayStr() }); setOpen(true) }
   const openEdit = (o: LegalObligation) => {
     setEditing(o)
     setForm({
@@ -178,9 +183,8 @@ const LegalObligationTab: React.FC = () => {
 
       {/* Toolbar */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField size="small" fullWidth placeholder="의무명/법령/담당부서 검색..."
-          value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }}
+        <ListSearchBar fullWidth placeholder="의무명/법령/담당부서 검색..."
+          value={searchInput} onChange={setSearchInput} onSearch={applySearch}
         />
         <TextField select size="small" sx={{ minWidth: 150 }} label="유형" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
@@ -190,6 +194,7 @@ const LegalObligationTab: React.FC = () => {
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s.code} value={s.code}>{s.label}</MenuItem>)}
         </TextField>
+        <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap' }}>New</Button>
       </Stack>
 
@@ -331,9 +336,9 @@ const LegalObligationTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.obligationName || createMut.isPending || updateMut.isPending}>
-            {editing ? '수정' : '등록'}
+            저장
           </Button>
         </DialogActions>
       </Dialog>

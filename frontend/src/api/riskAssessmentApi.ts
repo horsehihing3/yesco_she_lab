@@ -21,12 +21,14 @@ export const riskAssessmentApi = {
     status?: string
     page?: number
     size?: number
+    officeOnly?: boolean
   }): Promise<PageResponse<RiskAssessment>> => {
     const searchParams = new URLSearchParams()
     if (params?.site) searchParams.append('site', params.site)
     if (params?.status) searchParams.append('status', params.status)
     if (params?.page !== undefined) searchParams.append('page', params.page.toString())
     if (params?.size !== undefined) searchParams.append('size', params.size.toString())
+    if (params?.officeOnly) searchParams.append('officeOnly', 'true')
 
     const response = await axiosInstance.get<ApiResponse<PageResponse<RiskAssessment>>>(
       `/risk-assessments${searchParams.toString() ? `?${searchParams.toString()}` : ''}`

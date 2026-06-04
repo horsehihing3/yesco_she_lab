@@ -206,7 +206,7 @@ const HospitalSearchModal = ({ open, onClose, onSelect, initialValue }: Hospital
         )}
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose}>{t('common.cancel')}</Button>
+        <Button variant="outlined" onClick={onClose}>{t('common.cancel')}</Button>
         <Button
           variant="contained"
           onClick={handleConfirm}

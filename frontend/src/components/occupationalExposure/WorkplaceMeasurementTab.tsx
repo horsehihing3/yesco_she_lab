@@ -26,8 +26,7 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import RefreshIcon from '@mui/icons-material/Refresh'
-import SearchIcon from '@mui/icons-material/Search'
-import InputAdornment from '@mui/material/InputAdornment'
+import ListSearchBar from '../common/ListSearchBar'
 import { useForm, Controller } from 'react-hook-form'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
@@ -396,20 +395,12 @@ const WorkplaceMeasurementTab: React.FC = () => {
       {/* Filters - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder={t('occupationalExposure.measurement.searchPlaceholder')}
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={setSearchInput}
+            onSearch={handleSearch}
             sx={{ width: 300 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleSearch} edge="end"><SearchIcon /></IconButton>
-                </InputAdornment>
-              ),
-            }}
           />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select value={filterYear} onChange={handleYearChange} displayEmpty>
@@ -430,20 +421,12 @@ const WorkplaceMeasurementTab: React.FC = () => {
 
       {/* Filters - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           fullWidth
           placeholder={t('occupationalExposure.measurement.searchPlaceholder')}
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleSearch} edge="end"><SearchIcon /></IconButton>
-              </InputAdornment>
-            ),
-          }}
+          onChange={setSearchInput}
+          onSearch={handleSearch}
         />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <FormControl size="small" sx={{ flex: 1 }}>
@@ -828,7 +811,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
                     ref={field.ref}
                     size="small"
                     fullWidth
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     {years.map((y) => (
                       <MenuItem key={y} value={y}>{y}</MenuItem>
                     ))}
@@ -855,7 +839,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
                     size="small"
                     fullWidth
                     error={!!fieldState.error}
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     <MenuItem value="FIRST">{halfLabels.FIRST}</MenuItem>
                     <MenuItem value="SECOND">{halfLabels.SECOND}</MenuItem>
                   </Select>
@@ -924,7 +909,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
                     ref={field.ref}
                     size="small"
                     fullWidth
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     {statusCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -948,7 +934,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                     fullWidth
                     displayEmpty
                   >
-                    <MenuItem value=""></MenuItem>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     {(['PASS', 'FAIL', 'PARTIAL'] as OverallMeasurementResult[]).map((r) => (
                       <MenuItem key={r} value={r}>{resultLabels[r]}</MenuItem>
                     ))}
@@ -978,7 +964,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
               {t('occupationalExposure.measurement.measurementYear')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Controller name="measurementYear" control={control} rules={{ required: true }} render={({ field }) => (
-              <Select value={field.value || new Date().getFullYear()} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth>
+              <Select value={field.value || new Date().getFullYear()} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {years.map((y) => (<MenuItem key={y} value={y}>{y}</MenuItem>))}
               </Select>
             )} />
@@ -988,7 +975,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
               {t('occupationalExposure.measurement.measurementHalf')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Controller name="measurementHalf" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
-              <Select value={field.value || 'FIRST'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error}>
+              <Select value={field.value || 'FIRST'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="FIRST">{halfLabels.FIRST}</MenuItem>
                 <MenuItem value="SECOND">{halfLabels.SECOND}</MenuItem>
               </Select>
@@ -1031,7 +1019,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
               {t('occupationalExposure.measurement.status')}
             </Typography>
             <Controller name="status" control={control} render={({ field }) => (
-              <Select value={field.value || 'PLANNED'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth>
+              <Select value={field.value || 'PLANNED'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {(['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'OVERDUE'] as MeasurementStatus[]).map((s) => (
                   <MenuItem key={s} value={s}>{statusLabels[s]}</MenuItem>
                 ))}
@@ -1044,7 +1033,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
             </Typography>
             <Controller name="overallResult" control={control} render={({ field }) => (
               <Select value={field.value || ''} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
-                <MenuItem value=""></MenuItem>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {(['PASS', 'FAIL', 'PARTIAL'] as OverallMeasurementResult[]).map((r) => (
                   <MenuItem key={r} value={r}>{resultLabels[r]}</MenuItem>
                 ))}
@@ -1109,7 +1098,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           onChange={(e) => handleDetailRowChange(idx, 'factorType', e.target.value)}
                           size="small"
                           fullWidth
-                        >
+                         displayEmpty>
+                          <MenuItem value="" disabled>선택</MenuItem>
                           {factorTypeCodes.map((ft) => (
                             <MenuItem key={ft.code} value={ft.code}>{getLocalizedName(ft)}</MenuItem>
                           ))}
@@ -1148,7 +1138,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           fullWidth
                           displayEmpty
                         >
-                          <MenuItem value=""></MenuItem>
+                          <MenuItem value="" disabled>선택</MenuItem>
                           {unitCodes.map((c) => <MenuItem key={c.code} value={c.codeValue || c.code}>{getUnitLabel(c.code)}</MenuItem>)}
                         </Select>
                       </TableCell>
@@ -1166,7 +1156,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           onChange={(e) => handleDetailRowChange(idx, 'resultStatus', e.target.value)}
                           size="small"
                           fullWidth
-                        >
+                         displayEmpty>
+                          <MenuItem value="" disabled>선택</MenuItem>
                           {resultStatusCodes.map((rs) => (
                             <MenuItem key={rs.code} value={rs.code}>{getLocalizedName(rs)}</MenuItem>
                           ))}
@@ -1240,7 +1231,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
                       onChange={(e) => handleDetailRowChange(idx, 'factorType', e.target.value)}
                       size="small"
                       fullWidth
-                    >
+                     displayEmpty>
+                      <MenuItem value="" disabled>선택</MenuItem>
                       {factorTypeCodes.map((ft) => (
                         <MenuItem key={ft.code} value={ft.code}>{getLocalizedName(ft)}</MenuItem>
                       ))}
@@ -1274,7 +1266,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                         fullWidth
                         displayEmpty
                       >
-                        <MenuItem value=""></MenuItem>
+                        <MenuItem value="" disabled>선택</MenuItem>
                         {unitCodes.map((c) => <MenuItem key={c.code} value={c.codeValue || c.code}>{getUnitLabel(c.code)}</MenuItem>)}
                       </Select>
                     </Box>
@@ -1307,7 +1299,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
                         onChange={(e) => handleDetailRowChange(idx, 'resultStatus', e.target.value)}
                         size="small"
                         fullWidth
-                      >
+                       displayEmpty>
+                        <MenuItem value="" disabled>선택</MenuItem>
                         {resultStatusCodes.map((rs) => (
                           <MenuItem key={rs.code} value={rs.code}>{getLocalizedName(rs)}</MenuItem>
                         ))}

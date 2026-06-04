@@ -34,6 +34,11 @@ public class NearMiss {
     private Integer intensity;
     private Integer frequency;
     private String status;
+    // 사고 대응 분류 — 사고/아차사고 등록 시 같이 받는 코드 4종
+    private String emergencyType;   // INCIDENT_RESP_TYPE
+    private String responseStatus;  // INCIDENT_RESP_STATUS — 기존 status 와 별개
+    private Boolean isDrill;        // 구분 (true=훈련)
+    private String severity;        // INCIDENT_RESP_SEVERITY
     private Boolean deleted;
     private Boolean isExist;
     private LocalDateTime createdAt;

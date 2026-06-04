@@ -3,11 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
+  IconButton, CircularProgress,
 } from '@mui/material'
+import ListSearchBar from '../components/common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { incidentResponseApi } from '../api/incidentResponseApi'
 import type { IncidentResponse } from '../types/incidentResponse.types'
 import StatCard from '../components/legalCompliance/StatCard'
@@ -80,34 +81,41 @@ const IncidentResponsePage: React.FC = () => {
     queryFn: incidentResponseApi.stats,
   })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
   const [filterType, setFilterType] = useState('all')
   const [filterStatus, setFilterStatus] = useState('all')
 
-  const [openForm, setOpenForm] = useState(false)
-  const [openDetail, setOpenDetail] = useState(false)
+  // 'list' = 목록 / 'detail' = 상세 / 'form' = 등록·수정
+  const [viewMode, setViewMode] = useState<'list' | 'detail' | 'form'>('list')
   const [editing, setEditing] = useState<IncidentResponse | null>(null)
   const [viewing, setViewing] = useState<IncidentResponse | null>(null)
   const [form, setForm] = useState<Partial<IncidentResponse>>(emptyForm)
+  const [reportedAtOpen, setReportedAtOpen] = useState(false)
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ['incidentResponseList'] })
     qc.invalidateQueries({ queryKey: ['incidentResponseStats'] })
   }
 
+  const backToList = () => { setViewMode('list'); setEditing(null); setViewing(null) }
+
   const createM = useMutation({
     mutationFn: incidentResponseApi.create,
-    onSuccess: () => { invalidate(); setOpenForm(false); showSuccess('등록되었습니다') },
+    onSuccess: () => { invalidate(); backToList(); showSuccess('등록되었습니다') },
     onError: () => showError('등록에 실패했습니다'),
   })
   const updateM = useMutation({
     mutationFn: ({ id, e }: { id: number; e: Partial<IncidentResponse> }) => incidentResponseApi.update(id, e),
-    onSuccess: () => { invalidate(); setOpenForm(false); showSuccess('수정되었습니다') },
+    onSuccess: () => { invalidate(); backToList(); showSuccess('수정되었습니다') },
     onError: () => showError('수정에 실패했습니다'),
   })
   const deleteM = useMutation({
     mutationFn: incidentResponseApi.remove,
-    onSuccess: () => { invalidate(); showSuccess('삭제되었습니다') },
+    onSuccess: () => { invalidate(); backToList(); showSuccess('삭제되었습니다') },
     onError: () => showError('삭제에 실패했습니다'),
   })
 
@@ -129,7 +137,7 @@ const IncidentResponsePage: React.FC = () => {
     const now = new Date()
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
     setForm({ ...emptyForm, reportedAt: now.toISOString().slice(0, 16) })
-    setOpenForm(true)
+    setViewMode('form')
   }
 
   const openEdit = (item: IncidentResponse) => {
@@ -138,7 +146,7 @@ const IncidentResponsePage: React.FC = () => {
       ...item,
       reportedAt: toLocalInputValue(item.reportedAt),
     })
-    setOpenForm(true)
+    setViewMode('form')
   }
 
   const handleSave = async () => {
@@ -158,20 +166,224 @@ const IncidentResponsePage: React.FC = () => {
     if (!editing) return
     if (!(await showConfirm('이 사고 대응 기록을 삭제하시겠습니까?'))) return
     deleteM.mutate(editing.id)
-    setOpenForm(false)
   }
 
   const handleRowClick = (item: IncidentResponse) => {
     setViewing(item)
-    setOpenDetail(true)
+    setViewMode('detail')
   }
 
   const handleEditFromDetail = () => {
     if (!viewing) return
-    setOpenDetail(false)
-    setTimeout(() => openEdit(viewing), 100)
+    openEdit(viewing)
   }
 
+  // ============== FORM VIEW (등록·수정) ==============
+  if (viewMode === 'form') {
+    return (
+      <Box>
+        <FormTable>
+          <FormRow>
+            <FormLabel required>제목</FormLabel>
+            <FormCell>
+              <TextField fullWidth size="small" value={form.title || ''}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="예: 태풍 접근에 따른 비상 대비" />
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel required>비상 유형</FormLabel>
+            <FormCell borderRight>
+              <TextField select fullWidth size="small" value={form.incidentType || ''}
+                SelectProps={{ displayEmpty: true }}
+                onChange={(e) => setForm({ ...form, incidentType: e.target.value })}>
+                <MenuItem value="">선택</MenuItem>
+                {TYPE_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
+              </TextField>
+            </FormCell>
+            <FormLabel required>상태</FormLabel>
+            <FormCell>
+              <TextField select fullWidth size="small" value={form.status || ''}
+                SelectProps={{ displayEmpty: true }}
+                onChange={(e) => setForm({ ...form, status: e.target.value })}>
+                <MenuItem value="">선택</MenuItem>
+                {STATUS_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
+              </TextField>
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel required>발생 장소</FormLabel>
+            <FormCell>
+              <TextField fullWidth size="small" value={form.location || ''}
+                onChange={(e) => setForm({ ...form, location: e.target.value })}
+                placeholder="예: 공정동 2층 배관실" />
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel required>보고 일시</FormLabel>
+            <FormCell borderRight>
+              <DateTimePicker
+                value={form.reportedAt ? new Date(form.reportedAt) : null}
+                open={reportedAtOpen}
+                onOpen={() => setReportedAtOpen(true)}
+                onClose={() => setReportedAtOpen(false)}
+                onChange={(v) => {
+                  if (v && !isNaN(v.getTime())) {
+                    const y = v.getFullYear()
+                    const m = String(v.getMonth() + 1).padStart(2, '0')
+                    const d = String(v.getDate()).padStart(2, '0')
+                    const hh = String(v.getHours()).padStart(2, '0')
+                    const mm = String(v.getMinutes()).padStart(2, '0')
+                    setForm({ ...form, reportedAt: `${y}-${m}-${d}T${hh}:${mm}` })
+                  } else {
+                    setForm({ ...form, reportedAt: '' })
+                  }
+                }}
+                ampm={false}
+                format="yyyy-MM-dd HH:mm"
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    size: 'small',
+                    InputLabelProps: { shrink: true },
+                    onClick: () => setReportedAtOpen(true),
+                    sx: { '& input': { cursor: 'pointer' } },
+                  },
+                  field: { clearable: true } as any,
+                  openPickerButton: { onClick: () => setReportedAtOpen(true) },
+                }}
+              />
+            </FormCell>
+            <FormLabel>구분</FormLabel>
+            <FormCell>
+              <TextField select fullWidth size="small" value={form.isDrill ? 'true' : 'false'}
+                SelectProps={{ displayEmpty: true }}
+                onChange={(e) => setForm({ ...form, isDrill: e.target.value === 'true' })}>
+                <MenuItem value="false">실제 사고</MenuItem>
+                <MenuItem value="true">훈련</MenuItem>
+              </TextField>
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>심각도</FormLabel>
+            <FormCell borderRight>
+              <TextField select fullWidth size="small" value={form.severity || 'MODERATE'}
+                SelectProps={{ displayEmpty: true }}
+                onChange={(e) => setForm({ ...form, severity: e.target.value })}>
+                <MenuItem value="">선택</MenuItem>
+                {SEVERITY_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
+              </TextField>
+            </FormCell>
+            <FormLabel>보고자·담당자</FormLabel>
+            <FormCell>
+              <TextField fullWidth size="small" value={form.reporter || ''}
+                onChange={(e) => setForm({ ...form, reporter: e.target.value })}
+                placeholder="예: 안전관리팀 정차장" />
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>사고 경위·내용</FormLabel>
+            <FormCell>
+              <TextField fullWidth size="small" multiline minRows={3}
+                value={form.description || ''}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                placeholder="발생 경위·대응 내용을 기록하세요" />
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>대응 조치</FormLabel>
+            <FormCell>
+              <TextField fullWidth size="small" multiline minRows={3}
+                value={form.actionTaken || ''}
+                onChange={(e) => setForm({ ...form, actionTaken: e.target.value })}
+                placeholder="실시한 대응 조치 (작업중지·대피·119신고 등)" />
+            </FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>인명·재산 피해</FormLabel>
+            <FormCell>
+              <TextField fullWidth size="small" value={form.casualtyInfo || ''}
+                onChange={(e) => setForm({ ...form, casualtyInfo: e.target.value })}
+                placeholder="없음 / 경상 1명 / 사망 1명 등" />
+            </FormCell>
+          </FormRow>
+        </FormTable>
+
+        <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {editing && (
+            <Button color="error" variant="outlined" onClick={handleDelete}
+              sx={{ flex: { xs: 1, md: 'none' } }}>삭제</Button>
+          )}
+          <Button variant="outlined" onClick={backToList}
+            sx={{ flex: { xs: 1, md: 'none' } }}>취소</Button>
+          <Button variant="contained" onClick={handleSave}
+            disabled={createM.isPending || updateM.isPending}
+            sx={{ flex: { xs: 1, md: 'none' } }}>저장</Button>
+        </Box>
+      </Box>
+    )
+  }
+
+  // ============== DETAIL VIEW ==============
+  if (viewMode === 'detail' && viewing) {
+    return (
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+          <Box>
+            <Typography variant="h6" fontWeight="bold">{viewing.title}</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: 'monospace' }}>
+              {viewing.responseId}
+            </Typography>
+          </Box>
+        </Box>
+        <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+          <Chip size="small" label={STATUS_LABEL[viewing.status] || viewing.status} color={STATUS_COLOR[viewing.status] || 'default'} />
+          {viewing.isDrill && <Chip size="small" label="훈련" color="secondary" />}
+          {viewing.severity && (
+            <Chip size="small" label={SEVERITY_LABEL[viewing.severity] || viewing.severity}
+              color={SEVERITY_COLOR[viewing.severity] || 'default'} variant="outlined" />
+          )}
+        </Stack>
+        <FormTable>
+          <FormRow>
+            <FormLabel>비상 유형</FormLabel>
+            <FormCell borderRight>{TYPE_LABEL[viewing.incidentType] || viewing.incidentType}</FormCell>
+            <FormLabel>발생 장소</FormLabel>
+            <FormCell>{viewing.location}</FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>보고 일시</FormLabel>
+            <FormCell borderRight sx={{ fontFamily: 'monospace' }}>{fmtDateTime(viewing.reportedAt)}</FormCell>
+            <FormLabel>보고자</FormLabel>
+            <FormCell>{viewing.reporter || '-'}</FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>사고 경위</FormLabel>
+            <FormCell sx={{ whiteSpace: 'pre-wrap' }}>{viewing.description || '-'}</FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>대응 조치</FormLabel>
+            <FormCell sx={{ whiteSpace: 'pre-wrap' }}>{viewing.actionTaken || '-'}</FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>인명·재산</FormLabel>
+            <FormCell>{viewing.casualtyInfo || '-'}</FormCell>
+          </FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          <Button variant="outlined" onClick={backToList}
+            sx={{ flex: { xs: '1 1 calc(33% - 4px)', md: 'none' } }}>목록</Button>
+          <Button variant="contained" onClick={handleEditFromDetail}
+            sx={{ flex: { xs: '1 1 calc(33% - 4px)', md: 'none' } }}>수정</Button>
+          <Button variant="contained" color="error" onClick={async () => {
+            if (await showConfirm('이 사고 대응 기록을 삭제하시겠습니까?')) deleteM.mutate(viewing.id)
+          }} sx={{ flex: { xs: '1 1 calc(33% - 4px)', md: 'none' } }}>삭제</Button>
+        </Box>
+      </Box>
+    )
+  }
+
+  // ============== LIST VIEW ==============
   return (
     <Box>
       {/* KPI 5장 */}
@@ -183,30 +395,51 @@ const IncidentResponsePage: React.FC = () => {
         <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.total ?? 0}      label="전체" sub="누적" /></Grid>
       </Grid>
 
-      {/* 검색·필터 */}
-      <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems="center">
-          <TextField
-            size="small" placeholder="제목·발생장소·번호 검색"
-            value={search} onChange={(e) => setSearch(e.target.value)}
-            sx={{ flex: 1, minWidth: 200 }}
-          />
-          <TextField select size="small" label="비상 유형"
-            value={filterType} onChange={(e) => setFilterType(e.target.value)}
-            sx={{ minWidth: 140 }}
-          >
-            <MenuItem value="all">전체</MenuItem>
-            {TYPE_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
-          </TextField>
-          <TextField select size="small" label="상태"
-            value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
-            sx={{ minWidth: 120 }}
-          >
-            <MenuItem value="all">전체</MenuItem>
-            {STATUS_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
-          </TextField>
-        </Stack>
-      </Paper>
+      {/* ─── 데스크탑(md+) 헤더 ─── */}
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
+        <ListSearchBar sx={{ width: 320 }} placeholder="제목·발생장소·번호 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <TextField select size="small" sx={{ width: 160 }}
+          SelectProps={{ displayEmpty: true }}
+          value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+          <MenuItem value="all">비상 유형 전체</MenuItem>
+          {TYPE_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
+        </TextField>
+        <TextField select size="small" sx={{ width: 140 }}
+          SelectProps={{ displayEmpty: true }}
+          value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+          <MenuItem value="all">상태 전체</MenuItem>
+          {STATUS_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
+        </TextField>
+        <IconButton size="small" onClick={invalidate}><RefreshIcon /></IconButton>
+        <Box sx={{ flex: 1 }} />
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}
+          sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+      </Box>
+
+      {/* ─── 모바일(xs/sm) 헤더 ─── */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <TextField size="small" fullWidth placeholder="제목·발생장소·번호 검색..."
+            value={search} onChange={(e) => setSearch(e.target.value)} />
+          <IconButton size="small" onClick={invalidate}
+            sx={{ border: 1, borderColor: 'divider', borderRadius: 1, flexShrink: 0 }}>
+            <RefreshIcon fontSize="small" />
+          </IconButton>
+        </Box>
+        <TextField select size="small" fullWidth
+          SelectProps={{ displayEmpty: true }}
+          value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+          <MenuItem value="all">비상 유형 전체</MenuItem>
+          {TYPE_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
+        </TextField>
+        <TextField select size="small" fullWidth
+          SelectProps={{ displayEmpty: true }}
+          value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+          <MenuItem value="all">상태 전체</MenuItem>
+          {STATUS_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
+        </TextField>
+        <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+      </Box>
 
       {/* 목록 테이블 */}
       <Paper variant="outlined" sx={{ mb: 2 }}>
@@ -224,13 +457,12 @@ const IncidentResponsePage: React.FC = () => {
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 90 }}>심각도</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 90 }}>상태</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 140 }}>보고 일시</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', width: 100 }}>작업</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filtered.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center" sx={{ py: 6, color: 'text.disabled' }}>
+                    <TableCell colSpan={7} align="center" sx={{ py: 6, color: 'text.disabled' }}>
                       검색 결과가 없습니다
                     </TableCell>
                   </TableRow>
@@ -260,12 +492,6 @@ const IncidentResponsePage: React.FC = () => {
                     <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem', color: 'text.secondary' }}>
                       {fmtDateTime(item.reportedAt)}
                     </TableCell>
-                    <TableCell align="center" sx={{ whiteSpace: 'nowrap', px: 0.5 }} onClick={(e) => e.stopPropagation()}>
-                      <IconButton size="small" onClick={() => openEdit(item)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => {
-                        if (await showConfirm('이 항목을 삭제하시겠습니까?')) deleteM.mutate(item.id)
-                      }}><DeleteIcon fontSize="inherit" /></IconButton>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -274,178 +500,6 @@ const IncidentResponsePage: React.FC = () => {
         )}
       </Paper>
 
-      {/* New 버튼 우하단 — 모바일에서는 풀폭 */}
-      <Stack direction="row" justifyContent={{ xs: 'stretch', md: 'flex-end' }} sx={{ mb: 1 }}>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ width: { xs: '100%', md: 'auto' } }}>
-          신규 등록
-        </Button>
-      </Stack>
-
-      {/* ===== 등록·수정 Dialog ===== */}
-      <Dialog open={openForm} onClose={() => setOpenForm(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editing ? `사고 대응 수정 — ${editing.responseId}` : '신규 사고 대응'}</DialogTitle>
-        <DialogContent dividers>
-          <FormTable>
-            <FormRow>
-              <FormLabel required>제목</FormLabel>
-              <FormCell>
-                <TextField fullWidth size="small" value={form.title || ''}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="예: 태풍 접근에 따른 비상 대비" />
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel required>비상 유형</FormLabel>
-              <FormCell borderRight>
-                <TextField select fullWidth size="small" value={form.incidentType || ''}
-                  onChange={(e) => setForm({ ...form, incidentType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
-                  {TYPE_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
-                </TextField>
-              </FormCell>
-              <FormLabel required>상태</FormLabel>
-              <FormCell>
-                <TextField select fullWidth size="small" value={form.status || ''}
-                  onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
-                  {STATUS_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
-                </TextField>
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel required>발생 장소</FormLabel>
-              <FormCell>
-                <TextField fullWidth size="small" value={form.location || ''}
-                  onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  placeholder="예: 공정동 2층 배관실" />
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel required>보고 일시</FormLabel>
-              <FormCell borderRight>
-                <TextField type="datetime-local" fullWidth size="small"
-                  value={form.reportedAt ? form.reportedAt.substring(0, 16) : ''}
-                  onChange={(e) => setForm({ ...form, reportedAt: e.target.value })}
-                  InputLabelProps={{ shrink: true }} />
-              </FormCell>
-              <FormLabel>구분</FormLabel>
-              <FormCell>
-                <TextField select fullWidth size="small" value={form.isDrill ? 'true' : 'false'}
-                  onChange={(e) => setForm({ ...form, isDrill: e.target.value === 'true' })}>
-                  <MenuItem value="">선택</MenuItem>
-                  <MenuItem value="false">실제 사고</MenuItem>
-                  <MenuItem value="true">훈련</MenuItem>
-                </TextField>
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>심각도</FormLabel>
-              <FormCell borderRight>
-                <TextField select fullWidth size="small" value={form.severity || 'MODERATE'}
-                  onChange={(e) => setForm({ ...form, severity: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
-                  {SEVERITY_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
-                </TextField>
-              </FormCell>
-              <FormLabel>보고자·담당자</FormLabel>
-              <FormCell>
-                <TextField fullWidth size="small" value={form.reporter || ''}
-                  onChange={(e) => setForm({ ...form, reporter: e.target.value })}
-                  placeholder="예: 안전관리팀 정차장" />
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>사고 경위·내용</FormLabel>
-              <FormCell>
-                <TextField fullWidth size="small" multiline minRows={3}
-                  value={form.description || ''}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="발생 경위·대응 내용을 기록하세요" />
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>대응 조치</FormLabel>
-              <FormCell>
-                <TextField fullWidth size="small" multiline minRows={3}
-                  value={form.actionTaken || ''}
-                  onChange={(e) => setForm({ ...form, actionTaken: e.target.value })}
-                  placeholder="실시한 대응 조치 (작업중지·대피·119신고 등)" />
-              </FormCell>
-            </FormRow>
-            <FormRow last>
-              <FormLabel>인명·재산 피해</FormLabel>
-              <FormCell>
-                <TextField fullWidth size="small" value={form.casualtyInfo || ''}
-                  onChange={(e) => setForm({ ...form, casualtyInfo: e.target.value })}
-                  placeholder="없음 / 경상 1명 / 사망 1명 등" />
-              </FormCell>
-            </FormRow>
-          </FormTable>
-        </DialogContent>
-        <DialogActions>
-          {editing && <Button color="error" onClick={handleDelete}>삭제</Button>}
-          <Box sx={{ flex: 1 }} />
-          <Button onClick={() => setOpenForm(false)}>취소</Button>
-          <Button variant="contained" onClick={handleSave}
-            disabled={createM.isPending || updateM.isPending}>
-            저장
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* ===== 상세 Dialog ===== */}
-      <Dialog open={openDetail} onClose={() => setOpenDetail(false)} maxWidth="md" fullWidth>
-        <DialogTitle>
-          {viewing?.title}
-          <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontFamily: 'monospace' }}>
-            {viewing?.responseId}
-          </Typography>
-        </DialogTitle>
-        <DialogContent dividers>
-          {viewing && (
-            <>
-              <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                <Chip size="small" label={STATUS_LABEL[viewing.status] || viewing.status} color={STATUS_COLOR[viewing.status] || 'default'} />
-                {viewing.isDrill && <Chip size="small" label="훈련" color="secondary" />}
-                {viewing.severity && (
-                  <Chip size="small" label={SEVERITY_LABEL[viewing.severity] || viewing.severity}
-                    color={SEVERITY_COLOR[viewing.severity] || 'default'} variant="outlined" />
-                )}
-              </Stack>
-              <FormTable>
-                <FormRow>
-                  <FormLabel>비상 유형</FormLabel>
-                  <FormCell borderRight>{TYPE_LABEL[viewing.incidentType] || viewing.incidentType}</FormCell>
-                  <FormLabel>발생 장소</FormLabel>
-                  <FormCell>{viewing.location}</FormCell>
-                </FormRow>
-                <FormRow>
-                  <FormLabel>보고 일시</FormLabel>
-                  <FormCell borderRight sx={{ fontFamily: 'monospace' }}>{fmtDateTime(viewing.reportedAt)}</FormCell>
-                  <FormLabel>보고자</FormLabel>
-                  <FormCell>{viewing.reporter || '-'}</FormCell>
-                </FormRow>
-                <FormRow>
-                  <FormLabel>사고 경위</FormLabel>
-                  <FormCell sx={{ whiteSpace: 'pre-wrap' }}>{viewing.description || '-'}</FormCell>
-                </FormRow>
-                <FormRow>
-                  <FormLabel>대응 조치</FormLabel>
-                  <FormCell sx={{ whiteSpace: 'pre-wrap' }}>{viewing.actionTaken || '-'}</FormCell>
-                </FormRow>
-                <FormRow last>
-                  <FormLabel>인명·재산</FormLabel>
-                  <FormCell>{viewing.casualtyInfo || '-'}</FormCell>
-                </FormRow>
-              </FormTable>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDetail(false)}>닫기</Button>
-          <Button variant="contained" onClick={handleEditFromDetail}>수정</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   )
 }

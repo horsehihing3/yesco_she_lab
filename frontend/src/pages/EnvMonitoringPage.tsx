@@ -14,6 +14,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 import DatePickerField from '../components/common/DatePickerField'
+import { todayStr } from '../utils/dateDefaults'
 import NumberField from '../components/common/NumberField'
 import { useAlert } from '../contexts/AlertContext'
 import { envMonitoringApi } from '../api/envMonitoringApi'
@@ -130,7 +131,7 @@ const EnvMonitoringPage: React.FC = () => {
 
   const handleOpenCreate = () => {
     setSelectedItem(null)
-    setForm({ ...EMPTY_FORM })
+    setForm({ ...EMPTY_FORM, measurementDate: todayStr() })
     setViewMode('create')
   }
 
@@ -318,7 +319,8 @@ const EnvMonitoringPage: React.FC = () => {
                 <Select
                   value={form.status || 'NORMAL'}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
-                >
+                 displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   {statusCodes.map((c) => (
                     <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>
                   ))}
@@ -374,7 +376,8 @@ const EnvMonitoringPage: React.FC = () => {
                 <Select
                   value={form.exceedYn ? 'true' : 'false'}
                   onChange={(e) => setForm({ ...form, exceedYn: e.target.value === 'true' })}
-                >
+                 displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   <MenuItem value="false">N</MenuItem>
                   <MenuItem value="true">Y</MenuItem>
                 </Select>
@@ -441,7 +444,8 @@ const EnvMonitoringPage: React.FC = () => {
               {t('envMon.status')}
             </Typography>
             <FormControl fullWidth size="small">
-              <Select value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+              <Select value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {statusCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -491,7 +495,8 @@ const EnvMonitoringPage: React.FC = () => {
               {t('envMon.exceedYn')}
             </Typography>
             <FormControl fullWidth size="small">
-              <Select value={form.exceedYn ? 'true' : 'false'} onChange={(e) => setForm({ ...form, exceedYn: e.target.value === 'true' })}>
+              <Select value={form.exceedYn ? 'true' : 'false'} onChange={(e) => setForm({ ...form, exceedYn: e.target.value === 'true' })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="false">{t('envMon.exceedYn')}: N</MenuItem>
                 <MenuItem value="true">{t('envMon.exceedYn')}: Y</MenuItem>
               </Select>

@@ -38,7 +38,7 @@
              WHERE c.template_id = t.id) AS item_count
         FROM tb_checklist_template t
         WHERE t.is_active = 1 AND (t.is_private = 0 OR t.is_private IS NULL)
-        ORDER BY t.sort_order
+        ORDER BY t.created_at DESC, t.id DESC
     </select>
 
     <insert id="insertTemplateWithOwner" parameterType="com.smartehs.model.ChecklistTemplate" useGeneratedKeys="true" keyProperty="id">

@@ -561,7 +561,8 @@ const MyHealthCheckupPage: React.FC = () => {
             </Typography>
             <Box sx={formValueSx}>
               <Controller name="checkupYear" control={control} rules={{ required: true }} render={({ field }) => (
-                <Select value={field.value || new Date().getFullYear()} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth>
+                <Select value={field.value || new Date().getFullYear()} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   {years.map((y) => (<MenuItem key={y} value={y}>{y}</MenuItem>))}
                 </Select>
               )} />
@@ -572,7 +573,8 @@ const MyHealthCheckupPage: React.FC = () => {
             </Typography>
             <Box sx={{ ...formValueSx, borderRight: 0 }}>
               <Controller name="checkupType" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
-                <Select value={field.value || 'GENERAL'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error}>
+                <Select value={field.value || 'GENERAL'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error} displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   {checkupTypeCodes.map((item) => (
                     <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                   ))}
@@ -587,7 +589,8 @@ const MyHealthCheckupPage: React.FC = () => {
             </Typography>
             <Box sx={formValueSx}>
               <Controller name="checkupStatus" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
-                <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error}>
+                <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error} displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   {checkupStatusCodes.map((item) => (
                     <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                   ))}
@@ -598,7 +601,7 @@ const MyHealthCheckupPage: React.FC = () => {
             <Box sx={{ ...formValueSx, borderRight: 0 }}>
               <Controller name="overallResult" control={control} render={({ field }) => (
                 <Select {...field} size="small" fullWidth displayEmpty>
-                  <MenuItem value=""></MenuItem>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   {overallResultCodes.map((item) => (
                     <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                   ))}
@@ -699,7 +702,8 @@ const MyHealthCheckupPage: React.FC = () => {
               {t('healthCheckup.checkupYear')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Controller name="checkupYear" control={control} rules={{ required: true }} render={({ field }) => (
-              <Select value={field.value || new Date().getFullYear()} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth>
+              <Select value={field.value || new Date().getFullYear()} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {years.map((y) => (<MenuItem key={y} value={y}>{y}</MenuItem>))}
               </Select>
             )} />
@@ -709,7 +713,8 @@ const MyHealthCheckupPage: React.FC = () => {
               {t('healthCheckup.checkupType')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Controller name="checkupType" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
-              <Select value={field.value || 'GENERAL'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error}>
+              <Select value={field.value || 'GENERAL'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {checkupTypeCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}
@@ -721,7 +726,8 @@ const MyHealthCheckupPage: React.FC = () => {
               {t('healthCheckup.checkupStatus')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Controller name="checkupStatus" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
-              <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error}>
+              <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {checkupStatusCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}
@@ -732,7 +738,7 @@ const MyHealthCheckupPage: React.FC = () => {
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('healthCheckup.overallResult')}</Typography>
             <Controller name="overallResult" control={control} render={({ field }) => (
               <Select {...field} size="small" fullWidth displayEmpty>
-                <MenuItem value=""></MenuItem>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {overallResultCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}
@@ -850,7 +856,8 @@ const MyHealthCheckupPage: React.FC = () => {
                             <TextField value={row.referenceRange} onChange={(e) => handleDetailRowChange(idx, 'referenceRange', e.target.value)} size="small" fullWidth placeholder={t('healthCheckup.referenceRange')} />
                           </TableCell>
                           <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
-                            <Select value={row.resultStatus || 'normal'} onChange={(e) => handleDetailRowChange(idx, 'resultStatus', e.target.value)} size="small" fullWidth>
+                            <Select value={row.resultStatus || 'normal'} onChange={(e) => handleDetailRowChange(idx, 'resultStatus', e.target.value)} size="small" fullWidth displayEmpty>
+                              <MenuItem value="" disabled>선택</MenuItem>
                               <MenuItem value="normal">{t('healthCheckup.resultStatusLabels.normal')}</MenuItem>
                               <MenuItem value="caution">{t('healthCheckup.resultStatusLabels.caution')}</MenuItem>
                               <MenuItem value="abnormal">{t('healthCheckup.resultStatusLabels.abnormal')}</MenuItem>

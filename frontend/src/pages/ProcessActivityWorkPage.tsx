@@ -5,6 +5,7 @@ import {
   Box, Paper, Typography, Button, TextField, IconButton, CircularProgress, Alert,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from '@mui/material'
+import ListSearchBar from '../components/common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
@@ -59,7 +60,9 @@ const ProcessActivityWorkPage: React.FC = () => {
   const [evaluatorModalOpen, setEvaluatorModalOpen] = useState(false)
   const [memberModalOpen, setMemberModalOpen] = useState(false)
   const [deptModalOpen, setDeptModalOpen] = useState(false)
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => setKeyword(keywordInput)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -309,9 +312,7 @@ const ProcessActivityWorkPage: React.FC = () => {
         {/* Search / Action bar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('common.searchByTitle', '제목으로 검색...')} value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              sx={{ minWidth: 250 }} />
+            <ListSearchBar placeholder={t('common.searchByTitle', '제목으로 검색...')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
             <IconButton onClick={() => setKeyword('')} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
@@ -325,8 +326,7 @@ const ProcessActivityWorkPage: React.FC = () => {
         </Box>
         {/* Search / Action bar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('common.searchByTitle', '제목으로 검색...')} value={keyword}
-            onChange={(e) => setKeyword(e.target.value)} />
+          <ListSearchBar fullWidth placeholder={t('common.searchByTitle', '제목으로 검색...')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={() => setKeyword('')} sx={{ flex: 1 }}>
               {t('common.reset', '초기화')}

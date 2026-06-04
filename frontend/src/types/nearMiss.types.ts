@@ -52,6 +52,11 @@ export interface NearMiss {
   intensity?: number
   frequency?: number
   status: NearMissStatus
+  // 사고 대응 분류 — 사고/아차사고 등록 시 같이 받는 코드 4종
+  emergencyType?: string   // INCIDENT_RESP_TYPE
+  responseStatus?: string  // INCIDENT_RESP_STATUS
+  isDrill?: boolean
+  severity?: string        // INCIDENT_RESP_SEVERITY
   createdAt: string
   modifiedAt: string
   actions?: NearMissAction[]
@@ -80,5 +85,9 @@ export interface NearMissRequest {
   intensity?: number
   frequency?: number
   status?: NearMissStatus
+  emergencyType?: string
+  responseStatus?: string
+  isDrill?: boolean
+  severity?: string
   actions?: NearMissActionRequest[]
 }

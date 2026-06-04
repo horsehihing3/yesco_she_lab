@@ -17,6 +17,7 @@ import {
 import { ApiResponse } from '../../../types/common.types'
 import NumberField from '../../common/NumberField'
 import DatePickerField from '../../common/DatePickerField'
+import { todayStr } from '../../../utils/dateDefaults'
 import LoadingOverlay from '../../common/LoadingOverlay'
 import DepartmentSelectModal from '../../common/DepartmentSelectModal'
 import useCodeMap from '../../../hooks/useCodeMap'
@@ -149,6 +150,18 @@ const EhsBudgetExpenseTab: React.FC = () => {
     enabled: viewMode === 'list',
   })
 
+  // 등록/수정 폼에서 선택한 분류의 예산/사용 금액 요약용
+  const { data: formYearPlans = [] } = useQuery({
+    queryKey: ['ehsBudgetPlans-byYear', formData.budgetYear],
+    queryFn: () => fetchPlansByYear(formData.budgetYear),
+    enabled: viewMode === 'create' || viewMode === 'edit',
+  })
+  const { data: formYearExpenses = [] } = useQuery({
+    queryKey: ['ehsBudgetExpenses-byYear', formData.budgetYear],
+    queryFn: () => fetchExpensesByYear(formData.budgetYear),
+    enabled: viewMode === 'create' || viewMode === 'edit',
+  })
+
   const { data: detail, isLoading: detailLoading } = useQuery({
     queryKey: ['ehsBudgetExpenseDetail', selectedItem?.id],
     queryFn: () => fetchExpenseDetail(selectedItem!.id),
@@ -203,7 +216,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
 
   const handleAddClick = () => {
     setSelectedItem(null)
-    setFormData({ ...emptyForm, budgetYear: year, writer: currentWriter })
+    setFormData({ ...emptyForm, budgetYear: year, writer: currentWriter, expenseDate: todayStr() })
     setViewMode('create')
   }
 
@@ -258,9 +271,15 @@ const EhsBudgetExpenseTab: React.FC = () => {
 
   const filteredItems = categoryFilter ? items.filter(i => i.category === categoryFilter) : items
 
-  // 분류별 예산 총합 집계 (분류 코드에 정의된 모든 항목을 카드로 노출, 데이터 없으면 0)
+  // 분류별 사용금액 집계
   const sumByCategory: Record<string, number> = items.reduce((acc, i) => {
     if (i.category) acc[i.category] = (acc[i.category] || 0) + (i.amount || 0)
+    return acc
+  }, {} as Record<string, number>)
+
+  // 분류별 예산수립 금액 집계 — 같은 연도 plan 들 합산
+  const planByCategory: Record<string, number> = plans.reduce((acc, p) => {
+    if (p.category) acc[p.category] = (acc[p.category] || 0) + (p.planAmount || 0)
     return acc
   }, {} as Record<string, number>)
 
@@ -294,20 +313,42 @@ const EhsBudgetExpenseTab: React.FC = () => {
           </Grid>
         </Grid>
 
-        {/* 분류별 예산 총합 카드 — 코드에 정의된 모든 분류 노출, 분류별 borderLeft 색상 */}
+        {/* 분류별 카드 — 예산수립 금액 / 사용금액 / 잔여 노출, 분류별 borderLeft 색상 */}
         <Grid container spacing={1.5} sx={{ mb: 2 }}>
           {categoryCodes.map((c) => {
-            const sum = sumByCategory[c.code] || 0
+            const planned = planByCategory[c.code] || 0
+            const used = sumByCategory[c.code] || 0
+            const remaining = planned - used
+            const overspent = remaining < 0
             const borderColor = CATEGORY_BORDER_COLORS[c.code] || '#a3a3a3'
             return (
               <Grid item xs={6} sm={4} md={3} lg={1.5} key={c.code}>
-                <Paper sx={{ p: 1.5, borderLeft: 4, borderColor }}>
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <Paper sx={{ p: 1.25, borderLeft: 4, borderColor }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600 }}>
                     {getCategoryLabel(c.code) || c.code}
                   </Typography>
-                  <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.25 }}>
-                    {formatNumber(sum)}
-                  </Typography>
+                  <Box sx={{ mt: 0.5, display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                      <Typography variant="caption" color="text.secondary">예산</Typography>
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: '0.85rem' }}>
+                        {formatNumber(planned)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                      <Typography variant="caption" color="text.secondary">사용</Typography>
+                      <Typography variant="body2" fontWeight="bold" color="#22c55e" sx={{ fontSize: '0.85rem' }}>
+                        {formatNumber(used)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderTop: 1, borderColor: 'grey.200', pt: 0.25, mt: 0.25 }}>
+                      <Typography variant="caption" color="text.secondary">잔여</Typography>
+                      <Typography variant="body2" fontWeight="bold"
+                        color={overspent ? 'error.main' : 'text.primary'}
+                        sx={{ fontSize: '0.85rem' }}>
+                        {formatNumber(remaining)}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Paper>
               </Grid>
             )
@@ -326,7 +367,8 @@ const EhsBudgetExpenseTab: React.FC = () => {
           </FormControl>
           <Box sx={{ flex: 1 }} />
           <FormControl size="small" sx={{ minWidth: 100 }}>
-            <Select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+            <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                 <MenuItem key={y} value={y}>{y}</MenuItem>
               ))}
@@ -348,7 +390,8 @@ const EhsBudgetExpenseTab: React.FC = () => {
               </Select>
             </FormControl>
             <FormControl size="small" sx={{ minWidth: 100 }}>
-              <Select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+              <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                   <MenuItem key={y} value={y}>{y}</MenuItem>
                 ))}
@@ -504,9 +547,44 @@ const EhsBudgetExpenseTab: React.FC = () => {
   }
 
   // ===== RENDER: Create / Edit =====
+  const selectedCategoryPlan = formData.category
+    ? formYearPlans.find(p => p.category === formData.category)
+    : undefined
+  const selectedCategoryPlanAmount = selectedCategoryPlan?.planAmount ?? 0
+  const selectedCategoryUsedAmount = formData.category
+    ? formYearExpenses
+        .filter(e => e.category === formData.category && (viewMode !== 'edit' || e.id !== selectedItem?.id))
+        .reduce((s, e) => s + (e.amount || 0), 0)
+    : 0
+  const selectedCategoryRemaining = selectedCategoryPlanAmount - selectedCategoryUsedAmount
+
   return (
     <Box>
       <LoadingOverlay open={isProcessing} />
+      {formData.category && (
+        <Paper variant="outlined" sx={{ p: 1.5, mb: 2, display: 'flex', gap: { xs: 1, md: 3 }, flexWrap: 'wrap', bgcolor: 'grey.50' }}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">{t('budget.category', '분류')}</Typography>
+            <Typography variant="body2" fontWeight="bold">{getCategoryLabel(formData.category)}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">{t('budget.planAmount', '예산 금액')}</Typography>
+            <Typography variant="body2" fontWeight="bold" color="primary">{formatNumber(selectedCategoryPlanAmount)}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">{t('budget.usedAmount', '사용 금액')}</Typography>
+            <Typography variant="body2" fontWeight="bold" color={selectedCategoryUsedAmount > selectedCategoryPlanAmount ? 'error' : 'text.primary'}>
+              {formatNumber(selectedCategoryUsedAmount)}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">{t('budget.remainingAmount', '잔여 금액')}</Typography>
+            <Typography variant="body2" fontWeight="bold" color={selectedCategoryRemaining < 0 ? 'error' : 'success.main'}>
+              {formatNumber(selectedCategoryRemaining)}
+            </Typography>
+          </Box>
+        </Paper>
+      )}
      <Box sx={{ overflowX: 'auto' }}>
       <Box sx={{ minWidth: 720, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
         <Box sx={rowSx}>
@@ -515,7 +593,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
             <NumberField
               size="small" fullWidth thousandSeparator={false}
               value={formData.budgetYear}
-              onChange={(v) => setFormData({ ...formData, budgetYear: v ?? currentYear })}
+              onChange={(v) => setFormData({ ...formData, budgetYear: v ?? currentYear, category: '' })}
             />
           </Box>
           <Box sx={labelSx}>{t('budget.category', '분류')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
@@ -526,9 +604,11 @@ const EhsBudgetExpenseTab: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 displayEmpty
               >
-                <MenuItem value=""></MenuItem>
-                {categoryCodes.map(c => (
-                  <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>
+                <MenuItem value="" disabled>선택</MenuItem>
+                {formYearPlans.length === 0 ? (
+                  <MenuItem value="" disabled>{t('budget.noPlanForYear', '해당 연도의 예산수립이 없습니다')}</MenuItem>
+                ) : formYearPlans.map(p => (
+                  <MenuItem key={p.category} value={p.category}>{getCategoryLabel(p.category) || p.category}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -588,12 +668,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
         <Box sx={lastRowSx}>
           <Box sx={labelSx}>{t('budget.writer', '작성자')}</Box>
           <Box sx={valSx}>
-            <TextField
-              size="small" fullWidth
-              value={formData.writer || ''}
-              InputProps={{ readOnly: true }}
-              placeholder={t('budget.writer', '작성자')}
-            />
+            <Typography variant="body2">{formData.writer || currentWriter}</Typography>
           </Box>
         </Box>
       </Box>
@@ -601,10 +676,10 @@ const EhsBudgetExpenseTab: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.cancel', '취소') : t('common.backToList', '목록')}
+          {t('common.cancel', '취소')}
         </Button>
         <Button variant="contained" onClick={handleSubmit} disabled={isProcessing} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.save', '저장') : t('common.register', '등록')}
+          {t('common.save', '저장')}
         </Button>
       </Box>
 

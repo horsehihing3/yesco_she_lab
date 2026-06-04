@@ -16,7 +16,6 @@ import {
   CircularProgress,
   Alert,
   TextField,
-  InputAdornment,
   Chip,
   Pagination,
   IconButton,
@@ -26,7 +25,7 @@ import {
   Divider,
   useTheme,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../components/common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import PersonIcon from '@mui/icons-material/Person'
 import BusinessIcon from '@mui/icons-material/Business'
@@ -151,7 +150,9 @@ const AdminPage: React.FC = () => {
   const { t } = useTranslation()
   const theme = useTheme()
   const [tabValue, setTabValue] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
+  const applySearch = () => setSearchText(searchInput)
   const [page, setPage] = useState(0)
   const [selectedYear, setSelectedYear] = useState(2026)
   const [selectedQuarter, setSelectedQuarter] = useState('all')
@@ -232,7 +233,7 @@ const AdminPage: React.FC = () => {
   }, [t])
 
   const handleReset = () => {
-    setSearchText('')
+    setSearchInput(''); setSearchText('')
     setPage(0)
   }
 
@@ -329,19 +330,12 @@ const AdminPage: React.FC = () => {
         {/* Users Tab */}
         <TabPanel value={tabValue} index={0}>
           <Box sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
-            <TextField
-              size="small"
+            <ListSearchBar
               placeholder={t('admin.searchPlaceholder')}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+              value={searchInput}
+              onChange={setSearchInput}
+              onSearch={applySearch}
               sx={{ width: 300 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
             />
             <IconButton onClick={handleReset} size="small">
               <RefreshIcon />
@@ -454,7 +448,8 @@ const AdminPage: React.FC = () => {
                 <Select
                   value={selectedYear}
                   onChange={(e: SelectChangeEvent<number>) => setSelectedYear(e.target.value as number)}
-                >
+                 displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   {yearOptions.map((year) => (
                     <MenuItem key={year} value={year}>
                       {year}{t('admin.year')}
@@ -466,7 +461,8 @@ const AdminPage: React.FC = () => {
                 <Select
                   value={selectedQuarter}
                   onChange={(e: SelectChangeEvent) => setSelectedQuarter(e.target.value)}
-                >
+                 displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   {quarterKeys.map((q) => (
                     <MenuItem key={q} value={q}>
                       {t(`admin.quarters.${q}`)}

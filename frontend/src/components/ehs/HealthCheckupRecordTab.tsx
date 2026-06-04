@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Paper, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, IconButton, CircularProgress, TextField, Alert,
@@ -19,7 +20,10 @@ const HealthCheckupRecordTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
 
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => setKeyword(keywordInput)
+  const handleResetSearch = () => { setKeywordInput(''); setKeyword('') }
   const [uploading, setUploading] = useState(false)
   const [yearlyOpen, setYearlyOpen] = useState(false)
   const [yearlyRecords, setYearlyRecords] = useState<HealthCheckupRecord[]>([])
@@ -106,11 +110,11 @@ const HealthCheckupRecordTab: React.FC = () => {
       <input ref={fileInputRef} type="file" accept=".pdf,application/pdf" hidden onChange={handleFileChange} />
 
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1, flexWrap: 'wrap' }}>
-        <TextField
-          size="small" placeholder={t('healthCheckupRecord.searchPlaceholder', '성명, 부서명 입력')}
-          value={keyword} onChange={e => setKeyword(e.target.value)} sx={{ minWidth: 280 }}
+        <ListSearchBar
+          placeholder={t('healthCheckupRecord.searchPlaceholder', '성명, 부서명 입력')}
+          value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} sx={{ minWidth: 280 }}
         />
-        <IconButton size="small" onClick={() => setKeyword('')}><RefreshIcon /></IconButton>
+        <IconButton size="small" onClick={handleResetSearch}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" onClick={handleUploadClick} disabled={uploading}>
           {t('healthCheckupRecord.uploadPdf', 'PDF 업로드')}
@@ -274,7 +278,7 @@ const HealthCheckupRecordTab: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDetailOpen(false)}>{t('common.close', '닫기')}</Button>
+          <Button variant="outlined" onClick={() => setDetailOpen(false)}>{t('common.close', '닫기')}</Button>
         </DialogActions>
       </Dialog>
 
@@ -337,7 +341,7 @@ const HealthCheckupRecordTab: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setYearlyOpen(false)}>{t('common.close', '닫기')}</Button>
+          <Button variant="outlined" onClick={() => setYearlyOpen(false)}>{t('common.close', '닫기')}</Button>
         </DialogActions>
       </Dialog>
 

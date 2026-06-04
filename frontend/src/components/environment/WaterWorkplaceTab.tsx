@@ -7,6 +7,7 @@ import {
   Paper, Typography, Pagination, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
@@ -164,9 +165,9 @@ const WaterWorkplaceTab: React.FC = () => {
   const renderListView = () => (
     <Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <TextField size="small" placeholder={t('water.workplace.searchWorkplace')} value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          sx={{ width: { xs: '100%', md: 250 } }} />
+        <ListSearchBar placeholder={t('water.workplace.searchWorkplace')}
+          value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: { xs: '100%', md: 250 } }}  />
         <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />

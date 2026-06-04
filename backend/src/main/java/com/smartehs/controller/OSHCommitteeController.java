@@ -170,6 +170,7 @@ public class OSHCommitteeController {
             String company = (String) data.get("company");
             String dept = (String) data.get("dept");
             Boolean isExternal = (Boolean) data.get("isExternal");
+            String signatureImage = (String) data.get("signatureImage");
 
             OSHCommitteeAttendee existing = attendeeMapper.findByOshIdAndAttendeeMail(committee.getOshId(), userEmail);
             if (existing == null) {
@@ -181,9 +182,15 @@ public class OSHCommitteeController {
                         .attendeePhone(phone)
                         .attendeeCompany(company)
                         .isExternal(Boolean.TRUE.equals(isExternal))
-                        .isSigned(false)
+                        .signatureImage(signatureImage)
+                        .isSigned(signatureImage != null && !signatureImage.isEmpty())
                         .build();
                 attendeeMapper.insert(attendee);
+            } else if (signatureImage != null && !signatureImage.isEmpty()) {
+                // 기존 참석자 — 서명이 새로 들어오면 업데이트
+                existing.setSignatureImage(signatureImage);
+                existing.setIsSigned(true);
+                attendeeMapper.update(existing);
             }
         }
 
@@ -232,6 +239,28 @@ public class OSHCommitteeController {
 
         attendee.setIsSigned(true);
         attendee.setSignatureDate(LocalDateTime.now());
+
+        attendeeMapper.update(attendee);
+        return ResponseEntity.ok(ApiResponse.success(OSHCommitteeAttendeeResponse.from(attendee)));
+    }
+
+    @PatchMapping("/{id}/attendees/{attendeeId}/signature")
+    @Transactional
+    @Operation(summary = "Update attendee signature", description = "Update or clear an attendee's signature image")
+    public ResponseEntity<ApiResponse<OSHCommitteeAttendeeResponse>> updateAttendeeSignature(
+            @PathVariable Long id,
+            @PathVariable Long attendeeId,
+            @RequestBody Map<String, String> body) {
+        OSHCommitteeAttendee attendee = attendeeMapper.findById(attendeeId);
+        if (attendee == null) {
+            throw new RuntimeException("Attendee not found with id: " + attendeeId);
+        }
+
+        String signatureImage = body.get("signatureImage");
+        attendee.setSignatureImage(signatureImage);
+        boolean signed = signatureImage != null && !signatureImage.isEmpty();
+        attendee.setIsSigned(signed);
+        attendee.setSignatureDate(signed ? LocalDateTime.now() : null);
 
         attendeeMapper.update(attendee);
         return ResponseEntity.ok(ApiResponse.success(OSHCommitteeAttendeeResponse.from(attendee)));

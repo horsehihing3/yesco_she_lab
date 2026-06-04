@@ -8,11 +8,13 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import { radSourceApi, radStatsApi } from '../../api/radiationApi'
 import type { RadSource } from '../../types/radiation.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -30,7 +32,13 @@ const RadSourceTab: React.FC = () => {
   const { data: items = [], isLoading } = useQuery({ queryKey: ['radSources'], queryFn: radSourceApi.list })
   const { data: stats } = useQuery({ queryKey: ['radStats'], queryFn: radStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
 
@@ -58,7 +66,7 @@ const RadSourceTab: React.FC = () => {
     return true
   }), [items, statusFilter, typeFilter, search])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, permitDate: todayStr(), expireDate: todayStr() }); setOpen(true) }
   const openEdit = (v: RadSource) => { setEditing(v); setForm({ ...v }); setOpen(true) }
   const submit = () => {
     if (editing) updateMut.mutate({ id: editing.id, e: form })
@@ -79,8 +87,7 @@ const RadSourceTab: React.FC = () => {
       </Alert>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField size="small" fullWidth placeholder="관리번호/명칭/핵종 검색..." value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }} />
+        <ListSearchBar fullWidth placeholder="관리번호/명칭/핵종 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ minWidth: 150 }} label="구분" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
@@ -89,6 +96,7 @@ const RadSourceTab: React.FC = () => {
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
@@ -182,8 +190,8 @@ const RadSourceTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.mgmtNo || !form.name}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={!form.mgmtNo || !form.name}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

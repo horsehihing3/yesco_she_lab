@@ -1,17 +1,16 @@
 import { useState, useRef } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField,
-  Chip, Pagination, CircularProgress, Alert, LinearProgress,
+  Chip, CircularProgress, Alert, LinearProgress,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import IconButton from '@mui/material/IconButton'
-import { useAlert } from '../../contexts/AlertContext'
-import { auditApi, auditPlanApi } from '../../api/auditApi'
-import { fetchSafetyTemplateDetail } from '../../api/safetyChecklistApi'
-import { SafetyChecklistTemplate } from '../../types/safetyChecklist.types'
+import { auditApi as defaultAuditApi, auditPlanApi as defaultAuditPlanApi } from '../../api/auditApi'
+import { legalComplianceExecApi, legalCompliancePlanApi } from '../../api/legalComplianceApi'
 import { Audit } from '../../types/audit.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import SafetyChecklistTab, { SafetyChecklistTabRef } from './SafetyChecklistTab'
@@ -33,23 +32,32 @@ const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
 const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
 const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
 
-const AuditFindingTab: React.FC = () => {
+export interface AuditFindingTabProps {
+  variant?: 'audit' | 'legal-compliance'
+}
+
+const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) => {
+  const auditApi = variant === 'legal-compliance' ? legalComplianceExecApi : defaultAuditApi
+  const auditPlanApi = variant === 'legal-compliance' ? legalCompliancePlanApi : defaultAuditPlanApi
   const { t } = useTranslation()
-  const { showSuccess, showError } = useAlert()
   const { getLabel: getAuditStatusLabel } = useCodeMap('AUDIT_STATUS')
   const { getLabel: getAuditTypeLabel } = useCodeMap('AUDIT_TYPE')
 
   const checklistRef = useRef<SafetyChecklistTabRef>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selectedItem, setSelectedItem] = useState<Audit | null>(null)
-  const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
-  const pageSize = 10
+  const applySearch = () => setSearchText(searchInput)
+  const handleResetSearch = () => { setSearchInput(''); setSearchText('') }
 
-  // 전체 감사 실시 목록 조회
+  // 부적합(findingCount > 0) 만 노출 — plan→template 체인이 끊긴 경우에도 누락되지 않도록 서버에서 일괄 재계산 후 조회
   const { data, isLoading } = useQuery({
-    queryKey: ['auditExecFindings', page],
-    queryFn: () => auditApi.getAll(page, pageSize),
+    queryKey: ['auditExecFindings'],
+    queryFn: async () => {
+      try { await auditApi.recalcCounts() } catch { /* recalc 실패는 무시하고 기존 카운트로 표시 */ }
+      return auditApi.getAll(0, 1000)
+    },
     enabled: viewMode === 'list',
   })
 
@@ -75,16 +83,6 @@ const AuditFindingTab: React.FC = () => {
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null) }
   const handleRowClick = (item: Audit) => { setSelectedItem(item); setViewMode('detail') }
-  const handleSave = async () => {
-    if (checklistRef.current) {
-      await checklistRef.current.save()
-      try {
-        const updated = await auditApi.getById(selectedItem!.id)
-        setSelectedItem(updated)
-        showSuccess(t('common.saved'))
-      } catch { showError(t('common.error')) }
-    }
-  }
 
   // ==================== DETAIL ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -138,16 +136,15 @@ const AuditFindingTab: React.FC = () => {
           ))}
         </Box>
 
-        {/* 체크리스트 */}
+        {/* 체크리스트 — 보기 전용 */}
         {checklistTemplateId && (
           <Box sx={{ mb: 3 }}>
-            <SafetyChecklistTab ref={checklistRef} templateId={checklistTemplateId} embedded showSummary hideSignatures />
+            <SafetyChecklistTab ref={checklistRef} templateId={checklistTemplateId} embedded showSummary hideSignatures locked />
           </Box>
         )}
 
-        <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
-          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
-          <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, md: 'none' } }}>{t('common.list')}</Button>
         </Box>
       </Box>
     )
@@ -158,16 +155,17 @@ const AuditFindingTab: React.FC = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('audit.searchPlaceholder')} value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+          <ListSearchBar placeholder={t('audit.searchPlaceholder')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch}
             sx={{ minWidth: 200 }} />
-          <IconButton onClick={() => setSearchText('')} size="small"><RefreshIcon /></IconButton>
+          <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Box>
       </Box>
       {/* Mobile search */}
-      <Box sx={{ display: { xs: 'flex', md: 'none' }, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('audit.searchPlaceholder')} value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} />
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, mb: 2, gap: 1 }}>
+        <ListSearchBar fullWidth placeholder={t('audit.searchPlaceholder')}
+          value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
       </Box>
 
       {isLoading ? (

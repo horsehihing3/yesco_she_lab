@@ -6,12 +6,15 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { permitInspectionApi, permitLifecycleStatsApi } from '../../api/permitLifecycleApi'
 import type { PermitInspection } from '../../types/permitLifecycle.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -43,7 +46,13 @@ const PermitInspectionTab: React.FC = () => {
   const { data: list = [], isLoading } = useQuery({ queryKey: ['permitInspection'], queryFn: permitInspectionApi.list })
   const { data: stats } = useQuery({ queryKey: ['permitLifecycleStats'], queryFn: permitLifecycleStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [filterFreq, setFilterFreq] = useState('all')
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<PermitInspection | null>(null)
@@ -64,7 +73,7 @@ const PermitInspectionTab: React.FC = () => {
     return true
   }), [list, filterFreq, search])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, lastDate: todayStr(), nextDate: todayStr() }); setOpen(true) }
   const openEdit = (item: PermitInspection) => { setEditing(item); setForm({ ...item }); setOpen(true) }
   const handleSave = () => {
     if (!form.inspectionName || !form.frequency || !form.nextDate) { showError('점검명·주기·차기 점검일 필수'); return }
@@ -83,11 +92,12 @@ const PermitInspectionTab: React.FC = () => {
 
       <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <TextField size="small" placeholder="점검명·시설 검색" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ flex: 1, minWidth: 200 }} />
+          <ListSearchBar placeholder="점검명·시설 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ flex: 1, minWidth: 200 }} />
           <TextField select size="small" label="주기" value={filterFreq} onChange={(e) => setFilterFreq(e.target.value)} sx={{ minWidth: 110 }}>
             <MenuItem value="all">전체</MenuItem>
             {FREQS.map((f) => <MenuItem key={f} value={f}>{f}</MenuItem>)}
           </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Stack>
       </Paper>
 
@@ -199,7 +209,7 @@ const PermitInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
         </DialogActions>
       </Dialog>

@@ -3,6 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.EhsMessageRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.EhsMessageResponse;
+import com.smartehs.model.EhsMessageComment;
+import com.smartehs.service.EhsMessageCommentService;
 import com.smartehs.service.EhsMessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/messages")
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class EhsMessageController {
 
     private final EhsMessageService messageService;
+    private final EhsMessageCommentService commentService;
 
     @GetMapping
     @Operation(summary = "List messages", description = "Get all messages with pagination")
@@ -92,5 +98,38 @@ public class EhsMessageController {
     public ResponseEntity<ApiResponse<Void>> incrementViews(@PathVariable Long id) {
         messageService.incrementViews(id);
         return ResponseEntity.ok(ApiResponse.success("View count incremented", null));
+    }
+
+    // ===== Comments =====
+
+    @GetMapping("/{id}/comments")
+    @Operation(summary = "List comments")
+    public ResponseEntity<ApiResponse<List<EhsMessageComment>>> listComments(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(commentService.findByMessageId(id)));
+    }
+
+    @PostMapping("/{id}/comments")
+    @Operation(summary = "Create comment / reply")
+    public ResponseEntity<ApiResponse<EhsMessageComment>> createComment(
+            @PathVariable Long id,
+            @RequestBody EhsMessageComment body,
+            Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "system";
+        return ResponseEntity.ok(ApiResponse.success(commentService.create(id, body, username)));
+    }
+
+    @PutMapping("/comments/{commentId}")
+    @Operation(summary = "Update comment")
+    public ResponseEntity<ApiResponse<EhsMessageComment>> updateComment(
+            @PathVariable Long commentId,
+            @RequestBody EhsMessageComment body) {
+        return ResponseEntity.ok(ApiResponse.success(commentService.update(commentId, body)));
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    @Operation(summary = "Delete comment")
+    public ResponseEntity<ApiResponse<Void>> deleteComment(@PathVariable Long commentId) {
+        commentService.delete(commentId);
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

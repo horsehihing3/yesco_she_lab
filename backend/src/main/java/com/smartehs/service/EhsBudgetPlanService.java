@@ -52,6 +52,12 @@ public class EhsBudgetPlanService {
 
     @Transactional
     public EhsBudgetPlanResponse create(EhsBudgetPlanRequest request) {
+        // 같은 연도 + 같은 분류 중복 차단 (분류별 1건만 등록)
+        List<EhsBudgetPlan> existing = ehsBudgetPlanMapper.findByYearAndCategory(request.getBudgetYear(), request.getCategory());
+        if (existing != null && !existing.isEmpty()) {
+            throw new IllegalStateException("해당 연도에 이미 등록된 분류입니다. 분류별 1건만 등록할 수 있습니다.");
+        }
+
         EhsBudgetPlan plan = EhsBudgetPlan.builder()
                 .budgetYear(request.getBudgetYear())
                 .category(request.getCategory())
@@ -71,6 +77,12 @@ public class EhsBudgetPlanService {
         EhsBudgetPlan plan = ehsBudgetPlanMapper.findById(id);
         if (plan == null) {
             throw new ResourceNotFoundException("EhsBudgetPlan", "id", id);
+        }
+
+        // 같은 연도 + 같은 분류 중복 차단 (본인 행 제외)
+        List<EhsBudgetPlan> existing = ehsBudgetPlanMapper.findByYearAndCategory(request.getBudgetYear(), request.getCategory());
+        if (existing != null && existing.stream().anyMatch(p -> !p.getId().equals(id))) {
+            throw new IllegalStateException("해당 연도에 이미 등록된 분류입니다. 분류별 1건만 등록할 수 있습니다.");
         }
 
         plan.setBudgetYear(request.getBudgetYear());

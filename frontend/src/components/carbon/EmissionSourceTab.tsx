@@ -8,6 +8,7 @@ import {
 } from '@mui/material'
 import NumberField from '../common/NumberField'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useCodeMap } from '../../hooks/useCodeMap'
 import { emissionSourceApi } from '../../api/carbonApi'
@@ -146,10 +147,8 @@ const EmissionSourceTab: React.FC = () => {
   const renderListView = () => (
     <Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <TextField size="small" placeholder={t('carbon.source.searchSource')} value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          sx={{ width: { xs: '100%', md: 250 } }} />
-        <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
+        <ListSearchBar placeholder={t('carbon.source.searchSource')} value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: { xs: '100%', md: 250 } }}  />
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
@@ -310,8 +309,8 @@ const EmissionSourceTab: React.FC = () => {
           <Typography sx={labelSx}>{t('carbon.source.sourceType')}</Typography>
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.sourceType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, sourceType: e.target.value || null })}>
-                <MenuItem value=""></MenuItem>
+              <Select value={formData.sourceType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, sourceType: e.target.value || null })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {sourceTypeCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getSourceTypeLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -319,7 +318,8 @@ const EmissionSourceTab: React.FC = () => {
           <Typography sx={labelSx}>{t('carbon.source.scope')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })}>
+              <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {scopeCodes.length > 0 ? scopeCodes.map((c) => (
                   <MenuItem key={c.code} value={c.code}>{getScopeLabel(c.code)}</MenuItem>
                 )) : [1, 2, 3].map((s) => (
@@ -337,8 +337,8 @@ const EmissionSourceTab: React.FC = () => {
           <Typography sx={labelSx}>{t('carbon.source.status')}</Typography>
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
-              <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value || null })}>
-                <MenuItem value=""></MenuItem>
+              <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value || null })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {statusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -370,8 +370,8 @@ const EmissionSourceTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.source.sourceType')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.sourceType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, sourceType: e.target.value || null })}>
-              <MenuItem value=""></MenuItem>
+            <Select value={formData.sourceType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, sourceType: e.target.value || null })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {sourceTypeCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getSourceTypeLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -379,7 +379,8 @@ const EmissionSourceTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.source.scope')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })}>
+            <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {scopeCodes.length > 0 ? scopeCodes.map((c) => (
                 <MenuItem key={c.code} value={c.code}>{getScopeLabel(c.code)}</MenuItem>
               )) : [1, 2, 3].map((s) => (
@@ -395,8 +396,8 @@ const EmissionSourceTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.source.status')}</Typography>
           <FormControl fullWidth size="small">
-            <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value || null })}>
-              <MenuItem value=""></MenuItem>
+            <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value || null })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {statusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>

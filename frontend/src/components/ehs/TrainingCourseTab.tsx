@@ -6,7 +6,7 @@ import {
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
   FormControl, Grid, FormControlLabel, Checkbox,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import { useTranslation } from 'react-i18next'
@@ -230,15 +230,13 @@ const TrainingCourseTab: React.FC = () => {
               <MenuItem value="false">{t('common.inactive', '비활성')}</MenuItem>
             </Select>
           </FormControl>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder={t('trainingCourse.searchPh', '과정명/코드')}
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={setSearchText}
+            onSearch={handleSearch}
             sx={{ minWidth: 200 }}
           />
-          <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
@@ -372,7 +370,8 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={labelSx}>{t('trainingCourse.category', '분류')}</Box>
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.category || 'OTHER'}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {categoryCodes.map(c => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -405,8 +404,8 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={labelSx}>{t('trainingCourse.cycle', '주기')}</Box>
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.cycle || ''}
-              onChange={(e) => setFormData({ ...formData, cycle: e.target.value })}>
-              <MenuItem value=""></MenuItem>
+              onChange={(e) => setFormData({ ...formData, cycle: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {cycleCodes.map(c => <MenuItem key={c.code} value={c.code}>{getCycleLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -434,7 +433,8 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={labelSx}>{t('trainingCourse.mode', '방식')}</Box>
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.mode || 'CLASSROOM'}
-              onChange={(e) => setFormData({ ...formData, mode: e.target.value })}>
+              onChange={(e) => setFormData({ ...formData, mode: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="CLASSROOM">{t('training.modeClassroom', '집합교육')}</MenuItem>
               <MenuItem value="ONLINE">{t('training.modeOnline', '온라인')}</MenuItem>
               <MenuItem value="HYBRID">{t('training.modeHybrid', '혼합형')}</MenuItem>
@@ -450,7 +450,8 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={labelSx}>{t('trainingCourse.status', '모집상태')}</Box>
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.status || 'OPEN'}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="OPEN">{t('training.statusOpen', '모집중')}</MenuItem>
               <MenuItem value="CLOSED">{t('training.statusClosed', '마감')}</MenuItem>
               <MenuItem value="PREPARING">{t('training.statusPreparing', '준비중')}</MenuItem>
@@ -467,7 +468,8 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={labelSx}>{t('trainingCourse.catType', '카테고리')}</Box>
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.catType || 'safety'}
-              onChange={(e) => setFormData({ ...formData, catType: e.target.value })}>
+              onChange={(e) => setFormData({ ...formData, catType: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="safety">{t('training.catSafety', '안전')}</MenuItem>
               <MenuItem value="health">{t('training.catHealth', '보건')}</MenuItem>
               <MenuItem value="environment">{t('training.catEnvironment', '환경')}</MenuItem>
@@ -504,10 +506,10 @@ const TrainingCourseTab: React.FC = () => {
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList}>
-          {viewMode === 'edit' ? t('common.cancel', '취소') : t('common.backToList', '목록')}
+          {t('common.cancel', '취소')}
         </Button>
         <Button variant="contained" onClick={handleSubmit}>
-          {viewMode === 'edit' ? t('common.save', '저장') : t('common.register', '등록')}
+          {t('common.save', '저장')}
         </Button>
       </Box>
     </Box>

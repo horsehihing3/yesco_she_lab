@@ -48,6 +48,17 @@ public class AuditService {
         return new PageImpl<>(content, pageable, total);
     }
 
+    /**
+     * 모든 audit 의 체크리스트 카운트(finding 포함) 를 plan→template 현재 항목으로 재계산.
+     * 부적합 사항 탭 진입 시 호출 → 누락된 finding_count 갱신.
+     */
+    @Transactional
+    public int recalcAllChecklistCounts() {
+        int affected = auditMapper.recalcAllChecklistCounts();
+        log.info("Recalculated checklist counts for {} audits", affected);
+        return affected;
+    }
+
     @Transactional(readOnly = true)
     public Audit findById(Long id) {
         Audit audit = auditMapper.findById(id);

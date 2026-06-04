@@ -301,8 +301,8 @@ const FireInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setSOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => sEditing ? sUpdate.mutate({ id: sEditing.id, e: sForm }) : sCreate.mutate(sForm)}>{sEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setSOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => sEditing ? sUpdate.mutate({ id: sEditing.id, e: sForm }) : sCreate.mutate(sForm)}>저장</Button>
         </DialogActions>
       </Dialog>
 
@@ -363,8 +363,8 @@ const FireInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => iEditing ? iUpdate.mutate({ id: iEditing.id, e: iForm }) : iCreate.mutate(iForm)}>{iEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setIOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => iEditing ? iUpdate.mutate({ id: iEditing.id, e: iForm }) : iCreate.mutate(iForm)}>저장</Button>
         </DialogActions>
       </Dialog>
 
@@ -403,8 +403,8 @@ const FireInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setPOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => pEditing ? pUpdate.mutate({ id: pEditing.id, e: pForm }) : pCreate.mutate(pForm)} disabled={!pForm.planType}>{pEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setPOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => pEditing ? pUpdate.mutate({ id: pEditing.id, e: pForm }) : pCreate.mutate(pForm)} disabled={!pForm.planType}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

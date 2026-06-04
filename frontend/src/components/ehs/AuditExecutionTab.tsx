@@ -18,7 +18,8 @@ import { useAuth } from '../../context/AuthContext'
 import UserSelectModal from '../common/UserSelectModal'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import RejectReasonDialog from '../common/RejectReasonDialog'
-import { auditApi, auditPlanApi } from '../../api/auditApi'
+import { auditApi as defaultAuditApi, auditPlanApi as defaultAuditPlanApi } from '../../api/auditApi'
+import { legalComplianceExecApi, legalCompliancePlanApi } from '../../api/legalComplianceApi'
 import { fetchTeamLeader } from '../../api/approvalApi'
 import { fetchSafetyTemplateDetail } from '../../api/safetyChecklistApi'
 import { SafetyChecklistTemplate } from '../../types/safetyChecklist.types'
@@ -45,9 +46,11 @@ const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
 
 const emptyForm: AuditRequest = { auditName: '', auditType: 'REGULAR', targetDept: '', targetSite: '', auditor: '', auditDate: '', grade: undefined, summary: '', status: 'PLAN' }
 
-interface AuditExecutionTabProps { menuPath?: string }
+interface AuditExecutionTabProps { menuPath?: string; variant?: 'audit' | 'legal-compliance' }
 
-const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath }) => {
+const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant = 'audit' }) => {
+  const auditApi = variant === 'legal-compliance' ? legalComplianceExecApi : defaultAuditApi
+  const auditPlanApi = variant === 'legal-compliance' ? legalCompliancePlanApi : defaultAuditPlanApi
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()

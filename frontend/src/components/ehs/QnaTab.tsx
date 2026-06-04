@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
   TextField,
-  InputAdornment,
   Button,
   Table,
   TableBody,
@@ -26,7 +25,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
@@ -40,6 +39,7 @@ import { ApiResponse, PageResponse, FileMetadata } from '../../types/common.type
 import HtmlContent from '../common/HtmlContent'
 import RichTextEditor from '../common/RichTextEditor'
 import LoadingOverlay from '../common/LoadingOverlay'
+import EntityCommentsSection from '../common/EntityCommentsSection'
 import useCodeMap from '../../hooks/useCodeMap'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -406,22 +406,12 @@ const QnaTab: React.FC = () => {
       {/* Filters - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder={t('common.searchByTitle')}
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={setSearchText}
+            onSearch={handleSearch}
             sx={{ width: 300 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleSearch}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
           />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel>{t('qna.category')}</InputLabel>
@@ -429,7 +419,7 @@ const QnaTab: React.FC = () => {
               value={categoryFilter}
               label={t('qna.category')}
               onChange={(e) => { setCategoryFilter(e.target.value); setPage(0) }}
-            >
+             displayEmpty>
               <MenuItem value="">{t('common.all')}</MenuItem>
               {categoryCodes.map((cat) => (
                 <MenuItem key={cat.code} value={cat.code}>{getCategoryLabel(cat.code)}</MenuItem>
@@ -447,22 +437,12 @@ const QnaTab: React.FC = () => {
 
       {/* Filters - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           placeholder={t('common.searchByTitle')}
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onChange={setSearchText}
+          onSearch={handleSearch}
           fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleSearch}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
         />
         <FormControl size="small" fullWidth>
           <InputLabel>{t('qna.category')}</InputLabel>
@@ -470,7 +450,7 @@ const QnaTab: React.FC = () => {
             value={categoryFilter}
             label={t('qna.category')}
             onChange={(e) => { setCategoryFilter(e.target.value); setPage(0) }}
-          >
+           displayEmpty>
             <MenuItem value="">{t('common.all')}</MenuItem>
             {categoryCodes.map((cat) => (
               <MenuItem key={cat.code} value={cat.code}>{getCategoryLabel(cat.code)}</MenuItem>
@@ -807,6 +787,9 @@ const QnaTab: React.FC = () => {
               </Box>
             )}
           </Box>
+
+          {/* 댓글 — EHS 알림과 동일한 댓글/대댓글 구조 */}
+          <EntityCommentsSection entityId={postDetail.id} basePath="/qna" queryKey="qnaPostComments" />
         </>
       ) : null}
     </>
@@ -814,8 +797,7 @@ const QnaTab: React.FC = () => {
 
   const renderFormView = () => (
     <>
-      <Paper sx={{ p: { xs: 2, md: 3 }, bgcolor: 'grey.50' }}>
-        <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }} />
+      <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }} />
 
         {/* PC Form Layout */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
@@ -851,7 +833,8 @@ const QnaTab: React.FC = () => {
                 <Select
                   value={formData.category || 'GENERAL'}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                >
+                 displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   {categoryCodes.map((cat) => (
                     <MenuItem key={cat.code} value={cat.code}>{getCategoryLabel(cat.code)}</MenuItem>
                   ))}
@@ -931,7 +914,8 @@ const QnaTab: React.FC = () => {
               <Select
                 value={formData.category || 'GENERAL'}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              >
+               displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {categoryCodes.map((cat) => (
                   <MenuItem key={cat.code} value={cat.code}>{getCategoryLabel(cat.code)}</MenuItem>
                 ))}
@@ -981,15 +965,13 @@ const QnaTab: React.FC = () => {
           </Box>
         </Box>
 
-      </Paper>
-
       {/* Form Actions */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={viewMode === 'edit' ? () => setViewMode('detail') : handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.cancel') : t('common.backToList')}
+          {t('common.cancel', '취소')}
         </Button>
         <Button variant="contained" onClick={handleSubmit} disabled={isProcessing} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.save') : t('common.register')}
+          {t('common.save', '저장')}
         </Button>
       </Box>
     </>

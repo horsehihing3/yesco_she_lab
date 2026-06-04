@@ -5,18 +5,20 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  CircularProgress, Typography,
+  CircularProgress, Typography, IconButton,
 } from '@mui/material'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../common/ListSearchBar'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import { partnerVisitorApi, partnerStatsApi } from '../../api/partnerApi'
 import type { PartnerVisitor } from '../../types/partner.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
@@ -43,7 +45,13 @@ const PartnerVisitorTab: React.FC = () => {
   const { data: items = [], isLoading } = useQuery({ queryKey: ['partnerVisitors'], queryFn: partnerVisitorApi.list })
   const { data: stats } = useQuery({ queryKey: ['partnerStats'], queryFn: partnerStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearchInput(''); setSearch('') }
   const [statusFilter, setStatusFilter] = useState('')
 
   const [mode, setMode] = useState<Mode>('list')
@@ -96,7 +104,7 @@ const PartnerVisitorTab: React.FC = () => {
 
   // ====== Handlers ======
   const handleRowClick = (v: PartnerVisitor) => { setSelectedId(v.id); setMode('view') }
-  const handleNewClick = () => { setForm(emptyForm); setMode('create') }
+  const handleNewClick = () => { setForm({ ...emptyForm, visitDt: todayStr() }); setMode('create') }
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setMode('edit') } }
   const handleBackToList = () => { setSelectedId(null); setMode('list') }
   const handleCancelEdit = () => { setMode('view') }
@@ -253,7 +261,7 @@ const PartnerVisitorTab: React.FC = () => {
 
         {!isReadonly && (
           <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
-            <Button variant="contained" onClick={handleSubmit} disabled={!form.visitorName}>{mode === 'create' ? '등록' : '저장'}</Button>
+            <Button variant="contained" onClick={handleSubmit} disabled={!form.visitorName}>저장</Button>
           </Stack>
         )}
 
@@ -278,13 +286,12 @@ const PartnerVisitorTab: React.FC = () => {
       </Alert>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField size="small" fullWidth placeholder="성명/업체명/목적 검색..."
-          value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }} />
+        <ListSearchBar fullWidth placeholder="성명/업체명/목적 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <TextField select size="small" sx={{ minWidth: 130 }} label="상태" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-        </ReadTextField>
+        </TextField>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNewClick} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 

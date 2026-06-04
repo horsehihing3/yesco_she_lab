@@ -25,10 +25,14 @@ public class AuditPlanController {
     private final IdmMapper idmMapper;
 
     @GetMapping
-    @Operation(summary = "감사 계획 전체 목록 조회")
+    @Operation(summary = "감사 계획 전체 목록 조회 (unapproved=true 시 미승인만)")
     public ResponseEntity<ApiResponse<Page<AuditPlan>>> findAll(
+            @RequestParam(name = "unapproved", required = false, defaultValue = "false") boolean unapproved,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(auditPlanService.findAll(pageable)));
+        Page<AuditPlan> result = unapproved
+                ? auditPlanService.findUnapproved(pageable)
+                : auditPlanService.findAll(pageable);
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @GetMapping("/{id}")

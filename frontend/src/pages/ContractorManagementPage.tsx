@@ -7,6 +7,7 @@ import {
   FormControl, Chip, Pagination, CircularProgress, Alert, Tabs, Tab,
   Checkbox, ListItemText, OutlinedInput, Radio,
 } from '@mui/material'
+import ListSearchBar from '../components/common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -14,6 +15,7 @@ import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import IconButton from '@mui/material/IconButton'
 import DatePickerField from '../components/common/DatePickerField'
 import { fmtPhone } from '../utils/phoneFormat'
+import { todayStr, weekFromTodayStr } from '../utils/dateDefaults'
 import { contractorRegistrationApi } from '../api/contractorRegistrationApi'
 import NumberField from '../components/common/NumberField'
 import { useAlert } from '../contexts/AlertContext'
@@ -79,7 +81,9 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
 
   // List filters
   const [page, setPage] = useState(0)
+  const [searchTextInput, setSearchTextInput] = useState('')
   const [searchText, setSearchText] = useState('')
+  const applySearch = () => setSearchText(searchTextInput)
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
 
@@ -282,7 +286,11 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
 
   const handleOpenCreate = () => {
     setSelectedItem(null)
-    setForm({ title: '' })
+    setForm({
+      title: '',
+      workStartDate: todayStr() + 'T08:00:00',
+      workEndDate: weekFromTodayStr() + 'T17:00:00',
+    })
     setWorkers([])
     setViewMode('create')
   }
@@ -318,6 +326,10 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   }
 
   const handleSave = () => {
+    if (!form.checklistTemplateId) {
+      showError(t('common.checklist', '체크리스트') + ' ' + t('common.required', '필수입니다'))
+      return
+    }
     if (selectedItem) updateMutation.mutate({ id: selectedItem.id, req: form })
     else createMutation.mutate(form)
   }
@@ -421,9 +433,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
         {/* Search / Filter bar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder="검색 (제목/ID/위치)" value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setPage(0); setStatusFilter(''); setTypeFilter('') }}
-              sx={{ minWidth: 200 }} />
+            <ListSearchBar placeholder="검색 (제목/ID/위치)" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
             {!isApprovalMode && (
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText(''); setTypeFilter('') }}>
@@ -444,8 +454,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
         </Box>
         {/* Search / Filter bar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder="검색 (제목/ID/위치)" value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0); setStatusFilter(''); setTypeFilter('') }} />
+          <ListSearchBar fullWidth placeholder="검색 (제목/ID/위치)" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
           <Box sx={{ display: 'flex', gap: 1 }}>
             {!isApprovalMode && (
               <FormControl size="small" sx={{ flex: 1 }}>
@@ -953,7 +962,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           </Box>
           {/* Row: checklist (마지막) */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={labelSx}>체크리스트</Typography>
+            <Typography sx={labelSx}>체크리스트<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
                 <MenuItem value="">{t('common.select', '선택')}</MenuItem>
@@ -1155,7 +1164,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           </Box>
           {/* 체크리스트 (마지막) */}
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>체크리스트</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>체크리스트<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <FormControl fullWidth size="small">
               <Select displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
                 <MenuItem value="">{t('common.select', '선택')}</MenuItem>

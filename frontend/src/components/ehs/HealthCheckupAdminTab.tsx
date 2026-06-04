@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, TextField, Select, MenuItem,
@@ -90,9 +91,12 @@ const HealthCheckupAdminTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<HealthCheckup | null>(null)
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const pageSize = 10
+  const applySearch = () => { setSearchText(searchInput); setStatusFilter(''); setPage(0) }
+  const handleResetSearch = () => { setSearchInput(''); setSearchText(''); setStatusFilter(''); setPage(0) }
 
   const queryKey = searchText
     ? ['hcSearch', searchText, page]
@@ -286,8 +290,8 @@ const HealthCheckupAdminTab: React.FC = () => {
       {/* PC Search */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('healthCheckup.searchByName')} value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setStatusFilter(''); setPage(0) }}
+          <ListSearchBar placeholder={t('healthCheckup.searchByName')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch}
             sx={{ minWidth: 200 }} />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setSearchText(''); setPage(0) }}>
@@ -295,13 +299,13 @@ const HealthCheckupAdminTab: React.FC = () => {
               {statusCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
             </Select>
           </FormControl>
-          <IconButton onClick={() => { setSearchText(''); setStatusFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
+          <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Box>
       </Box>
       {/* Mobile Search */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('healthCheckup.searchByName')} value={searchText}
-          onChange={(e) => { setSearchText(e.target.value); setStatusFilter(''); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('healthCheckup.searchByName')}
+          value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <FormControl size="small" fullWidth>
           <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setSearchText(''); setPage(0) }}>
             <MenuItem value="">{t('healthCheckup.filterByStatus')}</MenuItem>

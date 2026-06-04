@@ -230,7 +230,19 @@ const EhsBudgetPlanTab: React.FC = () => {
     }
   }
 
-  const filteredItems = categoryFilter ? items.filter(i => i.category === categoryFilter) : items
+  const filteredItems = (categoryFilter ? items.filter(i => i.category === categoryFilter) : items)
+    .slice()
+    .sort((a, b) => {
+      // 1) 연도 오름차순
+      if ((a.budgetYear || 0) !== (b.budgetYear || 0)) return (a.budgetYear || 0) - (b.budgetYear || 0)
+      // 2) 분류 이름 오름차순 (라벨 기준)
+      const ca = getCategoryLabel(a.category) || a.category || ''
+      const cb = getCategoryLabel(b.category) || b.category || ''
+      const cmp = ca.localeCompare(cb)
+      if (cmp !== 0) return cmp
+      // 3) 항목명 오름차순
+      return (a.itemName || '').localeCompare(b.itemName || '')
+    })
 
   // ===== KPI / 점유율 계산 =====
   const totalPlanned = useMemo(
@@ -284,7 +296,8 @@ const EhsBudgetPlanTab: React.FC = () => {
           </FormControl>
           <Box sx={{ flex: 1 }} />
           <FormControl size="small" sx={{ minWidth: 100 }}>
-            <Select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+            <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                 <MenuItem key={y} value={y}>{y}</MenuItem>
               ))}
@@ -306,7 +319,8 @@ const EhsBudgetPlanTab: React.FC = () => {
               </Select>
             </FormControl>
             <FormControl size="small" sx={{ minWidth: 100 }}>
-              <Select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+              <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                   <MenuItem key={y} value={y}>{y}</MenuItem>
                 ))}
@@ -324,12 +338,13 @@ const EhsBudgetPlanTab: React.FC = () => {
           <Alert severity="info">{t('common.noData', '데이터가 없습니다')}</Alert>
         ) : (
           <>
-            {/* 테이블 - PC : 번호 / 분류 / 항목명 / 항목금액 / 계획총액 / 점유율 / 비고 */}
+            {/* 테이블 - PC : 번호 / 연도 / 분류 / 항목명 / 항목금액 / 계획총액 / 점유율 / 비고 */}
             <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
                     <TableCell sx={hSx} align="center">{t('common.no', 'No')}</TableCell>
+                    <TableCell sx={hSx} align="center">{t('budget.year', '연도')}</TableCell>
                     <TableCell sx={hSx} align="center">{t('budget.category', '분류')}</TableCell>
                     <TableCell sx={hSx}>{t('budget.itemName', '항목명')}</TableCell>
                     <TableCell sx={hSx} align="right">{t('budget.itemAmount', '항목금액')}</TableCell>
@@ -342,6 +357,7 @@ const EhsBudgetPlanTab: React.FC = () => {
                   {filteredItems.map((item, idx) => (
                     <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
                       <TableCell align="center">{idx + 1}</TableCell>
+                      <TableCell align="center">{item.budgetYear}</TableCell>
                       <TableCell align="center">
                         <Chip
                           label={getCategoryLabel(item.category) || item.category}
@@ -366,6 +382,7 @@ const EhsBudgetPlanTab: React.FC = () => {
                 <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(item)}>
                   <Box sx={{ display: 'flex', gap: 1, mb: 1, alignItems: 'center' }}>
                     <Typography variant="caption" color="text.secondary">#{idx + 1}</Typography>
+                    <Chip label={`${item.budgetYear}`} size="small" variant="outlined" />
                     <Chip
                       label={getCategoryLabel(item.category) || item.category}
                       color={CATEGORY_COLORS[item.category] || 'default'}
@@ -499,7 +516,7 @@ const EhsBudgetPlanTab: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 displayEmpty
               >
-                <MenuItem value=""></MenuItem>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {categoryCodes.map(c => (
                   <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>
                 ))}
@@ -553,12 +570,7 @@ const EhsBudgetPlanTab: React.FC = () => {
         <Box sx={lastRowSx}>
           <Box sx={labelSx}>{t('budget.writer', '작성자')}</Box>
           <Box sx={valSx}>
-            <TextField
-              size="small" fullWidth
-              value={formData.writer || ''}
-              InputProps={{ readOnly: true }}
-              placeholder={t('budget.writer', '작성자')}
-            />
+            <Typography variant="body2">{formData.writer || currentWriter}</Typography>
           </Box>
         </Box>
       </Box>
@@ -566,10 +578,10 @@ const EhsBudgetPlanTab: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.cancel', '취소') : t('common.backToList', '목록')}
+          {t('common.cancel', '취소')}
         </Button>
         <Button variant="contained" onClick={handleSubmit} disabled={isProcessing} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.save', '저장') : t('common.register', '등록')}
+          {t('common.save', '저장')}
         </Button>
       </Box>
     </Box>

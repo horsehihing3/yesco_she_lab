@@ -42,6 +42,15 @@ public class AuditPlanService {
     }
 
     @Transactional(readOnly = true)
+    public Page<AuditPlan> findUnapproved(Pageable pageable) {
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        List<AuditPlan> content = auditPlanMapper.findUnapproved(offset, limit);
+        int total = auditPlanMapper.countUnapproved();
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Transactional(readOnly = true)
     public AuditPlan findById(Long id) {
         AuditPlan plan = auditPlanMapper.findById(id);
         if (plan == null) {

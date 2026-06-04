@@ -6,8 +6,8 @@ import {
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
   FormControl, Grid, Switch, FormControlLabel,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
@@ -259,15 +259,7 @@ const WemFactorTab: React.FC = () => {
               ))}
             </Select>
           </FormControl>
-          <TextField
-            size="small"
-            placeholder={t('common.search')}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            sx={{ minWidth: 200 }}
-          />
-          <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
+          <ListSearchBar placeholder={t('common.search')} value={searchText} onChange={setSearchText} onSearch={handleSearch} sx={{ minWidth: 200 }} />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
@@ -289,15 +281,7 @@ const WemFactorTab: React.FC = () => {
                 ))}
               </Select>
             </FormControl>
-            <TextField
-              size="small"
-              placeholder={t('common.search')}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              sx={{ flex: 1 }}
-            />
-            <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
+            <ListSearchBar placeholder={t('common.search')} value={searchText} onChange={setSearchText} onSearch={handleSearch} sx={{ flex: 1 }} />
             <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleAddClick} size="small">
@@ -500,8 +484,8 @@ const WemFactorTab: React.FC = () => {
     { label: t('wem.factorNameEn'), node: <TextField size="small" fullWidth value={formData.factorNameEn || ''} onChange={(e) => setFormData({ ...formData, factorNameEn: e.target.value })} /> },
     { label: t('wem.casNumber'), node: <TextField size="small" fullWidth value={formData.casNumber || ''} onChange={(e) => setFormData({ ...formData, casNumber: e.target.value })} /> },
     { label: t('wem.factorType'), node: (
-      <Select size="small" fullWidth value={formData.factorType || ''} onChange={(e) => setFormData({ ...formData, factorType: e.target.value })}>
-        <MenuItem value=""></MenuItem>
+      <Select size="small" fullWidth value={formData.factorType || ''} onChange={(e) => setFormData({ ...formData, factorType: e.target.value })} displayEmpty>
+        <MenuItem value="" disabled>선택</MenuItem>
         {hazardTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getHazardTypeLabel(c.code)}</MenuItem>)}
       </Select>
     ) },
@@ -589,10 +573,10 @@ const WemFactorTab: React.FC = () => {
       </Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.cancel') : t('common.backToList')}
+          {t('common.cancel', '취소')}
         </Button>
         <Button variant="contained" onClick={handleSubmit} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.save') : t('common.register')}
+          {t('common.save', '저장')}
         </Button>
       </Box>
     </Box>

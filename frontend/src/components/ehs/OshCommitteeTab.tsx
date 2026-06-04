@@ -33,11 +33,12 @@ import {
   DialogActions,
 } from '@mui/material'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
-import CheckIcon from '@mui/icons-material/Check'
+import SignaturePad from '../common/SignaturePad'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import axiosInstance from '../../api/axiosInstance'
 import { workplaceApi } from '../../api/workplaceApi'
@@ -129,7 +130,9 @@ const OshCommitteeTab: React.FC = () => {
   })
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
   // userId === 0 일 때 외부 참석자로 처리. userEmail 은 unique placeholder 또는 사용자 이메일.
-  const [pendingAttendees, setPendingAttendees] = useState<{ userId: number; userName: string; userEmail: string; phone?: string; company?: string; dept?: string; isExternal?: boolean }[]>([])
+  const [pendingAttendees, setPendingAttendees] = useState<{ userId: number; userName: string; userEmail: string; phone?: string; company?: string; dept?: string; isExternal?: boolean; signatureImage?: string }[]>([])
+  // 편집 모드에서 기존 참석자들의 서명만 새로 받아 백엔드로 전송 (key: attendee.id)
+  const [existingSignatures, setExistingSignatures] = useState<Record<number, string>>({})
   // 외부 참석자 입력 다이얼로그 상태
   const [externalDialogOpen, setExternalDialogOpen] = useState(false)
   const [externalName, setExternalName] = useState('')
@@ -144,6 +147,8 @@ const OshCommitteeTab: React.FC = () => {
   useEffect(() => { pendingFilesRef.current = pendingFiles }, [pendingFiles])
   const removedAttendeeIdsRef = useRef(removedAttendeeIds)
   useEffect(() => { removedAttendeeIdsRef.current = removedAttendeeIds }, [removedAttendeeIds])
+  const existingSignaturesRef = useRef(existingSignatures)
+  useEffect(() => { existingSignaturesRef.current = existingSignatures }, [existingSignatures])
 
   // 참석자 추가 모달
   const [attendeeDialogOpen, setAttendeeDialogOpen] = useState(false)
@@ -246,6 +251,15 @@ const OshCommitteeTab: React.FC = () => {
       if (attendees.length > 0) {
         await axiosInstance.post(`/osh-committees/${updatedCommittee.id}/attendees/bulk`, attendees)
       }
+      // 기존 참석자 서명 업데이트 — removed 에 포함된 것은 제외
+      const sigUpdates = existingSignaturesRef.current
+      for (const [attendeeIdStr, signatureImage] of Object.entries(sigUpdates)) {
+        const attendeeId = Number(attendeeIdStr)
+        if (removed.includes(attendeeId)) continue
+        try {
+          await axiosInstance.patch(`/osh-committees/${updatedCommittee.id}/attendees/${attendeeId}/signature`, { signatureImage })
+        } catch { /* skip */ }
+      }
       queryClient.invalidateQueries({ queryKey: ['oshCommittees'] })
       queryClient.invalidateQueries({ queryKey: ['oshCommitteeDetail'] })
       await showSuccess(t('common.saveSuccess'))
@@ -280,6 +294,7 @@ const OshCommitteeTab: React.FC = () => {
     setPendingFiles([])
     setPendingAttendees([])
     setRemovedAttendeeIds([])
+    setExistingSignatures({})
   }
 
   const handleReset = () => {
@@ -309,7 +324,7 @@ const OshCommitteeTab: React.FC = () => {
     setFormData({
       oshYear: currentYear,
       oshQuarter: 1,
-      oshDate: '',
+      oshDate: todayStr(),
       oshLocation: '',
       oshLocationDetail: '',
       mainAgenda: '',
@@ -334,6 +349,7 @@ const OshCommitteeTab: React.FC = () => {
     setPendingFiles([])
     setPendingAttendees([])
     setRemovedAttendeeIds([])
+    setExistingSignatures({})
     setViewMode('edit')
   }
 
@@ -407,9 +423,6 @@ const OshCommitteeTab: React.FC = () => {
     setPendingAttendees(prev => [...prev, ...additions])
   }
 
-  const handleRemovePendingAttendee = (userId: number) => {
-    setPendingAttendees(pendingAttendees.filter(a => a.userId !== userId))
-  }
 
   // 외부 참석자 추가 (이름·소속업체·전화번호)
   const handleOpenExternalDialog = () => {
@@ -472,7 +485,8 @@ const OshCommitteeTab: React.FC = () => {
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ minWidth: 100 }}>
-            <Select value={quarterFilter} onChange={handleQuarterChange}>
+            <Select value={quarterFilter} onChange={handleQuarterChange} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {quarterOptions.map((q) => (<MenuItem key={q} value={q}>{q}</MenuItem>))}
             </Select>
           </FormControl>
@@ -495,7 +509,8 @@ const OshCommitteeTab: React.FC = () => {
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ flex: 1 }}>
-            <Select value={quarterFilter} onChange={handleQuarterChange}>
+            <Select value={quarterFilter} onChange={handleQuarterChange} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {quarterOptions.map((q) => (<MenuItem key={q} value={q}>{q}</MenuItem>))}
             </Select>
           </FormControl>
@@ -640,7 +655,7 @@ const OshCommitteeTab: React.FC = () => {
                     <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 170, whiteSpace: 'nowrap' }} align="center">{t('common.attendeeName')}</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('osh.deptOrCompany', '부서 / 소속업체')}</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 140 }} align="center">{t('common.contact', '연락처')}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', width: 100 }} align="center">{t('common.signedStatus')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: 100 }} align="center">{t('common.signature', '서명')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -665,8 +680,10 @@ const OshCommitteeTab: React.FC = () => {
                             : ((attendee as any).attendeeDept || '')}
                         </TableCell>
                         <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 140 }}>{(attendee as any).attendeePhone || ''}</TableCell>
-                        <TableCell align="center">
-                          {attendee.isSigned ? <CheckIcon color="success" /> : ''}
+                        <TableCell align="center" sx={{ p: 0.5 }}>
+                          {(attendee as any).signatureImage
+                            ? <img src={(attendee as any).signatureImage} alt="signature" style={{ maxHeight: 60, maxWidth: 180, display: 'block', margin: '0 auto' }} />
+                            : ''}
                         </TableCell>
                       </TableRow>
                     ))
@@ -759,7 +776,9 @@ const OshCommitteeTab: React.FC = () => {
                           </Typography>
                         )}
                       </Box>
-                      {attendee.isSigned ? <CheckIcon color="success" fontSize="small" /> : null}
+                      {(attendee as any).signatureImage
+                        ? <img src={(attendee as any).signatureImage} alt="signature" style={{ maxHeight: 40, maxWidth: 120, marginLeft: 8 }} />
+                        : null}
                     </Box>
                   )
                 })
@@ -976,10 +995,11 @@ const OshCommitteeTab: React.FC = () => {
           <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 170, whiteSpace: 'nowrap' }} align="center">{t('common.attendeeName')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 100, whiteSpace: 'nowrap' }} align="center">{t('common.attendeeName')}</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('osh.deptOrCompany', '부서 / 소속업체')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 140 }} align="center">{t('common.contact', '연락처')}</TableCell>
-                <TableCell sx={{ width: 60 }} align="center"></TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 150, whiteSpace: 'nowrap' }} align="center">{t('common.contact', '연락처')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 400 }} align="center">{t('common.signature', '서명')}</TableCell>
+                <TableCell sx={{ width: 36, p: 0 }} align="center"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -989,17 +1009,24 @@ const OshCommitteeTab: React.FC = () => {
                 .map((attendee) => {
                   const a = attendee as any
                   const deptOrCo = a.isExternal ? (a.attendeeCompany || '') : (a.attendeeDept || '')
+                  const currentSig = existingSignatures[attendee.id] ?? a.signatureImage ?? ''
                   return (
                     <TableRow key={`existing-${attendee.id}`}>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', width: 170, whiteSpace: 'nowrap' }}>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', width: 100, whiteSpace: 'nowrap' }}>
                         {attendee.attendeeName}
                         {a.isExternal && (
                           <Chip size="small" label={t('osh.external', '외부')} color="warning" variant="outlined" sx={{ ml: 1, height: 18, fontSize: '0.65rem' }} />
                         )}
                       </TableCell>
                       <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{deptOrCo}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 140 }}>{a.attendeePhone || ''}</TableCell>
-                      <TableCell align="center">
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 150, whiteSpace: 'nowrap' }}>{a.attendeePhone || ''}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', width: 400, p: 0.5 }}>
+                        <SignaturePad
+                          value={currentSig}
+                          onChange={(v) => setExistingSignatures(prev => ({ ...prev, [attendee.id]: v }))}
+                        />
+                      </TableCell>
+                      <TableCell align="center" sx={{ width: 36, p: 0 }}>
                         <IconButton size="small" onClick={() => handleRemoveExistingAttendee(attendee.id)}>
                           <CloseIcon fontSize="small" />
                         </IconButton>
@@ -1012,15 +1039,21 @@ const OshCommitteeTab: React.FC = () => {
                 const deptOrCo = attendee.isExternal ? (attendee.company || '') : (attendee.dept || '')
                 return (
                   <TableRow key={`pending-${attendee.userId}-${idx}`}>
-                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', width: 170, whiteSpace: 'nowrap' }}>
+                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', width: 100, whiteSpace: 'nowrap' }}>
                       {attendee.userName}
                       {attendee.isExternal && (
                         <Chip size="small" label={t('osh.external', '외부')} color="warning" variant="outlined" sx={{ ml: 1, height: 18, fontSize: '0.65rem' }} />
                       )}
                     </TableCell>
                     <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{deptOrCo}</TableCell>
-                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 140 }}>{attendee.phone || ''}</TableCell>
-                    <TableCell align="center">
+                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 150, whiteSpace: 'nowrap' }}>{attendee.phone || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', width: 400, p: 0.5 }}>
+                      <SignaturePad
+                        value={attendee.signatureImage || ''}
+                        onChange={(v) => setPendingAttendees(prev => prev.map((p, i) => i === idx ? { ...p, signatureImage: v } : p))}
+                      />
+                    </TableCell>
+                    <TableCell align="center" sx={{ width: 36, p: 0 }}>
                       <IconButton size="small" onClick={() => setPendingAttendees(prev => prev.filter((_, i) => i !== idx))}>
                         <CloseIcon fontSize="small" />
                       </IconButton>
@@ -1034,7 +1067,7 @@ const OshCommitteeTab: React.FC = () => {
                     || committeeDetail.attendees.filter(a => !removedAttendeeIds.includes(a.id)).length === 0)
                   && pendingAttendees.length === 0) ? (
                 <TableRow>
-                  <TableCell colSpan={4} align="center" sx={{ py: 2 }}>
+                  <TableCell colSpan={5} align="center" sx={{ py: 2 }}>
                     <Typography color="text.secondary">{t('common.noAttendees')}</Typography>
                   </TableCell>
                 </TableRow>
@@ -1050,7 +1083,7 @@ const OshCommitteeTab: React.FC = () => {
           {t('common.cancel')}
         </Button>
         <Button variant="contained" onClick={handleSubmit} disabled={isProcessing} sx={{ flex: { xs: 1, sm: 'none' } }}>
-          {viewMode === 'edit' ? t('common.save') : t('common.register')}
+          {t('common.save', '저장')}
         </Button>
       </Box>
     </>
@@ -1142,7 +1175,7 @@ const OshCommitteeTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setExternalDialogOpen(false)}>{t('common.cancel', '취소')}</Button>
+          <Button variant="outlined" onClick={() => setExternalDialogOpen(false)}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleConfirmExternal}>{t('common.add', '추가')}</Button>
         </DialogActions>
       </Dialog>

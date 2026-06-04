@@ -13,6 +13,7 @@ import { aftercareApi, fitnessApi, odStatsApi } from '../../api/occupationalDise
 import type { OdAftercare, OdFitness } from '../../types/occupationalDisease.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -60,7 +61,7 @@ const OdAftercareTab: React.FC = () => {
   const deleteFitMut = useMutation({ mutationFn: (id: number) => fitnessApi.remove(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['odFitness'] }) } })
 
-  const openCreate = () => { setEditing(null); setForm(emptyAft); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyAft, dueDate: todayStr() }); setOpen(true) }
   const openEdit = (a: OdAftercare) => { setEditing(a); setForm(a); setOpen(true) }
   const submit = () => { if (editing) updateMut.mutate({ id: editing.id, e: form }); else createMut.mutate(form) }
   const openFitCreate = () => { setFitEditing(null); setFitForm(emptyFit); setFitOpen(true) }
@@ -204,8 +205,8 @@ const OdAftercareTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.workerName}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={!form.workerName}>저장</Button>
         </DialogActions>
       </Dialog>
 
@@ -244,8 +245,8 @@ const OdAftercareTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setFitOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submitFit} disabled={!fitForm.workerName}>{fitEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setFitOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submitFit} disabled={!fitForm.workerName}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

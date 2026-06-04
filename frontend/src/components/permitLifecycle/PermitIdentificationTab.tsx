@@ -6,12 +6,15 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { permitIdentApi, permitLifecycleStatsApi } from '../../api/permitLifecycleApi'
 import type { PermitIdentification } from '../../types/permitLifecycle.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -30,7 +33,13 @@ const PermitIdentificationTab: React.FC = () => {
   const { data: list = [], isLoading } = useQuery({ queryKey: ['permitIdent'], queryFn: permitIdentApi.list })
   const { data: stats } = useQuery({ queryKey: ['permitLifecycleStats'], queryFn: permitLifecycleStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [filterStatus, setFilterStatus] = useState('all')
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<PermitIdentification | null>(null)
@@ -66,7 +75,7 @@ const PermitIdentificationTab: React.FC = () => {
     return true
   }), [list, filterStatus, search])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, installDate: todayStr(), assessmentDate: todayStr() }); setOpen(true) }
   const openEdit = (item: PermitIdentification) => { setEditing(item); setForm({ ...item }); setOpen(true) }
   const handleSave = () => {
     if (!form.equipmentName) { showError('설비명을 입력해주세요'); return }
@@ -85,11 +94,12 @@ const PermitIdentificationTab: React.FC = () => {
 
       <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <TextField size="small" placeholder="설비명·위치 검색" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ flex: 1, minWidth: 180 }} />
+          <ListSearchBar placeholder="설비명·위치 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ flex: 1, minWidth: 180 }} />
           <TextField select size="small" label="식별 상태" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} sx={{ minWidth: 130 }}>
             <MenuItem value="all">전체</MenuItem>
             {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
           </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Stack>
       </Paper>
 
@@ -187,7 +197,7 @@ const PermitIdentificationTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
         </DialogActions>
       </Dialog>

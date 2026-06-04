@@ -230,8 +230,8 @@ const FireComplianceTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => cEditing ? cUpdate.mutate({ id: cEditing.id, e: cForm }) : cCreate.mutate(cForm)} disabled={!cForm.title}>{cEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setCOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => cEditing ? cUpdate.mutate({ id: cEditing.id, e: cForm }) : cCreate.mutate(cForm)} disabled={!cForm.title}>저장</Button>
         </DialogActions>
       </Dialog>
 
@@ -272,8 +272,8 @@ const FireComplianceTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setROpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => rEditing ? rUpdate.mutate({ id: rEditing.id, e: rForm }) : rCreate.mutate(rForm)} disabled={!rForm.reportType}>{rEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setROpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => rEditing ? rUpdate.mutate({ id: rEditing.id, e: rForm }) : rCreate.mutate(rForm)} disabled={!rForm.reportType}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

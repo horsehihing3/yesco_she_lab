@@ -11,8 +11,10 @@ import {
 } from '../types/audit.types'
 
 export const auditPlanApi = {
-  getAll: async (page = 0, size = 20) => {
-    const res = await axiosInstance.get<ApiResponse<PageResponse<AuditPlan>>>('/audit-plan', { params: { page, size, sort: 'createdAt,desc' } })
+  getAll: async (page = 0, size = 20, unapproved = false) => {
+    const params: Record<string, unknown> = { page, size, sort: 'createdAt,desc' }
+    if (unapproved) params.unapproved = true
+    const res = await axiosInstance.get<ApiResponse<PageResponse<AuditPlan>>>('/audit-plan', { params })
     return res.data.data
   },
   getById: async (id: number) => {
@@ -59,6 +61,10 @@ export const auditApi = {
   },
   getByStatus: async (status: string, page = 0, size = 20) => {
     const res = await axiosInstance.get<ApiResponse<PageResponse<Audit>>>(`/audit/status/${status}`, { params: { page, size } })
+    return res.data.data
+  },
+  recalcCounts: async (): Promise<number> => {
+    const res = await axiosInstance.post<ApiResponse<number>>('/audit/recalc-counts')
     return res.data.data
   },
   create: async (data: AuditRequest) => {

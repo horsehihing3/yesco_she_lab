@@ -488,7 +488,7 @@ const UserSelectModal = ({
           {singleSelect && <Typography component="span" variant="caption" sx={{ ml: 1 }}>(max 1)</Typography>}
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button onClick={onClose}>{t('common.cancel', '취소')}</Button>
+          <Button variant="outlined" onClick={onClose}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleConfirm} disabled={tempSelected.length === 0}>
             {confirmLabel || t('common.confirm', '확인')}{!singleSelect && ` (${tempSelected.length})`}
           </Button>

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField,
@@ -49,8 +50,11 @@ const AuditChecklistTab: React.FC = () => {
   const [form, setForm] = useState<AuditChecklistTemplateRequest>({ ...emptyForm })
   const [formItems, setFormItems] = useState<AuditChecklistItemRequest[]>([])
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const pageSize = 10
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
+  const handleResetSearch = () => { setSearchInput(''); setSearchText(''); setPage(0) }
   const [editorMode, setEditorMode] = useState<'spreadsheet' | 'items'>('spreadsheet')
 
   const handleAddItem = () => { setFormItems([...formItems, { section: '', itemText: '', legalRef: '', isCritical: false, sortOrder: formItems.length + 1 }]) }
@@ -272,18 +276,21 @@ const AuditChecklistTab: React.FC = () => {
         {/* PC Search */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('audit.searchPlaceholder')} value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setPage(0) }}
+            <ListSearchBar placeholder={t('audit.searchPlaceholder')}
+              value={searchInput} onChange={setSearchInput} onSearch={applySearch}
               sx={{ minWidth: 200 }} />
-            <IconButton onClick={() => { setSearchText(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
+            <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
         </Box>
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('audit.searchPlaceholder')} value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0) }} />
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} fullWidth>New</Button>
+          <ListSearchBar fullWidth placeholder={t('audit.searchPlaceholder')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+          </Box>
         </Box>
 
         {isLoading ? (

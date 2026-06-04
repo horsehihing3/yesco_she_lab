@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
   TextField,
-  InputAdornment,
   Button,
   Table,
   TableBody,
@@ -28,7 +27,8 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import FolderIcon from '@mui/icons-material/Folder'
 import FolderOpenIcon from '@mui/icons-material/FolderOpen'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
@@ -260,7 +260,10 @@ const SafetyRulesTab: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const { showError, showWarning, showSuccess, showConfirm } = useAlert()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
+  const applySearch = () => setSearchText(searchInput)
+  const handleResetSearch = () => { setSearchInput(''); setSearchText('') }
   const [selectedFolder, setSelectedFolder] = useState('safety-rules')
   const [expandedFolders, setExpandedFolders] = useState<string[]>(['safety-rules'])
   const [selectedFile, setSelectedFile] = useState<FileMetadata | null>(null)
@@ -458,20 +461,16 @@ const SafetyRulesTab: React.FC = () => {
 
       {/* Search and Actions - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
-        <TextField
-          size="small"
-          placeholder={t('common.searchByFilename')}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          sx={{ width: 270 }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <ListSearchBar
+            placeholder={t('common.searchByFilename')}
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={applySearch}
+            sx={{ width: 270 }}
+          />
+          <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        </Box>
         {isAdmin && (
           <Button
             variant="contained"
@@ -487,20 +486,16 @@ const SafetyRulesTab: React.FC = () => {
 
       {/* Search and Actions - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField
-          size="small"
-          placeholder={t('common.searchByFilename')}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <ListSearchBar
+            placeholder={t('common.searchByFilename')}
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={applySearch}
+            fullWidth
+          />
+          <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        </Box>
         {isAdmin && (
           <Button
             variant="contained"

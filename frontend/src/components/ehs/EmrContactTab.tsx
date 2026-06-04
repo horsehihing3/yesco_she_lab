@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { fmtPhone } from '../../utils/phoneFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem,
@@ -40,10 +41,13 @@ const EmrContactTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<EmergencyContact | null>(null)
   const [form, setForm] = useState<EmergencyContactRequest>({ ...emptyForm })
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [showUserModal, setShowUserModal] = useState(false)
   const pageSize = 10
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
+  const handleResetSearch = () => { setSearchInput(''); setSearchText(''); setTypeFilter(''); setPage(0) }
 
   const handleUserPick = (users: UserInfo[]) => {
     if (users.length > 0) {
@@ -141,8 +145,8 @@ const EmrContactTab: React.FC = () => {
         {/* PC Search */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('emr.searchPlaceholder')} value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setPage(0) }}
+            <ListSearchBar placeholder={t('emr.searchPlaceholder')}
+              value={searchInput} onChange={setSearchInput} onSearch={applySearch}
               sx={{ minWidth: 200 }} />
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <Select displayEmpty value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0) }}>
@@ -151,14 +155,14 @@ const EmrContactTab: React.FC = () => {
                 <MenuItem value="EXTERNAL">{t('emr.external')}</MenuItem>
               </Select>
             </FormControl>
-            <IconButton onClick={() => { setSearchText(''); setTypeFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
+            <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
         </Box>
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('emr.searchPlaceholder')} value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0) }} />
+          <ListSearchBar fullWidth placeholder={t('emr.searchPlaceholder')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
           <Box sx={{ display: 'flex', gap: 1 }}>
             <FormControl size="small" sx={{ flex: 1 }}>
               <Select displayEmpty value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0) }}>
@@ -358,7 +362,8 @@ const EmrContactTab: React.FC = () => {
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('emr.contactType')}</Typography>
             <Box sx={valueBorderSx}>
-              <Select fullWidth size="small" value={form.contactType || 'INTERNAL'} onChange={(e) => setForm({ ...form, contactType: e.target.value })}>
+              <Select fullWidth size="small" value={form.contactType || 'INTERNAL'} onChange={(e) => setForm({ ...form, contactType: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="INTERNAL">{t('emr.internal')}</MenuItem>
                 <MenuItem value="EXTERNAL">{t('emr.external')}</MenuItem>
               </Select>
@@ -412,7 +417,8 @@ const EmrContactTab: React.FC = () => {
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('emr.contactType')}</Typography>
             <FormControl fullWidth size="small">
-              <Select value={form.contactType || 'INTERNAL'} onChange={(e) => setForm({ ...form, contactType: e.target.value })}>
+              <Select value={form.contactType || 'INTERNAL'} onChange={(e) => setForm({ ...form, contactType: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="INTERNAL">{t('emr.internal')}</MenuItem>
                 <MenuItem value="EXTERNAL">{t('emr.external')}</MenuItem>
               </Select>

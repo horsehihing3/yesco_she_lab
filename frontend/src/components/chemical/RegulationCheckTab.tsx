@@ -5,11 +5,13 @@ import {
   MenuItem, SelectChangeEvent, LinearProgress, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { regulationCheckApi } from '../../api/chemicalApi'
 import type { RegulationCheck } from '../../types/chemical.types'
@@ -56,7 +58,9 @@ const RegulationCheckTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<RegulationCheck | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [page, setPage] = useState(0)
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => { setKeyword(keywordInput); setPage(0) }
   const [checkStatus, setCheckStatus] = useState('')
 
   const { data, isLoading } = useQuery({
@@ -76,7 +80,7 @@ const RegulationCheckTab: React.FC = () => {
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm) }
   const handleRowClick = (item: RegulationCheck) => { setSelectedItem(item); setViewMode('detail') }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm(emptyForm); setViewMode('create') }
+  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm, dueDate: todayStr() }); setViewMode('create') }
   const handleOpenEdit = (item: RegulationCheck) => {
     setSelectedItem(item)
     setForm({ checkName: item.checkName || '', relatedRegulation: item.relatedRegulation || '', checkType: item.checkType || '', assignee: item.assignee || '', dueDate: item.dueDate || '', progress: item.progress ?? 0, status: item.status || 'PENDING' })
@@ -85,7 +89,7 @@ const RegulationCheckTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: RegulationCheck) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
-  const handleReset = () => { setKeyword(''); setCheckStatus(''); setPage(0) }
+  const handleReset = () => { setKeywordInput(''); setKeyword(''); setCheckStatus(''); setPage(0) }
 
   const getStatusLabel = (status: string) => {
     const map: Record<string, string> = {
@@ -200,7 +204,8 @@ const RegulationCheckTab: React.FC = () => {
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('chem.erp.status')}</Typography>
             <Box sx={valSx}>
-              <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+              <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="PENDING">{t('chem.check.statusPending')}</MenuItem>
                 <MenuItem value="IN_PROGRESS">{t('chem.check.statusInProgress')}</MenuItem>
                 <MenuItem value="COMPLETED">{t('chem.check.statusCompleted')}</MenuItem>
@@ -242,7 +247,8 @@ const RegulationCheckTab: React.FC = () => {
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.erp.status')}</Typography>
-            <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+            <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="PENDING">{t('chem.check.statusPending')}</MenuItem>
               <MenuItem value="IN_PROGRESS">{t('chem.check.statusInProgress')}</MenuItem>
               <MenuItem value="COMPLETED">{t('chem.check.statusCompleted')}</MenuItem>
@@ -291,8 +297,8 @@ const RegulationCheckTab: React.FC = () => {
       {/* Search - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('chem.check.searchPlaceholder')} value={keyword}
-            onChange={(e) => { setKeyword(e.target.value); setPage(0) }}
+          <ListSearchBar placeholder={t('chem.check.searchPlaceholder')}
+            value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
             sx={{ minWidth: 250 }} />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select value={checkStatus} onChange={(e: SelectChangeEvent) => { setCheckStatus(e.target.value); setPage(0) }} displayEmpty>
@@ -308,8 +314,8 @@ const RegulationCheckTab: React.FC = () => {
       </Box>
       {/* Search - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('chem.check.searchPlaceholder')} value={keyword}
-          onChange={(e) => { setKeyword(e.target.value); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('chem.check.searchPlaceholder')}
+          value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
         <FormControl size="small" fullWidth>
           <Select value={checkStatus} onChange={(e: SelectChangeEvent) => { setCheckStatus(e.target.value); setPage(0) }} displayEmpty>
             <MenuItem value="">{t('chem.erp.status')}</MenuItem>

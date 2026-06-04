@@ -7,11 +7,13 @@ import {
   CircularProgress, Alert, Select, MenuItem, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useAlert } from '../../contexts/AlertContext'
 import { chemicalUsageReportApi } from '../../api/chemicalApi'
 import { ChemicalUsageReport } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -34,7 +36,9 @@ const UsageReportTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<ChemicalUsageReport | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [page, setPage] = useState(0)
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => { setKeyword(keywordInput); setPage(0) }
 
   const statusMap: Record<string, { color: 'success' | 'primary'; label: string }> = {
     SUBMITTED: { color: 'success', label: t('chem.usageReport.statusSubmitted') },
@@ -62,7 +66,7 @@ const UsageReportTab: React.FC = () => {
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm) }
   const handleRowClick = (item: ChemicalUsageReport) => { setSelectedItem(item); setViewMode('detail') }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm(emptyForm); setViewMode('create') }
+  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm, reportDeadline: todayStr(), submitDate: todayStr() }); setViewMode('create') }
   const handleOpenEdit = (item: ChemicalUsageReport) => {
     setSelectedItem(item)
     setForm({ reportYear: item.reportYear, chemicalName: item.chemicalName || '', casNumber: item.casNumber || '', annualUsage: item.annualUsage ?? 0, unit: item.unit || '', usagePurpose: item.usagePurpose || '', reportDeadline: item.reportDeadline || '', submitDate: item.submitDate || '', status: item.status || 'COLLECTING' })
@@ -71,7 +75,7 @@ const UsageReportTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: ChemicalUsageReport) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
-  const handleReset = () => { setKeyword(''); setPage(0) }
+  const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
 
   const getStatusChip = (status: string) => {
     const info = statusMap[status]
@@ -228,8 +232,8 @@ const UsageReportTab: React.FC = () => {
       {/* Search - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('chem.usageReport.searchPlaceholder')} value={keyword}
-            onChange={(e) => { setKeyword(e.target.value); setPage(0) }}
+          <ListSearchBar placeholder={t('chem.usageReport.searchPlaceholder')}
+            value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
             sx={{ minWidth: 250 }} />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
@@ -237,8 +241,8 @@ const UsageReportTab: React.FC = () => {
       </Box>
       {/* Search - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('chem.usageReport.searchPlaceholder')} value={keyword}
-          onChange={(e) => { setKeyword(e.target.value); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('chem.usageReport.searchPlaceholder')}
+          value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleReset} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>

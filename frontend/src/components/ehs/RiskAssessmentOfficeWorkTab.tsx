@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box,
   TextField,
@@ -108,7 +109,7 @@ const MAJOR_CATEGORIES = ['사무업무', '출장/현장방문', '외주']
 const RiskAssessmentOfficeWorkTab: React.FC = () => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const { showConfirm, showSuccess } = useAlert()
+  const { showConfirm, showSuccess, showWarning } = useAlert()
   const { user } = useAuth()
   const { codeMap: frequencyLabels, codeList: frequencyCodes, getLocalizedName } = useCodeMap('WORK_FREQUENCY')
   const { codeMap: raStatusLabels } = useCodeMap('RISK_ASSESSMENT_STATUS')
@@ -120,6 +121,9 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
   // List filters
   const [siteFilter, setSiteFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [searchText, setSearchText] = useState('')
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
   const [page, setPage] = useState(0)
   const rowsPerPage = 10
 
@@ -175,13 +179,14 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
 
   // Queries
   const { data, isLoading, error } = useQuery({
-    queryKey: ['riskAssessments', page, siteFilter, statusFilter],
+    queryKey: ['riskAssessments', 'officeOnly', page, siteFilter, statusFilter],
     queryFn: () =>
       riskAssessmentApi.getAll({
         page,
         size: rowsPerPage,
         site: siteFilter || undefined,
         status: statusFilter || undefined,
+        officeOnly: true,
       }),
     enabled: viewMode === 'list',
   })
@@ -402,6 +407,8 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
   }
 
   const handleReset = () => {
+    setSearchInput('')
+    setSearchText('')
     setSiteFilter('')
     setStatusFilter('')
     setPage(0)
@@ -505,6 +512,10 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
   }
 
   const handleSubmit = async () => {
+    if (!formData.officeChecklistId || !formData.sanupChecklistId || !formData.jungdaeChecklistId) {
+      showWarning(t('common.checklist', '체크리스트') + ' ' + t('common.required', '필수입니다'))
+      return
+    }
     const confirmed = await showConfirm(t('common.confirmSave'))
     if (!confirmed) return
 
@@ -581,8 +592,12 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
     }
   }
 
-  // 사무업무 탭은 office_count > 0 인 평가만 노출 (전용 더미와 사용자가 사무업무로 등록한 항목만)
-  const assessments = (data?.content || []).filter(a => (a.officeCount ?? 0) > 0)
+  // 사무업무 탭은 백엔드에서 office_count > 0 만 페이징해서 내려옴
+  const assessments = (data?.content || []).filter((a) => {
+    if (!searchText) return true
+    const s = searchText.toLowerCase()
+    return (a.title || '').toLowerCase().includes(s)
+  })
   const totalPages = data?.totalPages || 0
 
   // ===== Render Functions =====
@@ -592,9 +607,11 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
       {/* Filters - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder={t('common.title')}
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={applySearch}
             sx={{ width: 200 }}
           />
           <FormControl size="small" sx={{ minWidth: 150 }}>
@@ -619,7 +636,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
 
       {/* Filters - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField size="small" placeholder={t('common.title')} fullWidth />
+        <ListSearchBar fullWidth placeholder={t('common.title')} value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <FormControl size="small" fullWidth>
           <Select value={siteFilter} onChange={(e: SelectChangeEvent) => { setSiteFilter(e.target.value); setPage(0) }} displayEmpty>
             <MenuItem value="">{t('riskAssessment.siteFilter')}</MenuItem>
@@ -824,10 +841,10 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           {/* Action Buttons - Mobile */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
             <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1, minWidth: 0 }}>{t('common.list')}</Button>
-            {isAdmin && (
+            {(isAdmin || assessmentDetail?.authorName === user?.name) && (
               <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1, minWidth: 0 }}>{t('common.edit')}</Button>
             )}
-            {isAdmin && (
+            {(isAdmin || assessmentDetail?.authorName === user?.name) && (
               <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1, minWidth: 0 }}>{t('common.delete')}</Button>
             )}
           </Box>
@@ -852,7 +869,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
       <Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
           <Typography variant="body2" sx={{ fontWeight: 'bold', minWidth: 110, wordBreak: 'keep-all' }}>
-            {t('riskAssessment.linkChecklist', '체크리스트 연결')}
+            {t('riskAssessment.linkChecklist', '체크리스트 연결')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
           </Typography>
           <FormControl size="small" sx={{ minWidth: 280 }}>
             <Select
@@ -953,15 +970,8 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
             <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.author')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder={t('riskAssessment.author')}
-                value={formData.authorName || ''}
-                onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                disabled={viewMode === 'create'}
-              />
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2">{formData.authorName || user?.name || user?.username || ''}</Typography>
             </Box>
             <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.department')}
@@ -1023,14 +1033,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.author')}</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder={t('riskAssessment.author')}
-              value={formData.authorName || ''}
-              onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-              disabled={viewMode === 'create'}
-            />
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formData.authorName || user?.name || user?.username || ''}</Typography>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.department')}</Typography>
@@ -1406,7 +1409,8 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                     <TableCell align="center">
                       {readOnly ? detail.possibilityGrade : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
-                          <Select value={detail.possibilityGrade} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'possibilityGrade', Number(e.target.value))}>
+                          <Select value={detail.possibilityGrade} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'possibilityGrade', Number(e.target.value))} displayEmpty>
+                            <MenuItem value="" disabled>선택</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1415,7 +1419,8 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                     <TableCell align="center">
                       {readOnly ? detail.resultGrade : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
-                          <Select value={detail.resultGrade} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'resultGrade', Number(e.target.value))}>
+                          <Select value={detail.resultGrade} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'resultGrade', Number(e.target.value))} displayEmpty>
+                            <MenuItem value="" disabled>선택</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1432,7 +1437,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                       {readOnly ? (detail.improvedPossibilityGrade || '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.improvedPossibilityGrade || ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'improvedPossibilityGrade', e.target.value ? Number(e.target.value) : undefined)} displayEmpty>
-                            <MenuItem value=""></MenuItem>
+                            <MenuItem value="" disabled>선택</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1442,7 +1447,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                       {readOnly ? (detail.improvedResultGrade || '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.improvedResultGrade || ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'improvedResultGrade', e.target.value ? Number(e.target.value) : undefined)} displayEmpty>
-                            <MenuItem value=""></MenuItem>
+                            <MenuItem value="" disabled>선택</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>

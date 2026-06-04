@@ -9,6 +9,7 @@ import {
   Pagination, CircularProgress, Step, Stepper, StepLabel, StepButton,
   Checkbox, FormControlLabel, Divider, Alert,
 } from '@mui/material'
+import ListSearchBar from '../components/common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import StarIcon from '@mui/icons-material/Star'
@@ -19,6 +20,7 @@ import DescriptionIcon from '@mui/icons-material/Description'
 import CloseIcon from '@mui/icons-material/Close'
 
 import DatePickerField from '../components/common/DatePickerField'
+import { todayStr } from '../utils/dateDefaults'
 import NumberField from '../components/common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../components/common/FormTable'
 import { useAlert } from '../contexts/AlertContext'
@@ -100,7 +102,9 @@ const ContractorRegistrationPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selected, setSelected] = useState<ContractorRegistration | null>(null)
   const [page, setPage] = useState(0)
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => setKeyword(keywordInput)
   const [statusFilter, setStatusFilter] = useState('')
 
   // wizard state
@@ -209,7 +213,7 @@ const ContractorRegistrationPage: React.FC = () => {
 
   const openCreate = () => {
     setSelected(null)
-    setForm({ ...emptyForm(), modifiedBy: user?.name || user?.username || '' })
+    setForm({ ...emptyForm(), modifiedBy: user?.name || user?.username || '', riskEvalDate: todayStr() })
     setStep(0)
     setSubmittedResult(null)
     resetUploadsAndAgree()
@@ -290,8 +294,7 @@ const ContractorRegistrationPage: React.FC = () => {
       <Box>
         {/* ─── 데스크탑(md+) : 한 줄 ─── */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-          <TextField size="small" sx={{ width: 380 }} placeholder="업체명 / 사업자번호 / 등록번호 / 대표자 검색..."
-            value={keyword} onChange={e => setKeyword(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setPage(0) }} />
+          <ListSearchBar sx={{ width: 380 }} placeholder="업체명 / 사업자번호 / 등록번호 / 대표자 검색..." value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
           <TextField select size="small" sx={{ width: 140 }} label="상태"
             value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">전체</MenuItem>

@@ -15,8 +15,6 @@ import {
   Checkbox,
   Divider,
   useTheme,
-  FormControl,
-  Select,
   MenuItem,
   CircularProgress,
   Alert,
@@ -43,6 +41,11 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 import ZoomInIcon from '@mui/icons-material/ZoomIn'
 import ZoomOutIcon from '@mui/icons-material/ZoomOut'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import BusinessIcon from '@mui/icons-material/Business'
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView'
+import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../contexts/AlertContext'
@@ -817,6 +820,112 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
 
   const selectedFloor = floorData.find((f) => f.id === effectiveSelectedId) || floorData[0]
 
+  // 건물(name) → 층(floor) 2단계 트리 데이터 — 등록된 층만 표시 (미등록 placeholder 제거)
+  const groupedByBuilding = useMemo(() => {
+    const map = new Map<string, FloorData[]>()
+    for (const f of floorData) {
+      const key = f.name || '(미지정)'
+      if (!map.has(key)) map.set(key, [])
+      map.get(key)!.push(f)
+    }
+    const parseFloorNum = (s: string | undefined) => parseInt(String(s || '').replace(/[^\d-]/g, '')) || 0
+    const result: Array<[string, Array<{ label: string; data: FloorData | null }>]> = []
+    for (const [building, drawings] of map.entries()) {
+      // 등록된 층만 내림차순 정렬 (위층부터)
+      const sorted = [...drawings].sort((a, b) => {
+        const na = parseFloorNum(a.floor)
+        const nb = parseFloorNum(b.floor)
+        if (na !== nb) return nb - na
+        return (a.floor || '').localeCompare(b.floor || '')
+      })
+      const items = sorted.map(d => ({ label: d.floor || '-', data: d as FloorData | null }))
+      result.push([building, items])
+    }
+    return result
+  }, [floorData])
+
+  // 트리 확장 상태 — 기본은 모든 건물 펼침
+  const [expandedBuildings, setExpandedBuildings] = useState<string[]>([])
+  useEffect(() => {
+    setExpandedBuildings(groupedByBuilding.map(([b]) => `b-${b}`))
+  }, [groupedByBuilding])
+
+  // 건물 → 층 트리 — PC/모바일 공통 렌더링
+  const renderBuildingTree = () => (
+    <SimpleTreeView
+      slots={{ collapseIcon: ExpandMoreIcon, expandIcon: ChevronRightIcon }}
+      expandedItems={expandedBuildings}
+      onExpandedItemsChange={(_, ids) => setExpandedBuildings(ids)}
+      selectedItems={effectiveSelectedId ? `f-${effectiveSelectedId}` : ''}
+      onSelectedItemsChange={(_, id) => {
+        if (id && typeof id === 'string' && id.startsWith('f-')) {
+          setSelectedFloorId(Number(id.slice(2)))
+          setSelectedImageIndex(0)
+          setShowDevices(true)
+          setDeviceEditMode(false)
+        }
+      }}
+    >
+      {groupedByBuilding.map(([building, floors]) => (
+        <TreeItem
+          key={`b-${building}`}
+          itemId={`b-${building}`}
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', py: 0.5 }}>
+              <BusinessIcon sx={{ fontSize: 16, mr: 0.5, color: 'primary.main' }} />
+              <Typography fontWeight="bold" sx={{ fontSize: '0.9rem' }}>{building}</Typography>
+            </Box>
+          }
+        >
+          {floors.map((item, idx) => {
+            const registered = item.data !== null
+            const itemId = registered ? `f-${item.data!.id}` : `p-${building}-${idx}`
+            return (
+              <TreeItem
+                key={itemId}
+                itemId={itemId}
+                disabled={!registered}
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.5 }}>
+                    <Typography sx={{
+                      fontSize: '0.85rem',
+                      fontWeight: registered && effectiveSelectedId === item.data!.id ? 'bold' : 'normal',
+                      color: registered ? 'text.primary' : 'text.disabled',
+                    }}>
+                      {item.label}{!registered && ' (미등록)'}
+                    </Typography>
+                    {registered && !readOnly && (
+                      <Box sx={{ display: 'flex', gap: 0.25 }}>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleOpenDrawingDialog(item.data!)
+                          }}
+                        >
+                          <EditIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteDrawing(item.data!.id)
+                          }}
+                        >
+                          <DeleteIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      </Box>
+                    )}
+                  </Box>
+                }
+              />
+            )
+          })}
+        </TreeItem>
+      ))}
+    </SimpleTreeView>
+  )
+
   // 현재 선택된 이미지에 해당하는 장치만 필터링
   const currentImageFileId = imageFiles && imageFiles.length > selectedImageIndex ? imageFiles[selectedImageIndex]?.id : undefined
   const currentImageDevices = selectedFloor
@@ -1137,64 +1246,9 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                   {t('factory.selectWorkplace')}
                 </Typography>
               </Box>
-              <List sx={{ p: 0 }}>
-                {floorData.map((floor, index) => (
-                  <ListItemButton
-                    key={floor.id}
-                    selected={effectiveSelectedId === floor.id}
-                    onClick={() => {
-                      setSelectedFloorId(floor.id)
-                      setSelectedImageIndex(0)
-                      setShowDevices(true)
-                      setDeviceEditMode(false)
-                    }}
-                    sx={{
-                      borderBottom: index < floorData.length - 1 ? 1 : 'none',
-                      borderColor: 'grey.300',
-                      '&.Mui-selected': {
-                        bgcolor: 'primary.light',
-                        color: 'primary.contrastText',
-                        '&:hover': { bgcolor: 'primary.main' },
-                      },
-                    }}
-                  >
-                    <ListItemText
-                      primary={floor.name}
-                      secondary={floor.site}
-                      primaryTypographyProps={{
-                        fontWeight: effectiveSelectedId === floor.id ? 'bold' : 'normal',
-                        fontSize: 14,
-                      }}
-                      secondaryTypographyProps={{
-                        fontSize: 12,
-                        color: effectiveSelectedId === floor.id ? 'inherit' : 'text.secondary',
-                      }}
-                    />
-                    {!readOnly && (
-                      <>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleOpenDrawingDialog(floor)
-                          }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteDrawing(floor.id)
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </>
-                    )}
-                  </ListItemButton>
-                ))}
-              </List>
+              <Box sx={{ p: 1 }}>
+                {renderBuildingTree()}
+              </Box>
             </Paper>
 
             {/* Right Panel - 도면 표시 */}
@@ -1202,10 +1256,10 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                 <Box>
                   <Typography variant="h6" fontWeight="bold">
-                    {selectedFloor.name}
+                    {selectedFloor.name}{selectedFloor.floor ? ` ${selectedFloor.floor}` : ''}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {selectedFloor.site} | {t('workplaceDrawing.safetyDevices', { count: currentImageDevices.length })}
+                    {t('workplaceDrawing.safetyDevices', { count: currentImageDevices.length })}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1 }}>
@@ -1374,28 +1428,16 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           {/* Mobile Layout */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
             {/* 사업장/층 선택 드롭다운 */}
-            <Box>
-              <Typography sx={{ bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5, fontWeight: 'bold', fontSize: '0.875rem', mb: 1 }}>
-                {t('factory.selectWorkplace')}
-              </Typography>
-              <FormControl fullWidth size="small">
-                <Select
-                  value={effectiveSelectedId ?? ''}
-                  onChange={(e) => {
-                    setSelectedFloorId(Number(e.target.value))
-                    setSelectedImageIndex(0)
-                    setShowDevices(true)
-                    setDeviceEditMode(false)
-                  }}
-                >
-                  {floorData.map((floor) => (
-                    <MenuItem key={floor.id} value={floor.id}>
-                      {floor.name} ({floor.site})
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+            <Paper variant="outlined">
+              <Box sx={{ px: 1.5, py: 0.75, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider' }}>
+                <Typography sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>
+                  {t('factory.selectWorkplace')}
+                </Typography>
+              </Box>
+              <Box sx={{ p: 1, maxHeight: 320, overflowY: 'auto' }}>
+                {renderBuildingTree()}
+              </Box>
+            </Paper>
 
             {/* 도면 표시 */}
             <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
@@ -1596,7 +1638,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           </List>
         </DialogContent>
         <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 1 } }}>
-          <Button onClick={() => setDeviceDialogOpen(false)} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.close')}</Button>
+          <Button variant="outlined" onClick={() => setDeviceDialogOpen(false)}>{t('common.close')}</Button>
         </DialogActions>
       </Dialog>
 
@@ -1858,7 +1900,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 1 }, gap: 1 }}>
-          <Button onClick={handleCloseDrawingDialog} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.cancel')}</Button>
+          <Button variant="outlined" onClick={handleCloseDrawingDialog} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.cancel')}</Button>
           <Button
             variant="contained"
             onClick={handleSaveDrawing}
@@ -1902,13 +1944,13 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { setDeviceNameDialogOpen(false); setPendingDevice(null) }}>{t('common.cancel')}</Button>
+          <Button variant="outlined" onClick={() => { setDeviceNameDialogOpen(false); setPendingDevice(null) }}>{t('common.cancel')}</Button>
           <Button
             variant="contained"
             onClick={handleSaveDevice}
             disabled={!newDeviceName.trim() || addDeviceMutation.isPending}
           >
-            {addDeviceMutation.isPending ? t('common.loading') : t('common.register')}
+            {addDeviceMutation.isPending ? t('common.loading') : t('common.save', '저장')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -1947,7 +1989,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelDrag}>{t('common.cancel')}</Button>
+          <Button variant="outlined" onClick={handleCancelDrag}>{t('common.cancel')}</Button>
           <Button
             variant="contained"
             onClick={handleConfirmDrag}

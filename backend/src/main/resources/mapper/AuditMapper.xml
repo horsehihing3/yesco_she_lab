@@ -158,4 +158,29 @@
         SELECT * FROM tb_audit WHERE plan_id = #{planId} AND deleted = 0
     </select>
 
+    <!--
+      audit 의 카운트(total/completed/finding) 를 plan→template 의 현재 항목으로 재계산.
+      ChecklistService.batchSave 의 plan-체인 갱신이 어떤 이유(plan 소프트삭제, 직접 생성된 audit 등)로 누락된 경우
+      AuditFindingTab 진입 시 한번에 보정한다. plan 이 없는 audit 은 영향받지 않는다.
+    -->
+    <update id="recalcAllChecklistCounts">
+        UPDATE a SET
+            total_checklist = ISNULL(c.total, 0),
+            completed_checklist = ISNULL(c.completed, 0),
+            finding_count = ISNULL(c.findings, 0),
+            modified_at = GETDATE()
+        FROM tb_audit a
+        INNER JOIN tb_audit_plan ap ON ap.id = a.plan_id
+        OUTER APPLY (
+            SELECT
+                COUNT(*) AS total,
+                SUM(CASE WHEN ci.check_result IS NOT NULL AND LEN(ci.check_result) &gt; 0 THEN 1 ELSE 0 END) AS completed,
+                SUM(CASE WHEN ci.check_result = 'FAIL' THEN 1 ELSE 0 END) AS findings
+            FROM tb_checklist_item ci
+            INNER JOIN tb_checklist_category cc ON cc.id = ci.category_id
+            WHERE cc.template_id = ap.checklist_template_id
+        ) c
+        WHERE a.deleted = 0
+    </update>
+
 </mapper>

@@ -751,7 +751,8 @@ const CodeManagePage: React.FC = () => {
                   <Select
                     value={groupForm.isActive ? 'Y' : 'N'}
                     onChange={(e) => setGroupForm({ ...groupForm, isActive: e.target.value === 'Y' })}
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     <MenuItem value="Y">Y</MenuItem>
                     <MenuItem value="N">N</MenuItem>
                   </Select>
@@ -820,7 +821,8 @@ const CodeManagePage: React.FC = () => {
                 <Select
                   value={groupForm.isActive ? 'Y' : 'N'}
                   onChange={(e) => setGroupForm({ ...groupForm, isActive: e.target.value === 'Y' })}
-                >
+                 displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   <MenuItem value="Y">Y</MenuItem>
                   <MenuItem value="N">N</MenuItem>
                 </Select>
@@ -840,7 +842,7 @@ const CodeManagePage: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions sx={{ borderTop: 1, borderColor: 'grey.300', px: { xs: 2, sm: 3 }, py: 2, gap: 1 }}>
-          <Button onClick={() => setGroupModalOpen(false)}>{t('common.cancel')}</Button>
+          <Button variant="outlined" onClick={() => setGroupModalOpen(false)}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleGroupSubmit}>{t('common.save')}</Button>
         </DialogActions>
       </Dialog>
@@ -993,7 +995,8 @@ const CodeManagePage: React.FC = () => {
                   <Select
                     value={detailForm.isActive ? 'Y' : 'N'}
                     onChange={(e) => setDetailForm({ ...detailForm, isActive: e.target.value === 'Y' })}
-                  >
+                   displayEmpty>
+                    <MenuItem value="" disabled>선택</MenuItem>
                     <MenuItem value="Y">Y</MenuItem>
                     <MenuItem value="N">N</MenuItem>
                   </Select>
@@ -1184,7 +1187,8 @@ const CodeManagePage: React.FC = () => {
                 <Select
                   value={detailForm.isActive ? 'Y' : 'N'}
                   onChange={(e) => setDetailForm({ ...detailForm, isActive: e.target.value === 'Y' })}
-                >
+                 displayEmpty>
+                  <MenuItem value="" disabled>선택</MenuItem>
                   <MenuItem value="Y">Y</MenuItem>
                   <MenuItem value="N">N</MenuItem>
                 </Select>
@@ -1244,7 +1248,7 @@ const CodeManagePage: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions sx={{ borderTop: 1, borderColor: 'grey.300', px: { xs: 2, sm: 3 }, py: 2, gap: 1 }}>
-          <Button onClick={() => { setDetailModalOpen(false); resetFileState() }}>{t('common.cancel')}</Button>
+          <Button variant="outlined" onClick={() => { setDetailModalOpen(false); resetFileState() }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleDetailSubmit}>{t('common.save')}</Button>
         </DialogActions>
       </Dialog>

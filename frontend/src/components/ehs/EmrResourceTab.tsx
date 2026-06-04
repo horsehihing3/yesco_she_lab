@@ -8,7 +8,9 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { useAlert } from '../../contexts/AlertContext'
 import { emergencyResourceApi } from '../../api/emergencyExtendedApi'
@@ -44,9 +46,12 @@ const EmrResourceTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<EmergencyResource | null>(null)
   const [form, setForm] = useState<EmergencyResourceRequest>({ ...emptyForm })
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const pageSize = 10
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
+  const handleResetSearch = () => { setSearchInput(''); setSearchText(''); setTypeFilter(''); setPage(0) }
 
   const queryKey = ['emrResources', page]
   const queryFn = () => emergencyResourceApi.getAll(page, pageSize)
@@ -84,7 +89,7 @@ const EmrResourceTab: React.FC = () => {
   })
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ ...emptyForm }) }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm }); setViewMode('create') }
+  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm, disposalDate: todayStr() }); setViewMode('create') }
   const handleOpenDetail = (item: EmergencyResource) => { setSelectedItem(item); setViewMode('detail') }
   const handleOpenEdit = (item?: EmergencyResource) => {
     const target = item || selectedItem
@@ -129,8 +134,8 @@ const EmrResourceTab: React.FC = () => {
         {/* PC Search */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('emr.searchPlaceholder')} value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setPage(0) }}
+            <ListSearchBar placeholder={t('emr.searchPlaceholder')}
+              value={searchInput} onChange={setSearchInput} onSearch={applySearch}
               sx={{ minWidth: 200 }} />
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <Select displayEmpty value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0) }}>
@@ -138,14 +143,14 @@ const EmrResourceTab: React.FC = () => {
                 {resourceTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getResourceTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
-            <IconButton onClick={() => { setSearchText(''); setTypeFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
+            <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
         </Box>
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('emr.searchPlaceholder')} value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0) }} />
+          <ListSearchBar fullWidth placeholder={t('emr.searchPlaceholder')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
           <Box sx={{ display: 'flex', gap: 1 }}>
             <FormControl size="small" sx={{ flex: 1 }}>
               <Select displayEmpty value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0) }}>
@@ -320,7 +325,8 @@ const EmrResourceTab: React.FC = () => {
             </Box>
             <Typography sx={labelSx}>{t('emr.resourceType')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
-              <Select fullWidth size="small" value={form.resourceType} onChange={(e) => setForm({ ...form, resourceType: e.target.value })}>
+              <Select fullWidth size="small" value={form.resourceType} onChange={(e) => setForm({ ...form, resourceType: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {resourceTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getResourceTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -342,7 +348,8 @@ const EmrResourceTab: React.FC = () => {
             </Box>
             <Typography sx={labelSx}>{t('common.status')}</Typography>
             <Box sx={valueSx}>
-              <Select fullWidth size="small" value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+              <Select fullWidth size="small" value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {resourceStatusCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getResourceStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -374,7 +381,8 @@ const EmrResourceTab: React.FC = () => {
               {t('emr.resourceType')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <FormControl fullWidth size="small">
-              <Select value={form.resourceType} onChange={(e) => setForm({ ...form, resourceType: e.target.value })}>
+              <Select value={form.resourceType} onChange={(e) => setForm({ ...form, resourceType: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {resourceTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getResourceTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -394,7 +402,8 @@ const EmrResourceTab: React.FC = () => {
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.status')}</Typography>
             <FormControl fullWidth size="small">
-              <Select value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+              <Select value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="NORMAL">NORMAL</MenuItem>
                 <MenuItem value="CHECK_NEEDED">CHECK_NEEDED</MenuItem>
               </Select>

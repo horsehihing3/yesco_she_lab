@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { fmtPhone } from '../../utils/phoneFormat'
+import ListSearchBar from '../common/ListSearchBar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Typography, Paper, Grid, TextField, Select, MenuItem, FormControl,
@@ -32,7 +33,10 @@ const TrainingApplyTab: React.FC = () => {
   const { getLabel: getModeLabel } = useCodeMap('TRAINING_MODE')
   const { getLabel: getAppStatusLabel } = useCodeMap('TRAINING_APPLICATION_STATUS')
 
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
+  const applySearch = () => setSearchText(searchInput)
+  const handleResetSearch = () => { setSearchInput(''); setSearchText(''); setModeFilter(''); setMonthFilter(''); setTabFilter('all') }
   const [modeFilter, setModeFilter] = useState('')
   const [monthFilter, setMonthFilter] = useState('')
   const [tabFilter, setTabFilter] = useState<string>('all') // all / mandatory / special / manager / voluntary
@@ -197,11 +201,11 @@ const TrainingApplyTab: React.FC = () => {
 
       {/* Filter bar */}
       <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           placeholder={t('training.searchCoursePh', '과정명, 강사명 검색')}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={applySearch}
           sx={{ minWidth: 220 }}
         />
         <FormControl size="small" sx={{ minWidth: 130 }}>
@@ -220,7 +224,7 @@ const TrainingApplyTab: React.FC = () => {
             ))}
           </Select>
         </FormControl>
-        <IconButton size="small" onClick={() => { setSearchText(''); setModeFilter(''); setMonthFilter(''); setTabFilter('all') }}>
+        <IconButton size="small" onClick={handleResetSearch}>
           <RefreshIcon />
         </IconButton>
       </Box>
@@ -342,7 +346,8 @@ const TrainingApplyTab: React.FC = () => {
                         <Box sx={labelSx}>{t('training.mealOption', '식사')}</Box>
                         <Box sx={valSx}>
                           <FormControl fullWidth size="small">
-                            <Select value={applyForm.meal} onChange={(e) => setApplyForm({ ...applyForm, meal: e.target.value })}>
+                            <Select value={applyForm.meal} onChange={(e) => setApplyForm({ ...applyForm, meal: e.target.value })} displayEmpty>
+                              <MenuItem value="" disabled>선택</MenuItem>
                               <MenuItem value="중식 신청 (일반식)">중식 신청 (일반식)</MenuItem>
                               <MenuItem value="중식 신청 (채식)">중식 신청 (채식)</MenuItem>
                               <MenuItem value="신청하지 않음">신청하지 않음</MenuItem>
@@ -354,7 +359,8 @@ const TrainingApplyTab: React.FC = () => {
                         <Box sx={labelSx}>{t('training.transportOption', '교통편')}</Box>
                         <Box sx={valSx}>
                           <FormControl fullWidth size="small">
-                            <Select value={applyForm.transport} onChange={(e) => setApplyForm({ ...applyForm, transport: e.target.value })}>
+                            <Select value={applyForm.transport} onChange={(e) => setApplyForm({ ...applyForm, transport: e.target.value })} displayEmpty>
+                              <MenuItem value="" disabled>선택</MenuItem>
                               <MenuItem value="개인 차량">개인 차량</MenuItem>
                               <MenuItem value="대중교통">대중교통</MenuItem>
                               <MenuItem value="회사 셔틀">회사 셔틀</MenuItem>
@@ -381,7 +387,7 @@ const TrainingApplyTab: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setApplyDialogCourse(null)}>{t('common.cancel', '취소')}</Button>
+          <Button variant="outlined" onClick={() => setApplyDialogCourse(null)}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleSubmitApplication}
             disabled={createMutation.isPending || !applyForm.chkLaw || !applyForm.chkPrivacy}>
             {t('training.submit', '신청 제출')}

@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
   Box, Paper, Table, TableHead, TableBody, TableRow, TableCell,
   TableContainer, Typography, Button, Alert,
-  TextField, IconButton,
+  TextField, IconButton, Radio,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import * as XLSX from 'xlsx'
 import { riskAssessmentApi } from '../../api/riskAssessmentApi'
 import { RiskAssessmentFormMaster, RiskAssessmentFormItemRequest } from '../../types/riskAssessment.types'
@@ -102,13 +103,31 @@ const parseRiskAssessmentSheet = (rows: string[][]): ParsedForm[] => {
 
       // 데이터 시작행 = "작업내용" 헤더 이후 2줄 (두번째 헤더 행에 재해형태/빈도/강도...)
       let dataStart = -1
+      let headerTopRow = -1
       for (let j = i + 1; j < Math.min(rows.length, i + 12); j++) {
         if (norm(rows[j]?.[0]) === '작업내용') {
           dataStart = j + 2
+          headerTopRow = j
           break
         }
       }
       if (dataStart < 0) { i++; continue }
+
+      // 헤더 두 행을 훑어 '현재 안전조치' / '안전조치' 컬럼 인덱스 탐지
+      // (KOSHA 양식별로 열 위치가 달라질 수 있어 헤더 텍스트로 동적 탐지)
+      let safetyCol = -1
+      const headerRows = [rows[headerTopRow] || [], rows[headerTopRow + 1] || []]
+      for (const hr of headerRows) {
+        for (let c = 0; c < hr.length; c++) {
+          const v = norm(hr[c])
+          if (!v) continue
+          if (v.includes('현재안전조치') || v === '안전조치' || (v.includes('현재') && v.includes('안전'))) {
+            safetyCol = c
+            break
+          }
+        }
+        if (safetyCol >= 0) break
+      }
 
       const items: RiskAssessmentFormItemRequest[] = []
       let lastDetailAction = ''
@@ -124,6 +143,9 @@ const parseRiskAssessmentSheet = (rows: string[][]): ParsedForm[] => {
         const risk4M = String(r[1] || '').trim() || lastRisk4M
         const danger = String(r[2] || '').trim()
         const expectedDisaster = String(r[4] || '').trim()
+        const currentSafetyMeasures = safetyCol >= 0
+          ? String(r[safetyCol] || '').replace(/\r\n/g, '\n').trim()
+          : ''
 
         // 완전히 비어 있으면 종료
         if (!detailAction && !risk4M && !danger && !expectedDisaster) break
@@ -141,7 +163,7 @@ const parseRiskAssessmentSheet = (rows: string[][]): ParsedForm[] => {
           danger,
           expectedDisaster: mapDisaster(expectedDisaster),
           target: '',
-          currentSafetyMeasures: '',
+          currentSafetyMeasures,
           possibilityGrade: 0,
           resultGrade: 0,
           reductionMeasures: '',
@@ -175,7 +197,46 @@ const RiskAssessmentFormWrapper: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false)
   const [keyword, setKeyword] = useState('')
   const [isUploading, setIsUploading] = useState(false)
+  const [copyTargetId, setCopyTargetId] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // 복사 — 선택된 양식의 상세를 가져와 동일 항목으로 새 양식 생성 (제목 앞에 'copy_ ' 접두어)
+  const copyMutation = useMutation({
+    mutationFn: async (sourceId: number) => {
+      const detail = await riskAssessmentApi.getFormById(sourceId)
+      const items: RiskAssessmentFormItemRequest[] = (detail.items || []).map((it: any, idx: number) => ({
+        riskIdx: idx + 1,
+        detailAction: it.detailAction || '',
+        risk4M: it.risk4M || '',
+        danger: it.danger || '',
+        expectedDisaster: it.expectedDisaster || '',
+        target: it.target || '',
+        currentSafetyMeasures: it.currentSafetyMeasures || '',
+        possibilityGrade: it.possibilityGrade ?? 0,
+        resultGrade: it.resultGrade ?? 0,
+        reductionMeasures: it.reductionMeasures || '',
+        improvementManager: it.improvementManager || '',
+        improvementDeadline: it.improvementDeadline || '',
+        improvedPossibilityGrade: it.improvedPossibilityGrade ?? 0,
+        improvedResultGrade: it.improvedResultGrade ?? 0,
+        relatedLaw: it.relatedLaw || '',
+        remark: it.remark || '',
+        reviewer: it.reviewer || '',
+        approverName: it.approverName || '',
+      }))
+      return riskAssessmentApi.createForm({ title: `copy_ ${detail.title || ''}`.trim(), items })
+    },
+    onSuccess: () => {
+      showSuccess(t('checklist.copySuccess', '복사되었습니다.'))
+      queryClient.invalidateQueries({ queryKey: ['riskAssessmentForms'] })
+      setCopyTargetId(null)
+    },
+    onError: () => showError(t('common.failed', '실패했습니다.')),
+  })
+  const handleCopy = () => {
+    if (copyTargetId == null) return
+    copyMutation.mutate(copyTargetId)
+  }
 
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -204,18 +265,7 @@ const RiskAssessmentFormWrapper: React.FC = () => {
         return
       }
 
-      // 업로드 전: 파싱된 title(정규화) 과 매칭되는 기존 form 삭제 (다시 설정 = 재업로드 idempotent)
-      const parsedTitleSet = new Set(parsed.map(p => cleanTitle(p.title)))
-      try {
-        const existing = await riskAssessmentApi.getForms({ page: 0, size: 200 })
-        const toDelete = (existing?.content || []).filter(f => parsedTitleSet.has(cleanTitle(f.title)))
-        for (const f of toDelete) {
-          try { await riskAssessmentApi.deleteForm(f.id) } catch (err) { console.error('Delete existing failed:', f.id, err) }
-        }
-      } catch (err) {
-        console.error('Fetch existing forms failed:', err)
-      }
-
+      // 동일 제목이라도 기존 항목 유지 + 새 항목으로 추가 등록 (중복 허용)
       let created = 0
       for (const form of parsed) {
         try {
@@ -226,8 +276,15 @@ const RiskAssessmentFormWrapper: React.FC = () => {
         }
       }
 
-      queryClient.invalidateQueries({ queryKey: ['riskAssessmentForms'] })
-      showSuccess(`${created}개 양식, 총 ${parsed.reduce((s, f) => s + f.items.length, 0)}개 항목이 등록되었습니다.`)
+      // 캐시 무효화 후 즉시 재조회를 await 해서 목록이 새 데이터로 갱신된 뒤 토스트가 뜨도록 함
+      // (invalidateQueries 만으로는 비동기 refetch 완료 전에 success 메시지가 떠 사용자가 "변화 없음"으로 오인할 수 있음)
+      await queryClient.refetchQueries({ queryKey: ['riskAssessmentForms'], type: 'active' })
+      if (keyword.trim()) setKeyword('') // 검색어 걸려있어 새 항목이 안보이는 경우 대비
+      if (created === 0) {
+        showWarning('등록된 양식이 없습니다. (모두 실패하거나 동일 제목이 이미 존재할 수 있음)')
+      } else {
+        showSuccess(`${created}개 양식, 총 ${parsed.reduce((s, f) => s + f.items.length, 0)}개 항목이 등록되었습니다.`)
+      }
     } catch (err) {
       console.error('Excel parse failed:', err)
       showError(t('common.error', '엑셀 파일 처리에 실패했습니다.'))
@@ -271,6 +328,10 @@ const RiskAssessmentFormWrapper: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="contained" size="small" onClick={() => fileInputRef.current?.click()}>{t('riskAssessment.excelUpload', '엑셀 업로드')}</Button>
+          <Button variant="contained" size="small" startIcon={<ContentCopyIcon />}
+            disabled={copyTargetId == null || copyMutation.isPending} onClick={handleCopy}>
+            {t('common.copy', '복사')}
+          </Button>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => setIsCreating(true)}>{t('common.new')}</Button>
         </Box>
       </Box>
@@ -278,10 +339,15 @@ const RiskAssessmentFormWrapper: React.FC = () => {
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
         <TextField size="small" fullWidth placeholder={t('riskAssessment.searchPlaceholder', '제목으로 검색...')} value={keyword}
           onChange={(e) => setKeyword(e.target.value)} />
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={() => setKeyword('')} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
-          <Button variant="contained" size="small" onClick={() => fileInputRef.current?.click()} sx={{ flex: 1 }}>{t('riskAssessment.excelUpload', '엑셀 업로드')}</Button>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => setIsCreating(true)} sx={{ flex: 1 }}>{t('common.new')}</Button>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={() => setKeyword('')} sx={{ flex: '1 1 calc(50% - 4px)' }}>{t('common.reset', '초기화')}</Button>
+          <Button variant="contained" size="small" startIcon={<ContentCopyIcon />}
+            disabled={copyTargetId == null || copyMutation.isPending} onClick={handleCopy}
+            sx={{ flex: '1 1 calc(50% - 4px)' }}>
+            {t('common.copy', '복사')}
+          </Button>
+          <Button variant="contained" size="small" onClick={() => fileInputRef.current?.click()} sx={{ flex: '1 1 calc(50% - 4px)' }}>{t('riskAssessment.excelUpload', '엑셀 업로드')}</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => setIsCreating(true)} sx={{ flex: '1 1 calc(50% - 4px)' }}>{t('common.new')}</Button>
         </Box>
       </Box>
 
@@ -296,6 +362,7 @@ const RiskAssessmentFormWrapper: React.FC = () => {
             <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
               <TableHead>
                 <TableRow>
+                  <TableCell sx={{ ...headerCellSx, width: 48, p: 0 }} align="center"></TableCell>
                   <TableCell sx={{ ...headerCellSx, width: 40 }} align="center">{t('common.no')}</TableCell>
                   <TableCell sx={headerCellSx}>{t('common.title', '제목')}</TableCell>
                   <TableCell sx={{ ...headerCellSx, width: 40 }} align="center">{t('riskAssessment.itemCount', '항목 수')}</TableCell>
@@ -304,6 +371,10 @@ const RiskAssessmentFormWrapper: React.FC = () => {
               <TableBody>
                 {filtered.map((item: RiskAssessmentFormMaster, idx: number) => (
                   <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => setSelectedId(item.id)}>
+                    <TableCell align="center" sx={{ width: 48, p: 0 }} onClick={(e) => e.stopPropagation()}>
+                      <Radio size="small" checked={copyTargetId === item.id}
+                        onChange={() => setCopyTargetId(item.id)} value={item.id} name="risk-copy-radio" />
+                    </TableCell>
                     <TableCell align="center" sx={{ fontWeight: 'bold', width: 40 }}>{idx + 1}</TableCell>
                     <TableCell><Typography variant="body2" fontWeight={600} color="primary">{item.title}</Typography></TableCell>
                     <TableCell align="center">{item.itemCount ?? 0}</TableCell>
@@ -316,7 +387,13 @@ const RiskAssessmentFormWrapper: React.FC = () => {
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {filtered.map((item: RiskAssessmentFormMaster) => (
               <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => setSelectedId(item.id)}>
-                <Typography fontWeight="bold" color="primary" sx={{ mb: 0.5 }}>{item.title}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                  <Box onClick={(e) => e.stopPropagation()}>
+                    <Radio size="small" checked={copyTargetId === item.id}
+                      onChange={() => setCopyTargetId(item.id)} value={item.id} name="risk-copy-radio-mobile" />
+                  </Box>
+                  <Typography fontWeight="bold" color="primary" sx={{ flex: 1 }}>{item.title}</Typography>
+                </Box>
                 <Typography variant="caption" color="text.secondary">{t('riskAssessment.itemCount', '항목 수')}: {item.itemCount ?? 0}</Typography>
               </Paper>
             ))}

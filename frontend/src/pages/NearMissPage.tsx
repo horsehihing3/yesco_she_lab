@@ -54,6 +54,11 @@ import SearchIcon from '@mui/icons-material/Search'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import BusinessIcon from '@mui/icons-material/Business'
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView'
+import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import { useForm, Controller } from 'react-hook-form'
 import DatePickerField from '../components/common/DatePickerField'
 import { useAlert } from '../contexts/AlertContext'
@@ -64,6 +69,7 @@ import { ApiResponse, PageResponse } from '../types/common.types'
 import { NearMiss, NearMissRequest, NearMissActionRequest, NearMissStatus } from '../types/nearMiss.types'
 import useCodeMap from '../hooks/useCodeMap'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
+import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
 import { FileMetadata } from '../types/file.types'
 import AccidentReportTab from '../components/ehs/AccidentReportTab'
 import NearMissDashboardTab from '../components/ehs/NearMissDashboardTab'
@@ -117,6 +123,10 @@ const NearMissPage: React.FC = () => {
   const theme = useTheme()
   const { showConfirm, showSuccess } = useAlert()
   const { codeMap: statusKeys } = useCodeMap('NEAR_MISS_STATUS')
+  // 사고 대응 4종 — 코드 그룹 (INCIDENT_RESP_*)
+  const { codeList: incRespTypeList, codeMap: incRespTypeMap } = useCodeMap('INCIDENT_RESP_TYPE')
+  const { codeList: incRespStatusList, codeMap: incRespStatusMap } = useCodeMap('INCIDENT_RESP_STATUS')
+  const { codeList: incRespSeverityList, codeMap: incRespSeverityMap } = useCodeMap('INCIDENT_RESP_SEVERITY')
   const { isMenuHidden } = useMenuRule()
   const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT' | 'REPORT'>((searchParams.get('incidentType') as 'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT' | 'REPORT') || 'NEAR_MISS')
@@ -147,6 +157,8 @@ const NearMissPage: React.FC = () => {
   const [newMeasure, setNewMeasure] = useState({ content: '', department: '', responsible: '', dueDate: '' })
   const [responsibleModalOpen, setResponsibleModalOpen] = useState(false)
   const [selectedResponsible, setSelectedResponsible] = useState<UserInfo | null>(null)
+  // 조치사항 담당부서 — 부서선택 모달
+  const [actionDeptModalOpen, setActionDeptModalOpen] = useState(false)
   const [beforeImage, setBeforeImage] = useState<string | null>(null)
   const [afterImage, setAfterImage] = useState<string | null>(null)
   const [beforeFile, setBeforeFile] = useState<File | null>(null)
@@ -174,6 +186,33 @@ const NearMissPage: React.FC = () => {
   const [drawingSelectModalOpen, setDrawingSelectModalOpen] = useState(false)
   const [modalPreviewDrawingId, setModalPreviewDrawingId] = useState<number | null>(null)
   const [modalPreviewImageIndex, setModalPreviewImageIndex] = useState(0)
+
+  // 건물(name) → 층(floor) 2단계 트리 데이터 — 도면 관리 화면과 동일 구조
+  const drawingsByBuilding = useMemo(() => {
+    const map = new Map<string, FloorDrawing[]>()
+    for (const f of floorDrawings) {
+      const key = f.name || '(미지정)'
+      if (!map.has(key)) map.set(key, [])
+      map.get(key)!.push(f)
+    }
+    const parseFloorNum = (s: string | undefined) => parseInt(String(s || '').replace(/[^\d-]/g, '')) || 0
+    for (const list of map.values()) {
+      list.sort((a, b) => {
+        const na = parseFloorNum(a.floor)
+        const nb = parseFloorNum(b.floor)
+        if (na !== nb) return nb - na  // 위층부터 노출 (도면 관리와 동일)
+        return (a.floor || '').localeCompare(b.floor || '')
+      })
+    }
+    return Array.from(map.entries())
+  }, [floorDrawings])
+
+  const [expandedBuildingsModal, setExpandedBuildingsModal] = useState<string[]>([])
+  useEffect(() => {
+    if (drawingSelectModalOpen) {
+      setExpandedBuildingsModal(drawingsByBuilding.map(([b]) => `b-${b}`))
+    }
+  }, [drawingSelectModalOpen, drawingsByBuilding])
 
   // Fetch selected drawing's images
   const { data: drawingImageFiles, isLoading: isLoadingDrawingImage } = useQuery({
@@ -324,6 +363,10 @@ const NearMissPage: React.FC = () => {
       authorEmail: '',
       authorDept: '',
       status: 'PENDING',
+      emergencyType: '',
+      responseStatus: '',
+      isDrill: false,
+      severity: '',
     })
     setViewMode('create')
   }
@@ -353,6 +396,10 @@ const NearMissPage: React.FC = () => {
       intensity: nearMiss.intensity,
       frequency: nearMiss.frequency,
       status: nearMiss.status,
+      emergencyType: nearMiss.emergencyType || '',
+      responseStatus: nearMiss.responseStatus || '',
+      isDrill: nearMiss.isDrill || false,
+      severity: nearMiss.severity || '',
     })
     // 기존 조치사항 로드
     if (nearMiss.actions && nearMiss.actions.length > 0) {
@@ -1019,6 +1066,27 @@ const NearMissPage: React.FC = () => {
           </Box>
         </Box>
 
+        {/* 사고 대응 분류 (조회) */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          사고 대응 분류
+        </Typography>
+        <Box sx={{ mb: 3 }}>
+          <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
+            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' } }}>
+              <TableBody>
+                <TableRow>
+                  <TableCell sx={{ width: 110, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center' }}>비상유형</TableCell>
+                  <TableCell>{viewNearMiss.emergencyType ? (incRespTypeMap[viewNearMiss.emergencyType] || viewNearMiss.emergencyType) : '-'}</TableCell>
+                  <TableCell sx={{ width: 110, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center' }}>상태</TableCell>
+                  <TableCell>{viewNearMiss.responseStatus ? (incRespStatusMap[viewNearMiss.responseStatus] || viewNearMiss.responseStatus) : '-'}</TableCell>
+                  <TableCell sx={{ width: 110, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center' }}>심각도</TableCell>
+                  <TableCell>{viewNearMiss.severity ? (incRespSeverityMap[viewNearMiss.severity] || viewNearMiss.severity) : '-'}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+
         {/* 위험성 파악 */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           {t('nearMiss.riskIdentification')}
@@ -1556,6 +1624,106 @@ const NearMissPage: React.FC = () => {
           </Box>
         </Paper>
 
+        {/* 사고 대응 분류 — 비상유형/상태/심각도 (코드) */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+          사고 대응 분류
+        </Typography>
+        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+          {/* PC용 테이블 레이아웃 */}
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell sx={{ width: 110, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center' }}>비상유형</TableCell>
+                    <TableCell>
+                      <Controller name="emergencyType" control={control} defaultValue=""
+                        render={({ field }) => (
+                          <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
+                            <MenuItem value="">선택</MenuItem>
+                            {incRespTypeList.map((c: any) => (
+                              <MenuItem key={c.code} value={c.code}>{incRespTypeMap[c.code] || c.code}</MenuItem>
+                            ))}
+                          </TextField>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ width: 110, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center' }}>상태</TableCell>
+                    <TableCell>
+                      <Controller name="responseStatus" control={control} defaultValue=""
+                        render={({ field }) => (
+                          <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
+                            <MenuItem value="">선택</MenuItem>
+                            {incRespStatusList.map((c: any) => (
+                              <MenuItem key={c.code} value={c.code}>{incRespStatusMap[c.code] || c.code}</MenuItem>
+                            ))}
+                          </TextField>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ width: 110, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center' }}>심각도</TableCell>
+                    <TableCell>
+                      <Controller name="severity" control={control} defaultValue=""
+                        render={({ field }) => (
+                          <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
+                            <MenuItem value="">선택</MenuItem>
+                            {incRespSeverityList.map((c: any) => (
+                              <MenuItem key={c.code} value={c.code}>{incRespSeverityMap[c.code] || c.code}</MenuItem>
+                            ))}
+                          </TextField>
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+
+          {/* 모바일용 레이아웃 — 3개 한 줄 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'row', gap: 1 }}>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1, py: 0.75, borderRadius: 0.5, fontSize: '0.75rem', textAlign: 'center' }}>비상유형</Typography>
+              <Controller name="emergencyType" control={control} defaultValue=""
+                render={({ field }) => (
+                  <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
+                    <MenuItem value="">선택</MenuItem>
+                    {incRespTypeList.map((c: any) => (
+                      <MenuItem key={c.code} value={c.code}>{incRespTypeMap[c.code] || c.code}</MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
+            </Box>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1, py: 0.75, borderRadius: 0.5, fontSize: '0.75rem', textAlign: 'center' }}>상태</Typography>
+              <Controller name="responseStatus" control={control} defaultValue=""
+                render={({ field }) => (
+                  <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
+                    <MenuItem value="">선택</MenuItem>
+                    {incRespStatusList.map((c: any) => (
+                      <MenuItem key={c.code} value={c.code}>{incRespStatusMap[c.code] || c.code}</MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
+            </Box>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1, py: 0.75, borderRadius: 0.5, fontSize: '0.75rem', textAlign: 'center' }}>심각도</Typography>
+              <Controller name="severity" control={control} defaultValue=""
+                render={({ field }) => (
+                  <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
+                    <MenuItem value="">선택</MenuItem>
+                    {incRespSeverityList.map((c: any) => (
+                      <MenuItem key={c.code} value={c.code}>{incRespSeverityMap[c.code] || c.code}</MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
+            </Box>
+          </Box>
+        </Paper>
+
         {/* 위험성 파악 섹션 - 반응형 */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           {t('nearMiss.riskIdentification')}
@@ -1685,8 +1853,12 @@ const NearMissPage: React.FC = () => {
               <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.responsibleDept')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
-                <TextField fullWidth size="small" placeholder={t('nearMiss.responsibleDept')} value={newMeasure.department} onChange={(e) => setNewMeasure({ ...newMeasure, department: e.target.value })} />
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+                <TextField fullWidth size="small" placeholder={t('nearMiss.responsibleDept')}
+                  value={newMeasure.department} InputProps={{ readOnly: true }} />
+                <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setActionDeptModalOpen(true)}>
+                  <PersonSearchIcon fontSize="small" />
+                </Button>
               </Box>
               <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.responsiblePerson')}
@@ -1723,7 +1895,13 @@ const NearMissPage: React.FC = () => {
             </Box>
             <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.responsibleDept')}</Typography>
-              <TextField fullWidth size="small" placeholder={t('nearMiss.responsibleDept')} value={newMeasure.department} onChange={(e) => setNewMeasure({ ...newMeasure, department: e.target.value })} />
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <TextField fullWidth size="small" placeholder={t('nearMiss.responsibleDept')}
+                  value={newMeasure.department} InputProps={{ readOnly: true }} />
+                <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setActionDeptModalOpen(true)}>
+                  <PersonSearchIcon fontSize="small" />
+                </Button>
+              </Box>
             </Box>
             <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.responsiblePerson')}</Typography>
@@ -1912,29 +2090,49 @@ const NearMissPage: React.FC = () => {
         <DialogContent>
           {/* PC 레이아웃 */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, mt: 1, minHeight: 400 }}>
-            {/* 왼쪽: 도면 목록 */}
-            <Paper sx={{ width: 260, flexShrink: 0, overflow: 'auto', maxHeight: 450 }}>
-              <List sx={{ p: 0 }}>
-                {floorDrawings.map((drawing, index) => (
-                  <ListItemButton
-                    key={drawing.id}
-                    selected={modalPreviewDrawingId === drawing.id}
-                    onClick={() => { setModalPreviewDrawingId(drawing.id); setModalPreviewImageIndex(0) }}
-                    sx={{
-                      borderBottom: index < floorDrawings.length - 1 ? 1 : 'none',
-                      borderColor: 'grey.300',
-                      '&.Mui-selected': { bgcolor: 'primary.light', color: 'primary.contrastText', '&:hover': { bgcolor: 'primary.main' } },
-                    }}
+            {/* 왼쪽: 건물→층 2단계 트리 (도면 관리와 동일) */}
+            <Paper sx={{ width: 260, flexShrink: 0, overflow: 'auto', maxHeight: 450, p: 1 }}>
+              <SimpleTreeView
+                slots={{ collapseIcon: ExpandMoreIcon, expandIcon: ChevronRightIcon }}
+                expandedItems={expandedBuildingsModal}
+                onExpandedItemsChange={(_, ids) => setExpandedBuildingsModal(ids)}
+                selectedItems={modalPreviewDrawingId ? `f-${modalPreviewDrawingId}` : ''}
+                onSelectedItemsChange={(_, id) => {
+                  if (id && typeof id === 'string' && id.startsWith('f-')) {
+                    setModalPreviewDrawingId(Number(id.slice(2)))
+                    setModalPreviewImageIndex(0)
+                  }
+                }}
+              >
+                {drawingsByBuilding.map(([building, floors]) => (
+                  <TreeItem
+                    key={`b-${building}`}
+                    itemId={`b-${building}`}
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center', py: 0.5 }}>
+                        <BusinessIcon sx={{ fontSize: 16, mr: 0.5, color: 'primary.main' }} />
+                        <Typography fontWeight="bold" sx={{ fontSize: '0.9rem' }}>{building}</Typography>
+                      </Box>
+                    }
                   >
-                    <ListItemText
-                      primary={drawing.name}
-                      secondary={`${drawing.site}${drawing.floor ? ` - ${drawing.floor}` : ''}`}
-                      primaryTypographyProps={{ fontWeight: modalPreviewDrawingId === drawing.id ? 'bold' : 'normal', fontSize: 14 }}
-                      secondaryTypographyProps={{ fontSize: 12, color: modalPreviewDrawingId === drawing.id ? 'inherit' : 'text.secondary' }}
-                    />
-                  </ListItemButton>
+                    {floors.map((drawing) => (
+                      <TreeItem
+                        key={`f-${drawing.id}`}
+                        itemId={`f-${drawing.id}`}
+                        label={
+                          <Typography sx={{
+                            fontSize: '0.85rem',
+                            fontWeight: modalPreviewDrawingId === drawing.id ? 'bold' : 'normal',
+                            py: 0.5,
+                          }}>
+                            {drawing.floor || '-'}
+                          </Typography>
+                        }
+                      />
+                    ))}
+                  </TreeItem>
                 ))}
-              </List>
+              </SimpleTreeView>
             </Paper>
             {/* 오른쪽: 도면 프리뷰 */}
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -1990,35 +2188,54 @@ const NearMissPage: React.FC = () => {
                 </Box>
               </Box>
             )}
-            {/* 도면 목록 */}
-            <Paper variant="outlined" sx={{ maxHeight: 250, overflow: 'auto' }}>
-              <List sx={{ p: 0 }}>
-                {floorDrawings.map((drawing, index) => (
-                  <ListItemButton
-                    key={drawing.id}
-                    selected={modalPreviewDrawingId === drawing.id}
-                    onClick={() => { setModalPreviewDrawingId(drawing.id); setModalPreviewImageIndex(0) }}
-                    sx={{
-                      borderBottom: index < floorDrawings.length - 1 ? 1 : 'none',
-                      borderColor: 'grey.300',
-                      '&.Mui-selected': { bgcolor: 'primary.light', color: 'primary.contrastText' },
-                    }}
-                    dense
+            {/* 도면 목록 — 건물→층 2단계 트리 */}
+            <Paper variant="outlined" sx={{ maxHeight: 250, overflow: 'auto', p: 1 }}>
+              <SimpleTreeView
+                slots={{ collapseIcon: ExpandMoreIcon, expandIcon: ChevronRightIcon }}
+                expandedItems={expandedBuildingsModal}
+                onExpandedItemsChange={(_, ids) => setExpandedBuildingsModal(ids)}
+                selectedItems={modalPreviewDrawingId ? `f-${modalPreviewDrawingId}` : ''}
+                onSelectedItemsChange={(_, id) => {
+                  if (id && typeof id === 'string' && id.startsWith('f-')) {
+                    setModalPreviewDrawingId(Number(id.slice(2)))
+                    setModalPreviewImageIndex(0)
+                  }
+                }}
+              >
+                {drawingsByBuilding.map(([building, floors]) => (
+                  <TreeItem
+                    key={`b-${building}`}
+                    itemId={`b-${building}`}
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center', py: 0.5 }}>
+                        <BusinessIcon sx={{ fontSize: 14, mr: 0.5, color: 'primary.main' }} />
+                        <Typography fontWeight="bold" sx={{ fontSize: '0.85rem' }}>{building}</Typography>
+                      </Box>
+                    }
                   >
-                    <ListItemText
-                      primary={drawing.name}
-                      secondary={`${drawing.site}${drawing.floor ? ` - ${drawing.floor}` : ''}`}
-                      primaryTypographyProps={{ fontSize: 13 }}
-                      secondaryTypographyProps={{ fontSize: 11 }}
-                    />
-                  </ListItemButton>
+                    {floors.map((drawing) => (
+                      <TreeItem
+                        key={`f-${drawing.id}`}
+                        itemId={`f-${drawing.id}`}
+                        label={
+                          <Typography sx={{
+                            fontSize: '0.8rem',
+                            fontWeight: modalPreviewDrawingId === drawing.id ? 'bold' : 'normal',
+                            py: 0.5,
+                          }}>
+                            {drawing.floor || '-'}
+                          </Typography>
+                        }
+                      />
+                    ))}
+                  </TreeItem>
                 ))}
-              </List>
+              </SimpleTreeView>
             </Paper>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDrawingSelectModalOpen(false)}>{t('common.cancel')}</Button>
+          <Button variant="outlined" onClick={() => setDrawingSelectModalOpen(false)}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleConfirmDrawingSelect} disabled={!modalPreviewDrawingId}>{t('common.select')}</Button>
         </DialogActions>
       </Dialog>
@@ -2032,6 +2249,17 @@ const NearMissPage: React.FC = () => {
         title={t('nearMiss.selectResponsiblePerson')}
         singleSelect
         useCompanyTree
+      />
+
+      {/* 조치사항 담당부서 — 부서 선택 모달 */}
+      <DepartmentSelectModal
+        open={actionDeptModalOpen}
+        onClose={() => setActionDeptModalOpen(false)}
+        initialDepartment={newMeasure.department || ''}
+        onConfirm={(dept) => {
+          setNewMeasure({ ...newMeasure, department: dept })
+          setActionDeptModalOpen(false)
+        }}
       />
     </Box>
   )

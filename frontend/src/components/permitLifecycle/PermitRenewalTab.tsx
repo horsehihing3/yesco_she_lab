@@ -6,12 +6,15 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress, LinearProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { permitRenewalApi, permitLifecycleStatsApi } from '../../api/permitLifecycleApi'
 import type { PermitRenewal } from '../../types/permitLifecycle.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -35,7 +38,13 @@ const PermitRenewalTab: React.FC = () => {
   const { data: list = [], isLoading } = useQuery({ queryKey: ['permitRenewal'], queryFn: permitRenewalApi.list })
   const { data: stats } = useQuery({ queryKey: ['permitLifecycleStats'], queryFn: permitLifecycleStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [filterStage, setFilterStage] = useState('all')
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<PermitRenewal | null>(null)
@@ -59,7 +68,7 @@ const PermitRenewalTab: React.FC = () => {
     return true
   }), [list, filterStage, search])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, currentExpiry: todayStr(), targetDate: todayStr(), dueDate: todayStr() }); setOpen(true) }
   const openEdit = (item: PermitRenewal) => { setEditing(item); setForm({ ...item }); setOpen(true) }
   const handleSave = () => {
     if (!form.permitName) { showError('갱신 인허가명을 입력해주세요'); return }
@@ -78,11 +87,12 @@ const PermitRenewalTab: React.FC = () => {
 
       <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <TextField size="small" placeholder="갱신 인허가·담당자 검색" value={search} onChange={(e) => setSearch(e.target.value)} sx={{ flex: 1, minWidth: 200 }} />
+          <ListSearchBar placeholder="갱신 인허가·담당자 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ flex: 1, minWidth: 200 }} />
           <TextField select size="small" label="단계" value={filterStage} onChange={(e) => setFilterStage(e.target.value)} sx={{ minWidth: 130 }}>
             <MenuItem value="all">전체</MenuItem>
             {STAGES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
           </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Stack>
       </Paper>
 
@@ -195,7 +205,7 @@ const PermitRenewalTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
         </DialogActions>
       </Dialog>

@@ -8,6 +8,7 @@ import {
   Switch, FormControlLabel, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useAlert } from '../../contexts/AlertContext'
 import { chemicalIncomingApi, chemicalUsageApi } from '../../api/chemicalApi'
@@ -39,14 +40,20 @@ const IncomingUsageTab: React.FC = () => {
   const [selectedIncoming, setSelectedIncoming] = useState<ChemicalIncoming | null>(null)
   const [incomingForm, setIncomingForm] = useState(emptyIncomingForm)
   const [incomingPage, setIncomingPage] = useState(0)
+  const [incomingKeywordInput, setIncomingKeywordInput] = useState('')
   const [incomingKeyword, setIncomingKeyword] = useState('')
+  const applyIncomingSearch = () => { setIncomingKeyword(incomingKeywordInput); setIncomingPage(0) }
+  const resetIncomingSearch = () => { setIncomingKeywordInput(''); setIncomingKeyword(''); setIncomingPage(0) }
 
   // ===== Usage state =====
   const [usageViewMode, setUsageViewMode] = useState<ViewMode>('list')
   const [selectedUsage, setSelectedUsage] = useState<ChemicalUsage | null>(null)
   const [usageForm, setUsageForm] = useState(emptyUsageForm)
   const [usagePage, setUsagePage] = useState(0)
+  const [usageKeywordInput, setUsageKeywordInput] = useState('')
   const [usageKeyword, setUsageKeyword] = useState('')
+  const applyUsageSearch = () => { setUsageKeyword(usageKeywordInput); setUsagePage(0) }
+  const resetUsageSearch = () => { setUsageKeywordInput(''); setUsageKeyword(''); setUsagePage(0) }
 
   // ===== Incoming query =====
   const { data: incomingData, isLoading: incomingLoading } = useQuery({
@@ -95,7 +102,7 @@ const IncomingUsageTab: React.FC = () => {
   }
   const handleIncomingSave = () => { if (selectedIncoming && incomingViewMode === 'edit') incomingUpdateMut.mutate({ id: selectedIncoming.id, r: incomingForm }); else incomingCreateMut.mutate(incomingForm) }
   const handleIncomingDelete = async (item: ChemicalIncoming) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) incomingDeleteMut.mutate(item.id) }
-  const handleIncomingReset = () => { setIncomingKeyword(''); setIncomingPage(0) }
+  const handleIncomingReset = () => { setIncomingKeywordInput(''); setIncomingKeyword(''); setIncomingPage(0) }
 
   // ===== Usage mutations =====
   const invalidateUsage = () => queryClient.invalidateQueries({ queryKey: ['chemicalUsage'] })
@@ -113,13 +120,14 @@ const IncomingUsageTab: React.FC = () => {
   }
   const handleUsageSave = () => { if (selectedUsage && usageViewMode === 'edit') usageUpdateMut.mutate({ id: selectedUsage.id, r: usageForm }); else usageCreateMut.mutate(usageForm) }
   const handleUsageDelete = async (item: ChemicalUsage) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) usageDeleteMut.mutate(item.id) }
-  const handleUsageReset = () => { setUsageKeyword(''); setUsagePage(0) }
+  const handleUsageReset = () => { setUsageKeywordInput(''); setUsageKeyword(''); setUsagePage(0) }
 
   return (
     <Box>
       {/* Category Select */}
       <FormControl size="small" sx={{ mb: 2, minWidth: 200 }}>
-        <Select value={activeTab} onChange={(e) => setActiveTab(Number(e.target.value))}>
+        <Select value={activeTab} onChange={(e) => setActiveTab(Number(e.target.value))} displayEmpty>
+          <MenuItem value="" disabled>선택</MenuItem>
           <MenuItem value={0}>{t('chem.incoming.tabIncoming')}</MenuItem>
           <MenuItem value={1}>{t('chem.incoming.tabUsage')}</MenuItem>
         </Select>
@@ -249,8 +257,8 @@ const IncomingUsageTab: React.FC = () => {
               {/* Search - PC */}
               <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                  <TextField size="small" placeholder={t('chem.incoming.searchPlaceholder')} value={incomingKeyword}
-                    onChange={(e) => { setIncomingKeyword(e.target.value); setIncomingPage(0) }}
+                  <ListSearchBar placeholder={t('chem.incoming.searchPlaceholder')}
+                    value={incomingKeywordInput} onChange={setIncomingKeywordInput} onSearch={applyIncomingSearch}
                     sx={{ minWidth: 250 }} />
                   <IconButton onClick={handleIncomingReset} size="small"><RefreshIcon /></IconButton>
                 </Box>
@@ -258,8 +266,8 @@ const IncomingUsageTab: React.FC = () => {
               </Box>
               {/* Search - Mobile */}
               <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-                <TextField size="small" fullWidth placeholder={t('chem.incoming.searchPlaceholder')} value={incomingKeyword}
-                  onChange={(e) => { setIncomingKeyword(e.target.value); setIncomingPage(0) }} />
+                <ListSearchBar fullWidth placeholder={t('chem.incoming.searchPlaceholder')}
+                  value={incomingKeywordInput} onChange={setIncomingKeywordInput} onSearch={applyIncomingSearch} />
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleIncomingReset} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
                   <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleIncomingOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>
@@ -444,8 +452,8 @@ const IncomingUsageTab: React.FC = () => {
               {/* Search - PC */}
               <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                  <TextField size="small" placeholder={t('chem.usage2.searchPlaceholder')} value={usageKeyword}
-                    onChange={(e) => { setUsageKeyword(e.target.value); setUsagePage(0) }}
+                  <ListSearchBar placeholder={t('chem.usage2.searchPlaceholder')}
+                    value={usageKeywordInput} onChange={setUsageKeywordInput} onSearch={applyUsageSearch}
                     sx={{ minWidth: 250 }} />
                   <IconButton onClick={handleUsageReset} size="small"><RefreshIcon /></IconButton>
                 </Box>
@@ -453,8 +461,8 @@ const IncomingUsageTab: React.FC = () => {
               </Box>
               {/* Search - Mobile */}
               <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-                <TextField size="small" fullWidth placeholder={t('chem.usage2.searchPlaceholder')} value={usageKeyword}
-                  onChange={(e) => { setUsageKeyword(e.target.value); setUsagePage(0) }} />
+                <ListSearchBar fullWidth placeholder={t('chem.usage2.searchPlaceholder')}
+                  value={usageKeywordInput} onChange={setUsageKeywordInput} onSearch={applyUsageSearch} />
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleUsageReset} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
                   <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleUsageOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>

@@ -6,6 +6,7 @@ import {
   Pagination, Button, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import { trainingApplicationApi } from '../../api/trainingApi'
@@ -42,9 +43,21 @@ const TrainingStatusTab: React.FC = () => {
   const [page, setPage] = useState(0)
   const pageSize = 15
   const [statusFilter, setStatusFilter] = useState('')
+  const [deptInput, setDeptInput] = useState('')
   const [deptFilter, setDeptFilter] = useState('')
+  const [nameInput, setNameInput] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [courseNameInput, setCourseNameInput] = useState('')
   const [courseNameFilter, setCourseNameFilter] = useState('')
+  const applyNameSearch = () => { setNameFilter(nameInput); setPage(0) }
+  const applyDeptSearch = () => { setDeptFilter(deptInput); setPage(0) }
+  const applyCourseNameSearch = () => { setCourseNameFilter(courseNameInput); setPage(0) }
+  const handleResetSearch = () => {
+    setNameInput(''); setNameFilter('')
+    setDeptInput(''); setDeptFilter('')
+    setCourseNameInput(''); setCourseNameFilter('')
+    setStatusFilter(''); setPage(0)
+  }
 
   const [rejectDialog, setRejectDialog] = useState<{ open: boolean; reason: string }>({ open: false, reason: '' })
 
@@ -228,27 +241,12 @@ const TrainingStatusTab: React.FC = () => {
 
       {/* Filter */}
       <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-        <TextField
-          size="small"
-          placeholder={t('training.searchNamePh', '이름 검색')}
-          value={nameFilter}
-          onChange={(e) => { setNameFilter(e.target.value); setPage(0) }}
-          sx={{ minWidth: 160 }}
-        />
-        <TextField
-          size="small"
-          placeholder={t('training.searchDeptPh', '부서 검색')}
-          value={deptFilter}
-          onChange={(e) => { setDeptFilter(e.target.value); setPage(0) }}
-          sx={{ minWidth: 160 }}
-        />
-        <TextField
-          size="small"
-          placeholder={t('training.searchCoursePh2', '교육명 검색')}
-          value={courseNameFilter}
-          onChange={(e) => { setCourseNameFilter(e.target.value); setPage(0) }}
-          sx={{ minWidth: 200 }}
-        />
+        <ListSearchBar placeholder={t('training.searchNamePh', '이름 검색')}
+          value={nameInput} onChange={setNameInput} onSearch={applyNameSearch} sx={{ minWidth: 160 }} />
+        <ListSearchBar placeholder={t('training.searchDeptPh', '부서 검색')}
+          value={deptInput} onChange={setDeptInput} onSearch={applyDeptSearch} sx={{ minWidth: 160 }} />
+        <ListSearchBar placeholder={t('training.searchCoursePh2', '교육명 검색')}
+          value={courseNameInput} onChange={setCourseNameInput} onSearch={applyCourseNameSearch} sx={{ minWidth: 200 }} />
         <FormControl size="small" sx={{ minWidth: 130 }}>
           <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">{t('common.allStatus', '전체 상태')}</MenuItem>
@@ -257,7 +255,7 @@ const TrainingStatusTab: React.FC = () => {
             ))}
           </Select>
         </FormControl>
-        <IconButton size="small" onClick={() => { setNameFilter(''); setDeptFilter(''); setCourseNameFilter(''); setStatusFilter(''); setPage(0) }}>
+        <IconButton size="small" onClick={handleResetSearch}>
           <RefreshIcon />
         </IconButton>
       </Box>

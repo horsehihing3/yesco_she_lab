@@ -46,6 +46,12 @@ public class AuditController {
         return ResponseEntity.ok(ApiResponse.success(auditService.findByStatus(status, pageable)));
     }
 
+    @PostMapping("/recalc-counts")
+    @Operation(summary = "전체 감사 체크리스트 카운트 재계산 (부적합 사항 탭 진입 시)")
+    public ResponseEntity<ApiResponse<Integer>> recalcCounts() {
+        return ResponseEntity.ok(ApiResponse.success(auditService.recalcAllChecklistCounts()));
+    }
+
     @PostMapping
     @Operation(summary = "감사 등록")
     public ResponseEntity<ApiResponse<Audit>> create(@RequestBody Audit audit) {

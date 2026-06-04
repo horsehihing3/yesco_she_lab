@@ -13,6 +13,10 @@ public interface AuditPlanMapper {
 
     int countByDeletedFalse();
 
+    List<AuditPlan> findUnapproved(@Param("offset") int offset, @Param("limit") int limit);
+
+    int countUnapproved();
+
     AuditPlan findById(@Param("id") Long id);
 
     List<AuditPlan> findByStatus(@Param("status") String status, @Param("offset") int offset, @Param("limit") int limit);

@@ -23,13 +23,12 @@ import {
   Checkbox,
   Tabs,
   Tab,
-  InputAdornment,
 } from '@mui/material'
 import EmailIcon from '@mui/icons-material/Email'
 import SmsIcon from '@mui/icons-material/Sms'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import RefreshIcon from '@mui/icons-material/Refresh'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../common/ListSearchBar'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
@@ -72,7 +71,10 @@ const EmergencyNotificationTab: React.FC = () => {
 
   // History state
   const [historyPage, setHistoryPage] = useState(0)
+  const [historySearchInput, setHistorySearchInput] = useState('')
   const [historySearch, setHistorySearch] = useState('')
+  const applyHistorySearch = () => setHistorySearch(historySearchInput)
+  const handleHistoryResetSearch = () => { setHistorySearchInput(''); setHistorySearch('') }
 
   // Dialog state
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
@@ -173,7 +175,6 @@ const EmergencyNotificationTab: React.FC = () => {
 
   const renderSendTab = () => (
     <Box sx={{ p: { xs: 1, sm: 2 } }}>
-      <Paper sx={{ p: { xs: 2, md: 3 }, bgcolor: 'grey.50' }}>
         {/* PC용 테이블 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
           {/* 발송 방법 */}
@@ -357,7 +358,6 @@ const EmergencyNotificationTab: React.FC = () => {
             {isSending ? t('common.sending') : t('emergency.sendEmergency')}
           </Button>
         </Box>
-      </Paper>
     </Box>
   )
 
@@ -365,21 +365,14 @@ const EmergencyNotificationTab: React.FC = () => {
     <Box sx={{ p: { xs: 1, sm: 2 } }}>
       {/* Search */}
       <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           placeholder={t('common.searchByTitle')}
-          value={historySearch}
-          onChange={(e) => setHistorySearch(e.target.value)}
+          value={historySearchInput}
+          onChange={setHistorySearchInput}
+          onSearch={applyHistorySearch}
           sx={{ width: { xs: '100%', md: 300 } }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
         />
-        <IconButton onClick={() => setHistorySearch('')} size="small">
+        <IconButton onClick={handleHistoryResetSearch} size="small">
           <RefreshIcon />
         </IconButton>
       </Box>
@@ -503,7 +496,7 @@ const EmergencyNotificationTab: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions sx={{ gap: 1, p: 2 }}>
-          <Button onClick={() => setConfirmDialogOpen(false)}>{t('common.cancel')}</Button>
+          <Button variant="outlined" onClick={() => setConfirmDialogOpen(false)}>{t('common.cancel')}</Button>
           <Button variant="contained" color="error" onClick={handleConfirmSend}>
             {t('emergency.sendConfirmation')}
           </Button>
@@ -599,7 +592,7 @@ const EmergencyNotificationTab: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={() => setHistoryDetailDialog(null)}>{t('common.close')}</Button>
+          <Button variant="outlined" onClick={() => setHistoryDetailDialog(null)}>{t('common.close')}</Button>
         </DialogActions>
       </Dialog>
 

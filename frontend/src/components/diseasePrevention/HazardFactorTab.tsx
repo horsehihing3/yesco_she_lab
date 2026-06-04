@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
   TextField,
-  InputAdornment,
   Button,
   Table,
   TableBody,
@@ -22,7 +21,7 @@ import {
   MenuItem,
   FormControl,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
+import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
@@ -411,20 +410,12 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
       {/* PC search bar */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
+          <ListSearchBar
             placeholder={t('dp.searchByName', '유해인자명 검색')}
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={setSearchText}
+            onSearch={handleSearch}
             sx={{ width: 280 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={handleSearch}><SearchIcon /></IconButton>
-                </InputAdornment>
-              ),
-            }}
           />
           <FormControl size="small" sx={{ minWidth: 130 }}>
             <Select displayEmpty value={riskFilter} onChange={(e) => { setRiskFilter(e.target.value); setPage(0) }}>
@@ -439,20 +430,12 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
 
       {/* Mobile search bar */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 2 }}>
-        <TextField
-          size="small"
+        <ListSearchBar
           placeholder={t('dp.searchByName', '유해인자명 검색')}
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onChange={setSearchText}
+          onSearch={handleSearch}
           fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleSearch}><SearchIcon /></IconButton>
-              </InputAdornment>
-            ),
-          }}
         />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <FormControl size="small" sx={{ flex: 1 }}>

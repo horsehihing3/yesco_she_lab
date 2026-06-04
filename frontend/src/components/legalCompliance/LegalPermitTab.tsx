@@ -13,6 +13,7 @@ import type { LegalPermit, LegalPermitRequest } from '../../types/legalComplianc
 import StatCard from './StatCard'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -81,7 +82,7 @@ const LegalPermitTab: React.FC = () => {
     return d !== null && d >= 0 && d <= 30
   }), [permits])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, issueDate: todayStr(), expiryDate: todayStr(), nextRenewalDate: todayStr() }); setOpen(true) }
   const openEdit = (p: LegalPermit) => {
     setEditing(p)
     setForm({
@@ -264,9 +265,9 @@ const LegalPermitTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.permitName || createMut.isPending || updateMut.isPending}>
-            {editing ? '수정' : '등록'}
+            저장
           </Button>
         </DialogActions>
       </Dialog>

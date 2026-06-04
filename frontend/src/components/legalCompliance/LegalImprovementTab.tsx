@@ -13,6 +13,7 @@ import type { LegalImprovement, LegalImprovementRequest } from '../../types/lega
 import StatCard from './StatCard'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -103,7 +104,7 @@ const LegalImprovementTab: React.FC = () => {
     return m
   }, [filtered])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, targetDate: todayStr(), registeredDate: todayStr() }); setOpen(true) }
   const openEdit = (i: LegalImprovement) => {
     setEditing(i)
     setForm({
@@ -263,9 +264,9 @@ const LegalImprovementTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.title || createMut.isPending || updateMut.isPending}>
-            {editing ? '수정' : '등록'}
+            저장
           </Button>
         </DialogActions>
       </Dialog>

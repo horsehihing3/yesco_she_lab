@@ -4,17 +4,18 @@ import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress, Tooltip,
-  InputAdornment,
 } from '@mui/material'
+import ListSearchBar from '../common/ListSearchBar'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import SearchIcon from '@mui/icons-material/Search'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import { equipmentApi } from '../../api/legalFacilityApi'
 import type { FacilityEquipment } from '../../types/legalFacility.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
@@ -71,7 +72,13 @@ const FacilityEquipmentTab: React.FC = () => {
   const { data: items = [], isLoading } = useQuery({ queryKey: ['facilityEquipments'], queryFn: equipmentApi.list })
   const { data: stats } = useQuery({ queryKey: ['facilityEquipmentsStats'], queryFn: equipmentApi.stats })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [catFilter, setCatFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [locFilter, setLocFilter] = useState('')
@@ -104,7 +111,7 @@ const FacilityEquipmentTab: React.FC = () => {
 
   const urgentList = useMemo(() => items.filter(e => e.status === '만료'), [items])
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, installDate: todayStr(), lastInspectDate: todayStr(), nextInspectDate: todayStr() }); setOpen(true) }
   const openEdit = (e: FacilityEquipment) => {
     setEditing(e); setForm(e); setOpen(true)
   }
@@ -140,9 +147,8 @@ const FacilityEquipmentTab: React.FC = () => {
       )}
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField size="small" fullWidth placeholder="기구명/관리번호/위치 검색..."
-          value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }} />
+        <ListSearchBar fullWidth placeholder="기구명/관리번호/위치 검색..."
+          value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ minWidth: 150 }} label="분류" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
@@ -155,6 +161,7 @@ const FacilityEquipmentTab: React.FC = () => {
           <MenuItem value="">전체</MenuItem>
           {LOCATIONS.map(l => <MenuItem key={l} value={l}>{l}</MenuItem>)}
         </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap' }}>New</Button>
       </Stack>
 
@@ -324,9 +331,9 @@ const FacilityEquipmentTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.name || !form.mgmtNo || createMut.isPending || updateMut.isPending}>
-            {editing ? '수정' : '등록'}
+            저장
           </Button>
         </DialogActions>
       </Dialog>

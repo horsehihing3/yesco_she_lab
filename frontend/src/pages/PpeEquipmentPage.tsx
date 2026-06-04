@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useMenuRule } from '../hooks/useMenuRule'
+import { todayStr } from '../utils/dateDefaults'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -148,7 +149,7 @@ const PpeEquipmentPage: React.FC = () => {
 
   const handleOpenCreate = () => {
     setSelectedItem(null)
-    setForm({ name: '', category: '', stockQuantity: 1 })
+    setForm({ name: '', category: '', stockQuantity: 1, expiryDate: todayStr() })
     setViewMode('create')
   }
 

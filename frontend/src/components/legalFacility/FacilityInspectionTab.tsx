@@ -12,6 +12,7 @@ import { inspectionApi } from '../../api/legalFacilityApi'
 import type { FacilityInspection } from '../../types/legalFacility.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
@@ -52,7 +53,7 @@ const FacilityInspectionTab: React.FC = () => {
   const deleteMut = useMutation({ mutationFn: (id: number) => inspectionApi.remove(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['facilityInspections'] }); qc.invalidateQueries({ queryKey: ['facilityInspectionsStats'] }) } })
 
-  const openCreate = () => { setEditing(null); setForm(emptyForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, applyDate: todayStr(), inspectDate: todayStr(), validUntil: todayStr() }); setOpen(true) }
   const openEdit = (e: FacilityInspection) => { setEditing(e); setForm(e); setOpen(true) }
   const submit = () => { if (editing) updateMut.mutate({ id: editing.id, e: form }); else createMut.mutate(form) }
 
@@ -173,8 +174,8 @@ const FacilityInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={createMut.isPending || updateMut.isPending}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={createMut.isPending || updateMut.isPending}>저장</Button>
         </DialogActions>
       </Dialog>
 

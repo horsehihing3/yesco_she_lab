@@ -4,6 +4,7 @@ import {
   Chip, Paper, Grid, Pagination, TableContainer, Select, MenuItem, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -47,7 +48,9 @@ const WarehouseTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<ChemicalWarehouse | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [page, setPage] = useState(0)
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => { setKeyword(keywordInput); setPage(0) }
 
   const { data, isLoading } = useQuery({
     queryKey: ['chemicalWarehouses', page, keyword],
@@ -79,7 +82,7 @@ const WarehouseTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: ChemicalWarehouse) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
-  const handleReset = () => { setKeyword(''); setPage(0) }
+  const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
 
   const getStorageTypeLabel = (type?: string) => {
     const map: Record<string, string> = {
@@ -199,7 +202,8 @@ const WarehouseTab: React.FC = () => {
             <Box sx={valBorderSx}><TextField fullWidth size="small" value={form.humidity} onChange={e => setForm({ ...form, humidity: e.target.value })} /></Box>
             <Typography sx={labelSx}>{t('chem.erp.status')}</Typography>
             <Box sx={valSx}>
-              <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+              <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="NORMAL">{t('chem.warehouse.statusNormal')}</MenuItem>
                 <MenuItem value="INSPECTION_NEEDED">{t('chem.warehouse.statusInspection')}</MenuItem>
               </Select>
@@ -246,7 +250,8 @@ const WarehouseTab: React.FC = () => {
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.erp.status')}</Typography>
-            <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+            <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="NORMAL">{t('chem.warehouse.statusNormal')}</MenuItem>
               <MenuItem value="INSPECTION_NEEDED">{t('chem.warehouse.statusInspection')}</MenuItem>
             </Select>
@@ -294,8 +299,8 @@ const WarehouseTab: React.FC = () => {
       {/* Search - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('chem.warehouse.searchPlaceholder')} value={keyword}
-            onChange={(e) => { setKeyword(e.target.value); setPage(0) }}
+          <ListSearchBar placeholder={t('chem.warehouse.searchPlaceholder')}
+            value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
             sx={{ minWidth: 250 }} />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
@@ -303,8 +308,8 @@ const WarehouseTab: React.FC = () => {
       </Box>
       {/* Search - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('chem.warehouse.searchPlaceholder')} value={keyword}
-          onChange={(e) => { setKeyword(e.target.value); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('chem.warehouse.searchPlaceholder')}
+          value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleReset} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>

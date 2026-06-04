@@ -9,9 +9,11 @@ import {
   Paper, Typography, Pagination, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { waterQualityApi } from '../../api/environmentApi'
@@ -70,7 +72,7 @@ const WaterQualityTab: React.FC = () => {
 
   const handleAddClick = () => {
     setSelectedItem(null)
-    setFormData({ manager: user?.name || '' })
+    setFormData({ manager: user?.name || '', measurementDate: todayStr() })
     setSelectedManager(null)
     setViewMode('create')
   }
@@ -109,9 +111,9 @@ const WaterQualityTab: React.FC = () => {
   const renderListView = () => (
     <Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <TextField size="small" placeholder={t('environment.searchWaterQuality')} value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          sx={{ width: { xs: '100%', md: 250 } }} />
+        <ListSearchBar placeholder={t('environment.searchWaterQuality')}
+          value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: { xs: '100%', md: 250 } }}  />
         <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />

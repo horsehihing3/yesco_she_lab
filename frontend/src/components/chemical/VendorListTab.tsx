@@ -5,11 +5,13 @@ import {
   Chip, Paper, Grid, Pagination, TableContainer, Select, MenuItem, IconButton,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { chemicalVendorApi } from '../../api/chemicalApi'
 import type { ChemicalVendor } from '../../types/chemical.types'
@@ -50,7 +52,9 @@ const VendorListTab: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<ChemicalVendor | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [page, setPage] = useState(0)
+  const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
+  const applySearch = () => { setKeyword(keywordInput); setPage(0) }
 
   const { data, isLoading } = useQuery({
     queryKey: ['chemical-vendor', page, keyword],
@@ -69,7 +73,7 @@ const VendorListTab: React.FC = () => {
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm) }
   const handleRowClick = (item: ChemicalVendor) => { setSelectedItem(item); setViewMode('detail') }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm(emptyForm); setViewMode('create') }
+  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm, lastTransactionDate: todayStr() }); setViewMode('create') }
   const handleOpenEdit = (item: ChemicalVendor) => {
     setSelectedItem(item)
     setForm({ vendorName: item.vendorName || '', representative: item.representative || '', contactPerson: item.contactPerson || '', phone: item.phone || '', supplyItemsCount: item.supplyItemsCount ?? 0, msdsStatus: item.msdsStatus || '', lastTransactionDate: item.lastTransactionDate || '', grade: item.grade || '' })
@@ -78,7 +82,7 @@ const VendorListTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: ChemicalVendor) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
-  const handleReset = () => { setKeyword(''); setPage(0) }
+  const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
 
   const getMsdsLabel = (status?: string) => {
     const map: Record<string, string> = {
@@ -286,8 +290,8 @@ const VendorListTab: React.FC = () => {
       {/* Search - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('chem.vendor.searchPlaceholder')} value={keyword}
-            onChange={(e) => { setKeyword(e.target.value); setPage(0) }}
+          <ListSearchBar placeholder={t('chem.vendor.searchPlaceholder')}
+            value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
             sx={{ minWidth: 250 }} />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
@@ -295,8 +299,8 @@ const VendorListTab: React.FC = () => {
       </Box>
       {/* Search - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('chem.vendor.searchPlaceholder')} value={keyword}
-          onChange={(e) => { setKeyword(e.target.value); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('chem.vendor.searchPlaceholder')}
+          value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleReset} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>

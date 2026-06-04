@@ -211,8 +211,8 @@ const FireEmergencyTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => cEditing ? cUpdate.mutate({ id: cEditing.id, e: cForm }) : cCreate.mutate(cForm)} disabled={!cForm.orgName}>{cEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setCOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => cEditing ? cUpdate.mutate({ id: cEditing.id, e: cForm }) : cCreate.mutate(cForm)} disabled={!cForm.orgName}>저장</Button>
         </DialogActions>
       </Dialog>
 
@@ -257,8 +257,8 @@ const FireEmergencyTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => dEditing ? dUpdate.mutate({ id: dEditing.id, e: dForm }) : dCreate.mutate(dForm)} disabled={!dForm.drillDate}>{dEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setDOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => dEditing ? dUpdate.mutate({ id: dEditing.id, e: dForm }) : dCreate.mutate(dForm)} disabled={!dForm.drillDate}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

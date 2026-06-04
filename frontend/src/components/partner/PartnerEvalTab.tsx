@@ -3,16 +3,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  CircularProgress, Typography,
+  CircularProgress, Typography, IconButton,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import { partnerEvalApi, partnerStatsApi } from '../../api/partnerApi'
 import { contractorRegistrationApi } from '../../api/contractorRegistrationApi'
 import type { PartnerEval } from '../../types/partner.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
@@ -62,7 +64,13 @@ const PartnerEvalTab: React.FC = () => {
   })
   const registrations = registrationsPage?.content || []
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearchInput(''); setSearch('') }
   const [gradeFilter, setGradeFilter] = useState('')
 
   const [mode, setMode] = useState<Mode>('list')
@@ -117,7 +125,7 @@ const PartnerEvalTab: React.FC = () => {
 
   // ====== Handlers ======
   const handleRowClick = (e: PartnerEval) => { setSelectedId(e.id); setMode('view') }
-  const handleNewClick = () => { setForm(emptyForm); setMode('create') }
+  const handleNewClick = () => { setForm({ ...emptyForm, evalDate: todayStr(), nextEvalDate: todayStr() }); setMode('create') }
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setMode('edit') } }
   const handleBackToList = () => { setSelectedId(null); setMode('list') }
   const handleSubmit = () => {
@@ -360,7 +368,7 @@ const PartnerEvalTab: React.FC = () => {
             <Button variant="contained" onClick={handleSubmit} disabled={!form.companyName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
           )}
           {mode === 'create' && (
-            <Button variant="contained" onClick={handleSubmit} disabled={!form.companyName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>등록</Button>
+            <Button variant="contained" onClick={handleSubmit} disabled={!form.companyName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
           )}
         </Box>
 
@@ -391,22 +399,19 @@ const PartnerEvalTab: React.FC = () => {
 
       {/* ─── 데스크탑 헤더 ─── */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-        <TextField size="small" sx={{ width: 320 }} placeholder="업체명/담당자/업종 검색..."
-          value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }} />
+        <ListSearchBar sx={{ width: 320 }} placeholder="업체명/담당자/업종 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ width: 130 }} label="등급" value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {['A', 'B', 'C', 'D'].map(g => <MenuItem key={g} value={g}>{g}</MenuItem>)}
         </TextField>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNewClick} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Box>
 
       {/* ─── 모바일 헤더 ─── */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder="업체명/담당자/업종 검색"
-          value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }} />
+        <ListSearchBar fullWidth placeholder="업체명/담당자/업종 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" fullWidth label="등급" value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {['A', 'B', 'C', 'D'].map(g => <MenuItem key={g} value={g}>{g}</MenuItem>)}

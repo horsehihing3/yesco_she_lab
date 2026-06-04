@@ -6,14 +6,16 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
   Typography,
 } from '@mui/material'
+import ListSearchBar from '../common/ListSearchBar'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import SearchIcon from '@mui/icons-material/Search'
 import { disasterFacApi, disasterInspApi, fireStatsApi } from '../../api/fireSafetyApi'
 import type { DisasterFacility, DisasterInspection } from '../../types/fireSafety.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -38,7 +40,13 @@ const DisasterFacilityTab: React.FC = () => {
   const { data: insps = [], isLoading: inspLoading } = useQuery({ queryKey: ['disasterInspections'], queryFn: disasterInspApi.list })
   const { data: stats } = useQuery({ queryKey: ['fireStats'], queryFn: fireStatsApi.get })
 
+  const [searchInput, setSearchInput] = useState('')
+
   const [search, setSearch] = useState('')
+
+  const applySearch = () => setSearch(searchInput)
+
+  const handleResetSearch = () => { setSearchInput(''); setSearch('') }
   const [typeFilter, setTypeFilter] = useState('')
 
   // Facility dialog
@@ -102,13 +110,13 @@ const DisasterFacilityTab: React.FC = () => {
       )}
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <TextField size="small" fullWidth placeholder="시설명/위치/화학물질 검색..." value={search} onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.disabled' }} /> }} />
+        <ListSearchBar fullWidth placeholder="시설명/위치/화학물질 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ minWidth: 170 }} label="유형" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setEditing(null); setForm(emptyFac); setOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+        <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setEditing(null); setForm({ ...emptyFac, installDate: todayStr(), lastCheck: todayStr(), nextCheck: todayStr() }); setOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
       <Paper variant="outlined" sx={{ mb: 3 }}>
@@ -267,8 +275,8 @@ const DisasterFacilityTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => editing ? update.mutate({ id: editing.id, e: form }) : create.mutate(form)} disabled={!form.mgmtNo || !form.name}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => editing ? update.mutate({ id: editing.id, e: form }) : create.mutate(form)} disabled={!form.mgmtNo || !form.name}>저장</Button>
         </DialogActions>
       </Dialog>
 
@@ -316,8 +324,8 @@ const DisasterFacilityTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={() => iEditing ? iUpdate.mutate({ id: iEditing.id, e: iForm }) : iCreate.mutate(iForm)} disabled={!iForm.inspDate}>{iEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setIOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={() => iEditing ? iUpdate.mutate({ id: iEditing.id, e: iForm }) : iCreate.mutate(iForm)} disabled={!iForm.inspDate}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

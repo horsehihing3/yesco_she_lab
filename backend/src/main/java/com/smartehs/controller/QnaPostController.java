@@ -3,6 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.QnaPostRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.QnaPostResponse;
+import com.smartehs.model.QnaPostComment;
+import com.smartehs.service.QnaPostCommentService;
 import com.smartehs.service.QnaPostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,8 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +28,7 @@ import java.util.Map;
 public class QnaPostController {
 
     private final QnaPostService qnaPostService;
+    private final QnaPostCommentService commentService;
 
     @GetMapping
     @Operation(summary = "List Q&A posts", description = "Get all Q&A posts with pagination")
@@ -101,5 +106,38 @@ public class QnaPostController {
     public ResponseEntity<ApiResponse<Void>> incrementViews(@PathVariable Long id) {
         qnaPostService.incrementViews(id);
         return ResponseEntity.ok(ApiResponse.success("View count incremented", null));
+    }
+
+    // ===== Comments =====
+
+    @GetMapping("/{id}/comments")
+    @Operation(summary = "List comments")
+    public ResponseEntity<ApiResponse<List<QnaPostComment>>> listComments(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(commentService.findByQnaId(id)));
+    }
+
+    @PostMapping("/{id}/comments")
+    @Operation(summary = "Create comment / reply")
+    public ResponseEntity<ApiResponse<QnaPostComment>> createComment(
+            @PathVariable Long id,
+            @RequestBody QnaPostComment body,
+            Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "system";
+        return ResponseEntity.ok(ApiResponse.success(commentService.create(id, body, username)));
+    }
+
+    @PutMapping("/comments/{commentId}")
+    @Operation(summary = "Update comment")
+    public ResponseEntity<ApiResponse<QnaPostComment>> updateComment(
+            @PathVariable Long commentId,
+            @RequestBody QnaPostComment body) {
+        return ResponseEntity.ok(ApiResponse.success(commentService.update(commentId, body)));
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    @Operation(summary = "Delete comment")
+    public ResponseEntity<ApiResponse<Void>> deleteComment(@PathVariable Long commentId) {
+        commentService.delete(commentId);
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

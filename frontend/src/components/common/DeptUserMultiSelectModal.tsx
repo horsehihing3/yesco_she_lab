@@ -359,7 +359,7 @@ const DeptUserMultiSelectModal: React.FC<DeptUserMultiSelectModalProps> = ({ ope
           {t('common.selectedCount', '선택됨')}: <strong>{selectedUsers.length}</strong>
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button onClick={handleClose}>{t('common.cancel', '취소')}</Button>
+          <Button variant="outlined" onClick={handleClose}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleConfirm} disabled={selectedUsers.length === 0}>
             {t('common.add', '추가')} ({selectedUsers.length})
           </Button>

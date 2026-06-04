@@ -41,6 +41,7 @@ import { ApiResponse, PageResponse } from '../../types/common.types'
 import RichTextEditor from '../common/RichTextEditor'
 import HtmlContent from '../common/HtmlContent'
 import LoadingOverlay from '../common/LoadingOverlay'
+import EntityCommentsSection from '../common/EntityCommentsSection'
 import { useCodeMap } from '../../hooks/useCodeMap'
 
 interface FetchParams {
@@ -610,6 +611,9 @@ const EhsMessageTab: React.FC = () => {
             </Box>
           </Box>
         </Box>
+
+        {/* 댓글 — EHS 알림과 동일한 댓글/대댓글 구조 */}
+        <EntityCommentsSection entityId={viewMessage.id} basePath="/messages" queryKey="ehsMessageComments" />
 
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>

@@ -10,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../components/common/DatePickerField'
+import { todayStr } from '../utils/dateDefaults'
 import NumberField from '../components/common/NumberField'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 import { useAlert } from '../contexts/AlertContext'
@@ -117,7 +118,7 @@ const ErgonomicsPage: React.FC = () => {
 
   const handleOpenCreate = () => {
     setSelectedItem(null)
-    setForm({ assessType: '', workProcess: '', assessDate: '' })
+    setForm({ assessType: '', workProcess: '', assessDate: todayStr(), improvementDeadline: todayStr() })
     setViewMode('create')
   }
 
@@ -508,7 +509,8 @@ const ErgonomicsPage: React.FC = () => {
           </Box>
           <Typography sx={labelSx}>{t('ergo.improveStatus')}</Typography>
           <Box sx={valSx}>
-            <Select fullWidth size="small" value={form.improvementStatus || 'PENDING'} onChange={(e) => setForm({ ...form, improvementStatus: e.target.value })}>
+            <Select fullWidth size="small" value={form.improvementStatus || 'PENDING'} onChange={(e) => setForm({ ...form, improvementStatus: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="PENDING">{t('ergo.pending')}</MenuItem>
               <MenuItem value="IN_PROGRESS">{t('ergo.in_progress')}</MenuItem>
               <MenuItem value="COMPLETED">{t('ergo.completed')}</MenuItem>
@@ -624,7 +626,8 @@ const ErgonomicsPage: React.FC = () => {
             {t('ergo.improveStatus')}
           </Typography>
           <FormControl fullWidth size="small">
-            <Select value={form.improvementStatus || 'PENDING'} onChange={(e) => setForm({ ...form, improvementStatus: e.target.value })}>
+            <Select value={form.improvementStatus || 'PENDING'} onChange={(e) => setForm({ ...form, improvementStatus: e.target.value })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               <MenuItem value="PENDING">{t('ergo.pending')}</MenuItem>
               <MenuItem value="IN_PROGRESS">{t('ergo.in_progress')}</MenuItem>
               <MenuItem value="COMPLETED">{t('ergo.completed')}</MenuItem>

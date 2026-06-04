@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem,
@@ -13,7 +14,16 @@ import DatePickerField from '../common/DatePickerField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
-import { auditApi, auditFindingApi, auditCorrectiveApi } from '../../api/auditApi'
+import {
+  auditApi as defaultAuditApi,
+  auditFindingApi as defaultAuditFindingApi,
+  auditCorrectiveApi as defaultAuditCorrectiveApi,
+} from '../../api/auditApi'
+import {
+  legalComplianceExecApi,
+  legalComplianceFindingApi,
+  legalComplianceCorrectiveApi,
+} from '../../api/legalComplianceApi'
 import {
   Audit, AuditFinding,
   AuditCorrective, AuditCorrectiveRequest, CorrectiveStatus,
@@ -57,7 +67,14 @@ const emptyRow: RowState = {
 // 새 4종 활성 코드만 노출 (PENDING/OVERDUE 비활성)
 const ACTIVE_STATUSES: CorrectiveStatus[] = ['IN_PROGRESS', 'COMPLETED', 'DEMONSTRATION', 'NA']
 
-const AuditCorrectiveTab: React.FC = () => {
+export interface AuditCorrectiveTabProps {
+  variant?: 'audit' | 'legal-compliance'
+}
+
+const AuditCorrectiveTab: React.FC<AuditCorrectiveTabProps> = ({ variant = 'audit' }) => {
+  const auditApi = variant === 'legal-compliance' ? legalComplianceExecApi : defaultAuditApi
+  const auditFindingApi = variant === 'legal-compliance' ? legalComplianceFindingApi : defaultAuditFindingApi
+  const auditCorrectiveApi = variant === 'legal-compliance' ? legalComplianceCorrectiveApi : defaultAuditCorrectiveApi
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
@@ -67,9 +84,11 @@ const AuditCorrectiveTab: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selectedItem, setSelectedItem] = useState<AuditCorrective | null>(null)
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [auditFilter, setAuditFilter] = useState<number | ''>('')
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
   const [selectedAuditId, setSelectedAuditId] = useState<number | ''>('')
   const pageSize = 10
 
@@ -312,7 +331,7 @@ const AuditCorrectiveTab: React.FC = () => {
   }
 
   const handleRefresh = () => {
-    setSearchText(''); setStatusFilter(''); setAuditFilter(''); setPage(0)
+    setSearchInput(''); setSearchText(''); setStatusFilter(''); setAuditFilter(''); setPage(0)
   }
 
   // ── Filtered items + 감사 단위 그룹핑 (목록은 1 row = 1 audit) ──
@@ -373,8 +392,8 @@ const AuditCorrectiveTab: React.FC = () => {
         {/* PC Search */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('audit.searchPlaceholder')} value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setPage(0) }}
+            <ListSearchBar placeholder={t('audit.searchPlaceholder')}
+              value={searchInput} onChange={setSearchInput} onSearch={applySearch}
               sx={{ minWidth: 200 }} />
             <FormControl size="small" sx={{ minWidth: 160 }}>
               <Select displayEmpty value={auditFilter} onChange={(e) => { setAuditFilter(e.target.value as number | ''); setPage(0) }}>
@@ -394,8 +413,8 @@ const AuditCorrectiveTab: React.FC = () => {
         </Box>
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('audit.searchPlaceholder')} value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0) }} />
+          <ListSearchBar fullWidth placeholder={t('audit.searchPlaceholder')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
           <Box sx={{ display: 'flex', gap: 1 }}>
             <FormControl size="small" sx={{ flex: 1 }}>
               <Select displayEmpty value={auditFilter} onChange={(e) => { setAuditFilter(e.target.value as number | ''); setPage(0) }}>
@@ -526,7 +545,7 @@ const AuditCorrectiveTab: React.FC = () => {
           {findingListLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress size={28} /></Box>
           ) : findingList.length === 0 ? (
-            <Alert severity="info">{t('audit.noFindings', '선택한 감사에 등록된 부적합 사항이 없습니다.')}</Alert>
+            <Alert severity="info">{t('audit.noFindings', '부적합 사항이 없습니다.')}</Alert>
           ) : (
             <TableContainer component={Paper} sx={{ overflowX: 'auto', border: 1, borderColor: 'grey.300' }}>
               <Table size="small" sx={{ minWidth: 1500, '& td, & th': { borderRight: '1px solid', borderColor: 'grey.300', wordBreak: 'keep-all' } }}>
@@ -644,7 +663,7 @@ const AuditCorrectiveTab: React.FC = () => {
         {!selectedAuditId ? (
           <Alert severity="info">{t('audit.selectAuditFirst', '먼저 감사를 선택하세요.')}</Alert>
         ) : visibleFindings.length === 0 && !findingListLoading ? (
-          <Alert severity="info">{t('audit.noFindings', '선택한 감사에 등록된 부적합 사항이 없습니다.')}</Alert>
+          <Alert severity="info">{t('audit.noFindings', '부적합 사항이 없습니다.')}</Alert>
         ) : (
           <TableContainer component={Paper} sx={{ overflowX: 'auto', border: 1, borderColor: 'grey.300' }}>
             <Table size="small" sx={{ minWidth: 1620, '& td, & th': { borderRight: '1px solid', borderColor: 'grey.300', wordBreak: 'keep-all' } }}>
@@ -697,7 +716,8 @@ const AuditCorrectiveTab: React.FC = () => {
                       </TableCell>
                       <TableCell>
                         <Select size="small" fullWidth value={row.status}
-                          onChange={(e) => updateRow(f.id, { status: e.target.value as CorrectiveStatus })}>
+                          onChange={(e) => updateRow(f.id, { status: e.target.value as CorrectiveStatus })} displayEmpty>
+                          <MenuItem value="" disabled>선택</MenuItem>
                           {ACTIVE_STATUSES.map((c) => (
                             <MenuItem key={c} value={c}>{getCorrectiveStatusLabel(c)}</MenuItem>
                           ))}

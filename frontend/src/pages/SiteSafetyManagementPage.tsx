@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { useMenuRule } from '../hooks/useMenuRule'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { fmtPhone } from '../utils/phoneFormat'
+import { todayStr, weekFromTodayStr } from '../utils/dateDefaults'
 import ReadTextField from '../components/common/ReadTextField'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -8,13 +8,18 @@ import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem, FormControl,
   Chip, Pagination, CircularProgress, Alert, Tabs, Tab, IconButton,
-  Stack,
+  Stack, Tooltip,
 } from '@mui/material'
+import ListSearchBar from '../components/common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
+import AttachFileIcon from '@mui/icons-material/AttachFile'
+import CloseIcon from '@mui/icons-material/Close'
+import { itemAttachmentApi } from '../api/itemAttachmentApi'
+import type { FileMetadata } from '../types/file.types'
 import DatePickerField from '../components/common/DatePickerField'
 import NumberField from '../components/common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../components/common/FormTable'
@@ -22,6 +27,7 @@ import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 import DeptUserMultiSelectModal from '../components/common/DeptUserMultiSelectModal'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
+import { useMenuRule } from '../hooks/useMenuRule'
 import { siteSafetyPlanApi } from '../api/siteSafetyApi'
 import type { SiteSafetyPlan, SiteSafetyPlanRequest } from '../types/siteSafety.types'
 import { fetchSafetyTemplates } from '../api/safetyChecklistApi'
@@ -50,6 +56,9 @@ const WORK_TYPES = ['유지보수', '공사', '점검', '청소', '기타']
 const RISK_LEVELS = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']
 const RISK_LABEL: Record<string, string> = { LOW: '낮음', MEDIUM: '중간', HIGH: '높음', CRITICAL: '심각' }
 
+// 현장 안전 계획 첨부파일 entity type
+const SITE_SAFETY_PLAN_ENTITY_TYPE = 'SITE_SAFETY_PLAN'
+
 // ===================================================================
 // Plan content (used by all 3 modes / planType: INTERNAL or PARTNER)
 // ===================================================================
@@ -66,10 +75,16 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selected, setSelected] = useState<SiteSafetyPlan | null>(null)
   const [page, setPage] = useState(0)
+  const [searchTextInput, setSearchTextInput] = useState('')
   const [searchText, setSearchText] = useState('')
+  const applySearch = () => setSearchText(searchTextInput)
   const [statusFilter, setStatusFilter] = useState('')
   const [form, setForm] = useState<SiteSafetyPlanRequest>({ title: '' })
   const [workers, setWorkers] = useState<Array<{ workerName: string; companyName: string; workerPhone: string }>>([])
+  // 첨부파일 — 신규 선택(pending) + 삭제 예정(markedDeletes)
+  const [pendingFiles, setPendingFiles] = useState<File[]>([])
+  const [markedDeleteIds, setMarkedDeleteIds] = useState<number[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [templates, setTemplates] = useState<SafetyChecklistTemplate[]>([])
   const [approverPickTarget, setApproverPickTarget] = useState<'plan' | 'completion' | null>(null)
   const [showWorkerUserModal, setShowWorkerUserModal] = useState(false)
@@ -97,6 +112,28 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
     enabled: !!selected?.id && viewMode === 'detail',
   })
 
+  // 첨부파일 — 상세 + 수정 모드에서 기존 파일 조회
+  const { data: attachments = [] } = useQuery<FileMetadata[]>({
+    queryKey: ['siteSafetyAttachments', selected?.id],
+    queryFn: () => itemAttachmentApi.list(SITE_SAFETY_PLAN_ENTITY_TYPE, selected!.id),
+    enabled: !!selected?.id && (viewMode === 'detail' || viewMode === 'edit'),
+  })
+
+  // 저장 성공 후 첨부파일 일괄 처리 (생성/수정 공용)
+  const flushAttachments = async (planId: number) => {
+    // 1) 삭제 예정
+    for (const fid of markedDeleteIds) {
+      try { await itemAttachmentApi.remove(fid) } catch { /* skip */ }
+    }
+    // 2) 신규 업로드
+    for (const f of pendingFiles) {
+      try { await itemAttachmentApi.upload(SITE_SAFETY_PLAN_ENTITY_TYPE, planId, f) } catch { /* skip */ }
+    }
+    setPendingFiles([])
+    setMarkedDeleteIds([])
+    qc.invalidateQueries({ queryKey: ['siteSafetyAttachments', planId] })
+  }
+
   const createMut = useMutation({
     mutationFn: (req: SiteSafetyPlanRequest) => siteSafetyPlanApi.create(req),
     onSuccess: async (created) => {
@@ -105,6 +142,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           await siteSafetyPlanApi.addWorker(created.id, { workerName: w.workerName, companyName: w.companyName, workerPhone: w.workerPhone })
         }
       }
+      if (created?.id) await flushAttachments(created.id)
       qc.invalidateQueries({ queryKey: ['siteSafety'] })
       showSuccess(t('common.saved', '저장되었습니다.'))
       handleBackToList()
@@ -121,6 +159,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           await siteSafetyPlanApi.addWorker(updated.id, { workerName: w.workerName, companyName: w.companyName, workerPhone: w.workerPhone })
         }
       }
+      if (updated?.id) await flushAttachments(updated.id)
       qc.invalidateQueries({ queryKey: ['siteSafety'] })
       showSuccess(t('common.saved', '저장되었습니다.'))
       handleBackToList()
@@ -159,6 +198,8 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
     setSelected(null)
     setForm({ title: '' })
     setWorkers([])
+    setPendingFiles([])
+    setMarkedDeleteIds([])
   }
 
   const handleRowClick = (item: SiteSafetyPlan) => {
@@ -168,9 +209,10 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
   const handleOpenCreate = () => {
     setSelected(null)
+    const dateDefaults = { workStartDate: todayStr(), workEndDate: weekFromTodayStr() }
     setForm(isPartner
-      ? { title: '', modifiedBy: user?.name || user?.username || '' }
-      : { title: '' })
+      ? { title: '', modifiedBy: user?.name || user?.username || '', ...dateDefaults }
+      : { title: '', ...dateDefaults })
     setWorkers([])
     setViewMode('create')
   }
@@ -219,6 +261,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
       return
     }
     if (!form.title) { showError('제목을 입력해 주세요.'); return }
+    if (!form.checklistTemplateId) { showError('체크리스트를 선택해 주세요.'); return }
     const payload = { ...form, planType }
     if (selected) updateMut.mutate({ id: selected.id, req: payload })
     else createMut.mutate(payload)
@@ -257,7 +300,11 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
     let items = data?.content || []
     if (searchText) {
       const s = searchText.toLowerCase()
-      items = items.filter(i => i.title?.toLowerCase().includes(s) || i.planId?.toLowerCase().includes(s) || i.workLocation?.toLowerCase().includes(s))
+      items = items.filter(i =>
+        i.title?.toLowerCase().includes(s) ||
+        i.planId?.toLowerCase().includes(s) ||
+        i.modifiedBy?.toLowerCase().includes(s),
+      )
     }
     if (isApprovalMode) {
       // 평가서조회: 결재 진행중·완료된 항목만
@@ -276,15 +323,12 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
       <Box>
         {/* ─── 데스크탑(md+) 헤더 ─── */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-          <TextField size="small" sx={{ width: 320 }} placeholder="제목/계획번호/위치 검색..."
-            value={searchText} onChange={e => setSearchText(e.target.value)} />
+          <ListSearchBar sx={{ width: 320 }} placeholder="제목/계획번호/작성자 검색..." value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
           <TextField select size="small" sx={{ width: 140 }} label="상태"
             value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">전체</MenuItem>
             <MenuItem value="DRAFT">작성중</MenuItem>
             <MenuItem value="PENDING_APPROVAL">결재대기</MenuItem>
-            <MenuItem value="APPROVED">승인</MenuItem>
-            <MenuItem value="DONE">완료</MenuItem>
             <MenuItem value="REJECTED">반려</MenuItem>
           </TextField>
           <IconButton size="small" onClick={() => qc.invalidateQueries({ queryKey: ['siteSafety'] })}><RefreshIcon /></IconButton>
@@ -298,7 +342,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         {/* ─── 모바일(xs/sm) 헤더 ─── */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField size="small" fullWidth placeholder="검색"
+            <TextField size="small" fullWidth placeholder="제목/계획번호/작성자 검색..."
               value={searchText} onChange={e => setSearchText(e.target.value)} />
             <IconButton size="small" onClick={() => qc.invalidateQueries({ queryKey: ['siteSafety'] })}
               sx={{ border: 1, borderColor: 'divider', borderRadius: 1, flexShrink: 0 }}>
@@ -310,8 +354,6 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             <MenuItem value="">전체</MenuItem>
             <MenuItem value="DRAFT">작성중</MenuItem>
             <MenuItem value="PENDING_APPROVAL">결재대기</MenuItem>
-            <MenuItem value="APPROVED">승인</MenuItem>
-            <MenuItem value="DONE">완료</MenuItem>
             <MenuItem value="REJECTED">반려</MenuItem>
           </TextField>
           {mode === 'plan' && (
@@ -488,11 +530,9 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           </FormRow>
           <FormRow>
             <FormLabel>작성자</FormLabel>
-            <FormCell>
+            <FormCell borderRight sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">{writer}</Typography>
             </FormCell>
-          </FormRow>
-          <FormRow>
             <FormLabel>계획 승인자</FormLabel>
             <FormCell borderRight>
               {isReadonly ? (
@@ -507,6 +547,9 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                 </Box>
               )}
             </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormCell borderRight>
             <FormLabel>완료 승인자</FormLabel>
             <FormCell>
               {isReadonly ? (
@@ -626,7 +669,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
           {!isReadonly && (
             <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-              {isCreating ? '등록' : '저장'}
+              저장
             </Button>
           )}
 
@@ -738,10 +781,8 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         </FormRow>
         <FormRow>
           <FormLabel>비상연락처</FormLabel>
-          <FormCell><ReadTextField fullWidth size="small" readOnly={isReadonly}
+          <FormCell borderRight><ReadTextField fullWidth size="small" readOnly={isReadonly}
             value={(view as any).emergencyContact || ''} onChange={e => setForm({ ...form, emergencyContact: fmtPhone(e.target.value) })} /></FormCell>
-        </FormRow>
-        <FormRow>
           <FormLabel>계획 승인자</FormLabel>
           <FormCell>
             {isReadonly ? (
@@ -758,7 +799,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           </FormCell>
         </FormRow>
         <FormRow>
-          <FormLabel>체크리스트</FormLabel>
+          <FormLabel required>체크리스트</FormLabel>
           <FormCell>
             {isReadonly ? (
               <Typography variant="body2">
@@ -780,10 +821,95 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             )}
           </FormCell>
         </FormRow>
-        <FormRow last>
+        <FormRow>
           <FormLabel>비고</FormLabel>
           <FormCell><ReadTextField fullWidth size="small" multiline minRows={2} readOnly={isReadonly}
             value={(view as any).notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} /></FormCell>
+        </FormRow>
+        <FormRow last>
+          <FormLabel>첨부파일</FormLabel>
+          <FormCell>
+            <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ alignItems: 'center' }}>
+              {/* 기존 서버 파일 */}
+              {attachments.map(f => {
+                const markedDelete = markedDeleteIds.includes(f.id)
+                return (
+                  <Chip
+                    key={f.id}
+                    size="small"
+                    icon={<AttachFileIcon fontSize="small" />}
+                    label={
+                      <Tooltip title={f.originalFilename}>
+                        <Box component="span" sx={{
+                          maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                          display: 'inline-block', verticalAlign: 'middle',
+                          textDecoration: markedDelete ? 'line-through' : 'none',
+                        }}>
+                          {f.originalFilename}
+                        </Box>
+                      </Tooltip>
+                    }
+                    onClick={() => {
+                      if (markedDelete) {
+                        setMarkedDeleteIds(prev => prev.filter(id => id !== f.id))
+                      } else {
+                        window.open(`/api/files/${f.id}`, '_blank')
+                      }
+                    }}
+                    deleteIcon={isReadonly || markedDelete ? undefined : <CloseIcon fontSize="small" />}
+                    onDelete={isReadonly || markedDelete ? undefined : () => setMarkedDeleteIds(prev => [...prev, f.id])}
+                    color={markedDelete ? 'default' : undefined}
+                    variant={markedDelete ? 'outlined' : 'filled'}
+                  />
+                )
+              })}
+              {/* 신규 보류 파일 */}
+              {!isReadonly && pendingFiles.map((file, idx) => (
+                <Chip
+                  key={`pending-${idx}`}
+                  size="small"
+                  icon={<AttachFileIcon fontSize="small" />}
+                  label={
+                    <Tooltip title={file.name}>
+                      <Box component="span" sx={{
+                        maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        display: 'inline-block', verticalAlign: 'middle',
+                      }}>
+                        {file.name}
+                      </Box>
+                    </Tooltip>
+                  }
+                  color="info"
+                  variant="outlined"
+                  deleteIcon={<CloseIcon fontSize="small" />}
+                  onDelete={() => setPendingFiles(prev => prev.filter((_, i) => i !== idx))}
+                />
+              ))}
+              {/* 첨부 추가 버튼 (편집/등록 모드에서만) */}
+              {!isReadonly && (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    hidden
+                    onChange={e => {
+                      const files = Array.from(e.target.files || [])
+                      if (files.length > 0) setPendingFiles(prev => [...prev, ...files])
+                      if (e.target) e.target.value = ''
+                    }}
+                  />
+                  <Button size="small" variant="text" startIcon={<AttachFileIcon fontSize="small" />}
+                    onClick={() => fileInputRef.current?.click()}>
+                    파일 추가
+                  </Button>
+                </>
+              )}
+              {isReadonly && attachments.length === 0 && (
+                <Typography variant="body2" color="text.disabled">첨부된 파일이 없습니다.</Typography>
+              )}
+            </Stack>
+          </FormCell>
         </FormRow>
       </FormTable>
 
@@ -814,7 +940,10 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                   <TableRow key={idx}>
                     <TableCell align="center">{idx + 1}</TableCell>
                     <TableCell><TextField size="small" fullWidth value={w.workerName} onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], workerName: e.target.value }; setWorkers(nw) }} /></TableCell>
-                    <TableCell><TextField size="small" fullWidth value={w.workerPhone} onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], workerPhone: e.target.value }; setWorkers(nw) }} /></TableCell>
+                    <TableCell><TextField size="small" fullWidth value={w.workerPhone}
+                      placeholder="010-0000-0000"
+                      inputProps={{ inputMode: 'numeric', maxLength: 13 }}
+                      onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], workerPhone: fmtPhone(e.target.value) }; setWorkers(nw) }} /></TableCell>
                     <TableCell><TextField size="small" fullWidth value={w.companyName} onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], companyName: e.target.value }; setWorkers(nw) }} /></TableCell>
                     <TableCell align="center"><IconButton size="small" color="error" onClick={() => setWorkers(prev => prev.filter((_, i) => i !== idx))}><DeleteIcon fontSize="inherit" /></IconButton></TableCell>
                   </TableRow>
@@ -864,7 +993,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         {/* 작성/수정 모드 */}
         {!isReadonly && (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-            {isCreating ? '등록' : '저장'}
+            저장
           </Button>
         )}
 
@@ -909,7 +1038,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
       <UserSelectModal open={approverPickTarget !== null} onClose={() => setApproverPickTarget(null)}
         selectedUsers={[]} onConfirm={handleUserSelect} singleSelect useCompanyTree
-        title={approverPickTarget === 'plan' ? '계획 승인자 선택' : '완료 승인자 선택'} />
+        title="계획 승인자 선택" />
       <DeptUserMultiSelectModal open={showWorkerUserModal} onClose={() => setShowWorkerUserModal(false)}
         onConfirm={handleWorkerUserSelect} title="내부직원 선택" />
     </Box>
@@ -920,28 +1049,22 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 // Main Page (4 tabs)
 // ===================================================================
 const SiteSafetyManagementPage: React.FC = () => {
-  const { isMenuHidden } = useMenuRule()
   const [activeTab, setActiveTab] = useState(0)
-
-  const tabs = useMemo(() => [
-    { menuKey: 'site-safety.tab.dashboard', label: '대시보드',           component: <SiteSafetyDashboardTab /> },
-    { menuKey: 'site-safety.tab.plan',      label: '계획',               component: <SiteSafetyPlanContent mode="plan" /> },
-    { menuKey: 'site-safety.tab.review',    label: '평가서조회 담당승인자', component: <SiteSafetyPlanContent mode="approval" /> },
-    { menuKey: 'site-safety.tab.admin',     label: '전체조회 (어드민)',   component: <SiteSafetyPlanContent mode="admin" /> },
-    { menuKey: 'site-safety.tab.report',    label: '레포트',             component: <SiteSafetyReportTab /> },
-  ].filter(tab => !isMenuHidden(tab.menuKey)), [isMenuHidden])
-
-  useEffect(() => {
-    if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
-  }, [tabs.length, activeTab])
-
   return (
     <Box>
       <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
         sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
-        {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
+        <Tab label="대시보드" />
+        <Tab label="계획" />
+        <Tab label="평가서조회 담당승인자" />
+        <Tab label="전체조회 (어드민)" />
+        <Tab label="레포트" />
       </Tabs>
-      {tabs[activeTab]?.component}
+      {activeTab === 0 && <SiteSafetyDashboardTab />}
+      {activeTab === 1 && <SiteSafetyPlanContent mode="plan" />}
+      {activeTab === 2 && <SiteSafetyPlanContent mode="approval" />}
+      {activeTab === 3 && <SiteSafetyPlanContent mode="admin" />}
+      {activeTab === 4 && <SiteSafetyReportTab />}
     </Box>
   )
 }

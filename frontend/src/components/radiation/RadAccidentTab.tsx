@@ -229,8 +229,8 @@ const RadAccidentTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setAccOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submitAcc} disabled={!accForm.accidentDate}>{accEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setAccOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submitAcc} disabled={!accForm.accidentDate}>저장</Button>
         </DialogActions>
       </Dialog>
 
@@ -266,8 +266,8 @@ const RadAccidentTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDrillOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submitDrill} disabled={!drillForm.drillDate}>{drillEditing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setDrillOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submitDrill} disabled={!drillForm.drillDate}>저장</Button>
         </DialogActions>
       </Dialog>
     </Box>

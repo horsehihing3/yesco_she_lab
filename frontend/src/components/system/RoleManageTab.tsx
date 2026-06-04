@@ -400,7 +400,8 @@ const RoleManageTab: React.FC = () => {
                       value={rowsPerPage}
                       onChange={(e) => { setRowsPerPage(Number(e.target.value)); setPage(0) }}
                       size="small"
-                    >
+                     displayEmpty>
+                      <MenuItem value="" disabled>선택</MenuItem>
                       {[20, 50, 100].map((n) => (
                         <MenuItem key={n} value={n}>{n}건</MenuItem>
                       ))}

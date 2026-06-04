@@ -82,6 +82,39 @@
         SELECT COUNT(*) FROM tb_risk_assessment WHERE status = #{status}
     </select>
 
+    <select id="findAllOfficeOnly" resultMap="RiskAssessmentResultMap">
+        <include refid="withDetailCount"/>
+        WHERE a.office_count > 0
+        ORDER BY a.created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="findBySiteOfficeOnly" resultMap="RiskAssessmentResultMap">
+        <include refid="withDetailCount"/>
+        WHERE a.site = #{site} AND a.office_count > 0
+        ORDER BY a.created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="findByStatusOfficeOnly" resultMap="RiskAssessmentResultMap">
+        <include refid="withDetailCount"/>
+        WHERE a.status = #{status} AND a.office_count > 0
+        ORDER BY a.created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAllOfficeOnly" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment WHERE office_count > 0
+    </select>
+
+    <select id="countBySiteOfficeOnly" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment WHERE site = #{site} AND office_count > 0
+    </select>
+
+    <select id="countByStatusOfficeOnly" resultType="int">
+        SELECT COUNT(*) FROM tb_risk_assessment WHERE status = #{status} AND office_count > 0
+    </select>
+
     <select id="countByFormId" resultType="int">
         SELECT COUNT(*) FROM tb_risk_assessment WHERE form_id = #{formId}
     </select>

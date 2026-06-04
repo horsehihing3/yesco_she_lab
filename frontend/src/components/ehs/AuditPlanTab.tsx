@@ -17,7 +17,8 @@ import DatePickerField from '../common/DatePickerField'
 import RejectReasonDialog from '../common/RejectReasonDialog'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
-import { auditPlanApi } from '../../api/auditApi'
+import { auditPlanApi as defaultAuditPlanApi } from '../../api/auditApi'
+import { legalCompliancePlanApi } from '../../api/legalComplianceApi'
 import { fetchTeamLeader } from '../../api/approvalApi'
 import { fetchSafetyTemplates, fetchSafetyTemplateDetail } from '../../api/safetyChecklistApi'
 import { SafetyChecklistTemplate, SafetyChecklistCategory, SafetyChecklistItem } from '../../types/safetyChecklist.types'
@@ -121,9 +122,10 @@ const ChecklistPreview: React.FC<{ templateId?: number | null }> = ({ templateId
 }
 
 
-interface AuditPlanTabProps { menuPath?: string }
+interface AuditPlanTabProps { menuPath?: string; variant?: 'audit' | 'legal-compliance' }
 
-const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ menuPath }) => {
+const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ menuPath, variant = 'audit' }) => {
+  const auditPlanApi = variant === 'legal-compliance' ? legalCompliancePlanApi : defaultAuditPlanApi
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()

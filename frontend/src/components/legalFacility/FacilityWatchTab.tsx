@@ -13,6 +13,7 @@ import { watchApi, watchCheckApi } from '../../api/legalFacilityApi'
 import type { FacilityWatch, FacilityWatchCheck } from '../../types/legalFacility.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
@@ -74,7 +75,7 @@ const FacilityWatchTab: React.FC = () => {
 
   const urgentList = watches.filter(w => w.riskGrade === 'A')
 
-  const openCreate = () => { setEditing(null); setForm(emptyWatchForm); setOpen(true) }
+  const openCreate = () => { setEditing(null); setForm({ ...emptyWatchForm, lastCheckDate: todayStr(), nextCheckDate: todayStr() }); setOpen(true) }
   const openEdit = (w: FacilityWatch) => { setEditing(w); setForm(w); setOpen(true) }
   const submit = () => { if (editing) updateWatchMut.mutate({ id: editing.id, e: form }); else createWatchMut.mutate(form) }
   const onOwnerPicked = (users: UserInfo[]) => {
@@ -256,8 +257,8 @@ const FacilityWatchTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.name || !form.riskGrade}>{editing ? '수정' : '등록'}</Button>
+          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={submit} disabled={!form.name || !form.riskGrade}>저장</Button>
         </DialogActions>
       </Dialog>
 
@@ -294,7 +295,7 @@ const FacilityWatchTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCheckOpen(false)}>취소</Button>
+          <Button variant="outlined" onClick={() => setCheckOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => createCheckMut.mutate(checkForm)} disabled={!checkForm.checkDate}>저장</Button>
         </DialogActions>
       </Dialog>
