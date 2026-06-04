@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useMenuRule } from '../hooks/useMenuRule'
 import EmrDashboardTab from '../components/ehs/EmrDashboardTab'
 import EmrPlanTab from '../components/ehs/EmrPlanTab'
 import EmrDrillTab from '../components/ehs/EmrDrillTab'
@@ -10,25 +11,26 @@ import EmrReportTab from '../components/ehs/EmrReportTab'
 
 const EmergencyResponsePage: React.FC = () => {
   const { t } = useTranslation()
+  const { isMenuHidden } = useMenuRule()
   const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState(0)
 
-  const tabs = [
-    { label: t('common.dashboard', '대시보드'), component: <EmrDashboardTab /> },
-    { label: t('emr.tabs.plans'), component: <EmrPlanTab /> },
-    { label: t('emr.tabs.drills'), component: <EmrDrillTab /> },
-    { label: t('emr.tabs.resources'), component: <EmrResourceTab /> },
-    { label: t('common.report', '레포트'), component: <EmrReportTab /> },
-  ]
-
-  const clampTab = (n: number) => Math.min(Math.max(0, n), tabs.length - 1)
-  const tabParam = clampTab(parseInt(searchParams.get('tab') || '0', 10) || 0)
-  const [activeTab, setActiveTab] = useState(tabParam)
+  const tabs = useMemo(() => [
+    { menuKey: 'emr.tab.dashboard', label: t('common.dashboard', '대시보드'), component: <EmrDashboardTab /> },
+    { menuKey: 'emr.tabs.plans',    label: t('emr.tabs.plans'),               component: <EmrPlanTab /> },
+    { menuKey: 'emr.tabs.drills',   label: t('emr.tabs.drills'),              component: <EmrDrillTab /> },
+    { menuKey: 'emr.tabs.resources',label: t('emr.tabs.resources'),           component: <EmrResourceTab /> },
+    { menuKey: 'emr.tab.report',    label: t('common.report', '레포트'),      component: <EmrReportTab /> },
+  ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
 
   useEffect(() => {
-    const tab = clampTab(parseInt(searchParams.get('tab') || '0', 10) || 0)
-    setActiveTab(tab)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
+    const tab = parseInt(searchParams.get('tab') || '0', 10) || 0
+    setActiveTab(Math.min(tab, Math.max(0, tabs.length - 1)))
+  }, [searchParams, tabs.length])
+
+  useEffect(() => {
+    if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
+  }, [tabs.length, activeTab])
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue)

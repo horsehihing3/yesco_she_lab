@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useMenuRule } from '../hooks/useMenuRule'
 import WasteDashboardTab from '../components/environment/WasteDashboardTab'
 import WasteManageTab from '../components/environment/WasteManageTab'
 import WasteDisposalTab from '../components/environment/WasteDisposalTab'
@@ -9,15 +10,20 @@ import WasteComplianceTab from '../components/environment/WasteComplianceTab'
 
 const WasteManagePage: React.FC = () => {
   const { t } = useTranslation()
+  const { isMenuHidden } = useMenuRule()
   const [activeTab, setActiveTab] = useState(0)
 
-  const tabs = [
-    { label: t('waste.tabs.dashboard'), component: <WasteDashboardTab /> },
-    { label: t('waste.tabs.inventory'), component: <WasteManageTab /> },
-    { label: t('waste.tabs.disposal'), component: <WasteDisposalTab /> },
-    { label: t('waste.tabs.company'), component: <DisposalCompanyTab /> },
-    { label: t('waste.tabs.compliance'), component: <WasteComplianceTab /> },
-  ]
+  const tabs = useMemo(() => [
+    { menuKey: 'waste.tabs.dashboard',  label: t('waste.tabs.dashboard'),  component: <WasteDashboardTab /> },
+    { menuKey: 'waste.tabs.inventory',  label: t('waste.tabs.inventory'),  component: <WasteManageTab /> },
+    { menuKey: 'waste.tabs.disposal',   label: t('waste.tabs.disposal'),   component: <WasteDisposalTab /> },
+    { menuKey: 'waste.tabs.company',    label: t('waste.tabs.company'),    component: <DisposalCompanyTab /> },
+    { menuKey: 'waste.tabs.compliance', label: t('waste.tabs.compliance'), component: <WasteComplianceTab /> },
+  ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
+
+  useEffect(() => {
+    if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
+  }, [tabs.length, activeTab])
 
   return (
     <Box>

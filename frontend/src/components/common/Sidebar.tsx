@@ -51,8 +51,10 @@ import RadioactiveIcon from '@mui/icons-material/Bolt'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import FiberNewIcon from '@mui/icons-material/FiberNew'
 import AddBusinessIcon from '@mui/icons-material/AddBusiness'
+import TuneIcon from '@mui/icons-material/Tune'
 import { useThemeMode } from '../../context/ThemeContext'
 import { useAuth } from '../../context/AuthContext'
+import { useMenuRule } from '../../hooks/useMenuRule'
 
 interface MenuItem {
   textKey: string
@@ -163,6 +165,8 @@ const menuItems: MenuItem[] = [
       { textKey: 'nav.roleManage', icon: <SettingsIcon />, path: '/system-manage/role' },
       { textKey: 'nav.authManage', icon: <SettingsIcon />, path: '/system-manage/auth' },
       { textKey: 'nav.floorDrawings', icon: <SettingsIcon />, path: '/system-manage/drawings' },
+      { textKey: 'nav.buttonManage', icon: <TuneIcon />, path: '/dev/button-manage' },
+      { textKey: 'nav.menuManage', icon: <SettingsIcon />, path: '/system-manage/menu' },
     ],
   },
 ]
@@ -183,9 +187,17 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
     navigate(path)
   }
 
-  const visibleMenuItems = menuItems.filter(
-    (item) => !item.requiredRole || user?.role === item.requiredRole
-  )
+  const { isMenuHidden } = useMenuRule()
+
+  const visibleMenuItems = menuItems
+    .filter((item) => !item.requiredRole || user?.role === item.requiredRole)
+    .filter((item) => !isMenuHidden(item.textKey))
+    .map((item) => {
+      if (!item.children) return item
+      const visibleChildren = item.children.filter((c) => !isMenuHidden(c.textKey))
+      return { ...item, children: visibleChildren }
+    })
+    .filter((item) => !item.children || item.children.length > 0)
   const { isDarkMode } = useThemeMode()
   const [expandedMenus, setExpandedMenus] = useState<string[]>(() => {
     const isPathActiveStrict = (path: string) => {

@@ -79,6 +79,7 @@ import PermitLifecyclePage from './pages/PermitLifecyclePage'
 import DiseasePreventionMgmtPage from './pages/DiseasePreventionMgmtPage'
 import ContractorRegistrationPage from './pages/ContractorRegistrationPage'
 import ButtonManagePage from './pages/ButtonManagePage'
+import MenuManageTab from './components/system/MenuManageTab'
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -121,9 +122,6 @@ function App() {
           <PartnerSafetyExecutePage />
         </ProtectedRoute>
       } />
-
-      {/* DEV — 버튼 관리 독립 페이지 (납품 전 삭제) */}
-      <Route path="/dev/button-manage" element={<ButtonManagePage />} />
 
       {/* Protected Routes */}
       <Route
@@ -198,6 +196,8 @@ function App() {
         <Route path="system-manage/role" element={<PageWithTitle titleKey="nav.roleManage"><RoleManageTab /></PageWithTitle>} />
         <Route path="system-manage/auth" element={<PageWithTitle titleKey="nav.authManage"><AuthManageTab /></PageWithTitle>} />
         <Route path="system-manage/drawings" element={<PageWithTitle titleKey="nav.floorDrawings"><WorkplaceDrawingsPage /></PageWithTitle>} />
+        <Route path="dev/button-manage" element={<PageWithTitle titleKey="nav.buttonManage"><ButtonManagePage /></PageWithTitle>} />
+        <Route path="system-manage/menu" element={<PageWithTitle titleKey="nav.menuManage"><MenuManageTab /></PageWithTitle>} />
       </Route>
 
       {/* 404 */}

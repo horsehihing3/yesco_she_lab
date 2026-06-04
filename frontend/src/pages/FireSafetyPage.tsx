@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useMenuRule } from '../hooks/useMenuRule'
 import FireFacilityTab from '../components/fireSafety/FireFacilityTab'
 import FireInspectionTab from '../components/fireSafety/FireInspectionTab'
 import DisasterFacilityTab from '../components/fireSafety/DisasterFacilityTab'
@@ -10,25 +11,29 @@ import FireComplianceTab from '../components/fireSafety/FireComplianceTab'
 
 const FireSafetyPage: React.FC = () => {
   const { t } = useTranslation()
+  const { isMenuHidden } = useMenuRule()
   const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = parseInt(searchParams.get('tab') || '0', 10)
-  const [activeTab, setActiveTab] = useState(tabParam)
+  const [activeTab, setActiveTab] = useState(0)
+
+  const tabs = useMemo(() => [
+    { menuKey: 'fs.tabs.facility',   label: t('fs.tabs.facility'),   component: <FireFacilityTab /> },
+    { menuKey: 'fs.tabs.inspection', label: t('fs.tabs.inspection'), component: <FireInspectionTab /> },
+    { menuKey: 'fs.tabs.disaster',   label: t('fs.tabs.disaster'),   component: <DisasterFacilityTab /> },
+    { menuKey: 'fs.tabs.emergency',  label: t('fs.tabs.emergency'),  component: <FireEmergencyTab /> },
+    { menuKey: 'fs.tabs.compliance', label: t('fs.tabs.compliance'), component: <FireComplianceTab /> },
+  ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
 
   useEffect(() => {
-    setActiveTab(parseInt(searchParams.get('tab') || '0', 10))
-  }, [searchParams])
+    setActiveTab(Math.min(parseInt(searchParams.get('tab') || '0', 10), Math.max(0, tabs.length - 1)))
+  }, [searchParams, tabs.length])
+
+  useEffect(() => {
+    if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
+  }, [tabs.length, activeTab])
 
   const handleTabChange = (_: React.SyntheticEvent, v: number) => {
     setActiveTab(v); setSearchParams({ tab: String(v) })
   }
-
-  const tabs = [
-    { label: t('fs.tabs.facility'),    component: <FireFacilityTab /> },
-    { label: t('fs.tabs.inspection'),  component: <FireInspectionTab /> },
-    { label: t('fs.tabs.disaster'),    component: <DisasterFacilityTab /> },
-    { label: t('fs.tabs.emergency'),   component: <FireEmergencyTab /> },
-    { label: t('fs.tabs.compliance'),  component: <FireComplianceTab /> },
-  ]
 
   return (
     <Box>

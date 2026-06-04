@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useMenuRule } from '../hooks/useMenuRule'
 import WemDashboardTab from '../components/workEnvMeasurement/WemDashboardTab'
 import WemFactorTab from '../components/workEnvMeasurement/WemFactorTab'
 import WemPlanTab from '../components/workEnvMeasurement/WemPlanTab'
@@ -11,30 +12,32 @@ import WemReportTab from '../components/workEnvMeasurement/WemReportTab'
 
 const WorkEnvMeasurementPage: React.FC = () => {
   const { t } = useTranslation()
+  const { isMenuHidden } = useMenuRule()
   const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = parseInt(searchParams.get('tab') || '0', 10)
-  const [activeTab, setActiveTab] = useState(tabParam)
+  const [activeTab, setActiveTab] = useState(0)
 
-  useEffect(() => {
-    const tab = parseInt(searchParams.get('tab') || '0', 10)
-    setActiveTab(Math.min(Math.max(0, tab), 5))
-  }, [searchParams])
-
-  // 탭 구성: 대시보드 / 유해인자 / 측정 계획 / 측정 결과 / 개선 조치 / 레포트
+  const tabs = useMemo(() => [
+    { menuKey: 'wem.tab.dashboard', label: t('common.dashboard', '대시보드'), component: <WemDashboardTab key="dashboard" /> },
+    { menuKey: 'wem.factorTab',     label: t('wem.factorTab', '유해인자'),    component: <WemFactorTab key="factor" /> },
+    { menuKey: 'wem.planTab',       label: t('wem.planTab', '측정 계획'),     component: <WemPlanTab key="plan" /> },
+    { menuKey: 'wem.resultTab',     label: t('wem.resultTab', '측정 결과'),   component: <WemResultTab key="result" /> },
+    { menuKey: 'wem.improveTab',    label: t('wem.improveTab', '개선 조치'),  component: <WemImprovementTab key="improve" /> },
+    { menuKey: 'wem.tab.report',    label: t('common.report', '레포트'),      component: <WemReportTab key="report" /> },
+  ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue)
     setSearchParams({ tab: String(newValue) })
   }
 
-  const tabs = [
-    { label: t('common.dashboard', '대시보드'), component: <WemDashboardTab key="dashboard" /> },
-    { label: t('wem.factorTab', '유해인자'), component: <WemFactorTab key="factor" /> },
-    { label: t('wem.planTab', '측정 계획'), component: <WemPlanTab key="plan" /> },
-    { label: t('wem.resultTab', '측정 결과'), component: <WemResultTab key="result" /> },
-    { label: t('wem.improveTab', '개선 조치'), component: <WemImprovementTab key="improve" /> },
-    { label: t('common.report', '레포트'), component: <WemReportTab key="report" /> },
-  ]
+  useEffect(() => {
+    const tab = parseInt(searchParams.get('tab') || '0', 10)
+    setActiveTab(Math.min(Math.max(0, tab), Math.max(0, tabs.length - 1)))
+  }, [searchParams, tabs.length])
+
+  useEffect(() => {
+    if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
+  }, [tabs.length, activeTab])
 
   return (
     <Box>

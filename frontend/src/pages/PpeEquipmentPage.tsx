@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
+import { useMenuRule } from '../hooks/useMenuRule'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -48,6 +49,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 const PpeEquipmentPage: React.FC = () => {
   const { t } = useTranslation()
   const { user } = useAuth()
+  const { isMenuHidden } = useMenuRule()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
   const canCreate = user?.role === 'SYSTEM_ADMIN' || user?.role === 'PPE_ADMIN'
@@ -472,14 +474,14 @@ const PpeEquipmentPage: React.FC = () => {
       {/* Tabs */}
       <Tabs value={activeTab} onChange={(_, v) => { setActiveTab(v); if (v !== activeTab) handleBackToList() }} variant="scrollable" scrollButtons="auto"
         sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
-        <Tab label={t('ppe.tabs.inventory')} />
-        <Tab label={t('ppe.tabs.request')} />
+        {!isMenuHidden('ppe.tabs.inventory') && <Tab label={t('ppe.tabs.inventory')} />}
+        {!isMenuHidden('ppe.tabs.request')   && <Tab label={t('ppe.tabs.request')} />}
       </Tabs>
       <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, flexShrink: 0 }}>
         {activeTab === 0 ? t('ppe.tabs.inventory') : t('ppe.tabs.request')}
       </Typography>
 
-      {activeTab === 1 && <PpeRequestTab />}
+      {activeTab === 1 && !isMenuHidden('ppe.tabs.request') && <PpeRequestTab />}
 
       {activeTab === 0 && <>
       {/* Detail View */}

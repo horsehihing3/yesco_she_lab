@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useMenuRule } from '../hooks/useMenuRule'
 import ChemicalListTab from '../components/chemical/ChemicalListTab'
 import ErpMaterialTab from '../components/chemical/ErpMaterialTab'
 import VendorListTab from '../components/chemical/VendorListTab'
@@ -9,15 +10,20 @@ import RegulationCheckTab from '../components/chemical/RegulationCheckTab'
 
 const ChemicalMasterPage: React.FC = () => {
   const { t } = useTranslation()
+  const { isMenuHidden } = useMenuRule()
   const [activeTab, setActiveTab] = useState(0)
 
-  const tabs = [
-    { label: t('chem.nav.chemList'), component: <ChemicalListTab /> },
-    { label: t('chem.nav.erpItem'), component: <ErpMaterialTab /> },
-    { label: t('chem.nav.vendor'), component: <VendorListTab /> },
-    { label: t('chem.nav.regRule'), component: <RegulationTab /> },
-    { label: t('chem.nav.regCheck'), component: <RegulationCheckTab /> },
-  ]
+  const tabs = useMemo(() => [
+    { menuKey: 'chem.nav.chemList', label: t('chem.nav.chemList'), component: <ChemicalListTab /> },
+    { menuKey: 'chem.nav.erpItem',  label: t('chem.nav.erpItem'),  component: <ErpMaterialTab /> },
+    { menuKey: 'chem.nav.vendor',   label: t('chem.nav.vendor'),   component: <VendorListTab /> },
+    { menuKey: 'chem.nav.regRule',  label: t('chem.nav.regRule'),  component: <RegulationTab /> },
+    { menuKey: 'chem.nav.regCheck', label: t('chem.nav.regCheck'), component: <RegulationCheckTab /> },
+  ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
+
+  useEffect(() => {
+    if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
+  }, [tabs.length, activeTab])
 
   return (
     <Box>

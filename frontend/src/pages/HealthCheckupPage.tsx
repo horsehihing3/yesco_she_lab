@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useMenuRule } from '../hooks/useMenuRule'
 import MyHealthCheckupPage from './MyHealthCheckupPage'
 import HealthCheckupAdminTab from '../components/ehs/HealthCheckupAdminTab'
 import HealthCheckupRecordTab from '../components/ehs/HealthCheckupRecordTab'
@@ -12,21 +13,27 @@ import { useAuth } from '../context/AuthContext'
 const HealthCheckupPage: React.FC = () => {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN' || user?.role === 'AUDIT_ADMIN'
+  const { isMenuHidden } = useMenuRule()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
   const [activeTab, setActiveTab] = useState(0)
 
-  // 슬라이드 7: 검진계획 / 검진관리(관리자) / 검진현황 / 리포트 / 사후관리 (관리자) + 내 검진현황 (사용자)
-  const adminOnlyTabs = [
-    { label: t('healthCheckup.tabs.plan', '검진 계획'),    component: <HealthCheckupPlanTab allowedTypes={['GENERAL', 'SPECIAL']} /> },
-    { label: t('healthCheckup.tabs.admin', '검진 관리'),   component: <HealthCheckupAdminTab /> },
-    { label: t('healthCheckup.tabs.status', '검진 현황'),  component: <HealthCheckupStatusTab allowedTypes={['GENERAL', 'SPECIAL']} /> },
-    { label: t('healthCheckup.tabs.report', '리포트'),     component: <HealthCheckupReportTab allowedTypes={['GENERAL', 'SPECIAL']} /> },
-    { label: t('healthCheckup.tabs.records', '사후관리'),  component: <HealthCheckupRecordTab /> },
-  ]
-  const userTabs = [
-    { label: t('healthCheckup.tabs.my', '내 검진 현황'),   component: <MyHealthCheckupPage /> },
-  ]
-  const tabs = isAdmin ? [...adminOnlyTabs, ...userTabs] : userTabs
+  const tabs = useMemo(() => {
+    const all = [
+      ...(isAdmin ? [
+        { menuKey: 'healthCheckup.tabs.plan',    label: t('healthCheckup.tabs.plan', '검진 계획'),   component: <HealthCheckupPlanTab allowedTypes={['GENERAL', 'SPECIAL']} /> },
+        { menuKey: 'healthCheckup.tabs.admin',   label: t('healthCheckup.tabs.admin', '검진 관리'),  component: <HealthCheckupAdminTab /> },
+        { menuKey: 'healthCheckup.tabs.status',  label: t('healthCheckup.tabs.status', '검진 현황'), component: <HealthCheckupStatusTab allowedTypes={['GENERAL', 'SPECIAL']} /> },
+        { menuKey: 'healthCheckup.tabs.report',  label: t('healthCheckup.tabs.report', '리포트'),    component: <HealthCheckupReportTab allowedTypes={['GENERAL', 'SPECIAL']} /> },
+        { menuKey: 'healthCheckup.tabs.records', label: t('healthCheckup.tabs.records', '사후관리'), component: <HealthCheckupRecordTab /> },
+      ] : []),
+      { menuKey: 'healthCheckup.tabs.my', label: t('healthCheckup.tabs.my', '내 검진 현황'), component: <MyHealthCheckupPage /> },
+    ]
+    return all.filter(tab => !isMenuHidden(tab.menuKey))
+  }, [t, isAdmin, isMenuHidden])
+
+  useEffect(() => {
+    if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
+  }, [tabs.length, activeTab])
 
   return (
     <Box>

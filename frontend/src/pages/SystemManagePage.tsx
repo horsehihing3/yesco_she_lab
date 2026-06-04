@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import CodeManagePage from './CodeManagePage'
 import RoleManageTab from '../components/system/RoleManageTab'
 import AuthManageTab from '../components/system/AuthManageTab'
+import MenuManageTab from '../components/system/MenuManageTab'
 import WorkplaceDrawingsPage from './WorkplaceDrawingsPage'
 import ChecklistPage from './ChecklistPage'
 
@@ -23,6 +24,7 @@ const SystemManagePage: React.FC = () => {
     if (isAdmin) {
       allTabs.push({ label: t('nav.codeManage'), component: <CodeManagePage /> })
       allTabs.push({ label: t('nav.roleManage'), component: <RoleManageTab /> })
+      allTabs.push({ label: t('nav.menuManage'), component: <MenuManageTab /> })
     }
     allTabs.push({ label: t('nav.authManage'), component: <AuthManageTab /> })
     allTabs.push({ label: t('nav.floorDrawings'), component: <WorkplaceDrawingsPage /> })

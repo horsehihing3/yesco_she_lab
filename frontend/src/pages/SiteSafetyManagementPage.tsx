@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useMenuRule } from '../hooks/useMenuRule'
 import { fmtPhone } from '../utils/phoneFormat'
 import ReadTextField from '../components/common/ReadTextField'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -919,22 +920,28 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 // Main Page (4 tabs)
 // ===================================================================
 const SiteSafetyManagementPage: React.FC = () => {
+  const { isMenuHidden } = useMenuRule()
   const [activeTab, setActiveTab] = useState(0)
+
+  const tabs = useMemo(() => [
+    { menuKey: 'site-safety.tab.dashboard', label: '대시보드',           component: <SiteSafetyDashboardTab /> },
+    { menuKey: 'site-safety.tab.plan',      label: '계획',               component: <SiteSafetyPlanContent mode="plan" /> },
+    { menuKey: 'site-safety.tab.review',    label: '평가서조회 담당승인자', component: <SiteSafetyPlanContent mode="approval" /> },
+    { menuKey: 'site-safety.tab.admin',     label: '전체조회 (어드민)',   component: <SiteSafetyPlanContent mode="admin" /> },
+    { menuKey: 'site-safety.tab.report',    label: '레포트',             component: <SiteSafetyReportTab /> },
+  ].filter(tab => !isMenuHidden(tab.menuKey)), [isMenuHidden])
+
+  useEffect(() => {
+    if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
+  }, [tabs.length, activeTab])
+
   return (
     <Box>
       <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
         sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
-        <Tab label="대시보드" />
-        <Tab label="계획" />
-        <Tab label="평가서조회 담당승인자" />
-        <Tab label="전체조회 (어드민)" />
-        <Tab label="레포트" />
+        {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
       </Tabs>
-      {activeTab === 0 && <SiteSafetyDashboardTab />}
-      {activeTab === 1 && <SiteSafetyPlanContent mode="plan" />}
-      {activeTab === 2 && <SiteSafetyPlanContent mode="approval" />}
-      {activeTab === 3 && <SiteSafetyPlanContent mode="admin" />}
-      {activeTab === 4 && <SiteSafetyReportTab />}
+      {tabs[activeTab]?.component}
     </Box>
   )
 }

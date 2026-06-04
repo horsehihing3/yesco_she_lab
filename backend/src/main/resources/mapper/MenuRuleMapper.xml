@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.MenuRuleMapper">
+
+    <resultMap id="MenuRuleMap" type="com.smartehs.model.MenuRule">
+        <id     column="id"         property="id"/>
+        <result column="role_key"   property="roleKey"/>
+        <result column="menu_key"   property="menuKey"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="MenuRuleMap">
+        SELECT id, role_key, menu_key, created_at
+        FROM tb_menu_rule
+        ORDER BY id
+    </select>
+
+    <!-- 벌크 INSERT — MSSQL 파라미터 한도 고려, 서비스에서 500행씩 청크 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO tb_menu_rule (role_key, menu_key, created_at)
+        VALUES
+        <foreach collection="list" item="r" separator=",">
+            (#{r.roleKey}, #{r.menuKey}, GETDATE())
+        </foreach>
+    </insert>
+
+    <delete id="deleteAll">
+        DELETE FROM tb_menu_rule
+    </delete>
+
+</mapper>
