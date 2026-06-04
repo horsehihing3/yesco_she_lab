@@ -1,4 +1,6 @@
 import { useState, useRef } from 'react'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
@@ -271,7 +273,12 @@ const SafetyRulesTab: React.FC = () => {
   const [uploading, setUploading] = useState(false)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [pendingFilePreview, setPendingFilePreview] = useState<string | null>(null)
-  const isAdmin = true // TODO: Get from auth context
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 커뮤니케이션 › EHS 문서'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew = canSee(MENU, 'LIST', 'New (파일 업로드)', myRoles)
 
   const currentEntityId = selectedFolder
 
@@ -292,6 +299,9 @@ const SafetyRulesTab: React.FC = () => {
     onSuccess: (data: FileMetadata) => {
       queryClient.invalidateQueries({ queryKey: ['safetyRulesFiles'] })
       setUploading(false)
+      setPendingFile(null)
+      setPendingFilePreview(null)
+      setSelectedFile(data)
       if (data.translationStatus) {
         showSuccess(t('safetyRules.fileUploadedWithTranslation'))
       } else {
@@ -300,6 +310,8 @@ const SafetyRulesTab: React.FC = () => {
     },
     onError: () => {
       setUploading(false)
+      setPendingFile(null)
+      setPendingFilePreview(null)
       showError(t('safetyRules.fileUploadFailed'))
     },
   })
@@ -434,8 +446,7 @@ const SafetyRulesTab: React.FC = () => {
     if (pendingFile) {
       setUploading(true)
       uploadMutation.mutate({ file: pendingFile, entityId: currentEntityId })
-      setPendingFile(null)
-      setPendingFilePreview(null)
+      // pendingFile은 onSuccess/onError에서 정리 — 업로드 중 미리보기 유지
     }
   }
 
@@ -471,7 +482,7 @@ const SafetyRulesTab: React.FC = () => {
           />
           <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Box>
-        {isAdmin && (
+        {canNew && (
           <Button
             variant="contained"
             startIcon={uploading ? <CircularProgress size={16} color="inherit" /> : <AddIcon />}
@@ -496,7 +507,7 @@ const SafetyRulesTab: React.FC = () => {
           />
           <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         </Box>
-        {isAdmin && (
+        {canNew && (
           <Button
             variant="contained"
             startIcon={uploading ? <CircularProgress size={16} color="inherit" /> : <AddIcon />}
@@ -625,7 +636,7 @@ const SafetyRulesTab: React.FC = () => {
                       >
                         <DownloadIcon fontSize="small" />
                       </IconButton>
-                      {isAdmin && (
+                      {canNew && (
                         <IconButton
                           size="small"
                           onClick={(e) => {

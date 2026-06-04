@@ -25,14 +25,15 @@ import LanguageSelector from './LanguageSelector'
 
 // DEV ONLY — 납품 전 삭제
 const DEV_ACCOUNTS = [
-  { id: 'jiwan.nam',     name: '남지완' },
-  { id: 'yeseo.moon',    name: '문예서' },
-  { id: 'jungho.yoo',    name: '유정호' },
-  { id: 'horsehihing3',  name: '정경석' },
-  { id: 'yujeong.jung',  name: '정유정' },
-  { id: 'gs5655',        name: '홍길동' },
-  { id: 'yuhyun.ha',     name: '하유현' },
-  { id: 'com4in',        name: 'com4in' },
+  { id: 'jiwan.nam',     name: '남지완',   label: '글로벌경영관리팀 팀장' },
+  { id: 'yeseo.moon',    name: '문예서',   label: '글로벌경영관리팀 팀원' },
+  { id: 'jungho.yoo',    name: '유정호',   label: '글로벌경영관리팀 팀원' },
+  { id: 'horsehihing3',  name: '정경석',   label: '글로벌경영관리팀 팀원' },
+  { id: 'yujeong.jung',  name: '정유정',   label: '글로벌경영관리팀 팀원' },
+  { id: 'gs5655',        name: '홍길동',   label: '글로벌경영관리팀 팀원' },
+  { id: 'junseok.kwak',  name: '곽준석',   label: 'T/S팀 팀장' },
+  { id: 'yuhyun.ha',     name: '하유현',   label: 'T/S팀 팀원' },
+  { id: 'com4in',        name: 'com4in',  label: '관리자' },
 ]
 
 const Header: React.FC = () => {
@@ -175,7 +176,11 @@ const Header: React.FC = () => {
           <Box sx={{ px: 2, pt: 0.5, pb: 0.25 }}>
             <Typography variant="caption" color="text.disabled">DEV 계정 전환</Typography>
           </Box>
-          {DEV_ACCOUNTS.map(({ id, name }) => (
+          <Divider />
+          <Box sx={{ px: 2, pt: 0.5, pb: 0.25 }}>
+            <Typography variant="caption" color="text.disabled">DEV 계정 전환</Typography>
+          </Box>
+          {DEV_ACCOUNTS.map(({ id, name, label }) => (
             <MenuItem
               key={id}
               onClick={() => handleDevLogin(id)}
@@ -191,7 +196,7 @@ const Header: React.FC = () => {
               }
               <Typography variant="body2">{name}</Typography>
               <Typography variant="caption" color="text.disabled" sx={{ ml: 0.75 }}>
-                {id}
+                {label}
               </Typography>
             </MenuItem>
           ))}

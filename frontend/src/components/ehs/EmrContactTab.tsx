@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { fmtPhone } from '../../utils/phoneFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -97,6 +99,15 @@ const EmrContactTab: React.FC = () => {
     onError: () => showError(t('common.error')),
   })
 
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 커뮤니케이션 › 비상 연락망'
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew  = canSee(MENU, 'LIST',   'New',  myRoles)
+  const canEdit = canSee(MENU, 'DETAIL', '수정', myRoles)
+  const canDel  = canSee(MENU, 'DETAIL', '삭제', myRoles)
+  const canSave = canSee(MENU, 'DETAIL', '저장', myRoles)
+
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ ...emptyForm }) }
   const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm }); setViewMode('create') }
   const handleOpenDetail = (item: EmergencyContact) => { setSelectedItem(item); setViewMode('detail') }
@@ -157,7 +168,7 @@ const EmrContactTab: React.FC = () => {
             </FormControl>
             <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+          {canNew && <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>}
         </Box>
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -325,8 +336,8 @@ const EmrContactTab: React.FC = () => {
           </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
-          <Button variant="contained" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
-          <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
+          {canEdit && <Button variant="contained" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>}
+          {canDel && <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>}
         </Box>
       </Box>
     )
@@ -437,7 +448,7 @@ const EmrContactTab: React.FC = () => {
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
-          <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
+          {canSave && <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>}
         </Box>
 
         <UserSelectModal

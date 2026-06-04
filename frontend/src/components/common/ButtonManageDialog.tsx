@@ -51,7 +51,7 @@ const WRITER_ADMIN: Record<Role, boolean> = { guest: false, writer: true, admin:
 const ADMIN_PLAN:   Record<Role, boolean> = { guest: false, writer: false, admin: true, planApprover: true,  completionApprover: false }
 const ADMIN_COMP:   Record<Role, boolean> = { guest: false, writer: false, admin: true, planApprover: false, completionApprover: true  }
 
-// ─── 기본 데이터 (코드 분석 기반) ────────────────────────────────────────────
+// ─── 기본 데이터 (코드 분석 기반 — 버튼이 있는 상태만 표시) ─────────────────
 const DEFAULT_MENU_DATA: MenuEntry[] = [
   // ── 연간계획 ──────────────────────────────────────────────────────────────
   {
@@ -72,25 +72,11 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'PENDING_APPROVAL', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        status: 'PENDING_APPROVAL', statusLabel: '승인대기', statusColor: 'warning',
         buttons: [
           { button: '반려',    roles: { guest: false, writer: false, admin: true, planApprover: true, completionApprover: false } },
           { button: '계획 승인', roles: { guest: false, writer: false, admin: true, planApprover: true, completionApprover: false } },
         ],
-      },
-      {
-        status: 'APPROVED', statusLabel: '계획 승인', statusColor: 'info',
-        buttons: [],
-        statusNote: '완료 결재 상신/승인은 KPI현황 탭에서 처리',
-      },
-      {
-        status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
-        buttons: [],
-        statusNote: 'KPI현황 탭에서 처리',
-      },
-      {
-        status: 'DONE', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
       },
     ],
   },
@@ -100,13 +86,8 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
     menuPath: 'EHS경영 › 계획KPI목표 › KPI 현황',
     statuses: [
       {
-        status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        statusNote: '신규 등록 없음 — 연간계획 승인 후 자동 표시',
-        buttons: [],
-      },
-      {
         status: 'APPROVED', statusLabel: '작성중 (KPI 입력)', statusColor: 'default',
-        statusNote: 'KPI현황 탭에서는 APPROVED 상태를 "작성중"으로 표시',
+        statusNote: 'KPI현황 탭: 연간계획 APPROVED 상태를 "작성중"으로 표시',
         buttons: [
           { button: '저장 (KPI 값)', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 KPI 값 저장 가능' },
           { button: '완료 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 완료 결재 상신 가능' },
@@ -118,10 +99,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '반려',    roles: ADMIN_COMP },
           { button: '완료 승인', roles: ADMIN_COMP },
         ],
-      },
-      {
-        status: 'DONE', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
       },
     ],
   },
@@ -137,7 +114,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'PLAN', statusLabel: '작성중 (반려 포함)', statusColor: 'default',
+        status: 'PLAN', statusLabel: '작성중', statusColor: 'default',
         statusNote: '반려 시 PENDING_APPROVAL → PLAN 복귀 (별도 REJECTED 상태 없음)',
         buttons: [
           { button: '계획 결재 상신', roles: { guest: false, writer: true,  admin: true,  planApprover: false, completionApprover: false } },
@@ -146,17 +123,11 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'PENDING_APPROVAL', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        status: 'PENDING_APPROVAL', statusLabel: '계획 결재 상신', statusColor: 'info',
         buttons: [
           { button: '반려',    roles: { guest: false, writer: false, admin: true, planApprover: true, completionApprover: false } },
-          { button: '계획 승인', roles: { guest: false, writer: false, admin: true, planApprover: true, completionApprover: false },
-          },
+          { button: '계획 승인', roles: { guest: false, writer: false, admin: true, planApprover: true, completionApprover: false } },
         ],
-      },
-      {
-        status: 'APPROVED', statusLabel: '계획 승인', statusColor: 'info',
-        buttons: [],
-        statusNote: '승인 시 감사 실시(IN_PROGRESS) 자동 생성 — 계획 탭에서 추가 버튼 없음',
       },
     ],
   },
@@ -186,16 +157,12 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'PENDING_CLOSE', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        status: 'PENDING_CLOSE', statusLabel: '종료확인대기', statusColor: 'warning',
         buttons: [
           { button: '저장 (감사 정보)', roles: { guest: true,  writer: true,  admin: true,  planApprover: true,  completionApprover: true  } },
           { button: '반려',             roles: { guest: false, writer: false, admin: true,  planApprover: false, completionApprover: true  } },
           { button: '완료 승인',        roles: { guest: false, writer: false, admin: true,  planApprover: false, completionApprover: true  } },
         ],
-      },
-      {
-        status: 'COMPLETED', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
       },
     ],
   },
@@ -205,12 +172,8 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
     menuPath: 'EHS경영 › 감사 › 감사 부적합',
     statuses: [
       {
-        status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        statusNote: '감사 실시 승인 후 자동 연결 — 별도 신규 등록 없음',
-        buttons: [],
-      },
-      {
         status: 'PLAN/PREPARING', statusLabel: '준비중', statusColor: 'default',
+        statusNote: '감사 실시 승인 후 자동 연결 — 별도 신규 등록 없음',
         buttons: [
           { button: '저장 (체크리스트)', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 저장 가능' },
         ],
@@ -220,14 +183,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [
           { button: '저장 (체크리스트)', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
-      },
-      {
-        status: 'PENDING_CLOSE', statusLabel: '완료 결재 대기', statusColor: 'warning',
-        buttons: [],
-      },
-      {
-        status: 'COMPLETED', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
       },
     ],
   },
@@ -250,22 +205,19 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'IN_PROGRESS', statusLabel: '진행중', statusColor: 'info',
+        status: 'IN_PROGRESS', statusLabel: '조치중', statusColor: 'info',
         buttons: [
           { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
       {
-        status: 'DEMONSTRATION', statusLabel: '실증', statusColor: 'warning',
+        status: 'DEMONSTRATION', statusLabel: '지연', statusColor: 'error',
         buttons: [
           { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: 'OVERDUE',   statusLabel: '지연',   statusColor: 'error',   buttons: [] },
-      { status: 'COMPLETED', statusLabel: '완료',   statusColor: 'success', buttons: [] },
-      { status: 'NA',        statusLabel: '해당없음', statusColor: 'default', buttons: [] },
     ],
   },
 
@@ -273,12 +225,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
   {
     menuPath: 'EHS경영 › 교육훈련 › 교육현황 (관리자)',
     statuses: [
-      {
-        status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [
-          { button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' },
-        ],
-      },
       {
         status: 'PENDING', statusLabel: '대기', statusColor: 'warning',
         buttons: [
@@ -288,15 +234,12 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'APPROVED', statusLabel: '승인', statusColor: 'primary',
+        status: 'APPROVED', statusLabel: '확정', statusColor: 'primary',
         buttons: [
           { button: '수료',      roles: ALL_ON, issue: '권한 체크 없음 — 누구든 수료 처리 가능' },
           { button: '신청 취소', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: 'COMPLETED', statusLabel: '수료',   statusColor: 'success', buttons: [] },
-      { status: 'REJECTED',  statusLabel: '반려',   statusColor: 'error',   buttons: [] },
-      { status: 'CANCELLED', statusLabel: '취소',   statusColor: 'default', buttons: [] },
     ],
   },
 
@@ -317,8 +260,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '취소', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 취소 가능' },
         ],
       },
-      { status: 'COMPLETED', statusLabel: '완료', statusColor: 'success', buttons: [] },
-      { status: 'CANCELLED', statusLabel: '취소', statusColor: 'error',   buttons: [] },
     ],
   },
 
@@ -342,25 +283,11 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'PENDING_APPROVAL', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        status: 'PENDING_APPROVAL', statusLabel: '승인대기', statusColor: 'warning',
         buttons: [
           { button: '반려',    roles: { guest: false, writer: false, admin: true, planApprover: true, completionApprover: false } },
           { button: '계획 승인', roles: { guest: false, writer: false, admin: true, planApprover: true, completionApprover: false } },
         ],
-      },
-      {
-        status: 'APPROVED', statusLabel: '계획 승인', statusColor: 'info',
-        buttons: [],
-        statusNote: '완료 결재 상신/승인은 훈련관리 탭에서 처리 (이 탭에서는 APPROVED 이후 숨김)',
-      },
-      {
-        status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
-        buttons: [],
-        statusNote: '훈련관리 탭에서 처리',
-      },
-      {
-        status: 'DONE', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
       },
     ],
   },
@@ -370,29 +297,14 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
     menuPath: 'EHS경영 › 비상대응 › 비상 훈련',
     statuses: [
       {
-        status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        status: 'SCHEDULED', statusLabel: '예정', statusColor: 'info',
+        statusNote: '비상계획 승인 후 자동 생성 — 신규 등록 없음 / linkedPlan 상태에 따라 버튼 표시',
         buttons: [
-          { button: '신규 등록', roles: ALL_ON },
-        ],
-      },
-      {
-        status: 'SCHEDULED', statusLabel: '훈련 예정', statusColor: 'info',
-        statusNote: '연결된 비상계획(linkedPlan)의 상태에 따라 추가 버튼 표시',
-        buttons: [
-          { button: '수정',           roles: ALL_ON },
           { button: '저장',           roles: ALL_ON, issue: '권한 체크 없음 — 누구든 저장 가능' },
           { button: '완료 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — linkedPlan=APPROVED 시 노출, 누구든 상신 가능' },
           { button: '반려 (완료)',    roles: ADMIN_COMP },
           { button: '완료 승인',      roles: ADMIN_COMP },
         ],
-      },
-      {
-        status: 'COMPLETED', statusLabel: '훈련 완료', statusColor: 'success',
-        buttons: [],
-      },
-      {
-        status: 'CANCELLED', statusLabel: '취소', statusColor: 'error',
-        buttons: [],
       },
     ],
   },
@@ -415,7 +327,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'ISSUED', statusLabel: '발생', statusColor: 'warning',
+        status: 'ISSUED', statusLabel: '발령', statusColor: 'warning',
         buttons: [
           { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
@@ -428,8 +340,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: 'RESOLVED', statusLabel: '해결',   statusColor: 'success', buttons: [] },
-      { status: 'DRILL',    statusLabel: '훈련',   statusColor: 'info',    buttons: [] },
     ],
   },
 
@@ -444,7 +354,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'PLANNED', statusLabel: '작성중', statusColor: 'default',
+        status: 'PLANNED', statusLabel: '계획', statusColor: 'default',
         buttons: [
           { button: '계획 결재 상신', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: '권한 체크 없음 — 작성자/관리자 체크 추가 필요' },
           { button: '수정',           roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: '권한 체크 없음 — 작성자/관리자 체크 추가 필요' },
@@ -452,7 +362,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'PENDING_APPROVAL', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        status: 'PENDING_APPROVAL', statusLabel: '결재대기', statusColor: 'warning',
         buttons: [
           { button: '반려',    roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: '권한 체크 없음 — 계획 승인자/관리자 체크 추가 필요' },
           { button: '계획 승인', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: '권한 체크 없음 — 계획 승인자/관리자 체크 추가 필요' },
@@ -465,14 +375,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '수정',           roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: '권한 체크 없음' },
           { button: '삭제',           roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: '권한 체크 없음' },
         ],
-      },
-      {
-        status: 'IN_PROGRESS', statusLabel: '검진 진행중', statusColor: 'info',
-        buttons: [],
-      },
-      {
-        status: 'COMPLETED', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
       },
     ],
   },
@@ -488,7 +390,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'draft', statusLabel: '작성중 [계획]', statusColor: 'default',
+        status: 'draft', statusLabel: '작성중', statusColor: 'default',
         buttons: [
           { button: '계획 결재 상신', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
           { button: '수정',           roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
@@ -496,14 +398,14 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'submitted', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        status: 'submitted', statusLabel: '승인대기', statusColor: 'warning',
         buttons: [
           { button: '반려',        roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true → canApprovePlan 항상 true' },
           { button: '계획 결재 승인', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true → canApprovePlan 항상 true' },
         ],
       },
       {
-        status: 'rejected', statusLabel: '반려 [계획]', statusColor: 'error',
+        status: 'rejected', statusLabel: '반려', statusColor: 'error',
         statusNote: 'draft 상태와 동일한 버튼 노출',
         buttons: [
           { button: '계획 결재 상신', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
@@ -512,7 +414,8 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'approved', statusLabel: '계획 승인 [관리 모드]', statusColor: 'info',
+        status: 'approved', statusLabel: '작성중', statusColor: 'default',
+        statusNote: '관리 모드에서는 approved 상태를 "작성중"으로 표시 (완료 결재 흐름)',
         buttons: [
           { button: '저장 (실시 내용)',  roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
           { button: '완료 결재 상신', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
@@ -524,10 +427,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '반려 (완료)',     roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true → canApproveCompletion 항상 true' },
           { button: '완료 결재 승인', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true → canApproveCompletion 항상 true' },
         ],
-      },
-      {
-        status: 'completed', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
       },
     ],
   },
@@ -560,7 +459,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'APPROVED', statusLabel: '계획 승인 (완료점검 탭)', statusColor: 'info',
+        status: 'APPROVED', statusLabel: '승인완료', statusColor: 'info',
         statusNote: '완료 결재 흐름은 "작업 완료 후 점검" 탭에서 처리',
         buttons: [
           { button: '저장 (체크리스트)', roles: ALL_ON, issue: '권한 체크 없음' },
@@ -574,14 +473,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '완료 결재 반려', roles: ADMIN_COMP },
           { button: '완료 결재 승인', roles: ADMIN_COMP },
         ],
-      },
-      {
-        status: 'DONE/COMPLETED', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
-      },
-      {
-        status: 'CANCELLED', statusLabel: '취소', statusColor: 'error',
-        buttons: [],
       },
     ],
   },
@@ -633,25 +524,51 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 삭제 가능' },
         ],
       },
+    ],
+  },
+
+  // ── 협력업체 › 협력사 위험성 평가 ───────────────────────────────────────────
+  {
+    menuPath: '협력업체 › 협력사 위험성 평가',
+    statuses: [
       {
-        status: 'SUBMITTED', statusLabel: '제출됨', statusColor: 'info',
-        buttons: [],
+        status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        statusNote: '계획 탭 / 어드민 탭에서만 신규 등록 가능 (관리 탭 제외)',
+        buttons: [
+          { button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' },
+        ],
       },
       {
-        status: 'REVIEWING', statusLabel: '검토중', statusColor: 'warning',
-        buttons: [],
+        status: 'DRAFT/REJECTED', statusLabel: '작성중 / 반려', statusColor: 'default',
+        statusNote: '반려 시 PENDING_APPROVAL → REJECTED 복귀 (계획 탭에서 표시)',
+        buttons: [
+          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 계획 탭에서 누구든 상신 가능' },
+          { button: '수정',           roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제',           roles: ALL_ON, issue: '권한 체크 없음' },
+        ],
       },
       {
-        status: 'APPROVED', statusLabel: '승인', statusColor: 'success',
-        buttons: [],
+        status: 'PENDING_APPROVAL', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        statusNote: '어드민 탭에서는 모든 사용자 승인 가능 / canApprove = SYSTEM_ADMIN·AUDIT_ADMIN (EHS_ADMIN 제외)',
+        buttons: [
+          { button: '반려',         roles: ADMIN_PLAN, issue: '어드민 탭에서는 모든 사용자 가능 / EHS_ADMIN은 어드민 탭에서만' },
+          { button: '계획 결재 승인', roles: ADMIN_PLAN, issue: '어드민 탭에서는 모든 사용자 가능 / EHS_ADMIN은 어드민 탭에서만' },
+        ],
       },
       {
-        status: 'REJECTED', statusLabel: '반려', statusColor: 'error',
-        buttons: [],
+        status: 'APPROVED', statusLabel: '승인완료', statusColor: 'info',
+        statusNote: '관리 탭(approval mode)에서 표시 — 완료 결재 상신/승인 흐름',
+        buttons: [
+          { button: '저장',          roles: ALL_ON, issue: '권한 체크 없음 — 관리 탭 누구든 저장 가능' },
+          { button: '완료 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 관리 탭 누구든 상신 가능' },
+        ],
       },
       {
-        status: 'COMPLETED', statusLabel: '완료', statusColor: 'success',
-        buttons: [],
+        status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '반려',         roles: ADMIN_COMP, issue: '어드민 탭에서는 모든 사용자 가능' },
+          { button: '완료 결재 승인', roles: ADMIN_COMP, issue: '어드민 탭에서는 모든 사용자 가능' },
+        ],
       },
     ],
   },
@@ -680,7 +597,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: '완료', statusLabel: '완료', statusColor: 'success', buttons: [] },
     ],
   },
 
@@ -715,7 +631,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: '퇴장', statusLabel: '퇴장', statusColor: 'success', buttons: [] },
     ],
   },
 
@@ -736,7 +651,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: 'SUBMITTED', statusLabel: '제출완료', statusColor: 'success', buttons: [] },
     ],
   },
 
@@ -771,7 +685,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: 'COMPLETED', statusLabel: '처리완료', statusColor: 'success', buttons: [] },
     ],
   },
 
@@ -799,7 +712,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: '종결', statusLabel: '종결', statusColor: 'success', buttons: [] },
     ],
   },
 
@@ -827,8 +739,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: '식별완료', statusLabel: '식별완료', statusColor: 'success', buttons: [] },
-      { status: '미대상',   statusLabel: '미대상',   statusColor: 'default', buttons: [] },
     ],
   },
 
@@ -856,8 +766,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: '유효',   statusLabel: '유효',   statusColor: 'success', buttons: [] },
-      { status: '무기한', statusLabel: '무기한', statusColor: 'default', buttons: [] },
     ],
   },
 
@@ -879,8 +787,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: '이행완료', statusLabel: '이행완료', statusColor: 'success', buttons: [] },
-      { status: '반려',     statusLabel: '반려',     statusColor: 'error',   buttons: [] },
     ],
   },
 
@@ -915,7 +821,6 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
         ],
       },
-      { status: '제출완료', statusLabel: '제출완료', statusColor: 'success', buttons: [] },
     ],
   },
 ]
@@ -1228,7 +1133,9 @@ const ButtonManageDialog: React.FC<Props> = ({ open, onClose }) => {
                         const init    = btn.roles[r.key]
                         const changed = visible !== init
                         return (
-                          <TableCell key={r.key} align="center" sx={{ px: 0.5, py: 0.4, cursor: 'pointer' }}
+                          <TableCell key={r.key} align="center"
+                            sx={{ px: 0.5, py: 0.4, cursor: 'pointer',
+                              bgcolor: changed ? '#fffde7' : undefined }}
                             onClick={() => toggleCell(key)}>
                             <Tooltip title={`클릭하여 ${visible ? '숨김' : '노출'}으로 변경${changed ? ' (수정됨)' : ''}`} arrow>
                               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>

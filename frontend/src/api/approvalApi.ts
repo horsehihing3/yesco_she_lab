@@ -61,6 +61,23 @@ export const fetchApprovalLines = async (approvalItemCode: string, deptCode: str
   return response.data.data
 }
 
+export interface TeamLeaderInfo {
+  name: string
+  position: string
+  team: string
+}
+
+export const fetchTeamLeader = async (deptCode: string | undefined): Promise<TeamLeaderInfo | null> => {
+  if (!deptCode) return null
+  try {
+    const lines = await fetchApprovalLines('TEAM_LEADER', `group-0100004-${deptCode}`)
+    if (lines.length > 0) {
+      return { name: lines[0].approverName, position: lines[0].approverPosition, team: lines[0].approverDept }
+    }
+  } catch { /* 팀장 미등록 시 null 반환 */ }
+  return null
+}
+
 export const createApprovalLine = async (data: Partial<ApprovalLineItem>): Promise<ApprovalLineItem> => {
   const response = await axiosInstance.post<ApiResponse<ApprovalLineItem>>('/approval-lines', data)
   return response.data.data

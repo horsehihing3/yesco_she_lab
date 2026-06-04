@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import { useButtonRules } from '../hooks/useButtonRules'
+import { Role } from '../data/buttonManageData'
 import { fmtPhone } from '../utils/phoneFormat'
 import { contractorRegistrationApi } from '../api/contractorRegistrationApi'
 import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -21,6 +23,7 @@ import NumberField from '../components/common/NumberField'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import { permitToWorkApi } from '../api/permitToWorkApi'
+import { fetchTeamLeader } from '../api/approvalApi'
 import { ppeEquipmentApi } from '../api/ppeEquipmentApi'
 import { PpeEquipment } from '../types/ppeEquipment.types'
 import { fetchSafetyTemplates, fetchSafetyTemplateDetail } from '../api/safetyChecklistApi'
@@ -85,6 +88,20 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
 
   const myId = user?.username || user?.email || ''
   const isExternalMode = mode === 'external'
+  const { canSee } = useButtonRules()
+  const MENU = '작업허가 › 허가 신청'
+  const isAdminUser = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdminUser ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const getItemRoles = (item: { planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+    const normalizeName = (s?: string | null) => (s || '').trim()
+    const roles: string[] = [...myRoles]
+    if (mode === 'all') { if (!roles.includes('planApprover')) roles.push('planApprover', 'completionApprover') }
+    else {
+      if ((item.planApproverUserId && item.planApproverUserId === user?.id) || (item.planApproverName && normalizeName(item.planApproverName) === normalizeName(user?.name))) roles.push('planApprover')
+      if ((item.completionApproverUserId && item.completionApproverUserId === user?.id) || (item.completionApproverName && normalizeName(item.completionApproverName) === normalizeName(user?.name))) roles.push('completionApprover')
+    }
+    return roles
+  }
 
   // View mode state
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -109,7 +126,6 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   const [userPickTarget, setUserPickTarget] = useState<'planApprover' | 'completionApprover' | 'inspector' | null>(null)
   // 결재 반려 사유 입력 다이얼로그
   const [rejectDialogStage, setRejectDialogStage] = useState<'plan' | 'completion' | null>(null)
-  const [sameAsPlan, setSameAsPlan] = useState(false)
 
   // PPE inventory list for multi-select
   const [ppeList, setPpeList] = useState<PpeEquipment[]>([])
@@ -250,7 +266,6 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     setExistingFiles([])
     setDeletedFileIds([])
     setWorkers([])
-    setSameAsPlan(false)
   }
 
   const handleRowClick = (item: PermitToWork) => {
@@ -259,14 +274,20 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     if (item.permitId) loadExistingFiles(item.permitId)
   }
 
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setSelectedItem(null)
-    setForm({ permitType: '', riskLevel: '', title: '', isExternal: isExternalMode })
+    const leader = await fetchTeamLeader(user?.deptCode)
+    setForm({
+      permitType: '', riskLevel: '', title: '', isExternal: isExternalMode,
+      ...(leader ? {
+        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+      } : {}),
+    })
     setAttachFiles([])
     setExistingFiles([])
     setDeletedFileIds([])
     setWorkers([])
-    setSameAsPlan(false)
     setViewMode('create')
   }
 
@@ -321,7 +342,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     if (users.length > 0) {
       const u = users[0]
       if (userPickTarget === 'planApprover') {
-        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name, ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}) }))
+        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name }))
       } else if (userPickTarget === 'completionApprover') {
         setForm(f => ({ ...f, completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name }))
       } else {
@@ -400,7 +421,9 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </FormControl>
             <IconButton onClick={() => { setSearchText(''); setStatusFilter(''); setTypeFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
           </Box>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+          )}
         </Box>
         {/* Search / Filter bar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -419,7 +442,9 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
                 {permitTypes.map((c) => <MenuItem key={c.code} value={c.code}>{getPermitTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
-            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+            {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+              <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+            )}
           </Box>
         </Box>
 
@@ -607,58 +632,36 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
         {/* 하단 버튼 — 계획/완료 결재 흐름: 6개 버튼 (계획 결재 상신/승인/반려, 완료 결재 상신/승인/반려) */}
         {(() => {
           const status = selectedItem.status
-          // 매칭: 1) user ID 우선, 2) trim 한 이름 비교 — 공백/null 차이로 버튼 누락 방지
-          const normalizeName = (s?: string | null) => (s || '').trim()
-          const isPlanApprover = !!user && (
-            (!!selectedItem.planApproverUserId && selectedItem.planApproverUserId === user.id) ||
-            (!!selectedItem.planApproverName && normalizeName(selectedItem.planApproverName) === normalizeName(user.name))
-          )
-          const isCompletionApprover = !!user && (
-            (!!selectedItem.completionApproverUserId && selectedItem.completionApproverUserId === user.id) ||
-            (!!selectedItem.completionApproverName && normalizeName(selectedItem.completionApproverName) === normalizeName(user.name))
-          )
-          // admin 권한자 — *_ADMIN 으로 끝나는 모든 관리자 role 포함 (SYSTEM_ADMIN, EHS_ADMIN, PERMIT_ADMIN, TEAM_ADMIN 등)
-          const isAdminRole = !!user?.role && (user.role === 'SYSTEM_ADMIN' || user.role.endsWith('_ADMIN'))
-          // '관리자' 탭(mode='all')은 관리자 검토 전용이므로 결재자 매칭과 무관하게 항상 결재 가능
-          const isAdminTab = mode === 'all'
-          const canApprovePlan = isAdminTab || isAdminRole || isPlanApprover
-          const canApproveCompletion = isAdminTab || isAdminRole || isCompletionApprover
+          const itemR = getItemRoles(selectedItem)
           return (
             <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' }, flexWrap: 'wrap' }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
 
-              {/* DRAFT/REJECTED → 계획 결재 상신 */}
-              {(status === 'DRAFT' || status === 'REJECTED') && (
+              {(status === 'DRAFT' || status === 'REJECTED') && canSee(MENU, 'DRAFT/REJECTED', '계획 결재 상신', itemR) && (
                 <Button variant="contained" color="info" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
                   onClick={async () => {
                     const ok = await showConfirm(t('permit.confirmPlanSubmit', '계획 결재를 상신하시겠습니까?'))
                     if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'submit' })
                   }}>{t('permit.planSubmit', '계획 결재 상신')}</Button>
               )}
-
-              {/* PENDING_APPROVAL/REQUESTED → 계획 결재 승인 / 계획 결재 반려 */}
-              {(status === 'PENDING_APPROVAL' || status === 'REQUESTED') && canApprovePlan && (
-                <>
-                  <Button variant="contained" color="warning" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={() => setRejectDialogStage('plan')}>
-                    {t('permit.planReject', '계획 결재 반려')}
-                  </Button>
-                  <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={async () => {
-                      const ok = await showConfirm(t('permit.confirmPlanApprove', '계획 결재를 승인하시겠습니까?'))
-                      if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
-                    }}>{t('permit.planApprove', '계획 결재 승인')}</Button>
-                </>
+              {(status === 'PENDING_APPROVAL' || status === 'REQUESTED') && canSee(MENU, 'PENDING_APPROVAL/REQUESTED', '계획 결재 반려', itemR) && (
+                <Button variant="contained" color="warning" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={() => setRejectDialogStage('plan')}>
+                  {t('permit.planReject', '계획 결재 반려')}
+                </Button>
               )}
-
-              {/* 완료 결재 흐름(상신/승인/반려)은 '작업 완료 후 점검' 탭에서 진행 */}
-
-              {/* DRAFT/REJECTED → 수정 / 삭제 */}
-              {(status === 'DRAFT' || status === 'REJECTED') && (
-                <>
-                  <Button variant="contained" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
-                  <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
-                </>
+              {(status === 'PENDING_APPROVAL' || status === 'REQUESTED') && canSee(MENU, 'PENDING_APPROVAL/REQUESTED', '계획 결재 승인', itemR) && (
+                <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={async () => {
+                    const ok = await showConfirm(t('permit.confirmPlanApprove', '계획 결재를 승인하시겠습니까?'))
+                    if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
+                  }}>{t('permit.planApprove', '계획 결재 승인')}</Button>
+              )}
+              {(status === 'DRAFT' || status === 'REJECTED') && canSee(MENU, 'DRAFT/REJECTED', '수정', itemR) && (
+                <Button variant="contained" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
+              )}
+              {(status === 'DRAFT' || status === 'REJECTED') && canSee(MENU, 'DRAFT/REJECTED', '삭제', itemR) && (
+                <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
               )}
             </Box>
           )
@@ -853,13 +856,10 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Box>
             <Typography sx={labelSx}>{t('common.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valSx, display: 'flex', gap: 0.5, alignItems: 'center' }}>
-              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
-                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
-              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
               <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
                 placeholder={t('common.selectFromOrg', '조직도에서 선택')}
                 value={form.completionApproverName || ''} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => { setUserPickTarget('completionApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => { setUserPickTarget('completionApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
         </Paper>
@@ -1342,7 +1342,7 @@ const PostWorkInspectionContent: React.FC = () => {
             (!!selectedItem.completionApproverUserId && selectedItem.completionApproverUserId === user.id) ||
             (!!selectedItem.completionApproverName && normalizeName(selectedItem.completionApproverName) === normalizeName(user.name))
           )
-          const isAdminRole = !!user?.role && (user.role === 'SYSTEM_ADMIN' || user.role.endsWith('_ADMIN'))
+          const isAdminRole = user?.role === 'SYSTEM_ADMIN'
           const noCompletionApproverAssigned = !selectedItem.completionApproverUserId && !normalizeName(selectedItem.completionApproverName)
           const canApproveCompletion = isAdminRole || isCompletionApprover || noCompletionApproverAssigned
           return (

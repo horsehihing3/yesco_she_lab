@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import {
@@ -93,6 +95,15 @@ const EhsPlanTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { t, i18n } = useTranslation()
   const { showConfirm, showSuccess } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 커뮤니케이션 › EHS Plan'
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew = canSee(MENU, 'LIST', 'New', myRoles)
+  const getDetailRoles = (plan: { authorEmail?: string | null }): string[] => [
+    ...myRoles,
+    ...(plan.authorEmail && user?.email && plan.authorEmail === user.email ? ['writer'] : []),
+  ]
   const { codeList: categoryCodes, getLabel: getCategoryLabel } = useCodeMap('PLAN_CATEGORY')
 
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -325,9 +336,11 @@ const EhsPlanTab: React.FC = () => {
             {t('ehsPlan.today')}
           </Button>
         </Box>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => handleOpenDialog()} sx={{ width: { xs: '100%', md: 'auto' } }}>
-          New
-        </Button>
+        {canNew && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => handleOpenDialog()} sx={{ width: { xs: '100%', md: 'auto' } }}>
+            New
+          </Button>
+        )}
       </Box>
 
       {/* Calendar */}
@@ -863,8 +876,12 @@ const EhsPlanTab: React.FC = () => {
           </Paper>
         </DialogContent>
         <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'grey.300', display: 'flex', '& > :not(style) ~ :not(style)': { ml: { xs: 0 } }, gap: 1 }}>
-          <Button variant="contained" color="primary" onClick={() => { if (viewPlan) { setViewPlan(null); handleOpenDialog(viewPlan) } }} sx={{ flex: { xs: 1, md: 0 }, minWidth: { xs: 0 } }}>{t('common.edit')}</Button>
-          <Button variant="contained" color="error" onClick={() => { if (viewPlan) handleDelete(viewPlan.id) }} sx={{ flex: { xs: 1, md: 0 }, minWidth: { xs: 0 } }}>{t('common.delete')}</Button>
+          {viewPlan && canSee(MENU, 'DETAIL', '수정', getDetailRoles(viewPlan)) && (
+            <Button variant="contained" color="primary" onClick={() => { setViewPlan(null); handleOpenDialog(viewPlan) }} sx={{ flex: { xs: 1, md: 0 }, minWidth: { xs: 0 } }}>{t('common.edit')}</Button>
+          )}
+          {viewPlan && canSee(MENU, 'DETAIL', '삭제', getDetailRoles(viewPlan)) && (
+            <Button variant="contained" color="error" onClick={() => handleDelete(viewPlan.id)} sx={{ flex: { xs: 1, md: 0 }, minWidth: { xs: 0 } }}>{t('common.delete')}</Button>
+          )}
         </DialogActions>
       </Dialog>
 

@@ -17,6 +17,7 @@ public class UserInfoResponse {
     private String email;
     private String name;
     private String department;
+    private String deptCode;
     private String company;
     private String role;
 
@@ -27,6 +28,7 @@ public class UserInfoResponse {
                 .email(user.getEmail())
                 .name(user.getUserName())
                 .department(user.getGroupName() != null ? user.getGroupName() : user.getDeptCode())
+                .deptCode(user.getDeptCode())
                 .company(user.getCompanyCode())
                 .role(user.getUserRole() != null ? user.getUserRole() : "TEAM_MEMBER")
                 .build();

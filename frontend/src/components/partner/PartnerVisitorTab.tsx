@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { fmtPhone } from '../../utils/phoneFormat'
 import ReadTextField from '../common/ReadTextField'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -53,6 +55,14 @@ const PartnerVisitorTab: React.FC = () => {
 
   const handleResetSearch = () => { setSearchInput(''); setSearchInput(''); setSearch('') }
   const [statusFilter, setStatusFilter] = useState('')
+
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const MENU = '협력업체 › 방문자 관리'
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew  = canSee(MENU, 'LIST',   '신규 등록', myRoles)
+  const canEdit = canSee(MENU, '입장중',  '수정', myRoles)
+  const canDel  = canSee(MENU, '입장중',  '삭제', myRoles)
 
   const [mode, setMode] = useState<Mode>('list')
   const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -133,8 +143,8 @@ const PartnerVisitorTab: React.FC = () => {
             )}
             {mode === 'view' && (
               <>
-                <Button variant="contained" size="small" color="primary" startIcon={<EditIcon />} onClick={handleEditClick}>수정</Button>
-                <Button variant="outlined" size="small" color="error" startIcon={<DeleteIcon />} onClick={handleDelete}>삭제</Button>
+                {canEdit && <Button variant="contained" size="small" color="primary" startIcon={<EditIcon />} onClick={handleEditClick}>수정</Button>}
+                {canDel && <Button variant="outlined" size="small" color="error" startIcon={<DeleteIcon />} onClick={handleDelete}>삭제</Button>}
               </>
             )}
           </Stack>
@@ -292,7 +302,7 @@ const PartnerVisitorTab: React.FC = () => {
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNewClick} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+        {canNew && <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNewClick} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>}
       </Stack>
 
       <Paper variant="outlined">

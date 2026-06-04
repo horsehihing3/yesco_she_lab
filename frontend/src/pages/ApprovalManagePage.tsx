@@ -82,7 +82,7 @@ const ApprovalManagePage: React.FC = () => {
   const queryClient = useQueryClient()
   const { user } = useAuth()
   const { showSuccess, showError, showConfirm } = useAlert()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN'
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
 
   const { codeList: approvalStatusList, getLabel: getStatusLabel } = useCodeMap('APPROVAL_STATUS')
   const { getLabel: getTypeLabel } = useCodeMap('APPROVAL_TYPE')

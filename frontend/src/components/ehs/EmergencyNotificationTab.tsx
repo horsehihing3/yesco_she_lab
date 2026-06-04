@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import {
   Box,
   TextField,
@@ -81,6 +83,11 @@ const EmergencyNotificationTab: React.FC = () => {
   const [historyDetailDialog, setHistoryDetailDialog] = useState<NotificationHistory | null>(null)
 
   const rowsPerPage = 10
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 커뮤니케이션 › 긴급 메일/문자 발송'
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canSend = canSee(MENU, 'FORM', '긴급 발송', myRoles)
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: TabType) => {
     setActiveTab(newValue)
@@ -346,7 +353,7 @@ const EmergencyNotificationTab: React.FC = () => {
 
         {/* 발송 버튼 */}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 3 }}>
-          <Button
+          {canSend && <Button
             variant="contained"
             color="error"
             size="large"
@@ -356,7 +363,7 @@ const EmergencyNotificationTab: React.FC = () => {
             sx={{ minWidth: 150 }}
           >
             {isSending ? t('common.sending') : t('emergency.sendEmergency')}
-          </Button>
+          </Button>}
         </Box>
     </Box>
   )

@@ -33,6 +33,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from 'i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import axiosInstance from '../../api/axiosInstance'
 import { QnaPost, QnaPostRequest, QnaAnswerRequest } from '../../types/qna.types'
 import { ApiResponse, PageResponse, FileMetadata } from '../../types/common.types'
@@ -132,6 +133,15 @@ const QnaTab: React.FC = () => {
 
   const isQnaAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'QNA_ADMIN'
   const isAuthor = (post: QnaPost | null) => post?.authorEmail === user?.email
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 커뮤니케이션 › Q&A'
+  const listRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const getDetailRoles = (post: QnaPost | null): string[] => [
+    'guest',
+    ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean)),
+    ...(isAuthor(post) ? ['writer'] : []),
+  ]
+  const canNew = canSee(MENU, 'LIST', 'New', listRoles)
 
   // Queries
   const { data, isLoading, error } = useQuery({
@@ -430,9 +440,11 @@ const QnaTab: React.FC = () => {
             <RefreshIcon />
           </IconButton>
         </Box>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>
-          New
-        </Button>
+        {canNew && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>
+            New
+          </Button>
+        )}
       </Box>
 
       {/* Filters - Mobile */}
@@ -666,8 +678,8 @@ const QnaTab: React.FC = () => {
                     {postDetail.isAnswered ? t('qna.editAnswer') : t('qna.addAnswer')}
                   </Button>
                 )}
-                {isAuthor(postDetail) && <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('qna.editQuestion')}</Button>}
-                {(isQnaAdmin || isAuthor(postDetail)) && <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>}
+                {canSee(MENU, 'DETAIL', '질문 수정', getDetailRoles(postDetail)) && isAuthor(postDetail) && <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('qna.editQuestion')}</Button>}
+                {canSee(MENU, 'DETAIL', '삭제', getDetailRoles(postDetail)) && (isQnaAdmin || isAuthor(postDetail)) && <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>}
               </Box>
             )}
           </Box>
@@ -782,8 +794,8 @@ const QnaTab: React.FC = () => {
                     {postDetail.isAnswered ? t('qna.editAnswer') : t('qna.addAnswer')}
                   </Button>
                 )}
-                {isAuthor(postDetail) && <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('qna.editQuestion')}</Button>}
-                {(isQnaAdmin || isAuthor(postDetail)) && <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1 }}>{t('common.delete')}</Button>}
+                {canSee(MENU, 'DETAIL', '질문 수정', getDetailRoles(postDetail)) && isAuthor(postDetail) && <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('qna.editQuestion')}</Button>}
+                {canSee(MENU, 'DETAIL', '삭제', getDetailRoles(postDetail)) && (isQnaAdmin || isAuthor(postDetail)) && <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1 }}>{t('common.delete')}</Button>}
               </Box>
             )}
           </Box>
