@@ -20,6 +20,7 @@ import {
 // 슈퍼관리자는 UI에서 숨김 — canSee에서 무조건 통과 처리
 const VISIBLE_ROLES = ROLES.filter(r => r.key !== 'superAdmin')
 import { fetchButtonRules, saveButtonRules, ButtonRuleItem } from '../api/buttonRuleApi'
+import { fetchMenuRules } from '../api/menuRuleApi'
 import { useAlert } from '../contexts/AlertContext'
 
 // GA 키 = menuPath (메뉴 단위)
@@ -147,6 +148,22 @@ const ButtonManagePage: React.FC = () => {
     queryFn: fetchButtonRules,
   })
 
+  const { data: menuRules } = useQuery({
+    queryKey: ['menuRules'],
+    queryFn: fetchMenuRules,
+  })
+
+  // SYSTEM_ADMIN 숨김 메뉴 키 집합 — 버튼 관리 테이블에서 해당 메뉴 제외
+  const sysAdminHiddenMenuKeys = useMemo(() => {
+    if (!menuRules) return new Set<string>()
+    return new Set(menuRules.filter(r => r.roleKey === 'SYSTEM_ADMIN').map(r => r.menuKey))
+  }, [menuRules])
+
+  const visibleMenuData = useMemo(
+    () => DEFAULT_MENU_DATA.filter(m => !m.menuKey || !sysAdminHiddenMenuKeys.has(m.menuKey)),
+    [sysAdminHiddenMenuKeys]
+  )
+
   useEffect(() => {
     if (dbRules !== undefined) {
       setCellState(buildStateFromDb(dbRules))
@@ -167,7 +184,7 @@ const ButtonManagePage: React.FC = () => {
     onError:   () => showError('저장 중 오류가 발생했습니다.'),
   })
 
-  const issueCount = DEFAULT_MENU_DATA
+  const issueCount = visibleMenuData
     .flatMap(m => m.statuses.flatMap(s => s.buttons))
     .filter(b => b.issue).length
 
@@ -180,7 +197,7 @@ const ButtonManagePage: React.FC = () => {
     const abstractChanged = Object.keys(cellState).filter(k =>
       !k.endsWith('_superAdmin') && cellState[k] !== savedState[k]
     ).length
-    const gaChanged = DEFAULT_MENU_DATA.filter(menu => {
+    const gaChanged = visibleMenuData.filter(menu => {
       const cur  = JSON.stringify([...(gaState[gaKey(menu.menuPath)] ?? [])].sort())
       const base = JSON.stringify([...(savedGaState[gaKey(menu.menuPath)] ?? [])].sort())
       return cur !== base
@@ -273,7 +290,7 @@ const ButtonManagePage: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {DEFAULT_MENU_DATA.map((menu, mi) => {
+              {visibleMenuData.map((menu, mi) => {
                 const totalRows = menu.statuses.reduce((acc, sg) => acc + Math.max(sg.buttons.length, 1), 0)
                 let menuPrinted = false
                 const gaSelected = gaState[gaKey(menu.menuPath)] ?? []

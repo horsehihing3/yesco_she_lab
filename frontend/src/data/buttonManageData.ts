@@ -49,6 +49,7 @@ export interface StatusGroup {
 
 export interface MenuEntry {
   menuPath: string
+  menuKey?: string   // 메뉴 관리의 MENU_TREE key — SYSTEM_ADMIN 숨김 여부 판단에 사용
   statuses: StatusGroup[]
 }
 
@@ -90,7 +91,7 @@ export function buildInitialState(): Record<string, boolean> {
 export const DEFAULT_MENU_DATA: MenuEntry[] = [
   // ── EHS경영 › 커뮤니케이션 › EHS 문서 ────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 문서',
+    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 문서', menuKey: 'nav.ehsDocument',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New (파일 업로드)', roles: WRITER_ADMIN }] },
@@ -99,7 +100,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── EHS경영 › 커뮤니케이션 › EHS Plan ────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS Plan',
+    menuPath: 'EHS경영 › 커뮤니케이션 › EHS Plan', menuKey: 'nav.ehsPlan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -115,7 +116,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── EHS경영 › 커뮤니케이션 › EHS 직책자 명단 ────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 직책자 명단',
+    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 직책자 명단', menuKey: 'nav.ehsOfficer',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -130,7 +131,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── EHS경영 › 커뮤니케이션 › EHS 메시지 ─────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 메시지',
+    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 메시지', menuKey: 'nav.ehsMessage',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -145,7 +146,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── EHS경영 › 커뮤니케이션 › EHS 알림 ───────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 알림',
+    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 알림', menuKey: 'nav.ehsAlert',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -166,7 +167,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── EHS경영 › 커뮤니케이션 › 산업안전보건 위원회 ─────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › 산업안전보건 위원회',
+    menuPath: 'EHS경영 › 커뮤니케이션 › 산업안전보건 위원회', menuKey: 'nav.ehsOshCommittee',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -180,7 +181,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── EHS경영 › 커뮤니케이션 › 긴급 메일/문자 발송 ────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › 긴급 메일/문자 발송',
+    menuPath: 'EHS경영 › 커뮤니케이션 › 긴급 메일/문자 발송', menuKey: 'nav.ehsEmergency',
     statuses: [
       { status: 'FORM', statusLabel: '발송 폼', statusColor: 'default',
         buttons: [{ button: '긴급 발송', roles: WRITER_ADMIN }] },
@@ -189,7 +190,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── EHS경영 › 커뮤니케이션 › Q&A ─────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › Q&A',
+    menuPath: 'EHS경영 › 커뮤니케이션 › Q&A', menuKey: 'nav.ehsQna',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -204,7 +205,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── EHS경영 › 커뮤니케이션 › 비상 연락망 ────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › 비상 연락망',
+    menuPath: 'EHS경영 › 커뮤니케이션 › 비상 연락망', menuKey: 'emr.tabs.contacts',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -219,7 +220,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 연간계획 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 계획KPI목표 › 연간계획',
+    menuPath: 'EHS경영 › 계획KPI목표 › 연간계획', menuKey: 'pkg.annualPlan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -239,7 +240,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── KPI 현황 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 계획KPI목표 › KPI 현황',
+    menuPath: 'EHS경영 › 계획KPI목표 › KPI 현황', menuKey: 'pkg.kpiStatus',
     statuses: [
       { status: 'APPROVED', statusLabel: '작성중 (KPI 입력)', statusColor: 'default',
         statusNote: 'KPI현황 탭: 연간계획 APPROVED 상태를 "작성중"으로 표시',
@@ -257,7 +258,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 감사 계획 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 감사 › 감사 계획',
+    menuPath: 'EHS경영 › 감사 › 감사 계획', menuKey: 'audit.tabs.plan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -278,7 +279,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 감사 실시 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 감사 › 감사 실시',
+    menuPath: 'EHS경영 › 감사 › 감사 실시', menuKey: 'audit.tabs.execution',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_OFF }] },
@@ -303,7 +304,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 감사 부적합 ───────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 감사 › 감사 부적합',
+    menuPath: 'EHS경영 › 감사 › 감사 부적합', menuKey: 'audit.tabs.findings',
     statuses: [
       { status: 'PLAN/PREPARING', statusLabel: '준비중', statusColor: 'default',
         statusNote: '감사 실시 승인 후 자동 연결 — 별도 신규 등록 없음',
@@ -315,7 +316,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 시정 조치 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 감사 › 시정 조치',
+    menuPath: 'EHS경영 › 감사 › 시정 조치', menuKey: 'audit.tabs.corrective',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -333,7 +334,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 교육현황 (관리자) ──────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 교육훈련 › 교육현황 (관리자)',
+    menuPath: 'EHS경영 › 교육훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',
     statuses: [
       { status: 'PENDING', statusLabel: '대기', statusColor: 'warning',
         buttons: [
@@ -351,7 +352,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 안전교육 신청 ─────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 교육훈련 › 안전교육 신청',
+    menuPath: 'EHS경영 › 교육훈련 › 안전교육 신청', menuKey: 'training.tabs.apply',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -365,7 +366,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 비상 계획 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상대응 › 비상 계획',
+    menuPath: 'EHS경영 › 비상대응 › 비상 계획', menuKey: 'emr.tabs.plans',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -386,7 +387,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 비상 훈련 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상대응 › 비상 훈련',
+    menuPath: 'EHS경영 › 비상대응 › 비상 훈련', menuKey: 'emr.tabs.drills',
     statuses: [
       { status: 'SCHEDULED', statusLabel: '예정', statusColor: 'info',
         statusNote: '비상계획 승인 후 자동 생성 — 신규 등록 없음 / linkedPlan 상태에 따라 버튼 표시',
@@ -401,7 +402,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 사고·사건 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상대응 › 사고·사건',
+    menuPath: 'EHS경영 › 비상대응 › 사고·사건', menuKey: 'nav.incidentResponse',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -416,7 +417,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 법규 대응 계획 ───────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 법규 대응 › 법규 대응 계획',
+    menuPath: 'EHS경영 › 법규 대응 › 법규 대응 계획', menuKey: 'lc.tabs.plan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -437,7 +438,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 법규 대응 실시 ───────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 법규 대응 › 법규 대응 실시',
+    menuPath: 'EHS경영 › 법규 대응 › 법규 대응 실시', menuKey: 'lc.tabs.execution',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_OFF }] },
@@ -463,7 +464,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 부적합 사항 (법규 대응) ──────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 법규 대응 › 부적합 사항',
+    menuPath: 'EHS경영 › 법규 대응 › 부적합 사항', menuKey: 'lc.tabs.findings',
     statuses: [
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
@@ -474,7 +475,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 건강검진 계획 ─────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 건강관리 › 건강검진 계획',
+    menuPath: 'EHS경영 › 건강관리 › 건강검진 계획', menuKey: 'healthCheckup.tabs.plan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -500,7 +501,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 위험성평가 ────────────────────────────────────────────────────────────
   {
-    menuPath: '위험성평가 (계획 / 관리 모드)',
+    menuPath: '위험성평가 (계획 / 관리 모드)', menuKey: 'nav.riskAssessment',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: 'isAdmin = true 하드코딩 — 모든 사용자가 관리자로 처리됨' }] },
@@ -538,7 +539,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 작업허가 › 허가 신청 ──────────────────────────────────────────────────
   {
-    menuPath: '작업허가 › 허가 신청',
+    menuPath: '작업허가 › 허가 신청', menuKey: 'nav.permitToWork',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -572,7 +573,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 작업환경측정 › 측정 계획 ──────────────────────────────────────────────
   {
-    menuPath: '작업환경측정 › 측정 계획',
+    menuPath: '작업환경측정 › 측정 계획', menuKey: 'wem.planTab',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -593,7 +594,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 산업재해/직업병 › 재해 청구 ───────────────────────────────────────────
   {
-    menuPath: '산업재해/직업병 › 재해 청구',
+    menuPath: '산업재해/직업병 › 재해 청구', menuKey: 'od.tabs.sanjae',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -608,7 +609,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 협력업체 › 협력사 위험성 평가 ───────────────────────────────────────────
   {
-    menuPath: '협력업체 › 협력사 위험성 평가',
+    menuPath: '협력업체 › 협력사 위험성 평가', menuKey: 'nav.partnerRiskAssessment',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         statusNote: '계획 탭 / 어드민 탭에서만 신규 등록 가능 (관리 탭 제외)',
@@ -642,7 +643,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 협력업체 › 협력업체 평가 ─────────────────────────────────────────────
   {
-    menuPath: '협력업체 › 협력업체 평가',
+    menuPath: '협력업체 › 협력업체 평가', menuKey: 'nav.partnerEval',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -681,7 +682,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 환경 › 폐기물 관리 ────────────────────────────────────────────────────
   {
-    menuPath: '환경 › 폐기물 관리',
+    menuPath: '환경 › 폐기물 관리', menuKey: 'nav.envWaste',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -696,7 +697,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 방사선 › 사고·사건 ────────────────────────────────────────────────────
   {
-    menuPath: '방사선 › 사고·사건',
+    menuPath: '방사선 › 사고·사건', menuKey: 'nav.radiationMgmt',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -709,7 +710,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 인허가 › 인허가 식별 ──────────────────────────────────────────────────
   {
-    menuPath: '인허가 › 인허가 식별',
+    menuPath: '인허가 › 인허가 식별', menuKey: 'permit-lc.tab.register',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -722,7 +723,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 인허가 › 인허가 대장 ──────────────────────────────────────────────────
   {
-    menuPath: '인허가 › 인허가 대장',
+    menuPath: '인허가 › 인허가 대장', menuKey: 'permit-lc.tab.ledger',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -735,7 +736,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 인허가 › 변경 관리 ────────────────────────────────────────────────────
   {
-    menuPath: '인허가 › 변경 관리',
+    menuPath: '인허가 › 변경 관리', menuKey: 'permit-lc.tab.change',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -750,7 +751,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 인허가 › 법정 보고서 ──────────────────────────────────────────────────
   {
-    menuPath: '인허가 › 법정 보고서',
+    menuPath: '인허가 › 법정 보고서', menuKey: 'permit-lc.tab.report',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },

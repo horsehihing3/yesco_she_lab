@@ -549,7 +549,6 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             </FormCell>
           </FormRow>
           <FormRow>
-            <FormCell borderRight>
             <FormLabel>완료 승인자</FormLabel>
             <FormCell>
               {isReadonly ? (
