@@ -149,7 +149,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
   // Dialog states
   const [guideDialogOpen, setGuideDialogOpen] = useState(false)
 
-  const isAdmin = true
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
 
   // Fetch sites from API
   const { data: sitesData } = useQuery({
@@ -814,10 +814,10 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           {/* Action Buttons - PC */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mt: 3, justifyContent: 'flex-end' }}>
             <Button variant="outlined" onClick={handleBackToList}>{t('common.list')}</Button>
-            {isAdmin && (
+            {(isAdmin || assessmentDetail?.authorName === user?.name) && (
               <Button variant="contained" onClick={handleEditClick}>{t('common.edit')}</Button>
             )}
-            {isAdmin && (
+            {(isAdmin || assessmentDetail?.authorName === user?.name) && (
               <Button variant="contained" color="error" onClick={handleDeleteClick}>{t('common.delete')}</Button>
             )}
           </Box>

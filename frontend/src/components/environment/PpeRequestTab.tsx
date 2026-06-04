@@ -109,7 +109,7 @@ const PpeRequestTab: React.FC = () => {
   const cancelMut = useMutation({ mutationFn: (id: number) => ppeRequestApi.cancel(id), onSuccess: () => { invalidateAll(); showSuccess(t('ppeReq.cancelled')); handleBackToList() }, onError: () => showError(t('common.error')) })
   const deleteMut = useMutation({ mutationFn: (id: number) => ppeRequestApi.delete(id), onSuccess: () => { invalidateAll(); showSuccess(t('common.deleted')); handleBackToList() }, onError: () => showError(t('common.error')) })
 
-  const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN'
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ itemName: '', quantity: 1 }) }
   const handleRowClick = (item: PpeRequestItem) => { setSelectedItem(item); setViewMode('detail') }
@@ -195,8 +195,8 @@ const PpeRequestTab: React.FC = () => {
           {isOwner && selectedItem.status === 'REQUESTED' && (
             <Button variant="contained" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
           )}
-          {/* 관리자만: 삭제 */}
-          {isAdmin && (
+          {/* 관리자 또는 신청자: 삭제 */}
+          {(isAdmin || isOwner) && (
             <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
           )}
         </Box>

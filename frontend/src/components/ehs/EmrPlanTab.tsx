@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useButtonRules } from '../../hooks/useButtonRules'
+import { Role } from '../../data/buttonManageData'
 import { useTranslation } from 'react-i18next'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
@@ -23,6 +25,7 @@ import SafetyChecklistTab from './SafetyChecklistTab'
 import { SafetyChecklistTemplate } from '../../types/safetyChecklist.types'
 import { EmergencyPlan, EmergencyPlanRequest, EmergencyResource } from '../../types/emergencyExtended.types'
 import useCodeMap from '../../hooks/useCodeMap'
+import { fetchTeamLeader } from '../../api/approvalApi'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 type UserPickTarget = 'planApprover' | 'completionApprover' | null
@@ -61,8 +64,22 @@ const EmrPlanTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm, showWarning } = useAlert()
   const { user: authUser } = useAuth()
-  const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
+  const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
   const canEditDraft = (item: { writerUserId?: number | null }) => isAdmin || item.writerUserId === authUser?.id
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 비상대응 › 비상 계획'
+  const getRoles = (item: { writerUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+    const roles: string[] = ['guest']
+    if (isAdmin) roles.push('superAdmin')
+    else if (authUser?.role) roles.push(authUser.role)
+    if (item.writerUserId === authUser?.id) roles.push('writer')
+    if ((item.planApproverUserId && authUser?.id && item.planApproverUserId === authUser.id) ||
+        (item.planApproverName && authUser?.name && item.planApproverName === authUser.name)) roles.push('planApprover')
+    if ((item.completionApproverUserId && authUser?.id && item.completionApproverUserId === authUser.id) ||
+        (item.completionApproverName && authUser?.name && item.completionApproverName === authUser.name)) roles.push('completionApprover')
+    return roles
+  }
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
   const { codeList: planTypeCodes, getLabel: getPlanTypeLabel } = useCodeMap('EMERGENCY_PLAN_TYPE')
   const { getLabel: getStatusLabel } = useCodeMap('PLAN_STATUS')
 
@@ -90,7 +107,7 @@ const EmrPlanTab: React.FC = () => {
     if (users.length > 0 && userPickTarget) {
       const u = users[0]
       if (userPickTarget === 'planApprover') {
-        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name, ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}) }))
+        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name }))
       } else if (userPickTarget === 'completionApprover') {
         setForm(f => ({ ...f, completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name }))
       }
@@ -148,7 +165,6 @@ const EmrPlanTab: React.FC = () => {
   })
 
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
-  const [sameAsPlan, setSameAsPlan] = useState(false)
   const transitionMutation = useMutation({
     mutationFn: ({ id, action, rejectReason }: { id: number; action: 'submit' | 'approve' | 'reject' | 'complete'; rejectReason?: string }) =>
       emergencyPlanApi.transition(id, action, rejectReason),
@@ -161,13 +177,23 @@ const EmrPlanTab: React.FC = () => {
     onError: () => showError(t('common.error')),
   })
 
-  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(buildEmptyForm(authUser)); setSameAsPlan(false) }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm(buildEmptyForm(authUser)); setSameAsPlan(false); setViewMode('create') }
+  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(buildEmptyForm(authUser)) }
+  const handleOpenCreate = async () => {
+    setSelectedItem(null)
+    const leader = await fetchTeamLeader(authUser?.deptCode)
+    setForm({
+      ...buildEmptyForm(authUser),
+      ...(leader ? {
+        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+      } : {}),
+    })
+    setViewMode('create')
+  }
   const handleOpenDetail = (item: EmergencyPlan) => { setSelectedItem(item); setViewMode('detail') }
   const handleOpenEdit = (item?: EmergencyPlan) => {
     const target = item || selectedItem
     if (!target) return
-    setSameAsPlan(false)
     setSelectedItem(target)
     setForm({
       planName: target.planName, planType: target.planType,
@@ -255,7 +281,9 @@ const EmrPlanTab: React.FC = () => {
             </FormControl>
             <IconButton onClick={() => { setSearchText(''); setTypeFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
           </Box>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+          )}
         </Box>
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
           <TextField size="small" fullWidth placeholder={t('emr.searchPlaceholder')} value={searchText}
@@ -267,7 +295,9 @@ const EmrPlanTab: React.FC = () => {
                 {planTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getPlanTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
-            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>
+            {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+              <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>
+            )}
           </Box>
         </Box>
 
@@ -509,7 +539,7 @@ const EmrPlanTab: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
           {/* DRAFT → 계획 결재 상신 */}
-          {isDraft && canEditDraft(selectedItem) && (
+          {isDraft && canSee(MENU, 'DRAFT', '계획 결재 상신', getRoles(selectedItem)) && (
             <Button variant="contained" color="info"
               onClick={async () => {
                 const ok = await showConfirm(t('emr.confirmSubmit', '계획 결재를 상신하시겠습니까?'))
@@ -520,29 +550,29 @@ const EmrPlanTab: React.FC = () => {
             </Button>
           )}
           {/* PENDING_APPROVAL → 반려 / 계획 승인 */}
-          {isPending && canApprovePlan(selectedItem) && (
-            <>
-              <Button variant="contained" color="warning"
-                onClick={() => setRejectDialogOpen(true)}
-                sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('common.reject', '반려')}
-              </Button>
-              <Button variant="contained" color="success"
-                onClick={async () => {
-                  const ok = await showConfirm(t('emr.confirmPlanApprove', '계획 결재를 승인하시겠습니까?'))
-                  if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
-                }}
-                sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('emr.planApprove', '계획 승인')}
-              </Button>
-            </>
+          {isPending && canSee(MENU, 'PENDING_APPROVAL', '반려', getRoles(selectedItem)) && (
+            <Button variant="contained" color="warning"
+              onClick={() => setRejectDialogOpen(true)}
+              sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+              {t('common.reject', '반려')}
+            </Button>
           )}
-          {/* DRAFT 상태 + 작성자/admin만 수정/삭제 */}
-          {isDraft && canEditDraft(selectedItem) && (
-            <>
-              <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
-              <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
-            </>
+          {isPending && canSee(MENU, 'PENDING_APPROVAL', '계획 승인', getRoles(selectedItem)) && (
+            <Button variant="contained" color="success"
+              onClick={async () => {
+                const ok = await showConfirm(t('emr.confirmPlanApprove', '계획 결재를 승인하시겠습니까?'))
+                if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
+              }}
+              sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+              {t('emr.planApprove', '계획 승인')}
+            </Button>
+          )}
+          {/* DRAFT 상태 — 수정/삭제 */}
+          {isDraft && canSee(MENU, 'DRAFT', '수정', getRoles(selectedItem)) && (
+            <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
+          )}
+          {isDraft && canSee(MENU, 'DRAFT', '삭제', getRoles(selectedItem)) && (
+            <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
           )}
         </Box>
 
@@ -609,11 +639,8 @@ const EmrPlanTab: React.FC = () => {
             </Box>
             <Typography sx={labelSx}>{t('emr.completionApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valueSx, gap: 0.5, display: 'flex', alignItems: 'center' }}>
-              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
-                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
-              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
               <TextField size="small" sx={{ flex: 1, minWidth: 0 }} placeholder={t('pkg.fullName', '성명')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
@@ -709,13 +736,10 @@ const EmrPlanTab: React.FC = () => {
               <Typography variant="body2" fontWeight="bold" sx={{ flex: 1 }}>
                 {t('emr.completionApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
               </Typography>
-              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0 }}
-                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setForm(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
-              <Typography variant="caption" sx={{ color: 'text.secondary', ml: 0.25, whiteSpace: 'nowrap' }}>계획과 동일</Typography>
             </Box>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <TextField size="small" fullWidth placeholder={t('pkg.fullName', '성명')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <Box>

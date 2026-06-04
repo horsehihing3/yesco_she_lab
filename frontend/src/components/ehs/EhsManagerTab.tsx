@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { useAlert } from '../../contexts/AlertContext'
@@ -62,7 +64,14 @@ const EhsManagerTab: React.FC = () => {
   const [dialogMode, setDialogMode] = useState<'add' | 'edit' | 'view'>('view')
   const [selectedManager, setSelectedManager] = useState<EhsManager | null>(null)
   const [userPickerOpen, setUserPickerOpen] = useState(false)
-  const isAdmin = true // TODO: Get from auth context
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 커뮤니케이션 › EHS 직책자 명단'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew  = canSee(MENU, 'LIST',   'New',  myRoles)
+  const canEdit = canSee(MENU, 'DETAIL', '수정', myRoles)
+  const canDel  = canSee(MENU, 'DETAIL', '삭제', myRoles)
 
   const { control, handleSubmit, reset, setValue } = useForm<EhsManagerRequest>({
     defaultValues: {
@@ -224,7 +233,7 @@ const EhsManagerTab: React.FC = () => {
   return (
     <Box>
       {/* Header with New button */}
-      {isAdmin && (
+      {canNew && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
           <Button variant="contained" startIcon={<AddIcon />} size="small" onClick={handleAddClick} sx={{ width: { xs: '100%', md: 'auto' } }}>
             New
@@ -723,23 +732,10 @@ const EhsManagerTab: React.FC = () => {
             >
               {dialogMode === 'view' ? '닫기' : '취소'}
             </Button>
-            {dialogMode === 'view' && selectedManager && isAdmin && (
+            {dialogMode === 'view' && selectedManager && (
               <>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => handleDeleteClick(selectedManager)}
-                  sx={{ flex: { xs: 1, sm: 'none' } }}
-                >
-                  삭제
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={() => handleEditClick(selectedManager)}
-                  sx={{ flex: { xs: 1, sm: 'none' } }}
-                >
-                  수정
-                </Button>
+                {canDel && <Button variant="contained" color="error" onClick={() => handleDeleteClick(selectedManager)} sx={{ flex: { xs: 1, sm: 'none' } }}>삭제</Button>}
+                {canEdit && <Button variant="contained" onClick={() => handleEditClick(selectedManager)} sx={{ flex: { xs: 1, sm: 'none' } }}>수정</Button>}
               </>
             )}
             {dialogMode !== 'view' && (

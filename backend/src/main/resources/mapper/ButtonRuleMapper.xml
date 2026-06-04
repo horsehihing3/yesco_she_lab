@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.ButtonRuleMapper">
+
+    <resultMap id="ButtonRuleResultMap" type="com.smartehs.model.ButtonRule">
+        <id     column="id"          property="id"/>
+        <result column="menu_path"   property="menuPath"/>
+        <result column="status_code" property="statusCode"/>
+        <result column="button_name" property="buttonName"/>
+        <result column="role_key"    property="roleKey"/>
+        <result column="visible"     property="visible"/>
+        <result column="created_at"  property="createdAt"/>
+        <result column="modified_at" property="modifiedAt"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="ButtonRuleResultMap">
+        SELECT id, menu_path, status_code, button_name, role_key, visible, created_at, modified_at
+        FROM tb_button_rule
+        ORDER BY id
+    </select>
+
+    <insert id="upsert" parameterType="com.smartehs.model.ButtonRule">
+        MERGE tb_button_rule AS target
+        USING (SELECT
+                   #{menuPath}   AS menu_path,
+                   #{statusCode} AS status_code,
+                   #{buttonName} AS button_name,
+                   #{roleKey}    AS role_key
+               ) AS source
+        ON (    target.menu_path   = source.menu_path
+            AND target.status_code = source.status_code
+            AND target.button_name = source.button_name
+            AND target.role_key    = source.role_key)
+        WHEN MATCHED THEN
+            UPDATE SET visible = #{visible}, modified_at = GETDATE()
+        WHEN NOT MATCHED THEN
+            INSERT (menu_path, status_code, button_name, role_key, visible, created_at, modified_at)
+            VALUES (#{menuPath}, #{statusCode}, #{buttonName}, #{roleKey}, #{visible}, GETDATE(), GETDATE());
+    </insert>
+
+    <!-- 벌크 INSERT — MSSQL 파라미터 한도(2100) 고려, 서비스에서 400행씩 청크 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO tb_button_rule (menu_path, status_code, button_name, role_key, visible, created_at, modified_at)
+        VALUES
+        <foreach collection="list" item="r" separator=",">
+            (#{r.menuPath}, #{r.statusCode}, #{r.buttonName}, #{r.roleKey}, #{r.visible}, GETDATE(), GETDATE())
+        </foreach>
+    </insert>
+
+    <delete id="deleteAll">
+        DELETE FROM tb_button_rule
+    </delete>
+
+</mapper>

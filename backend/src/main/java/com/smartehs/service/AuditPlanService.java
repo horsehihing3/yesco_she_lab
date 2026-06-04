@@ -159,7 +159,7 @@ public class AuditPlanService {
                 .totalChecklist(0)
                 .completedChecklist(0)
                 .findingCount(0)
-                .status("IN_PROGRESS")
+                .status("PREPARING")
                 .deleted(false)
                 .build();
         auditMapper.insert(audit);

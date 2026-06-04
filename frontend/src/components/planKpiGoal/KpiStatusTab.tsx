@@ -10,6 +10,7 @@ import { EhsPlan, EhsPlanGoal } from '../../types/planKpiGoal.types'
 import { ApiResponse } from '../../types/common.types'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import LoadingOverlay from '../common/LoadingOverlay'
 import RejectReasonDialog from '../common/RejectReasonDialog'
 import useCodeMap from '../../hooks/useCodeMap'
@@ -57,7 +58,18 @@ const KpiStatusTab: React.FC = () => {
   const { getLabel: getStatusLabel } = useCodeMap('PLAN_STATUS')
   const { user: authUser } = useAuth()
 
-  const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
+  const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 계획KPI목표 › KPI 현황'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
+  const getDetailRoles = (item: { writerUserId?: number|null; writerName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+    const roles = [...myRoles]
+    if ((item.writerUserId && authUser?.id && item.writerUserId === authUser.id) ||
+        (item.writerName && authUser?.name && item.writerName === authUser.name)) roles.push('writer')
+    if ((item.completionApproverUserId && authUser?.id && item.completionApproverUserId === authUser.id) ||
+        (item.completionApproverName && authUser?.name && item.completionApproverName === authUser.name)) roles.push('completionApprover')
+    return roles
+  }
   const canCompletionApprove = (d: { completionApproverUserId?: number | null; completionApproverName?: string | null }) => {
     if (isAdmin) return true
     if (d.completionApproverUserId && authUser?.id && d.completionApproverUserId === authUser.id) return true
@@ -360,26 +372,23 @@ const KpiStatusTab: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList}>{t('common.backToList', '목록')}</Button>
-        {/* 저장 — 완료 전 (APPROVED) 상태에서만, 결재 진행 중·완료 후엔 차단 */}
-        {d.status === 'APPROVED' && (
+        {d.status === 'APPROVED' && canSee(MENU, 'APPROVED', '저장 (KPI 값)', getDetailRoles(d)) && (
           <Button variant="contained" onClick={handleSave}>{t('common.save', '저장')}</Button>
         )}
-        {/* 완료 결재 상신 — APPROVED 상태(작성중) 에서 작성자/admin */}
-        {d.status === 'APPROVED' && (
+        {d.status === 'APPROVED' && canSee(MENU, 'APPROVED', '완료 결재 상신', getDetailRoles(d)) && (
           <Button variant="contained" color="info" onClick={handleCompletionSubmit}>
             {t('pkg.completionSubmit', '완료 결재 상신')}
           </Button>
         )}
-        {/* 반려 / 완료 승인 — COMPLETION_PENDING 상태 + 지정된 완료 승인자/admin */}
-        {d.status === 'COMPLETION_PENDING' && canCompletionApprove(d) && (
-          <>
-            <Button variant="contained" color="warning" onClick={() => setRejectDialogOpen(true)}>
-              {t('pkg.reject', '반려')}
-            </Button>
-            <Button variant="contained" color="success" onClick={handleComplete}>
-              {t('pkg.completionApprove', '완료 승인')}
-            </Button>
-          </>
+        {d.status === 'COMPLETION_PENDING' && canCompletionApprove(d) && canSee(MENU, 'COMPLETION_PENDING', '반려', getDetailRoles(d)) && (
+          <Button variant="contained" color="warning" onClick={() => setRejectDialogOpen(true)}>
+            {t('pkg.reject', '반려')}
+          </Button>
+        )}
+        {d.status === 'COMPLETION_PENDING' && canCompletionApprove(d) && canSee(MENU, 'COMPLETION_PENDING', '완료 승인', getDetailRoles(d)) && (
+          <Button variant="contained" color="success" onClick={handleComplete}>
+            {t('pkg.completionApprove', '완료 승인')}
+          </Button>
         )}
       </Box>
 

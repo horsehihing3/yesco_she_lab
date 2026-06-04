@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '../../context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -108,7 +109,8 @@ const PpeIssuanceTab: React.FC = () => {
   const [page, setPage] = useState(0)
   const rowsPerPage = 10
 
-  const isAdmin = true
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
 
   // Form
   const { control, handleSubmit, reset, watch, setValue } = useForm<PpeIssuanceRequest>({
@@ -632,10 +634,10 @@ const PpeIssuanceTab: React.FC = () => {
                   {t('occupationalExposure.ppeIssuance.signReceipt')}
                 </Button>
               )}
-              {isAdmin && (
+              {(isAdmin || issuanceDetail?.authorName === user?.name) && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
               )}
-              {isAdmin && (
+              {(isAdmin || issuanceDetail?.authorName === user?.name) && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>
               )}
             </Box>
@@ -732,10 +734,10 @@ const PpeIssuanceTab: React.FC = () => {
                   {t('occupationalExposure.ppeIssuance.signReceipt')}
                 </Button>
               )}
-              {isAdmin && (
+              {(isAdmin || issuanceDetail?.authorName === user?.name) && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('common.edit')}</Button>
               )}
-              {isAdmin && (
+              {(isAdmin || issuanceDetail?.authorName === user?.name) && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1 }}>{t('common.delete')}</Button>
               )}
             </Box>

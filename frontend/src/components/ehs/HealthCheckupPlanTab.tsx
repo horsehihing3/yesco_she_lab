@@ -4,7 +4,7 @@ import {
   Box, TextField, Button, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Paper, Typography, Pagination,
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
-  FormControl, Grid, Checkbox,
+  FormControl, Grid,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import axiosInstance from '../../api/axiosInstance'
+import { fetchTeamLeader } from '../../api/approvalApi'
 import { HealthCheckupPlan, HealthCheckupPlanRequest } from '../../types/healthCheckupPlan.types'
 import { ApiResponse, PageResponse, FileMetadata } from '../../types/common.types'
 import DatePickerField from '../common/DatePickerField'
@@ -24,6 +25,8 @@ import LoadingOverlay from '../common/LoadingOverlay'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import useCodeMap from '../../hooks/useCodeMap'
+import { useButtonRules } from '../../hooks/useButtonRules'
+import { Role } from '../../data/buttonManageData'
 
 const FILE_ENTITY_TYPE = 'health_checkup_plan'
 
@@ -129,6 +132,10 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   const { t } = useTranslation()
   const { showWarning, showSuccess, showConfirm, showError } = useAlert()
   const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 건강관리 › 건강검진 계획'
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const currentWriter = user?.name || user?.username || ''
   const { codeList: typeCodes, getLabel: getTypeLabel } = useCodeMap('HEALTH_CHECKUP_TYPE')
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('HEALTH_CHECKUP_PLAN_STATUS')
@@ -169,7 +176,6 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   }
   const [formData, setFormData] = useState<HealthCheckupPlanRequest>(emptyForm)
   const [approverPickTarget, setApproverPickTarget] = useState<'plan' | 'completion' | null>(null)
-  const [sameAsPlan, setSameAsPlan] = useState(false)
   // 등록(create) 모드에서는 plan id 가 없어 즉시 업로드 불가 — 클라이언트에서 staging 후 저장 직후 일괄 업로드
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
 
@@ -259,7 +265,6 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
     setSelectedItem(null)
     setFormData({ ...emptyForm })
     setPendingFiles([])
-    setSameAsPlan(false)
   }
   const handleReset = () => {
     setSearchText(''); setTypeFilter(''); setYearFilter(''); setStatusFilter(''); setPage(0)
@@ -267,8 +272,19 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   const handleRowClick = (item: HealthCheckupPlan) => {
     setSelectedItem(item); setViewMode('detail')
   }
-  const handleAddClick = () => {
-    setSelectedItem(null); setFormData({ ...emptyForm, writer: currentWriter }); setPendingFiles([]); setSameAsPlan(false); setViewMode('create')
+  const handleAddClick = async () => {
+    setSelectedItem(null)
+    const leader = await fetchTeamLeader(user?.deptCode)
+    setFormData({
+      ...emptyForm,
+      writer: currentWriter,
+      ...(leader ? {
+        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+      } : {}),
+    })
+    setPendingFiles([])
+    setViewMode('create')
   }
   const handleEditClick = () => {
     if (!detail) return
@@ -301,7 +317,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
     if (users[0]) {
       const u = users[0]
       if (approverPickTarget === 'plan') {
-        setFormData(f => ({ ...f, planApproverUserId: u.id, planApproverName: u.name, planApproverTeam: u.department || '', planApproverPosition: '', ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverName: u.name, completionApproverTeam: u.department || '' } : {}) }))
+        setFormData(f => ({ ...f, planApproverUserId: u.id, planApproverName: u.name, planApproverTeam: u.department || '', planApproverPosition: '' }))
       } else if (approverPickTarget === 'completion') {
         setFormData(f => ({ ...f, completionApproverUserId: u.id, completionApproverName: u.name, completionApproverTeam: u.department || '', completionApproverPosition: '' }))
       }
@@ -435,9 +451,11 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           <IconButton onClick={() => setPage(0)} size="small"><SearchIcon /></IconButton>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
-            {t('common.new', '신규')}
-          </Button>
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+            <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
+              {t('common.new', '신규')}
+            </Button>
+          )}
         </Box>
 
         {isLoading ? (
@@ -597,33 +615,46 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           </Alert>
         )}
 
-        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2, flexWrap: 'wrap' }}>
-          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.backToList', '목록')}</Button>
-          {(d.status === 'PLANNED' || d.status === 'REJECTED') && (
-            <>
-              <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit', '수정')}</Button>
-              <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete', '삭제')}</Button>
-              <Button variant="contained" color="info" onClick={async () => {
-                if (await showConfirm(t('healthCheckupPlan.confirmSubmit', '계획 결재를 상신하시겠습니까?'))) {
-                  transitionMutation.mutate({ id: d.id, action: 'submit' })
-                }
-              }} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('healthCheckupPlan.submitForApproval', '계획 결재 상신')}</Button>
-            </>
-          )}
-          {d.status === 'PENDING_APPROVAL' && (
-            <>
-              <Button variant="contained" color="warning" onClick={async () => {
-                const reason = window.prompt(t('healthCheckupPlan.enterRejectReason', '반려 사유를 입력하세요.'))
-                if (reason) transitionMutation.mutate({ id: d.id, action: 'reject', rejectReason: reason })
-              }} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.reject', '반려')}</Button>
-              <Button variant="contained" color="success" onClick={async () => {
-                if (await showConfirm(t('healthCheckupPlan.confirmApprove', '계획 결재를 승인하시겠습니까?'))) {
-                  transitionMutation.mutate({ id: d.id, action: 'approve' })
-                }
-              }} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('healthCheckupPlan.approvePlan', '계획 결재 승인')}</Button>
-            </>
-          )}
-        </Box>
+        {(() => {
+          const statusCode = d.status === 'PLANNED' || d.status === 'REJECTED' ? d.status : d.status
+          const itemRoles: string[] = [...myRoles]
+          if ((d.planApproverUserId && user?.id && d.planApproverUserId === user.id) ||
+              (d.planApproverName && user?.name && d.planApproverName === user.name)) itemRoles.push('planApprover')
+          if ((d.completionApproverUserId && user?.id && d.completionApproverUserId === user.id) ||
+              (d.completionApproverName && user?.name && d.completionApproverName === user.name)) itemRoles.push('completionApprover')
+          if (d.createdByName === user?.name) itemRoles.push('writer')
+          return (
+            <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2, flexWrap: 'wrap' }}>
+              <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.backToList', '목록')}</Button>
+              {(d.status === 'PLANNED' || d.status === 'REJECTED') && canSee(MENU, statusCode, '수정', itemRoles) && (
+                <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit', '수정')}</Button>
+              )}
+              {(d.status === 'PLANNED' || d.status === 'REJECTED') && canSee(MENU, statusCode, '삭제', itemRoles) && (
+                <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete', '삭제')}</Button>
+              )}
+              {(d.status === 'PLANNED' || d.status === 'REJECTED') && canSee(MENU, statusCode, '계획 결재 상신', itemRoles) && (
+                <Button variant="contained" color="info" onClick={async () => {
+                  if (await showConfirm(t('healthCheckupPlan.confirmSubmit', '계획 결재를 상신하시겠습니까?'))) {
+                    transitionMutation.mutate({ id: d.id, action: 'submit' })
+                  }
+                }} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('healthCheckupPlan.submitForApproval', '계획 결재 상신')}</Button>
+              )}
+              {d.status === 'PENDING_APPROVAL' && canSee(MENU, 'PENDING_APPROVAL', '반려', itemRoles) && (
+                <Button variant="contained" color="warning" onClick={async () => {
+                  const reason = window.prompt(t('healthCheckupPlan.enterRejectReason', '반려 사유를 입력하세요.'))
+                  if (reason) transitionMutation.mutate({ id: d.id, action: 'reject', rejectReason: reason })
+                }} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.reject', '반려')}</Button>
+              )}
+              {d.status === 'PENDING_APPROVAL' && canSee(MENU, 'PENDING_APPROVAL', '계획 결재 승인', itemRoles) && (
+                <Button variant="contained" color="success" onClick={async () => {
+                  if (await showConfirm(t('healthCheckupPlan.confirmApprove', '계획 결재를 승인하시겠습니까?'))) {
+                    transitionMutation.mutate({ id: d.id, action: 'approve' })
+                  }
+                }} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('healthCheckupPlan.approvePlan', '계획 결재 승인')}</Button>
+              )}
+            </Box>
+          )
+        })()}
       </Box>
     )
   }
@@ -723,12 +754,9 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           <Box sx={labelSx}>{t('healthCheckupPlan.completionApprover', '완료 승인자')}</Box>
           <Box sx={valSx}>
             <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', width: '100%' }}>
-              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
-                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setFormData(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
-              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
               <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
                 value={formData.completionApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setApproverPickTarget('completion')}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>

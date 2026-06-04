@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import {
   Box,
   TextField,
@@ -103,7 +104,13 @@ const EhsMessageTab: React.FC = () => {
   const [selectedMessage, setSelectedMessage] = useState<EhsMessage | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [viewMessage, setViewMessage] = useState<EhsMessage | null>(null)
-  const isAdmin = user?.role === 'ADMIN' || true // TODO: Implement proper role check
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 커뮤니케이션 › EHS 메시지'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew  = canSee(MENU, 'LIST', 'New', myRoles)
+  const getDetailRoles = (item: { authorName?: string } | null): string[] =>
+    [...myRoles, ...(item?.authorName === user?.name ? ['writer'] : [])]
   const rowsPerPage = 10
 
   const { control, handleSubmit, reset } = useForm<EhsMessageRequest>({
@@ -608,12 +615,12 @@ const EhsMessageTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
             {t('common.backToList')}
           </Button>
-          {isAdmin && (
+          {canSee(MENU, 'DETAIL', '수정', getDetailRoles(viewMessage)) && (
             <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>
               {t('common.edit')}
             </Button>
           )}
-          {isAdmin && (
+          {canSee(MENU, 'DETAIL', '삭제', getDetailRoles(viewMessage)) && (
             <Button variant="contained" color="error" onClick={() => handleDeleteClick(viewMessage)} sx={{ flex: { xs: 1, sm: 'none' } }}>
               {t('common.delete')}
             </Button>
@@ -903,7 +910,7 @@ const EhsMessageTab: React.FC = () => {
             <RefreshIcon />
           </IconButton>
         </Box>
-        {isAdmin && (
+        {canNew && (
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>
             New
           </Button>
@@ -949,7 +956,7 @@ const EhsMessageTab: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" onClick={handleReset} startIcon={<RefreshIcon />} sx={{ flex: 1 }}>{t('common.reset')}</Button>
-          {isAdmin && (
+          {canNew && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
           )}
         </Box>

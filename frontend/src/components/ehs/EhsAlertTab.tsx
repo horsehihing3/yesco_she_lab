@@ -32,6 +32,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from 'i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import axiosInstance from '../../api/axiosInstance'
 import { EhsAlert, EhsAlertRequest } from '../../types/ehsAlert.types'
 import { ApiResponse, PageResponse, FileMetadata } from '../../types/common.types'
@@ -114,7 +115,13 @@ const EhsAlertTab: React.FC = () => {
   })
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
 
-  const isAdmin = user?.role === 'ADMIN' || true // TODO: Implement proper role check
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 커뮤니케이션 › EHS 알림'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew  = canSee(MENU, 'LIST', 'New', myRoles)
+  const getDetailRoles = (item: { authorName?: string } | null | undefined): string[] =>
+    [...myRoles, ...(item?.authorName === user?.name ? ['writer'] : [])]
 
   // Queries
   const { data, isLoading, error } = useQuery({
@@ -394,7 +401,7 @@ const EhsAlertTab: React.FC = () => {
             <RefreshIcon />
           </IconButton>
         </Box>
-        {isAdmin && (
+        {canNew && (
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>
             New
           </Button>
@@ -422,7 +429,7 @@ const EhsAlertTab: React.FC = () => {
         />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" onClick={handleReset} startIcon={<RefreshIcon />} sx={{ flex: 1 }}>{t('common.reset')}</Button>
-          {isAdmin && (
+          {canNew && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
           )}
         </Box>
@@ -558,8 +565,8 @@ const EhsAlertTab: React.FC = () => {
             {/* Action Buttons - PDF 페이지 11 하단 */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ width: 'auto' }}>{t('common.backToList')}</Button>
-              {isAdmin && <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>}
-              {isAdmin && <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>}
+              {canSee(MENU, 'DETAIL', '수정', getDetailRoles(alertDetail)) && <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>}
+              {canSee(MENU, 'DETAIL', '삭제', getDetailRoles(alertDetail)) && <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>}
             </Box>
           </Box>
 
@@ -608,8 +615,8 @@ const EhsAlertTab: React.FC = () => {
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1 }}>{t('common.backToList')}</Button>
-              {isAdmin && <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('common.edit')}</Button>}
-              {isAdmin && <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1 }}>{t('common.delete')}</Button>}
+              {canSee(MENU, 'DETAIL', '수정', getDetailRoles(alertDetail)) && <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('common.edit')}</Button>}
+              {canSee(MENU, 'DETAIL', '삭제', getDetailRoles(alertDetail)) && <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1 }}>{t('common.delete')}</Button>}
             </Box>
           </Box>
         </>

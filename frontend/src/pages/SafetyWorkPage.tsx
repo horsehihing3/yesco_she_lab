@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { useAuth } from '../context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -161,7 +162,8 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   const [deletedPhotoIds, setDeletedPhotoIds] = useState<number[]>([])
   const [photoPreviewOpen, setPhotoPreviewOpen] = useState(false)
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState('')
-  const isAdmin = true
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
   const rowsPerPage = 10
 
   const { control, handleSubmit, reset, setValue } = useForm<SafetyWorkRequest>({
@@ -1030,7 +1032,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
             <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
               {t('common.list')}
             </Button>
-            {isAdmin && selectedWork && (
+            {(isAdmin || selectedWork?.authorName === user?.name) && selectedWork && (
               <>
                 <Button
                   variant="contained"

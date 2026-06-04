@@ -26,8 +26,8 @@ const LegalCompliancePage: React.FC = () => {
 
   const tabs = [
     { label: t('lc.tabs.law', '법규검토시스템'), component: <LegalLawTab /> },
-    { label: t('lc.tabs.plan', '법규 대응 계획'),      component: <AuditPlanTab /> },
-    { label: t('lc.tabs.execution', '법규 대응 실시'), component: <AuditExecutionTab /> },
+    { label: t('lc.tabs.plan', '법규 대응 계획'),      component: <AuditPlanTab      menuPath="EHS경영 › 법규 대응 › 법규 대응 계획" /> },
+    { label: t('lc.tabs.execution', '법규 대응 실시'), component: <AuditExecutionTab menuPath="EHS경영 › 법규 대응 › 법규 대응 실시" /> },
     { label: t('audit.tabs.findings', '부적합 사항'), component: <AuditFindingTab /> },
     { label: t('audit.tabs.corrective', '시정 조치'), component: <AuditCorrectiveTab /> },
   ]

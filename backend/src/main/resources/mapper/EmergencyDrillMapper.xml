@@ -31,7 +31,7 @@
     <select id="findByDeletedFalse" resultMap="EmergencyDrillResultMap">
         SELECT * FROM tb_emergency_drill
         WHERE deleted = 0
-        ORDER BY scheduled_date DESC
+        ORDER BY modified_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -46,7 +46,7 @@
     <select id="findByStatus" resultMap="EmergencyDrillResultMap">
         SELECT * FROM tb_emergency_drill
         WHERE status = #{status} AND deleted = 0
-        ORDER BY scheduled_date DESC
+        ORDER BY modified_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -57,7 +57,7 @@
     <select id="findByDrillType" resultMap="EmergencyDrillResultMap">
         SELECT * FROM tb_emergency_drill
         WHERE drill_type = #{drillType} AND deleted = 0
-        ORDER BY scheduled_date DESC
+        ORDER BY modified_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 

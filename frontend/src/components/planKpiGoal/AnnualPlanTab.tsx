@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useButtonRules } from '../../hooks/useButtonRules'
+import { Role } from '../../data/buttonManageData'
 import {
   Box, TextField, Button, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Paper, Typography, Pagination,
@@ -14,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import axiosInstance from '../../api/axiosInstance'
+import { fetchTeamLeader } from '../../api/approvalApi'
 import { EhsPlan, EhsPlanRequest, EhsPlanGoal } from '../../types/planKpiGoal.types'
 import { ApiResponse, PageResponse } from '../../types/common.types'
 import NumberField from '../common/NumberField'
@@ -127,7 +130,6 @@ const AnnualPlanTab: React.FC = () => {
   const [userPickTarget, setUserPickTarget] = useState<UserPickTarget | null>(null)
   // 결재 반려 사유 입력 다이얼로그
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
-  const [sameAsPlan, setSameAsPlan] = useState(false)
 
   // ===== Queries =====
   const { data, isLoading } = useQuery({
@@ -191,7 +193,6 @@ const AnnualPlanTab: React.FC = () => {
     setViewMode('list')
     setSelectedItem(null)
     setFormData(buildEmptyForm(year))
-    setSameAsPlan(false)
   }
 
   const handleReset = () => {
@@ -210,10 +211,16 @@ const AnnualPlanTab: React.FC = () => {
     setViewMode('detail')
   }
 
-  const handleAddClick = () => {
+  const handleAddClick = async () => {
     setSelectedItem(null)
-    setFormData(buildEmptyForm(year))
-    setSameAsPlan(false)
+    const leader = await fetchTeamLeader(authUser?.deptCode)
+    setFormData({
+      ...buildEmptyForm(year),
+      ...(leader ? {
+        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+      } : {}),
+    })
     setViewMode('create')
   }
 
@@ -298,7 +305,6 @@ const AnnualPlanTab: React.FC = () => {
           planApproverUserId: u.id,
           planApproverTeam: u.department || '',
           planApproverName: u.name,
-          ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}),
         }))
       } else if (userPickTarget === 'completionApprover') {
         setFormData(f => ({
@@ -320,7 +326,7 @@ const AnnualPlanTab: React.FC = () => {
   }
 
   // 권한 헬퍼: 계획 승인자 본인 또는 admin 만 계획 승인/반려 가능
-  const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
+  const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
   const canEditDraft = (d: { writerUserId?: number | null }) => isAdmin || d.writerUserId === authUser?.id
   const canApprovePlan = (d: { planApproverUserId?: number | null; planApproverName?: string | null }) => {
     if (isAdmin) return true
@@ -328,6 +334,20 @@ const AnnualPlanTab: React.FC = () => {
     if (d.planApproverName && authUser?.name && d.planApproverName === authUser.name) return true
     return false
   }
+  const { canSee } = useButtonRules()
+  const MENU_ANNUAL = 'EHS경영 › 계획KPI목표 › 연간계획'
+  const getRoles = (d: { writerUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+    const roles: string[] = ['guest']
+    if (isAdmin) roles.push('superAdmin')
+    else if (authUser?.role) roles.push(authUser.role)
+    if (d.writerUserId === authUser?.id) roles.push('writer')
+    if ((d.planApproverUserId && authUser?.id && d.planApproverUserId === authUser.id) ||
+        (d.planApproverName && authUser?.name && d.planApproverName === authUser.name)) roles.push('planApprover')
+    if ((d.completionApproverUserId && authUser?.id && d.completionApproverUserId === authUser.id) ||
+        (d.completionApproverName && authUser?.name && d.completionApproverName === authUser.name)) roles.push('completionApprover')
+    return roles
+  }
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
 
   const updateGoal = (idx: number, patch: Partial<EhsPlanGoal>) => {
     setFormData(f => {
@@ -363,9 +383,11 @@ const AnnualPlanTab: React.FC = () => {
           <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
-            {t('common.new')}
-          </Button>
+          {canSee(MENU_ANNUAL, 'LIST', '신규 등록', myRoles) && (
+            <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
+              {t('common.new')}
+            </Button>
+          )}
         </Box>
         {/* Toolbar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -383,9 +405,11 @@ const AnnualPlanTab: React.FC = () => {
             <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
             <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           </Box>
-          <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleAddClick} size="small">
-            {t('common.new')}
-          </Button>
+          {canSee(MENU_ANNUAL, 'LIST', '신규 등록', myRoles) && (
+            <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleAddClick} size="small">
+              {t('common.new')}
+            </Button>
+          )}
         </Box>
 
         {isLoading ? (
@@ -532,36 +556,35 @@ const AnnualPlanTab: React.FC = () => {
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ width: 'auto' }}>{t('common.backToList')}</Button>
-          {selectedItem && d.status === 'DRAFT' && canEditDraft(d) && (
+          {selectedItem && d.status === 'DRAFT' && canSee(MENU_ANNUAL, 'DRAFT', '계획 결재 상신', getRoles(d)) && (
             <Button variant="contained" color="info"
               onClick={() => transitionMutation.mutate({ id: selectedItem.id, action: 'submit' })}
               sx={{ width: 'auto' }}>
               {t('pkg.planSubmit', '계획 결재 상신')}
             </Button>
           )}
-          {/* 계획 승인/반려: 지정된 계획 승인자 또는 admin 만 노출 */}
-          {selectedItem && d.status === 'PENDING_APPROVAL' && canApprovePlan(d) && (
-            <>
-              <Button variant="contained" color="warning"
-                onClick={() => setRejectDialogOpen(true)}
-                sx={{ width: 'auto' }}>
-                {t('pkg.reject', '반려')}
-              </Button>
-              <Button variant="contained" color="success"
-                onClick={async () => {
-                  const ok = await showConfirm(t('pkg.confirmApprove', '승인 하시겠습니까?'))
-                  if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
-                }}
-                sx={{ width: 'auto' }}>
-                {t('pkg.planApprove', '계획 승인')}
-              </Button>
-            </>
+          {selectedItem && d.status === 'PENDING_APPROVAL' && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '반려', getRoles(d)) && (
+            <Button variant="contained" color="warning"
+              onClick={() => setRejectDialogOpen(true)}
+              sx={{ width: 'auto' }}>
+              {t('pkg.reject', '반려')}
+            </Button>
+          )}
+          {selectedItem && d.status === 'PENDING_APPROVAL' && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '계획 승인', getRoles(d)) && (
+            <Button variant="contained" color="success"
+              onClick={async () => {
+                const ok = await showConfirm(t('pkg.confirmApprove', '승인 하시겠습니까?'))
+                if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
+              }}
+              sx={{ width: 'auto' }}>
+              {t('pkg.planApprove', '계획 승인')}
+            </Button>
           )}
           {/* 완료 승인은 KPI현황 탭에서 처리하도록 분리됨 */}
-          {d.status === 'DRAFT' && canEditDraft(d) && (
+          {d.status === 'DRAFT' && canSee(MENU_ANNUAL, 'DRAFT', '수정', getRoles(d)) && (
             <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
           )}
-          {d.status === 'DRAFT' && canEditDraft(d) && (
+          {d.status === 'DRAFT' && canSee(MENU_ANNUAL, 'DRAFT', '삭제', getRoles(d)) && (
             <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>
           )}
         </Box>
@@ -643,12 +666,9 @@ const AnnualPlanTab: React.FC = () => {
           <Box sx={labelSx}>{t('pkg.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
           <Box sx={valSx}>
             <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', width: '100%' }}>
-              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
-                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setFormData(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
-              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
               <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
                 value={formData.completionApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setUserPickTarget('completionApprover')}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>

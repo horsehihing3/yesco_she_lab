@@ -17,6 +17,7 @@ import RejectReasonDialog from '../common/RejectReasonDialog'
 import LoadingOverlay from '../common/LoadingOverlay'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { emergencyDrillApi, emergencyPlanApi, emergencyResourceApi } from '../../api/emergencyExtendedApi'
 import { fetchSafetyTemplateDetail } from '../../api/safetyChecklistApi'
 import { EmergencyDrill, EmergencyDrillRequest, EmergencyResource } from '../../types/emergencyExtended.types'
@@ -47,7 +48,18 @@ const EmrDrillTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user: authUser } = useAuth()
-  const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
+  const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = 'EHS경영 › 비상대응 › 비상 훈련'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
+  const getDrillRoles = (plan: { writerUserId?: number|null; writerName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null } | null | undefined): string[] => {
+    const roles = [...myRoles]
+    if (plan && ((plan.writerUserId && authUser?.id && plan.writerUserId === authUser.id) ||
+                 (plan.writerName && authUser?.name && plan.writerName === authUser.name))) roles.push('writer')
+    if (plan && ((plan.completionApproverUserId && authUser?.id && plan.completionApproverUserId === authUser.id) ||
+                 (plan.completionApproverName && authUser?.name && plan.completionApproverName === authUser.name))) roles.push('completionApprover')
+    return roles
+  }
   const { codeList: drillTypeCodes, getLabel: getDrillTypeLabel } = useCodeMap('EMERGENCY_PLAN_TYPE')
   const { codeList: drillStatusCodes, getLabel: getDrillStatusLabel } = useCodeMap('DRILL_STATUS')
   const { codeList: drillScoreCodes, getLabel: getDrillScoreLabel } = useCodeMap('DRILL_SCORE')
@@ -697,25 +709,23 @@ const EmrDrillTab: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
           {/* 저장 — 미완료(COMPLETED 아님) + 완료 결재 상신 중이 아닐 때만 */}
-          {selectedItem.status !== 'COMPLETED' && linkedPlan?.status !== 'COMPLETION_PENDING' && (
+          {selectedItem.status !== 'COMPLETED' && linkedPlan?.status !== 'COMPLETION_PENDING' && canSee(MENU, 'SCHEDULED', '저장', getDrillRoles(linkedPlan)) && (
             <Button variant="contained" color="primary" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
           )}
-          {/* 완료 결재 상신 — 연결된 plan 이 APPROVED 일 때 (작성자/admin) */}
-          {selectedItem.status !== 'COMPLETED' && linkedPlan?.status === 'APPROVED' && (
+          {selectedItem.status !== 'COMPLETED' && linkedPlan?.status === 'APPROVED' && canSee(MENU, 'SCHEDULED', '완료 결재 상신', getDrillRoles(linkedPlan)) && (
             <Button variant="contained" color="info" onClick={handleCompletionSubmit} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
               {t('emr.completionSubmit', '완료 결재 상신')}
             </Button>
           )}
-          {/* 반려 / 완료 승인 — plan COMPLETION_PENDING + 완료 승인자/admin */}
-          {selectedItem.status !== 'COMPLETED' && linkedPlan?.status === 'COMPLETION_PENDING' && canApproveCompletion() && (
-            <>
-              <Button variant="contained" color="warning" onClick={() => setRejectDialogOpen(true)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('common.reject', '반려')}
-              </Button>
-              <Button variant="contained" color="success" onClick={handleCompletionApprove} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('emr.completionApprove', '완료 승인')}
-              </Button>
-            </>
+          {selectedItem.status !== 'COMPLETED' && linkedPlan?.status === 'COMPLETION_PENDING' && canApproveCompletion() && canSee(MENU, 'SCHEDULED', '반려 (완료)', getDrillRoles(linkedPlan)) && (
+            <Button variant="contained" color="warning" onClick={() => setRejectDialogOpen(true)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+              {t('common.reject', '반려')}
+            </Button>
+          )}
+          {selectedItem.status !== 'COMPLETED' && linkedPlan?.status === 'COMPLETION_PENDING' && canApproveCompletion() && canSee(MENU, 'SCHEDULED', '완료 승인', getDrillRoles(linkedPlan)) && (
+            <Button variant="contained" color="success" onClick={handleCompletionApprove} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+              {t('emr.completionApprove', '완료 승인')}
+            </Button>
           )}
         </Box>
 

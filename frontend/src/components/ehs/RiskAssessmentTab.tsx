@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useButtonRules } from '../../hooks/useButtonRules'
+import { Role } from '../../data/buttonManageData'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import {
@@ -26,7 +28,6 @@ import {
   CircularProgress,
   Alert,
   Chip,
-  Checkbox,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
@@ -39,6 +40,7 @@ import DepartmentSelectModal from '../common/DepartmentSelectModal'
 import DatePickerField from '../common/DatePickerField'
 import { useAuth } from '../../context/AuthContext'
 import { riskAssessmentApi } from '../../api/riskAssessmentApi'
+import { fetchTeamLeader } from '../../api/approvalApi'
 import { workplaceApi } from '../../api/workplaceApi'
 import {
   RiskAssessment,
@@ -113,7 +115,6 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   const [approverPickTarget, setApproverPickTarget] = useState<'plan' | 'completion' | null>(null)
   // 결재 반려 사유 입력 다이얼로그 (단계: 'plan' = 계획 결재 반려, 'completion' = 완료 결재 반려)
   const [rejectDialogStage, setRejectDialogStage] = useState<'plan' | 'completion' | null>(null)
-  const [sameAsPlan, setSameAsPlan] = useState(false)
 
   const handleApproverPicked = (users: UserInfo[]) => {
     if (users.length > 0 && approverPickTarget) {
@@ -124,7 +125,6 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           planApproverUserId: u.id,
           planApproverTeam: u.department || '',
           planApproverName: u.name,
-          ...(sameAsPlan ? { completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name } : {}),
         }))
       } else {
         setFormData(f => ({
@@ -138,7 +138,19 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     setApproverPickTarget(null)
   }
 
-  const isAdmin = true
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = '위험성평가 (계획 / 관리 모드)'
+  const getItemRoles = (item: { authorName?: string|null; planApproverName?: string|null; completionApproverName?: string|null }): string[] => {
+    const roles: string[] = ['guest']
+    if (isAdmin) roles.push('superAdmin')
+    else if (user?.role) roles.push(user.role)
+    if (item.authorName && user?.name && item.authorName === user.name) roles.push('writer')
+    if (item.planApproverName && user?.name && item.planApproverName === user.name) roles.push('planApprover')
+    if (item.completionApproverName && user?.name && item.completionApproverName === user.name) roles.push('completionApprover')
+    return roles
+  }
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
 
   // Fetch sites from API
   const { data: sitesData } = useQuery({
@@ -284,7 +296,6 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     })
     setActivityProcesses([])
     setAssessmentDetails([])
-    setSameAsPlan(false)
   }
 
   const handleBackToDetail = () => {
@@ -312,10 +323,11 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     setViewMode('detail')
   }
 
-  const handleAddClick = () => {
+  const handleAddClick = async () => {
     setSelectedAssessment(null)
     const firstFormId = formTemplates && formTemplates.length > 0 ? formTemplates[0].id : ''
     setStep21FormId(firstFormId)
+    const leader = await fetchTeamLeader(user?.deptCode)
     setFormData({
       title: '',
       site: '',
@@ -323,6 +335,10 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       authorDept: user?.department || '',
       authorMail: user?.email || '',
       formId: typeof firstFormId === 'number' ? firstFormId : undefined,
+      ...(leader ? {
+        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+      } : {}),
     })
     setActivityProcesses([
       {
@@ -710,7 +726,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {isAdmin && isPlanMode && (
+          {isPlanMode && canSee(MENU, 'LIST', '신규 등록', myRoles) && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>
               New
             </Button>
@@ -729,7 +745,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
         </FormControl>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" onClick={handleReset} sx={{ flex: 1 }}>{t('common.reset')}</Button>
-          {isAdmin && isPlanMode && (
+          {isPlanMode && canSee(MENU, 'LIST', '신규 등록', myRoles) && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
           )}
         </Box>
@@ -1018,78 +1034,49 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             const canApprovePlan = isAdmin || isPlanApprover
             const canApproveCompletion = isAdmin || isCompletionApprover
 
+            const itemR = assessmentDetail ? getItemRoles(assessmentDetail) : myRoles
+
             const buttons: React.ReactNode[] = []
-
-            // 계획 모드: draft/rejected → 결재 상신, submitted → 승인/반려
             if (isPlanMode) {
-              if (status === 'draft' || status === 'rejected') {
-                buttons.push(
-                  <Button key="planSubmit" variant="contained" color="info" onClick={handleSubmitForApproval}>
-                    {t('riskAssessment.planSubmit', '계획 결재 상신')}
-                  </Button>
-                )
-              }
-              if (status === 'submitted' && canApprovePlan) {
-                buttons.push(
-                  <Button key="reject" variant="contained" color="warning" onClick={handleReject}>
-                    {t('common.reject', '반려')}
-                  </Button>,
-                  <Button key="planApprove" variant="contained" color="success" onClick={handleApprove}>
-                    {t('riskAssessment.planApprove', '계획 결재 승인')}
-                  </Button>
-                )
-              }
+              if ((status === 'draft' || status === 'rejected') && canSee(MENU, status, '계획 결재 상신', itemR))
+                buttons.push(<Button key="planSubmit" variant="contained" color="info" onClick={handleSubmitForApproval}>{t('riskAssessment.planSubmit', '계획 결재 상신')}</Button>)
+              if (status === 'submitted' && canSee(MENU, 'submitted', '반려', itemR))
+                buttons.push(<Button key="reject" variant="contained" color="warning" onClick={handleReject}>{t('common.reject', '반려')}</Button>)
+              if (status === 'submitted' && canSee(MENU, 'submitted', '계획 결재 승인', itemR))
+                buttons.push(<Button key="planApprove" variant="contained" color="success" onClick={handleApprove}>{t('riskAssessment.planApprove', '계획 결재 승인')}</Button>)
             }
-
-            // 관리 모드: approved → 완료 결재 상신, completion_submitted → 완료 결재 승인/반려
             if (isManagementMode) {
-              if (status === 'approved') {
-                buttons.push(
-                  <Button key="saveDetails" variant="contained" onClick={handleSaveDetails}>
-                    {t('common.save', '저장')}
-                  </Button>,
-                  <Button key="completionSubmit" variant="contained" color="info" onClick={handleSubmitForCompletion}>
-                    {t('riskAssessment.completionSubmit', '완료 결재 상신')}
-                  </Button>
-                )
-              }
-              if (status === 'completion_submitted' && canApproveCompletion) {
-                buttons.push(
-                  <Button key="completionReject" variant="contained" color="warning" onClick={handleCompletionReject}>
-                    {t('common.reject', '반려')}
-                  </Button>,
-                  <Button key="completionApprove" variant="contained" color="success" onClick={handleComplete}>
-                    {t('riskAssessment.completionApprove', '완료 결재 승인')}
-                  </Button>
-                )
-              }
+              if (status === 'approved' && canSee(MENU, 'approved', '저장 (실시 내용)', itemR))
+                buttons.push(<Button key="saveDetails" variant="contained" onClick={handleSaveDetails}>{t('common.save', '저장')}</Button>)
+              if (status === 'approved' && canSee(MENU, 'approved', '완료 결재 상신', itemR))
+                buttons.push(<Button key="completionSubmit" variant="contained" color="info" onClick={handleSubmitForCompletion}>{t('riskAssessment.completionSubmit', '완료 결재 상신')}</Button>)
+              if (status === 'completion_submitted' && canSee(MENU, 'completion_submitted', '반려 (완료)', itemR))
+                buttons.push(<Button key="completionReject" variant="contained" color="warning" onClick={handleCompletionReject}>{t('common.reject', '반려')}</Button>)
+              if (status === 'completion_submitted' && canSee(MENU, 'completion_submitted', '완료 결재 승인', itemR))
+                buttons.push(<Button key="completionApprove" variant="contained" color="success" onClick={handleComplete}>{t('riskAssessment.completionApprove', '완료 결재 승인')}</Button>)
             }
 
             return (
               <>
-                {/* PC — 순서: 목록 / (결재 상신/승인/반려 등) / 수정 / 삭제 */}
                 <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mt: 3, justifyContent: 'flex-end' }}>
                   <Button variant="outlined" onClick={handleBackToList}>{t('common.list')}</Button>
                   {buttons}
-                  {isAdmin && isPlanMode && (status === 'draft' || status === 'rejected') && (
+                  {isPlanMode && (status === 'draft' || status === 'rejected') && canSee(MENU, status, '수정', itemR) && (
                     <Button variant="contained" onClick={handleEditClick}>{t('common.edit')}</Button>
                   )}
-                  {/* 삭제는 결재 상신 전(draft/rejected)에만 노출 */}
-                  {isAdmin && isPlanMode && (status === 'draft' || status === 'rejected') && (
+                  {isPlanMode && (status === 'draft' || status === 'rejected') && canSee(MENU, status, '삭제', itemR) && (
                     <Button variant="contained" color="error" onClick={handleDeleteClick}>{t('common.delete')}</Button>
                   )}
                 </Box>
-                {/* Mobile */}
                 <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3, flexWrap: 'wrap' }}>
                   <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1, minWidth: 0 }}>{t('common.list')}</Button>
                   {buttons.map((btn, i) => (
                     <Box key={i} sx={{ flex: 1, minWidth: 0, '& > button': { width: '100%' } }}>{btn}</Box>
                   ))}
-                  {isAdmin && isPlanMode && (status === 'draft' || status === 'rejected') && (
+                  {isPlanMode && (status === 'draft' || status === 'rejected') && canSee(MENU, status, '수정', itemR) && (
                     <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1, minWidth: 0 }}>{t('common.edit')}</Button>
                   )}
-                  {/* 삭제는 결재 상신 전(draft/rejected)에만 노출 */}
-                  {isAdmin && isPlanMode && (status === 'draft' || status === 'rejected') && (
+                  {isPlanMode && (status === 'draft' || status === 'rejected') && canSee(MENU, status, '삭제', itemR) && (
                     <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1, minWidth: 0 }}>{t('common.delete')}</Button>
                   )}
                 </Box>
@@ -1203,12 +1190,9 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', gap: 0.5, alignItems: 'center' }}>
-              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0.5 }}
-                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setFormData(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
-              <Typography variant="caption" sx={{ whiteSpace: 'nowrap', color: 'text.secondary' }}>계획과 동일</Typography>
               <TextField size="small" sx={{ flex: 1, minWidth: 0 }} value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('riskAssessment.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setApproverPickTarget('completion')}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>
@@ -1291,18 +1275,13 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             </Box>
           </Box>
           <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              <Typography variant="body2" fontWeight="bold" sx={{ flex: 1 }}>
-                {t('riskAssessment.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
-              </Typography>
-              <Checkbox size="small" checked={sameAsPlan} sx={{ p: 0 }}
-                onChange={(e) => { setSameAsPlan(e.target.checked); if (e.target.checked) setFormData(f => ({ ...f, completionApproverUserId: f.planApproverUserId, completionApproverTeam: f.planApproverTeam, completionApproverPosition: f.planApproverPosition, completionApproverName: f.planApproverName })) }} />
-              <Typography variant="caption" sx={{ color: 'text.secondary', ml: 0.25, whiteSpace: 'nowrap' }}>계획과 동일</Typography>
-            </Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              {t('riskAssessment.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+            </Typography>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('riskAssessment.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} disabled={sameAsPlan} onClick={() => setApproverPickTarget('completion')}>
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>
