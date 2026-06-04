@@ -12,10 +12,10 @@ export function useMenuRule() {
   })
 
   const hiddenSet = useMemo(() => {
-    if (!user || user.role === 'SYSTEM_ADMIN') return new Set<string>()
-    return new Set(
-      rules.filter(r => r.roleKey === user.role).map(r => r.menuKey)
-    )
+    if (!user) return new Set<string>()
+    const sysAdminHidden = rules.filter(r => r.roleKey === 'SYSTEM_ADMIN').map(r => r.menuKey)
+    const roleHidden = rules.filter(r => r.roleKey === user.role).map(r => r.menuKey)
+    return new Set([...sysAdminHidden, ...roleHidden])
   }, [rules, user])
 
   return {

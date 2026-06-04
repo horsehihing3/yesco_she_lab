@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useMenuRule } from '../../hooks/useMenuRule'
 import EhsBudgetPlanTab from './ehsBudget/EhsBudgetPlanTab'
 import EhsBudgetExpenseTab from './ehsBudget/EhsBudgetExpenseTab'
 import EhsBudgetCompareTab from './ehsBudget/EhsBudgetCompareTab'
@@ -8,19 +9,22 @@ import EhsBudgetReportTab from './ehsBudget/EhsBudgetReportTab'
 
 const EhsBudgetTab: React.FC = () => {
   const { t } = useTranslation()
+  const { isMenuHidden } = useMenuRule()
   const [subTab, setSubTab] = useState(0)
 
-  const subTabs = [
-    { label: t('budget.compareTab', '대시보드'), component: <EhsBudgetCompareTab key="compare" /> },
-    { label: t('budget.planTab', '예산수립'), component: <EhsBudgetPlanTab key="plan" /> },
-    { label: t('budget.expenseTab', '실예산 사용입력'), component: <EhsBudgetExpenseTab key="expense" /> },
-    { label: t('common.report', '레포트'), component: <EhsBudgetReportTab key="report" /> },
-  ]
+  const subTabs = useMemo(() => [
+    { menuKey: 'budget.tab.dashboard', label: t('budget.compareTab', '대시보드'), component: <EhsBudgetCompareTab key="compare" /> },
+    { menuKey: 'budget.tab.plan',      label: t('budget.planTab', '예산수립'),        component: <EhsBudgetPlanTab key="plan" /> },
+    { menuKey: 'budget.tab.expense',   label: t('budget.expenseTab', '실예산 사용입력'), component: <EhsBudgetExpenseTab key="expense" /> },
+    { menuKey: 'budget.tab.report',    label: t('common.report', '레포트'),           component: <EhsBudgetReportTab key="report" /> },
+  ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
+
+  const safeTab = Math.min(subTab, Math.max(0, subTabs.length - 1))
 
   return (
     <Box>
       <Tabs
-        value={subTab}
+        value={safeTab}
         onChange={(_, v) => setSubTab(v)}
         variant="scrollable"
         scrollButtons="auto"
@@ -40,9 +44,9 @@ const EhsBudgetTab: React.FC = () => {
         ))}
       </Tabs>
       <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {subTabs[subTab]?.label}
+        {subTabs[safeTab]?.label}
       </Typography>
-      {subTabs[subTab]?.component}
+      {subTabs[safeTab]?.component}
     </Box>
   )
 }

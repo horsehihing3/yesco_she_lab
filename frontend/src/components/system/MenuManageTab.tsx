@@ -54,78 +54,83 @@ interface MenuNode {
 }
 
 const MENU_TREE: MenuNode[] = [
-  { key: 'nav.dashboard', label: '대시보드', children: [
-    { key: 'nav.mapDashboard',      label: '지도 대시보드' },
-    { key: 'nav.generalDashboard',  label: '종합 대시보드' },
+  { key: 'nav.dashboard', label: 'Dashboard', children: [
+    { key: 'nav.mapDashboard',      label: '지도형 대시보드' },
+    { key: 'nav.generalDashboard',  label: '일반 대시보드' },
   ]},
   { key: 'nav.ehs', label: 'EHS 경영', children: [
-    { key: 'nav.ehsCommunication', label: 'EHS 소통', children: [
+    { key: 'nav.ehsCommunication', label: '커뮤니케이션', children: [
       { key: 'nav.ehsDocument',     label: 'EHS 문서' },
-      { key: 'nav.ehsPlan',         label: 'EHS 계획' },
-      { key: 'nav.ehsOfficer',      label: 'EHS 담당자' },
-      { key: 'nav.ehsMessage',      label: 'EHS 알림' },
-      { key: 'nav.ehsAlert',        label: 'EHS 경보' },
-      { key: 'nav.ehsOshCommittee', label: 'OSH 위원회' },
-      { key: 'nav.ehsEmergency',    label: '비상대응' },
+      { key: 'nav.ehsPlan',         label: 'EHS Plan' },
+      { key: 'nav.ehsOfficer',      label: 'EHS 직책자 명단' },
+      { key: 'nav.ehsMessage',      label: 'EHS 메시지' },
+      { key: 'nav.ehsAlert',        label: 'EHS 알림' },
+      { key: 'nav.ehsOshCommittee', label: '산업안전보건 위원회' },
+      { key: 'nav.ehsEmergency',    label: '긴급 메일/문자 발송' },
       { key: 'nav.ehsQna',          label: 'Q&A' },
-      { key: 'emr.tabs.contacts',   label: '비상연락망' },
+      { key: 'emr.tabs.contacts',   label: '비상 연락망' },
     ]},
-    { key: 'nav.planKpiGoal', label: 'EHS 계획/KPI', children: [
-      { key: 'pkg.overview',   label: '개요' },
-      { key: 'pkg.annualPlan', label: '연간계획' },
+    { key: 'nav.planKpiGoal', label: '계획·KPI·목표', children: [
+      { key: 'pkg.overview',   label: '대시보드' },
+      { key: 'pkg.annualPlan', label: '연간 계획' },
       { key: 'pkg.kpiStatus',  label: 'KPI 현황' },
       { key: 'pkg.reportTab',  label: '레포트' },
     ]},
     { key: 'nav.auditInspection', label: '내부 감사', children: [
-      { key: 'audit.tabs.plan',       label: '계획' },
-      { key: 'audit.tabs.execution',  label: '실행' },
-      { key: 'audit.tabs.findings',   label: '지적사항' },
-      { key: 'audit.tabs.corrective', label: '시정조치' },
+      { key: 'audit.tabs.plan',       label: '감사 계획' },
+      { key: 'audit.tabs.execution',  label: '감사 실시' },
+      { key: 'audit.tabs.findings',   label: '부적합 사항' },
+      { key: 'audit.tabs.corrective', label: '시정 조치' },
     ]},
     { key: 'nav.trainingMgmt', label: '교육·훈련', children: [
       { key: 'training.tab.dashboard',    label: '대시보드' },
       { key: 'training.tabs.apply',       label: '교육 신청' },
-      { key: 'training.tabs.statusAdmin', label: '현황 관리' },
-      { key: 'training.tabs.history',     label: '이력' },
-      { key: 'training.tabs.course',      label: '교육 과정' },
+      { key: 'training.tabs.statusAdmin', label: '교육현황(관리자)' },
+      { key: 'training.tabs.history',     label: '교육 이력' },
+      { key: 'training.tabs.course',      label: '교육 과정 관리' },
       { key: 'training.tab.report',       label: '레포트' },
     ]},
     { key: 'nav.emergencyResponse', label: '비상 훈련', children: [
       { key: 'emr.tab.dashboard', label: '대시보드' },
-      { key: 'emr.tabs.plans',    label: '비상대응 계획' },
-      { key: 'emr.tabs.drills',   label: '훈련' },
-      { key: 'emr.tabs.resources',label: '자원' },
+      { key: 'emr.tabs.plans',    label: '비상 계획' },
+      { key: 'emr.tabs.drills',   label: '훈련 관리' },
+      { key: 'emr.tabs.resources',label: '자원·장비' },
       { key: 'emr.tab.report',    label: '레포트' },
     ]},
     { key: 'nav.complianceMgmt', label: '법규 대응', children: [
-      { key: 'lc.tabs.law',       label: '법규 관리' },
-      { key: 'lc.tabs.plan',      label: '계획' },
-      { key: 'lc.tabs.execution', label: '실행' },
-      { key: 'lc.tabs.findings',  label: '지적사항' },
-      { key: 'lc.tabs.corrective',label: '시정조치' },
+      { key: 'lc.tabs.law',       label: '법규검토시스템' },
+      { key: 'lc.tabs.plan',      label: '법규 대응 계획' },
+      { key: 'lc.tabs.execution', label: '법규 대응 실시' },
+      { key: 'lc.tabs.findings',  label: '부적합 사항' },
+      { key: 'lc.tabs.corrective',label: '시정 조치' },
     ]},
-    { key: 'nav.ehsBudget',             label: 'EHS 예산' },
+    { key: 'nav.ehsBudget', label: 'EHS 예산', children: [
+      { key: 'budget.tab.dashboard', label: '대시보드' },
+      { key: 'budget.tab.plan',      label: '예산수립' },
+      { key: 'budget.tab.expense',   label: '실예산 사용입력' },
+      { key: 'budget.tab.report',    label: '레포트' },
+    ]},
     { key: 'nav.incidentResponse',      label: '사고 대응 관리' },
     { key: 'nav.workplaceDrawingsView', label: '사업장 도면' },
   ]},
   { key: 'nav.safetyManage', label: '안전 관리', children: [
-    { key: 'nav.processActivityWork', label: '공정/활동/작업' },
+    { key: 'nav.processActivityWork', label: '공정/활동별 작업내용' },
     { key: 'nav.riskAssessment', label: '위험성 평가', children: [
       { key: 'riskAssessment.tab.dashboard',   label: '대시보드' },
       { key: 'riskAssessment.tab.plan',        label: '계획' },
       { key: 'riskAssessment.tab.management',  label: '관리' },
-      { key: 'riskAssessment.tab.admin',       label: '전체 관리' },
-      { key: 'riskAssessment.tab.officeWork',  label: '사무실 위험성 평가' },
+      { key: 'riskAssessment.tab.admin',       label: '관리(관리자)' },
+      { key: 'riskAssessment.tab.officeWork',  label: '사무업무' },
       { key: 'riskAssessment.tab.report',      label: '레포트' },
     ]},
     { key: 'nav.siteSafetyMgmt', label: '현장 안전 관리', children: [
       { key: 'site-safety.tab.dashboard', label: '대시보드' },
       { key: 'site-safety.tab.plan',      label: '계획' },
-      { key: 'site-safety.tab.review',    label: '평가서 조회' },
-      { key: 'site-safety.tab.admin',     label: '전체 조회' },
+      { key: 'site-safety.tab.review',    label: '평가서조회 담당승인자' },
+      { key: 'site-safety.tab.admin',     label: '전체조회 (어드민)' },
       { key: 'site-safety.tab.report',    label: '레포트' },
     ]},
-    { key: 'nav.nearMiss', label: '사고/아차사고', children: [
+    { key: 'nav.nearMiss', label: '사고/아차사고 관리', children: [
       { key: 'near-miss.tab.dashboard', label: '대시보드' },
       { key: 'near-miss.tab.near-miss', label: '아차사고' },
       { key: 'near-miss.tab.accident',  label: '사고' },
@@ -133,8 +138,8 @@ const MENU_TREE: MenuNode[] = [
     ]},
     { key: 'nav.permitToWork', label: '작업 허가' },
     { key: 'nav.ppeEquipment', label: '보호구·장비', children: [
-      { key: 'ppe.tabs.inventory', label: '재고 관리' },
-      { key: 'ppe.tabs.request',   label: '불출 관리' },
+      { key: 'ppe.tabs.inventory', label: '보호구 재고' },
+      { key: 'ppe.tabs.request',   label: '지급 신청' },
     ]},
   ]},
   { key: 'nav.partnerGroupMgmt', label: '협력 업체 관리', children: [
@@ -152,11 +157,11 @@ const MENU_TREE: MenuNode[] = [
   { key: 'nav.healthManage', label: '보건 관리', children: [
     { key: 'nav.healthScreening', label: '건강 검진 관리', children: [
       { key: 'healthCheckup.tabs.plan',    label: '검진 계획' },
-      { key: 'healthCheckup.tabs.admin',   label: '검진 관리' },
+      { key: 'healthCheckup.tabs.admin',   label: '검진 관리 (담당자)' },
       { key: 'healthCheckup.tabs.status',  label: '검진 현황' },
-      { key: 'healthCheckup.tabs.report',  label: '레포트' },
-      { key: 'healthCheckup.tabs.records', label: '검진 기록' },
-      { key: 'healthCheckup.tabs.my',      label: '내 검진 결과' },
+      { key: 'healthCheckup.tabs.report',  label: '리포트' },
+      { key: 'healthCheckup.tabs.records', label: '임직원 건강검진 사후관리' },
+      { key: 'healthCheckup.tabs.my',      label: '내 검진 이력' },
     ]},
     { key: 'nav.workEnvMeasurement', label: '작업환경 측정', children: [
       { key: 'wem.tab.dashboard', label: '대시보드' },
@@ -166,13 +171,13 @@ const MENU_TREE: MenuNode[] = [
       { key: 'wem.improveTab',    label: '개선 조치' },
       { key: 'wem.tab.report',    label: '레포트' },
     ]},
-    { key: 'nav.occupationalDiseaseMgmt', label: '직업건강 관리', children: [
-      { key: 'od.tabs.plan',      label: '계획' },
-      { key: 'od.tabs.status',    label: '현황' },
-      { key: 'od.tabs.manage',    label: '관리' },
-      { key: 'od.tabs.exposure',  label: '노출' },
+    { key: 'nav.occupationalDiseaseMgmt', label: '직업병 관리', children: [
+      { key: 'od.tabs.plan',      label: '검진계획' },
+      { key: 'od.tabs.status',    label: '검진현황' },
+      { key: 'od.tabs.manage',    label: '검진관리' },
+      { key: 'od.tabs.exposure',  label: '노출관리' },
       { key: 'od.tabs.aftercare', label: '사후관리' },
-      { key: 'od.tabs.sanjae',    label: '산재' },
+      { key: 'od.tabs.sanjae',    label: '산재신청' },
       { key: 'od.tabs.result',    label: '결과' },
     ]},
     { key: 'nav.diseasePreventionMgmt', label: '질병예방 관리', children: [
@@ -190,33 +195,33 @@ const MENU_TREE: MenuNode[] = [
     { key: 'nav.envMonitoring', label: '환경 모니터링' },
     { key: 'nav.envWaste', label: '폐기물', children: [
       { key: 'waste.tabs.dashboard',   label: '대시보드' },
-      { key: 'waste.tabs.inventory',   label: '재고 관리' },
+      { key: 'waste.tabs.inventory',   label: '폐기물 현황' },
       { key: 'waste.tabs.disposal',    label: '처리 관리' },
-      { key: 'waste.tabs.company',     label: '처리 업체' },
-      { key: 'waste.tabs.compliance',  label: '법규 준수' },
+      { key: 'waste.tabs.company',     label: '처리업체 관리' },
+      { key: 'waste.tabs.compliance',  label: '법규 준수 관리' },
     ]},
     { key: 'nav.envAirWater', label: '대기·수질 관리' },
     { key: 'nav.envCarbon', label: '탄소 관리', children: [
       { key: 'carbon.tabs.dashboard',    label: '대시보드' },
-      { key: 'carbon.tabs.emission',     label: '배출량' },
-      { key: 'carbon.tabs.source',       label: '배출원' },
+      { key: 'carbon.tabs.emission',     label: '배출량 입력' },
+      { key: 'carbon.tabs.source',       label: '배출원 관리' },
       { key: 'carbon.tabs.scopeAnalysis',label: 'Scope 분석' },
-      { key: 'carbon.tabs.factor',       label: '배출계수' },
-      { key: 'carbon.tabs.report',       label: '레포트' },
+      { key: 'carbon.tabs.factor',       label: '배출계수 관리' },
+      { key: 'carbon.tabs.report',       label: '환경 보고서' },
     ]},
-    { key: 'nav.radiationMgmt', label: '방사선 관리' },
+    { key: 'nav.radiationMgmt', label: '방사선관리' },
     { key: 'nav.fireMgmt', label: '소방/방제 시설 관리', children: [
-      { key: 'fs.tabs.facility',    label: '시설 관리' },
-      { key: 'fs.tabs.inspection',  label: '점검' },
-      { key: 'fs.tabs.disaster',    label: '재해 대응' },
-      { key: 'fs.tabs.emergency',   label: '비상 연락' },
-      { key: 'fs.tabs.compliance',  label: '법규 준수' },
+      { key: 'fs.tabs.facility',    label: '시설 대장' },
+      { key: 'fs.tabs.inspection',  label: '점검 관리' },
+      { key: 'fs.tabs.disaster',    label: '방제시설' },
+      { key: 'fs.tabs.emergency',   label: '비상 연계' },
+      { key: 'fs.tabs.compliance',  label: '법령 준수' },
     ]},
     { key: 'nav.legalFacility', label: '법정시설관리', children: [
-      { key: 'lf.tabs.equipment',  label: '장비' },
-      { key: 'lf.tabs.status',     label: '현황' },
-      { key: 'lf.tabs.inspection', label: '점검' },
-      { key: 'lf.tabs.watch',      label: '감시' },
+      { key: 'lf.tabs.equipment',  label: '법정기구 관리' },
+      { key: 'lf.tabs.status',     label: '법정기구 현황' },
+      { key: 'lf.tabs.inspection', label: '법정기구 검사' },
+      { key: 'lf.tabs.watch',      label: '관심시설 현황' },
     ]},
     { key: 'nav.permitLifecycle', label: '인허가 관리', children: [
       { key: 'permit-lc.tab.register',  label: '식별·등록' },
@@ -229,30 +234,30 @@ const MENU_TREE: MenuNode[] = [
     ]},
   ]},
   { key: 'nav.chemicalMgmt', label: '화학물질 관리', children: [
-    { key: 'nav.chemMaster', label: '마스터·규제', children: [
+    { key: 'nav.chemMaster', label: '마스터 · 규제', children: [
       { key: 'chem.nav.chemList',  label: '화학물질 목록' },
-      { key: 'chem.nav.erpItem',   label: 'ERP 자재' },
-      { key: 'chem.nav.vendor',    label: '벤더 관리' },
-      { key: 'chem.nav.regRule',   label: '법규 규칙' },
-      { key: 'chem.nav.regCheck',  label: '법규 점검' },
+      { key: 'chem.nav.erpItem',   label: 'ERP 자재 관리' },
+      { key: 'chem.nav.vendor',    label: '협력사(Vendor) 목록' },
+      { key: 'chem.nav.regRule',   label: '관리 규제' },
+      { key: 'chem.nav.regCheck',  label: '점검 목록' },
     ]},
     { key: 'nav.chemMsdsRaw', label: '원료 MSDS', children: [
-      { key: 'chem.nav.rawMsdsLatest', label: '최신 MSDS' },
-      { key: 'chem.nav.rawMsdsOld',   label: '이전 MSDS' },
-      { key: 'chem.nav.rawMsdsHist',  label: '이력' },
+      { key: 'chem.nav.rawMsdsLatest', label: '원료 MSDS → 최신본' },
+      { key: 'chem.nav.rawMsdsOld',   label: '원료 MSDS → 구 버전' },
+      { key: 'chem.nav.rawMsdsHist',  label: '원료 MSDS → 이력관리' },
     ]},
     { key: 'nav.chemMsdsProduct', label: '제품 MSDS', children: [
-      { key: 'chem.nav.prodMsdsLatest', label: '최신 MSDS' },
-      { key: 'chem.nav.prodMsdsOld',    label: '이전 MSDS' },
-      { key: 'chem.nav.prodMsdsHist',   label: '이력' },
+      { key: 'chem.nav.prodMsdsLatest', label: '제품 MSDS → 최신본' },
+      { key: 'chem.nav.prodMsdsOld',    label: '제품 MSDS → 구 버전' },
+      { key: 'chem.nav.prodMsdsHist',   label: '제품 MSDS → 이력관리' },
     ]},
     { key: 'nav.chemRegulation', label: '해외 법규' },
     { key: 'nav.chemLifecycle',  label: 'Life-Cycle' },
   ]},
   { key: 'nav.approval', label: '승인', children: [
     { key: 'approval.myApproval',    label: '내 결재' },
-    { key: 'approval.approvalLine',  label: '결재선 관리' },
-    { key: 'approval.allApprovals',  label: '전체 결재' },
+    { key: 'approval.approvalLine',  label: '승인 라인' },
+    { key: 'approval.allApprovals',  label: '전체 결재 현황' },
   ]},
   { key: 'nav.checklist', label: '체크리스트 관리' },
   { key: 'nav.environmentManage', label: '설정', children: [
@@ -321,6 +326,15 @@ const MenuManageTab: React.FC = () => {
 
   const savedHiddenSet = useMemo(() => buildHiddenSet(dbRules ?? []), [dbRules])
 
+  // SYSTEM_ADMIN이 숨긴 메뉴 키 집합 (다른 역할의 강제 숨김 기준)
+  const sysAdminHiddenSet = useMemo(() => {
+    return new Set(
+      Array.from(hiddenSet)
+        .filter(k => k.startsWith('SYSTEM_ADMIN|'))
+        .map(k => k.slice('SYSTEM_ADMIN|'.length))
+    )
+  }, [hiddenSet])
+
   useEffect(() => {
     if (dbRules !== undefined) setHiddenSet(buildHiddenSet(dbRules))
   }, [dbRules])
@@ -342,23 +356,29 @@ const MenuManageTab: React.FC = () => {
 
   const isHidden = useCallback((menuKey: string) => {
     if (!selectedRole) return false
+    if (selectedRole !== 'SYSTEM_ADMIN' && sysAdminHiddenSet.has(menuKey)) return true
     return hiddenSet.has(hiddenKey(selectedRole, menuKey))
-  }, [hiddenSet, selectedRole])
+  }, [hiddenSet, selectedRole, sysAdminHiddenSet])
 
   // 노드 체크박스 상태 계산 (재귀)
   const getNodeState = useCallback((node: MenuNode): 'checked' | 'unchecked' | 'indeterminate' => {
-    if (!selectedRole || selectedRole === 'SYSTEM_ADMIN') return 'checked'
+    if (!selectedRole) return 'checked'
+    if (selectedRole !== 'SYSTEM_ADMIN' && sysAdminHiddenSet.has(node.key)) return 'unchecked'
     if (hiddenSet.has(hiddenKey(selectedRole, node.key))) return 'unchecked'
     if (!node.children?.length) return 'checked'
     const descendantKeys = getAllDescendantKeys(node)
-    const hiddenCount = descendantKeys.filter(k => hiddenSet.has(hiddenKey(selectedRole, k))).length
+    const hiddenCount = descendantKeys.filter(k =>
+      hiddenSet.has(hiddenKey(selectedRole, k)) ||
+      (selectedRole !== 'SYSTEM_ADMIN' && sysAdminHiddenSet.has(k))
+    ).length
     if (hiddenCount === 0) return 'checked'
     return 'indeterminate'
-  }, [hiddenSet, selectedRole])
+  }, [hiddenSet, selectedRole, sysAdminHiddenSet])
 
   // 노드 토글 (자신 + 모든 하위)
   const toggleNode = useCallback((node: MenuNode) => {
-    if (!selectedRole || selectedRole === 'SYSTEM_ADMIN') return
+    if (!selectedRole) return
+    if (selectedRole !== 'SYSTEM_ADMIN' && sysAdminHiddenSet.has(node.key)) return
     setHiddenSet(prev => {
       const next = new Set(prev)
       const selfKey = hiddenKey(selectedRole, node.key)
@@ -398,11 +418,12 @@ const MenuManageTab: React.FC = () => {
 
   // ── 재귀 렌더러 ─────────────────────────────────────────────────────────
   const renderNode = (node: MenuNode, depth: number): React.ReactNode => {
-    const hasChildren = !!(node.children?.length)
-    const isExpanded  = expandedSet.has(node.key)
-    const selfHidden  = isHidden(node.key)
-    const nodeState   = getNodeState(node)
-    const style       = DEPTH_STYLES[Math.min(depth, 2)]
+    const hasChildren   = !!(node.children?.length)
+    const isExpanded    = expandedSet.has(node.key)
+    const selfHidden    = isHidden(node.key)
+    const nodeState     = getNodeState(node)
+    const style         = DEPTH_STYLES[Math.min(depth, 2)]
+    const isForcedHidden = selectedRole !== 'SYSTEM_ADMIN' && sysAdminHiddenSet.has(node.key)
 
     const rowBg = (() => {
       if (depth === 0) return isDarkMode ? 'rgba(255,255,255,0.05)' : '#f5f5f5'
@@ -428,7 +449,7 @@ const MenuManageTab: React.FC = () => {
             checked={nodeState === 'checked'}
             indeterminate={nodeState === 'indeterminate'}
             onChange={() => toggleNode(node)}
-            disabled={isSysAdmin}
+            disabled={isForcedHidden}
             sx={{ p: 0.4, mr: 0.5, flexShrink: 0 }}
           />
           <Typography
@@ -449,13 +470,19 @@ const MenuManageTab: React.FC = () => {
               </Typography>
             )}
           </Typography>
-          {selfHidden && (
+          {isForcedHidden && (
+            <Chip
+              label="전체숨김" size="small"
+              sx={{ mr: 0.5, fontSize: '0.6rem', height: 16, bgcolor: 'error.light', color: 'error.dark' }}
+            />
+          )}
+          {!isForcedHidden && selfHidden && (
             <Chip
               label="숨김" size="small"
               sx={{ mr: 0.5, fontSize: '0.6rem', height: 16, bgcolor: 'warning.light', color: 'warning.dark' }}
             />
           )}
-          {hasChildren && !isSysAdmin && (
+          {hasChildren && (
             <IconButton size="small" onClick={() => toggleExpand(node.key)} sx={{ p: 0.25 }}>
               {isExpanded ? <ExpandLess sx={{ fontSize: 16 }} /> : <ExpandMore sx={{ fontSize: 16 }} />}
             </IconButton>
@@ -534,7 +561,7 @@ const MenuManageTab: React.FC = () => {
                 <Chip label="항상 모든 메뉴 접근" color="primary" size="small" sx={{ ml: 1, fontSize: '0.7rem' }} />
               )}
               <Box sx={{ flex: 1 }} />
-              {changedCount > 0 && !isSysAdmin && (
+              {changedCount > 0 && (
                 <>
                   <Chip label={`${changedCount}개 변경`} size="small"
                     sx={{ mr: 1, bgcolor: 'warning.light', color: 'warning.dark', fontSize: '0.7rem' }} />
@@ -545,13 +572,11 @@ const MenuManageTab: React.FC = () => {
                   </Tooltip>
                 </>
               )}
-              {!isSysAdmin && (
-                <Button variant="contained" size="small" startIcon={<SaveIcon />}
-                  onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                  {saveMutation.isPending && <CircularProgress size={12} sx={{ mr: 0.5 }} />}
-                  저장
-                </Button>
-              )}
+              <Button variant="contained" size="small" startIcon={<SaveIcon />}
+                onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
+                {saveMutation.isPending && <CircularProgress size={12} sx={{ mr: 0.5 }} />}
+                저장
+              </Button>
             </Box>
 
             {/* 범례 */}
@@ -562,15 +587,9 @@ const MenuManageTab: React.FC = () => {
             </Box>
             <Divider sx={{ mb: 1.5, flexShrink: 0 }} />
 
-            {isSysAdmin ? (
-              <Box sx={{ p: 3, textAlign: 'center', color: 'text.secondary' }}>
-                <Typography variant="body2">시스템 관리자(SYSTEM_ADMIN)는 항상 모든 메뉴에 접근할 수 있습니다.</Typography>
-              </Box>
-            ) : (
-              <Box sx={{ flex: 1, overflowY: 'auto', pr: 0.5 }}>
-                {MENU_TREE.map(node => renderNode(node, 0))}
-              </Box>
-            )}
+            <Box sx={{ flex: 1, overflowY: 'auto', pr: 0.5 }}>
+              {MENU_TREE.map(node => renderNode(node, 0))}
+            </Box>
           </>
         )}
       </Paper>

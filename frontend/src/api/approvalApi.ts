@@ -87,3 +87,27 @@ export const saveAllApprovalLines = async (
   )
   return response.data.data
 }
+
+// ===== Team Leader (팀장 조회) =====
+
+export interface TeamLeaderInfo {
+  name: string
+  position: string
+  team: string
+}
+
+export const fetchTeamLeader = async (deptCode?: string): Promise<TeamLeaderInfo | null> => {
+  if (!deptCode) return null
+  try {
+    const response = await axiosInstance.get<ApiResponse<{ id: number; username: string; email: string; name: string; department: string; company: string; role: string }[]>>('/users')
+    const users = response.data.data
+    const leader = users.find(
+      u => (u.department === deptCode || u.department?.includes(deptCode)) &&
+        (u.role === 'TEAM_LEADER' || u.role === 'EHS_ADMIN')
+    ) ?? users.find(u => u.department === deptCode || u.department?.includes(deptCode))
+    if (!leader) return null
+    return { name: leader.name, position: '팀장', team: leader.department || '' }
+  } catch {
+    return null
+  }
+}
