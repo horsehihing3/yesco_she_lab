@@ -28,12 +28,6 @@
         <result property="planApproverName" column="plan_approver_name"/>
         <result property="planApprovedAt" column="plan_approved_at"/>
         <result property="planApprovedBy" column="plan_approved_by"/>
-        <result property="completionApproverUserId" column="completion_approver_user_id"/>
-        <result property="completionApproverTeam" column="completion_approver_team"/>
-        <result property="completionApproverPosition" column="completion_approver_position"/>
-        <result property="completionApproverName" column="completion_approver_name"/>
-        <result property="completionApprovedAt" column="completion_approved_at"/>
-        <result property="completionApprovedBy" column="completion_approved_by"/>
         <result property="repeatType" column="repeat_type"/>
         <result property="repeatInterval" column="repeat_interval"/>
         <result property="repeatDays" column="repeat_days"/>
@@ -87,7 +81,6 @@
             required_ppe, hazard_factors, emergency_contact, notes,
             checklist_template_id, approver_name,
             plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
-            completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
             repeat_type, repeat_interval, repeat_days,
             status, total_checklist, completed_checklist, finding_count,
             modified_by, deleted, created_at, modified_at
@@ -97,7 +90,6 @@
             #{workDescription}, #{safetyMeasures}, #{requiredPpe}, #{hazardFactors},
             #{emergencyContact}, #{notes}, #{checklistTemplateId}, #{approverName},
             #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
-            #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
             #{repeatType}, #{repeatInterval}, #{repeatDays},
             #{status}, 0, 0, 0, #{modifiedBy}, 0, GETDATE(), GETDATE()
         )
@@ -116,10 +108,6 @@
             plan_approver_team     = #{planApproverTeam},
             plan_approver_position = #{planApproverPosition},
             plan_approver_name     = #{planApproverName},
-            completion_approver_user_id  = #{completionApproverUserId,jdbcType=BIGINT},
-            completion_approver_team     = #{completionApproverTeam},
-            completion_approver_position = #{completionApproverPosition},
-            completion_approver_name     = #{completionApproverName},
             repeat_type = #{repeatType}, repeat_interval = #{repeatInterval}, repeat_days = #{repeatDays},
             status = COALESCE(#{status}, status, 'DRAFT'),
             modified_by = #{modifiedBy}, modified_at = GETDATE()
