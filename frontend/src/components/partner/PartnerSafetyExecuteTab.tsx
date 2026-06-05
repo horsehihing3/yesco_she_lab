@@ -15,6 +15,13 @@ import { useAlert } from '../../contexts/AlertContext'
 const buildExecuteUrl = (planId: number) =>
   `${window.location.origin}/partner-safety-execute/${planId}`
 
+const STATUS_LABEL: Record<string, string> = {
+  APPROVED: '계획승인', COMPLETION_PENDING: '완료결재대기',
+}
+const STATUS_COLOR: Record<string, 'info' | 'warning' | 'default'> = {
+  APPROVED: 'info', COMPLETION_PENDING: 'warning',
+}
+
 const STORAGE_KEY_PREFIX = 'partnerSafetySubmitted:'
 
 type SubmittedRecord = {
@@ -126,13 +133,69 @@ const PartnerSafetyExecuteTab: React.FC = () => {
 
     return (
       <Box sx={{ pb: 4 }}>
+        {/* 상단 제목 + 상태 + 등록일 */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+          <Typography variant="h6" fontWeight="bold" sx={{ flex: 1 }}>{selectedPlan.title}</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
+            {selectedPlan.createdAt?.substring(0, 10)}
+          </Typography>
+          <Chip
+            label={STATUS_LABEL[selectedPlan.status] ?? selectedPlan.status}
+            color={STATUS_COLOR[selectedPlan.status] ?? 'default'}
+            size="small"
+          />
+        </Box>
+
+        {/* 계획 기본 정보 */}
+        <FormTable>
+          <FormRow>
+            <FormLabel>작성일</FormLabel>
+            <FormCell borderRight>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                {selectedPlan.createdAt?.substring(0, 10) || '-'}
+              </Typography>
+            </FormCell>
+            <FormLabel>작성자</FormLabel>
+            <FormCell>
+              <Typography variant="body2">{selectedPlan.modifiedBy || '-'}</Typography>
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>작업 기간</FormLabel>
+            <FormCell borderRight>
+              <Typography variant="body2">
+                {selectedPlan.workStartDate || ''}{selectedPlan.workEndDate ? ` ~ ${selectedPlan.workEndDate}` : ''}
+              </Typography>
+            </FormCell>
+            <FormLabel>작업 장소</FormLabel>
+            <FormCell>
+              <Typography variant="body2">{selectedPlan.workLocation || '-'}</Typography>
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>위험 등급</FormLabel>
+            <FormCell borderRight>
+              <Typography variant="body2">{selectedPlan.riskLevel || '-'}</Typography>
+            </FormCell>
+            <FormLabel>계획 승인자</FormLabel>
+            <FormCell>
+              <Typography variant="body2">{selectedPlan.planApproverName || '-'}</Typography>
+            </FormCell>
+          </FormRow>
+        </FormTable>
+
         {/* 체크리스트 */}
+        <Typography variant="subtitle1" fontWeight="bold" color="text.primary" sx={{ mt: 3, mb: 1 }}>
+          체크리스트
+        </Typography>
         {checklistTemplateId ? (
           <SafetyChecklistTab
             templateId={checklistTemplateId}
             embedded
             showSummary
             hideSignatures
+            hideTemplateInfo
+            simpleMode
             locked
           />
         ) : (
@@ -243,6 +306,7 @@ const PartnerSafetyExecuteTab: React.FC = () => {
             <TableRow sx={{ bgcolor: 'grey.100' }}>
               <TableCell sx={{ fontWeight: 'bold', width: 60 }} align="center">No</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>{t('common.title', '제목')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 130 }} align="center">상태</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>{t('partnerSafety.executeUrl', '실행 URL')}</TableCell>
             </TableRow>
           </TableHead>
@@ -250,7 +314,7 @@ const PartnerSafetyExecuteTab: React.FC = () => {
             {isLoading ? (
               <TableRow><TableCell colSpan={3} align="center" sx={{ py: 4 }}>{t('common.loading', '로딩 중...')}</TableCell></TableRow>
             ) : plans.length === 0 ? (
-              <TableRow><TableCell colSpan={3} align="center" sx={{ py: 4 }}>
+              <TableRow><TableCell colSpan={4} align="center" sx={{ py: 4 }}>
                 <Typography color="text.secondary">{t('partnerSafety.noApproved', '승인된 계획이 없습니다.')}</Typography>
               </TableCell></TableRow>
             ) : (
@@ -264,6 +328,13 @@ const PartnerSafetyExecuteTab: React.FC = () => {
                         sx={{ textTransform: 'none', justifyContent: 'flex-start', fontWeight: 700, color: 'primary.main' }}>
                         {p.title}
                       </Button>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Chip
+                        size="small"
+                        label={STATUS_LABEL[p.status] ?? p.status}
+                        color={STATUS_COLOR[p.status] ?? 'default'}
+                      />
                     </TableCell>
                     <TableCell>
                       <Button variant="text" size="small" startIcon={<LinkIcon fontSize="small" />}
@@ -300,8 +371,9 @@ const PartnerSafetyExecuteTab: React.FC = () => {
                   <Typography sx={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'primary.main', fontWeight: 700, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {p.planId}
                   </Typography>
-                  <Chip size="small" label={p.status === 'COMPLETION_PENDING' ? '완료결재대기' : (p.status === 'APPROVED' ? '승인' : p.status)}
-                    color={p.status === 'COMPLETION_PENDING' ? 'warning' : (p.status === 'APPROVED' ? 'info' : 'default')} />
+                  <Chip size="small"
+                    label={STATUS_LABEL[p.status] ?? p.status}
+                    color={STATUS_COLOR[p.status] ?? 'default'} />
                 </Box>
                 {/* 2행: 제목 (클릭 → 상세) */}
                 <Typography onClick={() => setSelectedPlan(p)}

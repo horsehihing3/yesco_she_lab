@@ -607,6 +607,59 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
+  // ── 협력업체 › 협력업체 안전 관리 › 관리 탭 ─────────────────────────────────
+  {
+    menuPath: '협력업체 › 협력업체 안전 관리 › 관리', menuKey: 'partner-safety.tab.manage',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
+        statusNote: '반려 시 PENDING_APPROVAL → DRAFT 복귀',
+        buttons: [
+          { button: '계획 결재 상신', roles: WRITER_ADMIN },
+          { button: '수정',           roles: WRITER_ADMIN },
+          { button: '삭제',           roles: WRITER_ADMIN },
+        ] },
+      { status: 'PENDING_APPROVAL', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '반려',         roles: ADMIN_PLAN },
+          { button: '계획 결재 승인', roles: ADMIN_PLAN },
+        ] },
+      { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '완료 결재 반려', roles: ADMIN_COMP },
+          { button: '완료 결재 승인', roles: ADMIN_COMP },
+        ] },
+    ],
+  },
+
+  // ── 협력업체 › 협력업체 안전 관리 › 실행 탭 ─────────────────────────────────
+  {
+    menuPath: '협력업체 › 협력업체 안전 관리 › 실행', menuKey: 'partner-safety.tab.execute',
+    statuses: [
+      { status: 'APPROVED', statusLabel: '승인완료', statusColor: 'info',
+        statusNote: '계획 승인 후 이 탭에 노출 — 실행 URL 제공 / 작업자 서명 후 완료 결재 상신',
+        buttons: [
+          { button: '완료 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 서명 데이터 있으면 누구든 상신 가능' },
+        ] },
+      { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '완료 결재 반려', roles: ADMIN_COMP },
+          { button: '완료 결재 승인', roles: ADMIN_COMP },
+        ] },
+    ],
+  },
+
+  // ── 협력업체 › 협력업체 안전 관리 › 조회 탭 ─────────────────────────────────
+  {
+    menuPath: '협력업체 › 협력업체 안전 관리 › 조회', menuKey: 'partner-safety.tab.view',
+    statuses: [
+      { status: 'COMPLETED', statusLabel: '완료', statusColor: 'success',
+        statusNote: '완료 결재 승인된 실행 이력 조회 — 버튼 없음 (읽기 전용)',
+        buttons: [] },
+    ],
+  },
+
   // ── 협력업체 › 협력사 위험성 평가 ───────────────────────────────────────────
   {
     menuPath: '협력업체 › 협력사 위험성 평가', menuKey: 'nav.partnerRiskAssessment',
