@@ -8,6 +8,16 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
+### 🟢 진행 중 — main 변경내역 확인 (2026-06-05 세션 4에서 시작)
+- [x] **#1 협력업체 안전 실행** — 추가 완료, 버그 2건 수정 완료 (아래 세부 참조)
+- [ ] **#2 OSH 위원회 서명** — 미확인. 경로: EHS경영 → 산업안전보건위원회, 참석자 인라인 서명 기능
+- [ ] **#3 UX 통일** — 미확인. 검색바 Enter 트리거, 날짜 기본값, 체크리스트 연결 필수값 (전 페이지)
+- [ ] **#4 위험성 평가 요약 패널** — 미확인. 경로: 위험성 평가 관리 탭, 평균위험도 개선전/후 카드
+- [ ] **#5 평가표 multi-instance** — 미확인. 체크리스트 정렬, 도면 트리, 사고 분류 4종
+- [ ] **#6 EHS 메시지·Q&A 댓글** — 미확인. 대댓글 지원, 위험성평가 복사
+- [ ] **#7 EHS 실예산 카드** — 미확인. 경로: EHS 예산 → 실예산 사용입력, 분류별 예산/사용/잔여 비교
+- [ ] **#8 법규대응 DB 분리** — 미확인. tb_legal_compliance_* 별도 테이블 (ceaf263)
+
 ### 🔴 1단계 — 예스코 투입 전 준비 (~ 6/9)
 - [ ] **예스코 미팅 준비** — 아래 "예스코 확인 필요 사항" 체크리스트 기반 질문 목록 정리
 - [ ] **tb_user 전환 범위 최종 확인** — T_IDM_USER 참조 7개 파일 전환 시 영향도 재검토
@@ -143,6 +153,35 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - [x] 계획 결재상신·수정·삭제 버튼 — 작성자/Admin만 노출 (canEditDraft 헬퍼)
 - [x] 완료승인자 "계획과 동일" 체크박스 — 6개 탭 적용
 - [x] 백엔드 작성자 자동 매핑 수정 (IdmMapper로 UidNumber 세팅)
+
+### 세션 4 (2026-06-05) — origin/main 싱크 · 버그 수정
+
+#### origin/main → yesco-dev 싱크 (백업 태그: `yesco-backup-20260605`)
+- [x] **협력업체 안전 실행 기능 추가** (origin/main 5/28 커밋 `9b4a65f` — ed01b08 수동 머지에서 누락됐던 것)
+  - 백엔드: PartnerSafetyExecution Controller/Mapper/Model/Service/XML 추가
+  - 프론트: PartnerSafetyHistoryTab.tsx, partnerSafetyExecutionApi.ts 추가
+  - PartnerSafetyMgmtPage 조회 탭 → PartnerSafetyHistoryTab 연결
+- [x] **Flyway 버전 충돌 해결**
+  - yesco V186(create_button_rule) → **V195** 로 rename
+  - yesco V187(create_menu_rule) → **V196** 로 rename
+  - origin/main V186(partner_safety_execution), V187(site_safety_drop_completion_approver), V188 추가
+- [x] **현재 마이그레이션 순서**: V185 → V186(partner_safety) → V187(drop_completion_approver) → V188 → V189~V194(기존) → **V195(button_rule)** → **V196(menu_rule)**
+
+#### 버그 수정
+- [x] **SiteSafetyPlanMapper.xml 500 에러** — V187이 `completion_approver_*` 컬럼 DROP했는데 Mapper INSERT/UPDATE/resultMap에 잔존 → 컬럼 제거
+- [x] **approvalApi.ts 빌드 오류** — `fetchTeamLeader` 중복 export (796febd + 7b286ae 양쪽에서 추가) → 중복 제거
+
+#### main 변경내역 확인 현황
+| # | 커밋 | 내용 | 상태 |
+|---|------|------|------|
+| 1 | `9b4a65f` 5/28 | 협력업체 안전 실행 — 관리/실행/조회 탭 | ✅ 확인+버그수정 완료 |
+| 2 | `4503468` 6/4 | OSH 위원회 참석자 서명 (SignaturePad 인라인) | ⬜ 미확인 |
+| 3 | `4503468` 6/4 | UX 통일 — 검색바 Enter, 날짜 기본값, 체크리스트 필수값 | ⬜ 미확인 |
+| 4 | `373a654` 6/2 | 위험성 평가 — 평균위험도 요약 패널 | ⬜ 미확인 |
+| 5 | `d939884` 6/2 | 평가표 multi-instance · 도면 트리 · 사고 분류 4종 | ⬜ 미확인 |
+| 6 | `7a3ed62` 6/2 | EHS 메시지·Q&A 댓글 + 위험성평가 복사 | ⬜ 미확인 |
+| 7 | `b857077` 6/2 | EHS 실예산 — 분류별 예산/사용/잔여 비교 카드 | ⬜ 미확인 |
+| 8 | `ceaf263` 6/2 | 법규대응 DB 분리 — tb_legal_compliance_* | ⬜ 미확인 |
 
 ### 세션 3 (2026-06-02) — tb_user 전환 · DEV 도구 · 버그 수정
 - [x] **연간계획 반려 버튼 버그 수정** — RejectReasonDialog를 Detail 뷰에 추가
