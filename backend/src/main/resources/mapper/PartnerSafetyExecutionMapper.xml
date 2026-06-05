@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.PartnerSafetyExecutionMapper">
+
+    <resultMap id="PartnerSafetyExecutionMap" type="com.smartehs.model.PartnerSafetyExecution">
+        <id property="id" column="id"/>
+        <result property="planId" column="plan_id"/>
+        <result property="name" column="name"/>
+        <result property="companyCode" column="company_code"/>
+        <result property="phone" column="phone"/>
+        <result property="systemCode" column="system_code"/>
+        <result property="systemUid" column="system_uid"/>
+        <result property="calledAt" column="called_at"/>
+        <result property="executionToken" column="execution_token"/>
+        <result property="signature" column="signature"/>
+        <result property="checklistTemplateId" column="checklist_template_id"/>
+        <result property="checklistData" column="checklist_data"/>
+        <result property="completed" column="completed"/>
+        <result property="completedAt" column="completed_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_partner_safety_execution
+            (plan_id, name, company_code, phone, system_code, system_uid, called_at,
+             execution_token, signature, checklist_template_id, checklist_data,
+             completed, completed_at, created_at, modified_at)
+        VALUES
+            (#{planId,jdbcType=BIGINT}, #{name}, #{companyCode}, #{phone,jdbcType=NVARCHAR}, #{systemCode}, #{systemUid},
+             #{calledAt,jdbcType=TIMESTAMP}, #{executionToken}, #{signature,jdbcType=NVARCHAR},
+             #{checklistTemplateId,jdbcType=BIGINT}, #{checklistData,jdbcType=NVARCHAR},
+             <choose><when test="completed != null">#{completed}</when><otherwise>0</otherwise></choose>,
+             #{completedAt,jdbcType=TIMESTAMP}, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_partner_safety_execution
+        SET name = #{name},
+            company_code = #{companyCode},
+            phone = #{phone,jdbcType=NVARCHAR},
+            system_code = #{systemCode},
+            system_uid = #{systemUid},
+            called_at = #{calledAt,jdbcType=TIMESTAMP},
+            signature = #{signature,jdbcType=NVARCHAR},
+            checklist_template_id = #{checklistTemplateId,jdbcType=BIGINT},
+            checklist_data = #{checklistData,jdbcType=NVARCHAR},
+            completed = <choose><when test="completed != null">#{completed}</when><otherwise>0</otherwise></choose>,
+            completed_at = #{completedAt,jdbcType=TIMESTAMP},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findById" resultMap="PartnerSafetyExecutionMap">
+        SELECT * FROM tb_partner_safety_execution WHERE id = #{id}
+    </select>
+
+    <select id="findByToken" resultMap="PartnerSafetyExecutionMap">
+        SELECT * FROM tb_partner_safety_execution WHERE execution_token = #{token}
+    </select>
+
+    <select id="findCompleted" resultMap="PartnerSafetyExecutionMap">
+        SELECT * FROM tb_partner_safety_execution
+        WHERE completed = 1
+        ORDER BY completed_at DESC
+    </select>
+
+    <select id="findByPlanId" resultMap="PartnerSafetyExecutionMap">
+        SELECT * FROM tb_partner_safety_execution
+        WHERE plan_id = #{planId}
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findAll" resultMap="PartnerSafetyExecutionMap">
+        SELECT * FROM tb_partner_safety_execution ORDER BY created_at DESC
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM tb_partner_safety_execution WHERE id = #{id}
+    </delete>
+
+</mapper>
