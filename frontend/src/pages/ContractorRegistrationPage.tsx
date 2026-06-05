@@ -25,6 +25,7 @@ import NumberField from '../components/common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../components/common/FormTable'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
+import { useButtonRules } from '../hooks/useButtonRules'
 
 import { contractorRegistrationApi } from '../api/contractorRegistrationApi'
 import type {
@@ -98,6 +99,13 @@ const ContractorRegistrationPage: React.FC = () => {
   const qc = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const MENU = '협력 업체 관리 › 협력 업체 등록'
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew  = canSee(MENU, 'LIST',   'New (신규 등록)', myRoles)
+  const canEdit = canSee(MENU, 'DETAIL', '수정', myRoles)
+  const canDel  = canSee(MENU, 'DETAIL', '삭제', myRoles)
+  const canSave = canSee(MENU, 'FORM',   '등록 완료 / 저장', myRoles)
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selected, setSelected] = useState<ContractorRegistration | null>(null)
@@ -304,8 +312,10 @@ const ContractorRegistrationPage: React.FC = () => {
           </TextField>
           <IconButton size="small" onClick={() => qc.invalidateQueries({ queryKey: ['contractorRegistrations'] })}><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}
-            sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+          {canNew && (
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}
+              sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+          )}
         </Box>
 
         {/* ─── 모바일(xs/sm) : 세로 스택 ─── */}
@@ -325,9 +335,11 @@ const ContractorRegistrationPage: React.FC = () => {
             <MenuItem value="REVIEW">검토중</MenuItem>
             <MenuItem value="HOLD">보류</MenuItem>
           </TextField>
-          <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={openCreate}>
-            New
-          </Button>
+          {canNew && (
+            <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={openCreate}>
+              New
+            </Button>
+          )}
         </Box>
 
         {isLoading ? (
@@ -544,7 +556,7 @@ const ContractorRegistrationPage: React.FC = () => {
               {!isReadonly && step === 3 ? '검토하기' : '다음'}
             </Button>
           )}
-          {!isReadonly && step === STEPS.length - 1 && (
+          {!isReadonly && canSave && step === STEPS.length - 1 && (
             <Button variant="contained" color="success" onClick={handleSubmit}
               disabled={createMut.isPending || updateMut.isPending}
               sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: 'none' } }}>
@@ -554,8 +566,8 @@ const ContractorRegistrationPage: React.FC = () => {
           {/* 상세 모드: 수정·삭제 */}
           {isReadonly && selected && (
             <>
-              <Button variant="contained" onClick={() => openEdit(selected)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: 'none' } }}>수정</Button>
-              <Button variant="contained" color="error" onClick={() => handleDelete(selected)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: 'none' } }}>삭제</Button>
+              {canEdit && <Button variant="contained" onClick={() => openEdit(selected)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: 'none' } }}>수정</Button>}
+              {canDel  && <Button variant="contained" color="error" onClick={() => handleDelete(selected)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: 'none' } }}>삭제</Button>}
             </>
           )}
         </Box>

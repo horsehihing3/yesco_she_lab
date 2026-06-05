@@ -17,6 +17,7 @@ import DatePickerField from '../common/DatePickerField'
 import RejectReasonDialog from '../common/RejectReasonDialog'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
+import { fetchTeamLeader } from '../../api/approvalApi'
 import { auditPlanApi as defaultAuditPlanApi } from '../../api/auditApi'
 import { legalCompliancePlanApi } from '../../api/legalComplianceApi'
 import { fetchSafetyTemplates, fetchSafetyTemplateDetail } from '../../api/safetyChecklistApi'
@@ -212,15 +213,19 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
   })
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ ...emptyForm }) }
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setSelectedItem(null)
-    // 작성자(createdByName) 로그인 사용자 자동 입력 + 시작/종료 기본값
+    const leader = await fetchTeamLeader(user?.deptCode)
     setForm({
       ...emptyForm,
       createdByUserId: user?.id ?? null,
       createdByName: user?.name || '',
       planStartDate: todayStr(),
       planEndDate: weekFromTodayStr(),
+      ...(leader ? {
+        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+      } : {}),
     })
     setViewMode('create')
   }

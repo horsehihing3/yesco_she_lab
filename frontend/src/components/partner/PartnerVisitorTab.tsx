@@ -58,7 +58,7 @@ const PartnerVisitorTab: React.FC = () => {
 
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = '협력업체 › 방문자 관리'
+  const MENU = '협력 업체 관리 › EHS 협의체'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const canNew  = canSee(MENU, 'LIST',   '신규 등록', myRoles)
   const canEdit = canSee(MENU, '입장중',  '수정', myRoles)

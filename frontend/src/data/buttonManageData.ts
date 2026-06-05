@@ -607,9 +607,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 협력업체 › 협력업체 안전 관리 › 관리 탭 ─────────────────────────────────
+  // ── 협력 업체 관리 › 협력 업체 안전 관리 › 관리 탭 ──────────────────────────
   {
-    menuPath: '협력업체 › 협력업체 안전 관리 › 관리', menuKey: 'partner-safety.tab.manage',
+    menuPath: '협력 업체 관리 › 협력 업체 안전 관리 › 관리', menuKey: 'partner-safety.tab.manage',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -633,9 +633,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 협력업체 › 협력업체 안전 관리 › 실행 탭 ─────────────────────────────────
+  // ── 협력 업체 관리 › 협력 업체 안전 관리 › 실행 탭 ──────────────────────────
   {
-    menuPath: '협력업체 › 협력업체 안전 관리 › 실행', menuKey: 'partner-safety.tab.execute',
+    menuPath: '협력 업체 관리 › 협력 업체 안전 관리 › 실행', menuKey: 'partner-safety.tab.execute',
     statuses: [
       { status: 'APPROVED', statusLabel: '승인완료', statusColor: 'info',
         statusNote: '계획 승인 후 이 탭에 노출 — 실행 URL 제공 / 작업자 서명 후 완료 결재 상신',
@@ -650,9 +650,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 협력업체 › 협력업체 안전 관리 › 조회 탭 ─────────────────────────────────
+  // ── 협력 업체 관리 › 협력 업체 안전 관리 › 조회 탭 ──────────────────────────
   {
-    menuPath: '협력업체 › 협력업체 안전 관리 › 조회', menuKey: 'partner-safety.tab.view',
+    menuPath: '협력 업체 관리 › 협력 업체 안전 관리 › 조회', menuKey: 'partner-safety.tab.view',
     statuses: [
       { status: 'COMPLETED', statusLabel: '완료', statusColor: 'success',
         statusNote: '완료 결재 승인된 실행 이력 조회 — 버튼 없음 (읽기 전용)',
@@ -660,46 +660,117 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 협력업체 › 협력사 위험성 평가 ───────────────────────────────────────────
+  // ── 협력 업체 관리 › 협력 업체 위험성 평가 › 계획 ───────────────────────────
   {
-    menuPath: '협력업체 › 협력사 위험성 평가', menuKey: 'nav.partnerRiskAssessment',
+    menuPath: '협력 업체 관리 › 협력 업체 위험성 평가 › 계획', menuKey: 'nav.partnerRiskAssessment',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        statusNote: '계획 탭 / 어드민 탭에서만 신규 등록 가능 (관리 탭 제외)',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+        buttons: [{ button: '신규 등록', roles: WRITER_ADMIN }] },
       { status: 'DRAFT/REJECTED', statusLabel: '작성중 / 반려', statusColor: 'default',
-        statusNote: '반려 시 PENDING_APPROVAL → REJECTED 복귀 (계획 탭에서 표시)',
+        statusNote: '반려 시 PENDING_APPROVAL → REJECTED 복귀',
         buttons: [
-          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 계획 탭에서 누구든 상신 가능' },
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '계획 결재 상신', roles: WRITER_ADMIN },
+          { button: '수정',           roles: WRITER_ADMIN },
+          { button: '삭제',           roles: WRITER_ADMIN },
         ] },
       { status: 'PENDING_APPROVAL', statusLabel: '계획 결재 대기', statusColor: 'warning',
-        statusNote: '어드민 탭에서는 모든 사용자 승인 가능 / canApprove = SYSTEM_ADMIN·AUDIT_ADMIN (EHS_ADMIN 제외)',
+        statusNote: 'canApprove = SYSTEM_ADMIN · AUDIT_ADMIN · 지정 계획 승인자',
         buttons: [
-          { button: '반려',         roles: ADMIN_PLAN, issue: '어드민 탭에서는 모든 사용자 가능 / EHS_ADMIN은 어드민 탭에서만' },
-          { button: '계획 결재 승인', roles: ADMIN_PLAN, issue: '어드민 탭에서는 모든 사용자 가능 / EHS_ADMIN은 어드민 탭에서만' },
-        ] },
-      { status: 'APPROVED', statusLabel: '승인완료', statusColor: 'info',
-        statusNote: '관리 탭(approval mode)에서 표시 — 완료 결재 상신/승인 흐름',
-        buttons: [
-          { button: '저장',          roles: ALL_ON, issue: '권한 체크 없음 — 관리 탭 누구든 저장 가능' },
-          { button: '완료 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 관리 탭 누구든 상신 가능' },
-        ] },
-      { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
-        buttons: [
-          { button: '반려',         roles: ADMIN_COMP, issue: '어드민 탭에서는 모든 사용자 가능' },
-          { button: '완료 결재 승인', roles: ADMIN_COMP, issue: '어드민 탭에서는 모든 사용자 가능' },
+          { button: '반려',           roles: ADMIN_PLAN },
+          { button: '계획 결재 승인', roles: ADMIN_PLAN },
         ] },
     ],
   },
 
-  // ── 협력업체 › 협력업체 평가 ─────────────────────────────────────────────
+  // ── 협력 업체 관리 › 협력 업체 위험성 평가 › 평가서조회 담당승인자 ──────────
   {
-    menuPath: '협력업체 › 협력업체 평가', menuKey: 'nav.partnerEval',
+    menuPath: '협력 업체 관리 › 협력 업체 위험성 평가 › 평가서조회 담당승인자', menuKey: 'nav.partnerRiskAssessment',
+    statuses: [
+      { status: 'APPROVED', statusLabel: '승인완료 (완료 결재 진행)', statusColor: 'info',
+        statusNote: '계획 승인 후 이 탭에 노출 — 체크리스트 저장 후 완료 결재 상신',
+        buttons: [
+          { button: '저장',           roles: ALL_ON, issue: '권한 체크 없음 — 완료 결재 담당자만 접근하도록 개선 필요' },
+          { button: '완료 결재 상신', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+      { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        statusNote: '완료 승인자 또는 SYSTEM_ADMIN · AUDIT_ADMIN',
+        buttons: [
+          { button: '반려',           roles: ADMIN_COMP },
+          { button: '완료 결재 승인', roles: ADMIN_COMP },
+        ] },
+    ],
+  },
+
+  // ── 협력 업체 관리 › 협력 업체 위험성 평가 › 전체조회 (어드민) ───────────────
+  {
+    menuPath: '협력 업체 관리 › 협력 업체 위험성 평가 › 전체조회 (어드민)', menuKey: 'nav.partnerRiskAssessment',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+        buttons: [{ button: '신규 등록', roles: WRITER_ADMIN }] },
+      { status: 'DRAFT/REJECTED', statusLabel: '작성중 / 반려', statusColor: 'default',
+        buttons: [
+          { button: '계획 결재 상신', roles: WRITER_ADMIN },
+          { button: '수정',           roles: WRITER_ADMIN },
+          { button: '삭제',           roles: WRITER_ADMIN },
+        ] },
+      { status: 'PENDING_APPROVAL', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        statusNote: '어드민 탭: canApprovePlan = isAdminMode(항상 true) — 설정 역할도 승인 가능',
+        buttons: [
+          { button: '반려',           roles: ADMIN_PLAN },
+          { button: '계획 결재 승인', roles: ADMIN_PLAN },
+        ] },
+      { status: 'APPROVED', statusLabel: '승인완료 (완료 결재 진행)', statusColor: 'info',
+        buttons: [
+          { button: '저장',           roles: ALL_ON },
+          { button: '완료 결재 상신', roles: ALL_ON },
+        ] },
+      { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '반려',           roles: ADMIN_COMP },
+          { button: '완료 결재 승인', roles: ADMIN_COMP },
+        ] },
+    ],
+  },
+
+  // ── 협력 업체 관리 › 협력 업체 작업 허가 ─────────────────────────────────────
+  {
+    menuPath: '협력 업체 관리 › 협력 업체 작업 허가', menuKey: 'nav.partnerPermit',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DRAFT/REJECTED', statusLabel: '작성중 / 반려', statusColor: 'default',
+        statusNote: '반려 시 PENDING_APPROVAL → REJECTED 복귀',
+        buttons: [
+          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+      { status: 'PENDING_APPROVAL/REQUESTED', statusLabel: '계획 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '계획 결재 반려', roles: ADMIN_PLAN },
+          { button: '계획 결재 승인', roles: ADMIN_PLAN },
+        ] },
+      { status: 'APPROVED', statusLabel: '승인완료', statusColor: 'info',
+        buttons: [
+          { button: '저장 (체크리스트)', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '완료 결재 상신',    roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+      { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '완료 결재 반려', roles: ADMIN_COMP },
+          { button: '완료 결재 승인', roles: ADMIN_COMP },
+        ] },
+    ],
+  },
+
+  // ── 협력 업체 관리 › 협력 업체 평가 ──────────────────────────────────────────
+  {
+    menuPath: '협력 업체 관리 › 협력 업체 평가', menuKey: 'nav.partnerEval',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: WRITER_ADMIN }] },
+      { status: '완료',   statusLabel: '완료',   statusColor: 'success',
+        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
       { status: '예정',   statusLabel: '예정',   statusColor: 'default',
         buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
       { status: '재평가', statusLabel: '재평가', statusColor: 'error',
@@ -707,18 +778,33 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 협력업체 › 방문자 관리 ────────────────────────────────────────────────
+  // ── 협력 업체 관리 › EHS 협의체 ──────────────────────────────────────────────
   {
-    menuPath: '협력업체 › 방문자 관리',
+    menuPath: '협력 업체 관리 › EHS 협의체', menuKey: 'nav.partnerOshCommittee',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: '입장중',    statusLabel: '입장중',    statusColor: 'info',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
-      { status: '교육미이수', statusLabel: '교육미이수', statusColor: 'warning',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
-      { status: '출입금지', statusLabel: '출입금지', statusColor: 'error',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
+        buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 협력 업체 관리 › 협력 업체 등록 ──────────────────────────────────────────
+  {
+    menuPath: '협력 업체 관리 › 협력 업체 등록', menuKey: 'nav.partnerRegistration',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New (신규 등록)', roles: WRITER_ADMIN }] },
+      { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+      { status: 'FORM', statusLabel: '등록/수정 폼', statusColor: 'default',
+        buttons: [{ button: '등록 완료 / 저장', roles: WRITER_ADMIN }] },
     ],
   },
 

@@ -17,6 +17,7 @@ import { useAuth } from '../../context/AuthContext'
 import UserSelectModal from '../common/UserSelectModal'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import RejectReasonDialog from '../common/RejectReasonDialog'
+import { fetchTeamLeader } from '../../api/approvalApi'
 import { auditApi as defaultAuditApi, auditPlanApi as defaultAuditPlanApi } from '../../api/auditApi'
 import { legalComplianceExecApi, legalCompliancePlanApi } from '../../api/legalComplianceApi'
 import { fetchSafetyTemplateDetail } from '../../api/safetyChecklistApi'
@@ -139,14 +140,18 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm) }
   const handleRowClick = (item: Audit) => { setSelectedItem(item); setViewMode('detail') }
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setSelectedItem(null)
-    // 작성자(createdByName) 로그인 사용자 자동 입력
+    const leader = await fetchTeamLeader(authUser?.deptCode)
     setForm({
       ...emptyForm,
       auditDate: todayStr(),
       createdByUserId: authUser?.id ?? null,
       createdByName: authUser?.name || '',
+      ...(leader ? {
+        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+      } : {}),
     })
     setViewMode('create')
   }

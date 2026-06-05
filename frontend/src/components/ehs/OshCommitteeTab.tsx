@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { fmtPhone } from '../../utils/phoneFormat'
 import { contractorRegistrationApi } from '../../api/contractorRegistrationApi'
 import {
@@ -100,7 +102,9 @@ const currentYear = new Date().getFullYear()
 const years = Array.from({ length: 5 }, (_, i) => currentYear - i)
 const quarterOptions = ['전체', '1분기', '2분기', '3분기', '4분기']
 
-const OshCommitteeTab: React.FC = () => {
+const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
+  menuPath = 'EHS경영 › 커뮤니케이션 › 산업안전보건 위원회',
+}) => {
   const queryClient = useQueryClient()
   const { t } = useTranslation()
   const { showSuccess, showConfirm, showError } = useAlert()
@@ -151,7 +155,14 @@ const OshCommitteeTab: React.FC = () => {
   // 참석자 추가 모달
   const [attendeeDialogOpen, setAttendeeDialogOpen] = useState(false)
 
-  const isAdmin = true
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const myRoles = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const canNew  = canSee(menuPath, 'LIST',   'New', myRoles)
+  const canEdit = canSee(menuPath, 'DETAIL', '수정', myRoles)
+  const canDel  = canSee(menuPath, 'DETAIL', '삭제', myRoles)
+  // DEBUG: 권한 확인용 — 문제 해결 후 제거
+  if (import.meta.env.DEV) console.log('[OshCommitteeTab]', { menuPath, userRole: user?.role, myRoles, canNew })
 
   // Fetch locations from API
   const { data: locationsData } = useQuery({
@@ -483,7 +494,7 @@ const OshCommitteeTab: React.FC = () => {
           </FormControl>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
-        {isAdmin && (
+        {canNew && (
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>
             New
           </Button>
@@ -508,7 +519,7 @@ const OshCommitteeTab: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" onClick={handleReset} startIcon={<RefreshIcon />} sx={{ flex: 1 }}>{t('common.reset')}</Button>
-          {isAdmin && (
+          {canNew && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
           )}
         </Box>
@@ -686,10 +697,10 @@ const OshCommitteeTab: React.FC = () => {
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ width: 'auto' }}>{t('common.backToList')}</Button>
-              {isAdmin && (
+              {canEdit && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
               )}
-              {isAdmin && (
+              {canDel && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>
               )}
             </Box>
@@ -779,10 +790,10 @@ const OshCommitteeTab: React.FC = () => {
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1 }}>{t('common.backToList')}</Button>
-              {isAdmin && (
+              {canEdit && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('common.edit')}</Button>
               )}
-              {isAdmin && (
+              {canDel && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1 }}>{t('common.delete')}</Button>
               )}
             </Box>

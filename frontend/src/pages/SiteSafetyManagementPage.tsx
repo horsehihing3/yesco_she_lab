@@ -29,6 +29,7 @@ import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import { useMenuRule } from '../hooks/useMenuRule'
 import { useButtonRules } from '../hooks/useButtonRules'
+import { fetchTeamLeader } from '../api/approvalApi'
 import { siteSafetyPlanApi } from '../api/siteSafetyApi'
 import type { SiteSafetyPlan, SiteSafetyPlanRequest } from '../types/siteSafety.types'
 import { fetchSafetyTemplates } from '../api/safetyChecklistApi'
@@ -74,7 +75,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
   const isPartner = planType === 'PARTNER'
 
   const { canSee } = useButtonRules()
-  const BUTTON_MENU = isPartner ? '협력업체 › 협력업체 안전 관리 › 관리' : ''
+  const BUTTON_MENU = isPartner ? '협력 업체 관리 › 협력 업체 안전 관리 › 관리' : ''
   const normName = (s?: string | null) => (s || '').trim()
   const getItemRoles = (item: SiteSafetyPlan): string[] => {
     const roles: string[] = ['guest']
@@ -223,12 +224,17 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
     setViewMode('detail')
   }
 
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setSelected(null)
     const dateDefaults = { workStartDate: todayStr(), workEndDate: weekFromTodayStr() }
+    const leader = await fetchTeamLeader(user?.deptCode)
+    const approverDefaults = leader ? {
+      planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+      completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+    } : {}
     setForm(isPartner
-      ? { title: '', modifiedBy: user?.name || user?.username || '', ...dateDefaults }
-      : { title: '', ...dateDefaults })
+      ? { title: '', modifiedBy: user?.name || user?.username || '', ...dateDefaults, ...approverDefaults }
+      : { title: '', ...dateDefaults, ...approverDefaults })
     setWorkers([])
     setViewMode('create')
   }

@@ -12,8 +12,7 @@
 
 | 항목 | 내용 |
 |------|------|
-| 내 저장소 | `https://github.com/horsehihing3/smart_ehs_main` |
-| 원본(com4in) | `https://github.com/jiwon2ahn/smart_ehs_com4in` |
+| 저장소 | `https://github.com/jiwon2ahn/smart_ehs_com4in` |
 | 로컬 경로 | `C:\claude\smart_ehs_main` |
 | Backend | Spring Boot 3.2.2 / Java 17 / MyBatis / `http://localhost:7501/api` |
 | Frontend | React 18 + Vite + TypeScript + MUI / `http://localhost:7500` |

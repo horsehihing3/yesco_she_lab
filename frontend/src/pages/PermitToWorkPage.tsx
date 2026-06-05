@@ -89,7 +89,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   const myId = user?.username || user?.email || ''
   const isExternalMode = mode === 'external'
   const { canSee } = useButtonRules()
-  const MENU = '작업허가 › 허가 신청'
+  const MENU = isExternalMode ? '협력 업체 관리 › 협력 업체 작업 허가' : '작업허가 › 허가 신청'
   const isAdminUser = user?.role === 'SYSTEM_ADMIN'
   const myRoles: string[] = ['guest', ...(isAdminUser ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const getItemRoles = (item: { planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {

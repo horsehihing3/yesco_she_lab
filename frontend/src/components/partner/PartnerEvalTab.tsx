@@ -19,6 +19,8 @@ import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { fmtPhone } from '../../utils/phoneFormat'
 
 const INDUSTRIES = ['건설·설비', '전기·계장', '화학·원료', '청소·용역', '운반·물류']
@@ -55,6 +57,10 @@ type Mode = 'list' | 'view' | 'edit' | 'create'
 const PartnerEvalTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const MENU = '협력 업체 관리 › 협력 업체 평가'
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const { data: items = [], isLoading } = useQuery({ queryKey: ['partnerEvals'], queryFn: partnerEvalApi.list })
   const { data: stats } = useQuery({ queryKey: ['partnerStats'], queryFn: partnerStatsApi.get })
   // 등록된 협력업체 (셀렉트 박스 후보) — APPROVED 만
@@ -358,11 +364,11 @@ const PartnerEvalTab: React.FC = () => {
           ) : (
             <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
           )}
-          {mode === 'view' && (
-            <>
-              <Button variant="contained" color="primary" onClick={handleEditClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
-              <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
-            </>
+          {mode === 'view' && canSee(MENU, selected?.status || '', '수정', myRoles) && (
+            <Button variant="contained" color="primary" onClick={handleEditClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
+          )}
+          {mode === 'view' && canSee(MENU, selected?.status || '', '삭제', myRoles) && (
+            <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
           )}
           {mode === 'edit' && (
             <Button variant="contained" onClick={handleSubmit} disabled={!form.companyName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
@@ -406,7 +412,9 @@ const PartnerEvalTab: React.FC = () => {
         </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNewClick} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleNewClick} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+        )}
       </Box>
 
       {/* ─── 모바일 헤더 ─── */}
@@ -416,7 +424,9 @@ const PartnerEvalTab: React.FC = () => {
           <MenuItem value="">전체</MenuItem>
           {['A', 'B', 'C', 'D'].map(g => <MenuItem key={g} value={g}>{g}</MenuItem>)}
         </TextField>
-        <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleNewClick}>New</Button>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleNewClick}>New</Button>
+        )}
       </Box>
 
       {isLoading ? (

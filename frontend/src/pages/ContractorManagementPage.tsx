@@ -20,6 +20,8 @@ import { contractorRegistrationApi } from '../api/contractorRegistrationApi'
 import NumberField from '../components/common/NumberField'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
+import { useButtonRules } from '../hooks/useButtonRules'
+import { fetchTeamLeader } from '../api/approvalApi'
 import { contractorPlanApi } from '../api/contractorApi'
 import { ContractorPlan, ContractorPlanRequest, ContractorWorker } from '../types/contractor.types'
 import { ppeEquipmentApi } from '../api/ppeEquipmentApi'
@@ -70,10 +72,17 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   const { codeList: permitStatuses, getLabel: getStatusLabel } = useCodeMap('PERMIT_STATUS')
   const { codeList: riskLevels, getLabel: getRiskLabel } = useCodeMap('RISK_LEVEL')
 
+  const { canSee } = useButtonRules()
   const checklistRef = useRef<SafetyChecklistTabRef>(null)
   const isApprovalMode = mode === 'approval'
   const isAdminMode = mode === 'admin'
   const canApprove = user?.role === 'SYSTEM_ADMIN' || user?.role === 'AUDIT_ADMIN'
+  const MENU = mode === 'plan'
+    ? '협력 업체 관리 › 협력 업체 위험성 평가 › 계획'
+    : mode === 'approval'
+    ? '협력 업체 관리 › 협력 업체 위험성 평가 › 평가서조회 담당승인자'
+    : '협력 업체 관리 › 협력 업체 위험성 평가 › 전체조회 (어드민)'
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
 
   // View mode state
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -284,12 +293,17 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
     setViewMode('detail')
   }
 
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setSelectedItem(null)
+    const leader = await fetchTeamLeader(user?.deptCode)
     setForm({
       title: '',
       workStartDate: todayStr() + 'T08:00:00',
       workEndDate: weekFromTodayStr() + 'T17:00:00',
+      ...(leader ? {
+        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
+      } : {}),
     })
     setWorkers([])
     setViewMode('create')
@@ -450,7 +464,9 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </FormControl>
             <IconButton onClick={() => { setSearchText(''); setStatusFilter(''); setTypeFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
           </Box>
-          {!isApprovalMode && <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>}
+          {!isApprovalMode && canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+          )}
         </Box>
         {/* Search / Filter bar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -470,7 +486,9 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
                 {permitTypes.map((c) => <MenuItem key={c.code} value={c.code}>{getPermitTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
-            {!isApprovalMode && <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>}
+            {!isApprovalMode && canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+              <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+            )}
           </Box>
         </Box>
 
@@ -649,7 +667,6 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
         {/* Bottom buttons — 결재 흐름: 계획 탭(상신/승인) | 관리 탭(완료 상신/완료 승인) */}
         {(() => {
           const status = selectedItem.status
-          // 매칭: 1) user ID, 2) trim 후 이름 비교 — null/공백 차이로 버튼 누락 방지
           const normalizeName = (s?: string | null) => (s || '').trim()
           const isPlanApprover = !!user && (
             (!!selectedItem.planApproverUserId && selectedItem.planApproverUserId === user.id) ||
@@ -659,16 +676,21 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             (!!selectedItem.completionApproverUserId && selectedItem.completionApproverUserId === user.id) ||
             (!!selectedItem.completionApproverName && normalizeName(selectedItem.completionApproverName) === normalizeName(user.name))
           )
-          // admin 권한자(또는 admin 모드)면 결재 가능
-          const canApprovePlan = isAdminMode || canApprove || isPlanApprover
-          const canApproveCompletion = isAdminMode || canApprove || isCompletionApprover
           const isPlanMode = mode === 'plan'
+          const showPlan = isPlanMode || isAdminMode
+          const showApproval = isApprovalMode || isAdminMode
+          // 버튼 관리 권한 체크: canApprove(AUDIT_ADMIN)는 결재자 역할에 포함
+          const itemRoles: string[] = ['guest']
+          if (user?.role === 'SYSTEM_ADMIN') itemRoles.push('superAdmin')
+          else if (user?.role) itemRoles.push(user.role)
+          if (isPlanApprover || canApprove) itemRoles.push('planApprover')
+          if (isCompletionApprover || canApprove) itemRoles.push('completionApprover')
           return (
             <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' }, flexWrap: 'wrap' }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
 
               {/* DRAFT/REJECTED → 계획 결재 상신 */}
-              {isPlanMode && (status === 'DRAFT' || status === 'REJECTED') && (
+              {showPlan && (status === 'DRAFT' || status === 'REJECTED') && canSee(MENU, 'DRAFT/REJECTED', '계획 결재 상신', itemRoles) && (
                 <Button variant="contained" color="info" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
                   onClick={async () => {
                     const ok = await showConfirm('계획 결재를 상신하시겠습니까?')
@@ -676,62 +698,62 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
                   }}>계획 결재 상신</Button>
               )}
 
-              {/* PENDING_APPROVAL → 계획 결재 승인 / 반려 */}
-              {isPlanMode && status === 'PENDING_APPROVAL' && canApprovePlan && (
-                <>
-                  <Button variant="contained" color="warning" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={() => setRejectDialogStage('plan')}>반려</Button>
-                  <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={async () => {
-                      const ok = await showConfirm('계획 결재를 승인하시겠습니까?')
-                      if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
-                    }}>계획 결재 승인</Button>
-                </>
+              {/* PENDING_APPROVAL → 반려 / 계획 결재 승인 */}
+              {showPlan && status === 'PENDING_APPROVAL' && canSee(MENU, 'PENDING_APPROVAL', '반려', itemRoles) && (
+                <Button variant="contained" color="warning" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={() => setRejectDialogStage('plan')}>반려</Button>
+              )}
+              {showPlan && status === 'PENDING_APPROVAL' && canSee(MENU, 'PENDING_APPROVAL', '계획 결재 승인', itemRoles) && (
+                <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={async () => {
+                    const ok = await showConfirm('계획 결재를 승인하시겠습니까?')
+                    if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
+                  }}>계획 결재 승인</Button>
               )}
 
-              {/* 관리(승인 모드): APPROVED → 저장 + 완료 결재 상신 */}
-              {isApprovalMode && status === 'APPROVED' && (
-                <>
-                  <Button variant="contained" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={async () => {
-                      try {
-                        if (checklistRef.current) await checklistRef.current.save()
-                        const updated = await contractorPlanApi.getById(selectedItem.id)
-                        setSelectedItem(updated)
-                        queryClient.invalidateQueries({ queryKey: ['contractorApproval'] })
-                      } catch { showError(t('common.error')) }
-                    }}>{t('common.save')}</Button>
-                  <Button variant="contained" color="info" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={async () => {
-                      const ok = await showConfirm('완료 결재를 상신하시겠습니까?')
-                      if (!ok) return
-                      try {
-                        if (checklistRef.current) await checklistRef.current.save()
-                      } catch { /* continue */ }
-                      transitionMutation.mutate({ id: selectedItem.id, action: 'completionSubmit' })
-                    }}>완료 결재 상신</Button>
-                </>
+              {/* APPROVED → 저장 + 완료 결재 상신 */}
+              {showApproval && status === 'APPROVED' && canSee(MENU, 'APPROVED', '저장', itemRoles) && (
+                <Button variant="contained" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={async () => {
+                    try {
+                      if (checklistRef.current) await checklistRef.current.save()
+                      const updated = await contractorPlanApi.getById(selectedItem.id)
+                      setSelectedItem(updated)
+                      queryClient.invalidateQueries({ queryKey: ['contractorApproval'] })
+                    } catch { showError(t('common.error')) }
+                  }}>{t('common.save')}</Button>
+              )}
+              {showApproval && status === 'APPROVED' && canSee(MENU, 'APPROVED', '완료 결재 상신', itemRoles) && (
+                <Button variant="contained" color="info" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={async () => {
+                    const ok = await showConfirm('완료 결재를 상신하시겠습니까?')
+                    if (!ok) return
+                    try {
+                      if (checklistRef.current) await checklistRef.current.save()
+                    } catch { /* continue */ }
+                    transitionMutation.mutate({ id: selectedItem.id, action: 'completionSubmit' })
+                  }}>완료 결재 상신</Button>
               )}
 
-              {/* 관리(승인 모드): COMPLETION_PENDING → 반려 / 완료 결재 승인 */}
-              {isApprovalMode && status === 'COMPLETION_PENDING' && canApproveCompletion && (
-                <>
-                  <Button variant="contained" color="warning" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={() => setRejectDialogStage('completion')}>반려</Button>
-                  <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={async () => {
-                      const ok = await showConfirm('완료 결재를 승인하시겠습니까?')
-                      if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'complete' })
-                    }}>완료 결재 승인</Button>
-                </>
+              {/* COMPLETION_PENDING → 반려 / 완료 결재 승인 */}
+              {showApproval && status === 'COMPLETION_PENDING' && canSee(MENU, 'COMPLETION_PENDING', '반려', itemRoles) && (
+                <Button variant="contained" color="warning" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={() => setRejectDialogStage('completion')}>반려</Button>
+              )}
+              {showApproval && status === 'COMPLETION_PENDING' && canSee(MENU, 'COMPLETION_PENDING', '완료 결재 승인', itemRoles) && (
+                <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={async () => {
+                    const ok = await showConfirm('완료 결재를 승인하시겠습니까?')
+                    if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'complete' })
+                  }}>완료 결재 승인</Button>
               )}
 
               {/* 수정/삭제 — DRAFT/REJECTED 일 때만 */}
-              {isPlanMode && (status === 'DRAFT' || status === 'REJECTED') && (
-                <>
-                  <Button variant="contained" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
-                  <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
-                </>
+              {showPlan && (status === 'DRAFT' || status === 'REJECTED') && canSee(MENU, 'DRAFT/REJECTED', '수정', itemRoles) && (
+                <Button variant="contained" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
+              )}
+              {showPlan && (status === 'DRAFT' || status === 'REJECTED') && canSee(MENU, 'DRAFT/REJECTED', '삭제', itemRoles) && (
+                <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
               )}
             </Box>
           )
