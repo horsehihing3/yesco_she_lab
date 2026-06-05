@@ -332,6 +332,20 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
+  // ── 교육 신청 ─────────────────────────────────────────────────────────────
+  {
+    menuPath: 'EHS경영 › 교육훈련 › 교육 신청', menuKey: 'training.tabs.apply',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'PLANNED', statusLabel: '예정', statusColor: 'primary',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '취소', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 취소 가능' },
+        ] },
+    ],
+  },
+
   // ── 교육현황 (관리자) ──────────────────────────────────────────────────────
   {
     menuPath: 'EHS경영 › 교육훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',
@@ -346,20 +360,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [
           { button: '수료',      roles: ALL_ON, issue: '권한 체크 없음 — 누구든 수료 처리 가능' },
           { button: '신청 취소', roles: ALL_ON, issue: '권한 체크 없음' },
-        ] },
-    ],
-  },
-
-  // ── 안전교육 신청 ─────────────────────────────────────────────────────────
-  {
-    menuPath: 'EHS경영 › 교육훈련 › 안전교육 신청', menuKey: 'training.tabs.apply',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'PLANNED', statusLabel: '예정', statusColor: 'primary',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '취소', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 취소 가능' },
         ] },
     ],
   },
