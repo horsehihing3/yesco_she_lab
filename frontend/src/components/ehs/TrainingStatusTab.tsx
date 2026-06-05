@@ -9,10 +9,14 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import ListSearchBar from '../common/ListSearchBar'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { trainingApplicationApi } from '../../api/trainingApi'
 import { TrainingApplication } from '../../types/trainingApplication.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import RejectReasonDialog from '../common/RejectReasonDialog'
+
+const BUTTON_MENU = 'EHS경영 › 교육훈련 › 교육현황 (관리자)'
 
 type ViewMode = 'list' | 'detail'
 
@@ -35,6 +39,15 @@ const TrainingStatusTab: React.FC = () => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+
+  const userRoles = useMemo(() => {
+    const roles: string[] = ['guest']
+    if (user?.role === 'SYSTEM_ADMIN') roles.push('superAdmin')
+    if (user?.role) roles.push(user.role)
+    return roles
+  }, [user])
   const { getLabel: getStatusLabel, codeList: statusCodes } = useCodeMap('TRAINING_APPLICATION_STATUS')
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -193,14 +206,18 @@ const TrainingStatusTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
           {detail.status === 'PENDING' && (
             <>
-              <Button color="warning" variant="contained" onClick={() => setRejectDialog({ open: true, reason: '' })} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('training.reject', '반려')}</Button>
-              <Button color="success" variant="contained" onClick={() => handleApprove(detail)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('training.approve', '승인')}</Button>
+              {canSee(BUTTON_MENU, 'PENDING', '반려', userRoles) && (
+                <Button color="warning" variant="contained" onClick={() => setRejectDialog({ open: true, reason: '' })} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('training.reject', '반려')}</Button>
+              )}
+              {canSee(BUTTON_MENU, 'PENDING', '승인', userRoles) && (
+                <Button color="success" variant="contained" onClick={() => handleApprove(detail)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('training.approve', '승인')}</Button>
+              )}
             </>
           )}
-          {detail.status === 'APPROVED' && (
+          {detail.status === 'APPROVED' && canSee(BUTTON_MENU, 'APPROVED', '수료', userRoles) && (
             <Button color="success" variant="contained" onClick={() => handleComplete(detail)}>{t('training.complete', '수료')}</Button>
           )}
-          {(detail.status === 'PENDING' || detail.status === 'APPROVED') && (
+          {(detail.status === 'PENDING' || detail.status === 'APPROVED') && canSee(BUTTON_MENU, detail.status, '신청 취소', userRoles) && (
             <Button color="error" variant="contained" onClick={() => handleCancel(detail)}>{t('training.cancelApplication', '신청 취소')}</Button>
           )}
         </Box>

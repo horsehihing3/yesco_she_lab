@@ -91,7 +91,7 @@
             approved_by    = COALESCE(#{approvedBy}, approved_by),
             approved_at    = CASE WHEN #{status} = 'APPROVED' THEN GETDATE() ELSE approved_at END,
             reject_reason  = CASE WHEN #{status} = 'REJECTED' THEN #{rejectReason} ELSE reject_reason END,
-            completion_date= CASE WHEN #{status} = 'COMPLETED' THEN #{completionDate} ELSE completion_date END,
+            completion_date= CASE WHEN #{status} = 'COMPLETED' THEN #{completionDate,jdbcType=DATE} ELSE completion_date END,
             modified_at    = GETDATE()
         WHERE id = #{id}
     </update>
