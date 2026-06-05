@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import { useAuth } from '../../context/AuthContext'
-import { useButtonRules } from '../../hooks/useButtonRules'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
@@ -153,14 +151,7 @@ const OshCommitteeTab: React.FC = () => {
   // 참석자 추가 모달
   const [attendeeDialogOpen, setAttendeeDialogOpen] = useState(false)
 
-  const { user } = useAuth()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
-  const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 커뮤니케이션 › 산업안전보건 위원회'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
-  const canNew  = canSee(MENU, 'LIST', 'New', myRoles)
-  const getDetailRoles = (item: { authorName?: string } | null | undefined): string[] =>
-    [...myRoles, ...(item?.authorName === user?.name ? ['writer'] : [])]
+  const isAdmin = true
 
   // Fetch locations from API
   const { data: locationsData } = useQuery({
@@ -492,7 +483,7 @@ const OshCommitteeTab: React.FC = () => {
           </FormControl>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
-        {canNew && (
+        {isAdmin && (
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>
             New
           </Button>
@@ -517,7 +508,7 @@ const OshCommitteeTab: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" size="small" onClick={handleReset} startIcon={<RefreshIcon />} sx={{ flex: 1 }}>{t('common.reset')}</Button>
-          {canNew && (
+          {isAdmin && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
           )}
         </Box>
@@ -695,10 +686,10 @@ const OshCommitteeTab: React.FC = () => {
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ width: 'auto' }}>{t('common.backToList')}</Button>
-              {canSee(MENU, 'DETAIL', '수정', getDetailRoles(committeeDetail)) && (
+              {isAdmin && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
               )}
-              {canSee(MENU, 'DETAIL', '삭제', getDetailRoles(committeeDetail)) && (
+              {isAdmin && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>
               )}
             </Box>
@@ -788,10 +779,10 @@ const OshCommitteeTab: React.FC = () => {
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1 }}>{t('common.backToList')}</Button>
-              {canSee(MENU, 'DETAIL', '수정', getDetailRoles(committeeDetail)) && (
+              {isAdmin && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('common.edit')}</Button>
               )}
-              {canSee(MENU, 'DETAIL', '삭제', getDetailRoles(committeeDetail)) && (
+              {isAdmin && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1 }}>{t('common.delete')}</Button>
               )}
             </Box>

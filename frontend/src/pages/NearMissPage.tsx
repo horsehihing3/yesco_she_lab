@@ -2,7 +2,6 @@ import { useState, useRef, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { useMenuRule } from '../hooks/useMenuRule'
 import {
   Box,
   Typography,
@@ -127,23 +126,8 @@ const NearMissPage: React.FC = () => {
   const { codeList: incRespTypeList, codeMap: incRespTypeMap } = useCodeMap('INCIDENT_RESP_TYPE')
   const { codeList: incRespStatusList, codeMap: incRespStatusMap } = useCodeMap('INCIDENT_RESP_STATUS')
   const { codeList: incRespSeverityList, codeMap: incRespSeverityMap } = useCodeMap('INCIDENT_RESP_SEVERITY')
-  const { isMenuHidden } = useMenuRule()
   const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT' | 'REPORT'>((searchParams.get('incidentType') as 'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT' | 'REPORT') || 'NEAR_MISS')
-
-  const visibleNearMissTabs = useMemo(() => ({
-    DASHBOARD: !isMenuHidden('near-miss.tab.dashboard'),
-    NEAR_MISS: !isMenuHidden('near-miss.tab.near-miss'),
-    ACCIDENT:  !isMenuHidden('near-miss.tab.accident'),
-    REPORT:    !isMenuHidden('near-miss.tab.report'),
-  }), [isMenuHidden])
-
-  useEffect(() => {
-    if (!visibleNearMissTabs[activeTab]) {
-      const first = (['DASHBOARD', 'NEAR_MISS', 'ACCIDENT', 'REPORT'] as const).find(k => visibleNearMissTabs[k])
-      if (first) setActiveTab(first)
-    }
-  }, [visibleNearMissTabs, activeTab])
   const [page, setPage] = useState(1)
   const [rowsPerPage] = useState(10)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -2065,10 +2049,10 @@ const NearMissPage: React.FC = () => {
               value={activeTab}
               onChange={(_, newValue) => { setActiveTab(newValue); setPage(1) }}
             >
-              {visibleNearMissTabs.DASHBOARD && <Tab label={t('common.dashboard', '대시보드')} value="DASHBOARD" />}
-              {visibleNearMissTabs.NEAR_MISS && <Tab label={t('nearMiss.incidentTypes.nearMiss')} value="NEAR_MISS" />}
-              {visibleNearMissTabs.ACCIDENT  && <Tab label={t('nearMiss.incidentTypes.accident')} value="ACCIDENT" />}
-              {visibleNearMissTabs.REPORT    && <Tab label={t('nearMiss.incidentTypes.report', '레포트')} value="REPORT" />}
+              <Tab label={t('common.dashboard', '대시보드')} value="DASHBOARD" />
+              <Tab label={t('nearMiss.incidentTypes.nearMiss')} value="NEAR_MISS" />
+              <Tab label={t('nearMiss.incidentTypes.accident')} value="ACCIDENT" />
+              <Tab label={t('nearMiss.incidentTypes.report', '레포트')} value="REPORT" />
             </Tabs>
           </Box>
           {activeTab !== 'REPORT' && activeTab !== 'DASHBOARD' && (
