@@ -1,9 +1,9 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.LegalCompliancePlan;
-import com.smartehs.model.User;
 import com.smartehs.service.LegalCompliancePlanService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class LegalCompliancePlanController {
 
     private final LegalCompliancePlanService service;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<LegalCompliancePlan>>> findAll(
@@ -45,8 +45,8 @@ public class LegalCompliancePlanController {
     public ResponseEntity<ApiResponse<LegalCompliancePlan>> create(
             @RequestBody LegalCompliancePlan plan, Authentication authentication) {
         if (authentication != null) {
-            User u = userMapper.findByUsername(authentication.getName());
-            if (u != null) { plan.setCreatedByUserId(u.getId()); plan.setCreatedByName(u.getName()); }
+            IdmUser idmUser = idmMapper.findByUid(authentication.getName());
+            if (idmUser != null) { plan.setCreatedByUserId(idmUser.getUidNumber()); plan.setCreatedByName(idmUser.getUserName()); }
         }
         return ResponseEntity.ok(ApiResponse.success(service.create(plan)));
     }

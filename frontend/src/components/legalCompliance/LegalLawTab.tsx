@@ -14,6 +14,8 @@ import type { LegalLaw, LegalLawRequest } from '../../types/legalCompliance.type
 import StatCard from './StatCard'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import DatePickerField from '../common/DatePickerField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import ListSearchBar from '../common/ListSearchBar'
@@ -56,9 +58,15 @@ const emptyForm: LegalLawRequest = {
   reviewStatus: '검토대기', applyYn: '검토중', urgent: false,
 }
 
+const MENU = 'EHS경영 › 법규 대응 › 법규검토시스템'
+
 const LegalLawTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const { data: laws = [], isLoading } = useQuery({ queryKey: ['legalLaws'], queryFn: lawApi.list })
   const { data: stats } = useQuery({ queryKey: ['legalLawsStats'], queryFn: lawApi.stats })
 
@@ -177,7 +185,9 @@ const LegalLawTab: React.FC = () => {
             </FormControl>
             <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           </Box>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+          )}
         </Box>
 
         {/* Mobile Search */}
@@ -197,7 +207,9 @@ const LegalLawTab: React.FC = () => {
                 {REVIEW_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
               </Select>
             </FormControl>
-            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+            {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+              <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+            )}
           </Box>
         </Box>
 
@@ -309,12 +321,16 @@ const LegalLawTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
             목록
           </Button>
-          <Button variant="contained" color="primary" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
-            수정
-          </Button>
-          <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
-            삭제
-          </Button>
+          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+            <Button variant="contained" color="primary" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
+              수정
+            </Button>
+          )}
+          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+            <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
+              삭제
+            </Button>
+          )}
         </Box>
       </Box>
     )

@@ -67,7 +67,7 @@ const EmrPlanTab: React.FC = () => {
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
   const canEditDraft = (item: { writerUserId?: number | null }) => isAdmin || item.writerUserId === authUser?.id
   const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 비상대응 › 비상 계획'
+  const MENU = 'EHS경영 › 비상 훈련 › 비상 계획'
   const getRoles = (item: { writerUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
@@ -540,7 +540,7 @@ const EmrPlanTab: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
           {/* DRAFT → 계획 결재 상신 */}
-          {isDraft && canSee(MENU, 'DRAFT', '계획 결재 상신', getRoles(selectedItem)) && (
+          {isDraft && !getRoles(selectedItem).includes('planApprover') && !getRoles(selectedItem).includes('completionApprover') && canSee(MENU, 'DRAFT', '계획 결재 상신', getRoles(selectedItem)) && (
             <Button variant="contained" color="info"
               onClick={async () => {
                 const ok = await showConfirm(t('emr.confirmSubmit', '계획 결재를 상신하시겠습니까?'))
@@ -550,15 +550,15 @@ const EmrPlanTab: React.FC = () => {
               {t('emr.planSubmit', '계획 결재 상신')}
             </Button>
           )}
-          {/* PENDING_APPROVAL → 반려 / 계획 승인 */}
-          {isPending && canSee(MENU, 'PENDING_APPROVAL', '반려', getRoles(selectedItem)) && (
+          {/* PENDING_APPROVAL → 반려 / 계획 승인 (계획 승인자 · 슈퍼관리자만) */}
+          {isPending && (getRoles(selectedItem).includes('planApprover') || getRoles(selectedItem).includes('superAdmin')) && canSee(MENU, 'PENDING_APPROVAL', '반려', getRoles(selectedItem)) && (
             <Button variant="contained" color="warning"
               onClick={() => setRejectDialogOpen(true)}
               sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
               {t('common.reject', '반려')}
             </Button>
           )}
-          {isPending && canSee(MENU, 'PENDING_APPROVAL', '계획 승인', getRoles(selectedItem)) && (
+          {isPending && (getRoles(selectedItem).includes('planApprover') || getRoles(selectedItem).includes('superAdmin')) && canSee(MENU, 'PENDING_APPROVAL', '계획 승인', getRoles(selectedItem)) && (
             <Button variant="contained" color="success"
               onClick={async () => {
                 const ok = await showConfirm(t('emr.confirmPlanApprove', '계획 결재를 승인하시겠습니까?'))
@@ -569,10 +569,10 @@ const EmrPlanTab: React.FC = () => {
             </Button>
           )}
           {/* DRAFT 상태 — 수정/삭제 */}
-          {isDraft && canSee(MENU, 'DRAFT', '수정', getRoles(selectedItem)) && (
+          {isDraft && !getRoles(selectedItem).includes('planApprover') && !getRoles(selectedItem).includes('completionApprover') && canSee(MENU, 'DRAFT', '수정', getRoles(selectedItem)) && (
             <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
           )}
-          {isDraft && canSee(MENU, 'DRAFT', '삭제', getRoles(selectedItem)) && (
+          {isDraft && !getRoles(selectedItem).includes('planApprover') && !getRoles(selectedItem).includes('completionApprover') && canSee(MENU, 'DRAFT', '삭제', getRoles(selectedItem)) && (
             <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
           )}
         </Box>
@@ -677,7 +677,7 @@ const EmrPlanTab: React.FC = () => {
             </Box>
           </Box>
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={labelSx}>{t('audit.checklist', '체크리스트')}</Typography>
+            <Typography sx={labelSx}>{t('audit.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
               <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
                 <MenuItem value="">{t('audit.noChecklist', '체크리스트 미연결')}</MenuItem>
@@ -768,7 +768,9 @@ const EmrPlanTab: React.FC = () => {
             <TextField size="small" fullWidth multiline rows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
           </Box>
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.checklist', '체크리스트')}</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              {t('audit.checklist', '체크리스트')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
+            </Typography>
             <FormControl fullWidth size="small">
               <Select displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
                 <MenuItem value="">{t('audit.noChecklist', '체크리스트 미연결')}</MenuItem>

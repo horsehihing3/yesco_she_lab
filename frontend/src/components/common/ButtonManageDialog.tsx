@@ -265,7 +265,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 비상 계획 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상대응 › 비상 계획',
+    menuPath: 'EHS경영 › 비상 훈련 › 비상 계획',
     statuses: [
       {
         status: 'LIST', statusLabel: '목록', statusColor: 'primary',
@@ -294,7 +294,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 비상 훈련 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상대응 › 비상 훈련',
+    menuPath: 'EHS경영 › 비상 훈련 › 비상 훈련',
     statuses: [
       {
         status: 'SCHEDULED', statusLabel: '예정', statusColor: 'info',
@@ -309,35 +309,62 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 사고·사건 ─────────────────────────────────────────────────────────────
+  // ── 법규검토시스템 ──────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상대응 › 사고·사건',
+    menuPath: 'EHS경영 › 법규 대응 › 법규검토시스템',
     statuses: [
       {
         status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [
-          { button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '신규 등록', roles: WRITER_ADMIN },
         ],
       },
       {
-        status: 'STANDBY', statusLabel: '대기', statusColor: 'default',
+        status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ],
+      },
+    ],
+  },
+
+  // ── 자원·장비 ─────────────────────────────────────────────────────────────
+  {
+    menuPath: 'EHS경영 › 비상 훈련 › 자원·장비',
+    statuses: [
+      {
+        status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [
+          { button: '신규 등록', roles: WRITER_ADMIN },
         ],
       },
       {
-        status: 'ISSUED', statusLabel: '발령', statusColor: 'warning',
+        status: 'NORMAL', statusLabel: '정상', statusColor: 'success',
         buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
         ],
       },
       {
-        status: 'RESPONDING', statusLabel: '대응중', statusColor: 'primary',
+        status: 'CHECK_NEEDED', statusLabel: '점검필요', statusColor: 'warning',
         buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ],
+      },
+      {
+        status: 'DEFECTIVE', statusLabel: '불량', statusColor: 'error',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ],
+      },
+      {
+        status: 'DISPOSED', statusLabel: '폐기', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
         ],
       },
     ],

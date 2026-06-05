@@ -1,12 +1,12 @@
 package com.smartehs.service;
 
 import com.smartehs.exception.ResourceNotFoundException;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.mapper.LegalComplianceExecMapper;
 import com.smartehs.mapper.LegalCompliancePlanMapper;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.LegalComplianceExec;
 import com.smartehs.model.LegalCompliancePlan;
-import com.smartehs.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class LegalCompliancePlanService {
     private final LegalCompliancePlanMapper planMapper;
     private final LegalComplianceExecMapper execMapper;
     private final ChecklistSnapshotService checklistSnapshotService;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN", "EHS_ADMIN", "AUDIT_ADMIN");
     // ChecklistSnapshotService 의 OWNER_AUDIT 와 충돌 방지를 위해 별도 owner 식별자 사용
@@ -131,6 +131,16 @@ public class LegalCompliancePlanService {
                 .auditorDept(existing.getAuditorDept())
                 .auditStartDate(existing.getPlanStartDate())
                 .auditEndDate(existing.getPlanEndDate())
+                .planApproverUserId(existing.getPlanApproverUserId())
+                .planApproverTeam(existing.getPlanApproverTeam())
+                .planApproverPosition(existing.getPlanApproverPosition())
+                .planApproverName(existing.getPlanApproverName())
+                .completionApproverUserId(existing.getCompletionApproverUserId())
+                .completionApproverTeam(existing.getCompletionApproverTeam())
+                .completionApproverPosition(existing.getCompletionApproverPosition())
+                .completionApproverName(existing.getCompletionApproverName())
+                .createdByUserId(existing.getCreatedByUserId())
+                .createdByName(existing.getCreatedByName())
                 .totalChecklist(0)
                 .completedChecklist(0)
                 .findingCount(0)
@@ -156,12 +166,12 @@ public class LegalCompliancePlanService {
 
     private void ensureCanApprovePlan(LegalCompliancePlan plan, String username) {
         if (username == null || username.isEmpty() || "system".equals(username)) return;
-        User u;
-        try { u = userMapper.findByUsername(username); } catch (Exception e) { u = null; }
+        IdmUser u;
+        try { u = idmMapper.findByUid(username); } catch (Exception e) { u = null; }
         if (u == null) throw new AccessDeniedException("승인 권한이 없습니다.");
-        if (u.getRole() != null && ADMIN_ROLES.contains(u.getRole())) return;
-        if (plan.getPlanApproverUserId() != null && plan.getPlanApproverUserId().equals(u.getId())) return;
-        if (plan.getPlanApproverName() != null && plan.getPlanApproverName().equalsIgnoreCase(u.getName())) return;
+        if (u.getUserRole() != null && ADMIN_ROLES.contains(u.getUserRole())) return;
+        if (plan.getPlanApproverUserId() != null && plan.getPlanApproverUserId().equals(u.getUidNumber())) return;
+        if (plan.getPlanApproverName() != null && plan.getPlanApproverName().equalsIgnoreCase(u.getUserName())) return;
         throw new AccessDeniedException("지정된 계획 승인자만 승인/반려할 수 있습니다.");
     }
 

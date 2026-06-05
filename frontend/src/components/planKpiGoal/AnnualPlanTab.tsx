@@ -563,14 +563,14 @@ const AnnualPlanTab: React.FC = () => {
               {t('pkg.planSubmit', '계획 결재 상신')}
             </Button>
           )}
-          {selectedItem && d.status === 'PENDING_APPROVAL' && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '반려', getRoles(d)) && (
+          {selectedItem && d.status === 'PENDING_APPROVAL' && !(authUser?.id && d.writerUserId === authUser.id) && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '반려', getRoles(d)) && (
             <Button variant="contained" color="warning"
               onClick={() => setRejectDialogOpen(true)}
               sx={{ width: 'auto' }}>
               {t('pkg.reject', '반려')}
             </Button>
           )}
-          {selectedItem && d.status === 'PENDING_APPROVAL' && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '계획 승인', getRoles(d)) && (
+          {selectedItem && d.status === 'PENDING_APPROVAL' && !(authUser?.id && d.writerUserId === authUser.id) && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '계획 승인', getRoles(d)) && (
             <Button variant="contained" color="success"
               onClick={async () => {
                 const ok = await showConfirm(t('pkg.confirmApprove', '승인 하시겠습니까?'))

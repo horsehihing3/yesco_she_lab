@@ -76,26 +76,6 @@ const Header: React.FC = () => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        {/* 버튼관리 — DEV ONLY (납품 전 삭제) */}
-        <Tooltip title="버튼 노출 조건 관리">
-          <Button
-            size="small"
-            startIcon={<TableViewIcon fontSize="small" />}
-            onClick={() => window.open('/dev/button-manage', '_blank')}
-            sx={{
-              color: 'white',
-              borderColor: 'rgba(255,255,255,0.5)',
-              border: '1px solid',
-              px: 1,
-              py: 0.5,
-              fontSize: '0.75rem',
-              minWidth: 0,
-              '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', borderColor: 'white' },
-            }}
-          >
-            버튼관리
-          </Button>
-        </Tooltip>
 
         {/* Emergency Exit Compass */}
         <Tooltip title={t('dashboard.emergencyExit')}>

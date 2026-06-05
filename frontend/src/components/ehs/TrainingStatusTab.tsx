@@ -41,13 +41,14 @@ const TrainingStatusTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-
-  const userRoles = useMemo(() => {
+  const MENU = 'EHS경영 › 교육훈련 › 교육현황 (관리자)'
+  const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'TRAINING_ADMIN' || user?.role === 'EHS_ADMIN'
+  const getRoles = (): string[] => {
     const roles: string[] = ['guest']
-    if (user?.role === 'SYSTEM_ADMIN') roles.push('superAdmin')
-    if (user?.role) roles.push(user.role)
+    if (isAdmin) roles.push('superAdmin')
+    else if (user?.role) roles.push(user.role)
     return roles
-  }, [user])
+  }
   const { getLabel: getStatusLabel, codeList: statusCodes } = useCodeMap('TRAINING_APPLICATION_STATUS')
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -206,18 +207,18 @@ const TrainingStatusTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
           {detail.status === 'PENDING' && (
             <>
-              {canSee(BUTTON_MENU, 'PENDING', '반려', userRoles) && (
+              {canSee(MENU, 'PENDING', '반려', getRoles()) && (
                 <Button color="warning" variant="contained" onClick={() => setRejectDialog({ open: true, reason: '' })} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('training.reject', '반려')}</Button>
               )}
-              {canSee(BUTTON_MENU, 'PENDING', '승인', userRoles) && (
+              {canSee(MENU, 'PENDING', '승인', getRoles()) && (
                 <Button color="success" variant="contained" onClick={() => handleApprove(detail)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('training.approve', '승인')}</Button>
               )}
             </>
           )}
-          {detail.status === 'APPROVED' && canSee(BUTTON_MENU, 'APPROVED', '수료', userRoles) && (
+          {detail.status === 'APPROVED' && canSee(MENU, 'APPROVED', '수료', getRoles()) && (
             <Button color="success" variant="contained" onClick={() => handleComplete(detail)}>{t('training.complete', '수료')}</Button>
           )}
-          {(detail.status === 'PENDING' || detail.status === 'APPROVED') && canSee(BUTTON_MENU, detail.status, '신청 취소', userRoles) && (
+          {(detail.status === 'PENDING' || detail.status === 'APPROVED') && canSee(MENU, detail.status, '신청 취소', getRoles()) && (
             <Button color="error" variant="contained" onClick={() => handleCancel(detail)}>{t('training.cancelApplication', '신청 취소')}</Button>
           )}
         </Box>

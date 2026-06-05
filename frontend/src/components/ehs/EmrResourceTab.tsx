@@ -13,6 +13,8 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { emergencyResourceApi } from '../../api/emergencyExtendedApi'
 import { EmergencyResource, EmergencyResourceRequest } from '../../types/emergencyExtended.types'
 import useCodeMap from '../../hooks/useCodeMap'
@@ -35,10 +37,16 @@ const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 const emptyForm: EmergencyResourceRequest = { resourceName: '', resourceType: '' }
 
+const MENU = 'EHS경영 › 비상 훈련 › 자원·장비'
+
 const EmrResourceTab: React.FC = () => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = ['SYSTEM_ADMIN', 'EHS_ADMIN', 'TEAM_ADMIN'].includes(user?.role ?? '')
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const { codeList: resourceTypeCodes, getLabel: getResourceTypeLabel } = useCodeMap('RESOURCE_TYPE')
   const { codeList: resourceStatusCodes, getLabel: getResourceStatusLabel } = useCodeMap('RESOURCE_STATUS')
 
@@ -145,7 +153,9 @@ const EmrResourceTab: React.FC = () => {
             </FormControl>
             <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+          )}
         </Box>
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -158,7 +168,9 @@ const EmrResourceTab: React.FC = () => {
                 {resourceTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getResourceTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
-            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>
+            {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+              <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>{t('common.new')}</Button>
+            )}
           </Box>
         </Box>
 
@@ -305,8 +317,12 @@ const EmrResourceTab: React.FC = () => {
           </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
-          <Button variant="contained" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
-          <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
+          {canSee(MENU, selectedItem.status, '수정', myRoles) && (
+            <Button variant="contained" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
+          )}
+          {canSee(MENU, selectedItem.status, '삭제', myRoles) && (
+            <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
+          )}
         </Box>
       </Box>
     )

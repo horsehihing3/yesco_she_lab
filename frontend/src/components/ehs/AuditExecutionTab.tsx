@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
@@ -61,6 +62,21 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
   const { user: authUser } = useAuth()
 
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = variant === 'legal-compliance'
+    ? 'EHS경영 › 법규 대응 › 법규 대응 실시'
+    : 'EHS경영 › 내부 감사 › 감사 실시'
+  const getRoles = (item: { createdByUserId?: number | null; completionApproverUserId?: number | null; completionApproverName?: string | null; auditor?: string | null; auditorName?: string | null }): string[] => {
+    const roles: string[] = ['guest']
+    if (isAdmin) roles.push('superAdmin')
+    else if (authUser?.role) roles.push(authUser.role)
+    if (item.createdByUserId != null && authUser?.id != null && item.createdByUserId === authUser.id) roles.push('writer')
+    if ((item.completionApproverUserId != null && authUser?.id != null && item.completionApproverUserId === authUser.id) ||
+        (item.completionApproverName && authUser?.name && item.completionApproverName === authUser.name)) roles.push('completionApprover')
+    const auditorStr = item.auditorName || item.auditor || ''
+    if (auditorStr && authUser?.name && auditorStr.split(',').map((s: string) => s.trim()).includes(authUser.name)) roles.push('auditor')
+    return roles
+  }
   const canCompletionApprove = (a: { completionApproverUserId?: number | null; completionApproverName?: string | null }) => {
     if (isAdmin) return true
     if (a.completionApproverUserId && authUser?.id && a.completionApproverUserId === authUser.id) return true
@@ -360,9 +376,9 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           </Box>
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('audit.auditor')}</Typography>
-            <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.auditor || ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{(selectedItem as any).auditorName || selectedItem.auditor || ''}</Typography></Box>
             <Typography sx={labelSx}>{t('audit.auditDate', '감사일')}</Typography>
-            <Box sx={valSx}><Typography variant="body2">{selectedItem.auditDate || ''}</Typography></Box>
+            <Box sx={valSx}><Typography variant="body2">{selectedItem.auditDate || (selectedItem as any).auditStartDate || ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('audit.grade')}</Typography>
@@ -439,8 +455,8 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             [t('audit.auditName'), selectedItem.auditName],
             [t('audit.auditType'), getAuditTypeLabel(selectedItem.auditType)],
             [t('audit.targetDept'), selectedItem.targetDept],
-            [t('audit.auditor'), selectedItem.auditor],
-            [t('audit.auditDate', '감사일'), selectedItem.auditDate],
+            [t('audit.auditor'), (selectedItem as any).auditorName || selectedItem.auditor],
+            [t('audit.auditDate', '감사일'), selectedItem.auditDate || (selectedItem as any).auditStartDate],
             [t('audit.grade'), selectedItem.grade],
             [t('common.status'), getAuditStatusLabel(selectedItem.status)],
             ...(checklistTemplateId ? [
@@ -528,17 +544,25 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           </Button>
           {selectedItem.status !== 'COMPLETED' && (
             <>
-              <Button variant="contained" color="primary" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('common.save')}
-              </Button>
+              {!getRoles(selectedItem).includes('completionApprover') &&
+                (!['PREPARING', 'IN_PROGRESS', 'PENDING_CLOSE'].includes(selectedItem.status) ||
+                canSee(MENU, selectedItem.status, '저장 (감사 정보)', getRoles(selectedItem))) && (
+                <Button variant="contained" color="primary" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                  {t('common.save')}
+                </Button>
+              )}
               {/* 진행중 진입 — 진행 전 단계에서만 (작성자/일반 사용자도 노출) */}
-              {selectedItem.status !== 'IN_PROGRESS' && selectedItem.status !== 'PENDING_CLOSE' && (
+              {selectedItem.status !== 'IN_PROGRESS' && selectedItem.status !== 'PENDING_CLOSE' &&
+                !getRoles(selectedItem).includes('completionApprover') &&
+                canSee(MENU, 'PREPARING', '진행중 (상태 전환)', getRoles(selectedItem)) && (
                 <Button variant="contained" color="info" onClick={() => handleStatusChange('IN_PROGRESS')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                   {t('audit.startProgress', '진행중')}
                 </Button>
               )}
-              {/* 완료 결재 상신 — 진행 중 단계에서 결재 요청 (info 색상으로 연간 계획·KPI 현황과 톤 일치) */}
-              {selectedItem.status === 'IN_PROGRESS' && (
+              {/* 완료 결재 상신 — 진행 중 단계에서 결재 요청, 완료 승인자 제외 */}
+              {selectedItem.status === 'IN_PROGRESS' &&
+                !getRoles(selectedItem).includes('completionApprover') &&
+                canSee(MENU, 'IN_PROGRESS', '완료 결재 상신', getRoles(selectedItem)) && (
                 <Button variant="contained" color="info" onClick={() => handleStatusChange('PENDING_CLOSE')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                   {t('audit.completionSubmit', '완료 결재 상신')}
                 </Button>
@@ -546,14 +570,18 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
               {/* 반려 / 완료 승인 — PENDING_CLOSE 상태에서 지정된 완료 승인자/admin */}
               {selectedItem.status === 'PENDING_CLOSE' && canCompletionApprove(selectedItem) && (
                 <>
-                  <Button variant="contained" color="warning"
-                    onClick={() => setRejectDialogOpen(true)}
-                    sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                    {t('audit.reject', '반려')}
-                  </Button>
-                  <Button variant="contained" color="success" onClick={() => handleStatusChange('COMPLETED')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                    {t('audit.completionApprove', '완료 승인')}
-                  </Button>
+                  {canSee(MENU, 'PENDING_CLOSE', '반려', getRoles(selectedItem)) && (
+                    <Button variant="contained" color="warning"
+                      onClick={() => setRejectDialogOpen(true)}
+                      sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                      {t('audit.reject', '반려')}
+                    </Button>
+                  )}
+                  {canSee(MENU, 'PENDING_CLOSE', '완료 승인', getRoles(selectedItem)) && (
+                    <Button variant="contained" color="success" onClick={() => handleStatusChange('COMPLETED')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                      {t('audit.completionApprove', '완료 승인')}
+                    </Button>
+                  )}
                 </>
               )}
             </>
@@ -620,6 +648,27 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Button variant="outlined" onClick={() => setLogModalOpen(false)}>{t('common.close', '닫기')}</Button>
           </DialogActions>
         </Dialog>
+
+        {/* 완료 결재 반려 사유 입력 다이얼로그 */}
+        <RejectReasonDialog
+          open={rejectDialogOpen}
+          stage={t('audit.completionReject', '완료 결재 반려')}
+          onClose={() => setRejectDialogOpen(false)}
+          onConfirm={async (reason) => {
+            if (!selectedItem) return
+            try {
+              await auditApi.reject(selectedItem.id, reason)
+              const updated = await auditApi.getById(selectedItem.id)
+              setSelectedItem(updated)
+              invalidate()
+              refetchLogs()
+              setRejectDialogOpen(false)
+              showSuccess(t('audit.rejected', '반려되었습니다.'))
+            } catch (e: any) {
+              showError(e?.response?.data?.message || t('common.error'))
+            }
+          }}
+        />
       </Box>
     )
   }
@@ -860,7 +909,10 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           </FormControl>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+        {/* 신규 등록 비활성 — 감사 실시는 계획 승인 시 자동 생성됨. 수동 등록 필요 시 false → canSee 조건으로 복구 */}
+        {false && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+        )}
       </Box>
       {/* Mobile Search */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -876,7 +928,9 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             </Select>
           </FormControl>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+          {false && (
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
+          )}
         </Box>
       </Box>
 

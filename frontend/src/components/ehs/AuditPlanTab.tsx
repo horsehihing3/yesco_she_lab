@@ -3,6 +3,7 @@ import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import ListSearchBar from '../common/ListSearchBar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem,
@@ -20,6 +21,7 @@ import { useAuth } from '../../context/AuthContext'
 import { fetchTeamLeader } from '../../api/approvalApi'
 import { auditPlanApi as defaultAuditPlanApi } from '../../api/auditApi'
 import { legalCompliancePlanApi } from '../../api/legalComplianceApi'
+import { fetchTeamLeader } from '../../api/approvalApi'
 import { fetchSafetyTemplates, fetchSafetyTemplateDetail } from '../../api/safetyChecklistApi'
 import { SafetyChecklistTemplate, SafetyChecklistCategory, SafetyChecklistItem } from '../../types/safetyChecklist.types'
 import { AuditPlan, AuditPlanRequest, AuditType } from '../../types/audit.types'
@@ -135,6 +137,20 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
   const { user } = useAuth()
   const { codeList: auditTypeCodes, getLabel: getAuditTypeLabel } = useCodeMap('AUDIT_TYPE')
   const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'AUDIT_ADMIN' || user?.role === 'EHS_ADMIN'
+  const { canSee } = useButtonRules()
+  const MENU = variant === 'legal-compliance'
+    ? 'EHS경영 › 법규 대응 › 법규 대응 계획'
+    : 'EHS경영 › 내부 감사 › 감사 계획'
+  const getRoles = (item: { createdByUserId?: number | null; planApproverUserId?: number | null; planApproverName?: string | null; auditorName?: string | null }): string[] => {
+    const roles: string[] = ['guest']
+    if (isAdmin) roles.push('superAdmin')
+    else if (user?.role) roles.push(user.role)
+    if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
+    if ((item.planApproverUserId != null && user?.id != null && item.planApproverUserId === user.id) ||
+        (item.planApproverName && user?.name && item.planApproverName === user.name)) roles.push('planApprover')
+    if (item.auditorName && user?.name && item.auditorName.split(',').map(s => s.trim()).includes(user.name)) roles.push('auditor')
+    return roles
+  }
   // 계획 승인 권한: admin 또는 지정된 plan_approver 본인만
   const canApprovePlan = (p: { planApproverUserId?: number | null; planApproverName?: string | null }) => {
     if (isAdmin) return true
@@ -373,7 +389,9 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             </FormControl>
             <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+          {canSee(MENU, 'LIST', '신규 등록', getRoles({})) && (
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+          )}
         </Box>
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -387,7 +405,9 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Select>
             </FormControl>
             <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
-            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+            {canSee(MENU, 'LIST', '신규 등록', getRoles({})) && (
+              <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+            )}
           </Box>
         </Box>
 
@@ -701,7 +721,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             {t('common.list')}
           </Button>
           {/* 계획 결재 상신 — 작성중(PLAN) 상태에서 작성자/일반 사용자가 결재 요청 */}
-          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && (
+          {canSee(MENU, 'PLAN', '계획 결재 상신', getRoles(selectedItem)) && !getRoles(selectedItem).includes('planApprover') && !selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && (
             <Button variant="contained" color="info"
               onClick={handleSubmit}
               sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
@@ -711,23 +731,31 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           {/* 계획 반려 / 계획 승인 — PENDING_APPROVAL 상태 + 지정된 승인자/admin */}
           {!selectedItem.approved && selectedItem.status === 'PENDING_APPROVAL' && canApprovePlan(selectedItem) && (
             <>
-              <Button variant="contained" color="warning" onClick={handleReject} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('audit.reject', '반려')}
-              </Button>
-              <Button variant="contained" color="success" onClick={handleApprove} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('audit.planApprove', '계획 승인')}
-              </Button>
+              {canSee(MENU, 'PENDING_APPROVAL', '반려', getRoles(selectedItem)) && (
+                <Button variant="contained" color="warning" onClick={handleReject} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                  {t('audit.reject', '반려')}
+                </Button>
+              )}
+              {canSee(MENU, 'PENDING_APPROVAL', '계획 승인', getRoles(selectedItem)) && (
+                <Button variant="contained" color="success" onClick={handleApprove} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                  {t('audit.planApprove', '계획 승인')}
+                </Button>
+              )}
             </>
           )}
-          {/* 수정 / 삭제 — 작성중(PLAN) 상태에서만 (결재 진행/승인 후 차단) */}
-          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && (
+          {/* 수정 / 삭제 — 작성중(PLAN) 상태에서만, 계획 승인자 제외 */}
+          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && !getRoles(selectedItem).includes('planApprover') && (
             <>
-              <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('common.edit')}
-              </Button>
-              <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('common.delete')}
-              </Button>
+              {canSee(MENU, 'PLAN', '수정', getRoles(selectedItem)) && (
+                <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                  {t('common.edit')}
+                </Button>
+              )}
+              {canSee(MENU, 'PLAN', '삭제', getRoles(selectedItem)) && (
+                <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                  {t('common.delete')}
+                </Button>
+              )}
             </>
           )}
         </Box>
@@ -995,7 +1023,9 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
-          <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
+          {canSee(MENU, 'PLAN', '저장', getRoles(viewMode === 'edit' ? (selectedItem ?? form) : form)) && (
+            <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
+          )}
         </Box>
         <UserSelectModal
           open={showAuditorModal}
