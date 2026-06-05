@@ -125,14 +125,14 @@ const OdExposureTab: React.FC = () => {
             <FormRow>
               <FormLabel>분류</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.factorClass || ''} onChange={e => setForm({ ...form, factorClass: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{CLASSES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{CLASSES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
               <FormLabel required>유해인자명</FormLabel>
               <FormCell><TextField fullWidth size="small" value={form.factorName || ''} onChange={e => setForm({ ...form, factorName: e.target.value })} /></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>노출 부서</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.dept || ''} onChange={e => setForm({ ...form, dept: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{DEPTS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{DEPTS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
               <FormLabel>공정명</FormLabel>
               <FormCell><TextField fullWidth size="small" value={form.processName || ''} onChange={e => setForm({ ...form, processName: e.target.value })} /></FormCell>
             </FormRow>
@@ -153,7 +153,7 @@ const OdExposureTab: React.FC = () => {
               <FormCell borderRight><NumberField fullWidth size="small" value={form.workerCount ?? null} onChange={v => setForm({ ...form, workerCount: v ?? 0 })} min={0} /></FormCell>
               <FormLabel>상태</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.status || 'ok'} onChange={e => setForm({ ...form, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{STATUSES.map(s => <MenuItem key={s.code} value={s.code}>{s.label}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{STATUSES.map(s => <MenuItem key={s.code} value={s.code}>{s.label}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow last>
               <FormLabel>개선 내용</FormLabel>

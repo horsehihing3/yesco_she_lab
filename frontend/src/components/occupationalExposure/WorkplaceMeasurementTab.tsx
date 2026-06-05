@@ -812,7 +812,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                     size="small"
                     fullWidth
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     {years.map((y) => (
                       <MenuItem key={y} value={y}>{y}</MenuItem>
                     ))}
@@ -840,7 +840,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                     fullWidth
                     error={!!fieldState.error}
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     <MenuItem value="FIRST">{halfLabels.FIRST}</MenuItem>
                     <MenuItem value="SECOND">{halfLabels.SECOND}</MenuItem>
                   </Select>
@@ -910,7 +910,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                     size="small"
                     fullWidth
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     {statusCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -934,7 +934,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                     fullWidth
                     displayEmpty
                   >
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     {(['PASS', 'FAIL', 'PARTIAL'] as OverallMeasurementResult[]).map((r) => (
                       <MenuItem key={r} value={r}>{resultLabels[r]}</MenuItem>
                     ))}
@@ -965,7 +965,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
             </Typography>
             <Controller name="measurementYear" control={control} rules={{ required: true }} render={({ field }) => (
               <Select value={field.value || new Date().getFullYear()} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {years.map((y) => (<MenuItem key={y} value={y}>{y}</MenuItem>))}
               </Select>
             )} />
@@ -976,7 +976,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
             </Typography>
             <Controller name="measurementHalf" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
               <Select value={field.value || 'FIRST'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="FIRST">{halfLabels.FIRST}</MenuItem>
                 <MenuItem value="SECOND">{halfLabels.SECOND}</MenuItem>
               </Select>
@@ -1020,7 +1020,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
             </Typography>
             <Controller name="status" control={control} render={({ field }) => (
               <Select value={field.value || 'PLANNED'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {(['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'OVERDUE'] as MeasurementStatus[]).map((s) => (
                   <MenuItem key={s} value={s}>{statusLabels[s]}</MenuItem>
                 ))}
@@ -1033,7 +1033,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
             </Typography>
             <Controller name="overallResult" control={control} render={({ field }) => (
               <Select value={field.value || ''} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {(['PASS', 'FAIL', 'PARTIAL'] as OverallMeasurementResult[]).map((r) => (
                   <MenuItem key={r} value={r}>{resultLabels[r]}</MenuItem>
                 ))}
@@ -1099,7 +1099,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           size="small"
                           fullWidth
                          displayEmpty>
-                          <MenuItem value="" disabled>선택</MenuItem>
+                          <MenuItem value="" disabled>선택하세요</MenuItem>
                           {factorTypeCodes.map((ft) => (
                             <MenuItem key={ft.code} value={ft.code}>{getLocalizedName(ft)}</MenuItem>
                           ))}
@@ -1138,7 +1138,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           fullWidth
                           displayEmpty
                         >
-                          <MenuItem value="" disabled>선택</MenuItem>
+                          <MenuItem value="" disabled>선택하세요</MenuItem>
                           {unitCodes.map((c) => <MenuItem key={c.code} value={c.codeValue || c.code}>{getUnitLabel(c.code)}</MenuItem>)}
                         </Select>
                       </TableCell>
@@ -1157,7 +1157,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           size="small"
                           fullWidth
                          displayEmpty>
-                          <MenuItem value="" disabled>선택</MenuItem>
+                          <MenuItem value="" disabled>선택하세요</MenuItem>
                           {resultStatusCodes.map((rs) => (
                             <MenuItem key={rs.code} value={rs.code}>{getLocalizedName(rs)}</MenuItem>
                           ))}
@@ -1232,7 +1232,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                       size="small"
                       fullWidth
                      displayEmpty>
-                      <MenuItem value="" disabled>선택</MenuItem>
+                      <MenuItem value="" disabled>선택하세요</MenuItem>
                       {factorTypeCodes.map((ft) => (
                         <MenuItem key={ft.code} value={ft.code}>{getLocalizedName(ft)}</MenuItem>
                       ))}
@@ -1266,7 +1266,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                         fullWidth
                         displayEmpty
                       >
-                        <MenuItem value="" disabled>선택</MenuItem>
+                        <MenuItem value="" disabled>선택하세요</MenuItem>
                         {unitCodes.map((c) => <MenuItem key={c.code} value={c.codeValue || c.code}>{getUnitLabel(c.code)}</MenuItem>)}
                       </Select>
                     </Box>
@@ -1300,7 +1300,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                         size="small"
                         fullWidth
                        displayEmpty>
-                        <MenuItem value="" disabled>선택</MenuItem>
+                        <MenuItem value="" disabled>선택하세요</MenuItem>
                         {resultStatusCodes.map((rs) => (
                           <MenuItem key={rs.code} value={rs.code}>{getLocalizedName(rs)}</MenuItem>
                         ))}

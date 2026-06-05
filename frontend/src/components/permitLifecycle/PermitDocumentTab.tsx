@@ -183,14 +183,14 @@ const PermitDocumentTab: React.FC = () => {
               <FormLabel required>문서 종류</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.docType || ''} onChange={(e) => setForm({ ...form, docType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {DOC_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>분야</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.category || ''} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
                 </TextField>
               </FormCell>

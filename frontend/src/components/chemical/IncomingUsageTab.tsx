@@ -127,7 +127,7 @@ const IncomingUsageTab: React.FC = () => {
       {/* Category Select */}
       <FormControl size="small" sx={{ mb: 2, minWidth: 200 }}>
         <Select value={activeTab} onChange={(e) => setActiveTab(Number(e.target.value))} displayEmpty>
-          <MenuItem value="" disabled>선택</MenuItem>
+          <MenuItem value="" disabled>선택하세요</MenuItem>
           <MenuItem value={0}>{t('chem.incoming.tabIncoming')}</MenuItem>
           <MenuItem value={1}>{t('chem.incoming.tabUsage')}</MenuItem>
         </Select>

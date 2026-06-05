@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Button, TextField,
+  TableHead, TableRow, Button,
   Chip, CircularProgress, Alert, LinearProgress,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'

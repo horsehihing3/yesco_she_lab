@@ -165,14 +165,14 @@ const PermitInspectionTab: React.FC = () => {
               <FormLabel>점검 구분</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.inspectionType || ''} onChange={(e) => setForm({ ...form, inspectionType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel required>점검 주기</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.frequency || ''} onChange={(e) => setForm({ ...form, frequency: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {FREQS.map((f) => <MenuItem key={f} value={f}>{f}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -197,7 +197,7 @@ const PermitInspectionTab: React.FC = () => {
               <FormLabel>최근 결과</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.lastResult || ''} onChange={(e) => setForm({ ...form, lastResult: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {RESULTS.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
                 </TextField>
               </FormCell>

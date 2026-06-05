@@ -162,7 +162,7 @@ const PermitRegistryTab: React.FC = () => {
               <FormLabel required>분야</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.category || ''} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
                 </TextField>
               </FormCell>

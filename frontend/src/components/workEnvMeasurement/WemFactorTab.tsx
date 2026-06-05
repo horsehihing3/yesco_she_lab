@@ -485,7 +485,7 @@ const WemFactorTab: React.FC = () => {
     { label: t('wem.casNumber'), node: <TextField size="small" fullWidth value={formData.casNumber || ''} onChange={(e) => setFormData({ ...formData, casNumber: e.target.value })} /> },
     { label: t('wem.factorType'), node: (
       <Select size="small" fullWidth value={formData.factorType || ''} onChange={(e) => setFormData({ ...formData, factorType: e.target.value })} displayEmpty>
-        <MenuItem value="" disabled>선택</MenuItem>
+        <MenuItem value="" disabled>선택하세요</MenuItem>
         {hazardTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getHazardTypeLabel(c.code)}</MenuItem>)}
       </Select>
     ) },

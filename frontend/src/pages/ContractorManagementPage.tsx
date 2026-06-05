@@ -773,14 +773,14 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Typography sx={labelSx}>작업유형</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" displayEmpty value={form.workType || ''} onChange={(e) => setForm({ ...form, workType: e.target.value })}>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {permitTypes.map((c) => <MenuItem key={c.code} value={c.code}>{getPermitTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
             <Typography sx={labelSx}>위험등급</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" displayEmpty value={form.riskLevel || ''} onChange={(e) => setForm({ ...form, riskLevel: e.target.value })}>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {riskLevels.map((c) => <MenuItem key={c.code} value={c.code}>{getRiskLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -965,7 +965,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Typography sx={labelSx}>체크리스트<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-                <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
                 {templates.filter(t => (t as SafetyChecklistTemplate & { categoryType?: string }).categoryType === 'CONTRACTOR')
                   .map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
               </Select>
@@ -990,7 +990,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작업유형</Typography>
             <FormControl fullWidth size="small">
               <Select displayEmpty value={form.workType || ''} onChange={(e) => setForm({ ...form, workType: e.target.value })}>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {permitTypes.map((c) => <MenuItem key={c.code} value={c.code}>{getPermitTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -999,7 +999,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>위험등급</Typography>
             <FormControl fullWidth size="small">
               <Select displayEmpty value={form.riskLevel || ''} onChange={(e) => setForm({ ...form, riskLevel: e.target.value })}>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {riskLevels.map((c) => <MenuItem key={c.code} value={c.code}>{getRiskLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -1167,7 +1167,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>체크리스트<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <FormControl fullWidth size="small">
               <Select displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-                <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
                 {templates.filter(t => (t as SafetyChecklistTemplate & { categoryType?: string }).categoryType === 'CONTRACTOR')
                   .map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
               </Select>

@@ -199,14 +199,14 @@ const RadAccidentTab: React.FC = () => {
               <FormCell borderRight><DatePickerField value={accForm.accidentDate || null} onChange={d => setAccForm({ ...accForm, accidentDate: d || '' })} /></FormCell>
               <FormLabel>유형</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={accForm.accidentType || ''} onChange={e => setAccForm({ ...accForm, accidentType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ACC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ACC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>장소</FormLabel>
               <FormCell borderRight><TextField fullWidth size="small" value={accForm.location || ''} onChange={e => setAccForm({ ...accForm, location: e.target.value })} /></FormCell>
               <FormLabel>상태</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={accForm.status || ''} onChange={e => setAccForm({ ...accForm, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ACC_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ACC_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>원안위 보고</FormLabel>

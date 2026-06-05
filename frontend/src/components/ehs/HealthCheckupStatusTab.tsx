@@ -79,7 +79,7 @@ const HealthCheckupStatusTab: React.FC<Props> = ({ allowedTypes }) => {
         <Typography variant="body2">{t('common.year', '연도')}:</Typography>
         <FormControl size="small" sx={{ minWidth: 100 }}>
           <Select value={String(year)} onChange={(e) => setYear(parseInt(e.target.value, 10))} displayEmpty>
-            <MenuItem value="" disabled>선택</MenuItem>
+            <MenuItem value="" disabled>선택하세요</MenuItem>
             {[currentYear, currentYear - 1, currentYear - 2].map(y => (
               <MenuItem key={y} value={String(y)}>{y}</MenuItem>
             ))}

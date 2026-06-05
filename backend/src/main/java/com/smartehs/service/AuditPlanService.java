@@ -150,7 +150,6 @@ public class AuditPlanService {
                 .auditName(existing.getAuditName())
                 .auditType(existing.getAuditType())
                 .targetDept(existing.getTargetDept())
-                .targetSite(existing.getTargetSite())
                 .auditorName(existing.getAuditorName())
                 .auditorDept(existing.getAuditorDept())
                 .auditStartDate(existing.getPlanStartDate())

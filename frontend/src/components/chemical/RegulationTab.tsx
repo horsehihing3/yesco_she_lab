@@ -193,7 +193,7 @@ const RegulationTab: React.FC = () => {
             <Typography sx={labelSx}>{t('chem.erp.status')}</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="ACTIVE">{t('chem.reg.statusActive')}</MenuItem>
                 <MenuItem value="REVIEW_NEEDED">{t('chem.reg.statusReviewNeeded')}</MenuItem>
                 <MenuItem value="EXPIRED">{t('chem.reg.statusExpired')}</MenuItem>
@@ -236,7 +236,7 @@ const RegulationTab: React.FC = () => {
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.erp.status')}</Typography>
             <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               <MenuItem value="ACTIVE">{t('chem.reg.statusActive')}</MenuItem>
               <MenuItem value="REVIEW_NEEDED">{t('chem.reg.statusReviewNeeded')}</MenuItem>
               <MenuItem value="EXPIRED">{t('chem.reg.statusExpired')}</MenuItem>

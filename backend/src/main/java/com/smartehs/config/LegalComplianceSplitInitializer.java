@@ -24,7 +24,6 @@ public class LegalComplianceSplitInitializer implements CommandLineRunner {
             createPlan();
             createExec();
             createFinding();
-            createCorrective();
             createLog();
             createLogItem();
             log.info("LegalComplianceSplitInitializer 완료");
@@ -63,20 +62,6 @@ public class LegalComplianceSplitInitializer implements CommandLineRunner {
         jdbcTemplate.execute(
             "CREATE INDEX IX_lc_finding_exec_id ON tb_legal_compliance_finding(audit_id)");
         log.info("tb_legal_compliance_finding 생성 완료");
-    }
-
-    private void createCorrective() {
-        if (tableExists("tb_legal_compliance_corrective")) return;
-        jdbcTemplate.execute(
-            "SELECT c.* INTO tb_legal_compliance_corrective FROM tb_audit_corrective c " +
-            "WHERE c.audit_id IN (SELECT id FROM tb_audit WHERE audit_type = 'LEGAL_COMPLIANCE')");
-        jdbcTemplate.execute(
-            "ALTER TABLE tb_legal_compliance_corrective ADD CONSTRAINT PK_lc_corrective PRIMARY KEY (id)");
-        jdbcTemplate.execute(
-            "CREATE INDEX IX_lc_corrective_finding_id ON tb_legal_compliance_corrective(finding_id)");
-        jdbcTemplate.execute(
-            "CREATE INDEX IX_lc_corrective_exec_id ON tb_legal_compliance_corrective(audit_id)");
-        log.info("tb_legal_compliance_corrective 생성 완료");
     }
 
     private void createLog() {

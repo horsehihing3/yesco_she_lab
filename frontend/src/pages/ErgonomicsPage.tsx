@@ -510,7 +510,7 @@ const ErgonomicsPage: React.FC = () => {
           <Typography sx={labelSx}>{t('ergo.improveStatus')}</Typography>
           <Box sx={valSx}>
             <Select fullWidth size="small" value={form.improvementStatus || 'PENDING'} onChange={(e) => setForm({ ...form, improvementStatus: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               <MenuItem value="PENDING">{t('ergo.pending')}</MenuItem>
               <MenuItem value="IN_PROGRESS">{t('ergo.in_progress')}</MenuItem>
               <MenuItem value="COMPLETED">{t('ergo.completed')}</MenuItem>
@@ -627,7 +627,7 @@ const ErgonomicsPage: React.FC = () => {
           </Typography>
           <FormControl fullWidth size="small">
             <Select value={form.improvementStatus || 'PENDING'} onChange={(e) => setForm({ ...form, improvementStatus: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               <MenuItem value="PENDING">{t('ergo.pending')}</MenuItem>
               <MenuItem value="IN_PROGRESS">{t('ergo.in_progress')}</MenuItem>
               <MenuItem value="COMPLETED">{t('ergo.completed')}</MenuItem>

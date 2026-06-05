@@ -922,7 +922,7 @@ const SafetyEducationTab: React.FC = () => {
                     fullWidth
                     error={!!fieldState.error}
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     {educationTypeCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -1047,7 +1047,7 @@ const SafetyEducationTab: React.FC = () => {
                     size="small"
                     fullWidth
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     {statusCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -1084,7 +1084,7 @@ const SafetyEducationTab: React.FC = () => {
             </Typography>
             <Controller name="educationType" control={control} rules={{ required: true }} render={({ field, fieldState }) => (
               <Select value={field.value || 'REGULAR'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth error={!!fieldState.error} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {educationTypeCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}
@@ -1167,7 +1167,7 @@ const SafetyEducationTab: React.FC = () => {
             </Typography>
             <Controller name="status" control={control} render={({ field }) => (
               <Select value={field.value || 'PLANNED'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {statusCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}

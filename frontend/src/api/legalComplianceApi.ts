@@ -10,7 +10,6 @@ import type {
   AuditPlan, AuditPlanRequest,
   Audit, AuditRequest, AuditGrade,
   AuditFinding, AuditFindingRequest,
-  AuditCorrective, AuditCorrectiveRequest,
   AuditLogEntry,
 } from '../types/audit.types'
 
@@ -232,28 +231,3 @@ export const legalComplianceFindingApi = {
   },
 }
 
-export const legalComplianceCorrectiveApi = {
-  getAll: async (page = 0, size = 20) => {
-    const res = await axiosInstance.get<ApiResponse<PageResponse<AuditCorrective>>>('/legal-compliance-corrective', { params: { page, size, sort: 'createdAt,desc' } })
-    return res.data.data
-  },
-  getByAudit: async (auditId: number, page = 0, size = 20) => {
-    const res = await axiosInstance.get<ApiResponse<PageResponse<AuditCorrective>>>(`/legal-compliance-corrective/audit/${auditId}`, { params: { page, size } })
-    return res.data.data
-  },
-  getByStatus: async (status: string, page = 0, size = 20) => {
-    const res = await axiosInstance.get<ApiResponse<PageResponse<AuditCorrective>>>(`/legal-compliance-corrective/status/${status}`, { params: { page, size } })
-    return res.data.data
-  },
-  create: async (data: AuditCorrectiveRequest) => {
-    const res = await axiosInstance.post<ApiResponse<AuditCorrective>>('/legal-compliance-corrective', data)
-    return res.data.data
-  },
-  update: async (id: number, data: AuditCorrectiveRequest) => {
-    const res = await axiosInstance.put<ApiResponse<AuditCorrective>>(`/legal-compliance-corrective/${id}`, data)
-    return res.data.data
-  },
-  delete: async (id: number) => {
-    await axiosInstance.delete(`/legal-compliance-corrective/${id}`)
-  },
-}

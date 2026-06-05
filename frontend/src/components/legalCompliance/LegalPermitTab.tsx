@@ -203,14 +203,14 @@ const LegalPermitTab: React.FC = () => {
               <FormLabel>인허가 유형</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.permitType || ''} onChange={e => setForm({ ...form, permitType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {PERMIT_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>분류</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.category || ''} onChange={e => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -249,7 +249,7 @@ const LegalPermitTab: React.FC = () => {
               <FormLabel>갱신 주기</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.renewalPeriod || ''} onChange={e => setForm({ ...form, renewalPeriod: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {RENEWAL_PERIODS.map(p => <MenuItem key={p} value={p}>{p}</MenuItem>)}
                 </TextField>
               </FormCell>

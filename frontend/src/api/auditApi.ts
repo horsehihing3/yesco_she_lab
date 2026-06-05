@@ -6,7 +6,6 @@ import {
   AuditChecklistTemplate, AuditChecklistTemplateRequest,
   AuditChecklistResult, AuditChecklistResultRequest,
   AuditFinding, AuditFindingRequest,
-  AuditCorrective, AuditCorrectiveRequest,
   AuditLogEntry,
 } from '../types/audit.types'
 
@@ -172,32 +171,3 @@ export const auditFindingApi = {
   },
 }
 
-export const auditCorrectiveApi = {
-  getAll: async (page = 0, size = 20) => {
-    const res = await axiosInstance.get<ApiResponse<PageResponse<AuditCorrective>>>('/audit-corrective', { params: { page, size, sort: 'createdAt,desc' } })
-    return res.data.data
-  },
-  getByAudit: async (auditId: number, page = 0, size = 20) => {
-    const res = await axiosInstance.get<ApiResponse<PageResponse<AuditCorrective>>>(`/audit-corrective/audit/${auditId}`, { params: { page, size } })
-    return res.data.data
-  },
-  getByStatus: async (status: string, page = 0, size = 20) => {
-    const res = await axiosInstance.get<ApiResponse<PageResponse<AuditCorrective>>>(`/audit-corrective/status/${status}`, { params: { page, size } })
-    return res.data.data
-  },
-  create: async (data: AuditCorrectiveRequest) => {
-    const res = await axiosInstance.post<ApiResponse<AuditCorrective>>('/audit-corrective', data)
-    return res.data.data
-  },
-  update: async (id: number, data: AuditCorrectiveRequest) => {
-    const res = await axiosInstance.put<ApiResponse<AuditCorrective>>(`/audit-corrective/${id}`, data)
-    return res.data.data
-  },
-  updateCompletion: async (id: number, completionRate: number) => {
-    const res = await axiosInstance.patch<ApiResponse<AuditCorrective>>(`/audit-corrective/${id}/completion`, { completionRate })
-    return res.data.data
-  },
-  delete: async (id: number) => {
-    await axiosInstance.delete(`/audit-corrective/${id}`)
-  },
-}

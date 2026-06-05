@@ -17,7 +17,6 @@ public class LegalComplianceExec {
     private String auditName;
     private String auditType;
     private String targetDept;
-    private String targetSite;
     private String auditorName;
     private String auditorDept;
     private LocalDate auditStartDate;

@@ -231,13 +231,14 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
     setSelectedItem(target)
     setForm({
       auditName: target.auditName, auditType: target.auditType,
-      targetDept: target.targetDept, targetSite: target.targetSite,
+      targetDept: target.targetDept,
       auditorName: target.auditorName || target.auditor || '',
       auditor: target.auditorName || target.auditor || '',
       auditorEmail: target.auditorEmail,
       personInCharge: target.personInCharge,
       planStartDate: target.planStartDate, planEndDate: target.planEndDate,
-      purpose: target.purpose, checklistTemplateId: target.checklistTemplateId,
+      purpose: target.purpose, notes: target.notes,
+      checklistTemplateId: target.checklistTemplateId,
       planApproverUserId: target.planApproverUserId ?? null,
       planApproverTeam: target.planApproverTeam || '',
       planApproverPosition: target.planApproverPosition || '',
@@ -493,14 +494,9 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.rejectReason}</Typography>
             </Box>
           )}
-          {/* PC Detail */}
+          {/* PC Detail — 흐름: 제목/유형 → 부서/상태 → 목적 → [도메인필드] → 비고 → 작성자/부서/생성일 → 수정자/부서/수정일 → 계획승인자/완료승인자 → 체크리스트 */}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={labelSx}>{t('audit.planId')}</Typography>
-              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2" fontFamily="monospace">{selectedItem.planId}</Typography>
-              </Box>
-            </Box>
+            {/* 제목 | 유형 */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={labelSx}>{t('audit.auditName')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
@@ -511,16 +507,29 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                 <Typography variant="body2">{getAuditTypeLabel(selectedItem.auditType)}</Typography>
               </Box>
             </Box>
+            {/* 대상 부서 | 상태 */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={labelSx}>{t('audit.targetDept')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{selectedItem.targetDept || ''}</Typography>
               </Box>
-              <Typography sx={labelSx}>{t('audit.targetSite')}</Typography>
+              <Typography sx={labelSx}>{t('common.status')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{selectedItem.targetSite || ''}</Typography>
+                {(() => {
+                  if (selectedItem.approved) return <Chip label={t('audit.planApprove', '계획 승인')} color="success" size="small" />
+                  if (selectedItem.status === 'PENDING_APPROVAL') return <Chip label={t('audit.submitApproval', '계획 결재 상신')} color="info" size="small" />
+                  return <Chip label={t('audit.statusDraft', '작성중')} color="default" size="small" />
+                })()}
               </Box>
             </Box>
+            {/* 계획번호 (풀폭) */}
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={labelSx}>{t('audit.planId')}</Typography>
+              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2" fontFamily="monospace">{selectedItem.planId || ''}</Typography>
+              </Box>
+            </Box>
+            {/* 감사원 (풀폭) */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={labelSx}>{t('audit.auditor')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -534,28 +543,60 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                 })()}
               </Box>
             </Box>
+            {/* 시작일 | 종료일 — 감사원 아래 */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={labelSx}>{t('audit.planDate')}</Typography>
+              <Typography sx={labelSx}>{t('audit.planStartDate')}</Typography>
+              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2" fontFamily="monospace">{selectedItem.planStartDate || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>{t('audit.planEndDate')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2" fontFamily="monospace">{selectedItem.planStartDate || ''} ~ {selectedItem.planEndDate || ''}</Typography>
+                <Typography variant="body2" fontFamily="monospace">{selectedItem.planEndDate || ''}</Typography>
               </Box>
             </Box>
+            {/* 목적 */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={labelSx}>{t('audit.purpose')}</Typography>
               <Box sx={valueSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.purpose || ''}</Typography>
               </Box>
             </Box>
+            {/* 비고 — 목적 바로 아래, 풀폭 */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={labelSx}>{t('audit.checklist', '체크리스트')}</Typography>
+              <Typography sx={labelSx}>{t('common.notes', '비고')}</Typography>
+              <Box sx={valueSx}>
+                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.notes || ''}</Typography>
+              </Box>
+            </Box>
+            {/* 작성자 | 생성일 */}
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={labelSx}>{t('audit.creator', '작성자')}</Typography>
+              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2">{selectedItem.createdByName || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>{t('common.createdAt', '생성일')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">
-                  {selectedItem.checklistTemplateId
-                    ? auditChecklists.find((t: SafetyChecklistTemplate) => t.id === selectedItem.checklistTemplateId)?.templateName || ''
-                    : t('audit.noChecklist', '미연결')}
+                <Typography variant="body2" fontFamily="monospace">
+                  {selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
                 </Typography>
               </Box>
             </Box>
+            {/* 수정자 | 수정일 — 수정 이력 있을 때만(modifiedAt이 createdAt과 다른 경우) 표시 */}
+            {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
+                <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body2">{(selectedItem as any).modifiedByName || ''}</Typography>
+                </Box>
+                <Typography sx={labelSx}>{t('common.modifiedAt', '수정일')}</Typography>
+                <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body2" fontFamily="monospace">
+                    {selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+            {/* 계획승인자 | 완료승인자 */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={labelSx}>{t('audit.planApprover', '계획 승인자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
@@ -584,38 +625,54 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                 </Typography>
               </Box>
             </Box>
+            {/* 체크리스트 */}
             <Box sx={{ display: 'flex' }}>
-              <Typography sx={labelSx}>{t('audit.creator', '작성자')}</Typography>
-              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{selectedItem.createdByName || ''}</Typography>
-              </Box>
-              <Typography sx={labelSx}>{t('audit.createdAt', '작성일시')}</Typography>
+              <Typography sx={labelSx}>{t('audit.checklist', '체크리스트')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2" fontFamily="monospace">
-                  {selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+                <Typography variant="body2">
+                  {selectedItem.checklistTemplateId
+                    ? auditChecklists.find((t: SafetyChecklistTemplate) => t.id === selectedItem.checklistTemplateId)?.templateName || ''
+                    : t('audit.noChecklist', '미연결')}
                 </Typography>
               </Box>
             </Box>
           </Box>
-          {/* Mobile Detail */}
+          {/* Mobile Detail — PC 와 동일한 흐름 순서 */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 3 }}>
-            {[
-              [t('audit.planId'), selectedItem.planId],
+            {([
               [t('audit.auditName'), selectedItem.auditName],
               [t('audit.auditType'), getAuditTypeLabel(selectedItem.auditType)],
               [t('audit.targetDept'), selectedItem.targetDept || ''],
-              [t('audit.targetSite'), selectedItem.targetSite || ''],
+              [t('common.status'), (() => {
+                if (selectedItem.approved) return t('audit.planApprove', '계획 승인')
+                if (selectedItem.status === 'PENDING_APPROVAL') return t('audit.submitApproval', '계획 결재 상신')
+                return t('audit.statusDraft', '작성중')
+              })()],
+              [t('audit.planId'), selectedItem.planId],
               [t('audit.auditor'), selectedItem.auditor || ''],
-              [t('audit.personInCharge', '담당자'), selectedItem.personInCharge || ''],
-              [t('audit.planDate'), `${selectedItem.planStartDate || ''} ~ ${selectedItem.planEndDate || ''}`],
+              [t('audit.planStartDate'), selectedItem.planStartDate || ''],
+              [t('audit.planEndDate'), selectedItem.planEndDate || ''],
               [t('audit.purpose'), selectedItem.purpose || ''],
+              [t('common.notes', '비고'), selectedItem.notes || ''],
+              [t('audit.creator', '작성자'), selectedItem.createdByName || ''],
+              [t('common.createdAt', '생성일'),
+                selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
+              ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt
+                ? [
+                    [t('common.modifier', '수정자'), (selectedItem as any).modifiedByName || ''],
+                    [t('common.modifiedAt', '수정일'),
+                      selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+                  ] as Array<[string, string]>
+                : []),
               [t('audit.planApprover', '계획 승인자'),
                 selectedItem.planApproverName
                   ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
                   : ''],
-              [t('audit.planApprovedAt', '계획 승인일시'),
-                selectedItem.planApprovedAt ? selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16) : ''],
-            ].map(([label, value], i) => (
+              [t('audit.completionApprover', '완료 승인자'),
+                selectedItem.completionApproverName
+                  ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
+                  : ''],
+            ] as Array<[string, string]>).map(([label, value], i) => (
               <Box key={i}>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography>
                 <Typography variant="body2" sx={{ px: 1.5, py: 0.5, whiteSpace: 'pre-wrap' }}>{value}</Typography>
@@ -684,8 +741,9 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
   if (viewMode === 'create' || viewMode === 'edit') {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        {/* PC Form */}
+        {/* PC Form — 흐름: 제목/유형 → 부서/(상태:생략) → 목적 → [도메인필드] → 비고(생략) → 작성자/부서/생성일 → 수정자/부서/수정일 → 계획승인자/완료승인자 → 체크리스트 */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          {/* 제목 | 유형 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('audit.auditName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
@@ -694,27 +752,25 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             <Typography sx={labelSx}>{t('audit.auditType')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
               <Select fullWidth size="small" value={form.auditType} onChange={(e) => setForm({ ...form, auditType: e.target.value as AuditType })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {auditTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getAuditTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
           </Box>
+          {/* 대상 부서 (풀폭) */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>
               {t('audit.targetDept')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
-            <Box sx={{ ...valueBorderSx, display: 'flex', gap: 1 }}>
+            <Box sx={{ ...valueSx, display: 'flex', gap: 1 }}>
               <TextField fullWidth size="small" value={form.targetDept || ''} InputProps={{ readOnly: true }}
                 placeholder={t('audit.selectTargetDept', '부서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowDeptModal(true)}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>
-            <Typography sx={labelSx}>{t('audit.targetSite')}</Typography>
-            <Box sx={valueSx}>
-              <TextField fullWidth size="small" value={form.targetSite || ''} onChange={(e) => setForm({ ...form, targetSite: e.target.value })} />
-            </Box>
           </Box>
+          {/* 감사원 (풀폭) */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>
               {t('audit.auditor')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -730,22 +786,60 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Button>
             </Box>
           </Box>
+          {/* 시작일 | 종료일 — 감사원 아래 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={labelSx}>{t('audit.planStartDate')}</Typography>
+            <Typography sx={labelSx}>{t('audit.planStartDate')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <DatePickerField value={form.planStartDate || null} onChange={(v) => setForm({ ...form, planStartDate: v })} size="small" maxDate={form.planEndDate} />
             </Box>
-            <Typography sx={labelSx}>{t('audit.planEndDate')}</Typography>
+            <Typography sx={labelSx}>{t('audit.planEndDate')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
               <DatePickerField value={form.planEndDate || null} onChange={(v) => setForm({ ...form, planEndDate: v })} size="small" minDate={form.planStartDate} />
             </Box>
           </Box>
+          {/* 목적 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('audit.purpose')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={3} value={form.purpose || ''} onChange={(e) => setForm({ ...form, purpose: e.target.value })} />
             </Box>
           </Box>
+          {/* 비고 — 목적 바로 아래, 풀폭 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>{t('common.notes', '비고')}</Typography>
+            <Box sx={valueSx}>
+              <TextField fullWidth size="small" multiline rows={3} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+            </Box>
+          </Box>
+          {/* 작성자 | 생성일 — 등록 모드: 생성일은 저장 후 표시되므로 빈 셀 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>{t('audit.creator', '작성자')}</Typography>
+            <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2">{form.createdByName || user?.name || user?.username || ''}</Typography>
+            </Box>
+            <Typography sx={labelSx}>{t('common.createdAt', '생성일')}</Typography>
+            <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2" fontFamily="monospace">
+                {selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+              </Typography>
+            </Box>
+          </Box>
+          {/* 수정자 | 수정일 — 수정 모드일 때만 표시 (등록 시점에는 의미 없음) */}
+          {viewMode === 'edit' && (
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
+              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2">{(selectedItem as any)?.modifiedByName || user?.name || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>{t('common.modifiedAt', '수정일')}</Typography>
+              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2" fontFamily="monospace">
+                  {selectedItem?.modifiedAt ? selectedItem.modifiedAt.replace('T', ' ').substring(0, 16) : ''}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+          {/* 계획승인자 | 완료승인자 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>
               {t('audit.planApprover', '계획 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -768,12 +862,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Button>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={labelSx}>{t('audit.createdByName', '작성자')}</Typography>
-            <Box sx={valueSx}>
-              <Typography variant="body2">{form.createdByName || user?.name || user?.username || ''}</Typography>
-            </Box>
-          </Box>
+          {/* 체크리스트 */}
           <Box sx={{ display: 'flex' }}>
             <Typography sx={labelSx}>{t('audit.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
@@ -787,25 +876,28 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           </Box>
         </Paper>
 
-        {/* Mobile Form */}
+        {/* Mobile Form — PC 와 동일한 흐름 순서 */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
+          {/* 제목 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('audit.auditName')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <TextField size="small" fullWidth value={form.auditName} onChange={(e) => setForm({ ...form, auditName: e.target.value })} />
           </Box>
+          {/* 유형 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('audit.auditType')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <FormControl fullWidth size="small">
               <Select value={form.auditType} onChange={(e) => setForm({ ...form, auditType: e.target.value as AuditType })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {auditTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getAuditTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
           </Box>
+          {/* 대상 부서 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('audit.targetDept')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
@@ -815,10 +907,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowDeptModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
-          <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.targetSite')}</Typography>
-            <TextField size="small" fullWidth value={form.targetSite || ''} onChange={(e) => setForm({ ...form, targetSite: e.target.value })} />
-          </Box>
+          {/* 감사원 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('audit.auditor')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
@@ -829,21 +918,42 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowAuditorModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
+          {/* 시작일/종료일 — 감사원 아래 */}
           <DatePickerField value={form.planStartDate || null} onChange={(v) => setForm({ ...form, planStartDate: v })} size="small" label={t('audit.planStartDate')} maxDate={form.planEndDate} />
           <DatePickerField value={form.planEndDate || null} onChange={(v) => setForm({ ...form, planEndDate: v })} size="small" label={t('audit.planEndDate')} minDate={form.planStartDate} />
+          {/* 목적 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.purpose')}</Typography>
             <TextField size="small" fullWidth multiline rows={3} value={form.purpose || ''} onChange={(e) => setForm({ ...form, purpose: e.target.value })} />
           </Box>
+          {/* 비고 — 목적 바로 아래 */}
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
-            <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-              <MenuItem value="">{t('audit.noChecklist', '체크리스트 미연결')}</MenuItem>
-              {auditChecklists.map((tpl: SafetyChecklistTemplate) => (
-                <MenuItem key={tpl.id} value={tpl.id}>{tpl.templateName} ({tpl.itemCount || 0}{t('audit.itemCountSuffix', '개 항목')})</MenuItem>
-              ))}
-            </Select>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.notes', '비고')}</Typography>
+            <TextField size="small" fullWidth multiline rows={3} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
           </Box>
+          {/* 작성자 / 생성일 */}
+          <Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.creator', '작성자')}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{form.createdByName || user?.name || user?.username || ''}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.createdAt', '생성일')}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}</Typography>
+          </Box>
+          {/* 수정자 / 수정일 — 수정 모드일 때만 */}
+          {viewMode === 'edit' && (
+            <>
+              <Box>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifier', '수정자')}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{(selectedItem as any)?.modifiedByName || user?.name || ''}</Typography>
+              </Box>
+              <Box>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifiedAt', '수정일')}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{selectedItem?.modifiedAt ? selectedItem.modifiedAt.replace('T', ' ').substring(0, 16) : ''}</Typography>
+              </Box>
+            </>
+          )}
+          {/* 계획승인자 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('audit.planApprover', '계획 승인자')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
@@ -853,6 +963,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowPlanApproverModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
+          {/* 완료승인자 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('audit.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
@@ -862,11 +973,15 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowCompletionApproverModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
+          {/* 체크리스트 */}
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('audit.createdByName', '작성자')}
-            </Typography>
-            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{form.createdByName || user?.name || user?.username || ''}</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
+            <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
+              <MenuItem value="">{t('audit.noChecklist', '체크리스트 미연결')}</MenuItem>
+              {auditChecklists.map((tpl: SafetyChecklistTemplate) => (
+                <MenuItem key={tpl.id} value={tpl.id}>{tpl.templateName} ({tpl.itemCount || 0}{t('audit.itemCountSuffix', '개 항목')})</MenuItem>
+              ))}
+            </Select>
           </Box>
         </Box>
 

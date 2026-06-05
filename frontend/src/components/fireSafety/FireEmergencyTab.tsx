@@ -180,7 +180,7 @@ const FireEmergencyTab: React.FC = () => {
             <FormRow>
               <FormLabel>기관 유형</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={cForm.orgType || ''} onChange={e => setCForm({ ...cForm, orgType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ORG_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ORG_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
               <FormLabel required>기관·업체명</FormLabel>
               <FormCell><TextField fullWidth size="small" value={cForm.orgName || ''} onChange={e => setCForm({ ...cForm, orgName: e.target.value })} /></FormCell>
             </FormRow>
@@ -226,7 +226,7 @@ const FireEmergencyTab: React.FC = () => {
               <FormCell borderRight><DatePickerField value={dForm.drillDate || null} onChange={d => setDForm({ ...dForm, drillDate: d || '' })} /></FormCell>
               <FormLabel>훈련 종류</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={dForm.drillType || ''} onChange={e => setDForm({ ...dForm, drillType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{DRILL_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{DRILL_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>시나리오</FormLabel>
@@ -243,12 +243,12 @@ const FireEmergencyTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={dForm.mgrName || ''} onChange={e => setDForm({ ...dForm, mgrName: e.target.value })} /></FormCell>
               <FormLabel>소방서 참관</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={dForm.fireDeptObs || ''} onChange={e => setDForm({ ...dForm, fireDeptObs: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{FIRE_OBS.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{FIRE_OBS.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>훈련 결과</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={dForm.result || ''} onChange={e => setDForm({ ...dForm, result: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{RESULTS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{RESULTS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow last>
               <FormLabel>개선 사항</FormLabel>

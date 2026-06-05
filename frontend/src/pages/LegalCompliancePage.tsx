@@ -6,7 +6,6 @@ import LegalLawTab from '../components/legalCompliance/LegalLawTab'
 import AuditPlanTab from '../components/ehs/AuditPlanTab'
 import AuditExecutionTab from '../components/ehs/AuditExecutionTab'
 import AuditFindingTab from '../components/ehs/AuditFindingTab'
-import AuditCorrectiveTab from '../components/ehs/AuditCorrectiveTab'
 
 const LegalCompliancePage: React.FC = () => {
   const { t } = useTranslation()
@@ -29,7 +28,6 @@ const LegalCompliancePage: React.FC = () => {
     { label: t('lc.tabs.plan', '법규 대응 계획'),      component: <AuditPlanTab variant="legal-compliance" /> },
     { label: t('lc.tabs.execution', '법규 대응 실시'), component: <AuditExecutionTab variant="legal-compliance" /> },
     { label: t('audit.tabs.findings', '부적합 사항'), component: <AuditFindingTab variant="legal-compliance" /> },
-    { label: t('audit.tabs.corrective', '시정 조치'), component: <AuditCorrectiveTab variant="legal-compliance" /> },
   ]
 
   return (

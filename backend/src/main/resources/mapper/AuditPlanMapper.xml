@@ -9,7 +9,6 @@
         <result property="auditName" column="audit_name"/>
         <result property="auditType" column="audit_type"/>
         <result property="targetDept" column="target_dept"/>
-        <result property="targetSite" column="target_site"/>
         <result property="auditorName" column="auditor_name"/>
         <result property="auditorDept" column="auditor_dept"/>
         <result property="personInCharge" column="person_in_charge"/>
@@ -86,7 +85,7 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_audit_plan (
-            plan_id, audit_name, audit_type, target_dept, target_site,
+            plan_id, audit_name, audit_type, target_dept,
             auditor_name, auditor_dept, person_in_charge, plan_start_date, plan_end_date,
             purpose, status, notes, checklist_template_id,
             created_by_user_id, created_by_name,
@@ -94,7 +93,7 @@
             completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
             deleted, created_at, modified_at
         ) VALUES (
-            #{planId}, #{auditName}, #{auditType}, #{targetDept}, #{targetSite},
+            #{planId}, #{auditName}, #{auditType}, #{targetDept},
             #{auditorName}, #{auditorDept}, #{personInCharge}, #{planStartDate,jdbcType=DATE}, #{planEndDate,jdbcType=DATE},
             #{purpose}, #{status}, #{notes}, #{checklistTemplateId},
             #{createdByUserId}, #{createdByName},
@@ -107,7 +106,7 @@
     <update id="update">
         UPDATE tb_audit_plan SET
             audit_name = #{auditName}, audit_type = #{auditType},
-            target_dept = #{targetDept}, target_site = #{targetSite},
+            target_dept = #{targetDept},
             auditor_name = #{auditorName}, auditor_dept = #{auditorDept}, person_in_charge = #{personInCharge},
             plan_start_date = #{planStartDate,jdbcType=DATE}, plan_end_date = #{planEndDate,jdbcType=DATE},
             purpose = #{purpose}, status = COALESCE(#{status}, status, 'PLAN'), notes = #{notes},

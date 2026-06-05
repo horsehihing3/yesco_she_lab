@@ -43,7 +43,7 @@ const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
 const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
 const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
 
-const emptyForm: AuditRequest = { auditName: '', auditType: 'REGULAR', targetDept: '', targetSite: '', auditor: '', auditDate: '', grade: undefined, summary: '', status: 'PLAN' }
+const emptyForm: AuditRequest = { auditName: '', auditType: 'REGULAR', targetDept: '', auditor: '', auditDate: '', grade: undefined, summary: '', status: 'PLAN' }
 
 export interface AuditExecutionTabProps {
   variant?: 'audit' | 'legal-compliance'
@@ -154,7 +154,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
     setSelectedItem(item)
     setForm({
       planId: item.planId, auditName: item.auditName, auditType: item.auditType,
-      targetDept: item.targetDept || '', targetSite: item.targetSite || '',
+      targetDept: item.targetDept || '',
       auditor: item.auditor || '', auditDate: item.auditDate || '',
       grade: item.grade, summary: item.summary || '', status: item.status,
       planApproverUserId: item.planApproverUserId ?? null,
@@ -216,7 +216,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
     try {
       await auditApi.update(selectedItem.id, {
         auditName: selectedItem.auditName, auditType: selectedItem.auditType,
-        targetDept: selectedItem.targetDept || '', targetSite: selectedItem.targetSite || '',
+        targetDept: selectedItem.targetDept || '',
         auditor: selectedItem.auditor || '', auditDate: selectedItem.auditDate || '',
         grade: selectedItem.grade, summary: selectedItem.summary || '', status: newStatus,
         planApproverUserId: selectedItem.planApproverUserId,
@@ -253,7 +253,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
     const k = `audit.field.${key}`
     const fallback: Record<string, string> = {
       auditName: '감사명', auditType: '감사 유형',
-      targetDept: '대상 부서', targetSite: '대상 현장',
+      targetDept: '대상 부서',
       auditorName: '감사원', auditorDept: '감사원 부서',
       auditStartDate: '시작일', auditEndDate: '종료일',
       grade: '등급', summary: '요약', notes: '비고',
@@ -631,7 +631,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Typography sx={labelSx}>{t('audit.auditType')}</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" value={form.auditType} onChange={e => setForm({ ...form, auditType: e.target.value as AuditRequest['auditType'] })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {auditTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getAuditTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -648,7 +648,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Typography sx={labelSx}>{t('audit.grade')}</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" displayEmpty value={form.grade || ''} onChange={e => setForm({ ...form, grade: (e.target.value || undefined) as AuditRequest['grade'] })}>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="S">S</MenuItem>
                 <MenuItem value="A">A</MenuItem>
                 <MenuItem value="B">B</MenuItem>
@@ -660,7 +660,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Typography sx={labelSx}>{t('common.status')}</Typography>
             <Box sx={valBorderSx}>
               <Select fullWidth size="small" value={form.status || 'PLAN'} onChange={e => setForm({ ...form, status: e.target.value as AuditRequest['status'] })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {auditStatusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getAuditStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -703,7 +703,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.auditType')}</Typography>
             <Select fullWidth size="small" value={form.auditType} onChange={e => setForm({ ...form, auditType: e.target.value as AuditRequest['auditType'] })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {auditTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getAuditTypeLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -722,13 +722,13 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.grade')}</Typography>
             <Select fullWidth size="small" displayEmpty value={form.grade || ''} onChange={e => setForm({ ...form, grade: (e.target.value || undefined) as AuditRequest['grade'] })}>
-              <MenuItem value="" disabled>선택</MenuItem><MenuItem value="S">S</MenuItem><MenuItem value="A">A</MenuItem><MenuItem value="B">B</MenuItem><MenuItem value="C">C</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem><MenuItem value="S">S</MenuItem><MenuItem value="A">A</MenuItem><MenuItem value="B">B</MenuItem><MenuItem value="C">C</MenuItem>
             </Select>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.status')}</Typography>
             <Select fullWidth size="small" value={form.status || 'PLAN'} onChange={e => setForm({ ...form, status: e.target.value as AuditRequest['status'] })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {auditStatusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getAuditStatusLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>

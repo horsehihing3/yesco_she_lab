@@ -449,7 +449,7 @@ const AdminPage: React.FC = () => {
                   value={selectedYear}
                   onChange={(e: SelectChangeEvent<number>) => setSelectedYear(e.target.value as number)}
                  displayEmpty>
-                  <MenuItem value="" disabled>선택</MenuItem>
+                  <MenuItem value="" disabled>선택하세요</MenuItem>
                   {yearOptions.map((year) => (
                     <MenuItem key={year} value={year}>
                       {year}{t('admin.year')}
@@ -462,7 +462,7 @@ const AdminPage: React.FC = () => {
                   value={selectedQuarter}
                   onChange={(e: SelectChangeEvent) => setSelectedQuarter(e.target.value)}
                  displayEmpty>
-                  <MenuItem value="" disabled>선택</MenuItem>
+                  <MenuItem value="" disabled>선택하세요</MenuItem>
                   {quarterKeys.map((q) => (
                     <MenuItem key={q} value={q}>
                       {t(`admin.quarters.${q}`)}

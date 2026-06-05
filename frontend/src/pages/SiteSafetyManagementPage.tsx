@@ -595,7 +595,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                 <FormControl fullWidth size="small">
                   <Select displayEmpty value={(view as any).checklistTemplateId || ''}
                     onChange={e => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-                    <MenuItem value="">선택</MenuItem>
+                    <MenuItem value="">선택하세요</MenuItem>
                     {templates.filter(t => (t as SafetyChecklistTemplate & { categoryType?: string }).categoryType === 'CONTRACTOR_MOBILE')
                       .map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
                   </Select>
@@ -765,7 +765,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           <FormCell borderRight>
             <ReadTextField select fullWidth size="small" readOnly={isReadonly} value={(view as any).workType || ''}
               onChange={e => setForm({ ...form, workType: e.target.value })}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {WORK_TYPES.map(w => <MenuItem key={w} value={w}>{w}</MenuItem>)}
             </ReadTextField>
           </FormCell>
@@ -773,7 +773,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           <FormCell>
             <ReadTextField select fullWidth size="small" readOnly={isReadonly} value={(view as any).riskLevel || ''}
               onChange={e => setForm({ ...form, riskLevel: e.target.value })}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {RISK_LEVELS.map(r => <MenuItem key={r} value={r}>{RISK_LABEL[r]}</MenuItem>)}
             </ReadTextField>
           </FormCell>
@@ -846,7 +846,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
               <FormControl fullWidth size="small">
                 <Select displayEmpty value={(view as any).checklistTemplateId || ''}
                   onChange={e => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {templates.filter(t => (t as SafetyChecklistTemplate & { categoryType?: string }).categoryType === 'CONTRACTOR_MOBILE')
                     .map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
                 </Select>

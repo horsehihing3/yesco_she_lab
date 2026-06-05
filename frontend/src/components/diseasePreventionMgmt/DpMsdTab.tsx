@@ -158,7 +158,7 @@ const DpMsdTab: React.FC = () => {
               <FormLabel>부담작업</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.taskCategory || ''} onChange={(e) => setForm({ ...form, taskCategory: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {MSD_TASKS.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -173,14 +173,14 @@ const DpMsdTab: React.FC = () => {
               <FormLabel>위험도</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.riskLevel || ''} onChange={(e) => setForm({ ...form, riskLevel: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {RISKS.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>관리 상태</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.status || ''} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

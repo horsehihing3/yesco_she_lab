@@ -340,7 +340,7 @@ const WasteComplianceTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {statusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -374,7 +374,7 @@ const WasteComplianceTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.actionStatus || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, actionStatus: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {actionStatusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getActionStatusLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -399,7 +399,7 @@ const WasteComplianceTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('waste.compliance.status')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {statusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -427,7 +427,7 @@ const WasteComplianceTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('waste.compliance.actionStatus')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.actionStatus || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, actionStatus: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {actionStatusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getActionStatusLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>

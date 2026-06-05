@@ -267,7 +267,7 @@ const FireInspectionTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={sForm.issueNo || ''} onChange={e => setSForm({ ...sForm, issueNo: e.target.value })} /></FormCell>
               <FormLabel>유형</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={sForm.issueType || ''} onChange={e => setSForm({ ...sForm, issueType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ISSUE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ISSUE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>시설</FormLabel>
@@ -292,7 +292,7 @@ const FireInspectionTab: React.FC = () => {
               <FormCell borderRight><NumberField fullWidth value={sForm.progressPct ?? null} onChange={v => setSForm({ ...sForm, progressPct: v ?? 0 })} min={0} max={100} thousandSeparator={false} /></FormCell>
               <FormLabel>상태</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={sForm.status || ''} onChange={e => setSForm({ ...sForm, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ISSUE_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ISSUE_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow last>
               <FormLabel>담당자</FormLabel>
@@ -316,7 +316,7 @@ const FireInspectionTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={iForm.inspNo || ''} onChange={e => setIForm({ ...iForm, inspNo: e.target.value })} /></FormCell>
               <FormLabel>종류</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={iForm.inspType || ''} onChange={e => setIForm({ ...iForm, inspType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{INSP_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{INSP_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>점검명</FormLabel>
@@ -337,14 +337,14 @@ const FireInspectionTab: React.FC = () => {
             <FormRow>
               <FormLabel>결과</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={iForm.result || ''} onChange={e => setIForm({ ...iForm, result: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{RESULTS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{RESULTS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField></FormCell>
               <FormLabel>점검 비용 (원)</FormLabel>
               <FormCell><NumberField fullWidth value={iForm.cost ?? null} onChange={v => setIForm({ ...iForm, cost: v ?? undefined })} /></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>제출 여부</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={iForm.submitStatus || ''} onChange={e => setIForm({ ...iForm, submitStatus: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{SUBMIT_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{SUBMIT_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
               <FormLabel>제출일</FormLabel>
               <FormCell><DatePickerField value={iForm.submitDate || null} onChange={d => setIForm({ ...iForm, submitDate: d || undefined })} /></FormCell>
             </FormRow>
@@ -388,7 +388,7 @@ const FireInspectionTab: React.FC = () => {
               <FormCell borderRight><DatePickerField value={pForm.planDate || null} onChange={d => setPForm({ ...pForm, planDate: d || undefined })} /></FormCell>
               <FormLabel>상태</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={pForm.status || ''} onChange={e => setPForm({ ...pForm, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{PLAN_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{PLAN_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>점검기관</FormLabel>

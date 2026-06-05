@@ -178,7 +178,7 @@ const OdAftercareTab: React.FC = () => {
             <FormRow>
               <FormLabel>검진 판정</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.judge || 'D1'} onChange={e => setForm({ ...form, judge: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{JUDGES.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{JUDGES.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
               <FormLabel>유해인자</FormLabel>
               <FormCell><TextField fullWidth size="small" value={form.factor || ''} onChange={e => setForm({ ...form, factor: e.target.value })} /></FormCell>
             </FormRow>
@@ -193,14 +193,14 @@ const OdAftercareTab: React.FC = () => {
             <FormRow>
               <FormLabel>상태</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.status || ''} onChange={e => setForm({ ...form, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
               <FormLabel>조치 기한</FormLabel>
               <FormCell><DatePickerField value={form.dueDate || null} onChange={d => setForm({ ...form, dueDate: d })} /></FormCell>
             </FormRow>
             <FormRow last>
               <FormLabel>긴급 여부</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.urgent ? '1' : '0'} onChange={e => setForm({ ...form, urgent: e.target.value === '1' })}>
-<MenuItem value="">선택</MenuItem><MenuItem value="0">일반</MenuItem><MenuItem value="1">긴급</MenuItem></TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem><MenuItem value="0">일반</MenuItem><MenuItem value="1">긴급</MenuItem></TextField></FormCell>
             </FormRow>
           </FormTable>
         </DialogContent>
@@ -234,7 +234,7 @@ const OdAftercareTab: React.FC = () => {
             <FormRow>
               <FormLabel>평가결과</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={fitForm.evalResult || ''} onChange={e => setFitForm({ ...fitForm, evalResult: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{FIT_RESULTS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{FIT_RESULTS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField></FormCell>
               <FormLabel>이행 상태</FormLabel>
               <FormCell><TextField fullWidth size="small" placeholder="이행중/완료/산재처리" value={fitForm.doneStatus || ''} onChange={e => setFitForm({ ...fitForm, doneStatus: e.target.value })} /></FormCell>
             </FormRow>

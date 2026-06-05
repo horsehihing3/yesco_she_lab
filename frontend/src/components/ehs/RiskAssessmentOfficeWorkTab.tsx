@@ -1410,7 +1410,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                       {readOnly ? detail.possibilityGrade : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.possibilityGrade} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'possibilityGrade', Number(e.target.value))} displayEmpty>
-                            <MenuItem value="" disabled>선택</MenuItem>
+                            <MenuItem value="" disabled>선택하세요</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1420,7 +1420,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                       {readOnly ? detail.resultGrade : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.resultGrade} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'resultGrade', Number(e.target.value))} displayEmpty>
-                            <MenuItem value="" disabled>선택</MenuItem>
+                            <MenuItem value="" disabled>선택하세요</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1437,7 +1437,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                       {readOnly ? (detail.improvedPossibilityGrade || '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.improvedPossibilityGrade || ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'improvedPossibilityGrade', e.target.value ? Number(e.target.value) : undefined)} displayEmpty>
-                            <MenuItem value="" disabled>선택</MenuItem>
+                            <MenuItem value="" disabled>선택하세요</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1447,7 +1447,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                       {readOnly ? (detail.improvedResultGrade || '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.improvedResultGrade || ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(index, 'improvedResultGrade', e.target.value ? Number(e.target.value) : undefined)} displayEmpty>
-                            <MenuItem value="" disabled>선택</MenuItem>
+                            <MenuItem value="" disabled>선택하세요</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>

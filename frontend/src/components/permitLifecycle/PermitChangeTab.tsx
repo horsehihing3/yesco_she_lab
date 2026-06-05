@@ -145,14 +145,14 @@ const PermitChangeTab: React.FC = () => {
               <FormLabel required>변경 유형</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.changeType || ''} onChange={(e) => setForm({ ...form, changeType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {CHANGE_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>상태</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.status || ''} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -181,7 +181,7 @@ const PermitChangeTab: React.FC = () => {
               <FormLabel>안전영향 평가</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.impactAssessment || ''} onChange={(e) => setForm({ ...form, impactAssessment: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {IMPACTS.map((i) => <MenuItem key={i} value={i}>{i}</MenuItem>)}
                 </TextField>
               </FormCell>

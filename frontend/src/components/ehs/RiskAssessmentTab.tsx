@@ -1709,7 +1709,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {readOnly ? (detail.possibilityGrade ?? '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.possibilityGrade ?? ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(gIdx, 'possibilityGrade', Number(e.target.value))} displayEmpty>
-                            <MenuItem value="" disabled>선택</MenuItem>
+                            <MenuItem value="" disabled>선택하세요</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1720,7 +1720,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {readOnly ? (detail.resultGrade ?? '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.resultGrade ?? ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(gIdx, 'resultGrade', Number(e.target.value))} displayEmpty>
-                            <MenuItem value="" disabled>선택</MenuItem>
+                            <MenuItem value="" disabled>선택하세요</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1747,7 +1747,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {readOnly ? (detail.improvedPossibilityGrade ?? '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.improvedPossibilityGrade ?? ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(gIdx, 'improvedPossibilityGrade', e.target.value ? Number(e.target.value) : undefined)} displayEmpty>
-                            <MenuItem value="" disabled>선택</MenuItem>
+                            <MenuItem value="" disabled>선택하세요</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1758,7 +1758,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {readOnly ? (detail.improvedResultGrade ?? '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>
                           <Select value={detail.improvedResultGrade ?? ''} onChange={(e: SelectChangeEvent<number>) => handleInlineDetailChange(gIdx, 'improvedResultGrade', e.target.value ? Number(e.target.value) : undefined)} displayEmpty>
-                            <MenuItem value="" disabled>선택</MenuItem>
+                            <MenuItem value="" disabled>선택하세요</MenuItem>
                             {[1, 2, 3, 4, 5].map((n) => (<MenuItem key={n} value={n}>{n}</MenuItem>))}
                           </Select>
                         </FormControl>
@@ -1816,7 +1816,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           setFormData({ ...formData, authorDept: dept })
           setDeptModalOpen(false)
         }}
-        title={t('riskAssessment.department', '부서') + ' ' + t('common.select', '선택')}
+        title={t('riskAssessment.department', '부서') + ' ' + t('common.select', '선택하세요')}
       />
 
       <UserSelectModal

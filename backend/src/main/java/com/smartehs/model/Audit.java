@@ -17,7 +17,6 @@ public class Audit {
     private String auditName;
     private String auditType;
     private String targetDept;
-    private String targetSite;
     @JsonProperty("auditor")
     private String auditorName;
     private String auditorDept;

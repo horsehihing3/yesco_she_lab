@@ -227,7 +227,7 @@ const SafetyInspectionTab: React.FC<SafetyInspectionTabProps> = ({
                               onChange={e => handleResultChange(item.id, 'result', e.target.value)}
                               sx={{ width: '100%', textAlign: 'center' }}
                              displayEmpty>
-                              <MenuItem value="" disabled>선택</MenuItem>
+                              <MenuItem value="" disabled>선택하세요</MenuItem>
                               <MenuItem value="○">○</MenuItem>
                               <MenuItem value="✕">✕</MenuItem>
                               {isMajorDisaster && <MenuItem value="△">△</MenuItem>}

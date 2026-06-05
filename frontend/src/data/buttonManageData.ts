@@ -314,24 +314,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 시정 조치 ─────────────────────────────────────────────────────────────
-  {
-    menuPath: 'EHS경영 › 감사 › 시정 조치', menuKey: 'audit.tabs.corrective',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'PENDING', statusLabel: '대기', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-      { status: 'IN_PROGRESS',   statusLabel: '조치중', statusColor: 'info',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
-      { status: 'DEMONSTRATION', statusLabel: '지연',   statusColor: 'error',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
-    ],
-  },
-
   // ── 교육현황 (관리자) ──────────────────────────────────────────────────────
   {
     menuPath: 'EHS경영 › 교육훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',

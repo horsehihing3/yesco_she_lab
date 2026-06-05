@@ -490,13 +490,13 @@ const WemPlanTab: React.FC = () => {
     { label: t('wem.department'), node: <TextField size="small" fullWidth value={formData.department || ''} onChange={(e) => setFormData({ ...formData, department: e.target.value })} /> },
     { label: t('wem.hazardType'), node: (
       <Select size="small" fullWidth value={formData.hazardType || ''} onChange={(e) => setFormData({ ...formData, hazardType: e.target.value })} displayEmpty>
-        <MenuItem value="" disabled>선택</MenuItem>
+        <MenuItem value="" disabled>선택하세요</MenuItem>
         {hazardTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getHazardTypeLabel(c.code)}</MenuItem>)}
       </Select>
     ) },
     { label: t('wem.cycle'), node: (
       <Select size="small" fullWidth value={formData.measurementCycle || ''} onChange={(e) => setFormData({ ...formData, measurementCycle: e.target.value })} displayEmpty>
-        <MenuItem value="" disabled>선택</MenuItem>
+        <MenuItem value="" disabled>선택하세요</MenuItem>
         {cycleCodes.map(c => <MenuItem key={c.code} value={c.code}>{getCycleLabel(c.code)}</MenuItem>)}
       </Select>
     ) },
@@ -526,7 +526,7 @@ const WemPlanTab: React.FC = () => {
     })() },
     { label: t('common.status', '상태'), node: (
       <Select size="small" fullWidth value={formData.status || ''} onChange={(e) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
-        <MenuItem value="" disabled>선택</MenuItem>
+        <MenuItem value="" disabled>선택하세요</MenuItem>
         {statusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
       </Select>
     ) },

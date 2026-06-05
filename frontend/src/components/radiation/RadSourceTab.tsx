@@ -154,10 +154,10 @@ const RadSourceTab: React.FC = () => {
             <FormRow>
               <FormLabel>구분</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.sourceType || ''} onChange={e => setForm({ ...form, sourceType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
               <FormLabel>상태</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.status || '유효'} onChange={e => setForm({ ...form, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>핵종/에너지</FormLabel>

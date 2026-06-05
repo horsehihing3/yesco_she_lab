@@ -263,7 +263,7 @@ const FireComplianceTab: React.FC = () => {
             <FormRow>
               <FormLabel>상태</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={rForm.status || ''} onChange={e => setRForm({ ...rForm, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{REPORT_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{REPORT_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow last>
               <FormLabel>비고</FormLabel>

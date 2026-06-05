@@ -544,7 +544,7 @@ const WemResultTab: React.FC = () => {
     { label: t('wem.factorName'), node: <TextField size="small" fullWidth value={formData.factorName} onChange={(e) => setFormData({ ...formData, factorName: e.target.value })} /> },
     { label: t('wem.sampleType'), node: (
       <Select size="small" fullWidth value={formData.sampleType || ''} onChange={(e) => setFormData({ ...formData, sampleType: e.target.value })} displayEmpty>
-        <MenuItem value="" disabled>선택</MenuItem>
+        <MenuItem value="" disabled>선택하세요</MenuItem>
         {sampleTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getSampleTypeLabel(c.code)}</MenuItem>)}
       </Select>
     ) },
@@ -555,7 +555,7 @@ const WemResultTab: React.FC = () => {
     { label: t('wem.exceedRate'), node: <NumberField size="small" fullWidth value={formData.exceedRate} onChange={(v) => setFormData({ ...formData, exceedRate: v ?? undefined })} /> },
     { label: t('wem.judgment'), node: (
       <Select size="small" fullWidth value={formData.judgment || ''} onChange={(e) => setFormData({ ...formData, judgment: e.target.value })} displayEmpty>
-        <MenuItem value="" disabled>선택</MenuItem>
+        <MenuItem value="" disabled>선택하세요</MenuItem>
         {judgmentCodes.map(c => <MenuItem key={c.code} value={c.code}>{getJudgmentLabel(c.code)}</MenuItem>)}
       </Select>
     ) },

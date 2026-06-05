@@ -822,7 +822,7 @@ const PrePlacementExamTab: React.FC = () => {
                     size="small"
                     fullWidth
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     {years.map((y) => (
                       <MenuItem key={y} value={y}>{y}</MenuItem>
                     ))}
@@ -894,7 +894,7 @@ const PrePlacementExamTab: React.FC = () => {
                     size="small"
                     fullWidth
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     {examResultCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -917,7 +917,7 @@ const PrePlacementExamTab: React.FC = () => {
                     size="small"
                     fullWidth
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     {examStatusCodes.map((item) => (
                       <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                     ))}
@@ -1030,7 +1030,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Typography>
             <Controller name="examYear" control={control} rules={{ required: true }} render={({ field }) => (
               <Select value={field.value || currentYear} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {years.map((y) => (<MenuItem key={y} value={y}>{y}</MenuItem>))}
               </Select>
             )} />
@@ -1073,7 +1073,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Typography>
             <Controller name="examResult" control={control} render={({ field }) => (
               <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {examResultCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}
@@ -1120,7 +1120,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Typography>
             <Controller name="status" control={control} render={({ field }) => (
               <Select value={field.value || 'PENDING'} onChange={field.onChange} onBlur={field.onBlur} name={field.name} ref={field.ref} size="small" fullWidth displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {examStatusCodes.map((item) => (
                   <MenuItem key={item.code} value={item.code}>{getLocalizedName(item)}</MenuItem>
                 ))}

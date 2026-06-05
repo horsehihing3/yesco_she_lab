@@ -285,7 +285,7 @@ const EmissionFactorTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {unitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -310,7 +310,7 @@ const EmissionFactorTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: parseInt(e.target.value) })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="1">Scope 1</MenuItem>
                 <MenuItem value="2">Scope 2</MenuItem>
                 <MenuItem value="3">Scope 3</MenuItem>
@@ -335,7 +335,7 @@ const EmissionFactorTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.factor.unit')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {unitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -356,7 +356,7 @@ const EmissionFactorTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.factor.scope')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: parseInt(e.target.value) })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               <MenuItem value="1">Scope 1</MenuItem>
               <MenuItem value="2">Scope 2</MenuItem>
               <MenuItem value="3">Scope 3</MenuItem>

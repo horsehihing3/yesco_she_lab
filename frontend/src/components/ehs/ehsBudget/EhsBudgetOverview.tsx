@@ -116,7 +116,7 @@ const EhsBudgetOverview: React.FC<EhsBudgetOverviewProps> = ({
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
           <FormControl size="small" sx={{ minWidth: 100 }}>
             <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                 <MenuItem key={y} value={y}>{y}</MenuItem>
               ))}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
-  Box, Paper, Typography, Grid, Chip,
+  Box, Paper, Typography, Grid,
   Select, MenuItem, FormControl, CircularProgress, Alert,
 } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -11,16 +11,12 @@ import ErrorIcon from '@mui/icons-material/Error'
 import { useTranslation } from 'react-i18next'
 import axiosInstance from '../../api/axiosInstance'
 import { EhsPlan, KpiQuarterStatus } from '../../types/planKpiGoal.types'
-import { ApiResponse, PageResponse } from '../../types/common.types'
+import { ApiResponse } from '../../types/common.types'
 import { KPI_STATUS_COLOR, KPI_STATUS_LABEL } from './GoalsTable'
-import useCodeMap from '../../hooks/useCodeMap'
+import SafetyGoalProgressTable from './SafetyGoalProgressTable'
 
 const currentYear = new Date().getFullYear()
 
-const fetchPlans = async (year: number): Promise<PageResponse<EhsPlan>> => {
-  const res = await axiosInstance.get<ApiResponse<PageResponse<EhsPlan>>>(`/ehs-plans?year=${year}&page=0&size=100`)
-  return res.data.data
-}
 const fetchApprovedPlans = async (year: number): Promise<EhsPlan[]> => {
   const res = await axiosInstance.get<ApiResponse<EhsPlan[]>>(`/ehs-plans/approved?year=${year}`)
   return res.data.data || []
@@ -28,20 +24,12 @@ const fetchApprovedPlans = async (year: number): Promise<EhsPlan[]> => {
 
 const PlanOverviewTab: React.FC = () => {
   const { t } = useTranslation()
-  const { getLabel: getStatusLabel } = useCodeMap('PLAN_STATUS')
   const [year, setYear] = useState(currentYear)
 
-  const { data: planData, isLoading: plansLoading } = useQuery({
-    queryKey: ['planOverview-plans', year],
-    queryFn: () => fetchPlans(year),
-  })
-  const { data: approved = [], isLoading: kpiLoading } = useQuery({
+  const { data: approved = [], isLoading } = useQuery({
     queryKey: ['planOverview-approved', year],
     queryFn: () => fetchApprovedPlans(year),
   })
-
-  const plans = planData?.content || []
-  const isLoading = plansLoading || kpiLoading
 
   // KPI 분기별 달성상태 집계 — 승인된 plan 의 goals 의 q?_status 기준
   const quarterCounts: Record<KpiQuarterStatus, number> = {
@@ -75,22 +63,6 @@ const PlanOverviewTab: React.FC = () => {
   const inProgressCount = quarterCounts.IN_PROGRESS
   const delayedCount = quarterCounts.NOT_ACHIEVED
 
-  // Timeline (개정일자 폐기 → 작성일자 기준)
-  const timelinePlans = [...plans]
-    .filter(p => p.createdAt)
-    .sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''))
-    .slice(0, 10)
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'DONE': return 'success'
-      case 'APPROVED': return 'info'
-      case 'PENDING_APPROVAL': return 'warning'
-      case 'DRAFT': return 'default'
-      default: return 'default'
-    }
-  }
-
   if (isLoading) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
   }
@@ -115,7 +87,7 @@ const PlanOverviewTab: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, mb: 2 }}>
         <FormControl size="small" sx={{ width: { xs: '100%', sm: 'auto' }, minWidth: { sm: 100 } }}>
           <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
-            <MenuItem value="" disabled>선택</MenuItem>
+            <MenuItem value="" disabled>선택하세요</MenuItem>
             {[currentYear - 1, currentYear, currentYear + 1].map(y => (
               <MenuItem key={y} value={y}>{y}</MenuItem>
             ))}
@@ -162,35 +134,13 @@ const PlanOverviewTab: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* Annual Schedule Timeline */}
-      <Paper sx={{ p: 2 }}>
+      {/* 안전 목표 */}
+      <Box>
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
-          {t('pkg.annualSchedule')}
+          {t('generalDashboard.safetyGoal', '안전 목표')}
         </Typography>
-        {timelinePlans.length === 0 ? (
-          <Alert severity="info">{t('common.noData')}</Alert>
-        ) : (
-          <Box>
-            {timelinePlans.map((plan, idx) => (
-              <Box
-                key={plan.id}
-                sx={{
-                  display: 'flex', alignItems: 'center', gap: 2, py: 1.5,
-                  borderBottom: idx < timelinePlans.length - 1 ? 1 : 0,
-                  borderColor: 'grey.200',
-                }}
-              >
-                <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: plan.status === 'DONE' ? '#22c55e' : plan.status === 'APPROVED' ? '#3b82f6' : plan.status === 'PENDING_APPROVAL' ? '#f59e0b' : '#9ca3af', flexShrink: 0 }} />
-                <Typography variant="body2" color="text.secondary" sx={{ minWidth: 90 }}>
-                  {plan.createdAt ? plan.createdAt.substring(0, 10) : ''}
-                </Typography>
-                <Typography variant="body2" sx={{ flex: 1 }}>{plan.planName}</Typography>
-                <Chip label={getStatusLabel(plan.status) || plan.status} color={getStatusColor(plan.status) as any} size="small" />
-              </Box>
-            ))}
-          </Box>
-        )}
-      </Paper>
+        <SafetyGoalProgressTable />
+      </Box>
     </Box>
   )
 }

@@ -176,7 +176,7 @@ const WasteManageTab: React.FC = () => {
           sx={{ minWidth: 200 }}  />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0) }} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {statusTabs.map(tab => (
                 <MenuItem key={tab.value} value={tab.value}>{tab.label}</MenuItem>
               ))}
@@ -193,7 +193,7 @@ const WasteManageTab: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 1 }}>
           <FormControl size="small" sx={{ flex: 1 }}>
             <Select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0) }} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {statusTabs.map(tab => (
                 <MenuItem key={tab.value} value={tab.value}>{tab.label}</MenuItem>
               ))}
@@ -345,7 +345,7 @@ const WasteManageTab: React.FC = () => {
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.wasteType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, wasteType: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {wasteTypeCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteTypeLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -360,7 +360,7 @@ const WasteManageTab: React.FC = () => {
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.wasteCategory || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, wasteCategory: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {wasteCategoryCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteCategoryLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -369,7 +369,7 @@ const WasteManageTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.department || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, department: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {departmentCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDepartmentLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -384,7 +384,7 @@ const WasteManageTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {wasteUnitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteUnitLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -405,7 +405,7 @@ const WasteManageTab: React.FC = () => {
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.disposalMethod || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, disposalMethod: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {disposalMethodCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDisposalMethodLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -414,7 +414,7 @@ const WasteManageTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.disposalCompany || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, disposalCompany: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {disposalCompanyCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDisposalCompanyLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -441,16 +441,16 @@ const WasteManageTab: React.FC = () => {
       {/* Mobile Form */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
         {[
-          { label: t('environment.wasteType'), el: <FormControl fullWidth size="small"><Select value={formData.wasteType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, wasteType: e.target.value })} displayEmpty><MenuItem value="" disabled>선택</MenuItem>{wasteTypeCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteTypeLabel(c.code)}</MenuItem>))}</Select></FormControl> },
+          { label: t('environment.wasteType'), el: <FormControl fullWidth size="small"><Select value={formData.wasteType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, wasteType: e.target.value })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{wasteTypeCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteTypeLabel(c.code)}</MenuItem>))}</Select></FormControl> },
           { label: t('environment.wasteName'), el: <TextField fullWidth size="small" value={formData.wasteName || ''} onChange={(e) => setFormData({ ...formData, wasteName: e.target.value })} /> },
-          { label: t('waste.wasteCategory'), el: <FormControl fullWidth size="small"><Select value={formData.wasteCategory || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, wasteCategory: e.target.value })} displayEmpty><MenuItem value="" disabled>선택</MenuItem>{wasteCategoryCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteCategoryLabel(c.code)}</MenuItem>))}</Select></FormControl> },
-          { label: t('waste.department'), el: <FormControl fullWidth size="small"><Select value={formData.department || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, department: e.target.value })} displayEmpty><MenuItem value="" disabled>선택</MenuItem>{departmentCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDepartmentLabel(c.code)}</MenuItem>))}</Select></FormControl> },
+          { label: t('waste.wasteCategory'), el: <FormControl fullWidth size="small"><Select value={formData.wasteCategory || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, wasteCategory: e.target.value })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{wasteCategoryCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteCategoryLabel(c.code)}</MenuItem>))}</Select></FormControl> },
+          { label: t('waste.department'), el: <FormControl fullWidth size="small"><Select value={formData.department || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, department: e.target.value })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{departmentCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDepartmentLabel(c.code)}</MenuItem>))}</Select></FormControl> },
           { label: t('environment.generationAmount'), el: <NumberField fullWidth size="small" value={formData.generationAmount ?? ''} onChange={(v) => setFormData({ ...formData, generationAmount: v ?? undefined })} /> },
-          { label: t('environment.unit'), el: <FormControl fullWidth size="small"><Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty><MenuItem value="" disabled>선택</MenuItem>{wasteUnitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteUnitLabel(c.code)}</MenuItem>))}</Select></FormControl> },
+          { label: t('environment.unit'), el: <FormControl fullWidth size="small"><Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{wasteUnitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getWasteUnitLabel(c.code)}</MenuItem>))}</Select></FormControl> },
           { label: t('waste.generationDate'), el: <DatePickerField value={formData.generationDate || ''} onChange={(v) => setFormData({ ...formData, generationDate: v })} size="small" fullWidth /> },
           { label: t('waste.storageLocation'), el: <TextField fullWidth size="small" value={formData.storageLocation || ''} onChange={(e) => setFormData({ ...formData, storageLocation: e.target.value })} /> },
-          { label: t('environment.disposalMethod'), el: <FormControl fullWidth size="small"><Select value={formData.disposalMethod || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, disposalMethod: e.target.value })} displayEmpty><MenuItem value="" disabled>선택</MenuItem>{disposalMethodCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDisposalMethodLabel(c.code)}</MenuItem>))}</Select></FormControl> },
-          { label: t('environment.disposalCompany'), el: <FormControl fullWidth size="small"><Select value={formData.disposalCompany || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, disposalCompany: e.target.value })} displayEmpty><MenuItem value="" disabled>선택</MenuItem>{disposalCompanyCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDisposalCompanyLabel(c.code)}</MenuItem>))}</Select></FormControl> },
+          { label: t('environment.disposalMethod'), el: <FormControl fullWidth size="small"><Select value={formData.disposalMethod || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, disposalMethod: e.target.value })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{disposalMethodCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDisposalMethodLabel(c.code)}</MenuItem>))}</Select></FormControl> },
+          { label: t('environment.disposalCompany'), el: <FormControl fullWidth size="small"><Select value={formData.disposalCompany || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, disposalCompany: e.target.value })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{disposalCompanyCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDisposalCompanyLabel(c.code)}</MenuItem>))}</Select></FormControl> },
           { label: t('environment.disposalDate'), el: <DatePickerField value={formData.disposalDate || ''} onChange={(v) => setFormData({ ...formData, disposalDate: v })} size="small" fullWidth /> },
           { label: t('environment.manager'), el: <Box sx={{ display: 'flex', gap: 1 }}><TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('environment.selectManager')} /><Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button></Box> },
           { label: t('environment.remark'), el: <TextField fullWidth size="small" multiline rows={3} value={formData.remark || ''} onChange={(e) => setFormData({ ...formData, remark: e.target.value })} /> },

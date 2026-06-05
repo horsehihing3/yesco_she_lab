@@ -374,7 +374,7 @@ const EmrContactTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.contactType')}</Typography>
             <Box sx={valueBorderSx}>
               <Select fullWidth size="small" value={form.contactType || 'INTERNAL'} onChange={(e) => setForm({ ...form, contactType: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="INTERNAL">{t('emr.internal')}</MenuItem>
                 <MenuItem value="EXTERNAL">{t('emr.external')}</MenuItem>
               </Select>
@@ -429,7 +429,7 @@ const EmrContactTab: React.FC = () => {
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('emr.contactType')}</Typography>
             <FormControl fullWidth size="small">
               <Select value={form.contactType || 'INTERNAL'} onChange={(e) => setForm({ ...form, contactType: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="INTERNAL">{t('emr.internal')}</MenuItem>
                 <MenuItem value="EXTERNAL">{t('emr.external')}</MenuItem>
               </Select>
