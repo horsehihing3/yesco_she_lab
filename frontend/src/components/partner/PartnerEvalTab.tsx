@@ -179,7 +179,7 @@ const PartnerEvalTab: React.FC = () => {
                       setForm(f => ({ ...f, contractorRegistrationId: null } as any))
                     }
                   }}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {registrations.map(r => (
                     <MenuItem key={r.id} value={r.id}>
                       {r.companyName} <Typography component="span" sx={{ color: 'text.disabled', fontSize: '0.75rem', ml: 1 }}>· {r.bizType || '-'} · {r.regNo}</Typography>
@@ -198,7 +198,7 @@ const PartnerEvalTab: React.FC = () => {
                 <TextField select fullWidth size="small"
                   value={form.industry || ''}
                   onChange={e => setForm({ ...form, industry: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {INDUSTRIES.map(i => <MenuItem key={i} value={i}>{i}</MenuItem>)}
                 </TextField>
               )}
@@ -316,7 +316,7 @@ const PartnerEvalTab: React.FC = () => {
                 <TextField select fullWidth size="small"
                   value={form.status || '완료'}
                   onChange={e => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               )}

@@ -411,7 +411,7 @@ const EmrIncidentTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.type')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
               <Select fullWidth size="small" value={form.emergencyType} onChange={(e) => setForm({ ...form, emergencyType: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {typeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -420,7 +420,7 @@ const EmrIncidentTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.status')}</Typography>
             <Box sx={valueBorderSx}>
               <Select fullWidth size="small" value={form.status || 'STANDBY'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {statusCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -515,7 +515,7 @@ const EmrIncidentTab: React.FC = () => {
             </Typography>
             <FormControl fullWidth size="small">
               <Select value={form.emergencyType} onChange={(e) => setForm({ ...form, emergencyType: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {typeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -524,7 +524,7 @@ const EmrIncidentTab: React.FC = () => {
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('emr.status')}</Typography>
             <FormControl fullWidth size="small">
               <Select value={form.status || 'STANDBY'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {statusCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>

@@ -121,10 +121,10 @@ const FacilityInspectionTab: React.FC = () => {
             <FormRow>
               <FormLabel>분류</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.category || ''} onChange={e => setForm({ ...form, category: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
               <FormLabel>검사 종류</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.inspectType || ''} onChange={e => setForm({ ...form, inspectType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{INSPECT_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{INSPECT_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>검사기관</FormLabel>
@@ -141,7 +141,7 @@ const FacilityInspectionTab: React.FC = () => {
             <FormRow>
               <FormLabel>검사 결과</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.result || ''} onChange={e => setForm({ ...form, result: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{RESULTS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{RESULTS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField></FormCell>
               <FormLabel>유효기간</FormLabel>
               <FormCell><DatePickerField value={form.validUntil || null} onChange={d => setForm({ ...form, validUntil: d })} /></FormCell>
             </FormRow>

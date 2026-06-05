@@ -45,7 +45,6 @@ export interface AuditPlan {
   auditName: string
   auditType: AuditType
   targetDept?: string
-  targetSite?: string
   /** 다중 감사담당자 — 콤마(,)로 구분된 이름 목록 */
   auditorName?: string
   auditorDept?: string
@@ -56,6 +55,7 @@ export interface AuditPlan {
   planStartDate?: string
   planEndDate?: string
   purpose?: string
+  notes?: string
   checklistTemplateId?: number
   approved?: boolean
   approvedBy?: string
@@ -86,7 +86,6 @@ export interface AuditPlanRequest {
   auditName: string
   auditType: AuditType
   targetDept?: string
-  targetSite?: string
   auditorName?: string
   auditorDept?: string
   auditor?: string
@@ -95,6 +94,7 @@ export interface AuditPlanRequest {
   planStartDate?: string
   planEndDate?: string
   purpose?: string
+  notes?: string
   checklistTemplateId?: number
   status?: AuditPlanStatus
   planApproverUserId?: number | null
@@ -116,7 +116,6 @@ export interface Audit {
   auditName: string
   auditType: AuditType
   targetDept?: string
-  targetSite?: string
   auditor?: string
   auditDate?: string
   grade?: AuditGrade
@@ -154,7 +153,6 @@ export interface AuditRequest {
   auditName: string
   auditType: AuditType
   targetDept?: string
-  targetSite?: string
   auditor?: string
   auditDate?: string
   grade?: AuditGrade
@@ -275,28 +273,3 @@ export interface AuditFindingRequest {
   status?: CorrectiveStatus
 }
 
-export interface AuditCorrective {
-  id: number
-  correctiveId: string
-  findingId: number
-  findingDescription?: string
-  auditId?: number
-  auditName?: string
-  severity?: string
-  actionDescription: string
-  responsiblePerson?: string
-  responsibleDept?: string
-  dueDate?: string
-  status: CorrectiveStatus
-  createdAt: string
-  modifiedAt: string
-}
-
-export interface AuditCorrectiveRequest {
-  findingId: number
-  actionDescription: string
-  responsiblePerson?: string
-  responsibleDept?: string
-  dueDate?: string
-  status?: CorrectiveStatus
-}

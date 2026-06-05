@@ -310,7 +310,7 @@ const EmissionSourceTab: React.FC = () => {
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.sourceType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, sourceType: e.target.value || null })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {sourceTypeCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getSourceTypeLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -319,7 +319,7 @@ const EmissionSourceTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {scopeCodes.length > 0 ? scopeCodes.map((c) => (
                   <MenuItem key={c.code} value={c.code}>{getScopeLabel(c.code)}</MenuItem>
                 )) : [1, 2, 3].map((s) => (
@@ -338,7 +338,7 @@ const EmissionSourceTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value || null })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {statusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -371,7 +371,7 @@ const EmissionSourceTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.source.sourceType')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.sourceType || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, sourceType: e.target.value || null })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {sourceTypeCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getSourceTypeLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -380,7 +380,7 @@ const EmissionSourceTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.source.scope')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {scopeCodes.length > 0 ? scopeCodes.map((c) => (
                 <MenuItem key={c.code} value={c.code}>{getScopeLabel(c.code)}</MenuItem>
               )) : [1, 2, 3].map((s) => (
@@ -397,7 +397,7 @@ const EmissionSourceTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.source.status')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value || null })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {statusCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>

@@ -166,14 +166,14 @@ const PermitRenewalTab: React.FC = () => {
               <FormLabel>분야</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.category || ''} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>단계</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.stage || ''} onChange={(e) => setForm({ ...form, stage: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STAGES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

@@ -565,7 +565,7 @@ const WemImprovementTab: React.FC = () => {
     { label: t('wem.exceedRate'), node: <NumberField size="small" fullWidth value={formData.exceedRate} onChange={(v) => setFormData({ ...formData, exceedRate: v ?? undefined })} /> },
     { label: t('wem.exceedLevel'), node: (
       <Select size="small" fullWidth value={formData.exceedLevel || ''} onChange={(e) => setFormData({ ...formData, exceedLevel: e.target.value })} displayEmpty>
-        <MenuItem value="" disabled>선택</MenuItem>
+        <MenuItem value="" disabled>선택하세요</MenuItem>
         {exceedLevelCodes.map(c => <MenuItem key={c.code} value={c.code}>{getExceedLevelCodeLabel(c.code)}</MenuItem>)}
       </Select>
     ) },
@@ -583,7 +583,7 @@ const WemImprovementTab: React.FC = () => {
     { label: t('wem.improvementPlan'), node: <TextField size="small" fullWidth multiline rows={3} value={formData.improvementPlan || ''} onChange={(e) => setFormData({ ...formData, improvementPlan: e.target.value })} /> },
     { label: t('common.status', '상태'), node: (
       <Select size="small" fullWidth value={formData.status || ''} onChange={(e) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
-        <MenuItem value="" disabled>선택</MenuItem>
+        <MenuItem value="" disabled>선택하세요</MenuItem>
         {statusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
       </Select>
     ) },

@@ -229,7 +229,7 @@ const FacilityEquipmentTab: React.FC = () => {
               <FormLabel required>분류</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.category || ''} onChange={e => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -252,7 +252,7 @@ const FacilityEquipmentTab: React.FC = () => {
               <FormLabel required>설치위치</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.location || ''} onChange={e => setForm({ ...form, location: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {LOCATIONS.map(l => <MenuItem key={l} value={l}>{l}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -281,14 +281,14 @@ const FacilityEquipmentTab: React.FC = () => {
               <FormLabel>검사 종류</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.inspectType || ''} onChange={e => setForm({ ...form, inspectType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {INSPECT_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>검사 주기</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.inspectPeriod || ''} onChange={e => setForm({ ...form, inspectPeriod: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {INSPECT_PERIODS.map(p => <MenuItem key={p} value={p}>{p}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -307,7 +307,7 @@ const FacilityEquipmentTab: React.FC = () => {
               <FormLabel>상태</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.status || '정상'} onChange={e => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

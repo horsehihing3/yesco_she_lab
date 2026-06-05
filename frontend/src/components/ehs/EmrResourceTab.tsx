@@ -326,7 +326,7 @@ const EmrResourceTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.resourceType')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
               <Select fullWidth size="small" value={form.resourceType} onChange={(e) => setForm({ ...form, resourceType: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {resourceTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getResourceTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -349,7 +349,7 @@ const EmrResourceTab: React.FC = () => {
             <Typography sx={labelSx}>{t('common.status')}</Typography>
             <Box sx={valueSx}>
               <Select fullWidth size="small" value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {resourceStatusCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getResourceStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -382,7 +382,7 @@ const EmrResourceTab: React.FC = () => {
             </Typography>
             <FormControl fullWidth size="small">
               <Select value={form.resourceType} onChange={(e) => setForm({ ...form, resourceType: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {resourceTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getResourceTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -403,7 +403,7 @@ const EmrResourceTab: React.FC = () => {
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.status')}</Typography>
             <FormControl fullWidth size="small">
               <Select value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="NORMAL">NORMAL</MenuItem>
                 <MenuItem value="CHECK_NEEDED">CHECK_NEEDED</MenuItem>
               </Select>

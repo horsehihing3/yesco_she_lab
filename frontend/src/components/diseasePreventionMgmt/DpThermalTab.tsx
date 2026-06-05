@@ -145,7 +145,7 @@ const DpThermalTab: React.FC = () => {
               <FormLabel required>유형</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.thermalType || ''} onChange={(e) => setForm({ ...form, thermalType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -176,7 +176,7 @@ const DpThermalTab: React.FC = () => {
               <FormLabel>심각도</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.severity || ''} onChange={(e) => setForm({ ...form, severity: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {SEVERITIES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

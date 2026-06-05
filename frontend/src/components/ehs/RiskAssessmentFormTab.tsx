@@ -425,7 +425,7 @@ const RiskAssessmentFormTab: React.FC<RiskAssessmentFormTabProps> = ({ formId: p
                     <TableCell align="center" rowSpan={risk4MSpan.span}>
                       {isEditing ? (
                         <Select size="small" fullWidth value={item.risk4M || ''} onChange={(e) => handleItemChange(index, 'risk4M', e.target.value)} displayEmpty>
-                          <MenuItem value="">선택</MenuItem>
+                          <MenuItem value="">선택하세요</MenuItem>
                           {evalCategoryCodes.map(c => <MenuItem key={c.code} value={c.code}>{getEvalCategoryLabel(c.code)}</MenuItem>)}
                         </Select>
                       ) : (
@@ -443,7 +443,7 @@ const RiskAssessmentFormTab: React.FC<RiskAssessmentFormTabProps> = ({ formId: p
                   <TableCell align="center">
                     {isEditing ? (
                       <Select size="small" fullWidth value={item.expectedDisaster || ''} onChange={(e) => handleItemChange(index, 'expectedDisaster', e.target.value)} displayEmpty>
-                        <MenuItem value="">선택</MenuItem>
+                        <MenuItem value="">선택하세요</MenuItem>
                         {disasterTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getDisasterTypeLabel(c.code)}</MenuItem>)}
                       </Select>
                     ) : (

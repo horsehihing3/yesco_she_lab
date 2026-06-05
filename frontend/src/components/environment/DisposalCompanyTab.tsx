@@ -339,7 +339,7 @@ const DisposalCompanyTab: React.FC = () => {
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.rating || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, rating: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {ratingCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getRatingLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -348,7 +348,7 @@ const DisposalCompanyTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="ACTIVE">{t('waste.company.statusActive')}</MenuItem>
                 <MenuItem value="INACTIVE">{t('waste.company.statusInactive')}</MenuItem>
               </Select>
@@ -399,7 +399,7 @@ const DisposalCompanyTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('waste.company.rating')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.rating || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, rating: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {ratingCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getRatingLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>
@@ -408,7 +408,7 @@ const DisposalCompanyTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('waste.company.status')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.status || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               <MenuItem value="ACTIVE">{t('waste.company.statusActive')}</MenuItem>
               <MenuItem value="INACTIVE">{t('waste.company.statusInactive')}</MenuItem>
             </Select>

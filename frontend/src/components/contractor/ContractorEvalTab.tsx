@@ -426,7 +426,7 @@ const ContractorEvalTab = () => {
                     <TableCell sx={{ ...bodyCellSx, textAlign: 'center' }}>
                       {viewMode === 'edit' ? (
                         <Select size="small" fullWidth value={item.evalCategory || ''} onChange={(e) => handleItemChange(index, 'evalCategory', e.target.value)} displayEmpty>
-                          <MenuItem value="">선택</MenuItem>
+                          <MenuItem value="">선택하세요</MenuItem>
                           {evalCategoryCodes.map(c => <MenuItem key={c.code} value={c.code}>{getEvalCategoryLabel(c.code)}</MenuItem>)}
                         </Select>
                       ) : (
@@ -447,7 +447,7 @@ const ContractorEvalTab = () => {
                     <TableCell sx={{ ...bodyCellSx, textAlign: 'center' }}>
                       {viewMode === 'edit' ? (
                         <Select size="small" fullWidth value={item.disasterType || ''} onChange={(e) => handleItemChange(index, 'disasterType', e.target.value)} displayEmpty>
-                          <MenuItem value="">선택</MenuItem>
+                          <MenuItem value="">선택하세요</MenuItem>
                           {disasterTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getDisasterTypeLabel(c.code)}</MenuItem>)}
                         </Select>
                       ) : (

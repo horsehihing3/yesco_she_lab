@@ -155,7 +155,7 @@ const ReachTab: React.FC = () => {
             <Typography sx={labelSx}>{t('chem.reach.svhc', 'SVHC')}</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" value={form.svhc} onChange={e => setForm({ ...form, svhc: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {reachYnCodes.map(c => <MenuItem key={c.code} value={c.code}>{getReachYnLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -164,7 +164,7 @@ const ReachTab: React.FC = () => {
             <Typography sx={labelSx}>{t('chem.reach.authRequired', '허가 대상')}</Typography>
             <Box sx={valBorderSx}>
               <Select fullWidth size="small" value={form.authorizationRequired} onChange={e => setForm({ ...form, authorizationRequired: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {reachYnCodes.map(c => <MenuItem key={c.code} value={c.code}>{getReachYnLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -177,7 +177,7 @@ const ReachTab: React.FC = () => {
             <Typography sx={labelSx}>{t('chem.reach.status', '상태')}</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {reachStatusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getReachStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -202,14 +202,14 @@ const ReachTab: React.FC = () => {
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.reach.svhc', 'SVHC')}</Typography>
             <Select fullWidth size="small" value={form.svhc} onChange={e => setForm({ ...form, svhc: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {reachYnCodes.map(c => <MenuItem key={c.code} value={c.code}>{getReachYnLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.reach.authRequired', '허가 대상')}</Typography>
             <Select fullWidth size="small" value={form.authorizationRequired} onChange={e => setForm({ ...form, authorizationRequired: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {reachYnCodes.map(c => <MenuItem key={c.code} value={c.code}>{getReachYnLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -224,7 +224,7 @@ const ReachTab: React.FC = () => {
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.reach.status', '상태')}</Typography>
             <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {reachStatusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getReachStatusLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>

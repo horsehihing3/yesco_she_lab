@@ -1624,7 +1624,7 @@ const NearMissPage: React.FC = () => {
                       <Controller name="emergencyType" control={control} defaultValue=""
                         render={({ field }) => (
                           <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
-                            <MenuItem value="">선택</MenuItem>
+                            <MenuItem value="">선택하세요</MenuItem>
                             {incRespTypeList.map((c: any) => (
                               <MenuItem key={c.code} value={c.code}>{incRespTypeMap[c.code] || c.code}</MenuItem>
                             ))}
@@ -1637,7 +1637,7 @@ const NearMissPage: React.FC = () => {
                       <Controller name="responseStatus" control={control} defaultValue=""
                         render={({ field }) => (
                           <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
-                            <MenuItem value="">선택</MenuItem>
+                            <MenuItem value="">선택하세요</MenuItem>
                             {incRespStatusList.map((c: any) => (
                               <MenuItem key={c.code} value={c.code}>{incRespStatusMap[c.code] || c.code}</MenuItem>
                             ))}
@@ -1650,7 +1650,7 @@ const NearMissPage: React.FC = () => {
                       <Controller name="severity" control={control} defaultValue=""
                         render={({ field }) => (
                           <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
-                            <MenuItem value="">선택</MenuItem>
+                            <MenuItem value="">선택하세요</MenuItem>
                             {incRespSeverityList.map((c: any) => (
                               <MenuItem key={c.code} value={c.code}>{incRespSeverityMap[c.code] || c.code}</MenuItem>
                             ))}
@@ -1671,7 +1671,7 @@ const NearMissPage: React.FC = () => {
               <Controller name="emergencyType" control={control} defaultValue=""
                 render={({ field }) => (
                   <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
-                    <MenuItem value="">선택</MenuItem>
+                    <MenuItem value="">선택하세요</MenuItem>
                     {incRespTypeList.map((c: any) => (
                       <MenuItem key={c.code} value={c.code}>{incRespTypeMap[c.code] || c.code}</MenuItem>
                     ))}
@@ -1684,7 +1684,7 @@ const NearMissPage: React.FC = () => {
               <Controller name="responseStatus" control={control} defaultValue=""
                 render={({ field }) => (
                   <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
-                    <MenuItem value="">선택</MenuItem>
+                    <MenuItem value="">선택하세요</MenuItem>
                     {incRespStatusList.map((c: any) => (
                       <MenuItem key={c.code} value={c.code}>{incRespStatusMap[c.code] || c.code}</MenuItem>
                     ))}
@@ -1697,7 +1697,7 @@ const NearMissPage: React.FC = () => {
               <Controller name="severity" control={control} defaultValue=""
                 render={({ field }) => (
                   <TextField select fullWidth size="small" {...field} SelectProps={{ displayEmpty: true }}>
-                    <MenuItem value="">선택</MenuItem>
+                    <MenuItem value="">선택하세요</MenuItem>
                     {incRespSeverityList.map((c: any) => (
                       <MenuItem key={c.code} value={c.code}>{incRespSeverityMap[c.code] || c.code}</MenuItem>
                     ))}

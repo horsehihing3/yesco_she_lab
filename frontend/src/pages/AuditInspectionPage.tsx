@@ -3,12 +3,9 @@ import { useSearchParams } from 'react-router-dom'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../hooks/useMenuRule'
-import AuditDashboardTab from '../components/ehs/AuditDashboardTab'
 import AuditPlanTab from '../components/ehs/AuditPlanTab'
 import AuditExecutionTab from '../components/ehs/AuditExecutionTab'
 import AuditFindingTab from '../components/ehs/AuditFindingTab'
-import AuditCorrectiveTab from '../components/ehs/AuditCorrectiveTab'
-import AuditReportTab from '../components/ehs/AuditReportTab'
 
 const AuditInspectionPage: React.FC = () => {
   const { t } = useTranslation()
@@ -20,7 +17,6 @@ const AuditInspectionPage: React.FC = () => {
     { menuKey: 'audit.tabs.plan',       label: t('audit.tabs.plan'),       component: <AuditPlanTab /> },
     { menuKey: 'audit.tabs.execution',  label: t('audit.tabs.execution'),  component: <AuditExecutionTab /> },
     { menuKey: 'audit.tabs.findings',   label: t('audit.tabs.findings'),   component: <AuditFindingTab /> },
-    { menuKey: 'audit.tabs.corrective', label: t('audit.tabs.corrective'), component: <AuditCorrectiveTab /> },
   ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
 
   useEffect(() => {

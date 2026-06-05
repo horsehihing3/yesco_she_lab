@@ -197,7 +197,7 @@ const IncidentResponsePage: React.FC = () => {
               <TextField select fullWidth size="small" value={form.incidentType || ''}
                 SelectProps={{ displayEmpty: true }}
                 onChange={(e) => setForm({ ...form, incidentType: e.target.value })}>
-                <MenuItem value="">선택</MenuItem>
+                <MenuItem value="">선택하세요</MenuItem>
                 {TYPE_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
               </TextField>
             </FormCell>
@@ -206,7 +206,7 @@ const IncidentResponsePage: React.FC = () => {
               <TextField select fullWidth size="small" value={form.status || ''}
                 SelectProps={{ displayEmpty: true }}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                <MenuItem value="">선택</MenuItem>
+                <MenuItem value="">선택하세요</MenuItem>
                 {STATUS_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
               </TextField>
             </FormCell>
@@ -270,7 +270,7 @@ const IncidentResponsePage: React.FC = () => {
               <TextField select fullWidth size="small" value={form.severity || 'MODERATE'}
                 SelectProps={{ displayEmpty: true }}
                 onChange={(e) => setForm({ ...form, severity: e.target.value })}>
-                <MenuItem value="">선택</MenuItem>
+                <MenuItem value="">선택하세요</MenuItem>
                 {SEVERITY_OPTIONS.map(([k, v]) => <MenuItem key={k} value={k}>{v}</MenuItem>)}
               </TextField>
             </FormCell>

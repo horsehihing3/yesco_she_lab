@@ -148,7 +148,7 @@ const DpRespiTab: React.FC = () => {
               <FormLabel required>노출 유형</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.exposureType || ''} onChange={(e) => setForm({ ...form, exposureType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {EXPOSURE_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -171,7 +171,7 @@ const DpRespiTab: React.FC = () => {
               <FormLabel>Fit Test 결과</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.fitTestResult || ''} onChange={(e) => setForm({ ...form, fitTestResult: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {FIT_RESULTS.map((r) => <MenuItem key={r} value={r}>{r || '미실시'}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -192,7 +192,7 @@ const DpRespiTab: React.FC = () => {
               <FormLabel>판정</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.status || ''} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

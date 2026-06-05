@@ -320,7 +320,7 @@ const EnvMonitoringPage: React.FC = () => {
                   value={form.status || 'NORMAL'}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
                  displayEmpty>
-                  <MenuItem value="" disabled>선택</MenuItem>
+                  <MenuItem value="" disabled>선택하세요</MenuItem>
                   {statusCodes.map((c) => (
                     <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>
                   ))}
@@ -377,7 +377,7 @@ const EnvMonitoringPage: React.FC = () => {
                   value={form.exceedYn ? 'true' : 'false'}
                   onChange={(e) => setForm({ ...form, exceedYn: e.target.value === 'true' })}
                  displayEmpty>
-                  <MenuItem value="" disabled>선택</MenuItem>
+                  <MenuItem value="" disabled>선택하세요</MenuItem>
                   <MenuItem value="false">N</MenuItem>
                   <MenuItem value="true">Y</MenuItem>
                 </Select>
@@ -445,7 +445,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Typography>
             <FormControl fullWidth size="small">
               <Select value={form.status || 'NORMAL'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {statusCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -496,7 +496,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Typography>
             <FormControl fullWidth size="small">
               <Select value={form.exceedYn ? 'true' : 'false'} onChange={(e) => setForm({ ...form, exceedYn: e.target.value === 'true' })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 <MenuItem value="false">{t('envMon.exceedYn')}: N</MenuItem>
                 <MenuItem value="true">{t('envMon.exceedYn')}: Y</MenuItem>
               </Select>

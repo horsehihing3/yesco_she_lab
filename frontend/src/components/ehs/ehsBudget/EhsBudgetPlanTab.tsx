@@ -297,7 +297,7 @@ const EhsBudgetPlanTab: React.FC = () => {
           <Box sx={{ flex: 1 }} />
           <FormControl size="small" sx={{ minWidth: 100 }}>
             <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                 <MenuItem key={y} value={y}>{y}</MenuItem>
               ))}
@@ -320,7 +320,7 @@ const EhsBudgetPlanTab: React.FC = () => {
             </FormControl>
             <FormControl size="small" sx={{ minWidth: 100 }}>
               <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                   <MenuItem key={y} value={y}>{y}</MenuItem>
                 ))}
@@ -516,7 +516,7 @@ const EhsBudgetPlanTab: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 displayEmpty
               >
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {categoryCodes.map(c => (
                   <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>
                 ))}

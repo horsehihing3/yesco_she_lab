@@ -141,7 +141,7 @@ const RadZoneTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={form.name || ''} onChange={e => setForm({ ...form, name: e.target.value })} /></FormCell>
               <FormLabel>구역구분</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.zoneType || ''} onChange={e => setForm({ ...form, zoneType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ZONE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ZONE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>위치</FormLabel>
@@ -152,7 +152,7 @@ const RadZoneTab: React.FC = () => {
             <FormRow>
               <FormLabel>측정주기</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.measureCycle || ''} onChange={e => setForm({ ...form, measureCycle: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
               <FormLabel>관리자</FormLabel>
               <FormCell><TextField fullWidth size="small" value={form.ownerName || ''} onChange={e => setForm({ ...form, ownerName: e.target.value })} /></FormCell>
             </FormRow>

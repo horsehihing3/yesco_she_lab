@@ -191,19 +191,19 @@ const OdStatusTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={form.dept || ''} onChange={e => setForm({ ...form, dept: e.target.value })} /></FormCell>
               <FormLabel>직종</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.job || ''} onChange={e => setForm({ ...form, job: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{JOBS.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{JOBS.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>성별</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.gender || ''} onChange={e => setForm({ ...form, gender: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{GENDERS.map(g => <MenuItem key={g} value={g}>{g}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{GENDERS.map(g => <MenuItem key={g} value={g}>{g}</MenuItem>)}</TextField></FormCell>
               <FormLabel>생년월일</FormLabel>
               <FormCell><DatePickerField value={form.birthDate || null} onChange={d => setForm({ ...form, birthDate: d })} /></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>검진 구분</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.division || '정기'} onChange={e => setForm({ ...form, division: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{DIVISIONS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{DIVISIONS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
               <FormLabel>유해인자</FormLabel>
               <FormCell><TextField fullWidth size="small" value={form.factor || ''} onChange={e => setForm({ ...form, factor: e.target.value })} /></FormCell>
             </FormRow>
@@ -223,11 +223,11 @@ const OdStatusTab: React.FC = () => {
               <FormLabel>판정</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.judge || ''} onChange={e => setForm({ ...form, judge: e.target.value })}><MenuItem value="">미판정</MenuItem>{JUDGES.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
               <FormLabel>사후조치</FormLabel>
-              <FormCell><TextField select fullWidth size="small" value={form.afterAction || ''} onChange={e => setForm({ ...form, afterAction: e.target.value })}><MenuItem value="">선택</MenuItem>{AFTER_ACTIONS.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
+              <FormCell><TextField select fullWidth size="small" value={form.afterAction || ''} onChange={e => setForm({ ...form, afterAction: e.target.value })}><MenuItem value="">선택하세요</MenuItem>{AFTER_ACTIONS.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow last>
               <FormLabel>이행 여부</FormLabel>
-              <FormCell><TextField select fullWidth size="small" value={form.actionDone || ''} onChange={e => setForm({ ...form, actionDone: e.target.value })}><MenuItem value="">선택</MenuItem>{ACTION_DONE.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
+              <FormCell><TextField select fullWidth size="small" value={form.actionDone || ''} onChange={e => setForm({ ...form, actionDone: e.target.value })}><MenuItem value="">선택하세요</MenuItem>{ACTION_DONE.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
             </FormRow>
           </FormTable>
         </DialogContent>

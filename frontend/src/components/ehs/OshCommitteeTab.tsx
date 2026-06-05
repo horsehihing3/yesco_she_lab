@@ -488,7 +488,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </FormControl>
           <FormControl size="small" sx={{ minWidth: 100 }}>
             <Select value={quarterFilter} onChange={handleQuarterChange} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {quarterOptions.map((q) => (<MenuItem key={q} value={q}>{q}</MenuItem>))}
             </Select>
           </FormControl>
@@ -512,7 +512,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </FormControl>
           <FormControl size="small" sx={{ flex: 1 }}>
             <Select value={quarterFilter} onChange={handleQuarterChange} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {quarterOptions.map((q) => (<MenuItem key={q} value={q}>{q}</MenuItem>))}
             </Select>
           </FormControl>
@@ -1154,7 +1154,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                   onChange={(e) => setExternalCompany(e.target.value)}
                   SelectProps={{ displayEmpty: true }}
                 >
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {contractorRegs.map(r => (
                     <MenuItem key={r.id} value={r.companyName}>{r.companyName}</MenuItem>
                   ))}

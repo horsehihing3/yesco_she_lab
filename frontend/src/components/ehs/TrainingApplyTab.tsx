@@ -347,7 +347,7 @@ const TrainingApplyTab: React.FC = () => {
                         <Box sx={valSx}>
                           <FormControl fullWidth size="small">
                             <Select value={applyForm.meal} onChange={(e) => setApplyForm({ ...applyForm, meal: e.target.value })} displayEmpty>
-                              <MenuItem value="" disabled>선택</MenuItem>
+                              <MenuItem value="" disabled>선택하세요</MenuItem>
                               <MenuItem value="중식 신청 (일반식)">중식 신청 (일반식)</MenuItem>
                               <MenuItem value="중식 신청 (채식)">중식 신청 (채식)</MenuItem>
                               <MenuItem value="신청하지 않음">신청하지 않음</MenuItem>
@@ -360,7 +360,7 @@ const TrainingApplyTab: React.FC = () => {
                         <Box sx={valSx}>
                           <FormControl fullWidth size="small">
                             <Select value={applyForm.transport} onChange={(e) => setApplyForm({ ...applyForm, transport: e.target.value })} displayEmpty>
-                              <MenuItem value="" disabled>선택</MenuItem>
+                              <MenuItem value="" disabled>선택하세요</MenuItem>
                               <MenuItem value="개인 차량">개인 차량</MenuItem>
                               <MenuItem value="대중교통">대중교통</MenuItem>
                               <MenuItem value="회사 셔틀">회사 셔틀</MenuItem>

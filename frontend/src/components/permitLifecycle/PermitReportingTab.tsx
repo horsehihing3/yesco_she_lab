@@ -208,14 +208,14 @@ const PermitReportingTab: React.FC = () => {
               <FormLabel>보고 구분</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.reportType || ''} onChange={(e) => setForm({ ...form, reportType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {REPORT_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>보고 주기</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.frequency || ''} onChange={(e) => setForm({ ...form, frequency: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {FREQS.map((f) => <MenuItem key={f} value={f}>{f}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -238,7 +238,7 @@ const PermitReportingTab: React.FC = () => {
               <FormLabel>상태</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.status || ''} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

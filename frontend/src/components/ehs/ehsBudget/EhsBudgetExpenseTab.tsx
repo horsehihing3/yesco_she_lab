@@ -368,7 +368,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
           <Box sx={{ flex: 1 }} />
           <FormControl size="small" sx={{ minWidth: 100 }}>
             <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                 <MenuItem key={y} value={y}>{y}</MenuItem>
               ))}
@@ -391,7 +391,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
             </FormControl>
             <FormControl size="small" sx={{ minWidth: 100 }}>
               <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                   <MenuItem key={y} value={y}>{y}</MenuItem>
                 ))}
@@ -604,7 +604,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 displayEmpty
               >
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {formYearPlans.length === 0 ? (
                   <MenuItem value="" disabled>{t('budget.noPlanForYear', '해당 연도의 예산수립이 없습니다')}</MenuItem>
                 ) : formYearPlans.map(p => (

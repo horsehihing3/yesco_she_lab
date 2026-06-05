@@ -144,7 +144,7 @@ const UsageReportTab: React.FC = () => {
             <Typography sx={labelSx}>{t('chem.status')}</Typography>
             <Box sx={valBorderSx}>
               <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
-                <MenuItem value="">선택</MenuItem>
+                <MenuItem value="">선택하세요</MenuItem>
                 <MenuItem value="COLLECTING">{t('chem.usageReport.statusCollecting')}</MenuItem>
                 <MenuItem value="SUBMITTED">{t('chem.usageReport.statusSubmitted')}</MenuItem>
               </Select>
@@ -192,7 +192,7 @@ const UsageReportTab: React.FC = () => {
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.status')}</Typography>
             <Select fullWidth size="small" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} displayEmpty>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               <MenuItem value="COLLECTING">{t('chem.usageReport.statusCollecting')}</MenuItem>
               <MenuItem value="SUBMITTED">{t('chem.usageReport.statusSubmitted')}</MenuItem>
             </Select>

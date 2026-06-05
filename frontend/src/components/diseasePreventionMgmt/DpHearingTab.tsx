@@ -186,7 +186,7 @@ const DpHearingTab: React.FC = () => {
               <FormLabel>검사 구분</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.examType || ''} onChange={(e) => setForm({ ...form, examType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {EXAM_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -195,7 +195,7 @@ const DpHearingTab: React.FC = () => {
               <FormLabel>판정</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.status || ''} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

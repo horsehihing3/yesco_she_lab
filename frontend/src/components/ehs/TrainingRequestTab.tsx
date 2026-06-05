@@ -340,7 +340,7 @@ const TrainingRequestTab: React.FC = () => {
             <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationType')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <Select fullWidth size="small" value={form.educationType} onChange={(e) => setForm({ ...form, educationType: e.target.value as any })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {typeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -381,7 +381,7 @@ const TrainingRequestTab: React.FC = () => {
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 3 }}>
           {[
             { label: t('common.title'), required: true, node: <TextField size="small" fullWidth value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /> },
-            { label: t('occupationalExposure.safetyEducation.educationType'), required: true, node: <FormControl fullWidth size="small"><Select value={form.educationType} onChange={(e) => setForm({ ...form, educationType: e.target.value as any })} displayEmpty><MenuItem value="" disabled>선택</MenuItem>{typeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getTypeLabel(c.code)}</MenuItem>)}</Select></FormControl> },
+            { label: t('occupationalExposure.safetyEducation.educationType'), required: true, node: <FormControl fullWidth size="small"><Select value={form.educationType} onChange={(e) => setForm({ ...form, educationType: e.target.value as any })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{typeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getTypeLabel(c.code)}</MenuItem>)}</Select></FormControl> },
             { label: t('occupationalExposure.safetyEducation.educationDate'), required: true, node: <DatePickerField value={form.educationDate || null} onChange={(v) => setForm({ ...form, educationDate: v || '' })} size="small" /> },
             { label: t('occupationalExposure.safetyEducation.educationHours'), node: <NumberField size="small" fullWidth value={form.educationHours || ''} onChange={(v) => setForm({ ...form, educationHours: v ?? undefined })} /> },
             { label: t('occupationalExposure.safetyEducation.location'), node: <TextField size="small" fullWidth value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} /> },

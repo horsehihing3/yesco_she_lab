@@ -5,8 +5,8 @@ import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Chip,
 } from '@mui/material'
-import { auditApi, auditFindingApi, auditCorrectiveApi } from '../../api/auditApi'
-import { Audit, AuditGrade, AuditFinding, AuditCorrective } from '../../types/audit.types'
+import { auditApi, auditFindingApi } from '../../api/auditApi'
+import { Audit, AuditGrade, AuditFinding } from '../../types/audit.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import ReportListWrapper, { ReportColumn } from '../common/ReportListWrapper'
 
@@ -30,7 +30,6 @@ const AuditReportTab: React.FC = () => {
   const { t } = useTranslation()
   const { getLabel: getAuditTypeLabel } = useCodeMap('AUDIT_TYPE')
   const { getLabel: getSeverityLabel } = useCodeMap('FINDING_SEVERITY')
-  const { getLabel: getCorrectiveStatusLabel } = useCodeMap('CORRECTIVE_STATUS')
 
   // 기본 범위: 최근 3개월 (오늘 - 3개월 ~ 오늘)
   const [startDate, setStartDate] = useState<string>(monthsAgoIso(3))
@@ -61,23 +60,17 @@ const AuditReportTab: React.FC = () => {
       .sort((a, b) => pickDate(b).localeCompare(pickDate(a)))
   }, [data, startDate, endDate])
 
-  // 각 audit 별 부적합/시정조치 병렬 조회
+  // 각 audit 별 부적합 사항 병렬 조회
   const findingQueries = useQueries({
     queries: reports.map(r => ({
       queryKey: ['auditReportFindings', r.id],
       queryFn: () => auditFindingApi.getByAudit(r.id, 0, 100),
     })),
   })
-  const correctiveQueries = useQueries({
-    queries: reports.map(r => ({
-      queryKey: ['auditReportCorrectives', r.id],
-      queryFn: () => auditCorrectiveApi.getByAudit(r.id, 0, 100),
-    })),
-  })
 
   const reportDate = todayIso()
 
-  const renderReport = (item: Audit, idx: number, total: number, findings: AuditFinding[], correctives: AuditCorrective[]) => (
+  const renderReport = (item: Audit, idx: number, total: number, findings: AuditFinding[]) => (
     <Paper
       key={item.id}
       sx={{
@@ -175,45 +168,6 @@ const AuditReportTab: React.FC = () => {
         </TableContainer>
       )}
 
-      {/* 3. 시정 조치 */}
-      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>
-        3. {t('audit.report.correctiveTitle', '시정 조치')} ({correctives.length}{t('audit.report.count', '건')})
-      </Typography>
-      {correctives.length === 0 ? (
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, p: 3, mb: 3, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">{t('audit.report.noCorrective', '등록된 시정 조치가 없습니다.')}</Typography>
-        </Box>
-      ) : (
-        <TableContainer sx={{ mb: 3 }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center" sx={headerCellSx}>{t('common.no')}</TableCell>
-                <TableCell align="center" sx={headerCellSx}>{t('audit.correctiveId')}</TableCell>
-                <TableCell align="center" sx={headerCellSx}>{t('audit.findingDesc', '부적합 내용')}</TableCell>
-                <TableCell align="center" sx={headerCellSx}>{t('audit.actionDescription', '시정조치 내용')}</TableCell>
-                <TableCell align="center" sx={headerCellSx}>{t('audit.responsiblePerson')}</TableCell>
-                <TableCell align="center" sx={headerCellSx}>{t('audit.dueDate')}</TableCell>
-                <TableCell align="center" sx={headerCellSx}>{t('common.status')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {correctives.map((c, i) => (
-                <TableRow key={c.id}>
-                  <TableCell align="center">{i + 1}</TableCell>
-                  <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{c.correctiveId}</TableCell>
-                  <TableCell>{c.findingDescription || ''}</TableCell>
-                  <TableCell>{c.actionDescription}</TableCell>
-                  <TableCell align="center">{c.responsiblePerson || ''}</TableCell>
-                  <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{c.dueDate || ''}</TableCell>
-                  <TableCell align="center">{getCorrectiveStatusLabel(c.status)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-
       {/* Footer */}
       <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'grey.300', textAlign: 'center' }}>
         <Typography variant="body2" color="text.secondary">
@@ -223,7 +177,7 @@ const AuditReportTab: React.FC = () => {
     </Paper>
   )
 
-  const subQueriesLoading = findingQueries.some(q => q.isLoading) || correctiveQueries.some(q => q.isLoading)
+  const subQueriesLoading = findingQueries.some(q => q.isLoading)
 
   const columns: ReportColumn<Audit>[] = [
     { header: t('audit.auditId', '감사번호'), key: 'auditId' as keyof Audit, align: 'center', width: 130 },
@@ -245,7 +199,7 @@ const AuditReportTab: React.FC = () => {
       emptyMessage={t('audit.report.noData', '레포트로 출력 가능한 감사가 없습니다.')}
       renderReport={(r, idx, total) => {
         const i = reports.findIndex((x: Audit) => x.id === r.id)
-        return renderReport(r, idx, total, findingQueries[i]?.data?.content || [], correctiveQueries[i]?.data?.content || [])
+        return renderReport(r, idx, total, findingQueries[i]?.data?.content || [])
       }}
     />
   )

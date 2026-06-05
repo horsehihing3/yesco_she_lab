@@ -145,7 +145,7 @@ const MsdsProductHistoryTab: React.FC = () => {
             <Typography sx={labelSx}>{t('chem.msds.changeType', '변경 유형')}</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" value={form.changeType} onChange={e => setForm({ ...form, changeType: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {changeTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getChangeTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -180,7 +180,7 @@ const MsdsProductHistoryTab: React.FC = () => {
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('chem.msds.changeType', '변경 유형')}</Typography>
             <Select fullWidth size="small" value={form.changeType} onChange={e => setForm({ ...form, changeType: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {changeTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getChangeTypeLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>

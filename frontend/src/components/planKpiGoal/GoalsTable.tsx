@@ -110,7 +110,7 @@ const GoalsTable: React.FC<GoalsTableProps> = ({ goals, mode, onChange, onPickOw
           }
           sx={{ minWidth: 90, '& .MuiSelect-select': { py: 0.5, pr: '24px !important' } }}
         >
-          <MenuItem value="">선택</MenuItem>
+          <MenuItem value="">선택하세요</MenuItem>
           {KPI_QUARTER_STATUSES.map(s => (
             <MenuItem key={s} value={s}>
               <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75 }}>

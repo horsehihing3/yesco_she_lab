@@ -317,7 +317,7 @@ const CarbonEmissionTab: React.FC = () => {
           <Box sx={cellRSx}>
             <FormControl fullWidth size="small">
               <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {scopeCodes.length > 0 ? scopeCodes.map((c) => (
                   <MenuItem key={c.code} value={c.code}>{getScopeLabel(c.code)}</MenuItem>
                 )) : [1, 2, 3].map((s) => (
@@ -340,7 +340,7 @@ const CarbonEmissionTab: React.FC = () => {
           <Box sx={cellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.energyUnit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, energyUnit: e.target.value || null })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {unitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -374,7 +374,7 @@ const CarbonEmissionTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.scopeLabel')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={String(formData.scope)} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, scope: Number(e.target.value) })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {scopeCodes.length > 0 ? scopeCodes.map((c) => (
                 <MenuItem key={c.code} value={c.code}>{getScopeLabel(c.code)}</MenuItem>
               )) : [1, 2, 3].map((s) => (
@@ -391,7 +391,7 @@ const CarbonEmissionTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('carbon.energyUnit')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.energyUnit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, energyUnit: e.target.value || null })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {unitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>

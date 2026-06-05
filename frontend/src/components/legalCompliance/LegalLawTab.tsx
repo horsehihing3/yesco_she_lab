@@ -16,6 +16,7 @@ import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 import DatePickerField from '../common/DatePickerField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import ListSearchBar from '../common/ListSearchBar'
 
 const CATEGORIES = ['안전', '환경', '보건', '화학물질', '소방', '전기']
 const REVIEW_STATUSES = ['검토대기', '검토중', '완료-적용', '완료-불해당']
@@ -61,6 +62,7 @@ const LegalLawTab: React.FC = () => {
   const { data: laws = [], isLoading } = useQuery({ queryKey: ['legalLaws'], queryFn: lawApi.list })
   const { data: stats } = useQuery({ queryKey: ['legalLawsStats'], queryFn: lawApi.stats })
 
+  const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
   const [catFilter, setCatFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
@@ -133,7 +135,7 @@ const LegalLawTab: React.FC = () => {
     if (!selectedItem) return
     if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selectedItem.id)
   }
-  const handleReset = () => { setSearch(''); setCatFilter(''); setStatusFilter('') }
+  const handleReset = () => { setSearchInput(''); setSearch(''); setCatFilter(''); setStatusFilter('') }
 
   // ──────────────────── LIST VIEW ────────────────────
   if (viewMode === 'list') {
@@ -159,9 +161,8 @@ const LegalLawTab: React.FC = () => {
         {/* PC Search */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder="법령명/조항/키워드 검색..." value={search}
-              onChange={e => setSearch(e.target.value)}
-              sx={{ minWidth: 240 }} />
+            <ListSearchBar value={searchInput} onChange={setSearchInput} onSearch={() => setSearch(searchInput)}
+              placeholder="법령명/조항/키워드 검색..." sx={{ minWidth: 240 }} />
             <FormControl size="small" sx={{ minWidth: 130 }}>
               <Select displayEmpty value={catFilter} onChange={e => setCatFilter(e.target.value)}>
                 <MenuItem value="">분류 전체</MenuItem>
@@ -181,8 +182,8 @@ const LegalLawTab: React.FC = () => {
 
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder="법령명/조항/키워드 검색..." value={search}
-            onChange={e => setSearch(e.target.value)} />
+          <ListSearchBar value={searchInput} onChange={setSearchInput} onSearch={() => setSearch(searchInput)}
+            placeholder="법령명/조항/키워드 검색..." fullWidth />
           <Box sx={{ display: 'flex', gap: 1 }}>
             <FormControl size="small" sx={{ flex: 1 }}>
               <Select displayEmpty value={catFilter} onChange={e => setCatFilter(e.target.value)}>
@@ -209,12 +210,12 @@ const LegalLawTab: React.FC = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>분류</TableCell>
+                    <TableCell align="center">분류</TableCell>
                     <TableCell>법령명/조항</TableCell>
-                    <TableCell>시행일</TableCell>
-                    <TableCell>검토 담당</TableCell>
-                    <TableCell>검토 상태</TableCell>
-                    <TableCell>적용 여부</TableCell>
+                    <TableCell align="center">시행일</TableCell>
+                    <TableCell align="center">검토 담당</TableCell>
+                    <TableCell align="center">검토 상태</TableCell>
+                    <TableCell align="center">적용 여부</TableCell>
                     <TableCell>후속 조치</TableCell>
                   </TableRow>
                 </TableHead>
@@ -222,19 +223,15 @@ const LegalLawTab: React.FC = () => {
                   {filtered.map(l => (
                     <TableRow key={l.id} hover sx={{ cursor: 'pointer', bgcolor: l.urgent ? 'rgba(239,68,68,0.05)' : undefined }}
                       onClick={() => handleOpenDetail(l)}>
-                      <TableCell><Chip size="small" label={l.category} color={catColor(l.category)} variant="outlined" /></TableCell>
+                      <TableCell align="center">{l.category}</TableCell>
                       <TableCell>
                         <Box sx={{ fontWeight: 600 }}>{l.lawName}{l.urgent && <Chip size="small" label="긴급" color="error" sx={{ ml: 1 }} />}</Box>
                         <Typography variant="caption" sx={{ color: 'info.main' }}>{l.clause}</Typography>
                       </TableCell>
-                      <TableCell>
-                        {l.enforceDate && (
-                          <Chip size="small" label={l.enforceDate} color={l.urgent ? 'error' : 'default'} variant="outlined" />
-                        )}
-                      </TableCell>
-                      <TableCell>{l.reviewer || '-'}</TableCell>
-                      <TableCell><Chip size="small" label={l.reviewStatus} color={statusColor(l.reviewStatus)} /></TableCell>
-                      <TableCell><Chip size="small" label={l.applyYn || '-'} color={applyColor(l.applyYn)} variant="outlined" /></TableCell>
+                      <TableCell align="center">{l.enforceDate || ''}</TableCell>
+                      <TableCell align="center">{l.reviewer || '-'}</TableCell>
+                      <TableCell align="center">{l.reviewStatus}</TableCell>
+                      <TableCell align="center">{l.applyYn || '-'}</TableCell>
                       <TableCell sx={{ color: 'text.secondary' }}>{l.followUpAction || '-'}</TableCell>
                     </TableRow>
                   ))}
@@ -331,14 +328,14 @@ const LegalLawTab: React.FC = () => {
           <FormLabel required>분류</FormLabel>
           <FormCell borderRight>
             <TextField select fullWidth size="small" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
             </TextField>
           </FormCell>
           <FormLabel>개정 유형</FormLabel>
           <FormCell>
             <TextField select fullWidth size="small" value={form.amendType || ''} onChange={e => setForm({ ...form, amendType: e.target.value })}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {AMEND_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
             </TextField>
           </FormCell>
@@ -375,14 +372,14 @@ const LegalLawTab: React.FC = () => {
           <FormLabel>검토 상태</FormLabel>
           <FormCell borderRight>
             <TextField select fullWidth size="small" value={form.reviewStatus || '검토대기'} onChange={e => setForm({ ...form, reviewStatus: e.target.value })}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {REVIEW_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
             </TextField>
           </FormCell>
           <FormLabel>적용 여부</FormLabel>
           <FormCell>
             <TextField select fullWidth size="small" value={form.applyYn || '검토중'} onChange={e => setForm({ ...form, applyYn: e.target.value })}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {APPLY_YN.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}
             </TextField>
           </FormCell>
@@ -399,7 +396,7 @@ const LegalLawTab: React.FC = () => {
           <FormLabel>긴급 여부</FormLabel>
           <FormCell>
             <TextField select fullWidth size="small" value={form.urgent ? '1' : '0'} onChange={e => setForm({ ...form, urgent: e.target.value === '1' })}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               <MenuItem value="0">일반</MenuItem>
               <MenuItem value="1">긴급</MenuItem>
             </TextField>

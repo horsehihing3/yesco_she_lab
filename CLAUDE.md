@@ -82,6 +82,7 @@ frontend/src/
 - 백엔드: `com.smartehs.{layer}.{Domain}` 패키지 구조 유지
 - 프론트: 컴포넌트 PascalCase, 페이지 `pages/{domain}/` 하위
 - 신규 API 추가 시 Swagger 어노테이션 필수
+- **폼(등록·수정·상세) 행 배치는 `docs/FORM_LAYOUT_CONVENTION.md` 흐름을 따른다** — 제목/유형 → 부서/상태 → 도메인 → 시작/종료일 → 목적 → 비고 → 작성자/생성일 → 수정자/수정일 → 승인자 → 체크리스트. 샘플: AuditPlanTab.tsx
 
 ---
 
@@ -105,4 +106,5 @@ frontend/src/
 |------|------|
 | `PROJECT_CONTEXT.md` | 현재 TODO · 완료 이력 · 진척도 · 이슈 |
 | `docs/SYSTEM_ANALYSIS.md` | 시스템 구조 분석 (인증·결재·사용자·권한) |
+| `docs/FORM_LAYOUT_CONVENTION.md` | 폼 테이블 행 배치 규칙 (등록·수정·상세 공통 흐름) |
 | `컴포인__예스코_SHE_시스템_구축_제안서.pdf` | 원본 기획서 — 전체 기능 요구사항 |

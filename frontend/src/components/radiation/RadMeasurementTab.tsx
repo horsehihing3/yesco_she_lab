@@ -149,7 +149,7 @@ const RadMeasurementTab: React.FC = () => {
               <FormCell borderRight><DatePickerField value={form.measureDate || null} onChange={d => setForm({ ...form, measureDate: d || '' })} /></FormCell>
               <FormLabel>측정유형</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.measureType || ''} onChange={e => setForm({ ...form, measureType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{MEASURE_TYPES.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{MEASURE_TYPES.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>구역</FormLabel>
@@ -162,14 +162,14 @@ const RadMeasurementTab: React.FC = () => {
               <FormCell borderRight><NumberField fullWidth value={form.measureValue ?? null} onChange={v => setForm({ ...form, measureValue: v ?? undefined })} step={0.001} thousandSeparator={false} /></FormCell>
               <FormLabel>단위</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.unit || ''} onChange={e => setForm({ ...form, unit: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{UNITS.map(u => <MenuItem key={u} value={u}>{u}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{UNITS.map(u => <MenuItem key={u} value={u}>{u}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>기준값</FormLabel>
               <FormCell borderRight><TextField fullWidth size="small" placeholder="10 μSv/h" value={form.standardValue || ''} onChange={e => setForm({ ...form, standardValue: e.target.value })} /></FormCell>
               <FormLabel>평가</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.evaluation || ''} onChange={e => setForm({ ...form, evaluation: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{EVALS.map(e => <MenuItem key={e} value={e}>{e}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{EVALS.map(e => <MenuItem key={e} value={e}>{e}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow last>
               <FormLabel>측정기기</FormLabel>

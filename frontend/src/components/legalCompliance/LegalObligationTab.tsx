@@ -267,14 +267,14 @@ const LegalObligationTab: React.FC = () => {
               <FormLabel>의무 유형</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.obligationType || ''} onChange={e => setForm({ ...form, obligationType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {OBL_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>분류</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.category || ''} onChange={e => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -291,7 +291,7 @@ const LegalObligationTab: React.FC = () => {
               <FormLabel>이행 주기</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.cycle || ''} onChange={e => setForm({ ...form, cycle: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -316,7 +316,7 @@ const LegalObligationTab: React.FC = () => {
               <FormLabel>상태</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.status || 'doing'} onChange={e => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map(s => <MenuItem key={s.code} value={s.code}>{s.label}</MenuItem>)}
                 </TextField>
               </FormCell>

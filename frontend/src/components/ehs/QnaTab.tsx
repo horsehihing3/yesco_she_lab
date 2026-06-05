@@ -846,7 +846,7 @@ const QnaTab: React.FC = () => {
                   value={formData.category || 'GENERAL'}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                  displayEmpty>
-                  <MenuItem value="" disabled>선택</MenuItem>
+                  <MenuItem value="" disabled>선택하세요</MenuItem>
                   {categoryCodes.map((cat) => (
                     <MenuItem key={cat.code} value={cat.code}>{getCategoryLabel(cat.code)}</MenuItem>
                   ))}
@@ -927,7 +927,7 @@ const QnaTab: React.FC = () => {
                 value={formData.category || 'GENERAL'}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {categoryCodes.map((cat) => (
                   <MenuItem key={cat.code} value={cat.code}>{getCategoryLabel(cat.code)}</MenuItem>
                 ))}

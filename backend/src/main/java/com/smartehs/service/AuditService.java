@@ -217,7 +217,6 @@ public class AuditService {
         addIfChanged(diffs, "auditName", before.getAuditName(), after.getAuditName());
         addIfChanged(diffs, "auditType", before.getAuditType(), after.getAuditType());
         addIfChanged(diffs, "targetDept", before.getTargetDept(), after.getTargetDept());
-        addIfChanged(diffs, "targetSite", before.getTargetSite(), after.getTargetSite());
         addIfChanged(diffs, "auditorName", before.getAuditorName(), after.getAuditorName());
         addIfChanged(diffs, "auditorDept", before.getAuditorDept(), after.getAuditorDept());
         addIfChanged(diffs, "auditStartDate", before.getAuditStartDate(), after.getAuditStartDate());

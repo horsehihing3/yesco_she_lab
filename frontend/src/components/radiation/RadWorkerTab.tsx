@@ -157,17 +157,17 @@ const RadWorkerTab: React.FC = () => {
             <FormRow>
               <FormLabel>구분</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.workerType || ''} onChange={e => setForm({ ...form, workerType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{WORKER_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{WORKER_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
               <FormLabel>상태</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.status || ''} onChange={e => setForm({ ...form, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>원안위 등록번호</FormLabel>
               <FormCell borderRight><TextField fullWidth size="small" value={form.nrscNo || ''} onChange={e => setForm({ ...form, nrscNo: e.target.value })} /></FormCell>
               <FormLabel>선량계 종류</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.dosimeterType || ''} onChange={e => setForm({ ...form, dosimeterType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{DOSIMETER_TYPES.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{DOSIMETER_TYPES.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>선량계 번호</FormLabel>

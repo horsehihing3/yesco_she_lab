@@ -9,8 +9,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 import GradeIcon from '@mui/icons-material/Grade'
 import TimelineIcon from '@mui/icons-material/Timeline'
-import { auditApi, auditFindingApi, auditCorrectiveApi } from '../../api/auditApi'
-import { Audit } from '../../types/audit.types'
+import { auditApi, auditFindingApi } from '../../api/auditApi'
 import useCodeMap from '../../hooks/useCodeMap'
 
 const statusColors: Record<string, 'default' | 'warning' | 'info' | 'success' | 'error'> = {
@@ -39,14 +38,8 @@ const AuditDashboardTab: React.FC = () => {
     queryFn: () => auditFindingApi.getAll(0, 100),
   })
 
-  const { data: correctiveData } = useQuery({
-    queryKey: ['auditCorrectives', 0],
-    queryFn: () => auditCorrectiveApi.getAll(0, 100),
-  })
-
   const audits = auditData?.content || []
   const findings = findingData?.content || []
-  const correctives = correctiveData?.content || []
 
   const totalAudits = audits.length
   const completedAudits = audits.filter((a) => a.status === 'COMPLETED').length
@@ -64,9 +57,6 @@ const AuditDashboardTab: React.FC = () => {
 
   const plannedCount = audits.filter((a) => a.status === 'PLAN').length
   const inProgressCount = audits.filter((a) => a.status === 'IN_PROGRESS').length
-
-  const correctiveCompleted = correctives.filter((c) => c.status === 'COMPLETED').length
-  const correctiveOverdue = correctives.filter((c) => c.status === 'OVERDUE').length
 
   const recentAudits = [...audits].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 10)
 
@@ -123,8 +113,6 @@ const AuditDashboardTab: React.FC = () => {
             { label: getAuditStatusLabel('PLAN'), count: plannedCount, total: totalAudits, color: 'secondary' },
             { label: getAuditStatusLabel('IN_PROGRESS'), count: inProgressCount, total: totalAudits, color: 'info' },
             { label: getAuditStatusLabel('COMPLETED'), count: completedAudits, total: totalAudits, color: 'success' },
-            { label: t('audit.correctiveCompleted'), count: correctiveCompleted, total: correctives.length, color: 'primary' },
-            { label: t('audit.correctiveOverdue'), count: correctiveOverdue, total: correctives.length, color: 'error' },
           ].map((item, idx) => (
             <Box key={idx} sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>

@@ -181,14 +181,14 @@ const OdPlanTab: React.FC = () => {
               <FormLabel required>구분</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.half || ''} onChange={e => setForm({ ...form, half: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {HALVES.map(h => <MenuItem key={h} value={h}>{h}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>검진방법</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.method || ''} onChange={e => setForm({ ...form, method: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {METHODS.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -231,7 +231,7 @@ const OdPlanTab: React.FC = () => {
               <FormLabel>상태</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.status || '계획'} onChange={e => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import {
   Box, Paper, Typography, Select, MenuItem, IconButton, Chip, Tooltip as MuiTooltip, Button,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from '@mui/material'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
@@ -28,6 +27,7 @@ import { EhsPlan as EhsPlanType } from '../types/ehsPlan.types'
 import UserSelectModal from '../components/common/UserSelectModal'
 import type { UserInfo } from '../components/common/UserSelectModal'
 import EhsBudgetOverview from '../components/ehs/ehsBudget/EhsBudgetOverview'
+import SafetyGoalProgressTable from '../components/planKpiGoal/SafetyGoalProgressTable'
 
 // shadcn/ui v4 chart colors (Tailwind v4 blue palette)
 const COLORS = {
@@ -388,7 +388,7 @@ const AreaStacked = () => {
             minWidth: 100,
           }}
          displayEmpty>
-          <MenuItem value="" disabled>선택</MenuItem>
+          <MenuItem value="" disabled>선택하세요</MenuItem>
           {periodOptions.map((opt) => (
             <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: '0.8rem' }}>{opt.label}</MenuItem>
           ))}
@@ -496,103 +496,7 @@ const PLAN_DOT_COLORS = ['#2A9D8F', '#E76F51', '#264653', '#E9C46A', '#F4A261', 
 // 목표 추진 현황 표 (클릭 시 계획/KPI/목표 - 목표 관리 탭으로 이동)
 const GoalProgressTable = () => {
   const navigate = useNavigate()
-  const hSx = {
-    bgcolor: 'grey.100',
-    fontWeight: 'bold',
-    fontSize: '1rem',
-    textAlign: 'center' as const,
-    whiteSpace: 'nowrap' as const,
-    py: 1.5,
-    px: 2,
-  }
-  const cSx = {
-    fontSize: '1rem',
-    px: 2,
-    py: 1.5,
-    wordBreak: 'keep-all' as const,
-  }
-  const goalLabelSx = {
-    ...cSx,
-    fontWeight: 'bold',
-    bgcolor: 'grey.50',
-    textAlign: 'center' as const,
-  }
-
-  const handleClick = () => navigate('/plan-kpi-goal?tab=3')
-
-  return (
-    <TableContainer
-      component={Paper}
-      onClick={handleClick}
-      sx={{
-        overflowX: 'auto',
-        border: 1,
-        borderColor: 'grey.300',
-        cursor: 'pointer',
-        transition: 'box-shadow 0.2s',
-        '&:hover': { boxShadow: 3 },
-      }}
-    >
-      <Table size="small" sx={{ minWidth: 900, '& td, & th': { borderRight: '1px solid', borderBottom: '1px solid', borderColor: 'grey.300' } }}>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ ...hSx, minWidth: 160 }} rowSpan={2}>목 표</TableCell>
-              <TableCell sx={{ ...hSx, minWidth: 180 }} rowSpan={2}>세부 목표</TableCell>
-              <TableCell sx={{ ...hSx, width: 110 }} rowSpan={2}>실행<br />(2026년)</TableCell>
-              <TableCell sx={{ ...hSx, minWidth: 160 }} rowSpan={2}>목표<br />(2026년)</TableCell>
-              <TableCell sx={hSx} colSpan={4}>추진결과</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{ ...hSx, width: 90 }}>1분기</TableCell>
-              <TableCell sx={{ ...hSx, width: 90 }}>2분기</TableCell>
-              <TableCell sx={{ ...hSx, width: 90 }}>3분기</TableCell>
-              <TableCell sx={{ ...hSx, width: 90 }}>4분기</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell sx={goalLabelSx}>Ⅰ. 재해율 0.5% 미만</TableCell>
-              <TableCell sx={cSx}>외근 중 교통사고, 안전사고 발생 zero화</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>95%</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>실행</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>97%</TableCell>
-              <TableCell sx={cSx}></TableCell>
-              <TableCell sx={cSx}></TableCell>
-              <TableCell sx={cSx}></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={goalLabelSx} rowSpan={2}>Ⅱ. 산업안전보건교육 이수율 100%</TableCell>
-              <TableCell sx={cSx}>근로자 정기 안전보건 교육 100% 달성</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>85%</TableCell>
-              <TableCell sx={cSx}>1. 4회(분기교육)<br />2. 전원이수</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>100%</TableCell>
-              <TableCell sx={cSx}></TableCell>
-              <TableCell sx={cSx}></TableCell>
-              <TableCell sx={cSx}></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={cSx}>MSDS 확인 및 교육 시행</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>98%</TableCell>
-              <TableCell sx={cSx}>1. MSDS 기본/특별 교육 실시</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>98%</TableCell>
-              <TableCell sx={cSx}></TableCell>
-              <TableCell sx={cSx}></TableCell>
-              <TableCell sx={cSx}></TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={goalLabelSx}>Ⅲ. 구성원 건강검진 수검률 99% 이상</TableCell>
-              <TableCell sx={cSx}>구성원 건강검진 수검률 100% 달성</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>95%</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>100%</TableCell>
-              <TableCell sx={{ ...cSx, textAlign: 'center' }}>100%</TableCell>
-              <TableCell sx={cSx}></TableCell>
-              <TableCell sx={cSx}></TableCell>
-              <TableCell sx={cSx}></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-    </TableContainer>
-  )
+  return <SafetyGoalProgressTable onClick={() => navigate('/plan-kpi-goal?tab=3')} />
 }
 
 // 팀별 위험성평가 - 개선전/개선후 세로 막대 차트

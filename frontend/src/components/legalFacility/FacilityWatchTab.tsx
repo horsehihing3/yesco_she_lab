@@ -210,10 +210,10 @@ const FacilityWatchTab: React.FC = () => {
             <FormRow>
               <FormLabel>시설 유형</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.facilityType || ''} onChange={e => setForm({ ...form, facilityType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{FACILITY_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{FACILITY_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
               <FormLabel required>위험등급</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.riskGrade || 'B'} onChange={e => setForm({ ...form, riskGrade: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{RISK_GRADES.map(r => <MenuItem key={r.code} value={r.code}>{r.label}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{RISK_GRADES.map(r => <MenuItem key={r.code} value={r.code}>{r.label}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>설치위치</FormLabel>
@@ -232,7 +232,7 @@ const FacilityWatchTab: React.FC = () => {
             <FormRow>
               <FormLabel>점검 주기</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.cycle || ''} onChange={e => setForm({ ...form, cycle: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
               <FormLabel>위험도 지수</FormLabel>
               <FormCell><NumberField fullWidth size="small" value={form.riskPct ?? null} onChange={v => setForm({ ...form, riskPct: v ?? 0 })} min={0} max={100} /></FormCell>
             </FormRow>
@@ -280,7 +280,7 @@ const FacilityWatchTab: React.FC = () => {
             <FormRow>
               <FormLabel>이상 여부</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={checkForm.anomaly || '이상없음'} onChange={e => setCheckForm({ ...checkForm, anomaly: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ANOMALIES.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ANOMALIES.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
               <FormLabel>다음 점검일</FormLabel>
               <FormCell><DatePickerField value={checkForm.nextCheckDate || null} onChange={d => setCheckForm({ ...checkForm, nextCheckDate: d })} /></FormCell>
             </FormRow>

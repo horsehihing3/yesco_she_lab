@@ -155,7 +155,7 @@ const RadDoseTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" type="month" InputLabelProps={{ shrink: true }} value={form.measureMonth || ''} onChange={e => setForm({ ...form, measureMonth: e.target.value })} /></FormCell>
               <FormLabel>선량계 종류</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.dosimeterType || ''} onChange={e => setForm({ ...form, dosimeterType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{DOSIMETER_TYPES.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{DOSIMETER_TYPES.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>유효선량 (mSv)</FormLabel>

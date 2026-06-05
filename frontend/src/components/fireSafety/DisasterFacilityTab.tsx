@@ -224,7 +224,7 @@ const DisasterFacilityTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={form.mgmtNo || ''} onChange={e => setForm({ ...form, mgmtNo: e.target.value })} /></FormCell>
               <FormLabel required>유형</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.facType || ''} onChange={e => setForm({ ...form, facType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel required>시설명</FormLabel>
@@ -247,7 +247,7 @@ const DisasterFacilityTab: React.FC = () => {
               <FormCell borderRight><DatePickerField value={form.installDate || null} onChange={d => setForm({ ...form, installDate: d || undefined })} /></FormCell>
               <FormLabel>점검 주기</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.checkCycle || ''} onChange={e => setForm({ ...form, checkCycle: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>최근 점검일</FormLabel>
@@ -258,7 +258,7 @@ const DisasterFacilityTab: React.FC = () => {
             <FormRow>
               <FormLabel>상태</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.status || ''} onChange={e => setForm({ ...form, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
               <FormLabel>담당자</FormLabel>
               <FormCell><TextField fullWidth size="small" value={form.mgrName || ''} onChange={e => setForm({ ...form, mgrName: e.target.value })} /></FormCell>
             </FormRow>
@@ -297,7 +297,7 @@ const DisasterFacilityTab: React.FC = () => {
             </FormRow>
             <FormRow>
               <FormLabel>유형</FormLabel>
-              <FormCell borderRight><TextField select fullWidth size="small" value={iForm.facType || ''} onChange={e => setIForm({ ...iForm, facType: e.target.value })}><MenuItem value="">선택</MenuItem>{FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+              <FormCell borderRight><TextField select fullWidth size="small" value={iForm.facType || ''} onChange={e => setIForm({ ...iForm, facType: e.target.value })}><MenuItem value="">선택하세요</MenuItem>{FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
               <FormLabel>위치</FormLabel>
               <FormCell><TextField fullWidth size="small" value={iForm.location || ''} onChange={e => setIForm({ ...iForm, location: e.target.value })} /></FormCell>
             </FormRow>
@@ -308,10 +308,10 @@ const DisasterFacilityTab: React.FC = () => {
             <FormRow>
               <FormLabel>이상 여부</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={iForm.anomaly || ''} onChange={e => setIForm({ ...iForm, anomaly: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ANOMALIES.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ANOMALIES.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
               <FormLabel>완료여부</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={iForm.doneStatus || ''} onChange={e => setIForm({ ...iForm, doneStatus: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{DONE_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{DONE_STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>조치 내용</FormLabel>

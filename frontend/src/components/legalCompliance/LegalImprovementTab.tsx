@@ -203,14 +203,14 @@ const LegalImprovementTab: React.FC = () => {
               <FormLabel>개선 구분</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.improvementType || ''} onChange={e => setForm({ ...form, improvementType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {IMP_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel required>중요도</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {PRIORITIES.map(p => <MenuItem key={p.code} value={p.code}>{p.label}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -247,7 +247,7 @@ const LegalImprovementTab: React.FC = () => {
               <FormLabel>발굴 경로</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.source || ''} onChange={e => setForm({ ...form, source: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {SOURCES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -256,7 +256,7 @@ const LegalImprovementTab: React.FC = () => {
               <FormLabel>진행 상태</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.colStatus || 'register'} onChange={e => setForm({ ...form, colStatus: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {COLUMNS.map(c => <MenuItem key={c.key} value={c.key}>{c.label}</MenuItem>)}
                 </TextField>
               </FormCell>

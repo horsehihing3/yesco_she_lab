@@ -127,7 +127,6 @@ public class LegalCompliancePlanService {
                 .auditName(existing.getAuditName())
                 .auditType("LEGAL_COMPLIANCE")
                 .targetDept(existing.getTargetDept())
-                .targetSite(existing.getTargetSite())
                 .auditorName(existing.getAuditorName())
                 .auditorDept(existing.getAuditorDept())
                 .auditStartDate(existing.getPlanStartDate())

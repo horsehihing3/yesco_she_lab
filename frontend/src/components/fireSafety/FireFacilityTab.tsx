@@ -166,7 +166,7 @@ const FireFacilityTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={form.mgmtNo || ''} onChange={e => setForm({ ...form, mgmtNo: e.target.value })} /></FormCell>
               <FormLabel required>분류</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.category || ''} onChange={e => setForm({ ...form, category: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel required>시설명</FormLabel>
@@ -199,7 +199,7 @@ const FireFacilityTab: React.FC = () => {
             <FormRow>
               <FormLabel>점검 주기</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.checkCycle || ''} onChange={e => setForm({ ...form, checkCycle: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{CYCLES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
               <FormLabel>담당자</FormLabel>
               <FormCell><TextField fullWidth size="small" value={form.mgrName || ''} onChange={e => setForm({ ...form, mgrName: e.target.value })} /></FormCell>
             </FormRow>
@@ -212,7 +212,7 @@ const FireFacilityTab: React.FC = () => {
             <FormRow>
               <FormLabel>현재 상태</FormLabel>
               <FormCell borderRight><TextField select fullWidth size="small" value={form.status || ''} onChange={e => setForm({ ...form, status: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}</TextField></FormCell>
               <FormLabel>취득 가격 (원)</FormLabel>
               <FormCell><NumberField fullWidth value={form.acquirePrice ?? null} onChange={v => setForm({ ...form, acquirePrice: v ?? undefined })} /></FormCell>
             </FormRow>

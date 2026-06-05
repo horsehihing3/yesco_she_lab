@@ -153,7 +153,7 @@ const RadHealthTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={form.dept || ''} onChange={e => setForm({ ...form, dept: e.target.value })} /></FormCell>
               <FormLabel>검진구분</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.examType || ''} onChange={e => setForm({ ...form, examType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{EXAM_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{EXAM_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>검진일</FormLabel>
@@ -166,7 +166,7 @@ const RadHealthTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={form.examOrg || ''} onChange={e => setForm({ ...form, examOrg: e.target.value })} /></FormCell>
               <FormLabel>판정</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.judgment || ''} onChange={e => setForm({ ...form, judgment: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{JUDGMENTS.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{JUDGMENTS.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>CBC(WBC)</FormLabel>

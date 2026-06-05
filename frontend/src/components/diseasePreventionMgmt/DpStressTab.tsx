@@ -172,7 +172,7 @@ const DpStressTab: React.FC = () => {
               <FormLabel>위험도</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.riskLevel || ''} onChange={(e) => setForm({ ...form, riskLevel: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {RISKS.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -183,7 +183,7 @@ const DpStressTab: React.FC = () => {
               <FormLabel>상담 진행</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.hasCounseling ? 'true' : 'false'} onChange={(e) => setForm({ ...form, hasCounseling: e.target.value === 'true' })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   <MenuItem value="false">해당없음</MenuItem>
                   <MenuItem value="true">진행 중</MenuItem>
                 </TextField>

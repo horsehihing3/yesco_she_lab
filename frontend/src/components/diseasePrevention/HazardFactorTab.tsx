@@ -694,7 +694,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           <Typography sx={labelSx}>{t('dp.riskLevel')}</Typography>
           <Box sx={valSx}>
             <Select fullWidth size="small" displayEmpty value={f.riskLevel ?? ''} onChange={(e) => set({ riskLevel: e.target.value })}>
-              <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+              <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
               {riskCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getRiskLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -703,7 +703,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           <Typography sx={labelSx}>{t('dp.preventionStatus')}</Typography>
           <Box sx={valBorderSx}>
             <Select fullWidth size="small" displayEmpty value={f.preventionStatus ?? ''} onChange={(e) => set({ preventionStatus: e.target.value })}>
-              <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+              <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
               {preventionCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getPreventionLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -772,7 +772,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
             <Typography sx={labelSx}>{t('dp.vaccinationStatus')}</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" displayEmpty value={f.vaccinationStatus ?? ''} onChange={(e) => set({ vaccinationStatus: e.target.value })}>
-                <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
                 {vaccinationCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getVaccinationLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -849,7 +849,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           {mobileField(t('dp.riskLevel'),
             <FormControl fullWidth size="small">
               <Select displayEmpty value={f.riskLevel ?? ''} onChange={(e) => set({ riskLevel: e.target.value })}>
-                <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
                 {riskCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getRiskLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -857,7 +857,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           {mobileField(t('dp.preventionStatus'),
             <FormControl fullWidth size="small">
               <Select displayEmpty value={f.preventionStatus ?? ''} onChange={(e) => set({ preventionStatus: e.target.value })}>
-                <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
                 {preventionCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getPreventionLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
@@ -891,7 +891,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
               {mobileField(t('dp.vaccinationStatus'),
                 <FormControl fullWidth size="small">
                   <Select displayEmpty value={f.vaccinationStatus ?? ''} onChange={(e) => set({ vaccinationStatus: e.target.value })}>
-                    <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+                    <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
                     {vaccinationCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getVaccinationLabel(c.code)}</MenuItem>)}
                   </Select>
                 </FormControl>

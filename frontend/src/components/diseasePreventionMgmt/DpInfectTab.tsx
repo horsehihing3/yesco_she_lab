@@ -157,14 +157,14 @@ const DpInfectTab: React.FC = () => {
               <FormLabel required>프로그램 유형</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.programType || ''} onChange={(e) => setForm({ ...form, programType: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {PROGRAM_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>상태</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.status || ''} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>

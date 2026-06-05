@@ -612,7 +612,7 @@ const Step0Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
         <FormCell borderRight>
           <ReadTextField select fullWidth size="small" readOnly={isReadonly}
             value={form.bizType || ''} onChange={e => setForm(f => ({ ...f, bizType: e.target.value }))}>
-            <MenuItem value="">선택</MenuItem>
+            <MenuItem value="">선택하세요</MenuItem>
             {BIZ_TYPES.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
           </ReadTextField>
         </FormCell>
@@ -678,7 +678,7 @@ const Step0Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
         <FormCell>
           <ReadTextField select fullWidth size="small" readOnly={isReadonly}
             value={form.empSize || ''} onChange={e => setForm(f => ({ ...f, empSize: e.target.value }))}>
-            <MenuItem value="">선택</MenuItem>
+            <MenuItem value="">선택하세요</MenuItem>
             {EMP_SIZES.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
           </ReadTextField>
         </FormCell>
@@ -707,7 +707,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
           <FormCell borderRight>
             <ReadTextField select fullWidth size="small" readOnly={isReadonly}
               value={form.oshApply || ''} onChange={e => setForm(f => ({ ...f, oshApply: e.target.value }))}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {OSH_APPLY_OPTS.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
             </ReadTextField>
           </FormCell>
@@ -722,7 +722,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
           <FormCell borderRight>
             <ReadTextField select fullWidth size="small" readOnly={isReadonly}
               value={form.safetyMgrStatus || ''} onChange={e => setForm(f => ({ ...f, safetyMgrStatus: e.target.value }))}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {MGR_STATUS_OPTS.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
             </ReadTextField>
           </FormCell>
@@ -730,7 +730,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
           <FormCell>
             <ReadTextField select fullWidth size="small" readOnly={isReadonly}
               value={form.healthMgrStatus || ''} onChange={e => setForm(f => ({ ...f, healthMgrStatus: e.target.value }))}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {MGR_STATUS_OPTS.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
             </ReadTextField>
           </FormCell>
@@ -755,7 +755,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
           <FormCell borderRight>
             <ReadTextField select fullWidth size="small" readOnly={isReadonly}
               value={form.riskEval || ''} onChange={e => setForm(f => ({ ...f, riskEval: e.target.value }))}>
-              <MenuItem value="">선택</MenuItem>
+              <MenuItem value="">선택하세요</MenuItem>
               {RISK_EVAL_OPTS.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
             </ReadTextField>
           </FormCell>
@@ -895,7 +895,7 @@ const Step2Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
         <FormCell borderRight>
           <ReadTextField select fullWidth size="small" readOnly={isReadonly}
             value={form.internalDept || ''} onChange={e => setForm(f => ({ ...f, internalDept: e.target.value }))}>
-            <MenuItem value="">선택</MenuItem>
+            <MenuItem value="">선택하세요</MenuItem>
             {INTERNAL_DEPTS.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
           </ReadTextField>
         </FormCell>
@@ -1008,7 +1008,7 @@ const Step3Panel: React.FC<{
         <FormCell borderRight>
           <ReadTextField select fullWidth size="small" readOnly={isReadonly}
             value={form.contractType || ''} onChange={e => setForm(f => ({ ...f, contractType: e.target.value }))}>
-            <MenuItem value="">선택</MenuItem>
+            <MenuItem value="">선택하세요</MenuItem>
             {CONTRACT_TYPES.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
           </ReadTextField>
         </FormCell>

@@ -835,7 +835,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             <Typography sx={labelSx}>{t('ptw.checklist', '체크리스트')}</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-                <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
                 {templates.filter(tmpl => tmpl.categoryType === 'WORK_PERMIT').map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
               </Select>
             </Box>
@@ -1026,7 +1026,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Typography>
             <FormControl fullWidth size="small">
               <Select displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-                <MenuItem value="">{t('common.select', '선택')}</MenuItem>
+                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
                 {templates.filter(tmpl => tmpl.categoryType === 'WORK_PERMIT').map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
               </Select>
             </FormControl>
@@ -1058,8 +1058,8 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
           singleSelect
           useCompanyTree
           title={
-            userPickTarget === 'planApprover' ? t('common.planApprover', '계획 승인자') + ' ' + t('common.select', '선택')
-            : userPickTarget === 'completionApprover' ? t('common.completionApprover', '완료 승인자') + ' ' + t('common.select', '선택')
+            userPickTarget === 'planApprover' ? t('common.planApprover', '계획 승인자') + ' ' + t('common.select', '선택하세요')
+            : userPickTarget === 'completionApprover' ? t('common.completionApprover', '완료 승인자') + ' ' + t('common.select', '선택하세요')
             : t('ptw.selectInspector', '점검자 선택')
           }
         />

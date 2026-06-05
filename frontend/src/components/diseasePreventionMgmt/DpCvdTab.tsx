@@ -159,7 +159,7 @@ const DpCvdTab: React.FC = () => {
               <FormLabel>성별</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.gender || ''} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   <MenuItem value="남">남</MenuItem>
                   <MenuItem value="여">여</MenuItem>
                 </TextField>
@@ -191,14 +191,14 @@ const DpCvdTab: React.FC = () => {
               <FormLabel>흡연</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.smoking || ''} onChange={(e) => setForm({ ...form, smoking: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {SMOKING.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>음주</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.drinking || ''} onChange={(e) => setForm({ ...form, drinking: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {DRINKING.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -207,14 +207,14 @@ const DpCvdTab: React.FC = () => {
               <FormLabel>운동</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.exercise || ''} onChange={(e) => setForm({ ...form, exercise: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {EXERCISE.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>
               <FormLabel>야간작업</FormLabel>
               <FormCell>
                 <TextField select fullWidth size="small" value={form.nightShift || ''} onChange={(e) => setForm({ ...form, nightShift: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {NIGHT_SHIFT.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
                 </TextField>
               </FormCell>
@@ -227,7 +227,7 @@ const DpCvdTab: React.FC = () => {
               <FormLabel required>위험도</FormLabel>
               <FormCell borderRight>
                 <TextField select fullWidth size="small" value={form.riskLevel || ''} onChange={(e) => setForm({ ...form, riskLevel: e.target.value })}>
-                  <MenuItem value="">선택</MenuItem>
+                  <MenuItem value="">선택하세요</MenuItem>
                   {RISKS.map((r) => <MenuItem key={r} value={r}>{r}</MenuItem>)}
                 </TextField>
               </FormCell>

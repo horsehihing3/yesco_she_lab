@@ -752,7 +752,7 @@ const CodeManagePage: React.FC = () => {
                     value={groupForm.isActive ? 'Y' : 'N'}
                     onChange={(e) => setGroupForm({ ...groupForm, isActive: e.target.value === 'Y' })}
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     <MenuItem value="Y">Y</MenuItem>
                     <MenuItem value="N">N</MenuItem>
                   </Select>
@@ -822,7 +822,7 @@ const CodeManagePage: React.FC = () => {
                   value={groupForm.isActive ? 'Y' : 'N'}
                   onChange={(e) => setGroupForm({ ...groupForm, isActive: e.target.value === 'Y' })}
                  displayEmpty>
-                  <MenuItem value="" disabled>선택</MenuItem>
+                  <MenuItem value="" disabled>선택하세요</MenuItem>
                   <MenuItem value="Y">Y</MenuItem>
                   <MenuItem value="N">N</MenuItem>
                 </Select>
@@ -996,7 +996,7 @@ const CodeManagePage: React.FC = () => {
                     value={detailForm.isActive ? 'Y' : 'N'}
                     onChange={(e) => setDetailForm({ ...detailForm, isActive: e.target.value === 'Y' })}
                    displayEmpty>
-                    <MenuItem value="" disabled>선택</MenuItem>
+                    <MenuItem value="" disabled>선택하세요</MenuItem>
                     <MenuItem value="Y">Y</MenuItem>
                     <MenuItem value="N">N</MenuItem>
                   </Select>
@@ -1188,7 +1188,7 @@ const CodeManagePage: React.FC = () => {
                   value={detailForm.isActive ? 'Y' : 'N'}
                   onChange={(e) => setDetailForm({ ...detailForm, isActive: e.target.value === 'Y' })}
                  displayEmpty>
-                  <MenuItem value="" disabled>선택</MenuItem>
+                  <MenuItem value="" disabled>선택하세요</MenuItem>
                   <MenuItem value="Y">Y</MenuItem>
                   <MenuItem value="N">N</MenuItem>
                 </Select>

@@ -188,7 +188,7 @@ const AirEmissionStandardTab: React.FC = () => {
           <Box sx={fCellSx}>
             <FormControl fullWidth size="small">
               <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
-                <MenuItem value="" disabled>선택</MenuItem>
+                <MenuItem value="" disabled>선택하세요</MenuItem>
                 {emissionUnitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getEmissionUnitLabel(c.code)}</MenuItem>))}
               </Select>
             </FormControl>
@@ -211,7 +211,7 @@ const AirEmissionStandardTab: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('airEmission.standard.unit')}</Typography>
           <FormControl fullWidth size="small">
             <Select value={formData.unit || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, unit: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {emissionUnitCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getEmissionUnitLabel(c.code)}</MenuItem>))}
             </Select>
           </FormControl>

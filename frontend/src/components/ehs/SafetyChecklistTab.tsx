@@ -610,7 +610,7 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
                             {isEditing ? (
                               <TextField select size="small" value={item.classification} onChange={e => handleItemChange(category._tempId, item._tempId, 'classification', e.target.value)}
                                 SelectProps={{ native: true }} sx={{ minWidth: 75 }}>
-                                <option value="">선택</option>
+                                <option value="">선택하세요</option>
                                 <option value="필수">필수</option>
                                 <option value="선택">선택</option>
                               </TextField>

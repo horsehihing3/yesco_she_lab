@@ -102,7 +102,7 @@ const OdManageTab: React.FC = () => {
               <FormCell borderRight><TextField fullWidth size="small" value={form.doctor || ''} onChange={e => setForm({ ...form, doctor: e.target.value })} /></FormCell>
               <FormLabel>지정 유형</FormLabel>
               <FormCell><TextField select fullWidth size="small" value={form.orgType || ''} onChange={e => setForm({ ...form, orgType: e.target.value })}>
-<MenuItem value="">선택</MenuItem>{ORG_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
+<MenuItem value="">선택하세요</MenuItem>{ORG_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField></FormCell>
             </FormRow>
             <FormRow>
               <FormLabel>지정 유해인자</FormLabel>

@@ -371,7 +371,7 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.category || 'OTHER'}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {categoryCodes.map(c => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -405,7 +405,7 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.cycle || ''}
               onChange={(e) => setFormData({ ...formData, cycle: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {cycleCodes.map(c => <MenuItem key={c.code} value={c.code}>{getCycleLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -434,7 +434,7 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.mode || 'CLASSROOM'}
               onChange={(e) => setFormData({ ...formData, mode: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               <MenuItem value="CLASSROOM">{t('training.modeClassroom', '집합교육')}</MenuItem>
               <MenuItem value="ONLINE">{t('training.modeOnline', '온라인')}</MenuItem>
               <MenuItem value="HYBRID">{t('training.modeHybrid', '혼합형')}</MenuItem>
@@ -451,7 +451,7 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.status || 'OPEN'}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               <MenuItem value="OPEN">{t('training.statusOpen', '모집중')}</MenuItem>
               <MenuItem value="CLOSED">{t('training.statusClosed', '마감')}</MenuItem>
               <MenuItem value="PREPARING">{t('training.statusPreparing', '준비중')}</MenuItem>
@@ -469,7 +469,7 @@ const TrainingCourseTab: React.FC = () => {
           <Box sx={valSx}>
             <Select size="small" fullWidth value={formData.catType || 'safety'}
               onChange={(e) => setFormData({ ...formData, catType: e.target.value })} displayEmpty>
-              <MenuItem value="" disabled>선택</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               <MenuItem value="safety">{t('training.catSafety', '안전')}</MenuItem>
               <MenuItem value="health">{t('training.catHealth', '보건')}</MenuItem>
               <MenuItem value="environment">{t('training.catEnvironment', '환경')}</MenuItem>
