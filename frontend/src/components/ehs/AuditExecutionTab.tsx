@@ -1,8 +1,7 @@
 import { useState, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useButtonRules } from '../../hooks/useButtonRules'
-import { Role } from '../../data/buttonManageData'
 import { useTranslation } from 'react-i18next'
+import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, TextField, Select, MenuItem,
@@ -20,12 +19,12 @@ import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import RejectReasonDialog from '../common/RejectReasonDialog'
 import { auditApi as defaultAuditApi, auditPlanApi as defaultAuditPlanApi } from '../../api/auditApi'
 import { legalComplianceExecApi, legalCompliancePlanApi } from '../../api/legalComplianceApi'
-import { fetchTeamLeader } from '../../api/approvalApi'
 import { fetchSafetyTemplateDetail } from '../../api/safetyChecklistApi'
 import { SafetyChecklistTemplate } from '../../types/safetyChecklist.types'
 import { Audit, AuditRequest, AuditLogEntry, AuditFieldChange } from '../../types/audit.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import DatePickerField from '../common/DatePickerField'
+import { todayStr } from '../../utils/dateDefaults'
 import SafetyChecklistTab, { SafetyChecklistTabRef } from './SafetyChecklistTab'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -46,9 +45,11 @@ const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
 
 const emptyForm: AuditRequest = { auditName: '', auditType: 'REGULAR', targetDept: '', targetSite: '', auditor: '', auditDate: '', grade: undefined, summary: '', status: 'PLAN' }
 
-interface AuditExecutionTabProps { menuPath?: string; variant?: 'audit' | 'legal-compliance' }
+export interface AuditExecutionTabProps {
+  variant?: 'audit' | 'legal-compliance'
+}
 
-const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant = 'audit' }) => {
+const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit' }) => {
   const auditApi = variant === 'legal-compliance' ? legalComplianceExecApi : defaultAuditApi
   const auditPlanApi = variant === 'legal-compliance' ? legalCompliancePlanApi : defaultAuditPlanApi
   const { t } = useTranslation()
@@ -58,29 +59,13 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
   const { codeList: auditTypeCodes, getLabel: getAuditTypeLabel } = useCodeMap('AUDIT_TYPE')
   const { user: authUser } = useAuth()
 
-  const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
+  const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
   const canCompletionApprove = (a: { completionApproverUserId?: number | null; completionApproverName?: string | null }) => {
     if (isAdmin) return true
     if (a.completionApproverUserId && authUser?.id && a.completionApproverUserId === authUser.id) return true
     if (a.completionApproverName && authUser?.name && a.completionApproverName === authUser.name) return true
     return false
   }
-  const { canSee } = useButtonRules()
-  const MENU = menuPath ?? 'EHS경영 › 감사 › 감사 실시'
-  const getRoles = (item: { createdByUserId?: number|null; auditorName?: string|null; auditor?: string|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
-    const roles: string[] = ['guest']
-    if (isAdmin) roles.push('superAdmin')
-    else if (authUser?.role) roles.push(authUser.role)
-    if (item.createdByUserId === authUser?.id) roles.push('writer')
-    const auditorCsv = item.auditorName || item.auditor || ''
-    if (authUser?.name && auditorCsv.split(',').map(s => s.trim()).includes(authUser.name)) roles.push('auditor')
-    if ((item.planApproverUserId && authUser?.id && item.planApproverUserId === authUser.id) ||
-        (item.planApproverName && authUser?.name && item.planApproverName === authUser.name)) roles.push('planApprover')
-    if ((item.completionApproverUserId && authUser?.id && item.completionApproverUserId === authUser.id) ||
-        (item.completionApproverName && authUser?.name && item.completionApproverName === authUser.name)) roles.push('completionApprover')
-    return roles
-  }
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
   const [showCompletionApproverModal, setShowCompletionApproverModal] = useState(false)
   const [showPlanApproverModal, setShowPlanApproverModal] = useState(false)
   // 완료 결재 반려 사유 입력 다이얼로그
@@ -95,9 +80,11 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
   const [selectedItem, setSelectedItem] = useState<Audit | null>(null)
   const [form, setForm] = useState<AuditRequest>(emptyForm)
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const pageSize = 10
+  const applySearch = () => { setSearchText(searchInput); setPage(0) }
 
   const queryKey = statusFilter
     ? ['auditExecStatus', statusFilter, page]
@@ -152,17 +139,14 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm(emptyForm) }
   const handleRowClick = (item: Audit) => { setSelectedItem(item); setViewMode('detail') }
-  const handleOpenCreate = async () => {
+  const handleOpenCreate = () => {
     setSelectedItem(null)
-    const leader = await fetchTeamLeader(authUser?.deptCode)
+    // 작성자(createdByName) 로그인 사용자 자동 입력
     setForm({
       ...emptyForm,
+      auditDate: todayStr(),
       createdByUserId: authUser?.id ?? null,
       createdByName: authUser?.name || '',
-      ...(leader ? {
-        planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
-        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
-      } : {}),
     })
     setViewMode('create')
   }
@@ -339,7 +323,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
     return <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>{log.detail}</Typography>
   }
   const handleDelete = async (item: Audit) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
-  const handleReset = () => { setSearchText(''); setStatusFilter(''); setPage(0) }
+  const handleReset = () => { setSearchInput(''); setSearchText(''); setStatusFilter(''); setPage(0) }
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -537,41 +521,38 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {t('common.list')}
           </Button>
-          {selectedItem.status !== 'COMPLETED' && (() => {
-            const r = getRoles(selectedItem)
-            const st = selectedItem.status
-            return (
-              <>
-                {canSee(MENU, st === 'PENDING_CLOSE' ? 'PENDING_CLOSE' : st === 'IN_PROGRESS' ? 'IN_PROGRESS' : 'PREPARING', '저장 (감사 정보)', r) && (
-                  <Button variant="contained" color="primary" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                    {t('common.save')}
-                  </Button>
-                )}
-                {st !== 'IN_PROGRESS' && st !== 'PENDING_CLOSE' && canSee(MENU, 'PREPARING', '진행중 (상태 전환)', r) && (
-                  <Button variant="contained" color="info" onClick={() => handleStatusChange('IN_PROGRESS')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                    {t('audit.startProgress', '진행중')}
-                  </Button>
-                )}
-                {st === 'IN_PROGRESS' && canSee(MENU, 'IN_PROGRESS', '완료 결재 상신', r) && (
-                  <Button variant="contained" color="info" onClick={() => handleStatusChange('PENDING_CLOSE')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                    {t('audit.completionSubmit', '완료 결재 상신')}
-                  </Button>
-                )}
-                {st === 'PENDING_CLOSE' && canSee(MENU, 'PENDING_CLOSE', '반려', r) && (
+          {selectedItem.status !== 'COMPLETED' && (
+            <>
+              <Button variant="contained" color="primary" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                {t('common.save')}
+              </Button>
+              {/* 진행중 진입 — 진행 전 단계에서만 (작성자/일반 사용자도 노출) */}
+              {selectedItem.status !== 'IN_PROGRESS' && selectedItem.status !== 'PENDING_CLOSE' && (
+                <Button variant="contained" color="info" onClick={() => handleStatusChange('IN_PROGRESS')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                  {t('audit.startProgress', '진행중')}
+                </Button>
+              )}
+              {/* 완료 결재 상신 — 진행 중 단계에서 결재 요청 (info 색상으로 연간 계획·KPI 현황과 톤 일치) */}
+              {selectedItem.status === 'IN_PROGRESS' && (
+                <Button variant="contained" color="info" onClick={() => handleStatusChange('PENDING_CLOSE')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                  {t('audit.completionSubmit', '완료 결재 상신')}
+                </Button>
+              )}
+              {/* 반려 / 완료 승인 — PENDING_CLOSE 상태에서 지정된 완료 승인자/admin */}
+              {selectedItem.status === 'PENDING_CLOSE' && canCompletionApprove(selectedItem) && (
+                <>
                   <Button variant="contained" color="warning"
                     onClick={() => setRejectDialogOpen(true)}
                     sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                     {t('audit.reject', '반려')}
                   </Button>
-                )}
-                {st === 'PENDING_CLOSE' && canSee(MENU, 'PENDING_CLOSE', '완료 승인', r) && (
                   <Button variant="contained" color="success" onClick={() => handleStatusChange('COMPLETED')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                     {t('audit.completionApprove', '완료 승인')}
                   </Button>
-                )}
-              </>
-            )
-          })()}
+                </>
+              )}
+            </>
+          )}
         </Box>
 
         {/* 이력 상세 모달 */}
@@ -631,7 +612,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setLogModalOpen(false)}>{t('common.close', '닫기')}</Button>
+            <Button variant="outlined" onClick={() => setLogModalOpen(false)}>{t('common.close', '닫기')}</Button>
           </DialogActions>
         </Dialog>
       </Box>
@@ -649,7 +630,8 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
             <Box sx={valBorderSx}><TextField fullWidth size="small" value={form.auditName} onChange={e => setForm({ ...form, auditName: e.target.value })} /></Box>
             <Typography sx={labelSx}>{t('audit.auditType')}</Typography>
             <Box sx={valSx}>
-              <Select fullWidth size="small" value={form.auditType} onChange={e => setForm({ ...form, auditType: e.target.value as AuditRequest['auditType'] })}>
+              <Select fullWidth size="small" value={form.auditType} onChange={e => setForm({ ...form, auditType: e.target.value as AuditRequest['auditType'] })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {auditTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getAuditTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
@@ -666,7 +648,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
             <Typography sx={labelSx}>{t('audit.grade')}</Typography>
             <Box sx={valSx}>
               <Select fullWidth size="small" displayEmpty value={form.grade || ''} onChange={e => setForm({ ...form, grade: (e.target.value || undefined) as AuditRequest['grade'] })}>
-                <MenuItem value=""></MenuItem>
+                <MenuItem value="" disabled>선택</MenuItem>
                 <MenuItem value="S">S</MenuItem>
                 <MenuItem value="A">A</MenuItem>
                 <MenuItem value="B">B</MenuItem>
@@ -677,13 +659,14 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('common.status')}</Typography>
             <Box sx={valBorderSx}>
-              <Select fullWidth size="small" value={form.status || 'PLAN'} onChange={e => setForm({ ...form, status: e.target.value as AuditRequest['status'] })}>
+              <Select fullWidth size="small" value={form.status || 'PLAN'} onChange={e => setForm({ ...form, status: e.target.value as AuditRequest['status'] })} displayEmpty>
+                <MenuItem value="" disabled>선택</MenuItem>
                 {auditStatusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getAuditStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
             <Typography sx={labelSx}>{t('audit.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
-            <Box sx={{ ...valSx, display: 'flex', gap: 0.5, alignItems: 'center' }}>
-              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
+            <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center' }}>
+              <TextField fullWidth size="small" value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder={t('audit.selectCompletionApprover', '완료 승인자 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowCompletionApproverModal(true)}>
                 <PersonSearchIcon fontSize="small" />
@@ -701,7 +684,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
             </Box>
             <Typography sx={labelSx}>{t('audit.createdByName', '작성자')}</Typography>
             <Box sx={valSx}>
-              <TextField fullWidth size="small" value={form.createdByName || ''} InputProps={{ readOnly: true }} />
+              <Typography variant="body2">{form.createdByName || authUser?.name || authUser?.username || ''}</Typography>
             </Box>
           </Box>
           <Box sx={rowSx}>
@@ -719,7 +702,8 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.auditType')}</Typography>
-            <Select fullWidth size="small" value={form.auditType} onChange={e => setForm({ ...form, auditType: e.target.value as AuditRequest['auditType'] })}>
+            <Select fullWidth size="small" value={form.auditType} onChange={e => setForm({ ...form, auditType: e.target.value as AuditRequest['auditType'] })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {auditTypeCodes.map(c => <MenuItem key={c.code} value={c.code}>{getAuditTypeLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -738,12 +722,13 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.grade')}</Typography>
             <Select fullWidth size="small" displayEmpty value={form.grade || ''} onChange={e => setForm({ ...form, grade: (e.target.value || undefined) as AuditRequest['grade'] })}>
-              <MenuItem value=""></MenuItem><MenuItem value="S">S</MenuItem><MenuItem value="A">A</MenuItem><MenuItem value="B">B</MenuItem><MenuItem value="C">C</MenuItem>
+              <MenuItem value="" disabled>선택</MenuItem><MenuItem value="S">S</MenuItem><MenuItem value="A">A</MenuItem><MenuItem value="B">B</MenuItem><MenuItem value="C">C</MenuItem>
             </Select>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.status')}</Typography>
-            <Select fullWidth size="small" value={form.status || 'PLAN'} onChange={e => setForm({ ...form, status: e.target.value as AuditRequest['status'] })}>
+            <Select fullWidth size="small" value={form.status || 'PLAN'} onChange={e => setForm({ ...form, status: e.target.value as AuditRequest['status'] })} displayEmpty>
+              <MenuItem value="" disabled>선택</MenuItem>
               {auditStatusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getAuditStatusLabel(c.code)}</MenuItem>)}
             </Select>
           </Box>
@@ -775,7 +760,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('audit.createdByName', '작성자')}
             </Typography>
-            <TextField size="small" fullWidth value={form.createdByName || ''} InputProps={{ readOnly: true }} />
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{form.createdByName || authUser?.name || authUser?.username || ''}</Typography>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.summary', '요약')}</Typography>
@@ -815,12 +800,12 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
           onConfirm={(users) => {
             if (users.length > 0) {
               const u = users[0]
-              setForm(prev => ({
-                ...prev,
+              setForm({
+                ...form,
                 planApproverUserId: u.id,
                 planApproverTeam: u.department || '',
                 planApproverName: u.name,
-              }))
+              })
             }
             setShowPlanApproverModal(false)
           }}
@@ -857,11 +842,11 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
       {/* PC Search */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('audit.searchPlaceholder')} value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0) }}
+          <ListSearchBar placeholder={t('audit.searchPlaceholder')}
+            value={searchInput} onChange={setSearchInput} onSearch={applySearch}
             sx={{ minWidth: 200 }} />
           <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText('') }}>
+            <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0) }}>
               <MenuItem value="">{t('audit.allStatus')}</MenuItem>
               {auditStatusCodes.map((c) => (
                 <MenuItem key={c.code} value={c.code}>{getAuditStatusLabel(c.code)}</MenuItem>
@@ -870,26 +855,23 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ menuPath, variant
           </FormControl>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
         </Box>
-        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
-        )}
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
       </Box>
       {/* Mobile Search */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('audit.searchPlaceholder')} value={searchText}
-          onChange={(e) => { setSearchText(e.target.value); setPage(0) }} />
+        <ListSearchBar fullWidth placeholder={t('audit.searchPlaceholder')}
+          value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <FormControl size="small" sx={{ flex: 1 }}>
-            <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText('') }}>
+            <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0) }}>
               <MenuItem value="">{t('audit.allStatus')}</MenuItem>
               {auditStatusCodes.map((c) => (
                 <MenuItem key={c.code} value={c.code}>{getAuditStatusLabel(c.code)}</MenuItem>
               ))}
             </Select>
           </FormControl>
-          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
-            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
-          )}
+          <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
         </Box>
       </Box>
 
