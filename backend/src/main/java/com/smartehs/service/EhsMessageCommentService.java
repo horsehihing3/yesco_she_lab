@@ -36,9 +36,12 @@ public class EhsMessageCommentService {
                 c.setAuthorName(u.getName() != null ? u.getName() : u.getUsername());
                 c.setAuthorDept(u.getDepartment());
                 c.setAuthorEmail(u.getEmail());
+            } else {
+                c.setAuthorName(username);
             }
         }
         if (c.getAuthorName() == null) c.setAuthorName(input.getAuthorName());
+        if (c.getAuthorName() == null) c.setAuthorName("anonymous");
         if (c.getAuthorDept() == null) c.setAuthorDept(input.getAuthorDept());
         if (c.getAuthorEmail() == null) c.setAuthorEmail(input.getAuthorEmail());
 
