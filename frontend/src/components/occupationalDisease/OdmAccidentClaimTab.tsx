@@ -787,11 +787,13 @@ const OdmAccidentClaimTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.backToList', '목록')}</Button>
           {d.status === 'DRAFT' && (
             <>
-              {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+              {canSee(MENU, 'DRAFT', '수정', myRoles) && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit', '수정')}</Button>
               )}
-              <Button variant="contained" color="info" onClick={handleSubmitClaim} sx={{ flex: { xs: 1, sm: 'none' } }}>제출</Button>
-              {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+              {canSee(MENU, 'DRAFT', '제출', myRoles) && (
+                <Button variant="contained" color="info" onClick={handleSubmitClaim} sx={{ flex: { xs: 1, sm: 'none' } }}>제출</Button>
+              )}
+              {canSee(MENU, 'DRAFT', '삭제', myRoles) && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete', '삭제')}</Button>
               )}
             </>
@@ -1039,7 +1041,7 @@ const OdmAccidentClaimTab: React.FC = () => {
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>
-        {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+        {canSee(MENU, 'DRAFT', '저장', myRoles) && (
         <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.save', '저장')}
         </Button>

@@ -895,8 +895,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
       { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
         buttons: [
           { button: '수정', roles: WRITER_ADMIN },
-          { button: '제출', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 제출 가능' },
+          { button: '제출', roles: WRITER_ADMIN },
           { button: '삭제', roles: WRITER_ADMIN },
+          { button: '저장', roles: WRITER_ADMIN },
         ] },
     ],
   },
