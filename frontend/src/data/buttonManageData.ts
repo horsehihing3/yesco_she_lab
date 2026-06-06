@@ -744,6 +744,69 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
+  // ── 작업환경측정 › 유해인자 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 유해인자', menuKey: 'wem.factorTab',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 작업환경측정 › 측정 계획 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 측정 계획', menuKey: 'wem.planTab',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'PLANNED/IN_PROGRESS/OVERDUE/UNMEASURED', statusLabel: '측정 전 (진행/지연/미측정 포함)', statusColor: 'default',
+        statusNote: '해당 상태 모두 동일 버튼 노출 (상태 조건 없음)',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+      { status: 'COMPLETED', statusLabel: '측정 완료', statusColor: 'success',
+        statusNote: '완료 상태에서도 수정/삭제 조건 없음',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 작업환경측정 › 측정 결과 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 측정 결과', menuKey: 'wem.resultTab',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 작업환경측정 › 개선 조치 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 개선 조치', menuKey: 'wem.improveTab',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
   // ── 직업병관리 - 검진계획 ────────────────────────────────────────────────
   {
     menuPath: '보건 관리 › 직업병 관리 › 검진계획', menuKey: 'od.tabs.plan',
@@ -819,6 +882,21 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
           { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
           { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 산재신청 ───────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 산재신청', menuKey: 'od.tabs.sanjae',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '제출', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 제출 가능' },
+          { button: '삭제', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -924,84 +1002,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '수정', roles: ALL_ON },
           { button: '삭제', roles: ALL_ON },
           { button: '저장', roles: ALL_ON },
-        ] },
-    ],
-  },
-
-  // ── 작업환경측정 › 유해인자 ──────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 작업환경 측정 › 유해인자', menuKey: 'wem.factorTab',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-    ],
-  },
-
-  // ── 작업환경측정 › 측정 계획 ──────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 작업환경 측정 › 측정 계획', menuKey: 'wem.planTab',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'PLANNED/IN_PROGRESS/OVERDUE/UNMEASURED', statusLabel: '측정 전 (진행/지연/미측정 포함)', statusColor: 'default',
-        statusNote: '해당 상태 모두 동일 버튼 노출 (상태 조건 없음)',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-      { status: 'COMPLETED', statusLabel: '측정 완료', statusColor: 'success',
-        statusNote: '완료 상태에서도 수정/삭제 조건 없음',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-    ],
-  },
-
-  // ── 작업환경측정 › 측정 결과 ──────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 작업환경 측정 › 측정 결과', menuKey: 'wem.resultTab',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-    ],
-  },
-
-  // ── 작업환경측정 › 개선 조치 ──────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 작업환경 측정 › 개선 조치', menuKey: 'wem.improveTab',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-    ],
-  },
-
-  // ── 직업병관리 - 산재신청 ───────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 직업병 관리 › 산재신청', menuKey: 'od.tabs.sanjae',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '제출', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 제출 가능' },
-          { button: '삭제', roles: WRITER_ADMIN },
         ] },
     ],
   },
