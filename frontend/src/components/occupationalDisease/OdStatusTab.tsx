@@ -17,6 +17,8 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 
 const DIVISIONS = ['정기', '수시', '배치전', '미수검']
 const JUDGES = ['A', 'B', 'C1', 'C2', 'D1', 'D2']
@@ -38,9 +40,15 @@ const divColor = (d: string): 'primary' | 'warning' | 'error' | 'success' | 'def
 
 const emptyForm: Partial<OdWorker> = { division: '정기', gender: '남', job: '비사무직' }
 
+const MENU = '보건관리 › 직업병관리 › 검진 현황'
+
 const OdStatusTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
   const { data: items = [], isLoading } = useQuery({ queryKey: ['odWorkers'], queryFn: workerApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })
 
@@ -129,7 +137,9 @@ const OdStatusTab: React.FC = () => {
           {DIVISIONS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
         </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+        {canSee(MENU, 'LIST', 'New', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+        )}
       </Stack>
 
       <Paper variant="outlined">
@@ -164,8 +174,12 @@ const OdStatusTab: React.FC = () => {
                     <TableCell>{w.afterAction}</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 700, color: w.actionDone === '완료' ? 'success.main' : w.actionDone === '진행중' ? 'warning.main' : 'text.disabled' }}>{w.actionDone}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
-                      <IconButton size="small" onClick={() => openEdit(w)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(w.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                        <IconButton size="small" onClick={() => openEdit(w)}><EditIcon fontSize="inherit" /></IconButton>
+                      )}
+                      {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                        <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(w.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -233,7 +247,9 @@ const OdStatusTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.name || !form.employeeNo}>{editing ? '수정' : '추가'}</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={submit} disabled={!form.name || !form.employeeNo}>{editing ? '수정' : '추가'}</Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

@@ -16,14 +16,22 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 
 const ORG_TYPES = ['특수검진 전문기관', '일반검진기관']
 
 const emptyForm: Partial<OdOrg> = { orgType: '특수검진 전문기관' }
 
+const MENU = '보건관리 › 직업병관리 › 기관 관리'
+
 const OdManageTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
   const { data: orgs = [], isLoading } = useQuery({ queryKey: ['odOrgs'], queryFn: odOrgApi.list })
 
   const [open, setOpen] = useState(false)
@@ -55,7 +63,9 @@ const OdManageTab: React.FC = () => {
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="space-between" alignItems="center">
         <Typography variant="subtitle1" fontWeight={700}>검진기관 관리</Typography>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+        {canSee(MENU, 'LIST', 'New', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+        )}
       </Stack>
 
       {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
@@ -79,8 +89,12 @@ const OdManageTab: React.FC = () => {
                   <Grid item xs={6}><Typography variant="caption" color="text.disabled">연간 예상</Typography><Typography variant="body2">₩{(((o.costPerPerson||0)*(o.targetCount||0))/10000).toFixed(0)}만</Typography></Grid>
                 </Grid>
                 <Stack direction="row" spacing={0.5} sx={{ mt: 1 }} justifyContent="flex-end">
-                  <IconButton size="small" onClick={() => openEdit(o)}><EditIcon fontSize="inherit" /></IconButton>
-                  <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(o.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                  {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                    <IconButton size="small" onClick={() => openEdit(o)}><EditIcon fontSize="inherit" /></IconButton>
+                  )}
+                  {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                    <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(o.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                  )}
                 </Stack>
               </Paper>
             </Grid>
@@ -122,7 +136,9 @@ const OdManageTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.name}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={submit} disabled={!form.name}>저장</Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>
