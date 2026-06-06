@@ -23,7 +23,7 @@ const ORG_TYPES = ['특수검진 전문기관', '일반검진기관']
 
 const emptyForm: Partial<OdOrg> = { orgType: '특수검진 전문기관' }
 
-const MENU = '보건 관리 › 직업병 관리 › 기관 관리'
+const MENU = '보건 관리 › 직업병 관리 › 검진관리'
 
 const OdManageTab: React.FC = () => {
   const qc = useQueryClient()

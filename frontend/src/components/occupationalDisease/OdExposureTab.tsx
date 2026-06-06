@@ -31,7 +31,7 @@ const statusInfo = (s?: string) => STATUSES.find(x => x.code === s) || STATUSES[
 
 const emptyForm: Partial<OdExposure> = { factorClass: '화학적', status: 'ok', exposureRatio: 0 }
 
-const MENU = '보건 관리 › 직업병 관리 › 노출 기록'
+const MENU = '보건 관리 › 직업병 관리 › 노출관리'
 
 const OdExposureTab: React.FC = () => {
   const qc = useQueryClient()

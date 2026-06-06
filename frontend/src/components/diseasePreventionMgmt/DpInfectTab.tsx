@@ -34,7 +34,7 @@ const daysUntil = (d?: string) => {
 
 const emptyForm: Partial<DpInfect> = { programType: '예방접종', status: '완료' }
 
-const MENU = '보건 관리 › 질병예방 관리 › 각 질환 탭'
+const MENU = '보건 관리 › 질병예방 관리 › 감염병'
 
 const DpInfectTab: React.FC = () => {
   const qc = useQueryClient()

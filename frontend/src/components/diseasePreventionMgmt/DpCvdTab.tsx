@@ -32,7 +32,7 @@ const riskColor = (r?: string): 'success' | 'warning' | 'error' | 'default' =>
 
 const emptyForm: Partial<DpCvd> = { riskLevel: '중위험', gender: '남' }
 
-const MENU = '보건 관리 › 질병예방 관리 › 각 질환 탭'
+const MENU = '보건 관리 › 질병예방 관리 › 뇌심혈관'
 
 const DpCvdTab: React.FC = () => {
   const qc = useQueryClient()

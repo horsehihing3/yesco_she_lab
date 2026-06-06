@@ -30,7 +30,7 @@ const riskColor = (r?: string): 'success' | 'warning' | 'error' | 'default' =>
 
 const emptyForm: Partial<DpMsd> = { riskLevel: '중간', status: '요관찰' }
 
-const MENU = '보건 관리 › 질병예방 관리 › 각 질환 탭'
+const MENU = '보건 관리 › 질병예방 관리 › 근골격계'
 
 const DpMsdTab: React.FC = () => {
   const qc = useQueryClient()

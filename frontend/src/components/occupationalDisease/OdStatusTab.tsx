@@ -40,7 +40,7 @@ const divColor = (d: string): 'primary' | 'warning' | 'error' | 'success' | 'def
 
 const emptyForm: Partial<OdWorker> = { division: '정기', gender: '남', job: '비사무직' }
 
-const MENU = '보건 관리 › 직업병 관리 › 검진 현황'
+const MENU = '보건 관리 › 직업병 관리 › 검진현황'
 
 const OdStatusTab: React.FC = () => {
   const qc = useQueryClient()
