@@ -138,8 +138,8 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
   const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'AUDIT_ADMIN' || user?.role === 'EHS_ADMIN'
   const { canSee } = useButtonRules()
   const MENU = variant === 'legal-compliance'
-    ? 'EHS경영 › 법규 대응 › 법규 대응 계획'
-    : 'EHS경영 › 내부 감사 › 감사 계획'
+    ? 'EHS 경영 › 법규 대응 › 법규 대응 계획'
+    : 'EHS 경영 › 내부 감사 › 감사 계획'
   const getRoles = (item: { createdByUserId?: number | null; planApproverUserId?: number | null; planApproverName?: string | null; auditorName?: string | null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')

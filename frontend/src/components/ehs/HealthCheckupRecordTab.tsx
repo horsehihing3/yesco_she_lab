@@ -17,7 +17,7 @@ import { useButtonRules } from '../../hooks/useButtonRules'
 import { healthCheckupRecordApi, HealthCheckupRecord } from '../../api/healthCheckupRecordApi'
 import LoadingOverlay from '../common/LoadingOverlay'
 
-const MENU = '보건관리 › 건강검진 › 사후관리'
+const MENU = '보건 관리 › 건강 검진 관리 › 사후관리'
 
 const HealthCheckupRecordTab: React.FC = () => {
   const { t } = useTranslation()

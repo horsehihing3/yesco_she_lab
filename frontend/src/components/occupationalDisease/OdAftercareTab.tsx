@@ -35,7 +35,7 @@ const statusColor = (s?: string): 'info' | 'success' | 'secondary' | 'warning' |
 const emptyAft: Partial<OdAftercare> = { judge: 'D1', status: '진행중', urgent: false }
 const emptyFit: Partial<OdFitness> = { evalResult: '조건부 적합', doneStatus: '이행중' }
 
-const MENU = '보건관리 › 직업병관리 › 사후관리'
+const MENU = '보건 관리 › 직업병 관리 › 사후관리'
 
 const OdAftercareTab: React.FC = () => {
   const qc = useQueryClient()

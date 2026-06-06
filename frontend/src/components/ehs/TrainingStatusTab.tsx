@@ -16,7 +16,7 @@ import { TrainingApplication } from '../../types/trainingApplication.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import RejectReasonDialog from '../common/RejectReasonDialog'
 
-const BUTTON_MENU = 'EHS경영 › 교육훈련 › 교육현황 (관리자)'
+const BUTTON_MENU = 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)'
 
 type ViewMode = 'list' | 'detail'
 
@@ -41,7 +41,7 @@ const TrainingStatusTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 교육훈련 › 교육현황 (관리자)'
+  const MENU = 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)'
   const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'TRAINING_ADMIN' || user?.role === 'EHS_ADMIN'
   const getRoles = (): string[] => {
     const roles: string[] = ['guest']

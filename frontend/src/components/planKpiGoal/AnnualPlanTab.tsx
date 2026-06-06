@@ -335,7 +335,7 @@ const AnnualPlanTab: React.FC = () => {
     return false
   }
   const { canSee } = useButtonRules()
-  const MENU_ANNUAL = 'EHS경영 › 계획KPI목표 › 연간계획'
+  const MENU_ANNUAL = 'EHS 경영 › 계획·KPI·목표 › 연간계획'
   const getRoles = (d: { writerUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')

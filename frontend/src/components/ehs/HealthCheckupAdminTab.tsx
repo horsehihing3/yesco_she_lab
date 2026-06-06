@@ -64,7 +64,7 @@ const completePlan = async (id: number): Promise<HealthCheckupPlan> => {
 
 type ViewMode = 'list' | 'detail'
 
-const MENU = '보건관리 › 건강검진 › 검진 관리'
+const MENU = '보건 관리 › 건강 검진 관리 › 검진 관리'
 
 const HealthCheckupAdminTab: React.FC = () => {
   const { t } = useTranslation()

@@ -32,7 +32,7 @@ const riskColor = (r?: string): 'success' | 'warning' | 'error' | 'default' =>
 
 const emptyForm: Partial<DpStress> = { riskLevel: '잠재', hasCounseling: false }
 
-const MENU = '보건관리 › 질병예방관리 › 각 질환 탭'
+const MENU = '보건 관리 › 질병예방 관리 › 각 질환 탭'
 
 const DpStressTab: React.FC = () => {
   const qc = useQueryClient()

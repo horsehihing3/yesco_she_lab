@@ -54,7 +54,7 @@ const statusColor = (s: string): 'success' | 'info' | 'warning' | 'error' | 'def
 
 const emptyForm: Partial<OdPlan> = { half: '상반기', method: '내원검진', status: '계획', targetCount: 0 }
 
-const MENU = '보건관리 › 직업병관리 › 검진 계획'
+const MENU = '보건 관리 › 직업병 관리 › 검진 계획'
 
 const OdPlanTab: React.FC = () => {
   const qc = useQueryClient()

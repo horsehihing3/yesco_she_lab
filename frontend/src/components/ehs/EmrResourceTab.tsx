@@ -37,7 +37,7 @@ const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 const emptyForm: EmergencyResourceRequest = { resourceName: '', resourceType: '' }
 
-const MENU = 'EHS경영 › 비상 훈련 › 자원·장비'
+const MENU = 'EHS 경영 › 비상 훈련 › 자원·장비'
 
 const EmrResourceTab: React.FC = () => {
   const { t } = useTranslation()

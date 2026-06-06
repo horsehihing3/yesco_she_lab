@@ -134,7 +134,7 @@ const QnaTab: React.FC = () => {
   const isQnaAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'QNA_ADMIN'
   const isAuthor = (post: QnaPost | null) => post?.authorEmail === user?.email
   const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 커뮤니케이션 › Q&A'
+  const MENU = 'EHS 경영 › 커뮤니케이션 › Q&A'
   const listRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const getDetailRoles = (post: QnaPost | null): string[] => [
     'guest',

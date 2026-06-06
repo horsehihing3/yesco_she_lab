@@ -60,7 +60,7 @@ const KpiStatusTab: React.FC = () => {
 
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
   const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 계획KPI목표 › KPI 현황'
+  const MENU = 'EHS 경영 › 계획·KPI·목표 › KPI 현황'
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
   const getDetailRoles = (item: { writerUserId?: number|null; writerName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles = [...myRoles]

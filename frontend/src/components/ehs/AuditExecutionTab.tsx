@@ -64,8 +64,8 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
   const { canSee } = useButtonRules()
   const MENU = variant === 'legal-compliance'
-    ? 'EHS경영 › 법규 대응 › 법규 대응 실시'
-    : 'EHS경영 › 내부 감사 › 감사 실시'
+    ? 'EHS 경영 › 법규 대응 › 법규 대응 실시'
+    : 'EHS 경영 › 내부 감사 › 감사 실시'
   const getRoles = (item: { createdByUserId?: number | null; completionApproverUserId?: number | null; completionApproverName?: string | null; auditor?: string | null; auditorName?: string | null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')

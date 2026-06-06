@@ -85,7 +85,7 @@ const EmergencyNotificationTab: React.FC = () => {
   const rowsPerPage = 10
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 커뮤니케이션 › 긴급 메일/문자 발송'
+  const MENU = 'EHS 경영 › 커뮤니케이션 › 긴급 메일/문자 발송'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const canSend = canSee(MENU, 'FORM', '긴급 발송', myRoles)
 
