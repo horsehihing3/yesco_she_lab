@@ -18,6 +18,15 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - [ ] **#7 EHS 실예산 카드** — 미확인. 경로: EHS 예산 → 실예산 사용입력, 분류별 예산/사용/잔여 비교
 - [ ] **#8 법규대응 DB 분리** — 미확인. tb_legal_compliance_* 별도 테이블 (ceaf263)
 
+### ✅ 완료 — 보건 관리 버튼 권한 전면 적용 (2026-06-06 세션 5, commit 2d0dc60)
+- [x] buttonManageData 보건 관리 메뉴 구조 정비 — 실제 탭 구조와 일치 (내 검진 이력 1개, 작업환경 측정 4탭, 직업병 관리 6탭, 질병예방 관리 7탭)
+- [x] 보건 관리 전 탭 canSee 적용 — WemFactorTab/PlanTab/ResultTab/ImprovementTab, OdmAccidentClaimTab, Dp*Tab 7개, MyHealthCheckupPage
+- [x] 내 검진 이력 EHS_ADMIN 버튼 미표시 수정 — DETAIL ALL_ON + isAdmin EHS_ADMIN 포함
+- [x] GA 버튼 권한 실제 동작 버그 수정 — myRoles에 user.role 추가 (20개 컴포넌트 일괄)
+  - 원인: TEAM_ADMIN 등 실제 role로 GA 권한 부여해도 myRoles에 없어 canSee 미체크
+  - 해결: myRoles = ['guest', ...(isAdmin?['superAdmin']:[]), ...(user?.role?[user.role]:[])]
+- [x] 산재신청 제출 버튼 canSee 적용 + statusCode 'DETAIL'→'DRAFT' 수정
+
 ### 🔴 1단계 — 예스코 투입 전 준비 (~ 6/9)
 - [ ] **예스코 미팅 준비** — 아래 "예스코 확인 필요 사항" 체크리스트 기반 질문 목록 정리
 - [ ] **tb_user 전환 범위 최종 확인** — T_IDM_USER 참조 7개 파일 전환 시 영향도 재검토
@@ -153,6 +162,16 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - [x] 계획 결재상신·수정·삭제 버튼 — 작성자/Admin만 노출 (canEditDraft 헬퍼)
 - [x] 완료승인자 "계획과 동일" 체크박스 — 6개 탭 적용
 - [x] 백엔드 작성자 자동 매핑 수정 (IdmMapper로 UidNumber 세팅)
+
+### 세션 5 (2026-06-06) — 보건 관리 버튼 권한 전면 적용
+- [x] buttonManageData 보건 관리 섹션 메뉴 구조 정비 (내 검진 이력 / 작업환경 측정 4탭 / 직업병 관리 6탭 / 질병예방 관리 7탭)
+- [x] MyHealthCheckupPage canSee 적용 + EHS_ADMIN isAdmin 포함
+- [x] WemFactorTab/PlanTab/ResultTab/ImprovementTab canSee 신규 적용 (imports, MENU 상수, hooks, 버튼 래핑)
+- [x] OdmAccidentClaimTab canSee 신규 적용 + statusCode DETAIL→DRAFT 수정 + 제출 버튼 래핑
+- [x] OdPlanTab/StatusTab/ManageTab/ExposureTab/AftercareTab myRoles user.role 추가
+- [x] Dp*Tab 7개 myRoles user.role 추가
+- [x] GA 권한 버그 근본 원인 수정 — myRoles에 user?.role 포함 (20개 컴포넌트)
+- [x] 산재신청 buttonManageData 제출 ALL_ON→WRITER_ADMIN, 저장 항목 추가
 
 ### 세션 4 (2026-06-05) — origin/main 싱크 · 버그 수정
 
