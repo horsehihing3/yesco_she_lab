@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
+import { useButtonRules } from '../hooks/useButtonRules'
 import { useForm, Controller } from 'react-hook-form'
 import { useAlert } from '../contexts/AlertContext'
 import useCodeMap from '../hooks/useCodeMap'
@@ -41,6 +42,8 @@ import {
   HealthCheckupDetailRequest,
   BodyPart,
 } from '../types/healthCheckup.types'
+
+const MENU = '보건 관리 › 건강 검진 관리 › 내 검진 이력'
 
 // ===== DB Korean value -> i18n key mapping =====
 const checkupTypeMap: Record<string, string> = {
@@ -112,6 +115,9 @@ type MyViewMode = 'list' | 'detail' | 'create' | 'edit'
 const MyHealthCheckupPage: React.FC = () => {
   const { t } = useTranslation()
   const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
   const queryClient = useQueryClient()
   const { showAlert, showConfirm, showSuccess } = useAlert()
   const { getLocalizedName, codeList: checkupStatusCodes } = useCodeMap('CHECKUP_STATUS')
@@ -319,9 +325,11 @@ const MyHealthCheckupPage: React.FC = () => {
   const renderListView = () => (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, mb: 2 }}>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleCreate} sx={{ width: { xs: '100%', sm: 'auto' } }}>
-          {t('common.new')}
-        </Button>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleCreate} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+            {t('common.new')}
+          </Button>
+        )}
       </Box>
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
@@ -497,12 +505,16 @@ const MyHealthCheckupPage: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {t('common.list')}
           </Button>
-          <Button variant="contained" onClick={handleEdit} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-            {t('common.edit')}
-          </Button>
-          <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-            {t('common.delete')}
-          </Button>
+          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+            <Button variant="contained" onClick={handleEdit} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+              {t('common.edit')}
+            </Button>
+          )}
+          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+            <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+              {t('common.delete')}
+            </Button>
+          )}
         </Box>
 
         <AiReportModal open={aiReportOpen} onClose={() => setAiReportOpen(false)} checkup={selectedItem} />
@@ -889,9 +901,11 @@ const MyHealthCheckupPage: React.FC = () => {
           <Button variant="outlined" onClick={() => setViewMode('list')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {t('common.cancel')}
           </Button>
-          <Button type="submit" variant="contained" disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-            {createMutation.isPending || updateMutation.isPending ? <CircularProgress size={20} /> : t('common.save')}
-          </Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button type="submit" variant="contained" disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+              {createMutation.isPending || updateMutation.isPending ? <CircularProgress size={20} /> : t('common.save')}
+            </Button>
+          )}
         </Box>
       </form>
 
