@@ -737,9 +737,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-          { button: '저장', roles: WRITER_ADMIN },
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
         ] },
     ],
   },
