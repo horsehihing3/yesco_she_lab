@@ -18,6 +18,8 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 
 const TYPES = ['온열', '한랭', '예방조치']
 const SEVERITIES = ['경증', '중등도', '중증']
@@ -29,9 +31,15 @@ const sevColor = (s?: string): 'error' | 'warning' | 'success' | 'default' =>
 
 const emptyForm: Partial<DpThermal> = { thermalType: '온열', severity: '경증' }
 
+const MENU = '보건 관리 › 질병예방 관리 › 온열한랭'
+
 const DpThermalTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
 
   const { data: list = [], isLoading } = useQuery({ queryKey: ['dpThermal'], queryFn: dpThermalApi.list })
   const { data: stats } = useQuery({ queryKey: ['dpMgmtStats'], queryFn: dpMgmtStatsApi.get })
@@ -120,10 +128,14 @@ const DpThermalTab: React.FC = () => {
                     <TableCell sx={{ fontSize: '0.85rem' }}>{x.symptoms || '-'}</TableCell>
                     <TableCell align="center"><Chip size="small" label={x.severity || '-'} color={sevColor(x.severity)} variant="outlined" /></TableCell>
                     <TableCell align="center" sx={{ whiteSpace: 'nowrap', px: 0.5 }}>
-                      <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => {
-                        if (await showConfirm('이 기록을 삭제하시겠습니까?')) deleteM.mutate(x.id)
-                      }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                        <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
+                      )}
+                      {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                        <IconButton size="small" onClick={async () => {
+                          if (await showConfirm('이 기록을 삭제하시겠습니까?')) deleteM.mutate(x.id)
+                        }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -134,7 +146,9 @@ const DpThermalTab: React.FC = () => {
       </Paper>
 
       <Stack direction="row" justifyContent="flex-end">
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
+        )}
       </Stack>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
@@ -199,7 +213,9 @@ const DpThermalTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

@@ -67,7 +67,7 @@ const EmrPlanTab: React.FC = () => {
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
   const canEditDraft = (item: { writerUserId?: number | null }) => isAdmin || item.writerUserId === authUser?.id
   const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 비상 훈련 › 비상 계획'
+  const MENU = 'EHS 경영 › 비상 훈련 › 비상 계획'
   const getRoles = (item: { writerUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')

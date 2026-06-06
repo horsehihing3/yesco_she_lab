@@ -143,7 +143,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
 
   const isAdmin = user?.role === 'SYSTEM_ADMIN'
   const { canSee } = useButtonRules()
-  const MENU = '위험성평가 (계획 / 관리 모드)'
+  const MENU = '안전 관리 › 위험성 평가'
   const getItemRoles = (item: { authorName?: string|null; planApproverName?: string|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')

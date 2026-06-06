@@ -16,6 +16,8 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 
 const CLASSES = ['화학적', '물리적', '생물학적']
 const STATUSES = [
@@ -29,9 +31,15 @@ const statusInfo = (s?: string) => STATUSES.find(x => x.code === s) || STATUSES[
 
 const emptyForm: Partial<OdExposure> = { factorClass: '화학적', status: 'ok', exposureRatio: 0 }
 
+const MENU = '보건 관리 › 직업병 관리 › 노출관리'
+
 const OdExposureTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { data: items = [], isLoading } = useQuery({ queryKey: ['odExposures'], queryFn: exposureApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })
 
@@ -69,7 +77,9 @@ const OdExposureTab: React.FC = () => {
       )}
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="flex-end">
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+        {canSee(MENU, 'LIST', 'New', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+        )}
       </Stack>
 
       <Paper variant="outlined">
@@ -106,8 +116,12 @@ const OdExposureTab: React.FC = () => {
                       <TableCell align="center"><Chip size="small" label={s.label} color={s.color} /></TableCell>
                       <TableCell sx={{ color: 'text.secondary' }}>{e.action}</TableCell>
                       <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
-                        <IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="inherit" /></IconButton>
-                        <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                        {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                          <IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="inherit" /></IconButton>
+                        )}
+                        {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                          <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                        )}
                       </TableCell>
                     </TableRow>
                   )
@@ -163,7 +177,9 @@ const OdExposureTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.factorName}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={submit} disabled={!form.factorName}>저장</Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

@@ -18,6 +18,8 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 
 const RISKS = ['정상', '잠재', '고위험']
 const DOMAINS: Array<[keyof DpStress, string]> = [
@@ -30,9 +32,15 @@ const riskColor = (r?: string): 'success' | 'warning' | 'error' | 'default' =>
 
 const emptyForm: Partial<DpStress> = { riskLevel: '잠재', hasCounseling: false }
 
+const MENU = '보건 관리 › 질병예방 관리 › 직무스트레스'
+
 const DpStressTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
 
   const { data: list = [], isLoading } = useQuery({ queryKey: ['dpStress'], queryFn: dpStressApi.list })
   const { data: stats } = useQuery({ queryKey: ['dpMgmtStats'], queryFn: dpMgmtStatsApi.get })
@@ -126,10 +134,14 @@ const DpStressTab: React.FC = () => {
                       <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{x.assessmentDate || '-'}</TableCell>
                       <TableCell align="center">{x.hasCounseling ? <Chip size="small" label="진행중" color="info" /> : '-'}</TableCell>
                       <TableCell align="center" sx={{ whiteSpace: 'nowrap', px: 0.5 }}>
-                        <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
-                        <IconButton size="small" onClick={async () => {
-                          if (await showConfirm('이 평가를 삭제하시겠습니까?')) deleteM.mutate(x.id)
-                        }}><DeleteIcon fontSize="inherit" /></IconButton>
+                        {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                          <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
+                        )}
+                        {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                          <IconButton size="small" onClick={async () => {
+                            if (await showConfirm('이 평가를 삭제하시겠습니까?')) deleteM.mutate(x.id)
+                          }}><DeleteIcon fontSize="inherit" /></IconButton>
+                        )}
                       </TableCell>
                     </TableRow>
                   )
@@ -141,7 +153,9 @@ const DpStressTab: React.FC = () => {
       </Paper>
 
       <Stack direction="row" justifyContent="flex-end">
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
+        )}
       </Stack>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
@@ -201,7 +215,9 @@ const DpStressTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

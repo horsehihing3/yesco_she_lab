@@ -14,6 +14,8 @@ import { ApiResponse, PageResponse } from '../../types/common.types'
 import { HealthCheckup, BodyPart } from '../../types/healthCheckup.types'
 import { HealthCheckupPlan } from '../../types/healthCheckupPlan.types'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import BodyDiagram, { regionBodyParts } from '../common/BodyDiagram'
 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
@@ -62,10 +64,16 @@ const completePlan = async (id: number): Promise<HealthCheckupPlan> => {
 
 type ViewMode = 'list' | 'detail'
 
+const MENU = '보건 관리 › 건강 검진 관리 › 검진 관리'
+
 const HealthCheckupAdminTab: React.FC = () => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('CHECKUP_STATUS')
 
   // 완료 승인 대상 계획 목록
@@ -273,9 +281,15 @@ const HealthCheckupAdminTab: React.FC = () => {
                     </TableCell>
                     <TableCell align="center">{p.completionApproverName || '-'}</TableCell>
                     <TableCell align="center">
-                      <Button variant="contained" size="small" color="info" onClick={() => handleCompleteApprove(p)} disabled={completeMutation.isPending}>
-                        {t('healthCheckupPlan.approveCompletion', '완료 승인')}
-                      </Button>
+                      {(() => {
+                        const itemRoles = [...myRoles]
+                        if (p.completionApproverName && user?.name && p.completionApproverName === user.name) itemRoles.push('completionApprover')
+                        return canSee(MENU, 'PENDING_COMPLETION', '완료 승인', itemRoles) && (
+                          <Button variant="contained" size="small" color="info" onClick={() => handleCompleteApprove(p)} disabled={completeMutation.isPending}>
+                            {t('healthCheckupPlan.approveCompletion', '완료 승인')}
+                          </Button>
+                        )
+                      })()}
                     </TableCell>
                   </TableRow>
                 ))}

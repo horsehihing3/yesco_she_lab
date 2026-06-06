@@ -89,18 +89,18 @@ export function buildInitialState(): Record<string, boolean> {
 
 // ─── 메뉴 데이터 (코드 분석 기반 — 버튼이 있는 상태만 표시) ─────────────────
 export const DEFAULT_MENU_DATA: MenuEntry[] = [
-  // ── EHS경영 › 커뮤니케이션 › EHS 문서 ────────────────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › EHS 문서 ────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 문서', menuKey: 'nav.ehsDocument',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS 문서', menuKey: 'nav.ehsDocument',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New (파일 업로드)', roles: WRITER_ADMIN }] },
     ],
   },
 
-  // ── EHS경영 › 커뮤니케이션 › EHS Plan ────────────────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › EHS Plan ────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS Plan', menuKey: 'nav.ehsPlan',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS Plan', menuKey: 'nav.ehsPlan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -114,9 +114,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS경영 › 커뮤니케이션 › EHS 직책자 명단 ────────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › EHS 직책자 명단 ────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 직책자 명단', menuKey: 'nav.ehsOfficer',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS 직책자 명단', menuKey: 'nav.ehsOfficer',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -129,9 +129,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS경영 › 커뮤니케이션 › EHS 메시지 ─────────────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › EHS 메시지 ─────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 메시지', menuKey: 'nav.ehsMessage',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS 메시지', menuKey: 'nav.ehsMessage',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -144,9 +144,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS경영 › 커뮤니케이션 › EHS 알림 ───────────────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › EHS 알림 ───────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › EHS 알림', menuKey: 'nav.ehsAlert',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS 알림', menuKey: 'nav.ehsAlert',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -165,9 +165,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS경영 › 커뮤니케이션 › 산업안전보건 위원회 ─────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › 산업안전보건 위원회 ─────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › 산업안전보건 위원회', menuKey: 'nav.ehsOshCommittee',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › 산업안전보건 위원회', menuKey: 'nav.ehsOshCommittee',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -179,18 +179,18 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS경영 › 커뮤니케이션 › 긴급 메일/문자 발송 ────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › 긴급 메일/문자 발송 ────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › 긴급 메일/문자 발송', menuKey: 'nav.ehsEmergency',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › 긴급 메일/문자 발송', menuKey: 'nav.ehsEmergency',
     statuses: [
       { status: 'FORM', statusLabel: '발송 폼', statusColor: 'default',
         buttons: [{ button: '긴급 발송', roles: WRITER_ADMIN }] },
     ],
   },
 
-  // ── EHS경영 › 커뮤니케이션 › Q&A ─────────────────────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › Q&A ─────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › Q&A', menuKey: 'nav.ehsQna',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › Q&A', menuKey: 'nav.ehsQna',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -203,9 +203,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS경영 › 커뮤니케이션 › 비상 연락망 ────────────────────────────────
+  // ── EHS 경영 › 커뮤니케이션 › 비상 연락망 ────────────────────────────────
   {
-    menuPath: 'EHS경영 › 커뮤니케이션 › 비상 연락망', menuKey: 'emr.tabs.contacts',
+    menuPath: 'EHS 경영 › 커뮤니케이션 › 비상 연락망', menuKey: 'emr.tabs.contacts',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -220,7 +220,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 연간계획 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 계획KPI목표 › 연간계획', menuKey: 'pkg.annualPlan',
+    menuPath: 'EHS 경영 › 계획·KPI·목표 › 연간계획', menuKey: 'pkg.annualPlan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -240,7 +240,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── KPI 현황 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 계획KPI목표 › KPI 현황', menuKey: 'pkg.kpiStatus',
+    menuPath: 'EHS 경영 › 계획·KPI·목표 › KPI 현황', menuKey: 'pkg.kpiStatus',
     statuses: [
       { status: 'APPROVED', statusLabel: '작성중 (KPI 입력)', statusColor: 'default',
         statusNote: 'KPI현황 탭: 연간계획 APPROVED 상태를 "작성중"으로 표시',
@@ -258,7 +258,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 감사 계획 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 내부 감사 › 감사 계획', menuKey: 'audit.tabs.plan',
+    menuPath: 'EHS 경영 › 내부 감사 › 감사 계획', menuKey: 'audit.tabs.plan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -280,7 +280,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 감사 실시 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 내부 감사 › 감사 실시', menuKey: 'audit.tabs.execution',
+    menuPath: 'EHS 경영 › 내부 감사 › 감사 실시', menuKey: 'audit.tabs.execution',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_OFF }] },
@@ -305,7 +305,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 감사 부적합 ───────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 내부 감사 › 감사 부적합', menuKey: 'audit.tabs.findings',
+    menuPath: 'EHS 경영 › 내부 감사 › 감사 부적합', menuKey: 'audit.tabs.findings',
     statuses: [
       { status: 'PLAN/PREPARING', statusLabel: '준비중', statusColor: 'default',
         statusNote: '감사 실시 승인 후 자동 연결 — 별도 신규 등록 없음',
@@ -317,7 +317,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 교육현황 (관리자) ──────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 교육훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',
+    menuPath: 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',
     statuses: [
       { status: 'PENDING', statusLabel: '대기', statusColor: 'warning',
         buttons: [
@@ -335,7 +335,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 비상 계획 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상 훈련 › 비상 계획', menuKey: 'emr.tabs.plans',
+    menuPath: 'EHS 경영 › 비상 훈련 › 비상 계획', menuKey: 'emr.tabs.plans',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -356,7 +356,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 비상 훈련 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상 훈련 › 비상 훈련', menuKey: 'emr.tabs.drills',
+    menuPath: 'EHS 경영 › 비상 훈련 › 비상 훈련', menuKey: 'emr.tabs.drills',
     statuses: [
       { status: 'SCHEDULED', statusLabel: '예정', statusColor: 'info',
         statusNote: '비상계획 승인 후 자동 생성 — 신규 등록 없음 / linkedPlan 상태에 따라 버튼 표시',
@@ -371,7 +371,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 자원·장비 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 비상 훈련 › 자원·장비', menuKey: 'nav.emergencyResource',
+    menuPath: 'EHS 경영 › 비상 훈련 › 자원·장비', menuKey: 'nav.emergencyResource',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: WRITER_ADMIN }] },
@@ -388,7 +388,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 법규검토시스템 ──────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 법규 대응 › 법규검토시스템', menuKey: 'lc.tabs.law',
+    menuPath: 'EHS 경영 › 법규 대응 › 법규검토시스템', menuKey: 'lc.tabs.law',
     statuses: [
       { status: 'LIST',   statusLabel: '목록',   statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: WRITER_ADMIN }] },
@@ -399,7 +399,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 법규 대응 계획 ───────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 법규 대응 › 법규 대응 계획', menuKey: 'lc.tabs.plan',
+    menuPath: 'EHS 경영 › 법규 대응 › 법규 대응 계획', menuKey: 'lc.tabs.plan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -421,7 +421,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 법규 대응 실시 ───────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 법규 대응 › 법규 대응 실시', menuKey: 'lc.tabs.execution',
+    menuPath: 'EHS 경영 › 법규 대응 › 법규 대응 실시', menuKey: 'lc.tabs.execution',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_OFF }] },
@@ -447,7 +447,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 부적합 사항 (법규 대응) ──────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 법규 대응 › 부적합 사항', menuKey: 'lc.tabs.findings',
+    menuPath: 'EHS 경영 › 법규 대응 › 부적합 사항', menuKey: 'lc.tabs.findings',
     statuses: [
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
@@ -456,35 +456,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 건강검진 계획 ─────────────────────────────────────────────────────────
-  {
-    menuPath: 'EHS경영 › 건강관리 › 건강검진 계획', menuKey: 'healthCheckup.tabs.plan',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
-      { status: 'PLANNED', statusLabel: '계획', statusColor: 'default',
-        buttons: [
-          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 작성자/관리자 체크 추가 필요' },
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-      { status: 'PENDING_APPROVAL', statusLabel: '결재대기', statusColor: 'warning',
-        buttons: [
-          { button: '반려',     roles: ALL_ON, issue: '권한 체크 없음 — 계획 승인자/관리자 체크 추가 필요' },
-          { button: '계획 승인', roles: ALL_ON, issue: '권한 체크 없음 — 계획 승인자/관리자 체크 추가 필요' },
-        ] },
-      { status: 'REJECTED', statusLabel: '반려', statusColor: 'error',
-        buttons: [
-          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-    ],
-  },
-
   // ── 위험성평가 ────────────────────────────────────────────────────────────
   {
-    menuPath: '위험성평가 (계획 / 관리 모드)', menuKey: 'nav.riskAssessment',
+    menuPath: '안전 관리 › 위험성 평가', menuKey: 'nav.riskAssessment',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: 'isAdmin = true 하드코딩 — 모든 사용자가 관리자로 처리됨' }] },
@@ -522,7 +496,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 작업허가 › 허가 신청 ──────────────────────────────────────────────────
   {
-    menuPath: '작업허가 › 허가 신청', menuKey: 'nav.permitToWork',
+    menuPath: '안전 관리 › 작업 허가 › 허가 신청', menuKey: 'nav.permitToWork',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -550,42 +524,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [
           { button: '완료 결재 반려', roles: ADMIN_COMP },
           { button: '완료 결재 승인', roles: ADMIN_COMP },
-        ] },
-    ],
-  },
-
-  // ── 작업환경측정 › 측정 계획 ──────────────────────────────────────────────
-  {
-    menuPath: '작업환경측정 › 측정 계획', menuKey: 'wem.planTab',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'PLANNED/IN_PROGRESS/OVERDUE/UNMEASURED', statusLabel: '측정 전 (진행/지연/미측정 포함)', statusColor: 'default',
-        statusNote: '해당 상태 모두 동일 버튼 노출 (상태 조건 없음)',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-      { status: 'COMPLETED', statusLabel: '측정 완료', statusColor: 'success',
-        statusNote: '완료 상태에서도 수정/삭제 조건 없음',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-    ],
-  },
-
-  // ── 산업재해/직업병 › 재해 청구 ───────────────────────────────────────────
-  {
-    menuPath: '산업재해/직업병 › 재해 청구', menuKey: 'od.tabs.sanjae',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '제출', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 제출 가능' },
-          { button: '삭제', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -791,20 +729,287 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 화학물질 › 위해성 보고 ────────────────────────────────────────────────
+  // ── 건강검진 - 내 검진 이력 ──────────────────────────────────────────────────────────
   {
-    menuPath: '화학물질 › 위해성 보고',
+    menuPath: '보건 관리 › 건강 검진 관리 › 내 검진 이력', menuKey: 'healthCheckup.tabs.my',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
+        ] },
+    ],
+  },
+
+  // ── 작업환경측정 › 유해인자 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 유해인자', menuKey: 'wem.factorTab',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 작업환경측정 › 측정 계획 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 측정 계획', menuKey: 'wem.planTab',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'COLLECTING', statusLabel: '수집중', statusColor: 'primary',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
+      { status: 'PLANNED/IN_PROGRESS/OVERDUE/UNMEASURED', statusLabel: '측정 전 (진행/지연/미측정 포함)', statusColor: 'default',
+        statusNote: '해당 상태 모두 동일 버튼 노출 (상태 조건 없음)',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+      { status: 'COMPLETED', statusLabel: '측정 완료', statusColor: 'success',
+        statusNote: '완료 상태에서도 수정/삭제 조건 없음',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 작업환경측정 › 측정 결과 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 측정 결과', menuKey: 'wem.resultTab',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 작업환경측정 › 개선 조치 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 개선 조치', menuKey: 'wem.improveTab',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 검진계획 ────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 검진계획', menuKey: 'od.tabs.plan',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 검진현황 ────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 검진현황', menuKey: 'od.tabs.status',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 검진관리 ────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 검진관리', menuKey: 'od.tabs.manage',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 노출관리 ────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 노출관리', menuKey: 'od.tabs.exposure',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 사후관리 ─────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 사후관리', menuKey: 'od.tabs.aftercare',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        statusNote: '사후관리 조치 및 업무적합성 평가 두 섹션에 각각 New 버튼',
+        buttons: [
+          { button: 'New (사후관리 조치)', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: 'New (업무적합성 평가)', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 산재신청 ───────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 산재신청', menuKey: 'od.tabs.sanjae',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '제출', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '저장', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 질병예방관리 - 근골격계 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 질병예방 관리 › 근골격계', menuKey: 'disease-prev.tab.msd',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
+        ] },
+    ],
+  },
+
+  // ── 질병예방관리 - 뇌심혈관 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 질병예방 관리 › 뇌심혈관', menuKey: 'disease-prev.tab.cvd',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
+        ] },
+    ],
+  },
+
+  // ── 질병예방관리 - 직무스트레스 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 질병예방 관리 › 직무스트레스', menuKey: 'disease-prev.tab.stress',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
+        ] },
+    ],
+  },
+
+  // ── 질병예방관리 - 호흡기피부 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 질병예방 관리 › 호흡기피부', menuKey: 'disease-prev.tab.resp',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
+        ] },
+    ],
+  },
+
+  // ── 질병예방관리 - 청력보존 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 질병예방 관리 › 청력보존', menuKey: 'disease-prev.tab.hearing',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
+        ] },
+    ],
+  },
+
+  // ── 질병예방관리 - 온열한랭 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 질병예방 관리 › 온열한랭', menuKey: 'disease-prev.tab.thermal',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
+        ] },
+    ],
+  },
+
+  // ── 질병예방관리 - 감염병 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 질병예방 관리 › 감염병', menuKey: 'disease-prev.tab.infect',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON },
+          { button: '삭제', roles: ALL_ON },
+          { button: '저장', roles: ALL_ON },
+        ] },
     ],
   },
 
   // ── 환경 › 폐기물 관리 ────────────────────────────────────────────────────
   {
-    menuPath: '환경 › 폐기물 관리', menuKey: 'nav.envWaste',
+    menuPath: '환경 관리 › 폐기물', menuKey: 'nav.envWaste',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -819,7 +1024,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 방사선 › 사고·사건 ────────────────────────────────────────────────────
   {
-    menuPath: '방사선 › 사고·사건', menuKey: 'nav.radiationMgmt',
+    menuPath: '환경 관리 › 방사선관리 › 사고·사건', menuKey: 'nav.radiationMgmt',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -832,7 +1037,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 인허가 › 인허가 식별 ──────────────────────────────────────────────────
   {
-    menuPath: '인허가 › 인허가 식별', menuKey: 'permit-lc.tab.register',
+    menuPath: '환경 관리 › 인허가 관리 › 인허가 식별', menuKey: 'permit-lc.tab.register',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -845,7 +1050,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 인허가 › 인허가 대장 ──────────────────────────────────────────────────
   {
-    menuPath: '인허가 › 인허가 대장', menuKey: 'permit-lc.tab.ledger',
+    menuPath: '환경 관리 › 인허가 관리 › 인허가 대장', menuKey: 'permit-lc.tab.ledger',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -858,7 +1063,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 인허가 › 변경 관리 ────────────────────────────────────────────────────
   {
-    menuPath: '인허가 › 변경 관리', menuKey: 'permit-lc.tab.change',
+    menuPath: '환경 관리 › 인허가 관리 › 변경 관리', menuKey: 'permit-lc.tab.change',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -873,7 +1078,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 인허가 › 법정 보고서 ──────────────────────────────────────────────────
   {
-    menuPath: '인허가 › 법정 보고서', menuKey: 'permit-lc.tab.report',
+    menuPath: '환경 관리 › 인허가 관리 › 법정 보고서', menuKey: 'permit-lc.tab.report',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
@@ -886,4 +1091,15 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
+
+  // ── 화학물질 › 위해성 보고 ────────────────────────────────────────────────
+  {
+    menuPath: '화학물질 관리 › 위해성 보고',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'COLLECTING', statusLabel: '수집중', statusColor: 'primary',
+        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
+    ],
+  },
 ]

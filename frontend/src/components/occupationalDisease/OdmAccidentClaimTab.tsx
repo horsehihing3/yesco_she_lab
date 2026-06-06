@@ -16,6 +16,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import DownloadIcon from '@mui/icons-material/Download'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { accidentClaimApi } from '../../api/accidentClaimApi'
 import { AccidentClaim, AccidentClaimRequest, AccidentClaimDoc } from '../../types/accidentClaim.types'
 import DatePickerField from '../common/DatePickerField'
@@ -67,10 +69,16 @@ const formatPhone = (value: string): string => {
   return formatted
 }
 
+const MENU = '보건 관리 › 직업병 관리 › 산재신청'
+
 const OdmAccidentClaimTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { t } = useTranslation()
   const { showWarning, showSuccess, showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('CLAIM_STATUS')
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -368,9 +376,11 @@ const OdmAccidentClaimTab: React.FC = () => {
           />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
             {t('common.new', '신규')}
           </Button>
+          )}
         </Box>
         {/* Toolbar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -396,9 +406,11 @@ const OdmAccidentClaimTab: React.FC = () => {
             />
             <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           </Box>
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
           <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleAddClick} size="small">
             {t('common.new', '신규')}
           </Button>
+          )}
         </Box>
 
         {/* Desktop Table */}
@@ -775,9 +787,15 @@ const OdmAccidentClaimTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.backToList', '목록')}</Button>
           {d.status === 'DRAFT' && (
             <>
-              <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit', '수정')}</Button>
-              <Button variant="contained" color="info" onClick={handleSubmitClaim} sx={{ flex: { xs: 1, sm: 'none' } }}>제출</Button>
-              <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete', '삭제')}</Button>
+              {canSee(MENU, 'DRAFT', '수정', myRoles) && (
+                <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit', '수정')}</Button>
+              )}
+              {canSee(MENU, 'DRAFT', '제출', myRoles) && (
+                <Button variant="contained" color="info" onClick={handleSubmitClaim} sx={{ flex: { xs: 1, sm: 'none' } }}>제출</Button>
+              )}
+              {canSee(MENU, 'DRAFT', '삭제', myRoles) && (
+                <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete', '삭제')}</Button>
+              )}
             </>
           )}
         </Box>
@@ -1023,9 +1041,11 @@ const OdmAccidentClaimTab: React.FC = () => {
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>
+        {canSee(MENU, 'DRAFT', '저장', myRoles) && (
         <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.save', '저장')}
         </Button>
+        )}
       </Box>
     </Box>
   )

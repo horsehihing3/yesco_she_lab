@@ -12,13 +12,21 @@ import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
 import DownloadIcon from '@mui/icons-material/Download'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { healthCheckupRecordApi, HealthCheckupRecord } from '../../api/healthCheckupRecordApi'
 import LoadingOverlay from '../common/LoadingOverlay'
+
+const MENU = '보건 관리 › 건강 검진 관리 › 사후관리'
 
 const HealthCheckupRecordTab: React.FC = () => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
 
   const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
@@ -116,9 +124,11 @@ const HealthCheckupRecordTab: React.FC = () => {
         />
         <IconButton size="small" onClick={handleResetSearch}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
-        <Button variant="contained" onClick={handleUploadClick} disabled={uploading}>
-          {t('healthCheckupRecord.uploadPdf', 'PDF 업로드')}
-        </Button>
+        {canSee(MENU, 'LIST', 'PDF 업로드', myRoles) && (
+          <Button variant="contained" onClick={handleUploadClick} disabled={uploading}>
+            {t('healthCheckupRecord.uploadPdf', 'PDF 업로드')}
+          </Button>
+        )}
       </Box>
 
       <Alert severity="info" sx={{ mb: 2 }}>
@@ -219,9 +229,11 @@ const HealthCheckupRecordTab: React.FC = () => {
                     )}
                   </TableCell>
                   <TableCell align="center" sx={cellSx}>
-                    <IconButton size="small" color="error" onClick={() => handleDelete(r)}>
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                    {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                      <IconButton size="small" color="error" onClick={() => handleDelete(r)}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

@@ -18,6 +18,8 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 
 const EXPOSURE_TYPES = ['분진', '유기용제', '금속분진', '산알칼리', '감작성물질']
 const STATUSES = ['정상', '요관찰', '이상소견']
@@ -28,9 +30,15 @@ const statusColor = (s?: string): 'success' | 'warning' | 'error' | 'default' =>
 
 const emptyForm: Partial<DpRespi> = { exposureType: '유기용제', status: '정상' }
 
+const MENU = '보건 관리 › 질병예방 관리 › 호흡기피부'
+
 const DpRespiTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
 
   const { data: list = [], isLoading } = useQuery({ queryKey: ['dpRespi'], queryFn: dpRespiApi.list })
   const { data: stats } = useQuery({ queryKey: ['dpMgmtStats'], queryFn: dpMgmtStatsApi.get })
@@ -117,10 +125,14 @@ const DpRespiTab: React.FC = () => {
                     <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{x.pftFev1 ?? '-'}/{x.pftFvc ?? '-'}</TableCell>
                     <TableCell align="center"><Chip size="small" label={x.status || '-'} color={statusColor(x.status)} /></TableCell>
                     <TableCell align="center" sx={{ whiteSpace: 'nowrap', px: 0.5 }}>
-                      <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => {
-                        if (await showConfirm('이 항목을 삭제하시겠습니까?')) deleteM.mutate(x.id)
-                      }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                        <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
+                      )}
+                      {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                        <IconButton size="small" onClick={async () => {
+                          if (await showConfirm('이 항목을 삭제하시겠습니까?')) deleteM.mutate(x.id)
+                        }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -131,7 +143,9 @@ const DpRespiTab: React.FC = () => {
       </Paper>
 
       <Stack direction="row" justifyContent="flex-end">
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
+        )}
       </Stack>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
@@ -211,7 +225,9 @@ const DpRespiTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

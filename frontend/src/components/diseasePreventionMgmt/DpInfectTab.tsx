@@ -17,6 +17,8 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 
 const PROGRAM_TYPES = ['예방접종', '검진', '감염병발생', '노출사고']
 const STATUSES = ['완료', '예정', '추적관리', '회복']
@@ -32,9 +34,15 @@ const daysUntil = (d?: string) => {
 
 const emptyForm: Partial<DpInfect> = { programType: '예방접종', status: '완료' }
 
+const MENU = '보건 관리 › 질병예방 관리 › 감염병'
+
 const DpInfectTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
 
   const { data: list = [], isLoading } = useQuery({ queryKey: ['dpInfect'], queryFn: dpInfectApi.list })
   const { data: stats } = useQuery({ queryKey: ['dpMgmtStats'], queryFn: dpMgmtStatsApi.get })
@@ -125,10 +133,14 @@ const DpInfectTab: React.FC = () => {
                       <TableCell sx={{ fontSize: '0.85rem' }}>{x.result || '-'}</TableCell>
                       <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem', color: d <= 30 && d >= 0 ? 'warning.main' : 'inherit' }}>{x.nextDueDate || '-'}</TableCell>
                       <TableCell align="center" sx={{ whiteSpace: 'nowrap', px: 0.5 }}>
-                        <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
-                        <IconButton size="small" onClick={async () => {
-                          if (await showConfirm('이 기록을 삭제하시겠습니까?')) deleteM.mutate(x.id)
-                        }}><DeleteIcon fontSize="inherit" /></IconButton>
+                        {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                          <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
+                        )}
+                        {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                          <IconButton size="small" onClick={async () => {
+                            if (await showConfirm('이 기록을 삭제하시겠습니까?')) deleteM.mutate(x.id)
+                          }}><DeleteIcon fontSize="inherit" /></IconButton>
+                        )}
                       </TableCell>
                     </TableRow>
                   )
@@ -140,7 +152,9 @@ const DpInfectTab: React.FC = () => {
       </Paper>
 
       <Stack direction="row" justifyContent="flex-end">
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
+        )}
       </Stack>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
@@ -191,7 +205,9 @@ const DpInfectTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>

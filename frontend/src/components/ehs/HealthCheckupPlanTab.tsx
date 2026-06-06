@@ -133,7 +133,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   const { showWarning, showSuccess, showConfirm, showError } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 건강관리 › 건강검진 계획'
+  const MENU = '보건 관리 › 건강 검진 관리 › 건강검진 계획'
   const isAdmin = user?.role === 'SYSTEM_ADMIN'
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const currentWriter = user?.name || user?.username || ''

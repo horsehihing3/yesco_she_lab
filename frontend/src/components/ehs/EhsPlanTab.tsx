@@ -97,7 +97,7 @@ const EhsPlanTab: React.FC = () => {
   const { showConfirm, showSuccess } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS경영 › 커뮤니케이션 › EHS Plan'
+  const MENU = 'EHS 경영 › 커뮤니케이션 › EHS Plan'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const canNew = canSee(MENU, 'LIST', 'New', myRoles)
   const getDetailRoles = (plan: { authorEmail?: string | null }): string[] => [

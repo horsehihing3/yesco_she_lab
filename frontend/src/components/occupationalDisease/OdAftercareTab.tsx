@@ -16,6 +16,8 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 
 const JUDGES = ['C1', 'C2', 'D1', 'D2']
 const STATUSES = ['진행중', '추적관찰', '산재진행', '완결']
@@ -33,9 +35,15 @@ const statusColor = (s?: string): 'info' | 'success' | 'secondary' | 'warning' |
 const emptyAft: Partial<OdAftercare> = { judge: 'D1', status: '진행중', urgent: false }
 const emptyFit: Partial<OdFitness> = { evalResult: '조건부 적합', doneStatus: '이행중' }
 
+const MENU = '보건 관리 › 직업병 관리 › 사후관리'
+
 const OdAftercareTab: React.FC = () => {
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { data: items = [], isLoading } = useQuery({ queryKey: ['odAftercare'], queryFn: aftercareApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })
   const { data: fits = [] } = useQuery({ queryKey: ['odFitness'], queryFn: fitnessApi.list })
@@ -87,7 +95,9 @@ const OdAftercareTab: React.FC = () => {
       )}
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="flex-end">
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+        {canSee(MENU, 'LIST', 'New (사후관리 조치)', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+        )}
       </Stack>
 
       {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
@@ -120,8 +130,12 @@ const OdAftercareTab: React.FC = () => {
                   </Paper>
                 )}
                 <Stack direction="row" spacing={0.5} sx={{ mt: 1 }} justifyContent="flex-end">
-                  <IconButton size="small" onClick={() => openEdit(a)}><EditIcon fontSize="inherit" /></IconButton>
-                  <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(a.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                  {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                    <IconButton size="small" onClick={() => openEdit(a)}><EditIcon fontSize="inherit" /></IconButton>
+                  )}
+                  {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                    <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(a.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                  )}
                 </Stack>
               </Paper>
             )
@@ -131,7 +145,9 @@ const OdAftercareTab: React.FC = () => {
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 2, mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>업무적합성 평가 현황</Typography>
-        <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={openFitCreate}>New</Button>
+        {canSee(MENU, 'LIST', 'New (업무적합성 평가)', myRoles) && (
+          <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={openFitCreate}>New</Button>
+        )}
       </Stack>
       <Paper variant="outlined">
         <TableContainer>
@@ -153,8 +169,12 @@ const OdAftercareTab: React.FC = () => {
                   <TableCell sx={{ color: 'text.secondary' }}>{f.recommendation}</TableCell>
                   <TableCell><Chip size="small" label={f.doneStatus} variant="outlined" /></TableCell>
                   <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
-                    <IconButton size="small" onClick={() => openFitEdit(f)}><EditIcon fontSize="inherit" /></IconButton>
-                    <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteFitMut.mutate(f.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                    {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                      <IconButton size="small" onClick={() => openFitEdit(f)}><EditIcon fontSize="inherit" /></IconButton>
+                    )}
+                    {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteFitMut.mutate(f.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -206,7 +226,9 @@ const OdAftercareTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submit} disabled={!form.workerName}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={submit} disabled={!form.workerName}>저장</Button>
+          )}
         </DialogActions>
       </Dialog>
 
@@ -246,7 +268,9 @@ const OdAftercareTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setFitOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={submitFit} disabled={!fitForm.workerName}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={submitFit} disabled={!fitForm.workerName}>저장</Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>
