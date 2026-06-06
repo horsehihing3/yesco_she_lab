@@ -11,6 +11,8 @@ import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
+import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import axiosInstance from '../../api/axiosInstance'
 import { WemFactor, WemFactorRequest } from '../../types/workEnvMeasurement.types'
 import { ApiResponse, PageResponse } from '../../types/common.types'
@@ -62,6 +64,8 @@ const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
 const lastRowSx = { display: 'flex', borderColor: 'grey.300' }
 
+const MENU = '보건 관리 › 작업환경 측정 › 유해인자'
+
 const WemFactorTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { t } = useTranslation()
@@ -77,6 +81,10 @@ const WemFactorTab: React.FC = () => {
     return `${y}-${m}-${d} ${h}:${min}`
   }
   const { showWarning, showSuccess, showConfirm } = useAlert()
+  const { user } = useAuth()
+  const { canSee } = useButtonRules()
+  const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN'
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
   const { codeList: hazardTypeCodes, getLabel: getHazardTypeLabel } = useCodeMap('WEM_HAZARD_TYPE')
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -262,9 +270,11 @@ const WemFactorTab: React.FC = () => {
           <ListSearchBar placeholder={t('common.search')} value={searchText} onChange={setSearchText} onSearch={handleSearch} sx={{ minWidth: 200 }} />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
             {t('common.new')}
           </Button>
+          )}
         </Box>
         {/* Toolbar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -284,9 +294,11 @@ const WemFactorTab: React.FC = () => {
             <ListSearchBar placeholder={t('common.search')} value={searchText} onChange={setSearchText} onSearch={handleSearch} sx={{ flex: 1 }} />
             <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           </Box>
+          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
           <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleAddClick} size="small">
             {t('common.new')}
           </Button>
+          )}
         </Box>
 
         {/* Table */}
@@ -471,8 +483,12 @@ const WemFactorTab: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.backToList')}</Button>
-          <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit')}</Button>
-          <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete')}</Button>
+          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+            <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit')}</Button>
+          )}
+          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+            <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete')}</Button>
+          )}
         </Box>
       </Box>
     )
@@ -575,9 +591,11 @@ const WemFactorTab: React.FC = () => {
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>
+        {canSee(MENU, 'DETAIL', '저장', myRoles) && (
         <Button variant="contained" onClick={handleSubmit} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.save', '저장')}
         </Button>
+        )}
       </Box>
     </Box>
   )
