@@ -31,7 +31,7 @@ const OdManageTab: React.FC = () => {
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const isAdmin = user?.role === 'SYSTEM_ADMIN'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { data: orgs = [], isLoading } = useQuery({ queryKey: ['odOrgs'], queryFn: odOrgApi.list })
 
   const [open, setOpen] = useState(false)

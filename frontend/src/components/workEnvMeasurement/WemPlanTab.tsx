@@ -104,7 +104,7 @@ const WemPlanTab: React.FC = () => {
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { codeList: hazardTypeCodes, getLabel: getHazardTypeLabel } = useCodeMap('WEM_HAZARD_TYPE')
   const { codeList: cycleCodes, getLabel: getCycleLabel } = useCodeMap('WEM_CYCLE')
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('WEM_PLAN_STATUS')

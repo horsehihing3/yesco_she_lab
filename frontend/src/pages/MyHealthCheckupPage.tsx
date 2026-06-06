@@ -117,7 +117,7 @@ const MyHealthCheckupPage: React.FC = () => {
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const queryClient = useQueryClient()
   const { showAlert, showConfirm, showSuccess } = useAlert()
   const { getLocalizedName, codeList: checkupStatusCodes } = useCodeMap('CHECKUP_STATUS')

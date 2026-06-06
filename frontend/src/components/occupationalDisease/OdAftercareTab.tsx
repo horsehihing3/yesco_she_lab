@@ -43,7 +43,7 @@ const OdAftercareTab: React.FC = () => {
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const isAdmin = user?.role === 'SYSTEM_ADMIN'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { data: items = [], isLoading } = useQuery({ queryKey: ['odAftercare'], queryFn: aftercareApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })
   const { data: fits = [] } = useQuery({ queryKey: ['odFitness'], queryFn: fitnessApi.list })

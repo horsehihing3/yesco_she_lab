@@ -99,7 +99,7 @@ const WemResultTab: React.FC = () => {
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [])]
+  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { codeList: sampleTypeCodes, getLabel: getSampleTypeLabel } = useCodeMap('WEM_SAMPLE_TYPE')
   const { codeList: judgmentCodes, getLabel: getJudgmentLabel } = useCodeMap('WEM_JUDGMENT')
 
