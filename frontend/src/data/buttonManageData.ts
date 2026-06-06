@@ -456,148 +456,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 건강검진 계획 ─────────────────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 건강 검진 관리 › 건강검진 계획', menuKey: 'healthCheckup.tabs.plan',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
-      { status: 'PLANNED', statusLabel: '계획', statusColor: 'default',
-        buttons: [
-          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 작성자/관리자 체크 추가 필요' },
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-      { status: 'PENDING_APPROVAL', statusLabel: '결재대기', statusColor: 'warning',
-        buttons: [
-          { button: '반려',     roles: ALL_ON, issue: '권한 체크 없음 — 계획 승인자/관리자 체크 추가 필요' },
-          { button: '계획 승인', roles: ALL_ON, issue: '권한 체크 없음 — 계획 승인자/관리자 체크 추가 필요' },
-        ] },
-      { status: 'REJECTED', statusLabel: '반려', statusColor: 'error',
-        buttons: [
-          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-    ],
-  },
-
-  // ── 건강검진 - 검진 관리 ─────────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 건강 검진 관리 › 검진 관리', menuKey: 'healthCheckup.tabs.admin',
-    statuses: [
-      { status: 'PENDING_COMPLETION', statusLabel: '완료 승인 대기', statusColor: 'warning',
-        statusNote: '계획 승인 완료(IN_PROGRESS) 상태의 검진 계획 목록에서 완료 승인',
-        buttons: [{ button: '완료 승인', roles: ADMIN_COMP }] },
-    ],
-  },
-
-  // ── 건강검진 - 사후관리 ───────────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 건강 검진 관리 › 사후관리', menuKey: 'healthCheckup.tabs.records',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: 'PDF 업로드', roles: WRITER_ADMIN }] },
-      { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
-        buttons: [{ button: '삭제', roles: WRITER_ADMIN }] },
-    ],
-  },
-
-  // ── 직업병관리 - 검진 계획 ────────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 직업병 관리 › 검진 계획', menuKey: 'od.tabs.plan',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
-        ] },
-    ],
-  },
-
-  // ── 직업병관리 - 검진 현황 ────────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 직업병 관리 › 검진 현황', menuKey: 'od.tabs.status',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
-        ] },
-    ],
-  },
-
-  // ── 직업병관리 - 기관 관리 ────────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 직업병 관리 › 기관 관리', menuKey: 'od.tabs.manage',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
-        ] },
-    ],
-  },
-
-  // ── 직업병관리 - 노출 기록 ────────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 직업병 관리 › 노출 기록', menuKey: 'od.tabs.exposure',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
-        ] },
-    ],
-  },
-
-  // ── 직업병관리 - 사후관리 ─────────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 직업병 관리 › 사후관리', menuKey: 'od.tabs.aftercare',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        statusNote: '사후관리 조치 및 업무적합성 평가 두 섹션에 각각 New 버튼',
-        buttons: [
-          { button: 'New (사후관리 조치)', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: 'New (업무적합성 평가)', roles: ALL_ON, issue: '권한 체크 없음' },
-        ] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
-        ] },
-    ],
-  },
-
-  // ── 질병예방관리 - 각 질환 탭 ────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 질병예방 관리 › 각 질환 탭', menuKey: 'disease-prev.tab.msd',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        statusNote: '근골격계(msd)·뇌심혈관(cvd)·직무스트레스(stress)·호흡기피부(resp)·청력보존(hearing)·온열한랭(thermal)·감염병(infect) 탭 공통 패턴',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
-        ] },
-    ],
-  },
-
   // ── 위험성평가 ────────────────────────────────────────────────────────────
   {
     menuPath: '안전 관리 › 위험성 평가', menuKey: 'nav.riskAssessment',
@@ -666,42 +524,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [
           { button: '완료 결재 반려', roles: ADMIN_COMP },
           { button: '완료 결재 승인', roles: ADMIN_COMP },
-        ] },
-    ],
-  },
-
-  // ── 작업환경측정 › 측정 계획 ──────────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 작업환경 측정 › 측정 계획', menuKey: 'wem.planTab',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'PLANNED/IN_PROGRESS/OVERDUE/UNMEASURED', statusLabel: '측정 전 (진행/지연/미측정 포함)', statusColor: 'default',
-        statusNote: '해당 상태 모두 동일 버튼 노출 (상태 조건 없음)',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-      { status: 'COMPLETED', statusLabel: '측정 완료', statusColor: 'success',
-        statusNote: '완료 상태에서도 수정/삭제 조건 없음',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-    ],
-  },
-
-  // ── 산업재해/직업병 › 재해 청구 ───────────────────────────────────────────
-  {
-    menuPath: '보건 관리 › 직업병 관리 › 재해 청구', menuKey: 'od.tabs.sanjae',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '제출', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 제출 가능' },
-          { button: '삭제', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -907,14 +729,181 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 화학물질 › 위해성 보고 ────────────────────────────────────────────────
+  // ── 건강검진 계획 ─────────────────────────────────────────────────────────
   {
-    menuPath: '화학물질 관리 › 위해성 보고',
+    menuPath: '보건 관리 › 건강 검진 관리 › 건강검진 계획', menuKey: 'healthCheckup.tabs.plan',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'PLANNED', statusLabel: '계획', statusColor: 'default',
+        buttons: [
+          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 작성자/관리자 체크 추가 필요' },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+      { status: 'PENDING_APPROVAL', statusLabel: '결재대기', statusColor: 'warning',
+        buttons: [
+          { button: '반려',     roles: ALL_ON, issue: '권한 체크 없음 — 계획 승인자/관리자 체크 추가 필요' },
+          { button: '계획 승인', roles: ALL_ON, issue: '권한 체크 없음 — 계획 승인자/관리자 체크 추가 필요' },
+        ] },
+      { status: 'REJECTED', statusLabel: '반려', statusColor: 'error',
+        buttons: [
+          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 건강검진 - 검진 관리 ─────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 건강 검진 관리 › 검진 관리', menuKey: 'healthCheckup.tabs.admin',
+    statuses: [
+      { status: 'PENDING_COMPLETION', statusLabel: '완료 승인 대기', statusColor: 'warning',
+        statusNote: '계획 승인 완료(IN_PROGRESS) 상태의 검진 계획 목록에서 완료 승인',
+        buttons: [{ button: '완료 승인', roles: ADMIN_COMP }] },
+    ],
+  },
+
+  // ── 건강검진 - 사후관리 ───────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 건강 검진 관리 › 사후관리', menuKey: 'healthCheckup.tabs.records',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'PDF 업로드', roles: WRITER_ADMIN }] },
+      { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
+        buttons: [{ button: '삭제', roles: WRITER_ADMIN }] },
+    ],
+  },
+
+  // ── 직업병관리 - 검진 계획 ────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 검진 계획', menuKey: 'od.tabs.plan',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 검진 현황 ────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 검진 현황', menuKey: 'od.tabs.status',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 기관 관리 ────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 기관 관리', menuKey: 'od.tabs.manage',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 노출 기록 ────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 노출 기록', menuKey: 'od.tabs.exposure',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'New', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 직업병관리 - 사후관리 ─────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 사후관리', menuKey: 'od.tabs.aftercare',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        statusNote: '사후관리 조치 및 업무적합성 평가 두 섹션에 각각 New 버튼',
+        buttons: [
+          { button: 'New (사후관리 조치)', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: 'New (업무적합성 평가)', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 질병예방관리 - 각 질환 탭 ────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 질병예방 관리 › 각 질환 탭', menuKey: 'disease-prev.tab.msd',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        statusNote: '근골격계(msd)·뇌심혈관(cvd)·직무스트레스(stress)·호흡기피부(resp)·청력보존(hearing)·온열한랭(thermal)·감염병(infect) 탭 공통 패턴',
+        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '삭제', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장', roles: ALL_ON, issue: '권한 체크 없음' },
+        ] },
+    ],
+  },
+
+  // ── 작업환경측정 › 측정 계획 ──────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 작업환경 측정 › 측정 계획', menuKey: 'wem.planTab',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'COLLECTING', statusLabel: '수집중', statusColor: 'primary',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
+      { status: 'PLANNED/IN_PROGRESS/OVERDUE/UNMEASURED', statusLabel: '측정 전 (진행/지연/미측정 포함)', statusColor: 'default',
+        statusNote: '해당 상태 모두 동일 버튼 노출 (상태 조건 없음)',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+      { status: 'COMPLETED', statusLabel: '측정 완료', statusColor: 'success',
+        statusNote: '완료 상태에서도 수정/삭제 조건 없음',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
+    ],
+  },
+
+  // ── 산업재해/직업병 › 재해 청구 ───────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 직업병 관리 › 재해 청구', menuKey: 'od.tabs.sanjae',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '제출', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 제출 가능' },
+          { button: '삭제', roles: WRITER_ADMIN },
+        ] },
     ],
   },
 
@@ -1002,4 +991,15 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
+
+  // ── 화학물질 › 위해성 보고 ────────────────────────────────────────────────
+  {
+    menuPath: '화학물질 관리 › 위해성 보고',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
+      { status: 'COLLECTING', statusLabel: '수집중', statusColor: 'primary',
+        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
+    ],
+  },
 ]
