@@ -3,6 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.WemPlanRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.WemPlanResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.WemPlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +25,11 @@ import org.springframework.web.bind.annotation.*;
 public class WemPlanController {
 
     private final WemPlanService wemPlanService;
+    private final IdmMapper idmMapper;
+
+    private IdmUser current(Authentication auth) {
+        return auth != null ? idmMapper.findByUid(auth.getName()) : null;
+    }
 
     @GetMapping
     @Operation(summary = "List measurement plans", description = "Get all WEM plans with optional status filter and pagination")
@@ -47,8 +55,9 @@ public class WemPlanController {
     @PostMapping
     @Operation(summary = "Create plan", description = "Create a new WEM plan")
     public ResponseEntity<ApiResponse<WemPlanResponse>> create(
-            @Valid @RequestBody WemPlanRequest request) {
-        WemPlanResponse plan = wemPlanService.create(request);
+            @Valid @RequestBody WemPlanRequest request,
+            Authentication authentication) {
+        WemPlanResponse plan = wemPlanService.create(request, current(authentication));
         return ResponseEntity.ok(ApiResponse.success("Plan created successfully", plan));
     }
 
@@ -56,8 +65,9 @@ public class WemPlanController {
     @Operation(summary = "Update plan", description = "Update an existing WEM plan")
     public ResponseEntity<ApiResponse<WemPlanResponse>> update(
             @PathVariable Long id,
-            @Valid @RequestBody WemPlanRequest request) {
-        WemPlanResponse plan = wemPlanService.update(id, request);
+            @Valid @RequestBody WemPlanRequest request,
+            Authentication authentication) {
+        WemPlanResponse plan = wemPlanService.update(id, request, current(authentication));
         return ResponseEntity.ok(ApiResponse.success("Plan updated successfully", plan));
     }
 

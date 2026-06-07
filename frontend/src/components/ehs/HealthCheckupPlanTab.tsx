@@ -24,6 +24,7 @@ import DatePickerField from '../common/DatePickerField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DepartmentSelectModal from '../common/DepartmentSelectModal'
 import useCodeMap from '../../hooks/useCodeMap'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { Role } from '../../data/buttonManageData'
@@ -176,6 +177,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   }
   const [formData, setFormData] = useState<HealthCheckupPlanRequest>(emptyForm)
   const [approverPickTarget, setApproverPickTarget] = useState<'plan' | 'completion' | null>(null)
+  const [deptModalOpen, setDeptModalOpen] = useState(false)
   // 등록(create) 모드에서는 plan id 가 없어 즉시 업로드 불가 — 클라이언트에서 staging 후 저장 직후 일괄 업로드
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
 
@@ -529,6 +531,11 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
     return (
       <Box>
         <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          {/* 계획명 (맨 위) */}
+          <Box sx={rowSx}>
+            <Box sx={labelSx}>{t('healthCheckupPlan.planName', '계획명')}</Box>
+            <Box sx={{ ...valSx, flex: 3 }}><Typography variant="body2" fontWeight={600}>{d.planName}</Typography></Box>
+          </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('healthCheckupPlan.planYear', '연도')}</Box>
             <Box sx={valBorderSx}><Typography variant="body2">{d.planYear}</Typography></Box>
@@ -537,25 +544,21 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
               <Chip label={getTypeLabel(d.checkupType) || d.checkupType} color={TYPE_COLORS[d.checkupType] || 'default'} size="small" variant="outlined"/>
             </Box>
           </Box>
-          <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('healthCheckupPlan.planName', '계획명')}</Box>
-            <Box sx={{ ...valSx, flex: 3 }}><Typography variant="body2">{d.planName}</Typography></Box>
-          </Box>
+          {/* 대상부서 | 대상인원 */}
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('healthCheckupPlan.targetDept', '대상부서')}</Box>
             <Box sx={valBorderSx}><Typography variant="body2">{d.targetDept || ''}</Typography></Box>
-            <Box sx={labelSx}>{t('healthCheckupPlan.hospital', '검진기관')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{d.hospital || ''}</Typography></Box>
-          </Box>
-          <Box sx={rowSx}>
             <Box sx={labelSx}>{t('healthCheckupPlan.targetCount', '대상인원')}</Box>
-            <Box sx={{ ...valSx, flex: 3 }}><Typography variant="body2">{d.targetCount}</Typography></Box>
+            <Box sx={valSx}><Typography variant="body2">{d.targetCount}</Typography></Box>
           </Box>
+          {/* 검진기관 | 상태 */}
           <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('healthCheckupPlan.planApprover', '계획 승인자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{d.planApproverName || '-'}{d.planApproverTeam ? ` (${d.planApproverTeam})` : ''}</Typography></Box>
-            <Box sx={labelSx}>{t('healthCheckupPlan.completionApprover', '완료 승인자')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{d.completionApproverName || '-'}{d.completionApproverTeam ? ` (${d.completionApproverTeam})` : ''}</Typography></Box>
+            <Box sx={labelSx}>{t('healthCheckupPlan.hospital', '검진기관')}</Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{d.hospital || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('healthCheckupPlan.status', '상태')}</Box>
+            <Box sx={valSx}>
+              <Chip label={getStatusLabel(d.status) || d.status} color={STATUS_COLORS[d.status] || 'default'} size="small"/>
+            </Box>
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('healthCheckupPlan.startDate', '시작일')}</Box>
@@ -569,43 +572,52 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
               <Box sx={{ ...valSx, flex: 3 }}><Typography variant="body2">{d.hazardFactors || ''}</Typography></Box>
             </Box>
           )}
-          <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('healthCheckupPlan.status', '상태')}</Box>
-            <Box sx={valBorderSx}>
-              <Chip label={getStatusLabel(d.status) || d.status} color={STATUS_COLORS[d.status] || 'default'} size="small"/>
-            </Box>
-            <Box sx={labelSx}>{t('healthCheckupPlan.writer', '작성자')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{d.writer || d.createdByName || ''}</Typography></Box>
-          </Box>
+          {/* 비고 */}
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
             <Box sx={{ ...valSx, flex: 3 }}><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{d.notes || ''}</Typography></Box>
           </Box>
-          <Box sx={lastRowSx}>
-            <Box sx={labelSx}>{t('common.registered', '등록')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{formatDate(d.createdAt)}</Typography></Box>
-            <Box sx={labelSx}>{t('common.modified', '수정')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{formatDate(d.modifiedAt)}</Typography></Box>
+          {/* 작성자 | 작성일자 */}
+          <Box sx={rowSx}>
+            <Box sx={labelSx}>{t('common.creator', '작성자')}</Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{d.writer || d.createdByName || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('audit.createdAt', '작성일자')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{formatDate(d.createdAt)}</Typography></Box>
           </Box>
-        </Box>
-
-        {/* 첨부파일 */}
-        <Box sx={{ mt: 3 }}>
-          <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>{t('common.attachments', '첨부파일')}</Typography>
-          {files.length === 0 ? (
-            <Alert severity="info">{t('common.noAttachments', '첨부파일이 없습니다')}</Alert>
-          ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-              {files.map(f => (
-                <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
-                  <AttachFileIcon fontSize="small" />
-                  <Typography variant="body2" sx={{ flex: 1 }}>
-                    <a href={`${axiosInstance.defaults.baseURL}/files/${f.id}`} target="_blank" rel="noopener noreferrer">{f.fileName}</a>
-                  </Typography>
-                </Box>
-              ))}
+          {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
+          {d.modifiedAt && d.modifiedAt !== d.createdAt && (
+            <Box sx={rowSx}>
+              <Box sx={labelSx}>{t('common.modifier', '수정자')}</Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{d.modifiedByName || ''}</Typography></Box>
+              <Box sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Box>
+              <Box sx={valSx}><Typography variant="body2">{formatDate(d.modifiedAt)}</Typography></Box>
             </Box>
           )}
+          {/* 계획 승인자 | 완료 승인자 */}
+          <Box sx={rowSx}>
+            <Box sx={labelSx}>{t('healthCheckupPlan.planApprover', '계획 승인자')}</Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{d.planApproverName || '-'}{d.planApproverTeam ? ` (${d.planApproverTeam})` : ''}</Typography></Box>
+            <Box sx={labelSx}>{t('healthCheckupPlan.completionApprover', '완료 승인자')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{d.completionApproverName || '-'}{d.completionApproverTeam ? ` (${d.completionApproverTeam})` : ''}</Typography></Box>
+          </Box>
+          {/* 첨부파일 — 맨 아래 */}
+          <Box sx={lastRowSx}>
+            <Box sx={labelSx}>{t('common.attachments', '첨부파일')}</Box>
+            <Box sx={{ ...valSx, flex: 3, flexDirection: 'column', alignItems: 'stretch', gap: 0.5, py: 1 }}>
+              {files.length === 0 ? (
+                <Typography variant="body2" color="text.disabled">{t('common.noAttachments', '첨부파일이 없습니다')}</Typography>
+              ) : (
+                files.map(f => (
+                  <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+                    <AttachFileIcon fontSize="small" />
+                    <Typography variant="body2" sx={{ flex: 1 }}>
+                      <a href={`${axiosInstance.defaults.baseURL}/files/${f.id}`} target="_blank" rel="noopener noreferrer">{f.fileName}</a>
+                    </Typography>
+                  </Box>
+                ))
+              )}
+            </Box>
+          </Box>
         </Box>
 
         {/* 반려 사유 */}
@@ -664,6 +676,14 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
     <Box>
       <LoadingOverlay open={isProcessing} />
       <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        {/* 계획명 — 맨 위 */}
+        <Box sx={rowSx}>
+          <Box sx={labelSx}>{t('healthCheckupPlan.planName', '계획명')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
+          <Box sx={{ ...valSx, flex: 3 }}>
+            <TextField size="small" fullWidth value={formData.planName}
+              onChange={(e) => setFormData({ ...formData, planName: e.target.value })}/>
+          </Box>
+        </Box>
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('healthCheckupPlan.planYear', '연도')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
           <Box sx={valBorderSx}>
@@ -678,40 +698,127 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
             </Select>
           </Box>
         </Box>
-        <Box sx={rowSx}>
-          <Box sx={labelSx}>{t('healthCheckupPlan.planName', '계획명')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
-          <Box sx={{ ...valSx, flex: 3 }}>
-            <TextField size="small" fullWidth value={formData.planName}
-              onChange={(e) => setFormData({ ...formData, planName: e.target.value })}/>
-          </Box>
-        </Box>
+        {/* 대상부서 | 대상인원 */}
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('healthCheckupPlan.targetDept', '대상부서')}</Box>
           <Box sx={valBorderSx}>
-            <TextField size="small" fullWidth value={formData.targetDept || ''}
-              onChange={(e) => setFormData({ ...formData, targetDept: e.target.value })}/>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
+              <TextField size="small" fullWidth InputProps={{ readOnly: true }}
+                value={formData.targetDept || ''}
+                placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
+                <PersonSearchIcon fontSize="small" />
+              </Button>
+            </Box>
           </Box>
-          <Box sx={labelSx}>{t('healthCheckupPlan.hospital', '검진기관')}</Box>
-          <Box sx={valSx}>
-            <TextField size="small" fullWidth value={formData.hospital || ''}
-              onChange={(e) => setFormData({ ...formData, hospital: e.target.value })}/>
-          </Box>
-        </Box>
-        <Box sx={rowSx}>
           <Box sx={labelSx}>{t('healthCheckupPlan.targetCount', '대상인원')}</Box>
-          <Box sx={valBorderSx}>
+          <Box sx={valSx}>
             <NumberField size="small" min={0} value={formData.targetCount ?? 0}
               onChange={(v) => setFormData({ ...formData, targetCount: v ?? 0 })}/>
           </Box>
+        </Box>
+        {/* 검진기관 | 상태 */}
+        <Box sx={rowSx}>
+          <Box sx={labelSx}>{t('healthCheckupPlan.hospital', '검진기관')}</Box>
+          <Box sx={valBorderSx}>
+            <TextField size="small" fullWidth value={formData.hospital || ''}
+              onChange={(e) => setFormData({ ...formData, hospital: e.target.value })}/>
+          </Box>
+          <Box sx={labelSx}>{t('healthCheckupPlan.status', '상태')}</Box>
+          <Box sx={valSx}>
+            <Select size="small" fullWidth value={formData.status || 'PLANNED'}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+              {statusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
+            </Select>
+          </Box>
+        </Box>
+        <Box sx={rowSx}>
+          <Box sx={labelSx}>{t('healthCheckupPlan.startDate', '시작일')}</Box>
+          <Box sx={valBorderSx}>
+            <DatePickerField value={formData.planStartDate || ''} onChange={(v) => setFormData({ ...formData, planStartDate: v })}/>
+          </Box>
+          <Box sx={labelSx}>{t('healthCheckupPlan.endDate', '종료일')}</Box>
+          <Box sx={valSx}>
+            <DatePickerField value={formData.planEndDate || ''} onChange={(v) => setFormData({ ...formData, planEndDate: v })}/>
+          </Box>
+        </Box>
+        {formData.checkupType !== 'GENERAL' && (
+          <Box sx={rowSx}>
+            <Box sx={labelSx}>{t('healthCheckupPlan.hazardFactors', '유해인자')}</Box>
+            <Box sx={{ ...valSx, flex: 3 }}>
+              <TextField size="small" fullWidth value={formData.hazardFactors || ''}
+                placeholder={t('healthCheckupPlan.hazardFactorsHint', '예: 소음, 분진, 유기용제')}
+                onChange={(e) => setFormData({ ...formData, hazardFactors: e.target.value })}/>
+            </Box>
+          </Box>
+        )}
+        {/* 비고 */}
+        <Box sx={rowSx}>
+          <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
+          <Box sx={{ ...valSx, flex: 3 }}>
+            <TextField size="small" fullWidth multiline rows={3} value={formData.notes || ''}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}/>
+          </Box>
+        </Box>
+        {/* 작성자 | 작성일자 — 작성자는 단순 텍스트 */}
+        <Box sx={rowSx}>
+          <Box sx={labelSx}>{t('common.creator', '작성자')}</Box>
+          <Box sx={valBorderSx}>
+            <Typography variant="body2">{formData.writer || ''}</Typography>
+          </Box>
+          <Box sx={labelSx}>{t('audit.createdAt', '작성일자')}</Box>
+          <Box sx={valSx}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {viewMode === 'edit' && selectedItem ? formatDate(selectedItem.createdAt) : '-'}
+            </Typography>
+          </Box>
+        </Box>
+        {/* 수정자 | 수정일자 — 수정 모드에서 이력이 있을 때만 */}
+        {viewMode === 'edit' && selectedItem?.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
+          <Box sx={rowSx}>
+            <Box sx={labelSx}>{t('common.modifier', '수정자')}</Box>
+            <Box sx={valBorderSx}>
+              <Typography variant="body2">{selectedItem.modifiedByName || ''}</Typography>
+            </Box>
+            <Box sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Box>
+            <Box sx={valSx}>
+              <Typography variant="body2">{formatDate(selectedItem.modifiedAt)}</Typography>
+            </Box>
+          </Box>
+        )}
+        {/* 계획 승인자 | 완료 승인자 */}
+        <Box sx={rowSx}>
+          <Box sx={labelSx}>{t('healthCheckupPlan.planApprover', '계획 승인자')}</Box>
+          <Box sx={valBorderSx}>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
+              <TextField fullWidth size="small" InputProps={{ readOnly: true }}
+                value={formData.planApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
+                <PersonSearchIcon fontSize="small" />
+              </Button>
+            </Box>
+          </Box>
+          <Box sx={labelSx}>{t('healthCheckupPlan.completionApprover', '완료 승인자')}</Box>
+          <Box sx={valSx}>
+            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', width: '100%' }}>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
+                value={formData.completionApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
+                <PersonSearchIcon fontSize="small" />
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+        {/* 첨부파일 — 맨 아래 */}
+        <Box sx={lastRowSx}>
           <Box sx={labelSx}>{t('common.attachments', '첨부파일')}</Box>
-          <Box sx={{ ...valSx, flexDirection: 'column', alignItems: 'stretch', gap: 0.5, py: 1 }}>
+          <Box sx={{ ...valSx, flex: 3, flexDirection: 'column', alignItems: 'stretch', gap: 0.5, py: 1 }}>
             <Box>
               <Button variant="outlined" component="label" size="small" startIcon={<CloudUploadIcon />}>
                 {t('common.upload', '업로드')}
                 <input type="file" hidden onChange={handleFileChange} />
               </Button>
             </Box>
-            {/* 등록 모드: 스테이징된 파일 / 수정 모드: 서버 파일 */}
             {viewMode === 'create' && pendingFiles.length > 0 && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {pendingFiles.map((f, idx) => (
@@ -740,70 +847,6 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
             )}
           </Box>
         </Box>
-        <Box sx={rowSx}>
-          <Box sx={labelSx}>{t('healthCheckupPlan.planApprover', '계획 승인자')}</Box>
-          <Box sx={valBorderSx}>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
-              <TextField fullWidth size="small" InputProps={{ readOnly: true }}
-                value={formData.planApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
-                <PersonSearchIcon fontSize="small" />
-              </Button>
-            </Box>
-          </Box>
-          <Box sx={labelSx}>{t('healthCheckupPlan.completionApprover', '완료 승인자')}</Box>
-          <Box sx={valSx}>
-            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', width: '100%' }}>
-              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
-                value={formData.completionApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
-                <PersonSearchIcon fontSize="small" />
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-        <Box sx={rowSx}>
-          <Box sx={labelSx}>{t('healthCheckupPlan.writer', '작성자')}</Box>
-          <Box sx={{ ...valSx, flex: 3 }}>
-            <TextField fullWidth size="small" InputProps={{ readOnly: true }} value={formData.writer || ''} />
-          </Box>
-        </Box>
-        <Box sx={rowSx}>
-          <Box sx={labelSx}>{t('healthCheckupPlan.startDate', '시작일')}</Box>
-          <Box sx={valBorderSx}>
-            <DatePickerField value={formData.planStartDate || ''} onChange={(v) => setFormData({ ...formData, planStartDate: v })}/>
-          </Box>
-          <Box sx={labelSx}>{t('healthCheckupPlan.endDate', '종료일')}</Box>
-          <Box sx={valSx}>
-            <DatePickerField value={formData.planEndDate || ''} onChange={(v) => setFormData({ ...formData, planEndDate: v })}/>
-          </Box>
-        </Box>
-        {formData.checkupType !== 'GENERAL' && (
-          <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('healthCheckupPlan.hazardFactors', '유해인자')}</Box>
-            <Box sx={{ ...valSx, flex: 3 }}>
-              <TextField size="small" fullWidth value={formData.hazardFactors || ''}
-                placeholder={t('healthCheckupPlan.hazardFactorsHint', '예: 소음, 분진, 유기용제')}
-                onChange={(e) => setFormData({ ...formData, hazardFactors: e.target.value })}/>
-            </Box>
-          </Box>
-        )}
-        <Box sx={rowSx}>
-          <Box sx={labelSx}>{t('healthCheckupPlan.status', '상태')}</Box>
-          <Box sx={{ ...valSx, flex: 3 }}>
-            <Select size="small" fullWidth value={formData.status || 'PLANNED'}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
-              {statusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
-            </Select>
-          </Box>
-        </Box>
-        <Box sx={lastRowSx}>
-          <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
-          <Box sx={{ ...valSx, flex: 3 }}>
-            <TextField size="small" fullWidth multiline rows={3} value={formData.notes || ''}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}/>
-          </Box>
-        </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
@@ -817,6 +860,14 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
       <UserSelectModal open={approverPickTarget !== null} onClose={() => setApproverPickTarget(null)}
         selectedUsers={[]} onConfirm={handleApproverPick} singleSelect useCompanyTree
         title={approverPickTarget === 'plan' ? t('healthCheckupPlan.selectPlanApprover', '계획 승인자 선택') : t('healthCheckupPlan.selectCompletionApprover', '완료 승인자 선택')} />
+
+      <DepartmentSelectModal
+        open={deptModalOpen}
+        onClose={() => setDeptModalOpen(false)}
+        onConfirm={(deptName) => { setFormData({ ...formData, targetDept: deptName }); setDeptModalOpen(false) }}
+        initialDepartment={formData.targetDept || ''}
+        title={t('healthCheckupPlan.selectTargetDept', '대상부서 선택')}
+      />
     </Box>
   )
 }

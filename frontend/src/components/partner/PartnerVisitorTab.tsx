@@ -296,7 +296,7 @@ const PartnerVisitorTab: React.FC = () => {
       </Alert>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <ListSearchBar fullWidth placeholder="성명/업체명/목적 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <ListSearchBar fullWidth placeholder="성명/업체명/목적 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <TextField select size="small" sx={{ minWidth: 130 }} label="상태" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>

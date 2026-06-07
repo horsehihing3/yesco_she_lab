@@ -81,7 +81,7 @@ public class HealthCheckupPlanService {
     }
 
     @Transactional
-    public HealthCheckupPlanResponse update(Long id, HealthCheckupPlanRequest req) {
+    public HealthCheckupPlanResponse update(Long id, HealthCheckupPlanRequest req, IdmUser currentUser) {
         HealthCheckupPlan plan = mapper.findById(id);
         if (plan == null) {
             throw new ResourceNotFoundException("HealthCheckupPlan", "id", id);
@@ -107,6 +107,10 @@ public class HealthCheckupPlanService {
         plan.setCompletionApproverPosition(req.getCompletionApproverPosition());
         plan.setCompletionApproverName(req.getCompletionApproverName());
         plan.setWriter(req.getWriter());
+        if (currentUser != null) {
+            plan.setModifiedByUserId(currentUser.getUidNumber());
+            plan.setModifiedByName(currentUser.getUserName());
+        }
 
         mapper.update(plan);
         log.info("Updated HealthCheckupPlan id={}", id);

@@ -28,6 +28,7 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import ListSearchBar from '../common/ListSearchBar'
 import NumberField from '../common/NumberField'
 import SignaturePad from '../common/SignaturePad'
+import SignatureImage from '../common/SignatureImage'
 import DatePickerField from '../common/DatePickerField'
 import useCodeMap from '../../hooks/useCodeMap'
 import { contractorEvalApi } from '../../api/contractorApi'
@@ -231,14 +232,14 @@ const ContractorEvalTab = () => {
         {/* Search - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <ListSearchBar placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
+            <ListSearchBar placeholder={t('checklist.searchPlaceholder', '제목으로 검색')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch}
               sx={{ minWidth: 250 }} />
             <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
         </Box>
         {/* Search - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <ListSearchBar fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
+          <ListSearchBar fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
         </Box>
 
         {templatesLoading ? (
@@ -586,7 +587,7 @@ const ContractorEvalTab = () => {
                       {viewMode === 'edit'
                         ? <SignaturePad value={evaluatorSign} onChange={setEvaluatorSign} />
                         : (evaluatorSign
-                            ? <img src={evaluatorSign} alt="evaluator signature" style={{ maxHeight: 60 }} />
+                            ? <SignatureImage src={evaluatorSign} alt="evaluator signature" maxHeight={60} />
                             : null)
                       }
                     </TableCell>
@@ -605,7 +606,7 @@ const ContractorEvalTab = () => {
                       {viewMode === 'edit'
                         ? <SignaturePad value={approverSign} onChange={setApproverSign} />
                         : (approverSign
-                            ? <img src={approverSign} alt="approver signature" style={{ maxHeight: 60 }} />
+                            ? <SignatureImage src={approverSign} alt="approver signature" maxHeight={60} />
                             : null)
                       }
                     </TableCell>

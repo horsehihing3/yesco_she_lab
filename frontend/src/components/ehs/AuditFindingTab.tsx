@@ -93,16 +93,92 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('audit.auditId')}</Typography>
             <Box sx={valBorderSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.auditId}</Typography></Box>
-            <Typography sx={labelSx}>{t('audit.auditName')}</Typography>
-            <Box sx={valSx}><Typography variant="body2" fontWeight={600}>{selectedItem.auditName}</Typography></Box>
+            <Typography sx={labelSx}>{t('audit.auditType')}</Typography>
+            <Box sx={valSx}><Typography variant="body2">{getAuditTypeLabel(selectedItem.auditType)}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
-            <Typography sx={labelSx}>{t('audit.auditType')}</Typography>
-            <Box sx={valBorderSx}><Typography variant="body2">{getAuditTypeLabel(selectedItem.auditType)}</Typography></Box>
+            <Typography sx={labelSx}>{t('audit.auditName')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2" fontWeight={600}>{selectedItem.auditName}</Typography></Box>
+            <Typography sx={labelSx}>{t('common.status')}</Typography>
+            <Box sx={valSx}><Chip label={getAuditStatusLabel(selectedItem.status)} color={statusColors[selectedItem.status]} size="small" /></Box>
+          </Box>
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('audit.auditor')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2">{(selectedItem as any).auditorName || selectedItem.auditor || linkedPlan?.auditorName || ''}</Typography></Box>
             <Typography sx={labelSx}>{t('audit.targetDept')}</Typography>
             <Box sx={valSx}><Typography variant="body2">{selectedItem.targetDept || ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('common.startDate', '시작일')}</Typography>
+            <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.auditDate || (selectedItem as any).auditStartDate || linkedPlan?.planStartDate || ''}</Typography></Box>
+            <Typography sx={labelSx}>{t('common.endDate', '종료일')}</Typography>
+            <Box sx={valSx}><Typography variant="body2">{selectedItem.auditEndDate || linkedPlan?.planEndDate || ''}</Typography></Box>
+          </Box>
+          {linkedPlan?.purpose && (
+            <Box sx={rowSx}>
+              <Typography sx={labelSx}>{t('audit.purpose', '목적')}</Typography>
+              <Box sx={valSx}><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{linkedPlan.purpose}</Typography></Box>
+            </Box>
+          )}
+          {(selectedItem.notes || linkedPlan?.notes) && (
+            <Box sx={rowSx}>
+              <Typography sx={labelSx}>{t('common.notes', '비고')}</Typography>
+              <Box sx={valSx}><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.notes || linkedPlan?.notes || ''}</Typography></Box>
+            </Box>
+          )}
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('audit.createdByName', '작성자')}</Typography>
+            <Box sx={valBorderSx}>
+              <Typography variant="body2">{selectedItem.createdByName || ''}</Typography>
+            </Box>
+            <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
+            <Box sx={valSx}>
+              <Typography variant="body2">
+                {selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+              </Typography>
+            </Box>
+          </Box>
+          {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
+            <Box sx={rowSx}>
+              <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
+              <Box sx={valBorderSx}>
+                <Typography variant="body2">{(selectedItem as any).modifiedByName || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
+              <Box sx={valSx}>
+                <Typography variant="body2">{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+              </Box>
+            </Box>
+          )}
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{t('audit.planApprover', '계획 승인자')}</Typography>
+            <Box sx={valBorderSx}>
+              <Typography variant="body2">
+                {selectedItem.planApproverName
+                  ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
+                  : ''}
+                {selectedItem.planApprovedAt && (
+                  <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                    ({selectedItem.planApprovedBy || ''} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16)})
+                  </Typography>
+                )}
+              </Typography>
+            </Box>
+            <Typography sx={labelSx}>{t('audit.completionApprover', '완료 승인자')}</Typography>
+            <Box sx={valSx}>
+              <Typography variant="body2">
+                {selectedItem.completionApproverName
+                  ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
+                  : ''}
+                {selectedItem.completionApprovedAt && (
+                  <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                    ({selectedItem.completionApprovedBy || ''} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16)})
+                  </Typography>
+                )}
+              </Typography>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex' }}>
             <Typography sx={labelSx}>{t('audit.checklistProgress')}</Typography>
             <Box sx={valBorderSx}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
@@ -113,21 +189,38 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
             <Typography sx={labelSx}>{t('audit.findingCount')}</Typography>
             <Box sx={valSx}><Typography variant="body2">{selectedItem.findingCount}</Typography></Box>
           </Box>
-          <Box sx={{ display: 'flex' }}>
-            <Typography sx={labelSx}>{t('common.status')}</Typography>
-            <Box sx={valSx}><Chip label={getAuditStatusLabel(selectedItem.status)} color={statusColors[selectedItem.status]} size="small" /></Box>
-          </Box>
         </Box>
 
         {/* Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 3 }}>
           {[
             [t('audit.auditId'), selectedItem.auditId],
-            [t('audit.auditName'), selectedItem.auditName],
             [t('audit.auditType'), getAuditTypeLabel(selectedItem.auditType)],
-            [t('audit.targetDept'), selectedItem.targetDept],
-            [t('audit.findingCount'), String(selectedItem.findingCount)],
+            [t('audit.auditName'), selectedItem.auditName],
             [t('common.status'), getAuditStatusLabel(selectedItem.status)],
+            [t('audit.auditor'), (selectedItem as any).auditorName || selectedItem.auditor || linkedPlan?.auditorName],
+            [t('audit.targetDept'), selectedItem.targetDept],
+            [t('common.startDate', '시작일'), selectedItem.auditDate || (selectedItem as any).auditStartDate || linkedPlan?.planStartDate],
+            [t('common.endDate', '종료일'), selectedItem.auditEndDate || linkedPlan?.planEndDate],
+            [t('audit.purpose', '목적'), linkedPlan?.purpose],
+            [t('common.notes', '비고'), selectedItem.notes || linkedPlan?.notes],
+            [t('audit.createdByName', '작성자'), selectedItem.createdByName || ''],
+            [t('audit.createdAt', '작성일자'),
+              selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
+            ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
+              [t('common.modifier', '수정자'), (selectedItem as any).modifiedByName || ''],
+              [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+            ] : []),
+            [t('audit.planApprover', '계획 승인자'),
+              selectedItem.planApproverName
+                ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
+                : ''],
+            [t('audit.completionApprover', '완료 승인자'),
+              selectedItem.completionApproverName
+                ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
+                : ''],
+            [t('audit.checklistProgress'), `${selectedItem.completedChecklist}/${selectedItem.totalChecklist}`],
+            [t('audit.findingCount'), String(selectedItem.findingCount)],
           ].filter(([, v]) => v).map(([label, value], i) => (
             <Box key={i}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography>

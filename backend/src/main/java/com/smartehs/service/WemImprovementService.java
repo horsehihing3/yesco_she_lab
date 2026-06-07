@@ -4,6 +4,7 @@ import com.smartehs.dto.request.WemImprovementRequest;
 import com.smartehs.dto.response.WemImprovementResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.WemImprovementMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.WemImprovement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,7 @@ public class WemImprovementService {
     }
 
     @Transactional
-    public WemImprovementResponse create(WemImprovementRequest request) {
+    public WemImprovementResponse create(WemImprovementRequest request, IdmUser currentUser) {
         WemImprovement improvement = WemImprovement.builder()
                 .processName(request.getProcessName())
                 .factorName(request.getFactorName())
@@ -84,6 +85,12 @@ public class WemImprovementService {
                 .completionDate(request.getCompletionDate())
                 .remarks(request.getRemarks())
                 .build();
+        if (currentUser != null) {
+            improvement.setCreatedByUserId(currentUser.getUidNumber());
+            improvement.setCreatedByName(currentUser.getUserName());
+            improvement.setModifiedByUserId(currentUser.getUidNumber());
+            improvement.setModifiedByName(currentUser.getUserName());
+        }
 
         wemImprovementMapper.insert(improvement);
         log.info("Created WEM improvement: {}", improvement.getId());
@@ -91,7 +98,7 @@ public class WemImprovementService {
     }
 
     @Transactional
-    public WemImprovementResponse update(Long id, WemImprovementRequest request) {
+    public WemImprovementResponse update(Long id, WemImprovementRequest request, IdmUser currentUser) {
         WemImprovement improvement = wemImprovementMapper.findById(id);
         if (improvement == null) {
             throw new ResourceNotFoundException("WemImprovement", "id", id);
@@ -112,6 +119,10 @@ public class WemImprovementService {
         improvement.setStatus(request.getStatus());
         improvement.setCompletionDate(request.getCompletionDate());
         improvement.setRemarks(request.getRemarks());
+        if (currentUser != null) {
+            improvement.setModifiedByUserId(currentUser.getUidNumber());
+            improvement.setModifiedByName(currentUser.getUserName());
+        }
 
         wemImprovementMapper.update(improvement);
         log.info("Updated WEM improvement: {}", id);

@@ -17,6 +17,10 @@
         <result property="agencyCode" column="agency_code"/>
         <result property="contractPeriod" column="contract_period"/>
         <result property="remarks" column="remarks"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
@@ -47,8 +51,13 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tb_wem_plan (plan_year, process_name, department, hazard_type, measurement_cycle, last_measurement_date, next_measurement_date, status, measurement_agency, agency_code, contract_period, remarks, created_at, modified_at)
-        VALUES (#{planYear}, #{processName}, #{department}, #{hazardType}, #{measurementCycle}, #{lastMeasurementDate}, #{nextMeasurementDate}, #{status}, #{measurementAgency}, #{agencyCode}, #{contractPeriod}, #{remarks}, GETDATE(), GETDATE())
+        INSERT INTO tb_wem_plan (plan_year, process_name, department, hazard_type, measurement_cycle, last_measurement_date, next_measurement_date, status, measurement_agency, agency_code, contract_period, remarks,
+            created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+            created_at, modified_at)
+        VALUES (#{planYear}, #{processName}, #{department}, #{hazardType}, #{measurementCycle}, #{lastMeasurementDate}, #{nextMeasurementDate}, #{status}, #{measurementAgency}, #{agencyCode}, #{contractPeriod}, #{remarks},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+            GETDATE(), GETDATE())
     </insert>
 
     <update id="update">
@@ -65,6 +74,8 @@
             agency_code = #{agencyCode},
             contract_period = #{contractPeriod},
             remarks = #{remarks},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

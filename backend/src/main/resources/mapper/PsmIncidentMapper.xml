@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PsmIncidentMapper">
+
+    <resultMap id="R" type="com.smartehs.model.PsmIncident">
+        <id property="id" column="id"/>
+        <result property="incidentNo" column="incident_no"/>
+        <result property="incidentType" column="incident_type"/>
+        <result property="occurAt" column="occur_at"/>
+        <result property="location" column="location"/>
+        <result property="relatedEquipment" column="related_equipment"/>
+        <result property="relatedMaterial" column="related_material"/>
+        <result property="firstFinder" column="first_finder"/>
+        <result property="reporter" column="reporter"/>
+        <result property="investigator" column="investigator"/>
+        <result property="reportedAt" column="reported_at"/>
+        <result property="narrative" column="narrative"/>
+        <result property="severity" column="severity"/>
+        <result property="humanFactorsJson" column="human_factors_json"/>
+        <result property="technicalFactorsJson" column="technical_factors_json"/>
+        <result property="why1" column="why1"/>
+        <result property="why2" column="why2"/>
+        <result property="why3" column="why3"/>
+        <result property="why4" column="why4"/>
+        <result property="why5" column="why5"/>
+        <result property="managementCause" column="management_cause"/>
+        <result property="deaths" column="deaths"/>
+        <result property="seriousInjuries" column="serious_injuries"/>
+        <result property="minorInjuries" column="minor_injuries"/>
+        <result property="injuryType" column="injury_type"/>
+        <result property="damagedEquipment" column="damaged_equipment"/>
+        <result property="propertyLoss" column="property_loss"/>
+        <result property="productionLoss" column="production_loss"/>
+        <result property="downtimeHours" column="downtime_hours"/>
+        <result property="envImpact" column="env_impact"/>
+        <result property="recoveryDate" column="recovery_date"/>
+        <result property="actionsJson" column="actions_json"/>
+        <result property="technicalAction" column="technical_action"/>
+        <result property="managerialAction" column="managerial_action"/>
+        <result property="similarCheckPlan" column="similar_check_plan"/>
+        <result property="psmImprovement" column="psm_improvement"/>
+        <result property="status" column="status"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <sql id="cols">
+        id, incident_no, incident_type, occur_at, location, related_equipment, related_material,
+        first_finder, reporter, investigator, reported_at, narrative, severity,
+        human_factors_json, technical_factors_json,
+        why1, why2, why3, why4, why5, management_cause,
+        deaths, serious_injuries, minor_injuries, injury_type, damaged_equipment,
+        property_loss, production_loss, downtime_hours, env_impact, recovery_date,
+        actions_json, technical_action, managerial_action, similar_check_plan, psm_improvement,
+        status,
+        created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+        deleted, created_at, modified_at
+    </sql>
+
+    <select id="findAll" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_incident
+        WHERE deleted = 0 ORDER BY occur_at DESC, created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_incident WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_incident WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countByIncidentNoStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_incident WHERE incident_no LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_psm_incident (
+            incident_no, incident_type, occur_at, location, related_equipment, related_material,
+            first_finder, reporter, investigator, reported_at, narrative, severity,
+            human_factors_json, technical_factors_json,
+            why1, why2, why3, why4, why5, management_cause,
+            deaths, serious_injuries, minor_injuries, injury_type, damaged_equipment,
+            property_loss, production_loss, downtime_hours, env_impact, recovery_date,
+            actions_json, technical_action, managerial_action, similar_check_plan, psm_improvement,
+            status,
+            created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{incidentNo}, #{incidentType}, #{occurAt}, #{location}, #{relatedEquipment}, #{relatedMaterial},
+            #{firstFinder}, #{reporter}, #{investigator}, #{reportedAt}, #{narrative}, #{severity},
+            #{humanFactorsJson}, #{technicalFactorsJson},
+            #{why1}, #{why2}, #{why3}, #{why4}, #{why5}, #{managementCause},
+            #{deaths}, #{seriousInjuries}, #{minorInjuries}, #{injuryType}, #{damagedEquipment},
+            #{propertyLoss}, #{productionLoss}, #{downtimeHours}, #{envImpact}, #{recoveryDate,jdbcType=DATE},
+            #{actionsJson}, #{technicalAction}, #{managerialAction}, #{similarCheckPlan}, #{psmImprovement},
+            COALESCE(#{status}, 'DRAFT'),
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+            0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_psm_incident SET
+            incident_type = #{incidentType}, occur_at = #{occurAt}, location = #{location},
+            related_equipment = #{relatedEquipment}, related_material = #{relatedMaterial},
+            first_finder = #{firstFinder}, reporter = #{reporter}, investigator = #{investigator},
+            reported_at = #{reportedAt}, narrative = #{narrative}, severity = #{severity},
+            human_factors_json = #{humanFactorsJson}, technical_factors_json = #{technicalFactorsJson},
+            why1 = #{why1}, why2 = #{why2}, why3 = #{why3}, why4 = #{why4}, why5 = #{why5},
+            management_cause = #{managementCause},
+            deaths = #{deaths}, serious_injuries = #{seriousInjuries}, minor_injuries = #{minorInjuries},
+            injury_type = #{injuryType}, damaged_equipment = #{damagedEquipment},
+            property_loss = #{propertyLoss}, production_loss = #{productionLoss}, downtime_hours = #{downtimeHours},
+            env_impact = #{envImpact}, recovery_date = #{recoveryDate,jdbcType=DATE},
+            actions_json = #{actionsJson}, technical_action = #{technicalAction},
+            managerial_action = #{managerialAction}, similar_check_plan = #{similarCheckPlan},
+            psm_improvement = #{psmImprovement}, status = #{status},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_psm_incident SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+</mapper>

@@ -209,9 +209,10 @@
     "contractorMgmt": "협력사 관리",
     "siteSafetyMgmt": "현장 안전 관리",
     "ppeEquipment": "보호구·장비",
-    "trainingMgmt": "교육·훈련",
+    "trainingMgmt": "교육 관리",
     "envMonitoring": "환경 모니터링",
     "chemicalMgmt": "화학물질 관리",
+    "processSafetyMgmt": "공정안전 관리",
     "chemMaster": "마스터 · 규제",
     "chemMsds": "MSDS 관리",
     "chemMsdsRaw": "원료 MSDS",
@@ -394,8 +395,10 @@
     "byFloor": "층별"
   },
   "theme": {
+    "select": "테마 선택",
     "lightMode": "라이트 모드",
-    "darkMode": "다크 모드"
+    "darkMode": "다크 모드",
+    "yescoMode": "예스코 모드"
   },
   "ehsAlert": {
     "title": "EHS 알림",
@@ -630,7 +633,7 @@
   "riskAssessment": {
     "title": "위험성평가",
     "pageTitle": "위험성 평가",
-    "searchPlaceholder": "제목으로 검색...",
+    "searchPlaceholder": "제목으로 검색",
     "createNew": "새 평가 등록",
     "planApprover": "계획 승인자",
     "completionApprover": "완료 승인자",
@@ -1577,7 +1580,7 @@
     }
   },
   "checklist": {
-    "searchPlaceholder": "제목으로 검색...",
+    "searchPlaceholder": "제목으로 검색",
     "tabRiskAssessment": "위험성 평가",
     "tabAudit": "감사",
     "tabCompliance": "법규 준수",
@@ -2016,6 +2019,7 @@
     "noMembers": "소속 직원이 없습니다",
     "selectDepartment": "부서를 선택하세요",
     "selectDeptFirst": "좌측에서 부서를 선택하세요",
+    "selectFromOrg": "조직도에서 선택",
     "confirmApprove": "이 건을 승인하시겠습니까?",
     "confirmReject": "반려 확인",
     "enterRejectReason": "반려 사유를 입력하세요",
@@ -2085,7 +2089,7 @@
       "measurement": "수질 측정 데이터",
       "workplace": "사업장 / 측정 지점",
       "standard": "배출 기준치 관리",
-      "report": "보고서"
+      "report": "레포트"
     },
     "dashboard": {
       "totalMeasurements": "총 측정 건수",
@@ -2147,7 +2151,7 @@
     "avgWearRate": "착용률 (평균)",
     "expirySoon": "유효기간 만료 임박",
     "expiredOrLow": "만료/재고부족",
-    "searchPlaceholder": "항목명, 모델명 검색...",
+    "searchPlaceholder": "항목명, 모델명 검색",
     "allStatus": "전체 상태",
     "statusNormal": "정상",
     "statusExpirySoon": "만료임박",
@@ -2230,7 +2234,7 @@
   "ptw": {
     "tabMy": "내 작업허가",
     "tabAdmin": "관리자",
-    "searchPlaceholder": "허가서 제목 검색...",
+    "searchPlaceholder": "허가서 제목 검색",
     "allStatus": "전체 상태",
     "allTypes": "전체 유형",
     "createPermit": "허가서 등록",
@@ -2332,7 +2336,7 @@
     }
   },
   "ergo": {
-    "searchPlaceholder": "작업공정, 작업자 검색...",
+    "searchPlaceholder": "작업공정, 작업자 검색",
     "allRisk": "전체 위험 수준",
     "createAssessment": "평가 등록",
     "editAssessment": "평가 수정",
@@ -2476,7 +2480,7 @@
   "emr": {
     "internal": "내부",
     "external": "외부",
-    "searchPlaceholder": "비상대응 검색...",
+    "searchPlaceholder": "비상대응 검색",
     "allStatus": "전체 상태",
     "allTypes": "전체 유형",
     "createReport": "비상대응 등록",
@@ -2703,7 +2707,7 @@
       "normalStock": "정상 재고",
       "lowStock": "재고 부족",
       "expiringSoon": "유통기한 임박",
-      "searchPlaceholder": "자재코드, 자재명, 화학물질명으로 검색..."
+      "searchPlaceholder": "자재코드, 자재명, 화학물질명으로 검색"
     },
     "vendor": {
       "vendorCode": "협력사 코드",
@@ -2722,7 +2726,7 @@
       "msdsPartial": "일부누락",
       "msdsMissing": "미제공",
       "totalVendor": "전체 협력사",
-      "searchPlaceholder": "협력사명, 담당자로 검색..."
+      "searchPlaceholder": "협력사명, 담당자로 검색"
     },
     "reg": {
       "regCode": "규제 코드",
@@ -2740,7 +2744,7 @@
       "totalRegulation": "적용 규제 수",
       "domesticReg": "국내 규제",
       "overseasReg": "해외 규제",
-      "searchPlaceholder": "규제명, 소관부처로 검색..."
+      "searchPlaceholder": "규제명, 소관부처로 검색"
     },
     "check": {
       "checkId": "점검 ID",
@@ -2759,7 +2763,7 @@
       "completed": "완료",
       "inProgress": "진행중",
       "pending": "미완료",
-      "searchPlaceholder": "점검명, 담당자로 검색..."
+      "searchPlaceholder": "점검명, 담당자로 검색"
     },
     "warehouse": {
       "warehouseCode": "창고코드",
@@ -2778,7 +2782,7 @@
       "statusInspection": "점검필요",
       "totalWarehouse": "보관 창고 수",
       "hazardWarehouse": "위험물 보관실",
-      "searchPlaceholder": "창고명, 위치로 검색..."
+      "searchPlaceholder": "창고명, 위치로 검색"
     },
     "incoming": {
       "incomingDate": "입고일",
@@ -2798,7 +2802,7 @@
       "waitingProcess": "처리 대기",
       "tabIncoming": "입고 현황",
       "tabUsage": "사용 현황",
-      "searchPlaceholder": "화학물질명, 공급사로 검색..."
+      "searchPlaceholder": "화학물질명, 공급사로 검색"
     },
     "usage2": {
       "usageDate": "사용일",
@@ -2813,7 +2817,7 @@
       "totalVolume": "이번달 사용량",
       "deptCount": "사용 부서 수",
       "lowStockAlert": "재고 부족 경보",
-      "searchPlaceholder": "화학물질명, 부서로 검색..."
+      "searchPlaceholder": "화학물질명, 부서로 검색"
     },
     "lot": {
       "lotNumber": "로트번호",
@@ -2830,7 +2834,7 @@
       "statusExpiring": "소모임박",
       "statusConsumed": "소진",
       "searchLot": "추적 조회",
-      "searchPlaceholder": "로트번호, 화학물질명으로 검색..."
+      "searchPlaceholder": "로트번호, 화학물질명으로 검색"
     },
     "usageReport": {
       "reportYear": "보고연도",
@@ -2845,7 +2849,7 @@
       "annualTotal": "연간 사용량(누계)",
       "monthlyUsage": "이번달 사용량",
       "nextDeadline": "다음 보고 기한",
-      "searchPlaceholder": "화학물질명, CAS No.로 검색..."
+      "searchPlaceholder": "화학물질명, CAS No.로 검색"
     },
     "hazardReport": {
       "reportYear": "보고연도",
@@ -2863,11 +2867,11 @@
       "annualHandlingTotal": "연간 취급량",
       "facilityCount": "취급시설 수",
       "managerCount": "취급관리자",
-      "searchPlaceholder": "화학물질명, CAS No.로 검색..."
+      "searchPlaceholder": "화학물질명, CAS No.로 검색"
     },
     "msds": {
-      "searchRawPlaceholder": "원료명, CAS No.로 검색...",
-      "searchProductPlaceholder": "제품명, 제품코드로 검색...",
+      "searchRawPlaceholder": "원료명, CAS No.로 검색",
+      "searchProductPlaceholder": "제품명, 제품코드로 검색",
       "itemName": "원료명/제품명",
       "casNumber": "CAS No.",
       "supplier": "공급사",
@@ -2888,7 +2892,7 @@
       "oldWarning": "구 버전은 참조 목적으로만 보관됩니다."
     },
     "ghs": {
-      "searchPlaceholder": "화학물질명, CAS No.로 검색...",
+      "searchPlaceholder": "화학물질명, CAS No.로 검색",
       "chemicalName": "화학물질명",
       "casNumber": "CAS No.",
       "physicalHazard": "물리적 위험성",
@@ -2903,7 +2907,7 @@
       "currentVersion": "현행 GHS 버전"
     },
     "reach": {
-      "searchPlaceholder": "화학물질명, CAS No.로 검색...",
+      "searchPlaceholder": "화학물질명, CAS No.로 검색",
       "chemicalName": "화학물질명",
       "casNumber": "CAS No.",
       "registrationNo": "등록 번호",
@@ -2918,7 +2922,7 @@
       "authNeeded": "허가 신청 필요"
     },
     "clp": {
-      "searchPlaceholder": "화학물질명, CAS No.로 검색...",
+      "searchPlaceholder": "화학물질명, CAS No.로 검색",
       "chemicalName": "화학물질명",
       "casNumber": "CAS No.",
       "classification": "CLP 분류",
@@ -2933,7 +2937,7 @@
       "warning": "경고(Warning)"
     },
     "tsca": {
-      "searchPlaceholder": "화학물질명, CAS No.로 검색...",
+      "searchPlaceholder": "화학물질명, CAS No.로 검색",
       "chemicalName": "화학물질명",
       "casNumber": "CAS No.",
       "inventoryStatus": "TSCA Inventory",
@@ -2950,7 +2954,7 @@
   },
   "comp": {
     "title": "법규 준수 관리",
-    "searchPlaceholder": "법률명, 조항, 담당자 검색...",
+    "searchPlaceholder": "법률명, 조항, 담당자 검색",
     "allCategory": "전체 분류",
     "allStatus": "전체 상태",
     "createCompliance": "법규 등록",
@@ -2995,7 +2999,7 @@
     }
   },
   "compEval": {
-    "searchPlaceholder": "법률명, 평가 대상 검색...",
+    "searchPlaceholder": "법률명, 평가 대상 검색",
     "allResults": "전체 결과",
     "createEval": "평가 등록",
     "editEval": "평가 수정",
@@ -3012,7 +3016,7 @@
     "notes": "비고"
   },
   "compAction": {
-    "searchPlaceholder": "항목명, 담당자 검색...",
+    "searchPlaceholder": "항목명, 담당자 검색",
     "allStatus": "전체 상태",
     "allPriority": "전체 우선순위",
     "createAction": "조치 등록",
@@ -3176,7 +3180,7 @@
     "startProgress": "진행중",
     "creator": "작성자",
     "createdByName": "작성자",
-    "createdAt": "작성일시",
+    "createdAt": "작성일자",
     "noChecklist": "미연결",
     "noChecklistLinked": "연결된 체크리스트가 없습니다. 감사 계획에서 체크리스트를 연결하세요.",
     "allChecklistMustBeChecked": "모든 체크리스트 항목이 체크되어야 완료할 수 있습니다.",
@@ -3305,7 +3309,7 @@
     "formNo": "서식번호",
     "revisedDate": "개정일자",
     "createdDate": "작성일자",
-    "writer": "작성",
+    "writer": "작성자",
     "approver": "승인",
     "planApprover": "계획 승인자",
     "completionApprover": "완료 승인자",

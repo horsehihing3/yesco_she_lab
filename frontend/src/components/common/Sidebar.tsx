@@ -55,6 +55,7 @@ import TuneIcon from '@mui/icons-material/Tune'
 import { useThemeMode } from '../../context/ThemeContext'
 import { useAuth } from '../../context/AuthContext'
 import { useMenuRule } from '../../hooks/useMenuRule'
+import { getYescoIcon } from './YescoSidebarIcons'
 
 interface MenuItem {
   textKey: string
@@ -148,6 +149,11 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
+    textKey: 'nav.processSafetyMgmt',
+    icon: <SettingsIcon />,
+    path: '/psm',
+  },
+  {
     textKey: 'nav.approval',
     icon: <ApprovalIcon />,
     path: '/approval',
@@ -198,7 +204,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
       return { ...item, children: visibleChildren }
     })
     .filter((item) => !item.children || item.children.length > 0)
-  const { isDarkMode } = useThemeMode()
+  const { isDarkMode, isYescoMode } = useThemeMode()
   const [expandedMenus, setExpandedMenus] = useState<string[]>(() => {
     const isPathActiveStrict = (path: string) => {
       if (path === '/') return location.pathname === '/'
@@ -212,15 +218,28 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
   })
 
   // Theme-aware colors
-  const colors = {
-    sidebar: isDarkMode ? '#18181b' : '#1e293b',
-    sidebarBrand: isDarkMode ? '#09090b' : '#0f172a',
-    sidebarHover: isDarkMode ? '#27272a' : '#334155',
-    activeBackground: '#2563eb',
-    activeBorder: '#3b82f6',
-    inactiveText: isDarkMode ? '#71717a' : '#9ca3af',
-    subMenuBg: isDarkMode ? '#09090b' : '#0f172a',
-  }
+  // 예스코 모드: 깊은 네이비 사이드바 + LS Red active/hover + 흰색 아이콘 (lsyesco.com 패턴)
+  const colors = isYescoMode
+    ? {
+        sidebar:           '#0F2147',
+        sidebarBrand:      '#0A1733',
+        sidebarHover:      'rgba(230,0,18,0.18)',
+        activeBackground:  '#E60012',
+        activeBorder:      '#FF334D',
+        inactiveText:      '#c8d0e0',
+        inactiveIcon:      '#ffffff',           // 흰색 아이콘 (YESCO 패턴)
+        subMenuBg:         '#0A1733',
+      }
+    : {
+        sidebar:           isDarkMode ? '#18181b' : '#1e293b',
+        sidebarBrand:      isDarkMode ? '#09090b' : '#0f172a',
+        sidebarHover:      isDarkMode ? '#27272a' : '#334155',
+        activeBackground:  '#2563eb',
+        activeBorder:      '#3b82f6',
+        inactiveText:      isDarkMode ? '#71717a' : '#9ca3af',
+        inactiveIcon:      isDarkMode ? '#71717a' : '#9ca3af',
+        subMenuBg:         isDarkMode ? '#09090b' : '#0f172a',
+      }
 
   const isPathActive = (path: string) => {
     if (path === '/') return location.pathname === '/'
@@ -243,6 +262,31 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
     const isExpanded = expandedMenus.includes(item.textKey)
     const isActive = item.path ? isPathActive(item.path) : isParentActive(item)
 
+    // YESCO 모드: 메뉴 textKey에 매핑된 커스텀 2-tone SVG 아이콘 사용
+    const YescoCustomIcon = isYescoMode ? getYescoIcon(item.textKey) : null
+
+    // YESCO 모드: 아이콘 컨테이너 = 둥근 사각 배지 (lsyesco.com 푸터 카드 패턴)
+    const iconWrapSx = isYescoMode
+      ? {
+          position: 'relative' as const,
+          width: 44, height: 44, mx: 'auto',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          borderRadius: 1.5,
+          bgcolor: isActive ? 'rgba(255,255,255,0.16)' : 'transparent',
+          transition: 'all .18s',
+          // 활성 시: 강조 글로우 + 하단 LS Red 받침
+          ...(isActive && {
+            boxShadow: '0 0 0 1.5px rgba(230,0,18,0.65), 0 0 14px -4px rgba(230,0,18,0.5)',
+          }),
+          // MUI 아이콘이 fallback 으로 들어가면 흰색 처리
+          '& .MuiSvgIcon-root': {
+            fontSize: 24,
+            color: '#ffffff',
+            transition: 'color .18s',
+          },
+        }
+      : {}
+
     const button = (
       <ListItemButton
         onClick={() => {
@@ -254,34 +298,47 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
           }
         }}
         sx={{
-          py: 1.5,
+          py: isYescoMode ? 1.75 : 1.5,
           px: collapsed ? 1.5 : 2,
           justifyContent: collapsed ? 'center' : 'flex-start',
           borderLeft: isActive ? `4px solid ${colors.activeBorder}` : '4px solid transparent',
           borderBottom: isActive && hasChildren && isExpanded ? '1px solid rgba(255,255,255,0.3)' : 'none',
           backgroundColor: isActive ? colors.activeBackground : 'transparent',
           color: isActive ? 'white' : colors.inactiveText,
+          ...(isYescoMode && isActive && {
+            boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 18px -8px rgba(230,0,18,0.6)',
+          }),
           '&:hover': {
             backgroundColor: isActive ? colors.activeBackground : colors.sidebarHover,
+            ...(isYescoMode && !isActive && {
+              '& .yesco-icon-wrap': { bgcolor: 'rgba(255,255,255,0.12)' },
+            }),
           },
         }}
       >
-        <ListItemIcon
-          sx={{
-            minWidth: collapsed ? 'auto' : 40,
-            justifyContent: 'center',
-            color: isActive ? 'white' : colors.inactiveText,
-          }}
-        >
-          {item.icon}
-        </ListItemIcon>
+        {isYescoMode ? (
+          <Box className="yesco-icon-wrap" sx={{ ...iconWrapSx, mr: collapsed ? 0 : 1.5 }}>
+            {YescoCustomIcon ? <YescoCustomIcon size={26} /> : item.icon}
+          </Box>
+        ) : (
+          <ListItemIcon
+            sx={{
+              minWidth: collapsed ? 'auto' : 40,
+              justifyContent: 'center',
+              color: isActive ? 'white' : colors.inactiveIcon,
+            }}
+          >
+            {item.icon}
+          </ListItemIcon>
+        )}
         {!collapsed && (
           <>
             <ListItemText
               primary={t(item.textKey)}
               primaryTypographyProps={{
-                fontSize: '0.875rem',
-                fontWeight: isActive ? 600 : 400,
+                fontSize: isYescoMode ? '0.9rem' : '0.875rem',
+                fontWeight: isActive ? (isYescoMode ? 700 : 600) : (isYescoMode ? 500 : 400),
+                letterSpacing: isYescoMode ? '0.02em' : 'normal',
               }}
             />
             {hasChildren && (isExpanded ? <ExpandLess /> : <ExpandMore />)}
@@ -324,16 +381,27 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
                         borderLeft: childActive ? `4px solid ${colors.activeBorder}` : '4px solid transparent',
                         backgroundColor: childActive ? colors.activeBackground : 'transparent',
                         color: childActive ? 'white' : colors.inactiveText,
+                        ...(isYescoMode && childActive && {
+                          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)',
+                        }),
                         '&:hover': {
                           backgroundColor: childActive ? colors.activeBackground : colors.sidebarHover,
                         },
                       }}
                     >
+                      {isYescoMode && (
+                        <Box sx={{
+                          width: 6, height: 6, borderRadius: '50%',
+                          bgcolor: childActive ? '#fff' : '#E60012',
+                          mr: 1.25, flexShrink: 0,
+                        }} />
+                      )}
                       <ListItemText
-                        primary={`•  ${t(child.textKey)}`}
+                        primary={isYescoMode ? t(child.textKey) : `•  ${t(child.textKey)}`}
                         primaryTypographyProps={{
-                          fontSize: '0.8rem',
-                          fontWeight: childActive ? 600 : 400,
+                          fontSize: '0.82rem',
+                          fontWeight: childActive ? 700 : (isYescoMode ? 500 : 400),
+                          letterSpacing: isYescoMode ? '0.02em' : 'normal',
                         }}
                       />
                     </ListItemButton>
@@ -368,6 +436,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
             gap: 1.5,
             backgroundColor: colors.sidebarBrand,
             cursor: 'pointer',
+            // YESCO 모드: 하단 LS Red 강조선 (브랜드 시그니처)
+            ...(isYescoMode && {
+              borderBottom: '3px solid #E60012',
+              background: 'linear-gradient(135deg, #0A1733 0%, #112a55 100%)',
+            }),
           }}
         >
           <Box component="img" src="/assets/logo-com4in-w.png" alt="COM4IN" sx={{ height: 40 }} />

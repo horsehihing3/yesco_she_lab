@@ -20,6 +20,10 @@
         <result property="status" column="status"/>
         <result property="completionDate" column="completion_date"/>
         <result property="remarks" column="remarks"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
@@ -61,8 +65,13 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tb_wem_improvement (process_name, factor_name, measured_value, exposure_standard, exceed_rate, exceed_level, department, measurement_date, measurement_agency, deadline, remaining_days, improvement_plan, status, completion_date, remarks, created_at, modified_at)
-        VALUES (#{processName}, #{factorName}, #{measuredValue}, #{exposureStandard}, #{exceedRate}, #{exceedLevel}, #{department}, #{measurementDate}, #{measurementAgency}, #{deadline}, #{remainingDays}, #{improvementPlan}, #{status}, #{completionDate}, #{remarks}, GETDATE(), GETDATE())
+        INSERT INTO tb_wem_improvement (process_name, factor_name, measured_value, exposure_standard, exceed_rate, exceed_level, department, measurement_date, measurement_agency, deadline, remaining_days, improvement_plan, status, completion_date, remarks,
+            created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+            created_at, modified_at)
+        VALUES (#{processName}, #{factorName}, #{measuredValue}, #{exposureStandard}, #{exceedRate}, #{exceedLevel}, #{department}, #{measurementDate}, #{measurementAgency}, #{deadline}, #{remainingDays}, #{improvementPlan}, #{status}, #{completionDate}, #{remarks},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+            GETDATE(), GETDATE())
     </insert>
 
     <update id="update">
@@ -82,6 +91,8 @@
             status = #{status},
             completion_date = #{completionDate},
             remarks = #{remarks},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

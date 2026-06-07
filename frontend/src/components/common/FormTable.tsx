@@ -7,13 +7,14 @@ import { Paper, Box, Typography, SxProps, Theme } from '@mui/material'
 
 export const labelSx: SxProps<Theme> = {
   // 데스크탑: 좌측 라벨열, 모바일: 값 위 라벨 행
-  width: { xs: '100%', md: 128 }, minWidth: { xs: 'auto', md: 128 },
+  width: { xs: '100%', md: 140 }, minWidth: { xs: 'auto', md: 140 },
   fontWeight: 'bold', bgcolor: 'grey.100',
   px: { xs: 1.5, md: 2 }, py: { xs: 0.75, md: 1.5 },
   borderRight: { xs: 'none', md: '1px solid #71717a' },
   display: 'flex', alignItems: 'center', fontSize: '0.8rem',
   justifyContent: { xs: 'flex-start', md: 'center' },
   wordBreak: 'keep-all' as const, textAlign: { xs: 'left', md: 'center' },
+  whiteSpace: { xs: 'normal', md: 'nowrap' } as const,
 }
 
 export const valSx: SxProps<Theme> = {

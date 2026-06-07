@@ -333,11 +333,14 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     const firstFormId = formTemplates && formTemplates.length > 0 ? formTemplates[0].id : ''
     setStep21FormId(firstFormId)
     const leader = await fetchTeamLeader(user?.deptCode)
+    const team = user?.department || ''
+    const defaultTitle = team ? `위험성평가 – ${team}` : '위험성평가'
+    const today = new Date().toISOString().substring(0, 10)
     setFormData({
-      title: '',
+      title: defaultTitle,
       site: '',
       authorName: user?.name || '',
-      authorDept: user?.department || '',
+      authorDept: team,
       authorMail: user?.email || '',
       formId: typeof firstFormId === 'number' ? firstFormId : undefined,
       ...(leader ? {
@@ -349,7 +352,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
         majorCategoryIdx: 1,
         majorCategory: MAJOR_CATEGORIES[0],
         detailAction: '',
-        evaluationDate: '',
+        evaluationDate: today,
         evaluator: '',
         isTarget: true,
       },
@@ -422,7 +425,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       majorCategoryIdx: 1,
       majorCategory: MAJOR_CATEGORIES[0],
       detailAction: '',
-      evaluationDate: '',
+      evaluationDate: new Date().toISOString().substring(0, 10),
       evaluator: '',
       isTarget: true,
     }])
@@ -867,120 +870,155 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             </Box>
           )}
 
-          {/* 기본 정보 (외부 박스 없음) */}
-          <Box sx={{ mb: 3 }}>
-            {/* PC용 테이블 레이아웃 */}
-            <TableContainer component={Paper} variant="outlined" sx={{ display: { xs: 'none', md: 'block' }, overflowX: 'auto', '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
-              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
-                <TableBody>
-                  <TableRow>
-                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.title')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: assessmentDetail.title ? 'left' : 'center' }}>{assessmentDetail.title || ''}</TableCell>
-                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.region')}</TableCell>
-                    <TableCell sx={{ textAlign: assessmentDetail.site ? 'left' : 'center' }}>{assessmentDetail.site || ''}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.author')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: assessmentDetail.authorName ? 'left' : 'center' }}>{assessmentDetail.authorName || ''}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.department')}</TableCell>
-                    <TableCell sx={{ textAlign: assessmentDetail.authorDept ? 'left' : 'center' }}>{assessmentDetail.authorDept || ''}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.status')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: assessmentDetail.status ? 'left' : 'center' }}>{getStatusChip(assessmentDetail.status)}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.completedDate')}</TableCell>
-                    <TableCell sx={{ textAlign: assessmentDetail.completedDate ? 'left' : 'center' }}>{formatDate(assessmentDetail.completedDate)}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', width: 130, minWidth: 130, whiteSpace: 'nowrap', wordBreak: 'keep-all', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.planApprover', '계획 승인자')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: assessmentDetail.planApproverName ? 'left' : 'center' }}>
-                      {[assessmentDetail.planApproverTeam, assessmentDetail.planApproverPosition, assessmentDetail.planApproverName].filter(Boolean).join(' / ') || ''}
-                      {assessmentDetail.planApprovedAt && (
-                        <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                          ({assessmentDetail.planApprovedBy} | {assessmentDetail.planApprovedAt.replace('T', ' ').substring(0, 19)})
-                        </Typography>
+          {/* 기본 정보 — 통합 폼 테이블: 제목 / 사업장|부서 / 평가자|평가일시 / 작성자|작성일자 / 수정자|수정일자 / 계획승인자|완료승인자 / 체크리스트 */}
+          {(() => {
+            const proc0 = activityProcesses[0] || { majorCategoryIdx: 1, majorCategory: '', detailAction: '', evaluationDate: '', evaluator: '', isTarget: true }
+            const fmtDt = (s?: string | null) => s ? s.replace('T', ' ').substring(0, 16) : ''
+            const hasModified = !!(assessmentDetail.modifiedAt && assessmentDetail.modifiedAt !== assessmentDetail.createdAt)
+            const checklistName = assessmentDetail.formTitle || (formTemplates || []).find(f => f.id === assessmentDetail.formId)?.title || ''
+            const lblCellSx = { width: 130, minWidth: 130, fontWeight: 'bold' as const, bgcolor: 'grey.100', textAlign: 'center' as const, borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' as const, whiteSpace: 'nowrap' as const }
+            const mLbl = { mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }
+            return (
+              <Box sx={{ mb: 3 }}>
+                {/* 상태 / 완료일 — 헤더 영역 chip */}
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1, flexWrap: 'wrap' }}>
+                  {getStatusChip(assessmentDetail.status)}
+                  {assessmentDetail.completedDate && (
+                    <Typography variant="caption" color="text.secondary">
+                      {t('riskAssessment.completedDate')}: {formatDate(assessmentDetail.completedDate)}
+                    </Typography>
+                  )}
+                </Box>
+
+                {/* PC */}
+                <TableContainer component={Paper} variant="outlined" sx={{ display: { xs: 'none', md: 'block' }, overflowX: 'auto', '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
+                  <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+                    <TableBody>
+                      {/* 제목 */}
+                      <TableRow>
+                        <TableCell sx={lblCellSx}>{t('common.title')}</TableCell>
+                        <TableCell colSpan={3} sx={{ textAlign: assessmentDetail.title ? 'left' : 'center', fontWeight: 600 }}>{assessmentDetail.title || ''}</TableCell>
+                      </TableRow>
+                      {/* 사업장 | 부서 */}
+                      <TableRow>
+                        <TableCell sx={lblCellSx}>{t('riskAssessment.region')}</TableCell>
+                        <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: assessmentDetail.site ? 'left' : 'center' }}>{assessmentDetail.site || ''}</TableCell>
+                        <TableCell sx={lblCellSx}>{t('riskAssessment.department')}</TableCell>
+                        <TableCell sx={{ textAlign: assessmentDetail.authorDept ? 'left' : 'center' }}>{assessmentDetail.authorDept || ''}</TableCell>
+                      </TableRow>
+                      {/* 평가자 | 평가일시 */}
+                      <TableRow>
+                        <TableCell sx={lblCellSx}>{t('riskAssessment.evaluator', '평가자')}</TableCell>
+                        <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: proc0.evaluator ? 'left' : 'center' }}>{proc0.evaluator || ''}</TableCell>
+                        <TableCell sx={lblCellSx}>{t('riskAssessment.evaluationDate', '평가일시')}</TableCell>
+                        <TableCell sx={{ textAlign: proc0.evaluationDate ? 'left' : 'center', fontFamily: proc0.evaluationDate ? 'monospace' : undefined }}>
+                          {proc0.evaluationDate ? proc0.evaluationDate.substring(0, 10) : ''}
+                        </TableCell>
+                      </TableRow>
+                      {/* 작성자 | 작성일자 */}
+                      <TableRow>
+                        <TableCell sx={lblCellSx}>{t('common.creator', '작성자')}</TableCell>
+                        <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{assessmentDetail.authorName || ''}</TableCell>
+                        <TableCell sx={lblCellSx}>{t('audit.createdAt', '작성일자')}</TableCell>
+                        <TableCell sx={{ fontFamily: 'monospace' }}>{fmtDt(assessmentDetail.createdAt)}</TableCell>
+                      </TableRow>
+                      {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
+                      {hasModified && (
+                        <TableRow>
+                          <TableCell sx={lblCellSx}>{t('common.modifier', '수정자')}</TableCell>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{(assessmentDetail as any)?.modifiedByName || ''}</TableCell>
+                          <TableCell sx={lblCellSx}>{t('common.modifiedAt', '수정일자')}</TableCell>
+                          <TableCell sx={{ fontFamily: 'monospace' }}>{fmtDt(assessmentDetail.modifiedAt)}</TableCell>
+                        </TableRow>
                       )}
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', width: 130, minWidth: 130, whiteSpace: 'nowrap', wordBreak: 'keep-all', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.completionApprover', '완료 승인자')}</TableCell>
-                    <TableCell sx={{ textAlign: assessmentDetail.completionApproverName ? 'left' : 'center' }}>
-                      {[assessmentDetail.completionApproverTeam, assessmentDetail.completionApproverPosition, assessmentDetail.completionApproverName].filter(Boolean).join(' / ') || ''}
-                      {assessmentDetail.completionApprovedAt && (
-                        <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                          ({assessmentDetail.completionApprovedBy} | {assessmentDetail.completionApprovedAt.replace('T', ' ').substring(0, 19)})
-                        </Typography>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+                      {/* 계획승인자 | 완료승인자 */}
+                      <TableRow>
+                        <TableCell sx={{ ...lblCellSx, width: 130, minWidth: 130, whiteSpace: 'nowrap' }}>{t('riskAssessment.planApprover', '계획 승인자')}</TableCell>
+                        <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: assessmentDetail.planApproverName ? 'left' : 'center' }}>
+                          {[assessmentDetail.planApproverTeam, assessmentDetail.planApproverPosition, assessmentDetail.planApproverName].filter(Boolean).join(' / ') || ''}
+                          {assessmentDetail.planApprovedAt && (
+                            <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                              ({assessmentDetail.planApprovedBy} | {assessmentDetail.planApprovedAt.replace('T', ' ').substring(0, 19)})
+                            </Typography>
+                          )}
+                        </TableCell>
+                        <TableCell sx={{ ...lblCellSx, width: 130, minWidth: 130, whiteSpace: 'nowrap' }}>{t('riskAssessment.completionApprover', '완료 승인자')}</TableCell>
+                        <TableCell sx={{ textAlign: assessmentDetail.completionApproverName ? 'left' : 'center' }}>
+                          {[assessmentDetail.completionApproverTeam, assessmentDetail.completionApproverPosition, assessmentDetail.completionApproverName].filter(Boolean).join(' / ') || ''}
+                          {assessmentDetail.completionApprovedAt && (
+                            <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                              ({assessmentDetail.completionApprovedBy} | {assessmentDetail.completionApprovedAt.replace('T', ' ').substring(0, 19)})
+                            </Typography>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                      {/* 체크리스트 */}
+                      <TableRow>
+                        <TableCell sx={lblCellSx}>{t('common.checklist', '체크리스트')}</TableCell>
+                        <TableCell colSpan={3} sx={{ textAlign: checklistName ? 'left' : 'center' }}>{checklistName}</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
 
-            {/* 모바일용 레이아웃 */}
-            <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
-              <Box>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.title')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5, textAlign: assessmentDetail.title ? 'left' : 'center' }}>{assessmentDetail.title || ''}</Typography>
+                {/* 모바일 */}
+                <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('common.title')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontWeight: 600 }}>{assessmentDetail.title || ''}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.region')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{assessmentDetail.site || ''}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.department')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{assessmentDetail.authorDept || ''}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.evaluator', '평가자')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{proc0.evaluator || ''}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{proc0.evaluationDate ? proc0.evaluationDate.substring(0, 10) : ''}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('common.creator', '작성자')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{assessmentDetail.authorName || ''}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('audit.createdAt', '작성일자')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{fmtDt(assessmentDetail.createdAt)}</Typography>
+                  </Box>
+                  {hasModified && (
+                    <>
+                      <Box>
+                        <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('common.modifier', '수정자')}</Typography>
+                        <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{(assessmentDetail as any)?.modifiedByName || ''}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('common.modifiedAt', '수정일자')}</Typography>
+                        <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{fmtDt(assessmentDetail.modifiedAt)}</Typography>
+                      </Box>
+                    </>
+                  )}
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.planApprover', '계획 승인자')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{[assessmentDetail.planApproverTeam, assessmentDetail.planApproverPosition, assessmentDetail.planApproverName].filter(Boolean).join(' / ') || ''}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.completionApprover', '완료 승인자')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{[assessmentDetail.completionApproverTeam, assessmentDetail.completionApproverPosition, assessmentDetail.completionApproverName].filter(Boolean).join(' / ') || ''}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('common.checklist', '체크리스트')}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{checklistName}</Typography>
+                  </Box>
+                </Box>
               </Box>
-              <Box>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.region')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5, textAlign: assessmentDetail.site ? 'left' : 'center' }}>{assessmentDetail.site || ''}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.author')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5, textAlign: assessmentDetail.authorName ? 'left' : 'center' }}>{assessmentDetail.authorName || ''}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.department')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5, textAlign: assessmentDetail.authorDept ? 'left' : 'center' }}>{assessmentDetail.authorDept || ''}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.status')}</Typography>
-                <Box sx={{ px: 1.5, py: 0.5, textAlign: assessmentDetail.status ? 'left' : 'center' }}>{getStatusChip(assessmentDetail.status)}</Box>
-              </Box>
-              <Box>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.completedDate')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5, textAlign: assessmentDetail.completedDate ? 'left' : 'center' }}>{formatDate(assessmentDetail.completedDate)}</Typography>
-              </Box>
-            </Box>
-          </Box>
-
-          {/* 활동공정 + 체크리스트 (읽기전용) — 데이터가 없어도 레이블/값 '-' 으로 항상 표시 */}
-          <Paper variant="outlined" sx={{ overflow: 'hidden', mb: 3 }}>
-            {renderProcessItem(
-              activityProcesses[0] || { majorCategoryIdx: 1, majorCategory: '', detailAction: '', evaluationDate: '', evaluator: '', isTarget: true },
-              1,
-              Math.max(0, activityProcesses.findIndex(p => p.majorCategoryIdx === 1)),
-              true,
-            )}
-
-            {/* 체크리스트 - PC */}
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, borderTop: 1, borderColor: 'grey.300' }}>
-              <Typography
-                sx={{
-                  width: 160, minWidth: 160, fontWeight: 'bold', bgcolor: 'grey.100',
-                  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center',
-                }}
-              >
-                {t('common.checklist', '체크리스트')}
-              </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">
-                  {assessmentDetail.formTitle || (formTemplates || []).find(f => f.id === assessmentDetail.formId)?.title || ''}
-                </Typography>
-              </Box>
-            </Box>
-            {/* 체크리스트 - 모바일 */}
-            <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', p: 2, gap: 1, borderTop: 1, borderColor: 'grey.300' }}>
-              <Typography variant="body2" fontWeight="bold" sx={{ bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-                {t('common.checklist', '체크리스트')}
-              </Typography>
-              <Typography variant="body2" sx={{ px: 1.5 }}>
-                {assessmentDetail.formTitle || (formTemplates || []).find(f => f.id === assessmentDetail.formId)?.title || ''}
-              </Typography>
-            </Box>
-          </Paper>
+            )
+          })()}
 
           {/* 체크리스트 정보 + 상세 항목 — formId/formTitle/detail 이 없어도 항상 노출 (없으면 '-' 와 빈 표 메시지) */}
           <Box sx={{ mb: 3 }}>
@@ -1137,102 +1175,125 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       <Box sx={{ mb: 3 }}>
         {/* PC용 테이블 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          {/* Row 1: 제목 | 지역 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-              {t('common.title')}
-            </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder={t('riskAssessment.form.titlePlaceholder')}
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                required
-              />
-            </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-              {t('riskAssessment.region')}
-            </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
-              <FormControl fullWidth size="small">
-                <Select
-                  value={formData.site}
-                  onChange={(e: SelectChangeEvent) => setFormData({ ...formData, site: e.target.value })}
-                  displayEmpty
-                >
-                  <MenuItem value="">{t('riskAssessment.siteFilter')}</MenuItem>
-                  {sites.map((site) => (<MenuItem key={site} value={site}>{site}</MenuItem>))}
-                </Select>
-              </FormControl>
-            </Box>
-          </Box>
-          {/* Row 2: 작성자 | 소속 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-              {t('riskAssessment.author')}
-            </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body2">{formData.authorName || user?.name || user?.username || ''}</Typography>
-            </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-              {t('riskAssessment.department')}
-            </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder={t('riskAssessment.department')}
-                value={formData.authorDept || ''}
-                InputProps={{ readOnly: true }}
-              />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
-                <PersonSearchIcon fontSize="small" />
-              </Button>
-            </Box>
-          </Box>
-          {/* Row 3: 이메일 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-              {t('riskAssessment.email')}
-            </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder={t('riskAssessment.email')}
-                value={formData.authorMail || ''}
-                onChange={(e) => setFormData({ ...formData, authorMail: e.target.value })}
-                disabled={viewMode === 'create'}
-              />
-            </Box>
-          </Box>
-          {/* Row 4: 계획 승인자 | 완료 승인자 */}
-          <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-              {t('riskAssessment.planApprover', '계획 승인자')}
-              <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
-            </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={formData.planApproverName || ''} InputProps={{ readOnly: true }}
-                placeholder={t('riskAssessment.selectPlanApprover', '계획 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
-                <PersonSearchIcon fontSize="small" />
-              </Button>
-            </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-              {t('riskAssessment.completionApprover', '완료 승인자')}
-              <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
-            </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
-                placeholder={t('riskAssessment.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
-                <PersonSearchIcon fontSize="small" />
-              </Button>
-            </Box>
-          </Box>
+          {(() => {
+            const lbl = { width: 130, minWidth: 130, fontWeight: 'bold' as const, bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const, whiteSpace: 'nowrap' as const }
+            const lblWide = lbl
+            const val = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
+            const valBr = { ...val, borderRight: 1, borderColor: 'grey.300' }
+            const proc0 = activityProcesses[0] || { majorCategoryIdx: 1, majorCategory: MAJOR_CATEGORIES[0], detailAction: '', evaluationDate: '', evaluator: '', isTarget: true }
+            const proc0Idx = Math.max(0, activityProcesses.findIndex(p => p.majorCategoryIdx === 1))
+            const hasModified = !!(selectedAssessment?.modifiedAt && selectedAssessment.modifiedAt !== selectedAssessment.createdAt)
+            const fmtDt = (s?: string) => s ? s.replace('T', ' ').substring(0, 16) : ''
+            return (
+              <>
+                {/* 제목 */}
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                  <Typography sx={lbl}>{t('common.title')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
+                  <Box sx={val}>
+                    <TextField fullWidth size="small" placeholder={t('riskAssessment.form.titlePlaceholder')} value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+                  </Box>
+                </Box>
+                {/* 사업장 | 부서 */}
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                  <Typography sx={lbl}>{t('riskAssessment.region')}</Typography>
+                  <Box sx={valBr}>
+                    <FormControl fullWidth size="small">
+                      <Select value={formData.site} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, site: e.target.value })} displayEmpty>
+                        <MenuItem value="">{t('riskAssessment.siteFilter')}</MenuItem>
+                        {sites.map((site) => (<MenuItem key={site} value={site}>{site}</MenuItem>))}
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Typography sx={lbl}>{t('riskAssessment.department')}</Typography>
+                  <Box sx={{ ...val, gap: 1 }}>
+                    <TextField fullWidth size="small" placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={formData.authorDept || ''} InputProps={{ readOnly: true }} />
+                    <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
+                      <PersonSearchIcon fontSize="small" />
+                    </Button>
+                  </Box>
+                </Box>
+                {/* 평가자 | 평가일시 */}
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                  <Typography sx={lbl}>{t('riskAssessment.evaluator', '평가자')}</Typography>
+                  <Box sx={{ ...valBr, gap: 1 }}>
+                    <TextField fullWidth size="small" value={proc0.evaluator || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setEvaluatorPickTarget({ globalIndex: proc0Idx })}>
+                      <PersonSearchIcon fontSize="small" />
+                    </Button>
+                  </Box>
+                  <Typography sx={lbl}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
+                  <Box sx={val}>
+                    <DatePickerField size="small" value={proc0.evaluationDate ? proc0.evaluationDate.substring(0, 10) : null}
+                      onChange={(v) => handleProcessFieldChange(proc0Idx, 'evaluationDate', v || '')} />
+                  </Box>
+                </Box>
+                {/* 작성자 | 작성일자 */}
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                  <Typography sx={lbl}>{t('common.creator', '작성자')}</Typography>
+                  <Box sx={valBr}>
+                    <Typography variant="body2">{formData.authorName || user?.name || user?.username || ''}</Typography>
+                  </Box>
+                  <Typography sx={lbl}>{t('audit.createdAt', '작성일자')}</Typography>
+                  <Box sx={val}>
+                    <Typography variant="body2" fontFamily="monospace">
+                      {viewMode === 'edit' && selectedAssessment ? fmtDt(selectedAssessment.createdAt) : new Date().toISOString().substring(0, 10)}
+                    </Typography>
+                  </Box>
+                </Box>
+                {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
+                {hasModified && (
+                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                    <Typography sx={lbl}>{t('common.modifier', '수정자')}</Typography>
+                    <Box sx={valBr}>
+                      <Typography variant="body2">{(selectedAssessment as any)?.modifiedByName || ''}</Typography>
+                    </Box>
+                    <Typography sx={lbl}>{t('common.modifiedAt', '수정일자')}</Typography>
+                    <Box sx={val}>
+                      <Typography variant="body2" fontFamily="monospace">{fmtDt(selectedAssessment?.modifiedAt)}</Typography>
+                    </Box>
+                  </Box>
+                )}
+                {/* 계획승인자 | 완료승인자 */}
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                  <Typography sx={lblWide}>
+                    {t('riskAssessment.planApprover', '계획 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+                  </Typography>
+                  <Box sx={{ ...valBr, gap: 1 }}>
+                    <TextField fullWidth size="small" value={formData.planApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
+                      <PersonSearchIcon fontSize="small" />
+                    </Button>
+                  </Box>
+                  <Typography sx={lblWide}>
+                    {t('riskAssessment.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+                  </Typography>
+                  <Box sx={{ ...val, gap: 1 }}>
+                    <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
+                      <PersonSearchIcon fontSize="small" />
+                    </Button>
+                  </Box>
+                </Box>
+                {/* 체크리스트 */}
+                <Box sx={{ display: 'flex' }}>
+                  <Typography sx={lbl}>
+                    {t('common.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+                  </Typography>
+                  <Box sx={{ ...val, flex: 3 }}>
+                    <FormControl fullWidth size="small">
+                      <Select value={step21FormId} onChange={(e: SelectChangeEvent<number | ''>) => handleStep21FormChange(e.target.value as number | '')} displayEmpty>
+                        <MenuItem value=""><em>{t('common.none', '선택 안함')}</em></MenuItem>
+                        {(formTemplates || []).map((form) => (
+                          <MenuItem key={form.id} value={form.id}>{form.title}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
+                </Box>
+              </>
+            )
+          })()}
         </Box>
 
         {/* 모바일용 레이아웃 */}
@@ -1261,118 +1322,108 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               </Select>
             </FormControl>
           </Box>
-          <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.author')}</Typography>
-            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formData.authorName || user?.name || user?.username || ''}</Typography>
-          </Box>
-          <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.department')}</Typography>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder={t('riskAssessment.department')}
-                value={formData.authorDept || ''}
-                InputProps={{ readOnly: true }}
-              />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
-                <PersonSearchIcon fontSize="small" />
-              </Button>
-            </Box>
-          </Box>
-          <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.email')}</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder={t('riskAssessment.email')}
-              value={formData.authorMail || ''}
-              onChange={(e) => setFormData({ ...formData, authorMail: e.target.value })}
-              disabled={viewMode === 'create'}
-            />
-          </Box>
-          <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('riskAssessment.planApprover', '계획 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={formData.planApproverName || ''} InputProps={{ readOnly: true }}
-                placeholder={t('riskAssessment.selectPlanApprover', '계획 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
-                <PersonSearchIcon fontSize="small" />
-              </Button>
-            </Box>
-          </Box>
-          <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('riskAssessment.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }}
-                placeholder={t('riskAssessment.selectCompletionApprover', '완료 승인자 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
-                <PersonSearchIcon fontSize="small" />
-              </Button>
-            </Box>
-          </Box>
+          {(() => {
+            const proc0 = activityProcesses[0] || { majorCategoryIdx: 1, majorCategory: MAJOR_CATEGORIES[0], detailAction: '', evaluationDate: '', evaluator: '', isTarget: true }
+            const proc0Idx = Math.max(0, activityProcesses.findIndex(p => p.majorCategoryIdx === 1))
+            const hasModified = !!(selectedAssessment?.modifiedAt && selectedAssessment.modifiedAt !== selectedAssessment.createdAt)
+            const fmtDt = (s?: string) => s ? s.replace('T', ' ').substring(0, 16) : ''
+            const lblCls = { mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }
+            return (
+              <>
+                {/* 부서 */}
+                <Box>
+                  <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('riskAssessment.department')}</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField fullWidth size="small" placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={formData.authorDept || ''} InputProps={{ readOnly: true }} />
+                    <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
+                      <PersonSearchIcon fontSize="small" />
+                    </Button>
+                  </Box>
+                </Box>
+                {/* 평가자 */}
+                <Box>
+                  <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('riskAssessment.evaluator', '평가자')}</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField fullWidth size="small" value={proc0.evaluator || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setEvaluatorPickTarget({ globalIndex: proc0Idx })}>
+                      <PersonSearchIcon fontSize="small" />
+                    </Button>
+                  </Box>
+                </Box>
+                {/* 평가일시 */}
+                <Box>
+                  <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
+                  <DatePickerField size="small" value={proc0.evaluationDate ? proc0.evaluationDate.substring(0, 10) : null}
+                    onChange={(v) => handleProcessFieldChange(proc0Idx, 'evaluationDate', v || '')} />
+                </Box>
+                {/* 작성자 */}
+                <Box>
+                  <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('common.creator', '작성자')}</Typography>
+                  <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formData.authorName || user?.name || user?.username || ''}</Typography>
+                </Box>
+                {/* 작성일자 */}
+                <Box>
+                  <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('audit.createdAt', '작성일자')}</Typography>
+                  <Typography variant="body2" fontFamily="monospace" sx={{ px: 1.5, py: 0.5 }}>
+                    {viewMode === 'edit' && selectedAssessment ? fmtDt(selectedAssessment.createdAt) : new Date().toISOString().substring(0, 10)}
+                  </Typography>
+                </Box>
+                {/* 수정자/수정일자 — 수정 이력 있을 때만 */}
+                {hasModified && (
+                  <>
+                    <Box>
+                      <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('common.modifier', '수정자')}</Typography>
+                      <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{(selectedAssessment as any)?.modifiedByName || ''}</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('common.modifiedAt', '수정일자')}</Typography>
+                      <Typography variant="body2" fontFamily="monospace" sx={{ px: 1.5, py: 0.5 }}>{fmtDt(selectedAssessment?.modifiedAt)}</Typography>
+                    </Box>
+                  </>
+                )}
+                {/* 계획 승인자 */}
+                <Box>
+                  <Typography variant="body2" fontWeight="bold" sx={lblCls}>
+                    {t('riskAssessment.planApprover', '계획 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField fullWidth size="small" value={formData.planApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
+                      <PersonSearchIcon fontSize="small" />
+                    </Button>
+                  </Box>
+                </Box>
+                {/* 완료 승인자 */}
+                <Box>
+                  <Typography variant="body2" fontWeight="bold" sx={lblCls}>
+                    {t('riskAssessment.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
+                      <PersonSearchIcon fontSize="small" />
+                    </Button>
+                  </Box>
+                </Box>
+                {/* 체크리스트 */}
+                <Box>
+                  <Typography variant="body2" fontWeight="bold" sx={lblCls}>
+                    {t('common.checklist', '체크리스트')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
+                  </Typography>
+                  <FormControl fullWidth size="small">
+                    <Select value={step21FormId} onChange={(e: SelectChangeEvent<number | ''>) => handleStep21FormChange(e.target.value as number | '')} displayEmpty>
+                      <MenuItem value=""><em>{t('common.none', '선택 안함')}</em></MenuItem>
+                      {(formTemplates || []).map((form) => (
+                        <MenuItem key={form.id} value={form.id}>{form.title}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              </>
+            )
+          })()}
         </Box>
       </Box>
-
-      {/* 활동공정 + 체크리스트 (하나의 테이블로 연결) — 활동공정이 비어도 기본 행으로 편집 필드 노출 */}
-      <Paper variant="outlined" sx={{ overflow: 'hidden', mb: 3 }}>
-        {renderProcessItem(
-          activityProcesses[0] || { majorCategoryIdx: 1, majorCategory: MAJOR_CATEGORIES[0], detailAction: '', evaluationDate: '', evaluator: '', isTarget: true },
-          1,
-          Math.max(0, activityProcesses.findIndex(p => p.majorCategoryIdx === 1)),
-          false,
-        )}
-
-        {/* 체크리스트 - PC */}
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, borderTop: 1, borderColor: 'grey.300' }}>
-          <Typography
-            sx={{
-              width: 160, minWidth: 160, fontWeight: 'bold', bgcolor: 'grey.100',
-              px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center',
-            }}
-          >
-            {t('common.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
-          </Typography>
-          <Box sx={{ flex: 1, px: 2, py: 1 }}>
-            <FormControl fullWidth size="small">
-              <Select
-                value={step21FormId}
-                onChange={(e: SelectChangeEvent<number | ''>) => handleStep21FormChange(e.target.value as number | '')}
-                displayEmpty
-              >
-                <MenuItem value=""><em>{t('common.none', '선택 안함')}</em></MenuItem>
-                {(formTemplates || []).map((form) => (
-                  <MenuItem key={form.id} value={form.id}>{form.title}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
-        {/* 체크리스트 - 모바일 */}
-        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', p: 2, gap: 1, borderTop: 1, borderColor: 'grey.300' }}>
-          <Typography variant="body2" fontWeight="bold" sx={{ bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-            {t('common.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
-          </Typography>
-          <FormControl fullWidth size="small">
-            <Select
-              value={step21FormId}
-              onChange={(e: SelectChangeEvent<number | ''>) => handleStep21FormChange(e.target.value as number | '')}
-              displayEmpty
-            >
-              <MenuItem value=""><em>{t('common.none', '선택 안함')}</em></MenuItem>
-              {(formTemplates || []).map((form) => (
-                <MenuItem key={form.id} value={form.id}>{form.title}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-      </Paper>
 
       {/* 선택한 양식의 체크리스트 정보 + 상세 항목 */}
       {step21FormId && (
@@ -1421,44 +1472,35 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       <Box key={globalIndex}>
         {/* PC 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          {/* Row 3: 평가일시 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          {/* 평가자 | 평가일시 — 한 행 */}
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={labelSx}>{t('riskAssessment.evaluator', '평가자')}</Typography>
+            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', gap: 1 }}>
+              {readOnly ? (
+                <Typography variant="body2" sx={{ py: 0.5, textAlign: process.evaluator ? 'left' : 'center', width: '100%' }}>{process.evaluator || ''}</Typography>
+              ) : (
+                <>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={process.evaluator || ''}
+                    InputProps={{ readOnly: true }}
+                    placeholder={t('common.selectFromOrg', '조직도에서 선택')}
+                  />
+                  <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setEvaluatorPickTarget({ globalIndex })}>
+                    <PersonSearchIcon fontSize="small" />
+                  </Button>
+                </>
+              )}
+            </Box>
             <Typography sx={labelSx}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1 }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, display: 'flex', alignItems: 'center' }}>
               {readOnly ? (
                 <Typography variant="body2" sx={{ py: 0.5, textAlign: process.evaluationDate ? 'left' : 'center' }}>{process.evaluationDate ? process.evaluationDate.substring(0, 10) : ''}</Typography>
               ) : (
                 <DatePickerField size="small"
                   value={process.evaluationDate ? process.evaluationDate.substring(0, 10) : null}
                   onChange={(v) => handleProcessFieldChange(globalIndex, 'evaluationDate', v || '')} />
-              )}
-            </Box>
-          </Box>
-
-          {/* Row 4: 평가자 */}
-          <Box sx={{ display: 'flex' }}>
-            <Typography sx={labelSx}>{t('riskAssessment.evaluator', '평가자')}</Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap', justifyContent: readOnly && !process.evaluator ? 'center' : 'flex-start' }}>
-              {readOnly ? (
-                <Typography variant="body2" sx={{ py: 0.5, textAlign: process.evaluator ? 'left' : 'center', width: '100%' }}>{process.evaluator || ''}</Typography>
-              ) : (
-                <>
-                  {evaluatorNames.map((name, idx) => (
-                    <Chip
-                      key={idx}
-                      label={name}
-                      size="small"
-                      onDelete={() => {
-                        const list = evaluatorNames.filter(n => n !== name)
-                        handleProcessFieldChange(globalIndex, 'evaluator', list.join(', '))
-                      }}
-                    />
-                  ))}
-                  {evaluatorNames.length === 0 && (
-                    <Typography variant="body2" color="text.secondary">{t('riskAssessment.selectEvaluator', '평가자 선택')}</Typography>
-                  )}
-                  <Button variant="outlined" size="small" sx={{ ml: 'auto', minWidth: 40 }} onClick={() => setEvaluatorPickTarget({ globalIndex })}><PersonSearchIcon fontSize="small" /></Button>
-                </>
               )}
             </Box>
           </Box>

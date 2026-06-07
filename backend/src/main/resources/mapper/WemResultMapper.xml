@@ -18,6 +18,10 @@
         <result property="measurementDate" column="measurement_date"/>
         <result property="measurementAgency" column="measurement_agency"/>
         <result property="remarks" column="remarks"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
@@ -48,8 +52,13 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tb_wem_result (process_name, factor_name, sample_type, measured_value, twa_value, stel_value, exposure_standard, exceed_rate, judgment, has_report, measurement_date, measurement_agency, remarks, created_at, modified_at)
-        VALUES (#{processName}, #{factorName}, #{sampleType}, #{measuredValue}, #{twaValue}, #{stelValue}, #{exposureStandard}, #{exceedRate}, #{judgment}, #{hasReport}, #{measurementDate}, #{measurementAgency}, #{remarks}, GETDATE(), GETDATE())
+        INSERT INTO tb_wem_result (process_name, factor_name, sample_type, measured_value, twa_value, stel_value, exposure_standard, exceed_rate, judgment, has_report, measurement_date, measurement_agency, remarks,
+            created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+            created_at, modified_at)
+        VALUES (#{processName}, #{factorName}, #{sampleType}, #{measuredValue}, #{twaValue}, #{stelValue}, #{exposureStandard}, #{exceedRate}, #{judgment}, #{hasReport}, #{measurementDate}, #{measurementAgency}, #{remarks},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+            GETDATE(), GETDATE())
     </insert>
 
     <update id="update">
@@ -67,6 +76,8 @@
             measurement_date = #{measurementDate},
             measurement_agency = #{measurementAgency},
             remarks = #{remarks},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

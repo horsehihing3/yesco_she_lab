@@ -3,6 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.WemFactorRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.WemFactorResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.WemFactorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +25,11 @@ import org.springframework.web.bind.annotation.*;
 public class WemFactorController {
 
     private final WemFactorService wemFactorService;
+    private final IdmMapper idmMapper;
+
+    private IdmUser current(Authentication auth) {
+        return auth != null ? idmMapper.findByUid(auth.getName()) : null;
+    }
 
     @GetMapping
     @Operation(summary = "List hazardous factors", description = "Get all WEM factors with optional type filter and pagination")
@@ -56,8 +64,9 @@ public class WemFactorController {
     @PostMapping
     @Operation(summary = "Create factor", description = "Create a new WEM factor")
     public ResponseEntity<ApiResponse<WemFactorResponse>> create(
-            @Valid @RequestBody WemFactorRequest request) {
-        WemFactorResponse factor = wemFactorService.create(request);
+            @Valid @RequestBody WemFactorRequest request,
+            Authentication authentication) {
+        WemFactorResponse factor = wemFactorService.create(request, current(authentication));
         return ResponseEntity.ok(ApiResponse.success("Factor created successfully", factor));
     }
 
@@ -65,8 +74,9 @@ public class WemFactorController {
     @Operation(summary = "Update factor", description = "Update an existing WEM factor")
     public ResponseEntity<ApiResponse<WemFactorResponse>> update(
             @PathVariable Long id,
-            @Valid @RequestBody WemFactorRequest request) {
-        WemFactorResponse factor = wemFactorService.update(id, request);
+            @Valid @RequestBody WemFactorRequest request,
+            Authentication authentication) {
+        WemFactorResponse factor = wemFactorService.update(id, request, current(authentication));
         return ResponseEntity.ok(ApiResponse.success("Factor updated successfully", factor));
     }
 

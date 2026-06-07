@@ -17,6 +17,10 @@
         <result property="isPermitted" column="is_permitted"/>
         <result property="usedProcess" column="used_process"/>
         <result property="remarks" column="remarks"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
@@ -59,8 +63,13 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tb_wem_factor (factor_name, factor_name_en, cas_number, factor_type, twa, stel, ceiling_value, unit, msds_linked, is_permitted, used_process, remarks, created_at, modified_at)
-        VALUES (#{factorName}, #{factorNameEn}, #{casNumber}, #{factorType}, #{twa}, #{stel}, #{ceilingValue}, #{unit}, #{msdsLinked}, #{isPermitted}, #{usedProcess}, #{remarks}, GETDATE(), GETDATE())
+        INSERT INTO tb_wem_factor (factor_name, factor_name_en, cas_number, factor_type, twa, stel, ceiling_value, unit, msds_linked, is_permitted, used_process, remarks,
+            created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+            created_at, modified_at)
+        VALUES (#{factorName}, #{factorNameEn}, #{casNumber}, #{factorType}, #{twa}, #{stel}, #{ceilingValue}, #{unit}, #{msdsLinked}, #{isPermitted}, #{usedProcess}, #{remarks},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+            GETDATE(), GETDATE())
     </insert>
 
     <update id="update">
@@ -77,6 +86,8 @@
             is_permitted = #{isPermitted},
             used_process = #{usedProcess},
             remarks = #{remarks},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

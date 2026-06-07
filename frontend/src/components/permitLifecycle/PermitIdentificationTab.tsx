@@ -1,15 +1,13 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip,
+  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
+  IconButton, CircularProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import ListSearchBar from '../common/ListSearchBar'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { permitIdentApi, permitLifecycleStatsApi } from '../../api/permitLifecycleApi'
 import type { PermitIdentification } from '../../types/permitLifecycle.types'
 import StatCard from '../legalCompliance/StatCard'
@@ -20,6 +18,8 @@ import { useAlert } from '../../contexts/AlertContext'
 
 const STATUSES = ['식별완료', '검토중', '미식별', '미대상']
 const CATEGORIES = ['환경', '안전', '보건', '소방', '화학', '건축']
+
+type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const statusColor = (s?: string): 'success' | 'warning' | 'error' | 'default' =>
   s === '식별완료' ? 'success' : s === '검토중' ? 'warning' : s === '미식별' ? 'error' : 'default'
@@ -33,17 +33,15 @@ const PermitIdentificationTab: React.FC = () => {
   const { data: list = [], isLoading } = useQuery({ queryKey: ['permitIdent'], queryFn: permitIdentApi.list })
   const { data: stats } = useQuery({ queryKey: ['permitLifecycleStats'], queryFn: permitLifecycleStatsApi.get })
 
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [selected, setSelected] = useState<PermitIdentification | null>(null)
   const [searchInput, setSearchInput] = useState('')
-
   const [search, setSearch] = useState('')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [form, setForm] = useState<Partial<PermitIdentification>>(emptyForm)
 
   const applySearch = () => setSearch(searchInput)
-
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
-  const [filterStatus, setFilterStatus] = useState('all')
-  const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<PermitIdentification | null>(null)
-  const [form, setForm] = useState<Partial<PermitIdentification>>(emptyForm)
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ['permitIdent'] })
@@ -52,17 +50,17 @@ const PermitIdentificationTab: React.FC = () => {
 
   const createM = useMutation({
     mutationFn: permitIdentApi.create,
-    onSuccess: () => { invalidate(); setOpen(false); showSuccess('등록되었습니다') },
+    onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() },
     onError: () => showError('등록에 실패했습니다'),
   })
   const updateM = useMutation({
     mutationFn: ({ id, e }: { id: number; e: Partial<PermitIdentification> }) => permitIdentApi.update(id, e),
-    onSuccess: () => { invalidate(); setOpen(false); showSuccess('수정되었습니다') },
+    onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() },
     onError: () => showError('수정에 실패했습니다'),
   })
   const deleteM = useMutation({
     mutationFn: permitIdentApi.remove,
-    onSuccess: () => { invalidate(); showSuccess('삭제되었습니다') },
+    onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() },
   })
 
   const filtered = useMemo(() => list.filter((x) => {
@@ -75,12 +73,128 @@ const PermitIdentificationTab: React.FC = () => {
     return true
   }), [list, filterStatus, search])
 
-  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, installDate: todayStr(), assessmentDate: todayStr() }); setOpen(true) }
-  const openEdit = (item: PermitIdentification) => { setEditing(item); setForm({ ...item }); setOpen(true) }
+  const handleBackToList = () => { setViewMode('list'); setSelected(null); setForm(emptyForm) }
+  const handleRowClick = (item: PermitIdentification) => { setSelected(item); setViewMode('detail') }
+  const handleAddClick = () => { setSelected(null); setForm({ ...emptyForm, installDate: todayStr(), assessmentDate: todayStr() }); setViewMode('create') }
+  const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
+  const handleDeleteClick = async () => {
+    if (!selected) return
+    if (await showConfirm('이 식별 항목을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+  }
   const handleSave = () => {
     if (!form.equipmentName) { showError('설비명을 입력해주세요'); return }
-    if (editing) updateM.mutate({ id: editing.id, e: form })
+    if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
+  }
+
+  if (viewMode === 'detail' && selected) {
+    return (
+      <Box>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>식별 항목 상세</Typography>
+        <FormTable>
+          <FormRow>
+            <FormLabel>설비·시설명</FormLabel>
+            <FormCell><Typography variant="body2" fontWeight={600}>{selected.equipmentName}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>시설 종류</FormLabel>
+            <FormCell borderRight><Typography variant="body2">{selected.equipmentType || ''}</Typography></FormCell>
+            <FormLabel>식별 상태</FormLabel>
+            <FormCell><Chip size="small" label={selected.status} color={statusColor(selected.status)} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>위치</FormLabel>
+            <FormCell borderRight><Typography variant="body2">{selected.location || ''}</Typography></FormCell>
+            <FormLabel>설치일</FormLabel>
+            <FormCell><Typography variant="body2" fontFamily="monospace">{selected.installDate || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>해당 분야</FormLabel>
+            <FormCell><Typography variant="body2">{selected.applicableCategories || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>예상 인허가</FormLabel>
+            <FormCell><Typography variant="body2">{selected.applicablePermits || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>연결된 인허가</FormLabel>
+            <FormCell><Typography variant="body2">{selected.linkedPermits || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>평가자</FormLabel>
+            <FormCell borderRight><Typography variant="body2">{selected.assessor || ''}</Typography></FormCell>
+            <FormLabel>평가일</FormLabel>
+            <FormCell><Typography variant="body2" fontFamily="monospace">{selected.assessmentDate || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>비고</FormLabel>
+            <FormCell><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selected.notes || ''}</Typography></FormCell>
+          </FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
+          <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
+          <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
+        </Box>
+      </Box>
+    )
+  }
+
+  if (viewMode === 'create' || viewMode === 'edit') {
+    return (
+      <Box>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{viewMode === 'edit' ? '식별 항목 수정' : '식별 항목 등록'}</Typography>
+        <FormTable>
+          <FormRow>
+            <FormLabel required>설비·시설명</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.equipmentName || ''} onChange={(e) => setForm({ ...form, equipmentName: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>시설 종류</FormLabel>
+            <FormCell borderRight><TextField fullWidth size="small" value={form.equipmentType || ''} onChange={(e) => setForm({ ...form, equipmentType: e.target.value })} /></FormCell>
+            <FormLabel>식별 상태</FormLabel>
+            <FormCell>
+              <TextField select fullWidth size="small" value={form.status || ''} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+                <MenuItem value="">선택하세요</MenuItem>
+                {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+              </TextField>
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>위치</FormLabel>
+            <FormCell borderRight><TextField fullWidth size="small" value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} /></FormCell>
+            <FormLabel>설치일</FormLabel>
+            <FormCell><DatePickerField value={form.installDate || null} onChange={(d) => setForm({ ...form, installDate: d || undefined })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>해당 분야</FormLabel>
+            <FormCell><TextField fullWidth size="small" placeholder="예: 환경,화학,소방 (쉼표 구분)" value={form.applicableCategories || ''} onChange={(e) => setForm({ ...form, applicableCategories: e.target.value })} helperText={`선택지: ${CATEGORIES.join(' / ')}`} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>예상 인허가</FormLabel>
+            <FormCell><TextField fullWidth size="small" placeholder="예: 대기배출시설,안전검사 (쉼표 구분)" value={form.applicablePermits || ''} onChange={(e) => setForm({ ...form, applicablePermits: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>연결된 인허가</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.linkedPermits || ''} onChange={(e) => setForm({ ...form, linkedPermits: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>평가자</FormLabel>
+            <FormCell borderRight><TextField fullWidth size="small" value={form.assessor || ''} onChange={(e) => setForm({ ...form, assessor: e.target.value })} /></FormCell>
+            <FormLabel>평가일</FormLabel>
+            <FormCell><DatePickerField value={form.assessmentDate || null} onChange={(d) => setForm({ ...form, assessmentDate: d || undefined })} /></FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>비고</FormLabel>
+            <FormCell><TextField fullWidth size="small" multiline minRows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></FormCell>
+          </FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
+          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
+        </Box>
+      </Box>
+    )
   }
 
   return (
@@ -92,16 +206,17 @@ const PermitIdentificationTab: React.FC = () => {
         <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.identMiss ?? 0}   label="미식별" sub="조치 필요" /></Grid>
       </Grid>
 
-      <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <ListSearchBar placeholder="설비명·위치 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ flex: 1, minWidth: 180 }} />
-          <TextField select size="small" label="식별 상태" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} sx={{ minWidth: 130 }}>
-            <MenuItem value="all">전체</MenuItem>
-            {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-          </TextField>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+        <ListSearchBar placeholder="설비명·위치 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
+          sx={{ width: { xs: '100%', sm: 240 } }} />
+        <TextField select size="small" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} sx={{ minWidth: 130 }}>
+          <MenuItem value="all">전체</MenuItem>
+          {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+        </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
-        </Stack>
-      </Paper>
+        <Box sx={{ flex: 1 }} />
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ whiteSpace: 'nowrap' }}>New</Button>
+      </Stack>
 
       <Paper variant="outlined" sx={{ mb: 2 }}>
         {isLoading ? <Box sx={{ p: 6, textAlign: 'center' }}><CircularProgress /></Box> : (
@@ -115,26 +230,19 @@ const PermitIdentificationTab: React.FC = () => {
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 110 }}>설치일</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 90 }}>상태</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 120 }}>평가자</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', width: 90 }}>작업</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filtered.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} align="center" sx={{ py: 6, color: 'text.disabled' }}>식별 항목이 없습니다</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} align="center" sx={{ py: 6, color: 'text.disabled' }}>식별 항목이 없습니다</TableCell></TableRow>
                 ) : filtered.map((x) => (
-                  <TableRow key={x.id} hover>
+                  <TableRow key={x.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(x)}>
                     <TableCell sx={{ fontWeight: 600 }}>{x.equipmentName}</TableCell>
                     <TableCell sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>{x.equipmentType || '-'}</TableCell>
                     <TableCell sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>{x.location || '-'}</TableCell>
                     <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{x.installDate || '-'}</TableCell>
                     <TableCell align="center"><Chip size="small" label={x.status} color={statusColor(x.status)} /></TableCell>
                     <TableCell align="center" sx={{ fontSize: '0.85rem' }}>{x.assessor || '-'}</TableCell>
-                    <TableCell align="center" sx={{ whiteSpace: 'nowrap', px: 0.5 }}>
-                      <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => {
-                        if (await showConfirm('이 식별 항목을 삭제하시겠습니까?')) deleteM.mutate(x.id)
-                      }}><DeleteIcon fontSize="inherit" /></IconButton>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -142,65 +250,6 @@ const PermitIdentificationTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
-
-      <Stack direction="row" justifyContent="flex-end">
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
-      </Stack>
-
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editing ? '식별 항목 수정' : '식별 항목 등록'}</DialogTitle>
-        <DialogContent dividers>
-          <FormTable>
-            <FormRow>
-              <FormLabel required>설비·시설명</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.equipmentName || ''} onChange={(e) => setForm({ ...form, equipmentName: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>시설 종류</FormLabel>
-              <FormCell borderRight><TextField fullWidth size="small" value={form.equipmentType || ''} onChange={(e) => setForm({ ...form, equipmentType: e.target.value })} /></FormCell>
-              <FormLabel>식별 상태</FormLabel>
-              <FormCell>
-                <TextField select fullWidth size="small" value={form.status || ''} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                  <MenuItem value="">선택하세요</MenuItem>
-                  {STATUSES.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-                </TextField>
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>위치</FormLabel>
-              <FormCell borderRight><TextField fullWidth size="small" value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} /></FormCell>
-              <FormLabel>설치일</FormLabel>
-              <FormCell><DatePickerField value={form.installDate || null} onChange={(d) => setForm({ ...form, installDate: d || undefined })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>해당 분야</FormLabel>
-              <FormCell><TextField fullWidth size="small" placeholder="예: 환경,화학,소방 (쉼표 구분)" value={form.applicableCategories || ''} onChange={(e) => setForm({ ...form, applicableCategories: e.target.value })} helperText={`선택지: ${CATEGORIES.join(' / ')}`} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>예상 인허가</FormLabel>
-              <FormCell><TextField fullWidth size="small" placeholder="예: 대기배출시설,안전검사 (쉼표 구분)" value={form.applicablePermits || ''} onChange={(e) => setForm({ ...form, applicablePermits: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>연결된 인허가</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.linkedPermits || ''} onChange={(e) => setForm({ ...form, linkedPermits: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>평가자</FormLabel>
-              <FormCell borderRight><TextField fullWidth size="small" value={form.assessor || ''} onChange={(e) => setForm({ ...form, assessor: e.target.value })} /></FormCell>
-              <FormLabel>평가일</FormLabel>
-              <FormCell><DatePickerField value={form.assessmentDate || null} onChange={(d) => setForm({ ...form, assessmentDate: d || undefined })} /></FormCell>
-            </FormRow>
-            <FormRow last>
-              <FormLabel>비고</FormLabel>
-              <FormCell><TextField fullWidth size="small" multiline minRows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></FormCell>
-            </FormRow>
-          </FormTable>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   )
 }

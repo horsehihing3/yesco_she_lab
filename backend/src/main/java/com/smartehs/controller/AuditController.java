@@ -1,9 +1,11 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.Audit;
 import com.smartehs.model.AuditLog;
 import com.smartehs.model.AuditLogItem;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.AuditService;
 import com.smartehs.service.AuditLogService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,7 @@ public class AuditController {
 
     private final AuditService auditService;
     private final AuditLogService auditLogService;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "감사 전체 목록 조회")
@@ -63,13 +66,14 @@ public class AuditController {
     public ResponseEntity<ApiResponse<Audit>> update(@PathVariable Long id, @RequestBody Audit audit, Authentication authentication) {
         String username = authentication != null ? authentication.getName() : "system";
         audit.setModifiedBy(username);
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                audit.setModifiedByUserId(u.getUidNumber());
+                audit.setModifiedByName(u.getUserName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(auditService.update(id, audit)));
-    }
-
-    @PatchMapping("/{id}/grade")
-    @Operation(summary = "감사 등급 수정")
-    public ResponseEntity<ApiResponse<Audit>> updateGrade(@PathVariable Long id, @RequestParam String grade) {
-        return ResponseEntity.ok(ApiResponse.success(auditService.updateGrade(id, grade)));
     }
 
     @PatchMapping("/{id}/complete")

@@ -450,12 +450,22 @@ const WemFactorTab: React.FC = () => {
             <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
             <Box sx={valSx}><Typography variant="body2">{d.remarks || ''}</Typography></Box>
           </Box>
-          <Box sx={lastRowSx}>
-            <Box sx={labelSx}>{t('common.registered')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{formatDate(d.createdAt)}</Typography></Box>
-            <Box sx={labelSx}>{t('common.modified')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{formatDate(d.modifiedAt)}</Typography></Box>
+          {/* 작성자 | 작성일자 */}
+          <Box sx={d.modifiedAt && d.modifiedAt !== d.createdAt ? rowSx : lastRowSx}>
+            <Box sx={labelSx}>{t('common.creator', '작성자')}</Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{d.createdByName || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('audit.createdAt', '작성일자')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{formatDate(d.createdAt)}</Typography></Box>
           </Box>
+          {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
+          {d.modifiedAt && d.modifiedAt !== d.createdAt && (
+            <Box sx={lastRowSx}>
+              <Box sx={labelSx}>{t('common.modifier', '수정자')}</Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{d.modifiedByName || ''}</Typography></Box>
+              <Box sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Box>
+              <Box sx={valSx}><Typography variant="body2">{formatDate(d.modifiedAt)}</Typography></Box>
+            </Box>
+          )}
         </Box>
         {/* Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
@@ -472,8 +482,12 @@ const WemFactorTab: React.FC = () => {
             [t('wem.isPermitted'), d.isPermitted ? t('wem.permitted', '허가') : t('wem.notPermitted', '일반')],
             [t('wem.usedProcess'), d.usedProcess],
             [t('common.remarks', '비고'), d.remarks],
-            [t('common.registered'), formatDate(d.createdAt)],
-            [t('common.modified'), formatDate(d.modifiedAt)],
+            [t('common.creator', '작성자'), d.createdByName || ''],
+            [t('audit.createdAt', '작성일자'), formatDate(d.createdAt)],
+            ...(d.modifiedAt && d.modifiedAt !== d.createdAt ? [
+              [t('common.modifier', '수정자'), d.modifiedByName || ''],
+              [t('common.modifiedAt', '수정일자'), formatDate(d.modifiedAt)],
+            ] : []),
           ].filter(([, v]) => v).map(([label, value], i) => (
             <Box key={i}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography>

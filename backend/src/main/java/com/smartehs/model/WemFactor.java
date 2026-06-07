@@ -22,6 +22,10 @@ public class WemFactor {
     private Boolean isPermitted;
     private String usedProcess;
     private String remarks;
+    private Long createdByUserId;
+    private String createdByName;
+    private Long modifiedByUserId;
+    private String modifiedByName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

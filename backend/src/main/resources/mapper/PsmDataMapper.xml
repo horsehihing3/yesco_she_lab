@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PsmDataMapper">
+
+    <resultMap id="R" type="com.smartehs.model.PsmData">
+        <id property="id" column="id"/>
+        <result property="category" column="category"/>
+        <result property="code" column="code"/>
+        <result property="nameKo" column="name_ko"/>
+        <result property="typeLabel" column="type_label"/>
+        <result property="location" column="location"/>
+        <result property="manufacturer" column="manufacturer"/>
+        <result property="installDate" column="install_date"/>
+        <result property="designPressure" column="design_pressure"/>
+        <result property="designTemperature" column="design_temperature"/>
+        <result property="material" column="material"/>
+        <result property="inspectionCycle" column="inspection_cycle"/>
+        <result property="lastInspectionDate" column="last_inspection_date"/>
+        <result property="nextInspectionDate" column="next_inspection_date"/>
+        <result property="statusCode" column="status_code"/>
+        <result property="managerName" column="manager_name"/>
+        <result property="notes" column="notes"/>
+        <result property="extraA" column="extra_a"/>
+        <result property="extraB" column="extra_b"/>
+        <result property="extraC" column="extra_c"/>
+        <result property="casNumber" column="cas_number"/>
+        <result property="ghsClass" column="ghs_class"/>
+        <result property="regulatedQtyKg" column="regulated_qty_kg"/>
+        <result property="holdingQtyKg" column="holding_qty_kg"/>
+        <result property="psmTarget" column="psm_target"/>
+        <result property="setPressure" column="set_pressure"/>
+        <result property="protectedEquip" column="protected_equip"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <sql id="cols">
+        id, category, code, name_ko, type_label, location, manufacturer, install_date,
+        design_pressure, design_temperature, material, inspection_cycle,
+        last_inspection_date, next_inspection_date, status_code, manager_name, notes,
+        extra_a, extra_b, extra_c, cas_number, ghs_class, regulated_qty_kg, holding_qty_kg, psm_target,
+        set_pressure, protected_equip,
+        created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+        deleted, created_at, modified_at
+    </sql>
+
+    <select id="findAll" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_data
+        WHERE deleted = 0
+        <if test="category != null and category != ''">AND category = #{category}</if>
+        ORDER BY code
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_data
+        WHERE deleted = 0
+        <if test="category != null and category != ''">AND category = #{category}</if>
+    </select>
+
+    <select id="findById" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_data WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="findExpiring" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_data
+        WHERE deleted = 0
+          AND next_inspection_date IS NOT NULL
+          AND next_inspection_date &lt;= DATEADD(day, 90, GETDATE())
+        ORDER BY next_inspection_date ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_psm_data
+            (category, code, name_ko, type_label, location, manufacturer, install_date,
+             design_pressure, design_temperature, material, inspection_cycle,
+             last_inspection_date, next_inspection_date, status_code, manager_name, notes,
+             extra_a, extra_b, extra_c, cas_number, ghs_class, regulated_qty_kg, holding_qty_kg, psm_target,
+             set_pressure, protected_equip,
+             created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+             deleted, created_at, modified_at)
+        VALUES
+            (#{category}, #{code}, #{nameKo}, #{typeLabel}, #{location}, #{manufacturer}, #{installDate,jdbcType=DATE},
+             #{designPressure}, #{designTemperature}, #{material}, #{inspectionCycle},
+             #{lastInspectionDate,jdbcType=DATE}, #{nextInspectionDate,jdbcType=DATE}, #{statusCode}, #{managerName}, #{notes},
+             #{extraA}, #{extraB}, #{extraC}, #{casNumber}, #{ghsClass}, #{regulatedQtyKg}, #{holdingQtyKg}, #{psmTarget},
+             #{setPressure}, #{protectedEquip},
+             #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+             0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_psm_data SET
+            category = #{category}, code = #{code}, name_ko = #{nameKo},
+            type_label = #{typeLabel}, location = #{location}, manufacturer = #{manufacturer},
+            install_date = #{installDate,jdbcType=DATE},
+            design_pressure = #{designPressure}, design_temperature = #{designTemperature},
+            material = #{material}, inspection_cycle = #{inspectionCycle},
+            last_inspection_date = #{lastInspectionDate,jdbcType=DATE},
+            next_inspection_date = #{nextInspectionDate,jdbcType=DATE},
+            status_code = #{statusCode}, manager_name = #{managerName}, notes = #{notes},
+            extra_a = #{extraA}, extra_b = #{extraB}, extra_c = #{extraC},
+            cas_number = #{casNumber}, ghs_class = #{ghsClass},
+            regulated_qty_kg = #{regulatedQtyKg}, holding_qty_kg = #{holdingQtyKg}, psm_target = #{psmTarget},
+            set_pressure = #{setPressure}, protected_equip = #{protectedEquip},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_psm_data SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+</mapper>

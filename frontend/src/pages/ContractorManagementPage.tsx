@@ -579,6 +579,22 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           <Box sx={dRowSx}><Typography sx={dLabelSx}>보호구</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requiredPpe || ''}</Typography></Box><Typography sx={dLabelSx}>위험요인</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.hazardFactors || ''}</Typography></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>비상연락처</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.emergencyContact || ''}</Typography></Box><Typography sx={dLabelSx}>비고</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.notes || ''}</Typography></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>일정 반복</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{!selectedItem.repeatType || selectedItem.repeatType === 'NONE' ? '반복 안 함' : selectedItem.repeatType === 'WEEKDAYS' ? (selectedItem.repeatDays || '').split(',').map((d: string) => ({MON:'월',TUE:'화',WED:'수',THU:'목',FRI:'금',SAT:'토',SUN:'일'}[d] || d)).join(', ') : `${selectedItem.repeatInterval || 1} ${selectedItem.repeatType === 'DAILY' ? '일' : selectedItem.repeatType === 'WEEKLY' ? '주' : '개월'}마다`}</Typography></Box></Box>
+          {/* 작성자 / 작성일자 — 계획 승인자 위 */}
+          <Box sx={dRowSx}>
+            <Typography sx={dLabelSx}>작성자</Typography>
+            <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.modifiedBy || ''}</Typography></Box>
+            <Typography sx={dLabelSx}>작성일자</Typography>
+            <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.createdAt?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box>
+          </Box>
+          {/* 수정자 / 수정일자 — 수정 이력 있을 때만 */}
+          {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
+            <Box sx={dRowSx}>
+              <Typography sx={dLabelSx}>수정자</Typography>
+              <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.modifiedBy || ''}</Typography></Box>
+              <Typography sx={dLabelSx}>수정일자</Typography>
+              <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography></Box>
+            </Box>
+          )}
           <Box sx={dRowSx}><Typography sx={dLabelSx}>계획 승인자</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{[selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''}{selectedItem.planApprovedAt && <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>({selectedItem.planApprovedBy} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 19)})</Typography>}</Typography></Box><Typography sx={dLabelSx}>완료 승인자</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{[selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''}{selectedItem.completionApprovedAt && <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>({selectedItem.completionApprovedBy} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 19)})</Typography>}</Typography></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>체크리스트</Typography><Box sx={{ ...dValSx, flex: 3 }}><Typography variant="body2" sx={{ py: 0.5 }}>{getTemplateName(selectedItem.checklistTemplateId)}</Typography></Box></Box>
         </Box>
@@ -602,6 +618,12 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             ['비상연락처', selectedItem.emergencyContact],
             ['비고', selectedItem.notes],
             ['일정 반복', !selectedItem.repeatType || selectedItem.repeatType === 'NONE' ? '반복 안 함' : selectedItem.repeatType === 'WEEKDAYS' ? (selectedItem.repeatDays || '').split(',').map((d: string) => ({MON:'월',TUE:'화',WED:'수',THU:'목',FRI:'금',SAT:'토',SUN:'일'}[d] || d)).join(', ') : `${selectedItem.repeatInterval || 1} ${selectedItem.repeatType === 'DAILY' ? '일' : selectedItem.repeatType === 'WEEKLY' ? '주' : '개월'}마다`],
+            ['작성자', selectedItem.modifiedBy || ''],
+            ['작성일자', selectedItem.createdAt?.replace('T', ' ').substring(0, 16) || ''],
+            ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
+              ['수정자', selectedItem.modifiedBy || ''],
+              ['수정일자', selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+            ] : []),
             ['계획 승인자', [selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''],
             ['완료 승인자', [selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''],
             ['체크리스트', getTemplateName(selectedItem.checklistTemplateId)],
@@ -927,6 +949,32 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               </Box>
             </Box>
           </Box>
+          {/* Row: 작성자 | 작성일자 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>작성자</Typography>
+            <Box sx={valSxBorder}>
+              <Typography variant="body2">{selectedItem ? (selectedItem.modifiedBy || user?.name || '') : (user?.name || '')}</Typography>
+            </Box>
+            <Typography sx={labelSx}>작성일자</Typography>
+            <Box sx={valSx}>
+              <Typography variant="body2" fontFamily="monospace">
+                {selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : todayStr()}
+              </Typography>
+            </Box>
+          </Box>
+          {/* Row: 수정자 | 수정일자 — 수정 모드에서만 표시 */}
+          {viewMode === 'edit' && selectedItem && (
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={labelSx}>수정자</Typography>
+              <Box sx={valSxBorder}>
+                <Typography variant="body2">{user?.name || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>수정일자</Typography>
+              <Box sx={valSx}>
+                <Typography variant="body2" fontFamily="monospace">{todayStr()}</Typography>
+              </Box>
+            </Box>
+          )}
           {/* Row: 계획 승인자 | 완료 승인자 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>
@@ -935,7 +983,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Typography>
             <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center', py: 1, borderRight: 1, borderColor: 'grey.300' }}>
               <TextField fullWidth size="small" value={form.planApproverName || ''} InputProps={{ readOnly: true }}
-                placeholder="계획 승인자 선택" />
+                placeholder="조직도에서 선택" />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
@@ -946,7 +994,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Typography>
             <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center', py: 1 }}>
               <TextField fullWidth size="small" value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
-                placeholder="완료 승인자 선택" />
+                placeholder="조직도에서 선택" />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
@@ -1131,13 +1179,39 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               </Box>
             </Box>
           </Box>
+          {/* 작성자 / 작성일자 */}
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작성자</Typography>
+              <Typography variant="body2" sx={{ px: 1.5 }}>{selectedItem ? (selectedItem.modifiedBy || user?.name || '') : (user?.name || '')}</Typography>
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작성일자</Typography>
+              <Typography variant="body2" fontFamily="monospace" sx={{ px: 1.5 }}>
+                {selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : todayStr()}
+              </Typography>
+            </Box>
+          </Box>
+          {/* 수정자 / 수정일자 — 수정 모드 */}
+          {viewMode === 'edit' && selectedItem && (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>수정자</Typography>
+                <Typography variant="body2" sx={{ px: 1.5 }}>{user?.name || ''}</Typography>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>수정일자</Typography>
+                <Typography variant="body2" fontFamily="monospace" sx={{ px: 1.5 }}>{todayStr()}</Typography>
+              </Box>
+            </Box>
+          )}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               계획 승인자 <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <TextField fullWidth size="small" value={form.planApproverName || ''} InputProps={{ readOnly: true }}
-                placeholder="계획 승인자 선택" />
+                placeholder="조직도에서 선택" />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
@@ -1149,7 +1223,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <TextField fullWidth size="small" value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
-                placeholder="완료 승인자 선택" />
+                placeholder="조직도에서 선택" />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>

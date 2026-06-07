@@ -96,8 +96,9 @@ const FireFacilityTab: React.FC = () => {
         </Alert>
       )}
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <ListSearchBar fullWidth placeholder="시설명/관리번호/위치/법령 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+        <ListSearchBar placeholder="시설명/관리번호/위치/법령 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
+          sx={{ width: { xs: '100%', sm: 240 } }} />
         <TextField select size="small" sx={{ minWidth: 150 }} label="분류" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
@@ -107,6 +108,7 @@ const FireFacilityTab: React.FC = () => {
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 

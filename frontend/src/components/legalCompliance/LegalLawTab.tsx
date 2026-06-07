@@ -170,7 +170,7 @@ const LegalLawTab: React.FC = () => {
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             <ListSearchBar value={searchInput} onChange={setSearchInput} onSearch={() => setSearch(searchInput)}
-              placeholder="법령명/조항/키워드 검색..." sx={{ minWidth: 240 }} />
+              placeholder="법령명/조항/키워드 검색" sx={{ minWidth: 240 }} />
             <FormControl size="small" sx={{ minWidth: 130 }}>
               <Select displayEmpty value={catFilter} onChange={e => setCatFilter(e.target.value)}>
                 <MenuItem value="">분류 전체</MenuItem>
@@ -193,7 +193,7 @@ const LegalLawTab: React.FC = () => {
         {/* Mobile Search */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
           <ListSearchBar value={searchInput} onChange={setSearchInput} onSearch={() => setSearch(searchInput)}
-            placeholder="법령명/조항/키워드 검색..." fullWidth />
+            placeholder="법령명/조항/키워드 검색" fullWidth />
           <Box sx={{ display: 'flex', gap: 1 }}>
             <FormControl size="small" sx={{ flex: 1 }}>
               <Select displayEmpty value={catFilter} onChange={e => setCatFilter(e.target.value)}>

@@ -52,6 +52,10 @@ import { useAlert } from '../contexts/AlertContext'
 import { floorDrawingApi } from '../api/floorDrawingApi'
 import { FloorDrawing, SafetyDeviceType, SafetyDeviceRequest, FloorDrawingRequest } from '../types/floorDrawing.types'
 import { FileMetadata } from '../types/common.types'
+import { workplaceSiteApi } from '../api/workplaceSiteApi'
+import type { WorkplaceSite } from '../types/workplaceSite.types'
+import WorkplaceSiteFormDialog from '../components/workplaceSite/WorkplaceSiteFormDialog'
+import DomainAddIcon from '@mui/icons-material/DomainAdd'
 
 // 컴포넌트 내부용 디바이스 인터페이스 (x, y 좌표 사용)
 interface DisplayDevice {
@@ -798,6 +802,17 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
   // 이미지 프리뷰 상태
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 
+  // 사업장 다이얼로그 상태
+  const [siteDialogOpen, setSiteDialogOpen] = useState(false)
+  const [editingSite, setEditingSite] = useState<WorkplaceSite | null>(null)
+  const [selectedSiteId, setSelectedSiteId] = useState<number | null>(null)
+
+  // 사업장 목록 조회 (도면관리 트리 루트)
+  const { data: workplaceSites = [] } = useQuery({
+    queryKey: ['workplaceSites'],
+    queryFn: () => workplaceSiteApi.list(),
+  })
+
   // API에서 도면 데이터 조회
   const { data: floorDrawings, isLoading, isError, error } = useQuery({
     queryKey: ['floorDrawings'],
@@ -820,98 +835,181 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
 
   const selectedFloor = floorData.find((f) => f.id === effectiveSelectedId) || floorData[0]
 
-  // 건물(name) → 층(floor) 2단계 트리 데이터 — 등록된 층만 표시 (미등록 placeholder 제거)
-  const groupedByBuilding = useMemo(() => {
-    const map = new Map<string, FloorData[]>()
-    for (const f of floorData) {
-      const key = f.name || '(미지정)'
-      if (!map.has(key)) map.set(key, [])
-      map.get(key)!.push(f)
-    }
+  // 사업장 → 도면 트리 데이터
+  // 사업장이 등록되어 있으면 사업장 트리, 사업장에 매칭되지 않는 도면은 "(미지정)" 그룹으로
+  const groupedBySite = useMemo(() => {
     const parseFloorNum = (s: string | undefined) => parseInt(String(s || '').replace(/[^\d-]/g, '')) || 0
-    const result: Array<[string, Array<{ label: string; data: FloorData | null }>]> = []
-    for (const [building, drawings] of map.entries()) {
-      // 등록된 층만 내림차순 정렬 (위층부터)
-      const sorted = [...drawings].sort((a, b) => {
-        const na = parseFloorNum(a.floor)
-        const nb = parseFloorNum(b.floor)
+    const result: Array<{ site: WorkplaceSite | null; drawings: FloorData[] }> = []
+
+    // 등록된 사업장별 그룹
+    for (const site of workplaceSites) {
+      const drawings = floorData
+        .filter(f => f.name === site.siteName || f.site === site.siteName)
+        .sort((a, b) => {
+          const na = parseFloorNum(a.floor); const nb = parseFloorNum(b.floor)
+          if (na !== nb) return nb - na
+          return (a.floor || '').localeCompare(b.floor || '')
+        })
+      result.push({ site, drawings })
+    }
+
+    // 사업장에 매칭되지 않는 도면 (legacy)
+    const matchedNames = new Set(workplaceSites.map(s => s.siteName))
+    const unmatched = floorData
+      .filter(f => !matchedNames.has(f.name) && !matchedNames.has(f.site))
+      .sort((a, b) => {
+        const na = parseFloorNum(a.floor); const nb = parseFloorNum(b.floor)
         if (na !== nb) return nb - na
         return (a.floor || '').localeCompare(b.floor || '')
       })
-      const items = sorted.map(d => ({ label: d.floor || '-', data: d as FloorData | null }))
-      result.push([building, items])
+    if (unmatched.length > 0) {
+      result.push({ site: null, drawings: unmatched })
     }
     return result
-  }, [floorData])
+  }, [workplaceSites, floorData])
 
-  // 트리 확장 상태 — 기본은 모든 건물 펼침
-  const [expandedBuildings, setExpandedBuildings] = useState<string[]>([])
+  // 트리 확장 상태 — 기본은 모든 사업장 펼침
+  const [expandedSites, setExpandedSites] = useState<string[]>([])
   useEffect(() => {
-    setExpandedBuildings(groupedByBuilding.map(([b]) => `b-${b}`))
-  }, [groupedByBuilding])
+    setExpandedSites(groupedBySite.map(g => g.site ? `s-${g.site.id}` : 's-_none_'))
+  }, [groupedBySite])
 
-  // 건물 → 층 트리 — PC/모바일 공통 렌더링
+  // 사업장 삭제 mutation
+  const deleteSiteMutation = useMutation({
+    mutationFn: (id: number) => workplaceSiteApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workplaceSites'] })
+      setSelectedSiteId(null)
+      showSuccess(t('common.deleted'))
+    },
+  })
+
+  const handleDeleteSite = async (id: number) => {
+    if (await showConfirm('이 사업장을 삭제하시겠습니까?')) {
+      deleteSiteMutation.mutate(id)
+    }
+  }
+
+  // 사업장 → 도면 트리 — PC/모바일 공통 렌더링
   const renderBuildingTree = () => (
     <SimpleTreeView
       slots={{ collapseIcon: ExpandMoreIcon, expandIcon: ChevronRightIcon }}
-      expandedItems={expandedBuildings}
-      onExpandedItemsChange={(_, ids) => setExpandedBuildings(ids)}
-      selectedItems={effectiveSelectedId ? `f-${effectiveSelectedId}` : ''}
+      expandedItems={expandedSites}
+      onExpandedItemsChange={(_, ids) => setExpandedSites(ids)}
+      selectedItems={
+        effectiveSelectedId ? `f-${effectiveSelectedId}`
+        : selectedSiteId   ? `s-${selectedSiteId}`
+        : ''
+      }
       onSelectedItemsChange={(_, id) => {
-        if (id && typeof id === 'string' && id.startsWith('f-')) {
+        if (typeof id !== 'string') return
+        if (id.startsWith('f-')) {
           setSelectedFloorId(Number(id.slice(2)))
           setSelectedImageIndex(0)
           setShowDevices(true)
           setDeviceEditMode(false)
+        } else if (id.startsWith('s-') && id !== 's-_none_') {
+          setSelectedSiteId(Number(id.slice(2)))
+          setSelectedFloorId(null)
         }
       }}
     >
-      {groupedByBuilding.map(([building, floors]) => (
-        <TreeItem
-          key={`b-${building}`}
-          itemId={`b-${building}`}
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', py: 0.5 }}>
-              <BusinessIcon sx={{ fontSize: 16, mr: 0.5, color: 'primary.main' }} />
-              <Typography fontWeight="bold" sx={{ fontSize: '0.9rem' }}>{building}</Typography>
-            </Box>
-          }
-        >
-          {floors.map((item, idx) => {
-            const registered = item.data !== null
-            const itemId = registered ? `f-${item.data!.id}` : `p-${building}-${idx}`
-            return (
+      {groupedBySite.map(({ site, drawings }) => {
+        const siteNodeId = site ? `s-${site.id}` : 's-_none_'
+        const siteLabel = site
+          ? `[${site.buildingNumber}] ${site.siteName}`
+          : '(사업장 미지정)'
+        return (
+          <TreeItem
+            key={siteNodeId}
+            itemId={siteNodeId}
+            sx={{
+              '& > .MuiTreeItem-content': {
+                py: 0.25,
+                '&:hover .site-actions, &.Mui-selected .site-actions, &.Mui-focused .site-actions': {
+                  opacity: 1,
+                },
+              },
+            }}
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.5, width: '100%', gap: 0.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0, flex: 1 }}>
+                  <BusinessIcon sx={{ fontSize: 16, mr: 0.5, color: 'primary.main', flexShrink: 0 }} />
+                  <Typography fontWeight="bold" sx={{ fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {siteLabel}
+                  </Typography>
+                </Box>
+                {site && !readOnly && (
+                  <Box
+                    className="site-actions"
+                    sx={{
+                      display: 'flex',
+                      gap: 0.25,
+                      flexShrink: 0,
+                      opacity: { xs: 1, md: 0.4 },     // 모바일: 항상 / PC: 호버/선택 시 강조
+                      transition: 'opacity .15s',
+                      '& .MuiIconButton-root': {
+                        p: 0.5,
+                        bgcolor: 'background.paper',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        borderRadius: 0.75,
+                        '&:hover': {
+                          bgcolor: 'action.hover',
+                          borderColor: 'primary.main',
+                        },
+                      },
+                    }}
+                  >
+                    <Tooltip title="이 사업장에 도면 추가" arrow>
+                      <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleOpenDrawingDialog(undefined, site) }}>
+                        <AddIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="사업장 수정" arrow>
+                      <IconButton size="small" onClick={(e) => { e.stopPropagation(); setEditingSite(site); setSiteDialogOpen(true) }}>
+                        <EditIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="사업장 삭제" arrow>
+                      <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id) }}>
+                        <DeleteIcon sx={{ fontSize: 16, color: 'error.main' }} />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                )}
+              </Box>
+            }
+          >
+            {drawings.length === 0 ? (
               <TreeItem
-                key={itemId}
-                itemId={itemId}
-                disabled={!registered}
+                itemId={`${siteNodeId}-empty`}
+                disabled
+                label={
+                  <Typography sx={{ fontSize: '0.8rem', color: 'text.disabled', py: 0.5, pl: 1 }}>
+                    등록된 도면 없음
+                  </Typography>
+                }
+              />
+            ) : drawings.map((d) => (
+              <TreeItem
+                key={`f-${d.id}`}
+                itemId={`f-${d.id}`}
                 label={
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.5 }}>
                     <Typography sx={{
                       fontSize: '0.85rem',
-                      fontWeight: registered && effectiveSelectedId === item.data!.id ? 'bold' : 'normal',
-                      color: registered ? 'text.primary' : 'text.disabled',
+                      fontWeight: effectiveSelectedId === d.id ? 'bold' : 'normal',
+                      color: 'text.primary',
                     }}>
-                      {item.label}{!registered && ' (미등록)'}
+                      {d.floor || '-'}
                     </Typography>
-                    {registered && !readOnly && (
+                    {!readOnly && (
                       <Box sx={{ display: 'flex', gap: 0.25 }}>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleOpenDrawingDialog(item.data!)
-                          }}
-                        >
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleOpenDrawingDialog(d) }}>
                           <EditIcon sx={{ fontSize: 16 }} />
                         </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteDrawing(item.data!.id)
-                          }}
-                        >
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleDeleteDrawing(d.id) }}>
                           <DeleteIcon sx={{ fontSize: 16 }} />
                         </IconButton>
                       </Box>
@@ -919,10 +1017,10 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                   </Box>
                 }
               />
-            )
-          })}
-        </TreeItem>
-      ))}
+            ))}
+          </TreeItem>
+        )
+      })}
     </SimpleTreeView>
   )
 
@@ -1065,13 +1163,22 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
   }
 
   // 도면 등록 다이얼로그 열기
-  const handleOpenDrawingDialog = (drawing?: FloorData) => {
+  // prefilledSite: 트리에서 사업장 노드의 + 버튼 클릭 시 사업장 정보 자동 채움
+  const handleOpenDrawingDialog = (drawing?: FloorData, prefilledSite?: WorkplaceSite) => {
     if (drawing) {
       setEditingDrawing(drawing)
       setDrawingForm({
         name: drawing.name,
         site: drawing.site,
         floor: drawing.floor || '',
+        description: '',
+      })
+    } else if (prefilledSite) {
+      setEditingDrawing(null)
+      setDrawingForm({
+        name: prefilledSite.siteName,
+        site: prefilledSite.siteName,
+        floor: '',
         description: '',
       })
     } else {
@@ -1216,35 +1323,75 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
     )
   }
 
+  // 사업장 추가 버튼 (모든 패널 헤더에서 재사용)
+  const renderSiteAddButton = () => !readOnly && (
+    <Button
+      variant="contained"
+      size="small"
+      onClick={() => { setEditingSite(null); setSiteDialogOpen(true) }}
+      sx={{ whiteSpace: 'nowrap', flexShrink: 0, py: 0.25 }}
+    >
+      사업장 추가
+    </Button>
+  )
+
   return (
     <Box>
-      {!readOnly && (
-        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, alignItems: 'center', mb: 2 }}>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => handleOpenDrawingDialog()}
-            fullWidth
-            sx={{ width: { xs: '100%', sm: 'auto' } }}
-          >
-            {t('workplaceDrawing.registerDrawing')}
-          </Button>
-        </Box>
+      {/* 사업장만 있고 도면 미등록 — 트리 표시하되 우측 안내 */}
+      {!selectedFloor && workplaceSites.length > 0 && (
+        <>
+          {/* PC Layout */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
+            <Paper sx={{ width: 320, flexShrink: 0, overflow: 'auto' }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" fontWeight="bold">{t('factory.selectWorkplace')}</Typography>
+                {renderSiteAddButton()}
+              </Box>
+              <Box sx={{ p: 1 }}>{renderBuildingTree()}</Box>
+            </Paper>
+            <Paper sx={{ flex: 1, p: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Alert severity="info" sx={{ width: '100%' }}>
+                트리에서 사업장을 선택하고 사업장 노드의 <strong>+</strong> 버튼을 눌러 도면을 추가하세요.
+              </Alert>
+            </Paper>
+          </Box>
+          {/* Mobile */}
+          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+            <Paper sx={{ mb: 2 }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" fontWeight="bold">{t('factory.selectWorkplace')}</Typography>
+                {renderSiteAddButton()}
+              </Box>
+              <Box sx={{ p: 1 }}>{renderBuildingTree()}</Box>
+            </Paper>
+            <Alert severity="info">사업장을 선택하고 도면을 등록하세요</Alert>
+          </Box>
+        </>
       )}
 
-      {/* 데이터 없음 */}
-      {!selectedFloor ? (
-        <Alert severity="info">{t('workplaceDrawing.noDrawings')}</Alert>
-      ) : (
+      {/* 사업장도 없고 도면도 없음 */}
+      {!selectedFloor && workplaceSites.length === 0 ? (
+        <Box>
+          {!readOnly && (
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              {renderSiteAddButton()}
+            </Box>
+          )}
+          <Alert severity="info">
+            등록된 사업장이 없습니다. <strong>사업장 추가</strong> 버튼을 눌러 사업장을 먼저 등록해주세요.
+          </Alert>
+        </Box>
+      ) : !selectedFloor ? null : (
         <>
           {/* PC Layout */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
             {/* Left Panel - 사업장/층 선택 */}
-            <Paper sx={{ width: 280, flexShrink: 0, overflow: 'auto' }}>
-              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Paper sx={{ width: 320, flexShrink: 0, overflow: 'auto' }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">
                   {t('factory.selectWorkplace')}
                 </Typography>
+                {renderSiteAddButton()}
               </Box>
               <Box sx={{ p: 1 }}>
                 {renderBuildingTree()}
@@ -1429,10 +1576,11 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
             {/* 사업장/층 선택 드롭다운 */}
             <Paper variant="outlined">
-              <Box sx={{ px: 1.5, py: 0.75, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider' }}>
+              <Box sx={{ px: 1.5, py: 0.75, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>
                   {t('factory.selectWorkplace')}
                 </Typography>
+                {renderSiteAddButton()}
               </Box>
               <Box sx={{ p: 1, maxHeight: 320, overflowY: 'auto' }}>
                 {renderBuildingTree()}
@@ -1648,7 +1796,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
         <DialogContent>
           {/* PC용 테이블 레이아웃 */}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mt: 2 }}>
-            {/* Row 1: 도면명 | 사업장 */}
+            {/* Row 1: 도면명 | 사업장 — 사업장은 항상 readOnly (사업장 수정에서만 변경) */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('workplaceDrawing.drawingName')}
@@ -1657,9 +1805,9 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder={t('workplaceDrawing.enterDrawingName')}
+                  InputProps={{ readOnly: true }}
                   value={drawingForm.name}
-                  onChange={(e) => setDrawingForm({ ...drawingForm, name: e.target.value })}
+                  helperText="사업장명은 [사업장 수정]에서 변경 가능"
                 />
               </Box>
               <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
@@ -1669,9 +1817,8 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                 <TextField
                   fullWidth
                   size="small"
-                  placeholder={t('workplaceDrawing.enterWorkplaceName')}
+                  InputProps={{ readOnly: true }}
                   value={drawingForm.site}
-                  onChange={(e) => setDrawingForm({ ...drawingForm, site: e.target.value })}
                 />
               </Box>
             </Box>
@@ -1793,9 +1940,9 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
               <TextField
                 fullWidth
                 size="small"
-                placeholder={t('workplaceDrawing.enterDrawingName')}
+                InputProps={{ readOnly: true }}
                 value={drawingForm.name}
-                onChange={(e) => setDrawingForm({ ...drawingForm, name: e.target.value })}
+                helperText="사업장명은 [사업장 수정]에서 변경"
               />
             </Box>
             <Box>
@@ -1803,9 +1950,8 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
               <TextField
                 fullWidth
                 size="small"
-                placeholder={t('workplaceDrawing.enterWorkplaceName')}
+                InputProps={{ readOnly: true }}
                 value={drawingForm.site}
-                onChange={(e) => setDrawingForm({ ...drawingForm, site: e.target.value })}
               />
             </Box>
             <Box>
@@ -2027,6 +2173,13 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           )}
         </Box>
       </Dialog>
+
+      {/* 사업장 등록/수정 다이얼로그 */}
+      <WorkplaceSiteFormDialog
+        open={siteDialogOpen}
+        editing={editingSite}
+        onClose={() => { setSiteDialogOpen(false); setEditingSite(null) }}
+      />
     </Box>
   )
 }

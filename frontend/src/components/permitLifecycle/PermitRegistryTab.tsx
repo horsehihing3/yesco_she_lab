@@ -1,15 +1,13 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip,
+  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
+  IconButton, CircularProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import ListSearchBar from '../common/ListSearchBar'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { permitRegistryApi, permitLifecycleStatsApi } from '../../api/permitLifecycleApi'
 import type { PermitRegistry } from '../../types/permitLifecycle.types'
 import StatCard from '../legalCompliance/StatCard'
@@ -19,6 +17,8 @@ import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
 const CATEGORIES = ['환경', '안전', '보건', '소방', '화학', '건축']
+
+type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const computeStatus = (p: PermitRegistry): '유효' | '만료임박' | '만료' | '무기한' => {
   if (!p.expiryDate) return '무기한'
@@ -47,26 +47,35 @@ const PermitRegistryTab: React.FC = () => {
   const { data: list = [], isLoading } = useQuery({ queryKey: ['permitRegistry'], queryFn: permitRegistryApi.list })
   const { data: stats } = useQuery({ queryKey: ['permitLifecycleStats'], queryFn: permitLifecycleStatsApi.get })
 
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [selected, setSelected] = useState<PermitRegistry | null>(null)
   const [searchInput, setSearchInput] = useState('')
-
   const [search, setSearch] = useState('')
+  const [filterCat, setFilterCat] = useState('all')
+  const [form, setForm] = useState<Partial<PermitRegistry>>(emptyForm)
 
   const applySearch = () => setSearch(searchInput)
-
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
-  const [filterCat, setFilterCat] = useState('all')
-  const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<PermitRegistry | null>(null)
-  const [form, setForm] = useState<Partial<PermitRegistry>>(emptyForm)
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ['permitRegistry'] })
     qc.invalidateQueries({ queryKey: ['permitLifecycleStats'] })
   }
 
-  const createM = useMutation({ mutationFn: permitRegistryApi.create, onSuccess: () => { invalidate(); setOpen(false); showSuccess('등록되었습니다') }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitRegistry> }) => permitRegistryApi.update(id, e), onSuccess: () => { invalidate(); setOpen(false); showSuccess('수정되었습니다') }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: permitRegistryApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다') } })
+  const createM = useMutation({
+    mutationFn: permitRegistryApi.create,
+    onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() },
+    onError: () => showError('등록 실패'),
+  })
+  const updateM = useMutation({
+    mutationFn: ({ id, e }: { id: number; e: Partial<PermitRegistry> }) => permitRegistryApi.update(id, e),
+    onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() },
+    onError: () => showError('수정 실패'),
+  })
+  const deleteM = useMutation({
+    mutationFn: permitRegistryApi.remove,
+    onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() },
+  })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterCat !== 'all' && x.category !== filterCat) return false
@@ -77,14 +86,143 @@ const PermitRegistryTab: React.FC = () => {
     return true
   }), [list, filterCat, search])
 
-  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, issuedDate: todayStr(), expiryDate: todayStr() }); setOpen(true) }
-  const openEdit = (item: PermitRegistry) => { setEditing(item); setForm({ ...item }); setOpen(true) }
+  const handleBackToList = () => { setViewMode('list'); setSelected(null); setForm(emptyForm) }
+  const handleRowClick = (item: PermitRegistry) => { setSelected(item); setViewMode('detail') }
+  const handleAddClick = () => { setSelected(null); setForm({ ...emptyForm, issuedDate: todayStr(), expiryDate: todayStr() }); setViewMode('create') }
+  const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
+  const handleDeleteClick = async () => {
+    if (!selected) return
+    if (await showConfirm('이 인허가를 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+  }
   const handleSave = () => {
     if (!form.name || !form.category) { showError('분야·인허가 명칭 필수'); return }
-    if (editing) updateM.mutate({ id: editing.id, e: form })
+    if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
 
+  // ─── DETAIL / CREATE / EDIT ───
+  if (viewMode === 'detail' && selected) {
+    const st = computeStatus(selected)
+    return (
+      <Box>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>인허가 상세</Typography>
+        <FormTable>
+          <FormRow>
+            <FormLabel>분야</FormLabel>
+            <FormCell borderRight><Chip size="small" label={selected.category} color={categoryColor(selected.category)} variant="outlined" /></FormCell>
+            <FormLabel>인허가 종류</FormLabel>
+            <FormCell><Typography variant="body2">{selected.permitType || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>인허가 명칭</FormLabel>
+            <FormCell><Typography variant="body2" fontWeight={600}>{selected.name}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>관계 법규</FormLabel>
+            <FormCell borderRight><Typography variant="body2">{selected.law || ''}</Typography></FormCell>
+            <FormLabel>발급 기관</FormLabel>
+            <FormCell><Typography variant="body2">{selected.agency || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>허가번호</FormLabel>
+            <FormCell borderRight><Typography variant="body2" fontFamily="monospace">{selected.permitNumber || ''}</Typography></FormCell>
+            <FormLabel>갱신 주기</FormLabel>
+            <FormCell><Typography variant="body2">{selected.cycle || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>발급일</FormLabel>
+            <FormCell borderRight><Typography variant="body2" fontFamily="monospace">{selected.issuedDate || ''}</Typography></FormCell>
+            <FormLabel>만료일</FormLabel>
+            <FormCell><Typography variant="body2" fontFamily="monospace">{selected.expiryDate || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>대상 시설</FormLabel>
+            <FormCell borderRight><Typography variant="body2">{selected.facility || ''}</Typography></FormCell>
+            <FormLabel>위치</FormLabel>
+            <FormCell><Typography variant="body2">{selected.location || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>담당자</FormLabel>
+            <FormCell borderRight><Typography variant="body2">{selected.manager || ''}</Typography></FormCell>
+            <FormLabel>상태</FormLabel>
+            <FormCell><Chip size="small" label={st} color={statusColor(st)} /></FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>비고</FormLabel>
+            <FormCell><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selected.notes || ''}</Typography></FormCell>
+          </FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
+          <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
+          <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
+        </Box>
+      </Box>
+    )
+  }
+
+  if (viewMode === 'create' || viewMode === 'edit') {
+    return (
+      <Box>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{viewMode === 'edit' ? '인허가 수정' : '인허가 등록'}</Typography>
+        <FormTable>
+          <FormRow>
+            <FormLabel required>분야</FormLabel>
+            <FormCell borderRight>
+              <TextField select fullWidth size="small" value={form.category || ''} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                <MenuItem value="">선택하세요</MenuItem>
+                {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+              </TextField>
+            </FormCell>
+            <FormLabel>인허가 종류</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.permitType || ''} onChange={(e) => setForm({ ...form, permitType: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel required>인허가 명칭</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.name || ''} onChange={(e) => setForm({ ...form, name: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>관계 법규</FormLabel>
+            <FormCell borderRight><TextField fullWidth size="small" value={form.law || ''} onChange={(e) => setForm({ ...form, law: e.target.value })} /></FormCell>
+            <FormLabel>발급 기관</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.agency || ''} onChange={(e) => setForm({ ...form, agency: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>허가번호</FormLabel>
+            <FormCell borderRight><TextField fullWidth size="small" value={form.permitNumber || ''} onChange={(e) => setForm({ ...form, permitNumber: e.target.value })} /></FormCell>
+            <FormLabel>갱신 주기</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.cycle || ''} onChange={(e) => setForm({ ...form, cycle: e.target.value })} placeholder="예: 5년 / 2년 / 없음" /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>발급일</FormLabel>
+            <FormCell borderRight><DatePickerField value={form.issuedDate || null} onChange={(d) => setForm({ ...form, issuedDate: d || undefined })} /></FormCell>
+            <FormLabel>만료일</FormLabel>
+            <FormCell><DatePickerField value={form.expiryDate || null} onChange={(d) => setForm({ ...form, expiryDate: d || undefined })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>대상 시설</FormLabel>
+            <FormCell borderRight><TextField fullWidth size="small" value={form.facility || ''} onChange={(e) => setForm({ ...form, facility: e.target.value })} /></FormCell>
+            <FormLabel>위치</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>담당자</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.manager || ''} onChange={(e) => setForm({ ...form, manager: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>비고</FormLabel>
+            <FormCell><TextField fullWidth size="small" multiline minRows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></FormCell>
+          </FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
+          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
+        </Box>
+      </Box>
+    )
+  }
+
+  // ─── LIST ───
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
@@ -94,16 +232,17 @@ const PermitRegistryTab: React.FC = () => {
         <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.regExpired ?? 0} label="만료" sub="즉시 조치" /></Grid>
       </Grid>
 
-      <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <ListSearchBar placeholder="인허가명·시설·허가번호 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ flex: 1, minWidth: 200 }} />
-          <TextField select size="small" label="분야" value={filterCat} onChange={(e) => setFilterCat(e.target.value)} sx={{ minWidth: 120 }}>
-            <MenuItem value="all">전체</MenuItem>
-            {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-          </TextField>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+        <ListSearchBar placeholder="인허가명·시설·허가번호 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
+          sx={{ width: { xs: '100%', sm: 240 } }} />
+        <TextField select size="small" value={filterCat} onChange={(e) => setFilterCat(e.target.value)} sx={{ minWidth: 120 }}>
+          <MenuItem value="all">전체</MenuItem>
+          {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+        </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
-        </Stack>
-      </Paper>
+        <Box sx={{ flex: 1 }} />
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ whiteSpace: 'nowrap' }}>New</Button>
+      </Stack>
 
       <Paper variant="outlined" sx={{ mb: 2 }}>
         {isLoading ? <Box sx={{ p: 6, textAlign: 'center' }}><CircularProgress /></Box> : (
@@ -118,16 +257,15 @@ const PermitRegistryTab: React.FC = () => {
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 100 }}>발급일</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 100 }}>만료일</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 90 }}>상태</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', width: 90 }}>작업</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filtered.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} align="center" sx={{ py: 6, color: 'text.disabled' }}>인허가가 없습니다</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} align="center" sx={{ py: 6, color: 'text.disabled' }}>인허가가 없습니다</TableCell></TableRow>
                 ) : filtered.map((x) => {
                   const st = computeStatus(x)
                   return (
-                    <TableRow key={x.id} hover>
+                    <TableRow key={x.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(x)}>
                       <TableCell align="center"><Chip size="small" label={x.category} color={categoryColor(x.category)} variant="outlined" /></TableCell>
                       <TableCell sx={{ fontWeight: 600 }}>{x.name}</TableCell>
                       <TableCell sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>{x.agency || '-'}</TableCell>
@@ -135,12 +273,6 @@ const PermitRegistryTab: React.FC = () => {
                       <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{x.issuedDate || '-'}</TableCell>
                       <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{x.expiryDate || '-'}</TableCell>
                       <TableCell align="center"><Chip size="small" label={st} color={statusColor(st)} /></TableCell>
-                      <TableCell align="center" sx={{ whiteSpace: 'nowrap', px: 0.5 }}>
-                        <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
-                        <IconButton size="small" onClick={async () => {
-                          if (await showConfirm('이 인허가를 삭제하시겠습니까?')) deleteM.mutate(x.id)
-                        }}><DeleteIcon fontSize="inherit" /></IconButton>
-                      </TableCell>
                     </TableRow>
                   )
                 })}
@@ -149,69 +281,6 @@ const PermitRegistryTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
-
-      <Stack direction="row" justifyContent="flex-end">
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
-      </Stack>
-
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editing ? '인허가 수정' : '인허가 등록'}</DialogTitle>
-        <DialogContent dividers>
-          <FormTable>
-            <FormRow>
-              <FormLabel required>분야</FormLabel>
-              <FormCell borderRight>
-                <TextField select fullWidth size="small" value={form.category || ''} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택하세요</MenuItem>
-                  {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-                </TextField>
-              </FormCell>
-              <FormLabel>인허가 종류</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.permitType || ''} onChange={(e) => setForm({ ...form, permitType: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel required>인허가 명칭</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.name || ''} onChange={(e) => setForm({ ...form, name: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>관계 법규</FormLabel>
-              <FormCell borderRight><TextField fullWidth size="small" value={form.law || ''} onChange={(e) => setForm({ ...form, law: e.target.value })} /></FormCell>
-              <FormLabel>발급 기관</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.agency || ''} onChange={(e) => setForm({ ...form, agency: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>허가번호</FormLabel>
-              <FormCell borderRight><TextField fullWidth size="small" value={form.permitNumber || ''} onChange={(e) => setForm({ ...form, permitNumber: e.target.value })} /></FormCell>
-              <FormLabel>갱신 주기</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.cycle || ''} onChange={(e) => setForm({ ...form, cycle: e.target.value })} placeholder="예: 5년 / 2년 / 없음" /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>발급일</FormLabel>
-              <FormCell borderRight><DatePickerField value={form.issuedDate || null} onChange={(d) => setForm({ ...form, issuedDate: d || undefined })} /></FormCell>
-              <FormLabel>만료일</FormLabel>
-              <FormCell><DatePickerField value={form.expiryDate || null} onChange={(d) => setForm({ ...form, expiryDate: d || undefined })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>대상 시설</FormLabel>
-              <FormCell borderRight><TextField fullWidth size="small" value={form.facility || ''} onChange={(e) => setForm({ ...form, facility: e.target.value })} /></FormCell>
-              <FormLabel>위치</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>담당자</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.manager || ''} onChange={(e) => setForm({ ...form, manager: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow last>
-              <FormLabel>비고</FormLabel>
-              <FormCell><TextField fullWidth size="small" multiline minRows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></FormCell>
-            </FormRow>
-          </FormTable>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   )
 }

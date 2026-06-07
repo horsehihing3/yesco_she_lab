@@ -3,6 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.WemResultRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.WemResultResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.WemResultService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +25,11 @@ import org.springframework.web.bind.annotation.*;
 public class WemResultController {
 
     private final WemResultService wemResultService;
+    private final IdmMapper idmMapper;
+
+    private IdmUser current(Authentication auth) {
+        return auth != null ? idmMapper.findByUid(auth.getName()) : null;
+    }
 
     @GetMapping
     @Operation(summary = "List measurement results", description = "Get all WEM results with optional judgment filter and pagination")
@@ -47,8 +55,9 @@ public class WemResultController {
     @PostMapping
     @Operation(summary = "Create result", description = "Create a new WEM result")
     public ResponseEntity<ApiResponse<WemResultResponse>> create(
-            @Valid @RequestBody WemResultRequest request) {
-        WemResultResponse result = wemResultService.create(request);
+            @Valid @RequestBody WemResultRequest request,
+            Authentication authentication) {
+        WemResultResponse result = wemResultService.create(request, current(authentication));
         return ResponseEntity.ok(ApiResponse.success("Result created successfully", result));
     }
 
@@ -56,8 +65,9 @@ public class WemResultController {
     @Operation(summary = "Update result", description = "Update an existing WEM result")
     public ResponseEntity<ApiResponse<WemResultResponse>> update(
             @PathVariable Long id,
-            @Valid @RequestBody WemResultRequest request) {
-        WemResultResponse result = wemResultService.update(id, request);
+            @Valid @RequestBody WemResultRequest request,
+            Authentication authentication) {
+        WemResultResponse result = wemResultService.update(id, request, current(authentication));
         return ResponseEntity.ok(ApiResponse.success("Result updated successfully", result));
     }
 

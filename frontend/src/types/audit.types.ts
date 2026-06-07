@@ -1,6 +1,5 @@
 export type AuditPlanStatus = 'PLAN' | 'PENDING_APPROVAL' | 'APPROVED' | 'PREPARING' | 'IN_PROGRESS' | 'PENDING_CLOSE' | 'COMPLETED'
 export type AuditType = 'REGULAR' | 'SPECIAL' | 'EXPERT' | 'INTERNAL'
-export type AuditGrade = 'S' | 'A' | 'B' | 'C'
 export type FindingSeverity = 'CRITICAL' | 'MINOR' | 'OBSERVATION'
 export type CorrectiveStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE' | 'DEMONSTRATION' | 'NA'
 export type CheckStatus = 'CHECKED' | 'UNCHECKED' | 'NA'
@@ -118,11 +117,12 @@ export interface Audit {
   targetDept?: string
   auditor?: string
   auditDate?: string
-  grade?: AuditGrade
+  auditEndDate?: string
   totalChecklist: number
   completedChecklist: number
   findingCount: number
   summary?: string
+  notes?: string
   status: AuditPlanStatus
   modifiedBy?: string
   // 계획 승인자 (실시에서도 표시·편집)
@@ -142,6 +142,9 @@ export interface Audit {
   // 작성자 (로그인 사용자 자동 입력)
   createdByUserId?: number | null
   createdByName?: string | null
+  // 수정자 (수정 시 자동 갱신)
+  modifiedByUserId?: number | null
+  modifiedByName?: string | null
   // 완료 결재 반려 사유
   rejectReason?: string | null
   createdAt: string
@@ -155,7 +158,6 @@ export interface AuditRequest {
   targetDept?: string
   auditor?: string
   auditDate?: string
-  grade?: AuditGrade
   summary?: string
   status?: AuditPlanStatus
   planApproverUserId?: number | null

@@ -135,29 +135,6 @@ public class AuditService {
     }
 
     @Transactional
-    public Audit updateGrade(Long id, String grade) {
-        Audit existing = auditMapper.findById(id);
-        if (existing == null) {
-            throw new ResourceNotFoundException("Audit", "id", id);
-        }
-        auditMapper.updateGrade(id, grade);
-        if (!Objects.equals(existing.getGrade(), grade)) {
-            List<Map<String, Object>> diffs = new ArrayList<>();
-            diffs.add(buildDiff("grade", existing.getGrade(), grade));
-            auditLogMapper.insert(AuditLog.builder()
-                    .auditId(id)
-                    .action("FIELD_UPDATE")
-                    .changedBy(existing.getModifiedBy())
-                    .actorRole("EDITOR")
-                    .detail(buildDiffSummary(diffs))
-                    .fieldChanges(toJson(diffs))
-                    .build());
-        }
-        log.info("Updated audit grade: {} -> {}", existing.getAuditId(), grade);
-        return findById(id);
-    }
-
-    @Transactional
     public void delete(Long id) {
         Audit existing = auditMapper.findById(id);
         if (existing == null) {
@@ -221,7 +198,6 @@ public class AuditService {
         addIfChanged(diffs, "auditorDept", before.getAuditorDept(), after.getAuditorDept());
         addIfChanged(diffs, "auditStartDate", before.getAuditStartDate(), after.getAuditStartDate());
         addIfChanged(diffs, "auditEndDate", before.getAuditEndDate(), after.getAuditEndDate());
-        addIfChanged(diffs, "grade", before.getGrade(), after.getGrade());
         addIfChanged(diffs, "summary", before.getSummary(), after.getSummary());
         addIfChanged(diffs, "notes", before.getNotes(), after.getNotes());
         return diffs;

@@ -83,13 +83,15 @@ const RadZoneTab: React.FC = () => {
         <strong>방사선 구역 설정 기준</strong> — 방사선관리구역 1 mSv/주 초과 · 출입통제 및 표지 의무 · 정기 측정 기록 보존 (원자력안전법 §54)
       </Alert>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <ListSearchBar fullWidth placeholder="구역명/위치 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+        <ListSearchBar placeholder="구역명/위치 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
+          sx={{ width: { xs: '100%', sm: 240 } }} />
         <TextField select size="small" sx={{ minWidth: 170 }} label="구역구분" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {ZONE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 

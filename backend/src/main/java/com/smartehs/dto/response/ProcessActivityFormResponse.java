@@ -26,6 +26,10 @@ public class ProcessActivityFormResponse {
     private String evaluator;
     private LocalDate creationDate;
     private String teamMembers;
+    private Long createdByUserId;
+    private String createdByName;
+    private Long modifiedByUserId;
+    private String modifiedByName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<ProcessResponse> processes;
@@ -92,6 +96,10 @@ public class ProcessActivityFormResponse {
                 .evaluator(f.getEvaluator())
                 .creationDate(f.getCreationDate())
                 .teamMembers(f.getTeamMembers())
+                .createdByUserId(f.getCreatedByUserId())
+                .createdByName(f.getCreatedByName())
+                .modifiedByUserId(f.getModifiedByUserId())
+                .modifiedByName(f.getModifiedByName())
                 .createdAt(f.getCreatedAt())
                 .modifiedAt(f.getModifiedAt())
                 .build();

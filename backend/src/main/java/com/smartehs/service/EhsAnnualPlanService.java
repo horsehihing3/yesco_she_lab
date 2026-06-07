@@ -78,6 +78,8 @@ public class EhsAnnualPlanService {
                 .writerTeam(request.getWriterTeam())
                 .writerPosition(request.getWriterPosition())
                 .writerName(request.getWriterName())
+                .modifiedByUserId(request.getWriterUserId())
+                .modifiedByName(request.getWriterName())
                 .planApproverUserId(request.getPlanApproverUserId())
                 .planApproverTeam(request.getPlanApproverTeam())
                 .planApproverPosition(request.getPlanApproverPosition())
@@ -111,6 +113,8 @@ public class EhsAnnualPlanService {
         plan.setWriterTeam(request.getWriterTeam());
         plan.setWriterPosition(request.getWriterPosition());
         plan.setWriterName(request.getWriterName());
+        plan.setModifiedByUserId(request.getModifiedByUserId());
+        plan.setModifiedByName(request.getModifiedByName());
         plan.setPlanApproverUserId(request.getPlanApproverUserId());
         plan.setPlanApproverTeam(request.getPlanApproverTeam());
         plan.setPlanApproverPosition(request.getPlanApproverPosition());
@@ -159,13 +163,34 @@ public class EhsAnnualPlanService {
 
     @Transactional
     public void delete(Long id) {
+        delete(id, null);
+    }
+
+    /**
+     * 권한 체크: 작성자(writerUserId 일치) 또는 admin 만 삭제 가능.
+     * username 이 null/system 이면 권한 검증 생략 (백오피스/스케줄러 호출용).
+     */
+    @Transactional
+    public void delete(Long id, String username) {
         EhsAnnualPlan plan = ehsAnnualPlanMapper.findById(id);
         if (plan == null) {
             throw new ResourceNotFoundException("EhsAnnualPlan", "id", id);
         }
+        if (username != null && !username.isEmpty() && !"system".equals(username)) {
+            IdmUser u;
+            try { u = idmMapper.findByUid(username); } catch (Exception e) { u = null; }
+            if (u == null) {
+                throw new AccessDeniedException("삭제 권한이 없습니다.");
+            }
+            boolean isAdmin = u.getUserRole() != null && ADMIN_ROLES.contains(u.getUserRole());
+            boolean isWriter = plan.getWriterUserId() != null && plan.getWriterUserId().equals(u.getUidNumber());
+            if (!isAdmin && !isWriter) {
+                throw new AccessDeniedException("작성자 또는 관리자만 삭제할 수 있습니다.");
+            }
+        }
         ehsAnnualPlanGoalMapper.deleteByPlanId(id);
         ehsAnnualPlanMapper.delete(id);
-        log.info("Deleted EHS annual plan with id: {}", id);
+        log.info("Deleted EHS annual plan with id: {} by {}", id, username);
     }
 
     @Transactional(readOnly = true)

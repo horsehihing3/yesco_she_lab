@@ -8,6 +8,12 @@ import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import EventIcon from '@mui/icons-material/Event'
+import PaidIcon from '@mui/icons-material/Paid'
+import PersonIcon from '@mui/icons-material/Person'
+import BuildIcon from '@mui/icons-material/Build'
 import { inspectionApi } from '../../api/legalFacilityApi'
 import type { FacilityInspection } from '../../types/legalFacility.types'
 import StatCard from '../legalCompliance/StatCard'
@@ -91,15 +97,19 @@ const FacilityInspectionTab: React.FC = () => {
                 </Stack>
               </Stack>
               <Divider sx={{ my: 1.5 }} />
-              <Stack direction="row" spacing={2} sx={{ color: 'text.secondary', flexWrap: 'wrap' }}>
-                <span>🏛️ {e.inspectOrg}</span>
-                <span>📋 {e.inspectType}</span>
-                <span>📅 검사일: <b>{e.inspectDate}</b></span>
-                {(e.cost ?? 0) > 0 && <span>💰 ₩{e.cost?.toLocaleString()}</span>}
-                <span>👤 {e.ownerName}</span>
+              <Stack direction="row" spacing={2} sx={{ color: 'text.secondary', flexWrap: 'wrap', alignItems: 'center', '& > .info-item': { display: 'inline-flex', alignItems: 'center', gap: 0.5 }, '& .MuiSvgIcon-root': { fontSize: '1rem', color: 'text.secondary' } }}>
+                <span className="info-item"><AccountBalanceIcon />{e.inspectOrg}</span>
+                <span className="info-item"><AssignmentIcon />{e.inspectType}</span>
+                <span className="info-item"><EventIcon />검사일: <b>{e.inspectDate}</b></span>
+                {(e.cost ?? 0) > 0 && <span className="info-item"><PaidIcon />₩{e.cost?.toLocaleString()}</span>}
+                <span className="info-item"><PersonIcon />{e.ownerName}</span>
               </Stack>
               {e.note && <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary' }}>{e.note}</Typography>}
-              {e.fix && e.fix !== '-' && <Typography variant="caption" sx={{ display: 'block', color: 'warning.main', mt: 0.5 }}>🔧 개선조치: {e.fix}</Typography>}
+              {e.fix && e.fix !== '-' && (
+                <Typography variant="caption" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, color: 'warning.main', mt: 0.5 }}>
+                  <BuildIcon sx={{ fontSize: '1rem' }} />개선조치: {e.fix}
+                </Typography>
+              )}
               <Stack direction="row" spacing={0.5} sx={{ mt: 1 }} justifyContent="flex-end">
                 <IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="inherit" /></IconButton>
                 <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="inherit" /></IconButton>

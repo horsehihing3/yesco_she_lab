@@ -1136,7 +1136,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
                 <Controller name="managerName" control={control} render={({ field }) => (
-                  <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('safetyWork.selectManager')} value={selectedManager ? getManagerDisplayName(selectedManager) : field.value} />
+                  <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={selectedManager ? getManagerDisplayName(selectedManager) : field.value} />
                 )} />
                 <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setManagerModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
               </Box>
@@ -1145,7 +1145,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
                 <Controller name="managerDept" control={control} rules={{ required: t('safetyWork.enterManagerDeptValidation') }} render={({ field }) => (
-                  <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('safetyWork.enterManagerDept')} />
+                  <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
                 )} />
               </Box>
             </Box>
@@ -1159,7 +1159,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
                   size="small"
                   fullWidth
                   value={getTeamLeaderDisplayName(selectedTeamLeader)}
-                  placeholder={t('safetyWork.selectTeamLeader')}
+                  placeholder={t('common.selectFromOrg', '조직도에서 선택')}
                   InputProps={{ readOnly: true }}
                 />
                 <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setTeamLeaderModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
@@ -1225,7 +1225,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('safetyWork.manager')}</Typography>
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <Controller name="managerName" control={control} render={({ field }) => (
-                  <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('safetyWork.selectManager')} value={selectedManager ? getManagerDisplayName(selectedManager) : field.value} />
+                  <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={selectedManager ? getManagerDisplayName(selectedManager) : field.value} />
                 )} />
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setManagerModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
               </Box>
@@ -1235,7 +1235,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
                 {t('safetyWork.managerDept')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
               </Typography>
               <Controller name="managerDept" control={control} rules={{ required: t('safetyWork.enterManagerDeptValidation') }} render={({ field }) => (
-                <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('safetyWork.enterManagerDept')} />
+                <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               )} />
             </Box>
             <Box>
@@ -1247,7 +1247,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
                   size="small"
                   fullWidth
                   value={getTeamLeaderDisplayName(selectedTeamLeader)}
-                  placeholder={t('safetyWork.selectTeamLeader')}
+                  placeholder={t('common.selectFromOrg', '조직도에서 선택')}
                   InputProps={{ readOnly: true }}
                 />
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setTeamLeaderModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>

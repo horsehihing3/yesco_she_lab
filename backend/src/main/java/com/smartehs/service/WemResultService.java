@@ -4,6 +4,7 @@ import com.smartehs.dto.request.WemResultRequest;
 import com.smartehs.dto.response.WemResultResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.WemResultMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.WemResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +56,7 @@ public class WemResultService {
     }
 
     @Transactional
-    public WemResultResponse create(WemResultRequest request) {
+    public WemResultResponse create(WemResultRequest request, IdmUser currentUser) {
         WemResult result = WemResult.builder()
                 .processName(request.getProcessName())
                 .factorName(request.getFactorName())
@@ -71,6 +72,12 @@ public class WemResultService {
                 .measurementAgency(request.getMeasurementAgency())
                 .remarks(request.getRemarks())
                 .build();
+        if (currentUser != null) {
+            result.setCreatedByUserId(currentUser.getUidNumber());
+            result.setCreatedByName(currentUser.getUserName());
+            result.setModifiedByUserId(currentUser.getUidNumber());
+            result.setModifiedByName(currentUser.getUserName());
+        }
 
         wemResultMapper.insert(result);
         log.info("Created WEM result: {}", result.getId());
@@ -78,7 +85,7 @@ public class WemResultService {
     }
 
     @Transactional
-    public WemResultResponse update(Long id, WemResultRequest request) {
+    public WemResultResponse update(Long id, WemResultRequest request, IdmUser currentUser) {
         WemResult result = wemResultMapper.findById(id);
         if (result == null) {
             throw new ResourceNotFoundException("WemResult", "id", id);
@@ -97,6 +104,10 @@ public class WemResultService {
         result.setMeasurementDate(request.getMeasurementDate());
         result.setMeasurementAgency(request.getMeasurementAgency());
         result.setRemarks(request.getRemarks());
+        if (currentUser != null) {
+            result.setModifiedByUserId(currentUser.getUidNumber());
+            result.setModifiedByName(currentUser.getUserName());
+        }
 
         wemResultMapper.update(result);
         log.info("Updated WEM result: {}", id);

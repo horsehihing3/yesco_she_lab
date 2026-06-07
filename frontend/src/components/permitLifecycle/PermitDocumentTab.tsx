@@ -1,15 +1,13 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip,
+  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
+  IconButton, CircularProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import ListSearchBar from '../common/ListSearchBar'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { permitDocumentApi, permitLifecycleStatsApi } from '../../api/permitLifecycleApi'
 import type { PermitDocument } from '../../types/permitLifecycle.types'
 import StatCard from '../legalCompliance/StatCard'
@@ -22,9 +20,11 @@ import { useAlert } from '../../contexts/AlertContext'
 const DOC_TYPES = ['허가증', '신고증', '검사결과서', '측정결과서', '보고서', '취급일지', '교육일지', '기타']
 const CATEGORIES = ['환경', '안전', '보건', '소방', '화학', '건축']
 
+type ViewMode = 'list' | 'detail' | 'create' | 'edit'
+
 const disposalDate = (d: PermitDocument): string | null => {
   if (!d.issueDate || !d.retentionYears) return null
-  if (d.retentionYears >= 999) return null  // 영구
+  if (d.retentionYears >= 999) return null
   const dt = new Date(d.issueDate)
   dt.setFullYear(dt.getFullYear() + d.retentionYears)
   return dt.toISOString().slice(0, 10)
@@ -52,26 +52,24 @@ const PermitDocumentTab: React.FC = () => {
   const { data: list = [], isLoading } = useQuery({ queryKey: ['permitDocument'], queryFn: permitDocumentApi.list })
   const { data: stats } = useQuery({ queryKey: ['permitLifecycleStats'], queryFn: permitLifecycleStatsApi.get })
 
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [selected, setSelected] = useState<PermitDocument | null>(null)
   const [searchInput, setSearchInput] = useState('')
-
   const [search, setSearch] = useState('')
+  const [filterType, setFilterType] = useState('all')
+  const [form, setForm] = useState<Partial<PermitDocument>>(emptyForm)
 
   const applySearch = () => setSearch(searchInput)
-
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
-  const [filterType, setFilterType] = useState('all')
-  const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<PermitDocument | null>(null)
-  const [form, setForm] = useState<Partial<PermitDocument>>(emptyForm)
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ['permitDocument'] })
     qc.invalidateQueries({ queryKey: ['permitLifecycleStats'] })
   }
 
-  const createM = useMutation({ mutationFn: permitDocumentApi.create, onSuccess: () => { invalidate(); setOpen(false); showSuccess('등록되었습니다') }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitDocument> }) => permitDocumentApi.update(id, e), onSuccess: () => { invalidate(); setOpen(false); showSuccess('수정되었습니다') }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: permitDocumentApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다') } })
+  const createM = useMutation({ mutationFn: permitDocumentApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitDocument> }) => permitDocumentApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
+  const deleteM = useMutation({ mutationFn: permitDocumentApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterType !== 'all' && x.docType !== filterType) return false
@@ -91,12 +89,121 @@ const PermitDocumentTab: React.FC = () => {
     return { active, near, disp }
   }, [list])
 
-  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, issueDate: todayStr() }); setOpen(true) }
-  const openEdit = (item: PermitDocument) => { setEditing(item); setForm({ ...item }); setOpen(true) }
+  const handleBackToList = () => { setViewMode('list'); setSelected(null); setForm(emptyForm) }
+  const handleRowClick = (item: PermitDocument) => { setSelected(item); setViewMode('detail') }
+  const handleAddClick = () => { setSelected(null); setForm({ ...emptyForm, issueDate: todayStr() }); setViewMode('create') }
+  const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
+  const handleDeleteClick = async () => {
+    if (!selected) return
+    if (await showConfirm('이 문서를 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+  }
   const handleSave = () => {
     if (!form.docName || !form.docType || !form.issueDate) { showError('문서명·종류·발급일 필수'); return }
-    if (editing) updateM.mutate({ id: editing.id, e: form })
+    if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
+  }
+
+  if (viewMode === 'detail' && selected) {
+    const rb = retentionBadge(selected)
+    const dd = disposalDate(selected)
+    return (
+      <Box>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>문서 상세</Typography>
+        <FormTable>
+          <FormRow>
+            <FormLabel>문서명</FormLabel>
+            <FormCell><Typography variant="body2" fontWeight={600}>{selected.docName}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>문서 종류</FormLabel>
+            <FormCell borderRight><Chip size="small" label={selected.docType} color="primary" variant="outlined" /></FormCell>
+            <FormLabel>분야</FormLabel>
+            <FormCell><Chip size="small" label={selected.category || '-'} variant="outlined" /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>관련 인허가 번호</FormLabel>
+            <FormCell><Typography variant="body2" fontFamily="monospace">{selected.relatedPermit || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>발급일</FormLabel>
+            <FormCell borderRight><Typography variant="body2" fontFamily="monospace">{selected.issueDate}</Typography></FormCell>
+            <FormLabel>보존기간 (년)</FormLabel>
+            <FormCell><Typography variant="body2">{selected.retentionYears >= 999 ? '영구' : `${selected.retentionYears}년`}</Typography></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>폐기 예정일</FormLabel>
+            <FormCell borderRight><Typography variant="body2" fontFamily="monospace">{dd || ''}</Typography></FormCell>
+            <FormLabel>상태</FormLabel>
+            <FormCell><Chip size="small" label={rb.label} color={rb.color} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>파일 경로</FormLabel>
+            <FormCell><Typography variant="body2" sx={{ wordBreak: 'break-all' }}>{selected.fileLocation || ''}</Typography></FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>비고</FormLabel>
+            <FormCell><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selected.notes || ''}</Typography></FormCell>
+          </FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
+          <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
+          <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
+        </Box>
+      </Box>
+    )
+  }
+
+  if (viewMode === 'create' || viewMode === 'edit') {
+    return (
+      <Box>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{viewMode === 'edit' ? '문서 수정' : '문서 등록'}</Typography>
+        <FormTable>
+          <FormRow>
+            <FormLabel required>문서명</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.docName || ''} onChange={(e) => setForm({ ...form, docName: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel required>문서 종류</FormLabel>
+            <FormCell borderRight>
+              <TextField select fullWidth size="small" value={form.docType || ''} onChange={(e) => setForm({ ...form, docType: e.target.value })}>
+                <MenuItem value="">선택하세요</MenuItem>
+                {DOC_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+              </TextField>
+            </FormCell>
+            <FormLabel>분야</FormLabel>
+            <FormCell>
+              <TextField select fullWidth size="small" value={form.category || ''} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                <MenuItem value="">선택하세요</MenuItem>
+                {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+              </TextField>
+            </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>관련 인허가 번호</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.relatedPermit || ''} onChange={(e) => setForm({ ...form, relatedPermit: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel required>발급일</FormLabel>
+            <FormCell borderRight><DatePickerField value={form.issueDate || null} onChange={(d) => setForm({ ...form, issueDate: d || undefined })} /></FormCell>
+            <FormLabel>보존기간 (년)</FormLabel>
+            <FormCell><NumberField fullWidth value={form.retentionYears ?? null} onChange={(v) => setForm({ ...form, retentionYears: v ?? 5 })} min={0} max={999} thousandSeparator={false} placeholder="영구 보존은 999" /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>파일 경로</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.fileLocation || ''} onChange={(e) => setForm({ ...form, fileLocation: e.target.value })} placeholder="예: /문서함/환경/대기/2024-대기-00123.pdf" /></FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>비고</FormLabel>
+            <FormCell><TextField fullWidth size="small" multiline minRows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></FormCell>
+          </FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
+          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
+        </Box>
+      </Box>
+    )
   }
 
   return (
@@ -108,16 +215,17 @@ const PermitDocumentTab: React.FC = () => {
         <Grid item xs={6} sm={3}><StatCard color="red"    value={computed.disp}   label="폐기 대상" sub="보존기간 종료" /></Grid>
       </Grid>
 
-      <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <ListSearchBar placeholder="문서명·관련 인허가 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} sx={{ flex: 1, minWidth: 200 }} />
-          <TextField select size="small" label="종류" value={filterType} onChange={(e) => setFilterType(e.target.value)} sx={{ minWidth: 130 }}>
-            <MenuItem value="all">전체</MenuItem>
-            {DOC_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
-          </TextField>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+        <ListSearchBar placeholder="문서명·관련 인허가 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
+          sx={{ width: { xs: '100%', sm: 240 } }} />
+        <TextField select size="small" value={filterType} onChange={(e) => setFilterType(e.target.value)} sx={{ minWidth: 130 }}>
+          <MenuItem value="all">전체</MenuItem>
+          {DOC_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+        </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
-        </Stack>
-      </Paper>
+        <Box sx={{ flex: 1 }} />
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ whiteSpace: 'nowrap' }}>New</Button>
+      </Stack>
 
       <Paper variant="outlined" sx={{ mb: 2 }}>
         {isLoading ? <Box sx={{ p: 6, textAlign: 'center' }}><CircularProgress /></Box> : (
@@ -133,17 +241,16 @@ const PermitDocumentTab: React.FC = () => {
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 80 }}>보존</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 110 }}>폐기예정</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 100 }}>상태</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', width: 90 }}>작업</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filtered.length === 0 ? (
-                  <TableRow><TableCell colSpan={9} align="center" sx={{ py: 6, color: 'text.disabled' }}>문서가 없습니다</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} align="center" sx={{ py: 6, color: 'text.disabled' }}>문서가 없습니다</TableCell></TableRow>
                 ) : filtered.map((x) => {
                   const rb = retentionBadge(x)
                   const dd = disposalDate(x)
                   return (
-                    <TableRow key={x.id} hover>
+                    <TableRow key={x.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(x)}>
                       <TableCell align="center"><Chip size="small" label={x.category || '-'} variant="outlined" /></TableCell>
                       <TableCell align="center"><Chip size="small" label={x.docType} color="primary" variant="outlined" /></TableCell>
                       <TableCell sx={{ fontWeight: 600 }}>{x.docName}</TableCell>
@@ -152,12 +259,6 @@ const PermitDocumentTab: React.FC = () => {
                       <TableCell align="center" sx={{ fontSize: '0.85rem' }}>{x.retentionYears >= 999 ? '영구' : `${x.retentionYears}년`}</TableCell>
                       <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{dd || '-'}</TableCell>
                       <TableCell align="center"><Chip size="small" label={rb.label} color={rb.color} /></TableCell>
-                      <TableCell align="center" sx={{ whiteSpace: 'nowrap', px: 0.5 }}>
-                        <IconButton size="small" onClick={() => openEdit(x)}><EditIcon fontSize="inherit" /></IconButton>
-                        <IconButton size="small" onClick={async () => {
-                          if (await showConfirm('이 문서를 삭제하시겠습니까?')) deleteM.mutate(x.id)
-                        }}><DeleteIcon fontSize="inherit" /></IconButton>
-                      </TableCell>
                     </TableRow>
                   )
                 })}
@@ -166,60 +267,6 @@ const PermitDocumentTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
-
-      <Stack direction="row" justifyContent="flex-end">
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>신규 등록</Button>
-      </Stack>
-
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editing ? '문서 수정' : '문서 등록'}</DialogTitle>
-        <DialogContent dividers>
-          <FormTable>
-            <FormRow>
-              <FormLabel required>문서명</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.docName || ''} onChange={(e) => setForm({ ...form, docName: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel required>문서 종류</FormLabel>
-              <FormCell borderRight>
-                <TextField select fullWidth size="small" value={form.docType || ''} onChange={(e) => setForm({ ...form, docType: e.target.value })}>
-                  <MenuItem value="">선택하세요</MenuItem>
-                  {DOC_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
-                </TextField>
-              </FormCell>
-              <FormLabel>분야</FormLabel>
-              <FormCell>
-                <TextField select fullWidth size="small" value={form.category || ''} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-                  <MenuItem value="">선택하세요</MenuItem>
-                  {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-                </TextField>
-              </FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>관련 인허가 번호</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.relatedPermit || ''} onChange={(e) => setForm({ ...form, relatedPermit: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel required>발급일</FormLabel>
-              <FormCell borderRight><DatePickerField value={form.issueDate || null} onChange={(d) => setForm({ ...form, issueDate: d || undefined })} /></FormCell>
-              <FormLabel>보존기간 (년)</FormLabel>
-              <FormCell><NumberField fullWidth value={form.retentionYears ?? null} onChange={(v) => setForm({ ...form, retentionYears: v ?? 5 })} min={0} max={999} thousandSeparator={false} placeholder="영구 보존은 999" /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>파일 경로</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.fileLocation || ''} onChange={(e) => setForm({ ...form, fileLocation: e.target.value })} placeholder="예: /문서함/환경/대기/2024-대기-00123.pdf" /></FormCell>
-            </FormRow>
-            <FormRow last>
-              <FormLabel>비고</FormLabel>
-              <FormCell><TextField fullWidth size="small" multiline minRows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></FormCell>
-            </FormRow>
-          </FormTable>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>저장</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   )
 }

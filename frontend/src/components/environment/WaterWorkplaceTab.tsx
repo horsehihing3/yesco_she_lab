@@ -168,7 +168,6 @@ const WaterWorkplaceTab: React.FC = () => {
         <ListSearchBar placeholder={t('water.workplace.searchWorkplace')}
           value={searchText} onChange={setSearchText} onSearch={handleSearch}
           sx={{ width: { xs: '100%', md: 250 } }}  />
-        <Button variant="contained" onClick={handleSearch} sx={{ display: { xs: 'none', md: 'flex' } }}>{t('common.search')}</Button>
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
@@ -371,7 +370,7 @@ const WaterWorkplaceTab: React.FC = () => {
         <Box sx={lastRowSx}>
           <Typography sx={labelSx}>{t('water.workplace.manager')}</Typography>
           <Box sx={fCellRSx}>
-            <TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('water.workplace.selectManager')} />
+            <TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
           <Typography sx={labelSx}>{t('water.workplace.remark')}</Typography>
@@ -394,7 +393,7 @@ const WaterWorkplaceTab: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('water.workplace.manager')}</Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('water.workplace.selectManager')} />
+            <TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>

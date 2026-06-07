@@ -23,7 +23,6 @@ public class Audit {
     @JsonProperty("auditDate")
     private LocalDate auditStartDate;
     private LocalDate auditEndDate;
-    private String grade;
     private Integer totalChecklist;
     private Integer completedChecklist;
     private Integer findingCount;
@@ -48,6 +47,9 @@ public class Audit {
     // 작성자 (감사 실시 등록자, 로그인 사용자 자동 입력)
     private Long createdByUserId;
     private String createdByName;
+    // 수정자 (마지막으로 수정한 사용자 — 수정 시 자동 갱신)
+    private Long modifiedByUserId;
+    private String modifiedByName;
     // 완료 결재 반려 사유
     private String rejectReason;
     private Boolean deleted;

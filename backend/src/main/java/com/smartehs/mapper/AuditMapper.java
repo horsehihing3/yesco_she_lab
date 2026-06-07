@@ -23,8 +23,6 @@ public interface AuditMapper {
 
     void update(Audit audit);
 
-    void updateGrade(@Param("id") Long id, @Param("grade") String grade);
-
     void completeAudit(@Param("id") Long id, @Param("approvedBy") String approvedBy);
 
     void rejectAudit(@Param("id") Long id, @Param("rejectReason") String rejectReason);

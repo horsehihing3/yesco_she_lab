@@ -27,6 +27,9 @@ public class EhsAnnualPlanResponse {
     private String writerPosition;
     private String writerName;
 
+    private Long modifiedByUserId;
+    private String modifiedByName;
+
     private Long planApproverUserId;
     private String planApproverTeam;
     private String planApproverPosition;
@@ -116,6 +119,8 @@ public class EhsAnnualPlanResponse {
                 .writerTeam(entity.getWriterTeam())
                 .writerPosition(entity.getWriterPosition())
                 .writerName(entity.getWriterName())
+                .modifiedByUserId(entity.getModifiedByUserId())
+                .modifiedByName(entity.getModifiedByName())
                 .planApproverUserId(entity.getPlanApproverUserId())
                 .planApproverTeam(entity.getPlanApproverTeam())
                 .planApproverPosition(entity.getPlanApproverPosition())

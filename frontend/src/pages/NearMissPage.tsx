@@ -1848,7 +1848,7 @@ const NearMissPage: React.FC = () => {
                 {t('nearMiss.responsiblePerson')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
-                <TextField fullWidth size="small" placeholder={t('nearMiss.responsiblePerson')} value={selectedResponsible ? getResponsibleDisplayName(selectedResponsible) : newMeasure.responsible} InputProps={{ readOnly: true }} />
+                <TextField fullWidth size="small" placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={selectedResponsible ? getResponsibleDisplayName(selectedResponsible) : newMeasure.responsible} InputProps={{ readOnly: true }} />
                 <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setResponsibleModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
               </Box>
             </Box>
@@ -1890,7 +1890,7 @@ const NearMissPage: React.FC = () => {
             <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.responsiblePerson')}</Typography>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <TextField fullWidth size="small" placeholder={t('nearMiss.responsiblePerson')} value={selectedResponsible ? getResponsibleDisplayName(selectedResponsible) : newMeasure.responsible} InputProps={{ readOnly: true }} />
+                <TextField fullWidth size="small" placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={selectedResponsible ? getResponsibleDisplayName(selectedResponsible) : newMeasure.responsible} InputProps={{ readOnly: true }} />
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setResponsibleModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
               </Box>
             </Box>

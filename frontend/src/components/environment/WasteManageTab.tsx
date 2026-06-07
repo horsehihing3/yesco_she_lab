@@ -427,7 +427,7 @@ const WasteManageTab: React.FC = () => {
           </Box>
           <Typography sx={labelSx}>{t('environment.manager')}</Typography>
           <Box sx={cellSx}>
-            <TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('environment.selectManager')} />
+            <TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>
@@ -452,7 +452,7 @@ const WasteManageTab: React.FC = () => {
           { label: t('environment.disposalMethod'), el: <FormControl fullWidth size="small"><Select value={formData.disposalMethod || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, disposalMethod: e.target.value })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{disposalMethodCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDisposalMethodLabel(c.code)}</MenuItem>))}</Select></FormControl> },
           { label: t('environment.disposalCompany'), el: <FormControl fullWidth size="small"><Select value={formData.disposalCompany || ''} onChange={(e: SelectChangeEvent) => setFormData({ ...formData, disposalCompany: e.target.value })} displayEmpty><MenuItem value="" disabled>선택하세요</MenuItem>{disposalCompanyCodes.map((c) => (<MenuItem key={c.code} value={c.code}>{getDisposalCompanyLabel(c.code)}</MenuItem>))}</Select></FormControl> },
           { label: t('environment.disposalDate'), el: <DatePickerField value={formData.disposalDate || ''} onChange={(v) => setFormData({ ...formData, disposalDate: v })} size="small" fullWidth /> },
-          { label: t('environment.manager'), el: <Box sx={{ display: 'flex', gap: 1 }}><TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('environment.selectManager')} /><Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button></Box> },
+          { label: t('environment.manager'), el: <Box sx={{ display: 'flex', gap: 1 }}><TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (formData.manager || '')} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} /><Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button></Box> },
           { label: t('environment.remark'), el: <TextField fullWidth size="small" multiline rows={3} value={formData.remark || ''} onChange={(e) => setFormData({ ...formData, remark: e.target.value })} /> },
         ].map((field, i) => (
           <Box key={i}>

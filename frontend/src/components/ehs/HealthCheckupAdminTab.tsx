@@ -147,7 +147,7 @@ const HealthCheckupAdminTab: React.FC = () => {
     return (
       <Box>
         {/* Checkup Info - PC */}
-        <Paper sx={{ p: 3, mb: 3, bgcolor: 'grey.50', display: { xs: 'none', md: 'block' } }}>
+        <Box sx={{ mb: 3, display: { xs: 'none', md: 'block' } }}>
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('healthCheckup.checkupInfo')}</Typography>
           <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
@@ -195,12 +195,12 @@ const HealthCheckupAdminTab: React.FC = () => {
               <Box sx={valueSx}><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.notes || ''}</Typography></Box>
             </Box>
           </Box>
-        </Paper>
+        </Box>
 
         {/* Checkup Info - Mobile */}
         <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('healthCheckup.checkupInfo')}</Typography>
-          <Paper sx={{ p: 2, border: 1, borderColor: 'grey.300' }}>
+          <Box>
             {[
               [t('healthCheckup.checkupId'), selectedItem.checkupId],
               [t('healthCheckup.checkupStatus'), getStatusLabel(selectedItem.checkupStatus) || selectedItem.checkupStatus],
@@ -221,7 +221,7 @@ const HealthCheckupAdminTab: React.FC = () => {
                 <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{value}</Typography>
               </Box>
             ))}
-          </Paper>
+          </Box>
         </Box>
 
         {/* Body Diagram + Results */}
@@ -302,11 +302,11 @@ const HealthCheckupAdminTab: React.FC = () => {
       <Alert severity="info" sx={{ mb: 2 }}>{t('healthCheckup.adminDesc')}</Alert>
 
       {/* PC Search */}
-      <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-start', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <ListSearchBar placeholder={t('healthCheckup.searchByName')}
             value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-            sx={{ minWidth: 200 }} />
+            sx={{ width: 240 }} />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setSearchText(''); setPage(0) }}>
               <MenuItem value="">{t('healthCheckup.filterByStatus')}</MenuItem>

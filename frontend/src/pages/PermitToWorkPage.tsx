@@ -30,6 +30,7 @@ import { fetchSafetyTemplates, fetchSafetyTemplateDetail } from '../api/safetyCh
 import SafetyChecklistTab, { SafetyChecklistTabRef } from '../components/ehs/SafetyChecklistTab'
 import PermitReportTab from '../components/ehs/PermitReportTab'
 import PermitDashboardTab from '../components/ehs/PermitDashboardTab'
+import ListSearchBar from '../components/common/ListSearchBar'
 import RejectReasonDialog from '../components/common/RejectReasonDialog'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 import axiosInstance from '../api/axiosInstance'
@@ -109,6 +110,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
 
   // List filters
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
@@ -277,8 +279,14 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   const handleOpenCreate = async () => {
     setSelectedItem(null)
     const leader = await fetchTeamLeader(user?.deptCode)
+    const today = new Date()
+    const weekLater = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
+    const todayStr = today.toISOString().substring(0, 10)
+    const weekLaterStr = weekLater.toISOString().substring(0, 10)
     setForm({
       permitType: '', riskLevel: '', title: '', isExternal: isExternalMode,
+      workStartDate: `${todayStr}T08:00:00`,
+      workEndDate: `${weekLaterStr}T17:00:00`,
       ...(leader ? {
         planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
         completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
@@ -404,22 +412,26 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
         {/* Search / Filter bar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <TextField size="small" placeholder={t('ptw.searchPlaceholder')} value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setPage(0); setStatusFilter(''); setTypeFilter('') }}
-              sx={{ minWidth: 200 }} />
+            <ListSearchBar
+              value={searchInput}
+              onChange={setSearchInput}
+              onSearch={() => { setSearchText(searchInput); setPage(0); setStatusFilter(''); setTypeFilter('') }}
+              placeholder={t('ptw.searchPlaceholder', '제목으로 검색')}
+              sx={{ minWidth: 240 }}
+            />
             <FormControl size="small" sx={{ minWidth: 120 }}>
-              <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText(''); setTypeFilter('') }}>
+              <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchInput(''); setSearchText(''); setTypeFilter('') }}>
                 <MenuItem value="">{t('ptw.allStatus')}</MenuItem>
                 {permitStatuses.map((c) => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
             <FormControl size="small" sx={{ minWidth: 120 }}>
-              <Select displayEmpty value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0); setSearchText(''); setStatusFilter('') }}>
+              <Select displayEmpty value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0); setSearchInput(''); setSearchText(''); setStatusFilter('') }}>
                 <MenuItem value="">{t('ptw.allTypes')}</MenuItem>
                 {permitTypes.map((c) => <MenuItem key={c.code} value={c.code}>{getPermitTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
-            <IconButton onClick={() => { setSearchText(''); setStatusFilter(''); setTypeFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
+            <IconButton onClick={() => { setSearchInput(''); setSearchText(''); setStatusFilter(''); setTypeFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
           </Box>
           {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
@@ -427,17 +439,22 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
         </Box>
         {/* Search / Filter bar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <TextField size="small" fullWidth placeholder={t('ptw.searchPlaceholder')} value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0); setStatusFilter(''); setTypeFilter('') }} />
+          <ListSearchBar
+            fullWidth
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={() => { setSearchText(searchInput); setPage(0); setStatusFilter(''); setTypeFilter('') }}
+            placeholder={t('ptw.searchPlaceholder', '제목으로 검색')}
+          />
           <Box sx={{ display: 'flex', gap: 1 }}>
             <FormControl size="small" sx={{ flex: 1 }}>
-              <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText(''); setTypeFilter('') }}>
+              <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchInput(''); setSearchText(''); setTypeFilter('') }}>
                 <MenuItem value="">{t('ptw.allStatus')}</MenuItem>
                 {permitStatuses.map((c) => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
             <FormControl size="small" sx={{ flex: 1 }}>
-              <Select displayEmpty value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0); setSearchText(''); setStatusFilter('') }}>
+              <Select displayEmpty value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(0); setSearchInput(''); setSearchText(''); setStatusFilter('') }}>
                 <MenuItem value="">{t('ptw.allTypes')}</MenuItem>
                 {permitTypes.map((c) => <MenuItem key={c.code} value={c.code}>{getPermitTypeLabel(c.code)}</MenuItem>)}
               </Select>
@@ -743,20 +760,34 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             <Typography sx={labelSx}>{t('ptw.description')}</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={2} value={form.description || ''} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Box>
           </Box>
-          {/* Row: safety measures */}
+          {/* 안전 조치 사항 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('ptw.safetyMeasures')}</Typography>
-            <Box sx={valSx}><TextField fullWidth size="small" multiline rows={2} value={form.safetyMeasures || ''} onChange={(e) => setForm({ ...form, safetyMeasures: e.target.value })} /></Box>
+            <Box sx={valSx}><TextField fullWidth size="small" multiline rows={3} value={form.safetyMeasures || ''} onChange={(e) => setForm({ ...form, safetyMeasures: e.target.value })} /></Box>
           </Box>
-          {/* Row: required PPE + hazard factors */}
+          {/* 위험 요인 — 안전 조치 사항과 동일 크기 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>{t('ptw.hazardFactors')}</Typography>
+            <Box sx={valSx}><TextField fullWidth size="small" multiline rows={3} value={form.hazardFactors || ''} onChange={(e) => setForm({ ...form, hazardFactors: e.target.value })} /></Box>
+          </Box>
+          {/* 비고 — 안전 조치 사항과 동일 크기 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>{t('ppe.notes')}</Typography>
+            <Box sx={valSx}><TextField fullWidth size="small" multiline rows={3} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></Box>
+          </Box>
+          {/* 필요 보호구 | 비상 연락처 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('ptw.requiredPpe')}</Typography>
             <Box sx={valSxBorder}>
-              <Select fullWidth size="small" multiple
+              <Select fullWidth size="small" multiple displayEmpty
                 value={form.requiredPpe ? form.requiredPpe.split(', ').filter(Boolean) : []}
                 onChange={(e) => setForm({ ...form, requiredPpe: (e.target.value as string[]).join(', ') })}
                 input={<OutlinedInput />}
-                renderValue={(selected) => (selected as string[]).join(', ')}>
+                renderValue={(selected) => {
+                  const arr = selected as string[]
+                  if (!arr || arr.length === 0) return <span style={{ color: '#9e9e9e' }}>{t('common.select', '선택하세요')}</span>
+                  return arr.join(', ')
+                }}>
                 {ppeList.map(ppe => (
                   <MenuItem key={ppe.id} value={ppe.name}>
                     <Checkbox checked={(form.requiredPpe || '').split(', ').includes(ppe.name)} size="small" />
@@ -765,23 +796,40 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
                 ))}
               </Select>
             </Box>
-            <Typography sx={labelSx}>{t('ptw.hazardFactors')}</Typography>
-            <Box sx={valSx}>
-              <TextField fullWidth size="small" value={form.hazardFactors || ''} onChange={(e) => setForm({ ...form, hazardFactors: e.target.value })} />
-            </Box>
-          </Box>
-          {/* Row: emergency contact + notes */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('ptw.emergencyContact')}</Typography>
-            <Box sx={valSxBorder}>
+            <Box sx={valSx}>
               <TextField fullWidth size="small" value={form.emergencyContact || ''} onChange={(e) => setForm({ ...form, emergencyContact: fmtPhone(e.target.value) })} />
             </Box>
-            <Typography sx={labelSx}>{t('ppe.notes')}</Typography>
+          </Box>
+          {/* 작성자 | 작성일자 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
+            <Box sx={valSxBorder}>
+              <Typography variant="body2">
+                {(selectedItem?.requesterName) || user?.name || user?.username || ''}
+              </Typography>
+            </Box>
+            <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={valSx}>
-              <TextField fullWidth size="small" value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+              <Typography variant="body2" fontFamily="monospace">
+                {viewMode === 'edit' && selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : new Date().toISOString().substring(0, 10)}
+              </Typography>
             </Box>
           </Box>
-          {/* Row: attachments */}
+          {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
+          {viewMode === 'edit' && selectedItem?.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
+              <Box sx={valSxBorder}>
+                <Typography variant="body2">{selectedItem.modifiedBy || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
+              <Box sx={valSx}>
+                <Typography variant="body2" fontFamily="monospace">{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+              </Box>
+            </Box>
+          )}
+          {/* 첨부파일 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('common.attachments', '첨부파일')}</Typography>
             <Box sx={{ ...valSx, flexDirection: 'column', gap: 1 }}>
@@ -830,22 +878,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               </Box>
             </Box>
           )}
-          {/* Row: checklist + inspector */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={labelSx}>{t('ptw.checklist', '체크리스트')}</Typography>
-            <Box sx={valSxBorder}>
-              <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
-                {templates.filter(tmpl => tmpl.categoryType === 'WORK_PERMIT').map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
-              </Select>
-            </Box>
-            <Typography sx={labelSx}>{t('ptw.inspectorName', '점검자')}</Typography>
-            <Box sx={{ ...valSx, display: 'flex', gap: 0 }}>
-              <TextField fullWidth size="small" value={form.inspectorName || ''} InputProps={{ readOnly: true }} placeholder={t('ptw.selectInspector', '점검자 선택')} />
-              <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => { setUserPickTarget('inspector'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
-            </Box>
-          </Box>
-          {/* 계획 / 완료 결재자 선택 */}
+          {/* 계획 승인자 | 완료 승인자 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('common.planApprover', '계획 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valSxBorder, display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -860,6 +893,21 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
                 placeholder={t('common.selectFromOrg', '조직도에서 선택')}
                 value={form.completionApproverName || ''} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => { setUserPickTarget('completionApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
+            </Box>
+          </Box>
+          {/* 체크리스트 — 맨 아래 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>{t('ptw.checklist', '체크리스트')}</Typography>
+            <Box sx={valSxBorder}>
+              <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
+                <MenuItem value="">{t('common.select', '선택하세요')}</MenuItem>
+                {templates.filter(tmpl => tmpl.categoryType === 'WORK_PERMIT').map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
+              </Select>
+            </Box>
+            <Typography sx={labelSx}>{t('ptw.inspectorName', '점검자')}</Typography>
+            <Box sx={{ ...valSx, display: 'flex', gap: 0 }}>
+              <TextField fullWidth size="small" value={form.inspectorName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => { setUserPickTarget('inspector'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
         </Paper>
@@ -1036,7 +1084,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               {t('ptw.inspectorName', '점검자')}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth value={form.inspectorName || ''} InputProps={{ readOnly: true }} placeholder={t('ptw.selectInspector', '점검자 선택')} />
+              <TextField size="small" fullWidth value={form.inspectorName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
@@ -1087,6 +1135,8 @@ const PostWorkInspectionContent: React.FC = () => {
   const [page] = useState(0)
   const [templates, setTemplates] = useState<SafetyChecklistTemplate[]>([])
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
+  const [searchInput, setSearchInput] = useState('')
+  const [searchText, setSearchText] = useState('')
 
   const checklistRef = useRef<SafetyChecklistTabRef>(null)
 
@@ -1114,11 +1164,23 @@ const PostWorkInspectionContent: React.FC = () => {
     enabled: viewMode === 'list',
   })
 
-  const allItems = [
+  const allItemsRaw = [
     ...(approvedData?.content || []),
     ...(completionPendingData?.content || []),
     ...(doneData?.content || []),
   ].filter(item => item.checklistTemplateId)
+
+  // 검색 — 허가번호 / 제목 / 점검자
+  const allItems = searchText
+    ? allItemsRaw.filter(item => {
+        const q = searchText.toLowerCase()
+        return (
+          (item.permitId || '').toLowerCase().includes(q) ||
+          (item.title || '').toLowerCase().includes(q) ||
+          (item.inspectorName || '').toLowerCase().includes(q)
+        )
+      })
+    : allItemsRaw
 
   // 마스터 목록에 없는 templateId(=스냅샷)는 상세 조회로 이름 lookup
   const unknownTemplateIds = useMemo(() => {
@@ -1225,6 +1287,28 @@ const PostWorkInspectionContent: React.FC = () => {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{t('permit.postWorkInspection', '작업 완료 후 점검')}</Typography>
+
+        {/* 검색 - PC */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center', mb: 2 }}>
+          <ListSearchBar
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={() => setSearchText(searchInput)}
+            placeholder={t('ptw.searchPostWorkPlaceholder', '허가번호/제목/점검자로 검색')}
+            sx={{ minWidth: 280 }}
+          />
+          <IconButton onClick={() => { setSearchInput(''); setSearchText('') }} size="small"><RefreshIcon /></IconButton>
+        </Box>
+        {/* 검색 - Mobile */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mb: 2 }}>
+          <ListSearchBar
+            fullWidth
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={() => setSearchText(searchInput)}
+            placeholder={t('ptw.searchPostWorkPlaceholder', '허가번호/제목/점검자로 검색')}
+          />
+        </Box>
 
         {allItems.length === 0
           ? <Alert severity="info" sx={{ m: 2 }}>{t('common.noData')}</Alert>

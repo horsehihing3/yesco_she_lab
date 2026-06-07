@@ -23,6 +23,10 @@ public class WemFactorResponse {
     private Boolean isPermitted;
     private String usedProcess;
     private String remarks;
+    private Long createdByUserId;
+    private String createdByName;
+    private Long modifiedByUserId;
+    private String modifiedByName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -41,6 +45,10 @@ public class WemFactorResponse {
                 .isPermitted(entity.getIsPermitted())
                 .usedProcess(entity.getUsedProcess())
                 .remarks(entity.getRemarks())
+                .createdByUserId(entity.getCreatedByUserId())
+                .createdByName(entity.getCreatedByName())
+                .modifiedByUserId(entity.getModifiedByUserId())
+                .modifiedByName(entity.getModifiedByName())
                 .createdAt(entity.getCreatedAt())
                 .modifiedAt(entity.getModifiedAt())
                 .build();

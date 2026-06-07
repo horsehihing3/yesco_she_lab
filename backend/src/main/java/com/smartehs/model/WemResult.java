@@ -24,6 +24,10 @@ public class WemResult {
     private LocalDate measurementDate;
     private String measurementAgency;
     private String remarks;
+    private Long createdByUserId;
+    private String createdByName;
+    private Long modifiedByUserId;
+    private String modifiedByName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

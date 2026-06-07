@@ -57,6 +57,8 @@ public class EmergencyPlanController {
             if (idmUser != null) {
                 emergencyPlan.setWriterUserId(idmUser.getUidNumber());
                 emergencyPlan.setWriterName(idmUser.getUserName());
+                emergencyPlan.setModifiedByUserId(idmUser.getUidNumber());
+                emergencyPlan.setModifiedByName(idmUser.getUserName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(emergencyPlanService.create(emergencyPlan)));
@@ -64,7 +66,14 @@ public class EmergencyPlanController {
 
     @PutMapping("/{id}")
     @Operation(summary = "비상 대응 계획 수정")
-    public ResponseEntity<ApiResponse<EmergencyPlan>> update(@PathVariable Long id, @RequestBody EmergencyPlan emergencyPlan) {
+    public ResponseEntity<ApiResponse<EmergencyPlan>> update(@PathVariable Long id, @RequestBody EmergencyPlan emergencyPlan, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser idmUser = idmMapper.findByUid(authentication.getName());
+            if (idmUser != null) {
+                emergencyPlan.setModifiedByUserId(idmUser.getUidNumber());
+                emergencyPlan.setModifiedByName(idmUser.getUserName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(emergencyPlanService.update(id, emergencyPlan)));
     }
 

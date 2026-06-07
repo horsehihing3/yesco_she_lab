@@ -13,15 +13,13 @@ import {
 } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import LogoutIcon from '@mui/icons-material/Logout'
-import LightModeIcon from '@mui/icons-material/LightMode'
-import DarkModeIcon from '@mui/icons-material/DarkMode'
 import ExploreIcon from '@mui/icons-material/Explore'
 import TableViewIcon from '@mui/icons-material/TableView'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../context/AuthContext'
-import { useThemeMode } from '../../context/ThemeContext'
 import LanguageSelector from './LanguageSelector'
+import ThemeSelector from './ThemeSelector'
 
 // DEV ONLY — 납품 전 삭제
 const DEV_ACCOUNTS = [
@@ -39,7 +37,6 @@ const DEV_ACCOUNTS = [
 const Header: React.FC = () => {
   const { t } = useTranslation()
   const { user, login, logout } = useAuth()
-  const { isDarkMode, toggleTheme } = useThemeMode()
   const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [switchingTo, setSwitchingTo] = useState<string | null>(null)
@@ -99,21 +96,8 @@ const Header: React.FC = () => {
         {/* Language Selector */}
         <LanguageSelector />
 
-        {/* Theme Toggle Button */}
-        <Tooltip title={isDarkMode ? t('theme.lightMode') : t('theme.darkMode')}>
-          <IconButton
-            onClick={toggleTheme}
-            size="small"
-            sx={{
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(255,255,255,0.1)',
-              },
-            }}
-          >
-            {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
-          </IconButton>
-        </Tooltip>
+        {/* Theme Selector — 언어 선택과 동일한 드롭다운 패턴 */}
+        <ThemeSelector />
 
         <Tooltip title={loginError ?? ''} open={!!loginError} arrow>
           <IconButton onClick={(e) => { setLoginError(null); handleMenuOpen(e) }} size="small">

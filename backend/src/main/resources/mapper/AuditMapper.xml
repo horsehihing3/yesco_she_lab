@@ -14,7 +14,6 @@
         <result property="auditorDept" column="auditor_dept"/>
         <result property="auditStartDate" column="audit_start_date"/>
         <result property="auditEndDate" column="audit_end_date"/>
-        <result property="grade" column="grade"/>
         <result property="totalChecklist" column="total_checklist"/>
         <result property="completedChecklist" column="completed_checklist"/>
         <result property="findingCount" column="finding_count"/>
@@ -36,6 +35,8 @@
         <result property="completionApprovedBy" column="completion_approved_by"/>
         <result property="createdByUserId" column="created_by_user_id"/>
         <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
         <result property="rejectReason" column="reject_reason"/>
         <result property="deleted" column="deleted"/>
         <result property="createdAt" column="created_at"/>
@@ -76,19 +77,21 @@
         INSERT INTO tb_audit (
             audit_id, plan_id, audit_name, audit_type, target_dept,
             auditor_name, auditor_dept, audit_start_date, audit_end_date,
-            grade, total_checklist, completed_checklist, finding_count,
+            total_checklist, completed_checklist, finding_count,
             status, summary, notes,
             plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
             completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
             created_by_user_id, created_by_name,
+            modified_by_user_id, modified_by_name,
             deleted, created_at, modified_at
         ) VALUES (
             #{auditId}, #{planId}, #{auditName}, #{auditType}, #{targetDept},
             #{auditorName}, #{auditorDept}, #{auditStartDate,jdbcType=DATE}, #{auditEndDate,jdbcType=DATE},
-            #{grade}, #{totalChecklist}, #{completedChecklist}, #{findingCount},
+            #{totalChecklist}, #{completedChecklist}, #{findingCount},
             #{status}, #{summary}, #{notes},
             #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
             #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
             #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
             0, GETDATE(), GETDATE()
         )
@@ -100,7 +103,7 @@
             target_dept = #{targetDept},
             auditor_name = #{auditorName}, auditor_dept = #{auditorDept},
             audit_start_date = #{auditStartDate,jdbcType=DATE}, audit_end_date = #{auditEndDate,jdbcType=DATE},
-            grade = #{grade}, total_checklist = #{totalChecklist},
+            total_checklist = #{totalChecklist},
             completed_checklist = #{completedChecklist}, finding_count = #{findingCount},
             status = #{status}, summary = #{summary}, notes = #{notes},
             modified_by = #{modifiedBy},
@@ -112,6 +115,8 @@
             completion_approver_team     = #{completionApproverTeam},
             completion_approver_position = #{completionApproverPosition},
             completion_approver_name     = #{completionApproverName},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name    = #{modifiedByName},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>
@@ -136,9 +141,6 @@
         WHERE id = #{id}
     </update>
 
-    <update id="updateGrade">
-        UPDATE tb_audit SET grade = #{grade}, modified_at = GETDATE() WHERE id = #{id}
-    </update>
 
     <update id="softDelete">
         UPDATE tb_audit SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
+import SignatureImage from '../common/SignatureImage'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -193,7 +194,7 @@ const PartnerSafetyHistoryTab: React.FC = () => {
               서명
             </Typography>
             <Paper variant="outlined" sx={{ p: 2 }}>
-              <img src={selected.signature} alt="" style={{ maxHeight: 100 }} />
+              <SignatureImage src={selected.signature} maxHeight={100} />
             </Paper>
           </>
         )}
@@ -244,13 +245,13 @@ const PartnerSafetyHistoryTab: React.FC = () => {
     <Box>
       {/* 검색 — 데스크탑 */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-        <ListSearchBar sx={{ width: 320 }} placeholder="제목/계획번호/작성자 검색..." value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
+        <ListSearchBar sx={{ width: 320 }} placeholder="제목/계획번호/작성자 검색" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
         <IconButton size="small" onClick={refresh}><RefreshIcon /></IconButton>
       </Box>
       {/* 검색 — 모바일 */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <ListSearchBar fullWidth placeholder="제목/계획번호/작성자 검색..." value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
+          <ListSearchBar fullWidth placeholder="제목/계획번호/작성자 검색" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
           <IconButton size="small" onClick={refresh}
             sx={{ border: 1, borderColor: 'divider', borderRadius: 1, flexShrink: 0 }}>
             <RefreshIcon fontSize="small" />

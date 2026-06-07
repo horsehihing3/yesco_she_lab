@@ -450,7 +450,7 @@ const ErgonomicsPage: React.FC = () => {
         <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
           <Typography sx={labelSx}>{t('ergo.worker')}</Typography>
           <Box sx={{ ...valBorderSx, display: 'flex', alignItems: 'center' }}>
-            <TextField fullWidth size="small" value={form.workerName || ''} InputProps={{ readOnly: true }} placeholder={t('ergo.worker')} />
+            <TextField fullWidth size="small" value={form.workerName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setWorkerModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
           <Typography sx={labelSx}>{t('ppe.department')}</Typography>
@@ -461,7 +461,7 @@ const ErgonomicsPage: React.FC = () => {
         <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
           <Typography sx={labelSx}>{t('ergo.assessor')}</Typography>
           <Box sx={{ ...valSx, display: 'flex', alignItems: 'center' }}>
-            <TextField fullWidth size="small" value={form.assessorName || ''} InputProps={{ readOnly: true }} placeholder={t('ergo.assessor')} />
+            <TextField fullWidth size="small" value={form.assessorName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setAssessorModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>
@@ -549,7 +549,7 @@ const ErgonomicsPage: React.FC = () => {
             {t('ergo.worker')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField size="small" fullWidth value={form.workerName || ''} InputProps={{ readOnly: true }} placeholder={t('ergo.worker')} />
+            <TextField size="small" fullWidth value={form.workerName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setWorkerModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>
@@ -564,7 +564,7 @@ const ErgonomicsPage: React.FC = () => {
             {t('ergo.assessor')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField size="small" fullWidth value={form.assessorName || ''} InputProps={{ readOnly: true }} placeholder={t('ergo.assessor')} />
+            <TextField size="small" fullWidth value={form.assessorName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setAssessorModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>

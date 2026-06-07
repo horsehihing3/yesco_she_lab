@@ -8,7 +8,7 @@ import type {
 } from '../types/legalCompliance.types'
 import type {
   AuditPlan, AuditPlanRequest,
-  Audit, AuditRequest, AuditGrade,
+  Audit, AuditRequest,
   AuditFinding, AuditFindingRequest,
   AuditLogEntry,
 } from '../types/audit.types'
@@ -170,10 +170,6 @@ export const legalComplianceExecApi = {
   },
   update: async (id: number, data: AuditRequest) => {
     const res = await axiosInstance.put<ApiResponse<Audit>>(`/legal-compliance/${id}`, data)
-    return res.data.data
-  },
-  updateGrade: async (id: number, grade: AuditGrade) => {
-    const res = await axiosInstance.patch<ApiResponse<Audit>>(`/legal-compliance/${id}/grade`, null, { params: { grade } })
     return res.data.data
   },
   complete: async (id: number) => {

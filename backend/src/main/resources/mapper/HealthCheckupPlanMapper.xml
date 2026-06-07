@@ -20,6 +20,8 @@
         <result property="createdBy" column="created_by"/>
         <result property="createdByName" column="created_by_name"/>
         <result property="createdByDept" column="created_by_dept"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
         <result property="planApproverUserId" column="plan_approver_user_id"/>
@@ -104,6 +106,8 @@
             completion_approver_position = #{completionApproverPosition},
             completion_approver_name     = #{completionApproverName},
             writer          = #{writer},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name    = #{modifiedByName},
             modified_at     = GETDATE()
         WHERE id = #{id}
     </update>

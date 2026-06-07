@@ -101,7 +101,7 @@ const SafetyChecklistWrapper: React.FC<SafetyChecklistWrapperProps> = ({ categor
       {/* Search - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField size="small" placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')} value={keyword}
+          <TextField size="small" placeholder={t('checklist.searchPlaceholder', '제목으로 검색')} value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             sx={{ minWidth: 250 }} />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
@@ -119,7 +119,7 @@ const SafetyChecklistWrapper: React.FC<SafetyChecklistWrapperProps> = ({ categor
       </Box>
       {/* Search - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-        <TextField size="small" fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')} value={keyword}
+        <TextField size="small" fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색')} value={keyword}
           onChange={(e) => setKeyword(e.target.value)} />
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleReset} sx={{ flex: '1 1 calc(50% - 4px)' }}>{t('common.reset', '초기화')}</Button>

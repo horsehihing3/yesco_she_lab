@@ -192,6 +192,7 @@
     "trainingMgmt": "Training Management",
     "envMonitoring": "Env. Monitoring",
     "chemicalMgmt": "Chemical Management",
+    "processSafetyMgmt": "PSW / MOC",
     "chemMaster": "Master & Regulation",
     "chemMsds": "MSDS Management",
     "chemMsdsRaw": "Raw Material MSDS",
@@ -372,8 +373,10 @@
     "byFloor": "By Floor"
   },
   "theme": {
+    "select": "Select Theme",
     "lightMode": "Light Mode",
-    "darkMode": "Dark Mode"
+    "darkMode": "Dark Mode",
+    "yescoMode": "YESCO Mode"
   },
   "ehsAlert": {
     "title": "EHS Alerts",
@@ -1955,6 +1958,7 @@
     "selectApprover": "Select Approver",
     "duplicateApprover": "This user is already added to the approval line.",
     "alreadyAdded": "Already added",
+    "selectFromOrg": "Select from organization",
     "confirmApprove": "Approve this request?",
     "confirmReject": "Confirm Rejection",
     "enterRejectReason": "Enter rejection reason",
@@ -2662,7 +2666,7 @@
     "submitApproval": "Submit Approval",
     "startProgress": "Start",
     "creator": "Creator",
-    "createdAt": "Created At",
+    "createdAt": "Written Date",
     "noChecklist": "Not Linked",
     "noChecklistLinked": "No checklist linked. Please link one in the audit plan.",
     "allChecklistMustBeChecked": "All checklist items must be checked before completion.",

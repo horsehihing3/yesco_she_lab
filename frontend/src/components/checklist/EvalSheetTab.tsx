@@ -336,7 +336,7 @@ const EvalSheetTab: React.FC = () => {
         {/* Search - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <ListSearchBar placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')}
+            <ListSearchBar placeholder={t('checklist.searchPlaceholder', '제목으로 검색')}
               value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} sx={{ minWidth: 250 }} />
             <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
           </Box>
@@ -352,7 +352,7 @@ const EvalSheetTab: React.FC = () => {
         </Box>
         {/* Search - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <ListSearchBar fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색...')}
+          <ListSearchBar fullWidth placeholder={t('checklist.searchPlaceholder', '제목으로 검색')}
             value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: '1 1 calc(50% - 4px)' }}>

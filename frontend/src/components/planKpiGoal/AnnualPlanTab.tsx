@@ -8,7 +8,6 @@ import {
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
   FormControl, Checkbox,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
@@ -22,6 +21,7 @@ import { ApiResponse, PageResponse } from '../../types/common.types'
 import NumberField from '../common/NumberField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import RejectReasonDialog from '../common/RejectReasonDialog'
+import ListSearchBar from '../common/ListSearchBar'
 import useCodeMap from '../../hooks/useCodeMap'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import GoalsTable, { GOAL_TEMPLATE, buildTemplateGoals } from './GoalsTable'
@@ -376,11 +376,13 @@ const AnnualPlanTab: React.FC = () => {
               ))}
             </Select>
           </FormControl>
-          <TextField size="small" placeholder={t('common.search')} value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            sx={{ minWidth: 200 }} />
-          <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
+          <ListSearchBar
+            value={searchText}
+            onChange={setSearchText}
+            onSearch={handleSearch}
+            placeholder={t('annualPlan.searchPlaceholder', '계획명으로 검색')}
+            sx={{ minWidth: 240 }}
+          />
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
           {canSee(MENU_ANNUAL, 'LIST', '신규 등록', myRoles) && (
@@ -399,10 +401,13 @@ const AnnualPlanTab: React.FC = () => {
             </Select>
           </FormControl>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField size="small" fullWidth placeholder={t('common.search')} value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()} />
-            <IconButton onClick={handleSearch} size="small"><SearchIcon /></IconButton>
+            <ListSearchBar
+              fullWidth
+              value={searchText}
+              onChange={setSearchText}
+              onSearch={handleSearch}
+              placeholder={t('annualPlan.searchPlaceholder', '계획명으로 검색')}
+            />
             <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           </Box>
           {canSee(MENU_ANNUAL, 'LIST', '신규 등록', myRoles) && (
@@ -522,19 +527,23 @@ const AnnualPlanTab: React.FC = () => {
             <Box sx={valSx}><Typography variant="body2">{d.description || ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
-            <Box sx={labelSx}>{t('pkg.status')}</Box>
-            <Box sx={valSx}>
-              <Chip label={getStatusChipLabel(d.status)} color={STATUS_COLORS[d.status] || 'default'} size="small" />
-            </Box>
+            <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{d.remarks || ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
-            <Box sx={valSx}>
-              <Typography variant="body2">{d.writerName || ''}</Typography>
-            </Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{d.writerName || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
           </Box>
+          {d.modifiedAt && d.modifiedAt !== d.createdAt && (
+            <Box sx={rowSx}>
+              <Box sx={labelSx}>{t('pkg.modifier', '수정자')}</Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{d.modifiedByName || ''}</Typography></Box>
+              <Box sx={labelSx}>{t('pkg.modifiedDate', '수정일자')}</Box>
+              <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.modifiedAt)}</Typography></Box>
+            </Box>
+          )}
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.planApprover', '계획 승인자')}</Box>
             <Box sx={valBorderSx}>
@@ -546,8 +555,10 @@ const AnnualPlanTab: React.FC = () => {
             </Box>
           </Box>
           <Box sx={{ ...rowSx, borderBottom: 0 }}>
-            <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{d.remarks || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('pkg.status')}</Box>
+            <Box sx={valSx}>
+              <Chip label={getStatusChipLabel(d.status)} color={STATUS_COLORS[d.status] || 'default'} size="small" />
+            </Box>
           </Box>
         </Box>
        </Box>
@@ -638,6 +649,18 @@ const AnnualPlanTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={rowSx}>
+          <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
+          <Box sx={valSx}>
+            <TextField size="small" fullWidth multiline rows={3}
+              value={formData.remarks || ''}
+              onChange={(e) => setFormData({ ...formData, remarks: e.target.value })} />
+          </Box>
+        </Box>
+        <Box sx={rowSx}>
+          <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
+          <Box sx={valBorderSx}>
+            <Typography variant="body2">{formData.writerName || ''}</Typography>
+          </Box>
           <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
           <Box sx={valSx}>
             <Typography variant="body2">
@@ -645,14 +668,19 @@ const AnnualPlanTab: React.FC = () => {
             </Typography>
           </Box>
         </Box>
-        <Box sx={rowSx}>
-          <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
-          <Box sx={valSx}>
-            <TextField size="small" fullWidth InputProps={{ readOnly: true }}
-              value={formData.writerName || ''} placeholder={t('pkg.fullName', '성명')} />
+        {viewMode === 'edit' && detail && detail.modifiedAt && detail.modifiedAt !== detail.createdAt && (
+          <Box sx={rowSx}>
+            <Box sx={labelSx}>{t('pkg.modifier', '수정자')}</Box>
+            <Box sx={valBorderSx}>
+              <Typography variant="body2">{detail.modifiedByName || ''}</Typography>
+            </Box>
+            <Box sx={labelSx}>{t('pkg.modifiedDate', '수정일자')}</Box>
+            <Box sx={valSx}>
+              <Typography variant="body2">{formatDateOnly(detail.modifiedAt)}</Typography>
+            </Box>
           </Box>
-        </Box>
-        <Box sx={rowSx}>
+        )}
+        <Box sx={{ ...rowSx, borderBottom: 0 }}>
           <Box sx={labelSx}>{t('pkg.planApprover', '계획 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
           <Box sx={valBorderSx}>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
@@ -672,14 +700,6 @@ const AnnualPlanTab: React.FC = () => {
                 <PersonSearchIcon fontSize="small" />
               </Button>
             </Box>
-          </Box>
-        </Box>
-        <Box sx={{ ...rowSx, borderBottom: 0 }}>
-          <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
-          <Box sx={valSx}>
-            <TextField size="small" fullWidth
-              value={formData.remarks || ''}
-              onChange={(e) => setFormData({ ...formData, remarks: e.target.value })} />
           </Box>
         </Box>
       </Box>

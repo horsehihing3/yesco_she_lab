@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import SignatureImage from '../common/SignatureImage'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -221,8 +222,9 @@ const SiteSafetyReportTab: React.FC = () => {
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>서명 이미지</TableCell>
               <TableCell colSpan={3} sx={{ p: 2 }}>
                 {item.inspectorSignature ? (
-                  <Box component="img" src={item.inspectorSignature} alt="signature"
-                    sx={{ maxHeight: 100, maxWidth: 320, border: 1, borderColor: 'grey.300', bgcolor: '#fff' }} />
+                  <Box sx={{ display: 'inline-block', border: 1, borderColor: 'grey.300', bgcolor: '#fff', p: 0.5 }}>
+                    <SignatureImage src={item.inspectorSignature} alt="signature" maxHeight={100} maxWidth={320} />
+                  </Box>
                 ) : (
                   <Typography variant="body2" color="text.secondary">서명이 등록되지 않았습니다.</Typography>
                 )}

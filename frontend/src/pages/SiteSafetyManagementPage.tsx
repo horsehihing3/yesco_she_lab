@@ -345,7 +345,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
       <Box>
         {/* ─── 데스크탑(md+) 헤더 ─── */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-          <ListSearchBar sx={{ width: 320 }} placeholder="제목/계획번호/작성자 검색..." value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
+          <ListSearchBar sx={{ width: 320 }} placeholder="제목/계획번호/작성자 검색" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
           <TextField select size="small" sx={{ width: 140 }} label="상태"
             value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">전체</MenuItem>
@@ -364,7 +364,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         {/* ─── 모바일(xs/sm) 헤더 ─── */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField size="small" fullWidth placeholder="제목/계획번호/작성자 검색..."
+            <TextField size="small" fullWidth placeholder="제목/계획번호/작성자 검색"
               value={searchText} onChange={e => setSearchText(e.target.value)} />
             <IconButton size="small" onClick={() => qc.invalidateQueries({ queryKey: ['siteSafety'] })}
               sx={{ border: 1, borderColor: 'divider', borderRadius: 1, flexShrink: 0 }}>
@@ -770,16 +770,18 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           <FormLabel>작업 유형</FormLabel>
           <FormCell borderRight>
             <ReadTextField select fullWidth size="small" readOnly={isReadonly} value={(view as any).workType || ''}
+              SelectProps={{ displayEmpty: true }}
               onChange={e => setForm({ ...form, workType: e.target.value })}>
-              <MenuItem value="">선택하세요</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {WORK_TYPES.map(w => <MenuItem key={w} value={w}>{w}</MenuItem>)}
             </ReadTextField>
           </FormCell>
           <FormLabel>위험도</FormLabel>
           <FormCell>
             <ReadTextField select fullWidth size="small" readOnly={isReadonly} value={(view as any).riskLevel || ''}
+              SelectProps={{ displayEmpty: true }}
               onChange={e => setForm({ ...form, riskLevel: e.target.value })}>
-              <MenuItem value="">선택하세요</MenuItem>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
               {RISK_LEVELS.map(r => <MenuItem key={r} value={r}>{RISK_LABEL[r]}</MenuItem>)}
             </ReadTextField>
           </FormCell>
@@ -810,6 +812,12 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           <FormCell><ReadTextField fullWidth size="small" multiline minRows={2} readOnly={isReadonly}
             value={(view as any).safetyMeasures || ''} onChange={e => setForm({ ...form, safetyMeasures: e.target.value })} /></FormCell>
         </FormRow>
+        {/* 비고 — 안전 조치 바로 아래로 이동 */}
+        <FormRow>
+          <FormLabel>비고</FormLabel>
+          <FormCell><ReadTextField fullWidth size="small" multiline minRows={2} readOnly={isReadonly}
+            value={(view as any).notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} /></FormCell>
+        </FormRow>
         <FormRow>
           <FormLabel>보호구</FormLabel>
           <FormCell borderRight><ReadTextField fullWidth size="small" readOnly={isReadonly}
@@ -820,10 +828,12 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         </FormRow>
         <FormRow>
           <FormLabel>비상연락처</FormLabel>
-          <FormCell borderRight><ReadTextField fullWidth size="small" readOnly={isReadonly}
+          <FormCell><ReadTextField fullWidth size="small" readOnly={isReadonly}
             value={(view as any).emergencyContact || ''} onChange={e => setForm({ ...form, emergencyContact: fmtPhone(e.target.value) })} /></FormCell>
+        </FormRow>
+        <FormRow>
           <FormLabel>계획 승인자</FormLabel>
-          <FormCell>
+          <FormCell borderRight>
             {isReadonly ? (
               <Typography variant="body2">{(view as any).planApproverName || ''}</Typography>
             ) : (
@@ -836,36 +846,22 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
               </Box>
             )}
           </FormCell>
-        </FormRow>
-        <FormRow>
-          <FormLabel required>체크리스트</FormLabel>
+          <FormLabel>완료 승인자</FormLabel>
           <FormCell>
             {isReadonly ? (
-              <Typography variant="body2">
-                {(() => {
-                  const tid = (view as any).checklistTemplateId
-                  const t = templates.find(x => x.id === tid)
-                  return t ? t.templateName : '-'
-                })()}
-              </Typography>
+              <Typography variant="body2">{(view as any).completionApproverName || ''}</Typography>
             ) : (
-              <FormControl fullWidth size="small">
-                <Select displayEmpty value={(view as any).checklistTemplateId || ''}
-                  onChange={e => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
-                  <MenuItem value="">선택하세요</MenuItem>
-                  {templates.filter(t => (t as SafetyChecklistTemplate & { categoryType?: string }).categoryType === 'CONTRACTOR_MOBILE')
-                    .map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
-                </Select>
-              </FormControl>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <TextField fullWidth size="small" InputProps={{ readOnly: true }}
+                  value={(view as any).completionApproverName || ''} placeholder="조직도에서 선택" />
+                <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
+                  <PersonSearchIcon fontSize="small" />
+                </Button>
+              </Box>
             )}
           </FormCell>
         </FormRow>
         <FormRow>
-          <FormLabel>비고</FormLabel>
-          <FormCell><ReadTextField fullWidth size="small" multiline minRows={2} readOnly={isReadonly}
-            value={(view as any).notes || ''} onChange={e => setForm({ ...form, notes: e.target.value })} /></FormCell>
-        </FormRow>
-        <FormRow last>
           <FormLabel>첨부파일</FormLabel>
           <FormCell>
             <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ alignItems: 'center' }}>
@@ -950,54 +946,86 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             </Stack>
           </FormCell>
         </FormRow>
+        {/* 체크리스트 — 맨 아래로 이동 */}
+        <FormRow last>
+          <FormLabel required>체크리스트</FormLabel>
+          <FormCell>
+            {isReadonly ? (
+              <Typography variant="body2">
+                {(() => {
+                  const tid = (view as any).checklistTemplateId
+                  const t = templates.find(x => x.id === tid)
+                  return t ? t.templateName : '-'
+                })()}
+              </Typography>
+            ) : (
+              <FormControl fullWidth size="small">
+                <Select displayEmpty value={(view as any).checklistTemplateId || ''}
+                  onChange={e => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
+                  <MenuItem value="" disabled>선택하세요</MenuItem>
+                  {templates.filter(t => (t as SafetyChecklistTemplate & { categoryType?: string }).categoryType === 'CONTRACTOR_MOBILE')
+                    .map(tmpl => <MenuItem key={tmpl.id} value={tmpl.id}>{tmpl.templateName}</MenuItem>)}
+                </Select>
+              </FormControl>
+            )}
+          </FormCell>
+        </FormRow>
       </FormTable>
 
       {/* ============ 작업자 정보 ============ */}
       <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>작업자 정보</Typography>
-      <Paper variant="outlined" sx={{ p: 2 }}>
-        {(isReadonly ? (detailWorkers || []) : workers).length === 0 ? (
-          <Typography variant="body2" color="text.disabled" sx={{ textAlign: 'center', py: 2 }}>등록된 작업자가 없습니다.</Typography>
-        ) : (
-          <TableContainer>
-            <Table size="small">
-              <TableHead><TableRow>
-                <TableCell align="center" sx={{ width: 40 }}>No</TableCell>
-                <TableCell>성명</TableCell>
-                <TableCell>연락처</TableCell>
-                <TableCell>소속업체</TableCell>
-                {!isReadonly && <TableCell align="center" sx={{ width: 60 }}>삭제</TableCell>}
-              </TableRow></TableHead>
-              <TableBody>
-                {(isReadonly ? (detailWorkers || []) : workers).map((w, idx) => isReadonly ? (
-                  <TableRow key={idx}>
-                    <TableCell align="center">{idx + 1}</TableCell>
-                    <TableCell>{w.workerName}</TableCell>
-                    <TableCell>{w.workerPhone || '-'}</TableCell>
-                    <TableCell>{w.companyName || '-'}</TableCell>
-                  </TableRow>
-                ) : (
-                  <TableRow key={idx}>
-                    <TableCell align="center">{idx + 1}</TableCell>
-                    <TableCell><TextField size="small" fullWidth value={w.workerName} onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], workerName: e.target.value }; setWorkers(nw) }} /></TableCell>
-                    <TableCell><TextField size="small" fullWidth value={w.workerPhone}
-                      placeholder="010-0000-0000"
-                      inputProps={{ inputMode: 'numeric', maxLength: 13 }}
-                      onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], workerPhone: fmtPhone(e.target.value) }; setWorkers(nw) }} /></TableCell>
-                    <TableCell><TextField size="small" fullWidth value={w.companyName} onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], companyName: e.target.value }; setWorkers(nw) }} /></TableCell>
-                    <TableCell align="center"><IconButton size="small" color="error" onClick={() => setWorkers(prev => prev.filter((_, i) => i !== idx))}><DeleteIcon fontSize="inherit" /></IconButton></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-        {!isReadonly && (
-          <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
-            <Button variant="outlined" size="small" onClick={() => setWorkers(prev => [...prev, { workerName: '', workerPhone: '', companyName: '' }])}>외부직원 추가</Button>
-            <Button variant="outlined" size="small" onClick={() => setShowWorkerUserModal(true)}>내부직원 추가</Button>
-          </Stack>
-        )}
-      </Paper>
+      {(() => {
+        const WorkerContent = (
+          <>
+            {(isReadonly ? (detailWorkers || []) : workers).length === 0 ? (
+              <Typography variant="body2" color="text.disabled" sx={{ textAlign: 'center', py: 2 }}>등록된 작업자가 없습니다.</Typography>
+            ) : (
+              <TableContainer>
+                <Table size="small">
+                  <TableHead><TableRow>
+                    <TableCell align="center" sx={{ width: 40 }}>No</TableCell>
+                    <TableCell>성명</TableCell>
+                    <TableCell>연락처</TableCell>
+                    <TableCell>소속업체</TableCell>
+                    {!isReadonly && <TableCell align="center" sx={{ width: 60 }}>삭제</TableCell>}
+                  </TableRow></TableHead>
+                  <TableBody>
+                    {(isReadonly ? (detailWorkers || []) : workers).map((w, idx) => isReadonly ? (
+                      <TableRow key={idx}>
+                        <TableCell align="center">{idx + 1}</TableCell>
+                        <TableCell>{w.workerName}</TableCell>
+                        <TableCell>{w.workerPhone || '-'}</TableCell>
+                        <TableCell>{w.companyName || '-'}</TableCell>
+                      </TableRow>
+                    ) : (
+                      <TableRow key={idx}>
+                        <TableCell align="center">{idx + 1}</TableCell>
+                        <TableCell><TextField size="small" fullWidth value={w.workerName} onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], workerName: e.target.value }; setWorkers(nw) }} /></TableCell>
+                        <TableCell><TextField size="small" fullWidth value={w.workerPhone}
+                          placeholder="010-0000-0000"
+                          inputProps={{ inputMode: 'numeric', maxLength: 13 }}
+                          onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], workerPhone: fmtPhone(e.target.value) }; setWorkers(nw) }} /></TableCell>
+                        <TableCell><TextField size="small" fullWidth value={w.companyName} onChange={e => { const nw = [...workers]; nw[idx] = { ...nw[idx], companyName: e.target.value }; setWorkers(nw) }} /></TableCell>
+                        <TableCell align="center"><IconButton size="small" color="error" onClick={() => setWorkers(prev => prev.filter((_, i) => i !== idx))}><DeleteIcon fontSize="inherit" /></IconButton></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+            {!isReadonly && (
+              <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
+                <Button variant="outlined" size="small" onClick={() => setWorkers(prev => [...prev, { workerName: '', workerPhone: '', companyName: '' }])}>외부직원 추가</Button>
+                <Button variant="outlined" size="small" onClick={() => setShowWorkerUserModal(true)}>내부직원 추가</Button>
+              </Stack>
+            )}
+          </>
+        )
+        // 상세(읽기) 모드: 외곽 Paper 박스 제거 (현장 안전 계획 + 평가서조회 담당승인자 공통)
+        return isReadonly
+          ? <Box>{WorkerContent}</Box>
+          : <Paper variant="outlined" sx={{ p: 2 }}>{WorkerContent}</Paper>
+      })()}
 
       {/* ============ 체크리스트 정보 (평가서조회 탭에서만) ============ */}
       {isReadonly && isApprovalMode && (
@@ -1077,7 +1105,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
       <UserSelectModal open={approverPickTarget !== null} onClose={() => setApproverPickTarget(null)}
         selectedUsers={[]} onConfirm={handleUserSelect} singleSelect useCompanyTree
-        title="계획 승인자 선택" />
+        title={approverPickTarget === 'completion' ? '완료 승인자 선택' : '계획 승인자 선택'} />
       <DeptUserMultiSelectModal open={showWorkerUserModal} onClose={() => setShowWorkerUserModal(false)}
         onConfirm={handleWorkerUserSelect} title="내부직원 선택" />
     </Box>

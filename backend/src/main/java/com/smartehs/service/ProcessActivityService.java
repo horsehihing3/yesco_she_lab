@@ -103,6 +103,10 @@ public class ProcessActivityService {
                 .evaluator(r.getEvaluator())
                 .creationDate(r.getCreationDate())
                 .teamMembers(r.getTeamMembers())
+                .createdByUserId(r.getCreatedByUserId())
+                .createdByName(r.getCreatedByName())
+                .modifiedByUserId(r.getModifiedByUserId())
+                .modifiedByName(r.getModifiedByName())
                 .build();
     }
 

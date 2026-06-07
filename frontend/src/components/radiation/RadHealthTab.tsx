@@ -85,13 +85,15 @@ const RadHealthTab: React.FC = () => {
         <strong>방사선작업종사자 특수건강진단</strong> — 배치전 1회 · 정기 6개월/1년 · 누적선량 추적 · 이상소견 시 추적관찰 (산안법 §130)
       </Alert>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <ListSearchBar fullWidth placeholder="성명/부서/검진기관 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+        <ListSearchBar placeholder="성명/부서/검진기관 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
+          sx={{ width: { xs: '100%', sm: 240 } }} />
         <TextField select size="small" sx={{ minWidth: 170 }} label="검진구분" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {EXAM_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 

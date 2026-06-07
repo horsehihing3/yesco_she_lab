@@ -23,6 +23,10 @@ public class WemPlan {
     private String agencyCode;
     private String contractPeriod;
     private String remarks;
+    private Long createdByUserId;
+    private String createdByName;
+    private Long modifiedByUserId;
+    private String modifiedByName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

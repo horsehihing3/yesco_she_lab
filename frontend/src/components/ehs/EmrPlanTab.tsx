@@ -11,7 +11,6 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
-import BusinessIcon from '@mui/icons-material/Business'
 import { Autocomplete, Chip as MuiChip } from '@mui/material'
 import DatePickerField from '../common/DatePickerField'
 import RejectReasonDialog from '../common/RejectReasonDialog'
@@ -411,13 +410,13 @@ const EmrPlanTab: React.FC = () => {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={labelSx}>{t('emr.responsibleDept')}</Typography>
-              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{selectedItem.responsibleDept || ''}</Typography>
-              </Box>
               <Typography sx={labelSx}>{t('emr.responsibleName')}</Typography>
-              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{selectedItem.responsibleName || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>{t('emr.responsibleDept')}</Typography>
+              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2">{selectedItem.responsibleDept || ''}</Typography>
               </Box>
             </Box>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
@@ -428,38 +427,6 @@ const EmrPlanTab: React.FC = () => {
               <Typography sx={labelSx}>{t('emr.trainingEndDate')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.trainingEndDate || ''}</Typography>
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={labelSx}>{t('emr.writer')}</Typography>
-              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">
-                  {[selectedItem.writerTeam, selectedItem.writerPosition, selectedItem.writerName].filter(Boolean).join(' / ') || ''}
-                </Typography>
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={labelSx}>{t('emr.planApprover')}</Typography>
-              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2">
-                  {[selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''}
-                </Typography>
-                {selectedItem.planApprovedAt && (
-                  <Typography variant="caption" color="text.secondary">
-                    ({selectedItem.planApprovedBy} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 19)})
-                  </Typography>
-                )}
-              </Box>
-              <Typography sx={labelSx}>{t('emr.completionApprover')}</Typography>
-              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2">
-                  {[selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''}
-                </Typography>
-                {selectedItem.completionApprovedAt && (
-                  <Typography variant="caption" color="text.secondary">
-                    ({selectedItem.completionApprovedBy} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 19)})
-                  </Typography>
-                )}
               </Box>
             </Box>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
@@ -491,6 +458,57 @@ const EmrPlanTab: React.FC = () => {
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.notes || ''}</Typography>
               </Box>
             </Box>
+            {/* 작성자 | 작성일자 */}
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
+              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2">{selectedItem.writerName || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
+              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2">
+                  {selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+                </Typography>
+              </Box>
+            </Box>
+            {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
+            {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+                <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
+                <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body2">{selectedItem.modifiedByName || ''}</Typography>
+                </Box>
+                <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
+                <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body2">{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+                </Box>
+              </Box>
+            )}
+            {/* 계획승인자 | 완료승인자 — 체크리스트 바로 위 */}
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={labelSx}>{t('emr.planApprover')}</Typography>
+              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2">
+                  {[selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''}
+                </Typography>
+                {selectedItem.planApprovedAt && (
+                  <Typography variant="caption" color="text.secondary">
+                    ({selectedItem.planApprovedBy} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 19)})
+                  </Typography>
+                )}
+              </Box>
+              <Typography sx={labelSx}>{t('emr.completionApprover')}</Typography>
+              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2">
+                  {[selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''}
+                </Typography>
+                {selectedItem.completionApprovedAt && (
+                  <Typography variant="caption" color="text.secondary">
+                    ({selectedItem.completionApprovedBy} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 19)})
+                  </Typography>
+                )}
+              </Box>
+            </Box>
             <Box sx={{ display: 'flex' }}>
               <Typography sx={labelSx}>{t('audit.checklist', '체크리스트')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -509,16 +527,22 @@ const EmrPlanTab: React.FC = () => {
               [t('emr.planId'), selectedItem.planId],
               [t('emr.planName'), selectedItem.planName],
               [t('emr.planType'), getPlanTypeLabel(selectedItem.planType)],
-              [t('emr.responsibleDept'), selectedItem.responsibleDept || ''],
               [t('emr.responsibleName'), selectedItem.responsibleName || ''],
+              [t('emr.responsibleDept'), selectedItem.responsibleDept || ''],
               [t('emr.trainingStartDate'), selectedItem.trainingStartDate || ''],
               [t('emr.trainingEndDate'), selectedItem.trainingEndDate || ''],
-              [t('emr.writer'), [selectedItem.writerTeam, selectedItem.writerPosition, selectedItem.writerName].filter(Boolean).join(' / ') || ''],
-              [t('emr.planApprover'), [selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''],
-              [t('emr.completionApprover'), [selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''],
               [t('common.description'), selectedItem.description || ''],
               [t('emr.responseSteps'), selectedItem.responseSteps || ''],
               [t('common.notes'), selectedItem.notes || ''],
+              [t('common.creator', '작성자'), selectedItem.writerName || ''],
+              [t('audit.createdAt', '작성일자'),
+                selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
+              ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
+                [t('common.modifier', '수정자'), selectedItem.modifiedByName || ''],
+                [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+              ] as Array<[string, string]> : []),
+              [t('emr.planApprover'), [selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''],
+              [t('emr.completionApprover'), [selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''],
             ].map(([label, value], i) => (
               <Box key={i}>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography>
@@ -605,21 +629,22 @@ const EmrPlanTab: React.FC = () => {
             </Box>
             <Typography sx={labelSx}>{t('emr.planType')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
-              <Select fullWidth size="small" value={form.planType} onChange={(e) => setForm({ ...form, planType: e.target.value })}>
+              <Select fullWidth size="small" displayEmpty value={form.planType} onChange={(e) => setForm({ ...form, planType: e.target.value })}>
+                <MenuItem value="" disabled>{t('common.select', '선택하세요')}</MenuItem>
                 {planTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getPlanTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={labelSx}>{t('emr.responsibleDept')}</Typography>
-            <Box sx={{ ...valueBorderSx, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={form.responsibleDept || ''} InputProps={{ readOnly: true }} placeholder={t('emr.selectDept', '담당부서 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowDeptModal(true)}><BusinessIcon fontSize="small" /></Button>
-            </Box>
             <Typography sx={labelSx}>{t('emr.responsibleName')}</Typography>
-            <Box sx={{ ...valueSx, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={form.responsibleName || ''} InputProps={{ readOnly: true }} placeholder={t('environment.selectManager')} />
+            <Box sx={{ ...valueBorderSx, display: 'flex', gap: 1, alignItems: 'center' }}>
+              <TextField fullWidth size="small" value={form.responsibleName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowResponsibleUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
+            </Box>
+            <Typography sx={labelSx}>{t('emr.responsibleDept')}</Typography>
+            <Box sx={{ ...valueSx, display: 'flex', gap: 1, alignItems: 'center' }}>
+              <TextField fullWidth size="small" value={form.responsibleDept || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowDeptModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
@@ -630,18 +655,6 @@ const EmrPlanTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.trainingEndDate')}</Typography>
             <Box sx={valueSx}>
               <DatePickerField value={form.trainingEndDate || null} onChange={(v) => setForm({ ...form, trainingEndDate: v })} size="small" />
-            </Box>
-          </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={labelSx}>{t('emr.planApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
-            <Box sx={{ ...valueBorderSx, gap: 1, display: 'flex', alignItems: 'center' }}>
-              <TextField size="small" fullWidth placeholder={t('pkg.fullName', '성명')} value={form.planApproverName || ''} InputProps={{ readOnly: true }} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('planApprover')}><PersonSearchIcon fontSize="small" /></Button>
-            </Box>
-            <Typography sx={labelSx}>{t('emr.completionApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
-            <Box sx={{ ...valueSx, gap: 0.5, display: 'flex', alignItems: 'center' }}>
-              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} placeholder={t('pkg.fullName', '성명')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
@@ -676,6 +689,47 @@ const EmrPlanTab: React.FC = () => {
               <TextField fullWidth size="small" multiline rows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
             </Box>
           </Box>
+          {/* 작성자 | 작성일자 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
+            <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2">{form.writerName || authUser?.name || authUser?.username || ''}</Typography>
+            </Box>
+            <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
+            <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2">
+                {viewMode === 'edit' && selectedItem?.createdAt
+                  ? selectedItem.createdAt.replace('T', ' ').substring(0, 16)
+                  : new Date().toISOString().substring(0, 10)}
+              </Typography>
+            </Box>
+          </Box>
+          {/* 수정자 | 수정일자 — 수정 모드 + 이력 있을 때만 */}
+          {viewMode === 'edit' && selectedItem && selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
+              <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2">{selectedItem.modifiedByName || ''}</Typography>
+              </Box>
+              <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
+              <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body2">{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+              </Box>
+            </Box>
+          )}
+          {/* 계획승인자 | 완료승인자 — 체크리스트 바로 위 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Typography sx={labelSx}>{t('emr.planApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
+            <Box sx={{ ...valueBorderSx, gap: 1, display: 'flex', alignItems: 'center' }}>
+              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={form.planApproverName || ''} InputProps={{ readOnly: true }} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('planApprover')}><PersonSearchIcon fontSize="small" /></Button>
+            </Box>
+            <Typography sx={labelSx}>{t('emr.completionApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
+            <Box sx={{ ...valueSx, gap: 0.5, display: 'flex', alignItems: 'center' }}>
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
+            </Box>
+          </Box>
           <Box sx={{ display: 'flex' }}>
             <Typography sx={labelSx}>{t('audit.checklist', '체크리스트')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
@@ -702,47 +756,28 @@ const EmrPlanTab: React.FC = () => {
               {t('emr.planType')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <FormControl fullWidth size="small">
-              <Select value={form.planType} onChange={(e) => setForm({ ...form, planType: e.target.value })}>
+              <Select displayEmpty value={form.planType} onChange={(e) => setForm({ ...form, planType: e.target.value })}>
+                <MenuItem value="" disabled>{t('common.select', '선택하세요')}</MenuItem>
                 {planTypeCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getPlanTypeLabel(c.code)}</MenuItem>)}
               </Select>
             </FormControl>
           </Box>
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('emr.responsibleDept')}</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('emr.responsibleName')}</Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth value={form.responsibleDept || ''} InputProps={{ readOnly: true }} placeholder={t('emr.selectDept', '담당부서 선택')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowDeptModal(true)}><BusinessIcon fontSize="small" /></Button>
+              <TextField size="small" fullWidth value={form.responsibleName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowResponsibleUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('emr.responsibleName')}</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('emr.responsibleDept')}</Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth value={form.responsibleName || ''} InputProps={{ readOnly: true }} placeholder={t('environment.selectManager')} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowResponsibleUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
+              <TextField size="small" fullWidth value={form.responsibleDept || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowDeptModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
           <DatePickerField value={form.trainingStartDate || null} onChange={(v) => setForm({ ...form, trainingStartDate: v })} size="small" label={t('emr.trainingStartDate')} />
           <DatePickerField value={form.trainingEndDate || null} onChange={(v) => setForm({ ...form, trainingEndDate: v })} size="small" label={t('emr.trainingEndDate')} />
-          <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('emr.planApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth placeholder={t('pkg.fullName', '성명')} value={form.planApproverName || ''} InputProps={{ readOnly: true }} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('planApprover')}><PersonSearchIcon fontSize="small" /></Button>
-            </Box>
-          </Box>
-          <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              <Typography variant="body2" fontWeight="bold" sx={{ flex: 1 }}>
-                {t('emr.completionApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth placeholder={t('pkg.fullName', '성명')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
-              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
-            </Box>
-          </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('emr.resources', '자원·장비')}</Typography>
             <Autocomplete
@@ -766,6 +801,51 @@ const EmrPlanTab: React.FC = () => {
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.notes')}</Typography>
             <TextField size="small" fullWidth multiline rows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+          </Box>
+          {/* 작성자 / 작성일자 */}
+          <Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.creator', '작성자')}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{form.writerName || authUser?.name || authUser?.username || ''}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.createdAt', '작성일자')}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>
+              {viewMode === 'edit' && selectedItem?.createdAt
+                ? selectedItem.createdAt.replace('T', ' ').substring(0, 16)
+                : new Date().toISOString().substring(0, 10)}
+            </Typography>
+          </Box>
+          {/* 수정자 / 수정일자 — 수정 모드 + 이력 있을 때만 */}
+          {viewMode === 'edit' && selectedItem && selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
+            <>
+              <Box>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifier', '수정자')}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{selectedItem.modifiedByName || ''}</Typography>
+              </Box>
+              <Box>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifiedAt', '수정일자')}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+              </Box>
+            </>
+          )}
+          {/* 계획승인자 — 체크리스트 바로 위 */}
+          <Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              {t('emr.planApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={form.planApproverName || ''} InputProps={{ readOnly: true }} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('planApprover')}><PersonSearchIcon fontSize="small" /></Button>
+            </Box>
+          </Box>
+          <Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              {t('emr.completionApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
+            </Box>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>

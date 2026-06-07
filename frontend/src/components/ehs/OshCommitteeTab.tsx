@@ -39,6 +39,7 @@ import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 import SignaturePad from '../common/SignaturePad'
+import SignatureImage from '../common/SignatureImage'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import axiosInstance from '../../api/axiosInstance'
 import { workplaceApi } from '../../api/workplaceApi'
@@ -684,7 +685,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                         <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 140 }}>{(attendee as any).attendeePhone || ''}</TableCell>
                         <TableCell align="center" sx={{ p: 0.5 }}>
                           {(attendee as any).signatureImage
-                            ? <img src={(attendee as any).signatureImage} alt="signature" style={{ maxHeight: 60, maxWidth: 180, display: 'block', margin: '0 auto' }} />
+                            ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={60} maxWidth={180} style={{ display: 'block', margin: '0 auto' }} />
                             : ''}
                         </TableCell>
                       </TableRow>
@@ -779,7 +780,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                         )}
                       </Box>
                       {(attendee as any).signatureImage
-                        ? <img src={(attendee as any).signatureImage} alt="signature" style={{ maxHeight: 40, maxWidth: 120, marginLeft: 8 }} />
+                        ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={40} maxWidth={120} style={{ marginLeft: 8 }} />
                         : null}
                     </Box>
                   )

@@ -26,6 +26,9 @@ public class HealthCheckupPlan {
     private String createdBy;
     private String createdByName;
     private String createdByDept;
+    // 수정자
+    private Long modifiedByUserId;
+    private String modifiedByName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 

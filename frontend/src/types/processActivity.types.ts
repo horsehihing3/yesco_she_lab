@@ -27,6 +27,10 @@ export interface ProcessActivityForm {
   evaluator?: string
   creationDate?: string
   teamMembers?: string
+  createdByUserId?: number | null
+  createdByName?: string | null
+  modifiedByUserId?: number | null
+  modifiedByName?: string | null
   createdAt?: string
   modifiedAt?: string
   processes?: ProcessActivityProcess[]

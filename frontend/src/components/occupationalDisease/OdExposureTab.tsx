@@ -1,13 +1,10 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, LinearProgress,
-  Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
+  Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, LinearProgress, Typography,
+  Table, TableHead, TableBody, TableRow, TableCell, TableContainer, CircularProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import DeleteIcon from '@mui/icons-material/Delete'
-import EditIcon from '@mui/icons-material/Edit'
 import { exposureApi, odStatsApi } from '../../api/occupationalDiseaseApi'
 import type { OdExposure } from '../../types/occupationalDisease.types'
 import StatCard from '../legalCompliance/StatCard'
@@ -27,6 +24,8 @@ const STATUSES = [
 ]
 const DEPTS = ['생산1팀', '생산2팀', '도장팀', '도금팀', '용접팀', '화학실험실']
 
+type ViewMode = 'list' | 'detail' | 'create' | 'edit'
+
 const statusInfo = (s?: string) => STATUSES.find(x => x.code === s) || STATUSES[2]
 
 const emptyForm: Partial<OdExposure> = { factorClass: '화학적', status: 'ok', exposureRatio: 0 }
@@ -43,22 +42,112 @@ const OdExposureTab: React.FC = () => {
   const { data: items = [], isLoading } = useQuery({ queryKey: ['odExposures'], queryFn: exposureApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })
 
-  const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<OdExposure | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [selected, setSelected] = useState<OdExposure | null>(null)
   const [form, setForm] = useState<Partial<OdExposure>>(emptyForm)
 
-  const createMut = useMutation({ mutationFn: (e: Partial<OdExposure>) => exposureApi.create(e),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['odExposures'] }); qc.invalidateQueries({ queryKey: ['odStats'] }); setOpen(false) } })
-  const updateMut = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<OdExposure> }) => exposureApi.update(id, e),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['odExposures'] }); qc.invalidateQueries({ queryKey: ['odStats'] }); setOpen(false) } })
-  const deleteMut = useMutation({ mutationFn: (id: number) => exposureApi.remove(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['odExposures'] }); qc.invalidateQueries({ queryKey: ['odStats'] }) } })
+  const handleBackToList = () => { setViewMode('list'); setSelected(null); setForm(emptyForm) }
 
-  const openCreate = () => { setEditing(null); setForm({ ...emptyForm, measureDate: todayStr() }); setOpen(true) }
-  const openEdit = (e: OdExposure) => { setEditing(e); setForm(e); setOpen(true) }
-  const submit = () => { if (editing) updateMut.mutate({ id: editing.id, e: form }); else createMut.mutate(form) }
+  const createMut = useMutation({ mutationFn: (e: Partial<OdExposure>) => exposureApi.create(e),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['odExposures'] }); qc.invalidateQueries({ queryKey: ['odStats'] }); handleBackToList() } })
+  const updateMut = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<OdExposure> }) => exposureApi.update(id, e),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['odExposures'] }); qc.invalidateQueries({ queryKey: ['odStats'] }); handleBackToList() } })
+  const deleteMut = useMutation({ mutationFn: (id: number) => exposureApi.remove(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['odExposures'] }); qc.invalidateQueries({ queryKey: ['odStats'] }); handleBackToList() } })
+
+  const handleRowClick = (e: OdExposure) => { setSelected(e); setViewMode('detail') }
+  const handleAddClick = () => { setSelected(null); setForm({ ...emptyForm, measureDate: todayStr() }); setViewMode('create') }
+  const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
+  const handleDeleteClick = async () => {
+    if (!selected) return
+    if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selected.id)
+  }
+  const handleSave = () => {
+    if (!form.factorName) return
+    if (viewMode === 'edit' && selected) updateMut.mutate({ id: selected.id, e: form })
+    else createMut.mutate(form)
+  }
 
   const dangerList = items.filter(e => e.status === 'danger')
+
+  if (viewMode === 'detail' && selected) {
+    const s = statusInfo(selected.status)
+    return (
+      <Box>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>노출기록 상세</Typography>
+        <FormTable>
+          <FormRow><FormLabel>분류</FormLabel><FormCell borderRight><Typography variant="body2">{selected.factorClass || ''}</Typography></FormCell><FormLabel>유해인자명</FormLabel><FormCell><Typography variant="body2" fontWeight={600}>{selected.factorName}</Typography></FormCell></FormRow>
+          <FormRow><FormLabel>노출 부서</FormLabel><FormCell borderRight><Typography variant="body2">{selected.dept || ''}</Typography></FormCell><FormLabel>공정명</FormLabel><FormCell><Typography variant="body2">{selected.processName || ''}</Typography></FormCell></FormRow>
+          <FormRow><FormLabel>측정값</FormLabel><FormCell borderRight><Typography variant="body2" fontFamily="monospace">{selected.measuredValue || ''}</Typography></FormCell><FormLabel>TWA</FormLabel><FormCell><Typography variant="body2" fontFamily="monospace">{selected.twaStandard || ''}</Typography></FormCell></FormRow>
+          <FormRow><FormLabel>노출비율 (%)</FormLabel><FormCell borderRight><Typography variant="body2" fontFamily="monospace">{selected.exposureRatio ?? 0}%</Typography></FormCell><FormLabel>측정일</FormLabel><FormCell><Typography variant="body2" fontFamily="monospace">{selected.measureDate || ''}</Typography></FormCell></FormRow>
+          <FormRow><FormLabel>노출 근로자</FormLabel><FormCell borderRight><Typography variant="body2" fontFamily="monospace">{selected.workerCount ?? 0}명</Typography></FormCell><FormLabel>상태</FormLabel><FormCell><Chip size="small" label={s.label} color={s.color} /></FormCell></FormRow>
+          <FormRow last><FormLabel>개선 내용</FormLabel><FormCell><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selected.action || ''}</Typography></FormCell></FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
+          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+            <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
+          )}
+          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+            <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
+          )}
+        </Box>
+      </Box>
+    )
+  }
+
+  if (viewMode === 'create' || viewMode === 'edit') {
+    return (
+      <Box>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{viewMode === 'edit' ? '노출기록 수정' : '노출기록 등록'}</Typography>
+        <FormTable>
+          <FormRow>
+            <FormLabel>분류</FormLabel>
+            <FormCell borderRight><TextField select fullWidth size="small" value={form.factorClass || ''} onChange={e => setForm({ ...form, factorClass: e.target.value })}>
+              <MenuItem value="">선택하세요</MenuItem>{CLASSES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
+            <FormLabel required>유해인자명</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.factorName || ''} onChange={e => setForm({ ...form, factorName: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>노출 부서</FormLabel>
+            <FormCell borderRight><TextField select fullWidth size="small" value={form.dept || ''} onChange={e => setForm({ ...form, dept: e.target.value })}>
+              <MenuItem value="">선택하세요</MenuItem>{DEPTS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
+            <FormLabel>공정명</FormLabel>
+            <FormCell><TextField fullWidth size="small" value={form.processName || ''} onChange={e => setForm({ ...form, processName: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>측정값</FormLabel>
+            <FormCell borderRight><TextField fullWidth size="small" placeholder="예) 120 ppm" value={form.measuredValue || ''} onChange={e => setForm({ ...form, measuredValue: e.target.value })} /></FormCell>
+            <FormLabel>TWA</FormLabel>
+            <FormCell><TextField fullWidth size="small" placeholder="예) 100 ppm" value={form.twaStandard || ''} onChange={e => setForm({ ...form, twaStandard: e.target.value })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>노출비율 (%)</FormLabel>
+            <FormCell borderRight><NumberField fullWidth size="small" value={form.exposureRatio ?? null} onChange={v => setForm({ ...form, exposureRatio: v ?? 0 })} min={0} max={500} /></FormCell>
+            <FormLabel>측정일</FormLabel>
+            <FormCell><DatePickerField value={form.measureDate || null} onChange={d => setForm({ ...form, measureDate: d })} /></FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>노출 근로자</FormLabel>
+            <FormCell borderRight><NumberField fullWidth size="small" value={form.workerCount ?? null} onChange={v => setForm({ ...form, workerCount: v ?? 0 })} min={0} /></FormCell>
+            <FormLabel>상태</FormLabel>
+            <FormCell><TextField select fullWidth size="small" value={form.status || 'ok'} onChange={e => setForm({ ...form, status: e.target.value })}>
+              <MenuItem value="">선택하세요</MenuItem>{STATUSES.map(s => <MenuItem key={s.code} value={s.code}>{s.label}</MenuItem>)}</TextField></FormCell>
+          </FormRow>
+          <FormRow last>
+            <FormLabel>개선 내용</FormLabel>
+            <FormCell><TextField fullWidth size="small" multiline minRows={2} value={form.action || ''} onChange={e => setForm({ ...form, action: e.target.value })} /></FormCell>
+          </FormRow>
+        </FormTable>
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
+          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+            <Button variant="contained" onClick={handleSave} disabled={!form.factorName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
+          )}
+        </Box>
+      </Box>
+    )
+  }
 
   return (
     <Box>
@@ -77,8 +166,8 @@ const OdExposureTab: React.FC = () => {
       )}
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="flex-end">
-        {canSee(MENU, 'LIST', 'New', myRoles) && (
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
         )}
       </Stack>
 
@@ -90,13 +179,12 @@ const OdExposureTab: React.FC = () => {
                 <TableCell>유해인자</TableCell><TableCell align="center">분류</TableCell><TableCell>부서</TableCell><TableCell>공정</TableCell>
                 <TableCell>측정값</TableCell><TableCell>TWA</TableCell><TableCell>노출비율</TableCell>
                 <TableCell align="center">측정일</TableCell><TableCell align="center">근로자</TableCell><TableCell align="center">상태</TableCell><TableCell>개선조치</TableCell>
-                <TableCell align="center" sx={{ width: 80 }}>액션</TableCell>
               </TableRow></TableHead>
               <TableBody>
                 {items.map(e => {
                   const s = statusInfo(e.status)
                   return (
-                    <TableRow key={e.id} hover sx={{ borderLeft: e.status === 'danger' ? '3px solid' : e.status === 'warn' ? '3px solid' : '3px solid', borderLeftColor: e.status === 'danger' ? 'error.main' : e.status === 'warn' ? 'warning.main' : 'success.main' }}>
+                    <TableRow key={e.id} hover sx={{ cursor: 'pointer', borderLeft: '3px solid', borderLeftColor: e.status === 'danger' ? 'error.main' : e.status === 'warn' ? 'warning.main' : 'success.main' }} onClick={() => handleRowClick(e)}>
                       <TableCell sx={{ fontWeight: 700 }}>{e.factorName}</TableCell>
                       <TableCell align="center"><Chip size="small" label={e.factorClass} variant="outlined" /></TableCell>
                       <TableCell>{e.dept}</TableCell>
@@ -115,14 +203,6 @@ const OdExposureTab: React.FC = () => {
                       <TableCell align="center" sx={{ fontWeight: 700 }}>{e.workerCount}명</TableCell>
                       <TableCell align="center"><Chip size="small" label={s.label} color={s.color} /></TableCell>
                       <TableCell sx={{ color: 'text.secondary' }}>{e.action}</TableCell>
-                      <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
-                        {canSee(MENU, 'DETAIL', '수정', myRoles) && (
-                          <IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="inherit" /></IconButton>
-                        )}
-                        {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
-                          <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
-                        )}
-                      </TableCell>
                     </TableRow>
                   )
                 })}
@@ -131,57 +211,6 @@ const OdExposureTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
-
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editing ? '노출기록 수정' : '노출기록 등록'}</DialogTitle>
-        <DialogContent dividers>
-          <FormTable>
-            <FormRow>
-              <FormLabel>분류</FormLabel>
-              <FormCell borderRight><TextField select fullWidth size="small" value={form.factorClass || ''} onChange={e => setForm({ ...form, factorClass: e.target.value })}>
-<MenuItem value="">선택하세요</MenuItem>{CLASSES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}</TextField></FormCell>
-              <FormLabel required>유해인자명</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.factorName || ''} onChange={e => setForm({ ...form, factorName: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>노출 부서</FormLabel>
-              <FormCell borderRight><TextField select fullWidth size="small" value={form.dept || ''} onChange={e => setForm({ ...form, dept: e.target.value })}>
-<MenuItem value="">선택하세요</MenuItem>{DEPTS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}</TextField></FormCell>
-              <FormLabel>공정명</FormLabel>
-              <FormCell><TextField fullWidth size="small" value={form.processName || ''} onChange={e => setForm({ ...form, processName: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>측정값</FormLabel>
-              <FormCell borderRight><TextField fullWidth size="small" placeholder="예) 120 ppm" value={form.measuredValue || ''} onChange={e => setForm({ ...form, measuredValue: e.target.value })} /></FormCell>
-              <FormLabel>TWA</FormLabel>
-              <FormCell><TextField fullWidth size="small" placeholder="예) 100 ppm" value={form.twaStandard || ''} onChange={e => setForm({ ...form, twaStandard: e.target.value })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>노출비율 (%)</FormLabel>
-              <FormCell borderRight><NumberField fullWidth size="small" value={form.exposureRatio ?? null} onChange={v => setForm({ ...form, exposureRatio: v ?? 0 })} min={0} max={500} /></FormCell>
-              <FormLabel>측정일</FormLabel>
-              <FormCell><DatePickerField value={form.measureDate || null} onChange={d => setForm({ ...form, measureDate: d })} /></FormCell>
-            </FormRow>
-            <FormRow>
-              <FormLabel>노출 근로자</FormLabel>
-              <FormCell borderRight><NumberField fullWidth size="small" value={form.workerCount ?? null} onChange={v => setForm({ ...form, workerCount: v ?? 0 })} min={0} /></FormCell>
-              <FormLabel>상태</FormLabel>
-              <FormCell><TextField select fullWidth size="small" value={form.status || 'ok'} onChange={e => setForm({ ...form, status: e.target.value })}>
-<MenuItem value="">선택하세요</MenuItem>{STATUSES.map(s => <MenuItem key={s.code} value={s.code}>{s.label}</MenuItem>)}</TextField></FormCell>
-            </FormRow>
-            <FormRow last>
-              <FormLabel>개선 내용</FormLabel>
-              <FormCell><TextField fullWidth size="small" multiline minRows={2} value={form.action || ''} onChange={e => setForm({ ...form, action: e.target.value })} /></FormCell>
-            </FormRow>
-          </FormTable>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
-          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
-            <Button variant="contained" onClick={submit} disabled={!form.factorName}>저장</Button>
-          )}
-        </DialogActions>
-      </Dialog>
     </Box>
   )
 }

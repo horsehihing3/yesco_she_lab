@@ -30,8 +30,12 @@ import { useAuth } from '../context/AuthContext'
 import { ppeEquipmentApi, ppeHistoryApi } from '../api/ppeEquipmentApi'
 import { PpeEquipment, PpeEquipmentRequest, PpeEquipmentStatus, PpeActionType } from '../types/ppeEquipment.types'
 import useCodeMap from '../hooks/useCodeMap'
-import { Tabs, Tab } from '@mui/material'
+import { Tabs, Tab, IconButton } from '@mui/material'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import PpeRequestTab from '../components/environment/PpeRequestTab'
+import ListSearchBar from '../components/common/ListSearchBar'
+import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
 
 const STATUS_CHIP: Record<PpeEquipmentStatus, { color: 'success' | 'warning' | 'error' | 'info'; label: string }> = {
   NORMAL: { color: 'success', label: 'ppe.statusNormal' },
@@ -60,6 +64,7 @@ const PpeEquipmentPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
 
   const [page, setPage] = useState(0)
+  const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
@@ -68,6 +73,7 @@ const PpeEquipmentPage: React.FC = () => {
   const [form, setForm] = useState<PpeEquipmentRequest>({
     name: '', category: '', stockQuantity: 1,
   })
+  const [deptModalOpen, setDeptModalOpen] = useState(false)
 
   const pageSize = 10
 
@@ -429,15 +435,32 @@ const PpeEquipmentPage: React.FC = () => {
               <TextField fullWidth size="small" value={form.storageLocation || ''} onChange={(e) => setForm({ ...form, storageLocation: e.target.value })} />
             </Box>
             <Typography sx={labelSx}>{t('ppe.department')}</Typography>
-            <Box sx={valSx}>
-              <TextField fullWidth size="small" value={form.department || ''} onChange={(e) => setForm({ ...form, department: e.target.value })} />
+            <Box sx={{ ...valSx, gap: 1 }}>
+              <TextField fullWidth size="small" InputProps={{ readOnly: true }}
+                value={form.department || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
+                <PersonSearchIcon fontSize="small" />
+              </Button>
             </Box>
           </Box>
           {/* Row 6: 비고 */}
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('ppe.notes')}</Typography>
             <Box sx={valSx}>
               <TextField fullWidth size="small" value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+            </Box>
+          </Box>
+          {/* Row 7: 작성자 | 작성일자 */}
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
+            <Box sx={valBorderSx}>
+              <Typography variant="body2">{user?.name || user?.username || ''}</Typography>
+            </Box>
+            <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
+            <Box sx={valSx}>
+              <Typography variant="body2" fontFamily="monospace">
+                {viewMode === 'edit' && selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : todayStr()}
+              </Typography>
             </Box>
           </Box>
         </Paper>
@@ -466,6 +489,14 @@ const PpeEquipmentPage: React.FC = () => {
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.save')}</Button>
         </Box>
+
+        <DepartmentSelectModal
+          open={deptModalOpen}
+          onClose={() => setDeptModalOpen(false)}
+          onConfirm={(deptName) => { setForm({ ...form, department: deptName }); setDeptModalOpen(false) }}
+          initialDepartment={form.department || ''}
+          title={t('ppe.selectDepartment', '담당부서 선택')}
+        />
       </>
     )
   }
@@ -528,21 +559,52 @@ const PpeEquipmentPage: React.FC = () => {
       )}
 
       {/* Search & Filter Bar - PC */}
-      <Paper sx={{ p: 2, mb: 2, flexShrink: 0, display: { xs: 'none', md: 'block' } }}>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <TextField
-            size="small"
-            placeholder={t('ppe.searchPlaceholder')}
-            value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0); setStatusFilter(''); setCategoryFilter('') }}
-            sx={{ minWidth: 220 }}
-          />
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select
-              displayEmpty
-              value={statusFilter}
-              onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText(''); setCategoryFilter('') }}
-            >
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center', mb: 2, flexShrink: 0 }}>
+        <ListSearchBar
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={() => { setSearchText(searchInput); setPage(0); setStatusFilter(''); setCategoryFilter('') }}
+          placeholder={t('ppe.searchPlaceholder', '품목명/모델/위치로 검색')}
+          sx={{ minWidth: 240 }}
+        />
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <Select displayEmpty value={statusFilter}
+            onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchInput(''); setSearchText(''); setCategoryFilter('') }}>
+            <MenuItem value="">{t('ppe.allStatus')}</MenuItem>
+            <MenuItem value="NORMAL">{t('ppe.statusNormal')}</MenuItem>
+            <MenuItem value="EXPIRY_SOON">{t('ppe.statusExpirySoon')}</MenuItem>
+            <MenuItem value="EXPIRED">{t('ppe.statusExpired')}</MenuItem>
+            <MenuItem value="LOW_STOCK">{t('ppe.statusLowStock')}</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <Select displayEmpty value={categoryFilter}
+            onChange={(e) => { setCategoryFilter(e.target.value); setPage(0); setSearchInput(''); setSearchText(''); setStatusFilter('') }}>
+            <MenuItem value="">{t('ppe.allCategory')}</MenuItem>
+            {categoryCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
+          </Select>
+        </FormControl>
+        <IconButton size="small" onClick={() => { setSearchInput(''); setSearchText(''); setStatusFilter(''); setCategoryFilter(''); setPage(0) }}><RefreshIcon /></IconButton>
+        <Box sx={{ flex: 1 }} />
+        {canCreate && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>
+            {t('common.new', 'New')}
+          </Button>
+        )}
+      </Box>
+      {/* Search & Filter Bar - Mobile */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2, flexShrink: 0 }}>
+        <ListSearchBar
+          fullWidth
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={() => { setSearchText(searchInput); setPage(0); setStatusFilter(''); setCategoryFilter('') }}
+          placeholder={t('ppe.searchPlaceholder', '품목명/모델/위치로 검색')}
+        />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <FormControl size="small" sx={{ flex: 1 }}>
+            <Select displayEmpty value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchInput(''); setSearchText(''); setCategoryFilter('') }}>
               <MenuItem value="">{t('ppe.allStatus')}</MenuItem>
               <MenuItem value="NORMAL">{t('ppe.statusNormal')}</MenuItem>
               <MenuItem value="EXPIRY_SOON">{t('ppe.statusExpirySoon')}</MenuItem>
@@ -550,69 +612,23 @@ const PpeEquipmentPage: React.FC = () => {
               <MenuItem value="LOW_STOCK">{t('ppe.statusLowStock')}</MenuItem>
             </Select>
           </FormControl>
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select
-              displayEmpty
-              value={categoryFilter}
-              onChange={(e) => { setCategoryFilter(e.target.value); setPage(0); setSearchText(''); setStatusFilter('') }}
-            >
+          <FormControl size="small" sx={{ flex: 1 }}>
+            <Select displayEmpty value={categoryFilter}
+              onChange={(e) => { setCategoryFilter(e.target.value); setPage(0); setSearchInput(''); setSearchText(''); setStatusFilter('') }}>
               <MenuItem value="">{t('ppe.allCategory')}</MenuItem>
               {categoryCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
             </Select>
           </FormControl>
-          <Box sx={{ flex: 1 }} />
-          {canCreate && (
-            <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreate}>
-              {t('ppe.register')}
-            </Button>
-          )}
         </Box>
-      </Paper>
-      {/* Search & Filter Bar - Mobile */}
-      <Paper sx={{ p: 2, mb: 2, flexShrink: 0, display: { xs: 'block', md: 'none' } }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <TextField
-            size="small"
-            fullWidth
-            placeholder={t('ppe.searchPlaceholder')}
-            value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); setPage(0); setStatusFilter(''); setCategoryFilter('') }}
-          />
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <FormControl size="small" sx={{ flex: 1 }}>
-              <Select
-                displayEmpty
-                value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value); setPage(0); setSearchText(''); setCategoryFilter('') }}
-              >
-                <MenuItem value="">{t('ppe.allStatus')}</MenuItem>
-                <MenuItem value="NORMAL">{t('ppe.statusNormal')}</MenuItem>
-                <MenuItem value="EXPIRY_SOON">{t('ppe.statusExpirySoon')}</MenuItem>
-                <MenuItem value="EXPIRED">{t('ppe.statusExpired')}</MenuItem>
-                <MenuItem value="LOW_STOCK">{t('ppe.statusLowStock')}</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl size="small" sx={{ flex: 1 }}>
-              <Select
-                displayEmpty
-                value={categoryFilter}
-                onChange={(e) => { setCategoryFilter(e.target.value); setPage(0); setSearchText(''); setStatusFilter('') }}
-              >
-                <MenuItem value="">{t('ppe.allCategory')}</MenuItem>
-                {categoryCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
-              </Select>
-            </FormControl>
-          </Box>
-          {canCreate && (
-            <Button variant="contained" fullWidth startIcon={<AddIcon />} onClick={handleOpenCreate}>
-              {t('ppe.register')}
-            </Button>
-          )}
-        </Box>
-      </Paper>
+        {canCreate && (
+          <Button variant="contained" size="small" fullWidth startIcon={<AddIcon />} onClick={handleOpenCreate}>
+            {t('common.new', 'New')}
+          </Button>
+        )}
+      </Box>
 
       {/* Table */}
-      <Paper sx={{ px: 2, pt: 2 }}>
+      <Box>
         {isLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
         ) : items.length === 0 ? (
@@ -729,7 +745,7 @@ const PpeEquipmentPage: React.FC = () => {
             )}
           </>
         )}
-      </Paper>
+      </Box>
 
       {/* 3-Column Panels: 알림 + 분류별 현황 + 점검 일정 */}
       {allItems.length > 0 && (

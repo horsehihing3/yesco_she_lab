@@ -44,7 +44,7 @@ const TrainingApplyTab: React.FC = () => {
   // 신청 모달
   const [applyDialogCourse, setApplyDialogCourse] = useState<TrainingCourse | null>(null)
   const [applyForm, setApplyForm] = useState({
-    phone: '', reason: '', meal: '신청하지 않음', transport: '개인 차량',
+    phone: '', reason: '', meal: '', transport: 'N/A',
     chkLaw: true, chkPrivacy: false,
   })
   const [myAppsOpen, setMyAppsOpen] = useState(false)
@@ -127,7 +127,7 @@ const TrainingApplyTab: React.FC = () => {
   const handleApplyClick = (c: TrainingCourse) => {
     setApplyDialogCourse(c)
     setApplyForm({
-      phone: '', reason: '', meal: '신청하지 않음', transport: '개인 차량',
+      phone: '', reason: '', meal: '', transport: 'N/A',
       chkLaw: true, chkPrivacy: false,
     })
   }
@@ -142,8 +142,8 @@ const TrainingApplyTab: React.FC = () => {
       courseId: applyDialogCourse.id,
       applicantPhone: applyForm.phone,
       reason: applyForm.reason,
-      mealOption: applyForm.meal,
-      transportOption: applyForm.transport,
+      mealOption: '',
+      transportOption: applyForm.transport || 'N/A',
     })
   }
 
@@ -328,11 +328,11 @@ const TrainingApplyTab: React.FC = () => {
                   return (
                     <>
                       <Box sx={rowSx}>
-                        <Box sx={labelSx}>{t('common.name', '성명')}</Box>
+                        <Box sx={labelSx}>{t('training.applicant', '신청자')}</Box>
                         <Box sx={valBorderSx}>
                           <TextField fullWidth size="small" value={user?.name || ''} InputProps={{ readOnly: true }} />
                         </Box>
-                        <Box sx={labelSx}>{t('training.dept', '소속부서')}</Box>
+                        <Box sx={labelSx}>{t('training.deptName', '부서명')}</Box>
                         <Box sx={valSx}>
                           <TextField fullWidth size="small" value={user?.department || ''} InputProps={{ readOnly: true }} />
                         </Box>
@@ -343,24 +343,11 @@ const TrainingApplyTab: React.FC = () => {
                           <TextField fullWidth size="small" value={applyForm.phone}
                             onChange={(e) => setApplyForm({ ...applyForm, phone: fmtPhone(e.target.value) })} placeholder="010-0000-0000" />
                         </Box>
-                        <Box sx={labelSx}>{t('training.mealOption', '식사')}</Box>
-                        <Box sx={valSx}>
-                          <FormControl fullWidth size="small">
-                            <Select value={applyForm.meal} onChange={(e) => setApplyForm({ ...applyForm, meal: e.target.value })} displayEmpty>
-                              <MenuItem value="" disabled>선택하세요</MenuItem>
-                              <MenuItem value="중식 신청 (일반식)">중식 신청 (일반식)</MenuItem>
-                              <MenuItem value="중식 신청 (채식)">중식 신청 (채식)</MenuItem>
-                              <MenuItem value="신청하지 않음">신청하지 않음</MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Box>
-                      </Box>
-                      <Box sx={rowSx}>
                         <Box sx={labelSx}>{t('training.transportOption', '교통편')}</Box>
                         <Box sx={valSx}>
                           <FormControl fullWidth size="small">
-                            <Select value={applyForm.transport} onChange={(e) => setApplyForm({ ...applyForm, transport: e.target.value })} displayEmpty>
-                              <MenuItem value="" disabled>선택하세요</MenuItem>
+                            <Select value={applyForm.transport || 'N/A'} onChange={(e) => setApplyForm({ ...applyForm, transport: e.target.value })} displayEmpty>
+                              <MenuItem value="N/A">N/A</MenuItem>
                               <MenuItem value="개인 차량">개인 차량</MenuItem>
                               <MenuItem value="대중교통">대중교통</MenuItem>
                               <MenuItem value="회사 셔틀">회사 셔틀</MenuItem>

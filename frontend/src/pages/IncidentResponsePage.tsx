@@ -85,7 +85,7 @@ const IncidentResponsePage: React.FC = () => {
 
   const [search, setSearch] = useState('')
 
-  const applySearch = () => setSearch(searchInput)
+  const applySearch = () => setSearch(searchInput)
   const [filterType, setFilterType] = useState('all')
   const [filterStatus, setFilterStatus] = useState('all')
 
@@ -397,7 +397,7 @@ const IncidentResponsePage: React.FC = () => {
 
       {/* ─── 데스크탑(md+) 헤더 ─── */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-        <ListSearchBar sx={{ width: 320 }} placeholder="제목·발생장소·번호 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <ListSearchBar sx={{ width: 320 }} placeholder="제목·발생장소·번호 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ width: 160 }}
           SelectProps={{ displayEmpty: true }}
           value={filterType} onChange={(e) => setFilterType(e.target.value)}>
@@ -419,7 +419,7 @@ const IncidentResponsePage: React.FC = () => {
       {/* ─── 모바일(xs/sm) 헤더 ─── */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <TextField size="small" fullWidth placeholder="제목·발생장소·번호 검색..."
+          <TextField size="small" fullWidth placeholder="제목·발생장소·번호 검색"
             value={search} onChange={(e) => setSearch(e.target.value)} />
           <IconButton size="small" onClick={invalidate}
             sx={{ border: 1, borderColor: 'divider', borderRadius: 1, flexShrink: 0 }}>

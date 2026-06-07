@@ -4,6 +4,7 @@ import com.smartehs.dto.request.WemPlanRequest;
 import com.smartehs.dto.response.WemPlanResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.WemPlanMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.WemPlan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +56,7 @@ public class WemPlanService {
     }
 
     @Transactional
-    public WemPlanResponse create(WemPlanRequest request) {
+    public WemPlanResponse create(WemPlanRequest request, IdmUser currentUser) {
         WemPlan plan = WemPlan.builder()
                 .planYear(request.getPlanYear())
                 .processName(request.getProcessName())
@@ -70,6 +71,12 @@ public class WemPlanService {
                 .contractPeriod(request.getContractPeriod())
                 .remarks(request.getRemarks())
                 .build();
+        if (currentUser != null) {
+            plan.setCreatedByUserId(currentUser.getUidNumber());
+            plan.setCreatedByName(currentUser.getUserName());
+            plan.setModifiedByUserId(currentUser.getUidNumber());
+            plan.setModifiedByName(currentUser.getUserName());
+        }
 
         wemPlanMapper.insert(plan);
         log.info("Created WEM plan: {}", plan.getId());
@@ -77,7 +84,7 @@ public class WemPlanService {
     }
 
     @Transactional
-    public WemPlanResponse update(Long id, WemPlanRequest request) {
+    public WemPlanResponse update(Long id, WemPlanRequest request, IdmUser currentUser) {
         WemPlan plan = wemPlanMapper.findById(id);
         if (plan == null) {
             throw new ResourceNotFoundException("WemPlan", "id", id);
@@ -95,6 +102,10 @@ public class WemPlanService {
         plan.setAgencyCode(request.getAgencyCode());
         plan.setContractPeriod(request.getContractPeriod());
         plan.setRemarks(request.getRemarks());
+        if (currentUser != null) {
+            plan.setModifiedByUserId(currentUser.getUidNumber());
+            plan.setModifiedByName(currentUser.getUserName());
+        }
 
         wemPlanMapper.update(plan);
         log.info("Updated WEM plan: {}", id);

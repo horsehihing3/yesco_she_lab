@@ -15,6 +15,8 @@
         <result property="writerTeam"      column="writer_team"/>
         <result property="writerPosition"  column="writer_position"/>
         <result property="writerName"      column="writer_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName"   column="modified_by_name"/>
         <result property="planApproverUserId"        column="plan_approver_user_id"/>
         <result property="planApproverTeam"          column="plan_approver_team"/>
         <result property="planApproverPosition"      column="plan_approver_position"/>
@@ -36,6 +38,7 @@
     <sql id="cols">
         id, plan_year, plan_name, description, status, priority, remarks,
         writer_user_id, writer_team, writer_position, writer_name,
+        modified_by_user_id, modified_by_name,
         plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
         plan_approved_at, plan_approved_by,
         completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
@@ -77,12 +80,14 @@
         INSERT INTO tb_ehs_annual_plan
             (plan_year, plan_name, description, status, priority, remarks,
              writer_user_id, writer_team, writer_position, writer_name,
+             modified_by_user_id, modified_by_name,
              plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
              completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
              created_at, modified_at)
         VALUES
             (#{planYear}, #{planName}, #{description}, #{status}, #{priority}, #{remarks},
              #{writerUserId}, #{writerTeam}, #{writerPosition}, #{writerName},
+             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
              #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
              #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
              GETDATE(), GETDATE())
@@ -108,6 +113,8 @@
                completion_approver_team     = #{completionApproverTeam},
                completion_approver_position = #{completionApproverPosition},
                completion_approver_name     = #{completionApproverName},
+               modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+               modified_by_name    = #{modifiedByName},
                modified_at       = GETDATE()
          WHERE id = #{id}
     </update>

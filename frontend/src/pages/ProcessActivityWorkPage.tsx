@@ -62,7 +62,7 @@ const ProcessActivityWorkPage: React.FC = () => {
   const [deptModalOpen, setDeptModalOpen] = useState(false)
   const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
-  const applySearch = () => setKeyword(keywordInput)
+  const applySearch = () => setKeyword(keywordInput)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -312,7 +312,7 @@ const ProcessActivityWorkPage: React.FC = () => {
         {/* Search / Action bar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <ListSearchBar placeholder={t('common.searchByTitle', '제목으로 검색...')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
+            <ListSearchBar placeholder={t('common.searchByTitle', '제목으로 검색')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
             <IconButton onClick={() => setKeyword('')} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
@@ -326,7 +326,7 @@ const ProcessActivityWorkPage: React.FC = () => {
         </Box>
         {/* Search / Action bar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
-          <ListSearchBar fullWidth placeholder={t('common.searchByTitle', '제목으로 검색...')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
+          <ListSearchBar fullWidth placeholder={t('common.searchByTitle', '제목으로 검색')} value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={() => setKeyword('')} sx={{ flex: 1 }}>
               {t('common.reset', '초기화')}
@@ -412,16 +412,10 @@ const ProcessActivityWorkPage: React.FC = () => {
       <Paper variant="outlined" sx={{ mb: 2, overflow: 'hidden', display: { xs: 'none', md: 'block' } }}>
         <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
           <Typography sx={labelSx}>{t('common.title', '제목')}</Typography>
-          <Box sx={valBorderSx}>
+          <Box sx={valSx}>
             {isEditing ? (
               <TextField size="small" fullWidth value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             ) : <Typography variant="body2">{displayData.title || ''}</Typography>}
-          </Box>
-          <Typography sx={labelSx}>{t('processActivity.creationDate', '작성일자')}</Typography>
-          <Box sx={valSx}>
-            {isEditing ? (
-              <DatePickerField size="small" value={form.creationDate || null} onChange={(v) => setForm({ ...form, creationDate: v || '' })} />
-            ) : <Typography variant="body2">{displayData.creationDate || ''}</Typography>}
           </Box>
         </Box>
         <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
@@ -438,7 +432,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           <Box sx={valSx}>
             {isEditing ? (
               <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                <TextField size="small" fullWidth value={form.departmentName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectDepartment', '부서 선택')} />
+                <TextField size="small" fullWidth value={form.departmentName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
                   <PersonSearchIcon fontSize="small" />
                 </Button>
@@ -448,23 +442,21 @@ const ProcessActivityWorkPage: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
           <Typography sx={labelSx}>{t('processActivity.evaluator', '평가자')}</Typography>
-          <Box sx={valSx}>
+          <Box sx={valBorderSx}>
             {isEditing ? (
               <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                <TextField size="small" fullWidth value={form.evaluator || ''} InputProps={{ readOnly: true }} placeholder={t('processActivity.selectEvaluator', '평가자 선택')} />
+                <TextField size="small" fullWidth value={form.evaluator || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setEvaluatorModalOpen(true)}>
                   <PersonSearchIcon fontSize="small" />
                 </Button>
               </Box>
             ) : <Typography variant="body2">{displayData.evaluator || ''}</Typography>}
           </Box>
-        </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
           <Typography sx={labelSx}>{t('processActivity.teamMembers', '팀 참여자')}</Typography>
           <Box sx={valSx}>
             {isEditing ? (
               <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                <TextField size="small" fullWidth multiline value={form.teamMembers || ''} InputProps={{ readOnly: true }} placeholder={t('processActivity.selectTeamMembers', '팀 참여자 선택')} />
+                <TextField size="small" fullWidth multiline value={form.teamMembers || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setMemberModalOpen(true)}>
                   <PersonSearchIcon fontSize="small" />
                 </Button>
@@ -472,7 +464,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{displayData.teamMembers || ''}</Typography>}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
           <Typography sx={labelSx}>{t('common.description', '상세')}</Typography>
           <Box sx={valSx}>
             {isEditing ? (
@@ -480,6 +472,32 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{displayData.description || ''}</Typography>}
           </Box>
         </Box>
+        {/* 작성자 | 작성일자 */}
+        <Box sx={{ display: 'flex', borderBottom: ((displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt) ? 1 : 0, borderColor: 'grey.300' }}>
+          <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
+          <Box sx={valBorderSx}>
+            <Typography variant="body2">{(displayData as ProcessActivityForm).createdByName || ''}</Typography>
+          </Box>
+          <Typography sx={labelSx}>{t('processActivity.creationDate', '작성일자')}</Typography>
+          <Box sx={valSx}>
+            {isEditing ? (
+              <DatePickerField size="small" value={form.creationDate || null} onChange={(v) => setForm({ ...form, creationDate: v || '' })} />
+            ) : <Typography variant="body2">{displayData.creationDate || ((displayData as ProcessActivityForm).createdAt?.substring(0, 10) ?? '')}</Typography>}
+          </Box>
+        </Box>
+        {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
+        {(displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt && (
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
+            <Box sx={valBorderSx}>
+              <Typography variant="body2">{(displayData as ProcessActivityForm).modifiedByName || ''}</Typography>
+            </Box>
+            <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
+            <Box sx={valSx}>
+              <Typography variant="body2">{(displayData as ProcessActivityForm).modifiedAt?.replace('T', ' ').substring(0, 16) ?? ''}</Typography>
+            </Box>
+          </Box>
+        )}
       </Paper>
 
       {/* 상단 정보 - Mobile */}
@@ -509,7 +527,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('processActivity.department', '부서(팀)명')}</Typography>
           {isEditing ? (
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth value={form.departmentName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectDepartment', '부서 선택')} />
+              <TextField size="small" fullWidth value={form.departmentName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
@@ -520,7 +538,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('processActivity.evaluator', '평가자')}</Typography>
           {isEditing ? (
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth value={form.evaluator || ''} InputProps={{ readOnly: true }} placeholder={t('processActivity.selectEvaluator', '평가자 선택')} />
+              <TextField size="small" fullWidth value={form.evaluator || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setEvaluatorModalOpen(true)}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
@@ -531,7 +549,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('processActivity.teamMembers', '팀 참여자')}</Typography>
           {isEditing ? (
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth multiline value={form.teamMembers || ''} InputProps={{ readOnly: true }} placeholder={t('processActivity.selectTeamMembers', '팀 참여자 선택')} />
+              <TextField size="small" fullWidth multiline value={form.teamMembers || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setMemberModalOpen(true)}>
                 <PersonSearchIcon fontSize="small" />
               </Button>

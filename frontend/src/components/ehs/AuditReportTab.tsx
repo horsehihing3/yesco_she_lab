@@ -6,16 +6,9 @@ import {
   TableHead, TableRow, Chip,
 } from '@mui/material'
 import { auditApi, auditFindingApi } from '../../api/auditApi'
-import { Audit, AuditGrade, AuditFinding } from '../../types/audit.types'
+import { Audit, AuditFinding } from '../../types/audit.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import ReportListWrapper, { ReportColumn } from '../common/ReportListWrapper'
-
-const gradeColors: Record<AuditGrade, 'success' | 'primary' | 'warning' | 'error'> = {
-  S: 'success',
-  A: 'primary',
-  B: 'warning',
-  C: 'error',
-}
 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
@@ -116,14 +109,8 @@ const AuditReportTab: React.FC = () => {
               <TableCell sx={{ fontFamily: 'monospace' }}>{item.auditDate || ''}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('audit.grade')}</TableCell>
-              <TableCell>
-                {item.grade ? (
-                  <Chip label={item.grade} size="small" color={gradeColors[item.grade]} sx={{ fontWeight: 'bold' }} />
-                ) : ''}
-              </TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('audit.findingCount')}</TableCell>
-              <TableCell sx={{ color: item.findingCount > 0 ? 'error.main' : 'inherit', fontWeight: 'bold' }}>{item.findingCount}</TableCell>
+              <TableCell colSpan={3} sx={{ color: item.findingCount > 0 ? 'error.main' : 'inherit', fontWeight: 'bold' }}>{item.findingCount}</TableCell>
             </TableRow>
             {item.summary && (
               <TableRow>

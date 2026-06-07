@@ -3,6 +3,8 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.WemImprovementRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.WemImprovementResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.WemImprovementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +25,11 @@ import org.springframework.web.bind.annotation.*;
 public class WemImprovementController {
 
     private final WemImprovementService wemImprovementService;
+    private final IdmMapper idmMapper;
+
+    private IdmUser current(Authentication auth) {
+        return auth != null ? idmMapper.findByUid(auth.getName()) : null;
+    }
 
     @GetMapping
     @Operation(summary = "List improvements", description = "Get all WEM improvements with optional status/exceedLevel filter and pagination")
@@ -50,8 +58,9 @@ public class WemImprovementController {
     @PostMapping
     @Operation(summary = "Create improvement", description = "Create a new WEM improvement")
     public ResponseEntity<ApiResponse<WemImprovementResponse>> create(
-            @Valid @RequestBody WemImprovementRequest request) {
-        WemImprovementResponse improvement = wemImprovementService.create(request);
+            @Valid @RequestBody WemImprovementRequest request,
+            Authentication authentication) {
+        WemImprovementResponse improvement = wemImprovementService.create(request, current(authentication));
         return ResponseEntity.ok(ApiResponse.success("Improvement created successfully", improvement));
     }
 
@@ -59,8 +68,9 @@ public class WemImprovementController {
     @Operation(summary = "Update improvement", description = "Update an existing WEM improvement")
     public ResponseEntity<ApiResponse<WemImprovementResponse>> update(
             @PathVariable Long id,
-            @Valid @RequestBody WemImprovementRequest request) {
-        WemImprovementResponse improvement = wemImprovementService.update(id, request);
+            @Valid @RequestBody WemImprovementRequest request,
+            Authentication authentication) {
+        WemImprovementResponse improvement = wemImprovementService.update(id, request, current(authentication));
         return ResponseEntity.ok(ApiResponse.success("Improvement updated successfully", improvement));
     }
 

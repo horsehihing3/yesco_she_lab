@@ -2,7 +2,7 @@ import axiosInstance from './axiosInstance'
 import { ApiResponse, PageResponse } from '../types/common.types'
 import {
   AuditPlan, AuditPlanRequest,
-  Audit, AuditRequest, AuditGrade,
+  Audit, AuditRequest,
   AuditChecklistTemplate, AuditChecklistTemplateRequest,
   AuditChecklistResult, AuditChecklistResultRequest,
   AuditFinding, AuditFindingRequest,
@@ -72,10 +72,6 @@ export const auditApi = {
   },
   update: async (id: number, data: AuditRequest) => {
     const res = await axiosInstance.put<ApiResponse<Audit>>(`/audit/${id}`, data)
-    return res.data.data
-  },
-  updateGrade: async (id: number, grade: AuditGrade) => {
-    const res = await axiosInstance.patch<ApiResponse<Audit>>(`/audit/${id}/grade`, { grade })
     return res.data.data
   },
   complete: async (id: number) => {

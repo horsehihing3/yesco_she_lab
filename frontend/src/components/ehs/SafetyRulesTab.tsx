@@ -656,7 +656,7 @@ const SafetyRulesTab: React.FC = () => {
         </TableContainer>
 
         {/* Preview Panel - Right Panel */}
-        <Paper sx={{ width: { xs: '100%', md: 350 }, flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: { xs: 250, md: 'auto' } }}>
+        <Paper sx={{ width: { xs: '100%', md: 350 }, flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: { xs: 250, md: 'auto' }, overflow: 'hidden' }}>
           <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography variant="subtitle2" fontWeight="bold">
               {t('safetyRules.preview')}

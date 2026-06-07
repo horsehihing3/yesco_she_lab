@@ -4,6 +4,7 @@ import com.smartehs.dto.request.WemFactorRequest;
 import com.smartehs.dto.response.WemFactorResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.WemFactorMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.WemFactor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,7 @@ public class WemFactorService {
     }
 
     @Transactional
-    public WemFactorResponse create(WemFactorRequest request) {
+    public WemFactorResponse create(WemFactorRequest request, IdmUser currentUser) {
         WemFactor factor = WemFactor.builder()
                 .factorName(request.getFactorName())
                 .factorNameEn(request.getFactorNameEn())
@@ -81,6 +82,12 @@ public class WemFactorService {
                 .usedProcess(request.getUsedProcess())
                 .remarks(request.getRemarks())
                 .build();
+        if (currentUser != null) {
+            factor.setCreatedByUserId(currentUser.getUidNumber());
+            factor.setCreatedByName(currentUser.getUserName());
+            factor.setModifiedByUserId(currentUser.getUidNumber());
+            factor.setModifiedByName(currentUser.getUserName());
+        }
 
         wemFactorMapper.insert(factor);
         log.info("Created WEM factor: {}", factor.getId());
@@ -88,7 +95,7 @@ public class WemFactorService {
     }
 
     @Transactional
-    public WemFactorResponse update(Long id, WemFactorRequest request) {
+    public WemFactorResponse update(Long id, WemFactorRequest request, IdmUser currentUser) {
         WemFactor factor = wemFactorMapper.findById(id);
         if (factor == null) {
             throw new ResourceNotFoundException("WemFactor", "id", id);
@@ -106,6 +113,10 @@ public class WemFactorService {
         factor.setIsPermitted(request.getIsPermitted());
         factor.setUsedProcess(request.getUsedProcess());
         factor.setRemarks(request.getRemarks());
+        if (currentUser != null) {
+            factor.setModifiedByUserId(currentUser.getUidNumber());
+            factor.setModifiedByName(currentUser.getUserName());
+        }
 
         wemFactorMapper.update(factor);
         log.info("Updated WEM factor: {}", id);

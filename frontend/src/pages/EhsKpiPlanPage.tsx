@@ -423,7 +423,7 @@ const EhsKpiPlanPage: React.FC = () => {
           </Box>
           <Typography sx={labelSx}>{t('kpiPlan.responsiblePerson', '담당자')}</Typography>
           <Box sx={{ ...valSx, display: 'flex', gap: 0 }}>
-            <TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (form.responsiblePerson || '')} InputProps={{ readOnly: true }} placeholder={t('environment.selectManager')} />
+            <TextField fullWidth size="small" value={selectedManager ? getManagerDisplayName(selectedManager) : (form.responsiblePerson || '')} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>
@@ -513,7 +513,7 @@ const EhsKpiPlanPage: React.FC = () => {
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('kpiPlan.responsiblePerson', '담당자')}</Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField size="small" fullWidth value={selectedManager ? getManagerDisplayName(selectedManager) : (form.responsiblePerson || '')} InputProps={{ readOnly: true }} placeholder={t('environment.selectManager')} />
+            <TextField size="small" fullWidth value={selectedManager ? getManagerDisplayName(selectedManager) : (form.responsiblePerson || '')} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>

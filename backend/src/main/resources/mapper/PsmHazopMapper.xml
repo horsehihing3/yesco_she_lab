@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PsmHazopMapper">
+
+    <resultMap id="R" type="com.smartehs.model.PsmHazop">
+        <id property="id" column="id"/>
+        <result property="hazopNo" column="hazop_no"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="pidDrawingNo" column="pid_drawing_no"/>
+        <result property="reviewDate" column="review_date"/>
+        <result property="designIntent" column="design_intent"/>
+        <result property="teamLeader" column="team_leader"/>
+        <result property="secretary" column="secretary"/>
+        <result property="status" column="status"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <resultMap id="IR" type="com.smartehs.model.PsmHazopItem">
+        <id property="id" column="id"/>
+        <result property="hazopId" column="hazop_id"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="deviation" column="deviation"/>
+        <result property="guideWord" column="guide_word"/>
+        <result property="cause" column="cause"/>
+        <result property="consequence" column="consequence"/>
+        <result property="likelihood" column="likelihood"/>
+        <result property="severity" column="severity"/>
+        <result property="riskGrade" column="risk_grade"/>
+        <result property="safeguard" column="safeguard"/>
+        <result property="owner" column="owner"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <sql id="cols">
+        id, hazop_no, node_name, pid_drawing_no, review_date, design_intent,
+        team_leader, secretary, status,
+        created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+        deleted, created_at, modified_at
+    </sql>
+
+    <select id="findAll" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_hazop
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_hazop WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_hazop WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countByHazopNoStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_hazop WHERE hazop_no LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_psm_hazop
+            (hazop_no, node_name, pid_drawing_no, review_date, design_intent,
+             team_leader, secretary, status,
+             created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+             deleted, created_at, modified_at)
+        VALUES
+            (#{hazopNo}, #{nodeName}, #{pidDrawingNo}, #{reviewDate,jdbcType=DATE}, #{designIntent},
+             #{teamLeader}, #{secretary}, COALESCE(#{status}, 'IN_PROGRESS'),
+             #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+             0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_psm_hazop SET
+            node_name = #{nodeName}, pid_drawing_no = #{pidDrawingNo},
+            review_date = #{reviewDate,jdbcType=DATE}, design_intent = #{designIntent},
+            team_leader = #{teamLeader}, secretary = #{secretary}, status = #{status},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_psm_hazop SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+
+    <select id="findItemsByHazopId" resultMap="IR">
+        SELECT * FROM tb_psm_hazop_item WHERE hazop_id = #{hazopId}
+        ORDER BY sort_order, item_no
+    </select>
+
+    <insert id="insertItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_psm_hazop_item
+            (hazop_id, item_no, deviation, guide_word, cause, consequence,
+             likelihood, severity, risk_grade, safeguard, owner, sort_order, created_at)
+        VALUES
+            (#{hazopId}, #{itemNo}, #{deviation}, #{guideWord}, #{cause}, #{consequence},
+             #{likelihood}, #{severity}, #{riskGrade}, #{safeguard}, #{owner}, #{sortOrder}, GETDATE())
+    </insert>
+
+    <delete id="deleteItemsByHazopId">
+        DELETE FROM tb_psm_hazop_item WHERE hazop_id = #{hazopId}
+    </delete>
+</mapper>

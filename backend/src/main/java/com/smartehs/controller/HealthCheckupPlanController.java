@@ -58,8 +58,10 @@ public class HealthCheckupPlanController {
     @Operation(summary = "검진계획 수정")
     public ResponseEntity<ApiResponse<HealthCheckupPlanResponse>> update(
             @PathVariable Long id,
-            @Valid @RequestBody HealthCheckupPlanRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("Health checkup plan updated", service.update(id, request)));
+            @Valid @RequestBody HealthCheckupPlanRequest request,
+            Authentication authentication) {
+        IdmUser currentUser = authentication != null ? idmMapper.findByUid(authentication.getName()) : null;
+        return ResponseEntity.ok(ApiResponse.success("Health checkup plan updated", service.update(id, request, currentUser)));
     }
 
     @PatchMapping("/{id}/transition")

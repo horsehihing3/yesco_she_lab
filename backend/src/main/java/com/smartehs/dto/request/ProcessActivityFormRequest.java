@@ -18,6 +18,11 @@ public class ProcessActivityFormRequest {
     private String evaluator;
     private LocalDate creationDate;
     private String teamMembers;
+    // 컨트롤러에서 인증된 사용자로 자동 채움 — 클라이언트 전송 무시
+    private Long createdByUserId;
+    private String createdByName;
+    private Long modifiedByUserId;
+    private String modifiedByName;
     private List<ProcessRequest> processes;
 
     @Data

@@ -1,13 +1,15 @@
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react'
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
-import { createLightTheme, createDarkTheme } from '../styles/theme'
+import { createLightTheme, createDarkTheme, createYescoTheme } from '../styles/theme'
 
-type ThemeMode = 'light' | 'dark'
+export type ThemeMode = 'light' | 'dark' | 'yesco'
 
 interface ThemeContextType {
   mode: ThemeMode
   toggleTheme: () => void
+  setMode: (mode: ThemeMode) => void
   isDarkMode: boolean
+  isYescoMode: boolean
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
@@ -24,10 +26,13 @@ interface ThemeContextProviderProps {
   children: ReactNode
 }
 
+const MODE_CYCLE: ThemeMode[] = ['light', 'dark', 'yesco']
+
 export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({ children }) => {
-  const [mode, setMode] = useState<ThemeMode>(() => {
+  const [mode, setModeState] = useState<ThemeMode>(() => {
     const savedMode = localStorage.getItem('themeMode')
-    return (savedMode as ThemeMode) || 'dark'
+    if (savedMode === 'light' || savedMode === 'dark' || savedMode === 'yesco') return savedMode
+    return 'dark'
   })
 
   useEffect(() => {
@@ -37,18 +42,27 @@ export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({ chil
   }, [mode])
 
   const toggleTheme = () => {
-    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'))
+    setModeState((prev) => {
+      const idx = MODE_CYCLE.indexOf(prev)
+      return MODE_CYCLE[(idx + 1) % MODE_CYCLE.length]
+    })
   }
 
+  const setMode = (m: ThemeMode) => setModeState(m)
+
   const theme = useMemo(() => {
-    return mode === 'light' ? createLightTheme() : createDarkTheme()
+    if (mode === 'dark')  return createDarkTheme()
+    if (mode === 'yesco') return createYescoTheme()
+    return createLightTheme()
   }, [mode])
 
   const value = useMemo(
     () => ({
       mode,
       toggleTheme,
+      setMode,
       isDarkMode: mode === 'dark',
+      isYescoMode: mode === 'yesco',
     }),
     [mode]
   )

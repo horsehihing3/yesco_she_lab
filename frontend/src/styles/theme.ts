@@ -38,6 +38,30 @@ const darkColors = {
   tableHover: '#1e3a5f',   // dark blue
 }
 
+// YESCO Mode Color Palette
+// 분석: lsyesco.com — 깊은 네이비 + 흰색 + 붉은색 강조 (LS 그룹 CI)
+// - 네이비 #0F2147 / 짙은 네이비 #0A1733 (사이드바, 헤더)
+// - LS Red #E60012 (브랜드 강조, 사이드바 active/hover, 강조 라벨)
+// - 라이트한 본문 배경 (#fafafa) + 흰색 카드
+// - 텍스트: 진한 네이비/회색
+const yescoColors = {
+  primary: '#E60012',         // LS Red (강조)
+  primaryHover: '#B8000F',
+  primaryLight: '#FF334D',
+  background: '#fafafa',
+  sidebar: '#0F2147',         // 깊은 네이비
+  sidebarBrand: '#0A1733',    // 더 깊은 네이비
+  surface: '#ffffff',
+  textPrimary: '#1a2332',     // 짙은 네이비-블랙
+  textSecondary: '#5b6478',
+  border: '#e5e7eb',
+  success: '#16a34a',
+  warning: '#f97316',
+  danger: '#dc2626',
+  tableHeader: '#f6f7fb',
+  tableHover: '#fff5f6',      // 옅은 붉은 톤
+}
+
 const fontFamily = [
   'ui-sans-serif',
   'system-ui',
@@ -50,7 +74,11 @@ const fontFamily = [
   'sans-serif',
 ].join(',')
 
-const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark'): Theme => {
+const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', variant: 'light' | 'dark' | 'yesco' = mode): Theme => {
+  const isYesco = variant === 'yesco'
+  const yescoNavy = '#0F2147'
+  const yescoNavyDeep = '#0A1733'
+  const yescoRed = '#E60012'
   return createTheme({
     palette: {
       mode,
@@ -122,6 +150,10 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark'): Th
       MuiCssBaseline: {
         styleOverrides: {
           body: {
+            // YESCO: 본문 배경에 옅은 네이비-블루 톤
+            ...(isYesco && {
+              backgroundColor: '#f4f6fb',
+            }),
             '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
               width: 10,
               height: 10,
@@ -182,6 +214,12 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark'): Th
           root: {
             boxShadow: mode === 'light' ? '0 1px 3px rgba(0,0,0,0.12)' : 'none',
             backgroundColor: mode === 'light' ? colors.surface : colors.sidebarBrand,
+            // YESCO: 진한 네이비 그라데이션 + 하단 붉은 강조선
+            ...(isYesco && {
+              backgroundImage: `linear-gradient(135deg, ${yescoNavyDeep} 0%, ${yescoNavy} 60%, #163267 100%)`,
+              borderBottom: `3px solid ${yescoRed}`,
+              boxShadow: '0 2px 12px -2px rgba(15,33,71,0.35)',
+            }),
           },
         },
       },
@@ -193,9 +231,16 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark'): Th
             ...(mode === 'dark' && {
               border: `1px solid ${colors.border}`,
             }),
+            // YESCO: 카드/페이퍼 좌측에 옅은 네이비 라인 (브랜드 강조)
+            ...(isYesco && {
+              boxShadow: '0 1px 3px rgba(15,33,71,0.08), 0 1px 2px rgba(15,33,71,0.05)',
+            }),
           },
           outlined: {
             borderColor: colors.border,
+            ...(isYesco && {
+              borderColor: '#d8dce5',
+            }),
           },
         },
       },
@@ -223,6 +268,14 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark'): Th
         styleOverrides: {
           root: {
             backgroundColor: colors.tableHeader,
+            ...(isYesco && {
+              backgroundColor: yescoNavy,
+              '& .MuiTableCell-head': {
+                color: '#ffffff',
+                backgroundColor: yescoNavy,
+                borderBottom: `2px solid ${yescoRed}`,
+              },
+            }),
           },
         },
       },
@@ -377,7 +430,7 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark'): Th
         styleOverrides: {
           root: {
             '@media (min-width: 900px)': {
-              borderBottom: `4px solid ${colors.primary}`,
+              borderBottom: `4px solid ${isYesco ? yescoNavy : colors.primary}`,
             },
             '@media (max-width: 899.95px)': {
               borderBottom: `1px solid ${colors.border}`,
@@ -406,11 +459,16 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark'): Th
             // 선택 상태 배경/색 전환 애니메이션 제거 → 마운트 시 깜빡임 방지
             transition: 'none',
             '&.Mui-selected': {
-              color: colors.primary,
+              color: isYesco ? yescoNavy : colors.primary,
               '@media (min-width: 900px)': {
-                backgroundColor: colors.primary,
+                backgroundColor: isYesco ? yescoNavy : colors.primary,
                 color: '#ffffff',
                 borderRadius: '6px 6px 0 0',
+                // YESCO: 선택 탭 상단 붉은 강조선
+                ...(isYesco && {
+                  borderTop: `3px solid ${yescoRed}`,
+                  borderRadius: '4px 4px 0 0',
+                }),
               },
             },
           },
@@ -470,13 +528,15 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark'): Th
   })
 }
 
-export const createLightTheme = (): Theme => createBaseTheme(lightColors, 'light')
-export const createDarkTheme = (): Theme => createBaseTheme(darkColors, 'dark')
+export const createLightTheme = (): Theme => createBaseTheme(lightColors, 'light', 'light')
+export const createDarkTheme  = (): Theme => createBaseTheme(darkColors,  'dark',  'dark')
+export const createYescoTheme = (): Theme => createBaseTheme(yescoColors, 'light', 'yesco')
 
 // Export colors for use in components
 export const themeColors = {
   light: lightColors,
   dark: darkColors,
+  yesco: yescoColors,
 }
 
 // Default export for backward compatibility

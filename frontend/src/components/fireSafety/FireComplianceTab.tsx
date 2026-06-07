@@ -17,6 +17,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import { todayStr, daysFromTodayStr } from '../../utils/dateDefaults'
 import { useAlert } from '../../contexts/AlertContext'
 
 const REPORT_STATUSES = ['완료', '예정', '계획']
@@ -162,7 +163,7 @@ const FireComplianceTab: React.FC = () => {
       {/* ===== Reports ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>법정 보고·제출 일정</Typography>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setREditing(null); setRForm(emptyReport); setROpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setREditing(null); setRForm({ ...emptyReport, lastSubmit: todayStr(), nextSubmit: daysFromTodayStr(365) }); setROpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       <Paper variant="outlined">
         {l2 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (

@@ -405,7 +405,7 @@ const PartnerEvalTab: React.FC = () => {
 
       {/* ─── 데스크탑 헤더 ─── */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-        <ListSearchBar sx={{ width: 320 }} placeholder="업체명/담당자/업종 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <ListSearchBar sx={{ width: 320 }} placeholder="업체명/담당자/업종 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <TextField select size="small" sx={{ width: 130 }} label="등급" value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {['A', 'B', 'C', 'D'].map(g => <MenuItem key={g} value={g}>{g}</MenuItem>)}

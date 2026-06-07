@@ -155,18 +155,20 @@ const TrainingStatusTab: React.FC = () => {
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('training.courseName', '교육과정')}</Box>
-            <Box sx={{ ...valSx, flex: 3 }}><Typography variant="body2" fontWeight={600}>{detail.courseName}</Typography></Box>
-          </Box>
-          <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('training.courseDate', '교육일')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2" fontFamily="monospace">{detail.courseDate || ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2" fontWeight={600}>{detail.courseName}</Typography></Box>
             <Box sx={labelSx}>{t('common.status', '상태')}</Box>
             <Box sx={valSx}><Chip size="small" label={getStatusLabel(detail.status) || detail.status} color={STATUS_COLOR[detail.status]} /></Box>
           </Box>
           <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('common.name', '신청자')}</Box>
+            <Box sx={labelSx}>{t('training.courseDate', '교육일')}</Box>
+            <Box sx={valBorderSx}><Typography variant="body2" fontFamily="monospace">{detail.courseDate || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('training.completionDate', '수료일')}</Box>
+            <Box sx={valSx}><Typography variant="body2" fontFamily="monospace">{detail.completionDate || ''}</Typography></Box>
+          </Box>
+          <Box sx={rowSx}>
+            <Box sx={labelSx}>{t('training.applicant', '신청자')}</Box>
             <Box sx={valBorderSx}><Typography variant="body2">{detail.applicantName}</Typography></Box>
-            <Box sx={labelSx}>{t('training.dept', '부서')}</Box>
+            <Box sx={labelSx}>{t('training.deptName', '부서명')}</Box>
             <Box sx={valSx}><Typography variant="body2">{detail.applicantDept || ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
@@ -176,23 +178,15 @@ const TrainingStatusTab: React.FC = () => {
             <Box sx={valSx}><Typography variant="body2">{detail.applicantPhone || ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('training.mealOption', '식사')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{detail.mealOption || ''}</Typography></Box>
             <Box sx={labelSx}>{t('training.transportOption', '교통편')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{detail.transportOption || ''}</Typography></Box>
+            <Box sx={{ ...valSx, flex: 3 }}><Typography variant="body2">{detail.transportOption || 'N/A'}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('training.reason', '신청사유')}</Box>
-            <Box sx={{ ...valSx, flex: 3 }}><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{detail.reason || ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{detail.reason || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('training.approvedBy', '승인자')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{detail.approvedBy || ''}</Typography></Box>
           </Box>
-          {detail.approvedBy && (
-            <Box sx={rowSx}>
-              <Box sx={labelSx}>{t('training.approvedBy', '승인자')}</Box>
-              <Box sx={valBorderSx}><Typography variant="body2">{detail.approvedBy}</Typography></Box>
-              <Box sx={labelSx}>{t('training.completionDate', '수료일')}</Box>
-              <Box sx={valSx}><Typography variant="body2">{detail.completionDate || ''}</Typography></Box>
-            </Box>
-          )}
           {detail.rejectReason && (
             <Box sx={lastRowSx}>
               <Box sx={labelSx}>{t('training.rejectReason', '반려사유')}</Box>

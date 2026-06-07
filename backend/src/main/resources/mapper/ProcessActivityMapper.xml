@@ -13,6 +13,10 @@
         <result property="evaluator" column="evaluator"/>
         <result property="creationDate" column="creation_date"/>
         <result property="teamMembers" column="team_members"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
@@ -33,9 +37,14 @@
 
     <insert id="insertForm" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_process_activity_form
-            (title, description, division_name, department_name, evaluator, creation_date, team_members, created_at, modified_at)
+            (title, description, division_name, department_name, evaluator, creation_date, team_members,
+             created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+             created_at, modified_at)
         VALUES
-            (#{title}, #{description}, #{divisionName}, #{departmentName}, #{evaluator}, #{creationDate}, #{teamMembers}, GETDATE(), GETDATE())
+            (#{title}, #{description}, #{divisionName}, #{departmentName}, #{evaluator}, #{creationDate}, #{teamMembers},
+             #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+             GETDATE(), GETDATE())
     </insert>
 
     <update id="updateForm">
@@ -47,6 +56,8 @@
             evaluator = #{evaluator},
             creation_date = #{creationDate},
             team_members = #{teamMembers},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

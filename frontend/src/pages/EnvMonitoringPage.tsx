@@ -600,7 +600,7 @@ const EnvMonitoringPage: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <TextField size="small" placeholder={t('envMon.searchPlaceholder')} value={searchText}
             onChange={(e) => { setSearchText(e.target.value); setPage(0) }}
-            sx={{ minWidth: 200 }} />
+            sx={{ width: 300 }} />
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select displayEmpty value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setTypeFilter(''); setSearchText(''); setPage(0) }}>
               <MenuItem value="">{t('envMon.allStatus')}</MenuItem>

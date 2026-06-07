@@ -25,6 +25,10 @@ public class WemResultResponse {
     private LocalDate measurementDate;
     private String measurementAgency;
     private String remarks;
+    private Long createdByUserId;
+    private String createdByName;
+    private Long modifiedByUserId;
+    private String modifiedByName;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -44,6 +48,10 @@ public class WemResultResponse {
                 .measurementDate(entity.getMeasurementDate())
                 .measurementAgency(entity.getMeasurementAgency())
                 .remarks(entity.getRemarks())
+                .createdByUserId(entity.getCreatedByUserId())
+                .createdByName(entity.getCreatedByName())
+                .modifiedByUserId(entity.getModifiedByUserId())
+                .modifiedByName(entity.getModifiedByName())
                 .createdAt(entity.getCreatedAt())
                 .modifiedAt(entity.getModifiedAt())
                 .build();

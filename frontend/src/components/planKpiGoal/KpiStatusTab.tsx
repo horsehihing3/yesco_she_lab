@@ -47,6 +47,10 @@ const transitionPlan = async ({ id, action, rejectReason }: { id: number; action
   return res.data.data
 }
 
+const deletePlan = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`/ehs-plans/${id}`)
+}
+
 const formatDateOnly = (s?: string | null) => (s ? s.substring(0, 10) : '')
 
 type ViewMode = 'list' | 'detail'
@@ -131,7 +135,17 @@ const KpiStatusTab: React.FC = () => {
     },
   })
 
-  const isProcessing = updateMutation.isPending || transitionMutation.isPending
+  const deleteMutation = useMutation({
+    mutationFn: deletePlan,
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ['kpiApprovedPlans'] })
+      queryClient.invalidateQueries({ queryKey: ['ehsPlans'] })
+      await showSuccess(t('common.deleted', '삭제되었습니다'))
+      handleBackToList()
+    },
+  })
+
+  const isProcessing = updateMutation.isPending || transitionMutation.isPending || deleteMutation.isPending
 
   const handleRowClick = (item: EhsPlan) => {
     setSelectedId(item.id)
@@ -191,6 +205,25 @@ const KpiStatusTab: React.FC = () => {
     const confirmed = await showConfirm(t('pkg.confirmComplete', '완료 결재를 승인하시겠습니까?'))
     if (!confirmed) return
     transitionMutation.mutate({ id: detail.id, action: 'complete' })
+  }
+
+  // 삭제 권한: 작성자 또는 admin
+  const canDeletePlan = (d: { writerUserId?: number | null; writerName?: string | null }) => {
+    if (isAdmin) return true
+    if (d.writerUserId && authUser?.id && d.writerUserId === authUser.id) return true
+    if (d.writerName && authUser?.name && d.writerName === authUser.name) return true
+    return false
+  }
+
+  const handleDelete = async () => {
+    if (!detail) return
+    if (!canDeletePlan(detail)) {
+      showWarning(t('pkg.notDeletePermission', '작성자 또는 관리자만 삭제할 수 있습니다.'))
+      return
+    }
+    const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
+    if (!confirmed) return
+    deleteMutation.mutate(detail.id)
   }
 
   const updateGoal = (idx: number, patch: Partial<EhsPlanGoal>) => {
@@ -317,32 +350,23 @@ const KpiStatusTab: React.FC = () => {
             <Box sx={valSx}><Typography variant="body2">{d.description || ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
-            <Box sx={labelSx}>{t('pkg.status', '상태')}</Box>
-            <Box sx={valSx}>
-              {(() => {
-                if (d.status === 'APPROVED') {
-                  return <Chip size="small" label={t('common.draft', '작성중')} color="default" />
-                }
-                if (d.status === 'COMPLETION_PENDING') {
-                  return <Chip size="small" label={t('pkg.completionPending', '완료 결재 대기')} color="warning" />
-                }
-                if (d.status === 'DONE') {
-                  return <Chip size="small" label={t('common.done', '완료')} color="success" />
-                }
-                return <Chip size="small" label={getStatusLabel(d.status) || d.status} color={STATUS_COLORS[d.status] || 'default'} />
-              })()}
-            </Box>
+            <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{d.remarks || ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
-            <Box sx={labelSx}>{t('pkg.writer', '작성')}</Box>
-            <Box sx={valSx}>
-              <Typography variant="body2">
-                {[d.writerTeam, d.writerPosition, d.writerName].filter(Boolean).join(' / ') || ''}
-              </Typography>
-            </Box>
+            <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{d.writerName || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
           </Box>
+          {d.modifiedAt && d.modifiedAt !== d.createdAt && (
+            <Box sx={rowSx}>
+              <Box sx={labelSx}>{t('pkg.modifier', '수정자')}</Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{d.modifiedByName || ''}</Typography></Box>
+              <Box sx={labelSx}>{t('pkg.modifiedDate', '수정일자')}</Box>
+              <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.modifiedAt)}</Typography></Box>
+            </Box>
+          )}
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.planApprover', '계획 승인자')}</Box>
             <Box sx={valBorderSx}>
@@ -358,8 +382,21 @@ const KpiStatusTab: React.FC = () => {
             </Box>
           </Box>
           <Box sx={{ ...rowSx, borderBottom: 0 }}>
-            <Box sx={labelSx}>{t('common.remarks', '비고')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{d.remarks || ''}</Typography></Box>
+            <Box sx={labelSx}>{t('pkg.status', '상태')}</Box>
+            <Box sx={valSx}>
+              {(() => {
+                if (d.status === 'APPROVED') {
+                  return <Chip size="small" label={t('common.draft', '작성중')} color="default" />
+                }
+                if (d.status === 'COMPLETION_PENDING') {
+                  return <Chip size="small" label={t('pkg.completionPending', '완료 결재 대기')} color="warning" />
+                }
+                if (d.status === 'DONE') {
+                  return <Chip size="small" label={t('common.done', '완료')} color="success" />
+                }
+                return <Chip size="small" label={getStatusLabel(d.status) || d.status} color={STATUS_COLORS[d.status] || 'default'} />
+              })()}
+            </Box>
           </Box>
         </Box>
       </Box>
@@ -388,6 +425,12 @@ const KpiStatusTab: React.FC = () => {
         {d.status === 'COMPLETION_PENDING' && canCompletionApprove(d) && canSee(MENU, 'COMPLETION_PENDING', '완료 승인', getDetailRoles(d)) && (
           <Button variant="contained" color="success" onClick={handleComplete}>
             {t('pkg.completionApprove', '완료 승인')}
+          </Button>
+        )}
+        {/* 삭제 — 작성중(APPROVED) 상태에서 작성자 또는 admin */}
+        {d.status === 'APPROVED' && canDeletePlan(d) && (
+          <Button variant="contained" color="error" onClick={handleDelete}>
+            {t('common.delete', '삭제')}
           </Button>
         )}
       </Box>

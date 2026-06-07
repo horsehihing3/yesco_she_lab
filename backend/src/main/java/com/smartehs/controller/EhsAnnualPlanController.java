@@ -71,15 +71,24 @@ public class EhsAnnualPlanController {
     @Operation(summary = "Update plan", description = "Update an existing EHS annual plan")
     public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> update(
             @PathVariable Long id,
-            @Valid @RequestBody EhsAnnualPlanRequest request) {
+            @Valid @RequestBody EhsAnnualPlanRequest request,
+            Authentication authentication) {
+        if (authentication != null) {
+            IdmUser idmUser = idmMapper.findByUid(authentication.getName());
+            if (idmUser != null) {
+                request.setModifiedByUserId(idmUser.getUidNumber());
+                request.setModifiedByName(idmUser.getUserName());
+            }
+        }
         EhsAnnualPlanResponse plan = ehsAnnualPlanService.update(id, request);
         return ResponseEntity.ok(ApiResponse.success("Plan updated successfully", plan));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete plan", description = "Delete an EHS annual plan")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
-        ehsAnnualPlanService.delete(id);
+    @Operation(summary = "Delete plan", description = "Delete an EHS annual plan (작성자 또는 admin 만 가능)")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id, Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "system";
+        ehsAnnualPlanService.delete(id, username);
         return ResponseEntity.ok(ApiResponse.success("Plan deleted successfully", null));
     }
 

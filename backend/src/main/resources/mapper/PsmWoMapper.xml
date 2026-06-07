@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PsmWoMapper">
+
+    <resultMap id="R" type="com.smartehs.model.PsmWo">
+        <id property="id" column="id"/>
+        <result property="woNo" column="wo_no"/>
+        <result property="woType" column="wo_type"/>
+        <result property="priority" column="priority"/>
+        <result property="functionalLocation" column="functional_location"/>
+        <result property="equipmentNo" column="equipment_no"/>
+        <result property="equipmentName" column="equipment_name"/>
+        <result property="plantCode" column="plant_code"/>
+        <result property="workCenter" column="work_center"/>
+        <result property="planStartDate" column="plan_start_date"/>
+        <result property="planEndDate" column="plan_end_date"/>
+        <result property="actualStartDate" column="actual_start_date"/>
+        <result property="actualEndDate" column="actual_end_date"/>
+        <result property="managerName" column="manager_name"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="laborCost" column="labor_cost"/>
+        <result property="materialCost" column="material_cost"/>
+        <result property="outsourcingCost" column="outsourcing_cost"/>
+        <result property="otherCost" column="other_cost"/>
+        <result property="operationsJson" column="operations_json"/>
+        <result property="materialsJson" column="materials_json"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <sql id="cols">
+        id, wo_no, wo_type, priority, functional_location, equipment_no, equipment_name,
+        plant_code, work_center, plan_start_date, plan_end_date, actual_start_date, actual_end_date,
+        manager_name, description, status,
+        labor_cost, material_cost, outsourcing_cost, other_cost,
+        operations_json, materials_json,
+        created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+        deleted, created_at, modified_at
+    </sql>
+
+    <select id="findAll" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_wo
+        WHERE deleted = 0 ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_wo WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_wo WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countByWoNoStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_wo WHERE wo_no LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_psm_wo (
+            wo_no, wo_type, priority, functional_location, equipment_no, equipment_name,
+            plant_code, work_center, plan_start_date, plan_end_date, actual_start_date, actual_end_date,
+            manager_name, description, status,
+            labor_cost, material_cost, outsourcing_cost, other_cost,
+            operations_json, materials_json,
+            created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+            deleted, created_at, modified_at
+        ) VALUES (
+            #{woNo}, #{woType}, #{priority}, #{functionalLocation}, #{equipmentNo}, #{equipmentName},
+            #{plantCode}, #{workCenter}, #{planStartDate,jdbcType=DATE}, #{planEndDate,jdbcType=DATE},
+            #{actualStartDate,jdbcType=DATE}, #{actualEndDate,jdbcType=DATE},
+            #{managerName}, #{description}, COALESCE(#{status}, 'CREATED'),
+            #{laborCost}, #{materialCost}, #{outsourcingCost}, #{otherCost},
+            #{operationsJson}, #{materialsJson},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+            0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_psm_wo SET
+            wo_type = #{woType}, priority = #{priority},
+            functional_location = #{functionalLocation}, equipment_no = #{equipmentNo}, equipment_name = #{equipmentName},
+            plant_code = #{plantCode}, work_center = #{workCenter},
+            plan_start_date = #{planStartDate,jdbcType=DATE}, plan_end_date = #{planEndDate,jdbcType=DATE},
+            actual_start_date = #{actualStartDate,jdbcType=DATE}, actual_end_date = #{actualEndDate,jdbcType=DATE},
+            manager_name = #{managerName}, description = #{description}, status = #{status},
+            labor_cost = #{laborCost}, material_cost = #{materialCost},
+            outsourcing_cost = #{outsourcingCost}, other_cost = #{otherCost},
+            operations_json = #{operationsJson}, materials_json = #{materialsJson},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_psm_wo SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+</mapper>

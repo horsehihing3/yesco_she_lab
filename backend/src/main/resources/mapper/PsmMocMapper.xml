@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PsmMocMapper">
+
+    <resultMap id="R" type="com.smartehs.model.PsmMoc">
+        <id property="id" column="id"/>
+        <result property="mocNo" column="moc_no"/>
+        <result property="changeType" column="change_type"/>
+        <result property="title" column="title"/>
+        <result property="requesterName" column="requester_name"/>
+        <result property="requesterDept" column="requester_dept"/>
+        <result property="requestDate" column="request_date"/>
+        <result property="targetDate" column="target_date"/>
+        <result property="reason" column="reason"/>
+        <result property="scope" column="scope"/>
+        <result property="riskMethod" column="risk_method"/>
+        <result property="riskResult" column="risk_result"/>
+        <result property="riskReviewDate" column="risk_review_date"/>
+        <result property="riskOpinion" column="risk_opinion"/>
+        <result property="status" column="status"/>
+        <result property="planApproverName" column="plan_approver_name"/>
+        <result property="planApprovedAt" column="plan_approved_at"/>
+        <result property="completionApproverName" column="completion_approver_name"/>
+        <result property="completionApprovedAt" column="completion_approved_at"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <sql id="cols">
+        id, moc_no, change_type, title, requester_name, requester_dept,
+        request_date, target_date, reason, scope,
+        risk_method, risk_result, risk_review_date, risk_opinion,
+        status, plan_approver_name, plan_approved_at,
+        completion_approver_name, completion_approved_at, reject_reason,
+        created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+        deleted, created_at, modified_at
+    </sql>
+
+    <select id="findAll" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_moc
+        WHERE deleted = 0
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_moc WHERE deleted = 0
+    </select>
+
+    <select id="findById" resultMap="R">
+        SELECT <include refid="cols"/> FROM tb_psm_moc WHERE id = #{id} AND deleted = 0
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_moc WHERE deleted = 0 AND status = #{status}
+    </select>
+
+    <select id="countByMocNoStartingWith" resultType="int">
+        SELECT COUNT(*) FROM tb_psm_moc WHERE moc_no LIKE #{prefix} + '%'
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_psm_moc
+            (moc_no, change_type, title, requester_name, requester_dept,
+             request_date, target_date, reason, scope,
+             risk_method, risk_result, risk_review_date, risk_opinion,
+             status, plan_approver_name,
+             created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+             deleted, created_at, modified_at)
+        VALUES
+            (#{mocNo}, #{changeType}, #{title}, #{requesterName}, #{requesterDept},
+             #{requestDate,jdbcType=DATE}, #{targetDate,jdbcType=DATE}, #{reason}, #{scope},
+             #{riskMethod}, #{riskResult}, #{riskReviewDate,jdbcType=DATE}, #{riskOpinion},
+             COALESCE(#{status}, 'DRAFT'), #{planApproverName},
+             #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
+             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+             0, GETDATE(), GETDATE())
+    </insert>
+
+    <update id="update">
+        UPDATE tb_psm_moc SET
+            change_type = #{changeType}, title = #{title},
+            requester_name = #{requesterName}, requester_dept = #{requesterDept},
+            request_date = #{requestDate,jdbcType=DATE}, target_date = #{targetDate,jdbcType=DATE},
+            reason = #{reason}, scope = #{scope},
+            risk_method = #{riskMethod}, risk_result = #{riskResult},
+            risk_review_date = #{riskReviewDate,jdbcType=DATE}, risk_opinion = #{riskOpinion},
+            status = #{status},
+            plan_approver_name = #{planApproverName},
+            completion_approver_name = #{completionApproverName},
+            reject_reason = #{rejectReason},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_psm_moc SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}
+    </update>
+</mapper>

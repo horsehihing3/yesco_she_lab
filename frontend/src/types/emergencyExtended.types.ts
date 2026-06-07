@@ -19,6 +19,9 @@ export interface EmergencyPlan {
   writerPosition?: string
   writerName?: string
 
+  modifiedByUserId?: number | null
+  modifiedByName?: string | null
+
   planApproverUserId?: number | null
   planApproverTeam?: string
   planApproverPosition?: string
@@ -56,6 +59,8 @@ export interface EmergencyPlanRequest {
   writerTeam?: string
   writerPosition?: string
   writerName?: string
+  modifiedByUserId?: number | null
+  modifiedByName?: string | null
   planApproverUserId?: number | null
   planApproverTeam?: string
   planApproverPosition?: string

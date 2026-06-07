@@ -357,6 +357,14 @@ const EhsBudgetExpenseTab: React.FC = () => {
 
         {/* Toolbar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mb: 2, alignItems: 'center' }}>
+          <FormControl size="small" sx={{ minWidth: 100 }}>
+            <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
+              <MenuItem value="" disabled>선택하세요</MenuItem>
+              {[currentYear - 1, currentYear, currentYear + 1].map(y => (
+                <MenuItem key={y} value={y}>{y}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <FormControl size="small" sx={{ minWidth: 140 }}>
             <Select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} displayEmpty>
               <MenuItem value="">{t('common.all', '전체')}</MenuItem>
@@ -366,14 +374,6 @@ const EhsBudgetExpenseTab: React.FC = () => {
             </Select>
           </FormControl>
           <Box sx={{ flex: 1 }} />
-          <FormControl size="small" sx={{ minWidth: 100 }}>
-            <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
-              <MenuItem value="" disabled>선택하세요</MenuItem>
-              {[currentYear - 1, currentYear, currentYear + 1].map(y => (
-                <MenuItem key={y} value={y}>{y}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
             {t('common.new', '신규')}
           </Button>
@@ -381,19 +381,19 @@ const EhsBudgetExpenseTab: React.FC = () => {
         {/* Toolbar - Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <FormControl size="small" sx={{ flex: 1 }}>
-              <Select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} displayEmpty>
-                <MenuItem value="">{t('common.all', '전체')}</MenuItem>
-                {categoryCodes.map(c => (
-                  <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
             <FormControl size="small" sx={{ minWidth: 100 }}>
               <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
                 <MenuItem value="" disabled>선택하세요</MenuItem>
                 {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                   <MenuItem key={y} value={y}>{y}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ flex: 1 }}>
+              <Select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} displayEmpty>
+                <MenuItem value="">{t('common.all', '전체')}</MenuItem>
+                {categoryCodes.map(c => (
+                  <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -647,7 +647,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
                 size="small" fullWidth
                 value={formData.department || ''}
                 InputProps={{ readOnly: true }}
-                placeholder={t('common.selectDepartment', '부서 선택')}
+                placeholder={t('common.selectFromOrg', '조직도에서 선택')}
               />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setDeptModalOpen(true)}>
                 <PersonSearchIcon fontSize="small" />

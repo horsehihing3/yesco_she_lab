@@ -302,7 +302,7 @@ const ContractorRegistrationPage: React.FC = () => {
       <Box>
         {/* ─── 데스크탑(md+) : 한 줄 ─── */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-          <ListSearchBar sx={{ width: 380 }} placeholder="업체명 / 사업자번호 / 등록번호 / 대표자 검색..." value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
+          <ListSearchBar sx={{ width: 380 }} placeholder="업체명 / 사업자번호 / 등록번호 / 대표자 검색" value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
           <TextField select size="small" sx={{ width: 140 }} label="상태"
             value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">전체</MenuItem>
@@ -541,7 +541,7 @@ const ContractorRegistrationPage: React.FC = () => {
 
       {/* ───── 하단 액션 버튼 ───── */}
       {!submittedResult && (
-        <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', sm: 'flex-end' }, flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', gap: 1, mt: 3, mb: 4, justifyContent: { xs: 'stretch', sm: 'flex-end' }, flexWrap: 'wrap' }}>
           {viewMode === 'edit' ? (
             <Button variant="outlined" onClick={() => setViewMode('detail')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: 'none' } }}>취소</Button>
           ) : (

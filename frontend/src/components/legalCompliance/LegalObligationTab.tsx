@@ -183,7 +183,7 @@ const LegalObligationTab: React.FC = () => {
 
       {/* Toolbar */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <ListSearchBar fullWidth placeholder="의무명/법령/담당부서 검색..."
+        <ListSearchBar fullWidth placeholder="의무명/법령/담당부서 검색"
           value={searchInput} onChange={setSearchInput} onSearch={applySearch}
         />
         <TextField select size="small" sx={{ minWidth: 150 }} label="유형" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>

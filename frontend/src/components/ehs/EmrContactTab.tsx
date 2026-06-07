@@ -356,7 +356,7 @@ const EmrContactTab: React.FC = () => {
             </Box>
             <Typography sx={labelSx}>{t('emr.contactName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valueSx, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={form.contactName} placeholder={t('environment.selectManager', '담당자 선택')} InputProps={{ readOnly: true }} />
+              <TextField fullWidth size="small" value={form.contactName} placeholder={t('common.selectFromOrg', '조직도에서 선택')} InputProps={{ readOnly: true }} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
@@ -411,7 +411,7 @@ const EmrContactTab: React.FC = () => {
               {t('emr.contactName')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth value={form.contactName} placeholder={t('environment.selectManager', '담당자 선택')} InputProps={{ readOnly: true }} />
+              <TextField size="small" fullWidth value={form.contactName} placeholder={t('common.selectFromOrg', '조직도에서 선택')} InputProps={{ readOnly: true }} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>

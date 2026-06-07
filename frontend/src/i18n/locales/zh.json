@@ -192,9 +192,10 @@
     "auditInspection": "内部审计",
     "permitToWork": "作业许可",
     "ppeEquipment": "防护用品·设备",
-    "trainingMgmt": "教育·培训",
+    "trainingMgmt": "教育管理",
     "envMonitoring": "环境监测",
     "chemicalMgmt": "化学品管理",
+    "processSafetyMgmt": "PSW / MOC",
     "chemMaster": "主数据 · 法规",
     "chemMsds": "MSDS管理",
     "chemMsdsRaw": "原料MSDS",
@@ -372,8 +373,10 @@
     "byFloor": "按楼层"
   },
   "theme": {
+    "select": "选择主题",
     "lightMode": "浅色模式",
-    "darkMode": "深色模式"
+    "darkMode": "深色模式",
+    "yescoMode": "YESCO 模式"
   },
   "ehsAlert": {
     "title": "EHS公告",
@@ -1955,6 +1958,7 @@
     "selectApprover": "选择审批人",
     "duplicateApprover": "该用户已添加到审批线中。",
     "alreadyAdded": "已添加",
+    "selectFromOrg": "从组织架构选择",
     "confirmApprove": "确认批准此请求？",
     "confirmReject": "确认驳回",
     "enterRejectReason": "请输入驳回理由",
@@ -2663,7 +2667,7 @@
     "submitApproval": "提交审批",
     "startProgress": "进行中",
     "creator": "创建者",
-    "createdAt": "创建时间",
+    "createdAt": "撰写日期",
     "noChecklist": "未关联",
     "noChecklistLinked": "未关联检查表，请在审核计划中关联。",
     "allChecklistMustBeChecked": "所有检查表项目必须勾选后才能完成。",

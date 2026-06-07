@@ -89,13 +89,15 @@ const RadMeasurementTab: React.FC = () => {
         <strong>방사선 측정 기록</strong> — 공간선량률 정기 측정 후 기록 보존 5년 이상 · 기준 초과 시 원안위 즉시 보고 (원자력안전법 §103)
       </Alert>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
-        <ListSearchBar fullWidth placeholder="구역/지점/측정자 검색..." value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+        <ListSearchBar placeholder="구역/지점/측정자 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
+          sx={{ width: { xs: '100%', sm: 240 } }} />
         <TextField select size="small" sx={{ minWidth: 130 }} label="평가" value={evalFilter} onChange={e => setEvalFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {EVALS.map(e => <MenuItem key={e} value={e}>{e}</MenuItem>)}
         </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 

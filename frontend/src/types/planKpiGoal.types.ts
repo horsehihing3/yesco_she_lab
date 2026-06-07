@@ -34,6 +34,8 @@ export interface EhsPlan {
   writerTeam: string | null
   writerPosition: string | null
   writerName: string | null
+  modifiedByUserId: number | null
+  modifiedByName: string | null
   // 계획 승인자 (연간 계획에서 승인)
   planApproverUserId: number | null
   planApproverTeam: string | null
