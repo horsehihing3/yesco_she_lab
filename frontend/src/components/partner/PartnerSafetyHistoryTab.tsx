@@ -72,8 +72,8 @@ const PartnerSafetyHistoryTab: React.FC = () => {
     queryFn: () => siteSafetyPlanApi.getAll(0, 500, 'PARTNER'),
     staleTime: 1000 * 60 * 5,
   })
-  const planById = new Map<number, { planId?: string; title?: string }>()
-  ;(plansPage?.content || []).forEach((p: any) => planById.set(p.id, { planId: p.planId, title: p.title }))
+  const planById = new Map<number, { planId?: string; title?: string; notes?: string }>()
+  ;(plansPage?.content || []).forEach((p: any) => planById.set(p.id, { planId: p.planId, title: p.title, notes: p.notes }))
 
   // 체크리스트 템플릿 이름
   const { data: templates } = useQuery({
@@ -108,8 +108,32 @@ const PartnerSafetyHistoryTab: React.FC = () => {
 
   // ───── 상세 ─────
   if (selected) {
+    const selectedPlan = selected.planId ? planById.get(selected.planId) : undefined
     return (
       <Box sx={{ pb: 4 }}>
+        {/* 등록 정보 — 관리 탭에서 저장한 제목/비고 */}
+        {selectedPlan && (
+          <>
+            <Typography variant="subtitle1" fontWeight="bold" color="text.primary" sx={{ mb: 2 }}>
+              등록 정보
+            </Typography>
+            <FormTable sx={{ mb: 3 }}>
+              <FormRow>
+                <FormLabel>제목</FormLabel>
+                <FormCell>
+                  <Typography variant="body2" fontWeight={600}>{selectedPlan.title || ''}</Typography>
+                </FormCell>
+              </FormRow>
+              <FormRow last>
+                <FormLabel>비고</FormLabel>
+                <FormCell>
+                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedPlan.notes || ''}</Typography>
+                </FormCell>
+              </FormRow>
+            </FormTable>
+          </>
+        )}
+
         {/* 파라미터 정보 */}
         <Typography variant="subtitle1" fontWeight="bold" color="text.primary" sx={{ mb: 2 }}>
           파라미터 정보
