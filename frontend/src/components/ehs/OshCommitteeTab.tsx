@@ -994,8 +994,8 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </Button>
         </Box>
 
-        <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+        <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto', width: '100%' }}>
+          <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'grey.300', whiteSpace: 'nowrap' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
                 <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 100, whiteSpace: 'nowrap' }} align="center">{t('common.attendeeName')}</TableCell>
@@ -1081,7 +1081,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
       </Box>
 
       {/* Form Actions */}
-      <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 3, mb: 4 }}>
         <Button variant="outlined" onClick={viewMode === 'edit' ? () => setViewMode('detail') : handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel')}
         </Button>

@@ -151,6 +151,8 @@ const Layout: React.FC = () => {
               border: 'none',
               borderRadius: 0,
               marginTop: '64px',
+              // AppBar 높이(64px) 만큼 감소 — 하단 메뉴까지 스크롤되도록
+              height: 'calc(100% - 64px)',
               backgroundColor: isDarkMode ? '#18181b' : '#1e293b',
               borderRight: isDarkMode ? '1px solid #27272a' : 'none',
               transition: 'width 0.3s',

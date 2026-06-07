@@ -26,13 +26,13 @@ interface ThemeContextProviderProps {
   children: ReactNode
 }
 
-const MODE_CYCLE: ThemeMode[] = ['light', 'dark', 'yesco']
+const MODE_CYCLE: ThemeMode[] = ['yesco', 'dark', 'light']
 
 export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({ children }) => {
   const [mode, setModeState] = useState<ThemeMode>(() => {
     const savedMode = localStorage.getItem('themeMode')
     if (savedMode === 'light' || savedMode === 'dark' || savedMode === 'yesco') return savedMode
-    return 'dark'
+    return 'yesco'
   })
 
   useEffect(() => {

@@ -21,9 +21,9 @@ const ThemeSelector: React.FC = () => {
   }
 
   const themes: { code: ThemeMode; label: string; icon: React.ReactNode }[] = [
-    { code: 'light', label: t('theme.lightMode', '라이트 모드'), icon: <LightModeIcon fontSize="small" /> },
-    { code: 'dark',  label: t('theme.darkMode',  '다크 모드'),    icon: <DarkModeIcon  fontSize="small" /> },
     { code: 'yesco', label: t('theme.yescoMode', '예스코 모드'),  icon: <BusinessIcon  fontSize="small" /> },
+    { code: 'dark',  label: t('theme.darkMode',  '다크 모드'),    icon: <DarkModeIcon  fontSize="small" /> },
+    { code: 'light', label: t('theme.lightMode', '라이트 모드'), icon: <LightModeIcon fontSize="small" /> },
   ]
 
   return (

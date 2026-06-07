@@ -448,23 +448,10 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
       )}
 
       {/* Navigation Menu */}
-      <List sx={{ flex: 1, pt: 2, px: 0, overflowY: 'auto', overflowX: 'hidden' }}>
+      <List sx={{ flex: 1, pt: 2, pb: 2, px: 0, overflowY: 'auto', overflowX: 'hidden' }}>
         {visibleMenuItems.map((item) => renderMenuItem(item))}
       </List>
 
-      {/* Footer */}
-      <Box
-        sx={{
-          p: collapsed ? 1 : 2,
-          backgroundColor: colors.sidebarBrand,
-          borderTop: isDarkMode ? '1px solid #27272a' : 'none',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="caption" sx={{ color: colors.inactiveText }}>
-          {collapsed ? 'v1.0' : 'Version 1.0.0'}
-        </Typography>
-      </Box>
     </Box>
   )
 }
