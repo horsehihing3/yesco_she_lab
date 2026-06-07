@@ -6,8 +6,8 @@ import {
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
   FormControl, Grid,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
@@ -443,14 +443,13 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
               ))}
             </Select>
           </FormControl>
-          <TextField
-            size="small"
-            placeholder={t('common.search', '검색')}
+          <ListSearchBar
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            sx={{ minWidth: 180 }}
+            onChange={setSearchText}
+            onSearch={() => setPage(0)}
+            placeholder={t('common.search', '검색')}
+            sx={{ width: { xs: '100%', sm: 240 } }}
           />
-          <IconButton onClick={() => setPage(0)} size="small"><SearchIcon /></IconButton>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
           {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
