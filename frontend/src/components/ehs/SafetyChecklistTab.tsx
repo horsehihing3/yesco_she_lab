@@ -56,6 +56,8 @@ interface SafetyChecklistTabProps {
   locked?: boolean
   // 상단 '체크리스트 정보' 헤더(제목·설명·작성일) 영역 숨김
   hideTemplateInfo?: boolean
+  // 항상 빈 상태로 시작 (저장된 checkResult/finding/조치 데이터 무시) — 협력업체 실행 URL 등
+  freshFill?: boolean
 }
 
 interface LocalItem {
@@ -87,7 +89,7 @@ export interface SafetyChecklistTabRef {
 let tempIdCounter = 0
 const nextTempId = () => `temp_${++tempIdCounter}`
 
-const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabProps>(({ templateId, onBack, startEditing, isNew, categoryType, onCreated, embedded, showSummary, hideSignatures, simpleMode: simpleModeProp, locked, hideTemplateInfo }, ref) => {
+const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabProps>(({ templateId, onBack, startEditing, isNew, categoryType, onCreated, embedded, showSummary, hideSignatures, simpleMode: simpleModeProp, locked, hideTemplateInfo, freshFill }, ref) => {
   const { t } = useTranslation()
   const { showConfirm, showSuccess, showError } = useAlert()
   const queryClient = useQueryClient()
@@ -130,6 +132,11 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
   // simpleMode 자동 활성화 — 템플릿 카테고리가 CONTRACTOR_MOBILE 이면 어디서 임베드되든 협력사 모바일 단순 컬럼 적용
   const simpleMode = simpleModeProp || template?.categoryType === 'CONTRACTOR_MOBILE' || categoryType === 'CONTRACTOR_MOBILE'
 
+  // 임베디드 미리보기 모드 (점검/감사 실행이 아닌 단순 템플릿 표시)
+  // 또는 freshFill=true (협력업체 실행 URL 등 매번 빈 상태로 시작)
+  // → 템플릿에 베이크된 checkResult/finding/조치 데이터를 표시하지 않음 (빈 상태로 시작)
+  const isPreviewOnly = freshFill || (embedded && !showSummary && !startEditing)
+
   // Sync server data → local state
   const syncFromServer = useCallback((tmpl: SafetyChecklistTemplate) => {
     setLocalCategories(
@@ -144,15 +151,15 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
           classification: item.classification || '필수',
           checkItem: item.checkItem,
           legalBasis: item.legalBasis,
-          checkResult: item.checkResult || '',
-          finding: item.finding || '',
-          actionDeadline: item.actionDeadline || '',
-          actionComplete: item.actionComplete || false,
+          checkResult: isPreviewOnly ? '' : (item.checkResult || ''),
+          finding: isPreviewOnly ? '' : (item.finding || ''),
+          actionDeadline: isPreviewOnly ? '' : (item.actionDeadline || ''),
+          actionComplete: isPreviewOnly ? false : (item.actionComplete || false),
           sortOrder: item.sortOrder,
         })),
       }))
     )
-  }, [])
+  }, [isPreviewOnly])
 
   // Reset when templateId changes
   useEffect(() => {

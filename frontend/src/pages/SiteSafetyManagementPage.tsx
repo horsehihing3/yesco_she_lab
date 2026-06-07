@@ -269,13 +269,11 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
   const handleSave = () => {
     if (isPartner) {
+      if (!form.title) { showError('제목을 입력해 주세요.'); return }
       if (!form.checklistTemplateId) { showError('체크리스트를 선택해 주세요.'); return }
-      const tpl = templates.find(t => t.id === form.checklistTemplateId)
-      const autoTitle = tpl?.templateName || '협력업체 안전 점검'
       const payload = {
         ...form,
         planType,
-        title: autoTitle,
         modifiedBy: form.modifiedBy || user?.name || user?.username || '',
       }
       if (selected) updateMut.mutate({ id: selected.id, req: payload })
@@ -394,7 +392,6 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                   <Table size="small">
                     <TableHead>
                       <TableRow>
-                        <TableCell align="center">번호</TableCell>
                         <TableCell>체크리스트</TableCell>
                         <TableCell align="center">작성자</TableCell>
                         <TableCell align="center">작성일</TableCell>
@@ -404,7 +401,6 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                     <TableBody>
                       {filteredItems.map(item => (
                         <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
-                          <TableCell align="center" sx={{ fontWeight: 700 }}>{item.planId}</TableCell>
                           <TableCell>{item.title || '-'}</TableCell>
                           <TableCell align="center">{item.modifiedBy || '-'}</TableCell>
                           <TableCell align="center">{item.createdAt ? item.createdAt.slice(0, 10) : '-'}</TableCell>
@@ -414,7 +410,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                         </TableRow>
                       ))}
                       {filteredItems.length === 0 && (
-                        <TableRow><TableCell colSpan={5} align="center" sx={{ color: 'text.disabled', py: 6 }}>등록된 점검이 없습니다</TableCell></TableRow>
+                        <TableRow><TableCell colSpan={4} align="center" sx={{ color: 'text.disabled', py: 6 }}>등록된 점검이 없습니다</TableCell></TableRow>
                       )}
                     </TableBody>
                   </Table>
@@ -470,17 +466,13 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
               {filteredItems.map(item => (
                 <Paper key={item.id} variant="outlined" onClick={() => handleRowClick(item)}
                   sx={{ p: 1.5, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
-                  {/* 1행: 계획번호 + 상태칩 */}
+                  {/* 1행: 제목 + 상태칩 */}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
-                    <Typography sx={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'primary.main', fontWeight: 700, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {item.planId}
+                    <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.title || '-'}
                     </Typography>
                     <Chip size="small" label={STATUS_LABEL[item.status] || item.status} color={STATUS_COLORS[item.status] || 'default'} />
                   </Box>
-                  {/* 2행: 제목/체크리스트 */}
-                  <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', mb: 0.75 }}>
-                    {item.title || '-'}
-                  </Typography>
                   {/* 3행: 부가정보 */}
                   {isPartner ? (
                     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', fontSize: '0.75rem', color: 'text.secondary', flexWrap: 'wrap' }}>
@@ -529,32 +521,70 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
   // ====== PARTNER 전용 간소화 폼 ======
   if (isPartner) {
-    const writer = (isReadonly ? selected?.modifiedBy : form.modifiedBy) || user?.name || user?.username || '-'
-    const writeDate = isReadonly
-      ? (selected?.createdAt ? selected.createdAt.slice(0, 10) : '-')
-      : new Date().toISOString().slice(0, 10)
-    const planNo = selected?.planId || '자동 생성'
-
+    const writer = (selected?.modifiedBy) || user?.name || user?.username || '-'
+    const createdDate = selected?.createdAt
+      ? selected.createdAt.replace('T', ' ').slice(0, 16)
+      : new Date().toISOString().replace('T', ' ').slice(0, 16)
+    const hasModified = selected?.modifiedAt && selected.modifiedAt !== selected?.createdAt
+    const modifiedDate = hasModified
+      ? selected!.modifiedAt.replace('T', ' ').slice(0, 16)
+      : new Date().toISOString().replace('T', ' ').slice(0, 16)
+    const showModifiedRow = viewMode === 'edit' || (isReadonly && hasModified)
     return (
       <Box>
         <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{titleLabel}</Typography>
 
         <FormTable>
+          {/* Row 1: 제목 */}
           <FormRow>
-            <FormLabel>계획번호</FormLabel>
-            <FormCell borderRight>
-              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>{planNo}</Typography>
-            </FormCell>
-            <FormLabel>작성일</FormLabel>
+            <FormLabel required>제목</FormLabel>
             <FormCell>
-              <Typography variant="body2">{writeDate}</Typography>
+              {isReadonly ? (
+                <Typography variant="body2">{(view as any).title || ''}</Typography>
+              ) : (
+                <TextField fullWidth size="small" value={(view as any).title || ''}
+                  onChange={e => setForm({ ...form, title: e.target.value })} />
+              )}
             </FormCell>
           </FormRow>
+          {/* Row 3: 비고 */}
+          <FormRow>
+            <FormLabel>비고</FormLabel>
+            <FormCell>
+              {isReadonly ? (
+                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{(view as any).notes || ''}</Typography>
+              ) : (
+                <TextField fullWidth size="small" multiline minRows={2} value={(view as any).notes || ''}
+                  onChange={e => setForm({ ...form, notes: e.target.value })} />
+              )}
+            </FormCell>
+          </FormRow>
+          {/* Row 4: 작성자 | 작성일자 */}
           <FormRow>
             <FormLabel>작성자</FormLabel>
-            <FormCell borderRight sx={{ display: 'flex', alignItems: 'center' }}>
+            <FormCell borderRight>
               <Typography variant="body2">{writer}</Typography>
             </FormCell>
+            <FormLabel>작성일자</FormLabel>
+            <FormCell>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>{createdDate}</Typography>
+            </FormCell>
+          </FormRow>
+          {/* Row 5: 수정자 | 수정일자 — 수정 모드 또는 수정 이력 있을 때만 */}
+          {showModifiedRow && (
+            <FormRow>
+              <FormLabel>수정자</FormLabel>
+              <FormCell borderRight>
+                <Typography variant="body2">{user?.name || user?.username || '-'}</Typography>
+              </FormCell>
+              <FormLabel>수정일자</FormLabel>
+              <FormCell>
+                <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>{modifiedDate}</Typography>
+              </FormCell>
+            </FormRow>
+          )}
+          {/* Row 6: 계획 승인자 | 완료 승인자 */}
+          <FormRow>
             <FormLabel>계획 승인자</FormLabel>
             <FormCell borderRight>
               {isReadonly ? (
@@ -569,8 +599,6 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                 </Box>
               )}
             </FormCell>
-          </FormRow>
-          <FormRow>
             <FormLabel>완료 승인자</FormLabel>
             <FormCell>
               {isReadonly ? (
@@ -586,6 +614,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
               )}
             </FormCell>
           </FormRow>
+          {/* Row 7: 체크리스트 */}
           <FormRow last>
             <FormLabel required>체크리스트</FormLabel>
             <FormCell>

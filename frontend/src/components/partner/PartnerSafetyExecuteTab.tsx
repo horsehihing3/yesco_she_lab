@@ -43,7 +43,6 @@ const readSubmitted = (planId: number): SubmittedRecord | null => {
 
 const PartnerSafetyExecuteTab: React.FC = () => {
   const { t } = useTranslation()
-  const { showSuccess, showError } = useAlert()
   const qc = useQueryClient()
 
   const [selectedPlan, setSelectedPlan] = useState<SiteSafetyPlan | null>(null)
@@ -74,55 +73,6 @@ const PartnerSafetyExecuteTab: React.FC = () => {
     ...(approvedData?.content || []),
     ...(pendingData?.content || []),
   ]
-
-  const handleSubmitForApproval = async (plan: SiteSafetyPlan) => {
-    try {
-      // 완료 결재 상신 — APPROVED → COMPLETION_PENDING (관리 탭에서 승인 대기)
-      await siteSafetyPlanApi.transition(plan.id, 'completionSubmit')
-      // 목록 즉시 새로고침 후 상세 닫고 목록으로 복귀
-      await Promise.all([
-        qc.refetchQueries({ queryKey: ['siteSafety'] }),
-        qc.refetchQueries({ queryKey: ['partnerSafetyExecuteList', 'APPROVED'] }),
-        qc.refetchQueries({ queryKey: ['partnerSafetyExecuteList', 'COMPLETION_PENDING'] }),
-      ])
-      setSelectedPlan(null)
-      showSuccess(t('partnerSafety.completionSubmitted', '완료 결재가 상신되었습니다.'))
-    } catch (e: any) {
-      showError(e?.response?.data?.message || t('common.error'))
-    }
-  }
-
-  const handleCompletionApprove = async (plan: SiteSafetyPlan) => {
-    try {
-      await siteSafetyPlanApi.transition(plan.id, 'complete')
-      await Promise.all([
-        qc.refetchQueries({ queryKey: ['siteSafety'] }),
-        qc.refetchQueries({ queryKey: ['partnerSafetyExecuteList', 'APPROVED'] }),
-        qc.refetchQueries({ queryKey: ['partnerSafetyExecuteList', 'COMPLETION_PENDING'] }),
-      ])
-      setSelectedPlan(null)
-      showSuccess(t('partnerSafety.completed', '완료 결재가 승인되었습니다. 조회 탭에서 확인하세요.'))
-    } catch (e: any) {
-      showError(e?.response?.data?.message || t('common.error'))
-    }
-  }
-
-  const handleCompletionReject = async (plan: SiteSafetyPlan) => {
-    const reason = window.prompt('반려 사유를 입력하세요.')
-    if (!reason) return
-    try {
-      await siteSafetyPlanApi.transition(plan.id, 'reject', reason)
-      await Promise.all([
-        qc.refetchQueries({ queryKey: ['siteSafety'] }),
-        qc.refetchQueries({ queryKey: ['partnerSafetyExecuteList', 'APPROVED'] }),
-        qc.refetchQueries({ queryKey: ['partnerSafetyExecuteList', 'COMPLETION_PENDING'] }),
-      ])
-      setSelectedPlan(null)
-      showSuccess(t('partnerSafety.completionRejected', '완료 결재가 반려되었습니다.'))
-    } catch (e: any) {
-      showError(e?.response?.data?.message || t('common.error'))
-    }
-  }
 
   // ───────── 상세 화면 (제목 클릭) ─────────
   if (selectedPlan) {
@@ -263,30 +213,12 @@ const PartnerSafetyExecuteTab: React.FC = () => {
             </Paper>
           )}
 
-        {/* 우하단 — 목록 / 완료 결재 상신 (제출 데이터 있을 때) */}
+        {/* 우하단 — 목록 (완료 처리는 실행 URL "확인" 클릭 시 자동 수행) */}
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={() => setSelectedPlan(null)}
             sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {t('common.list', '목록')}
           </Button>
-          {submitted && selectedPlan.status === 'APPROVED' && (
-            <Button variant="contained" color="info" onClick={() => handleSubmitForApproval(selectedPlan)}
-              sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-              {t('common.completionSubmit', '완료 결재 상신')}
-            </Button>
-          )}
-          {selectedPlan.status === 'COMPLETION_PENDING' && (
-            <>
-              <Button variant="contained" color="warning" onClick={() => handleCompletionReject(selectedPlan)}
-                sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('partnerSafety.completionReject', '완료 결재 반려')}
-              </Button>
-              <Button variant="contained" color="success" onClick={() => handleCompletionApprove(selectedPlan)}
-                sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                {t('partnerSafety.completionApprove', '완료 결재 승인')}
-              </Button>
-            </>
-          )}
         </Box>
       </Box>
     )
@@ -366,20 +298,16 @@ const PartnerSafetyExecuteTab: React.FC = () => {
             const url = buildExecuteUrl(p.id)
             return (
               <Paper key={p.id} variant="outlined" sx={{ p: 1.5 }}>
-                {/* 1행: 계획번호 + 상태칩 */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
-                  <Typography sx={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'primary.main', fontWeight: 700, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {p.planId}
+                {/* 1행: 제목 + 상태칩 (클릭 → 상세) */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <Typography onClick={() => setSelectedPlan(p)}
+                    sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0, color: 'primary.main', cursor: 'pointer', textDecoration: 'underline', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {p.title || '-'}
                   </Typography>
                   <Chip size="small"
                     label={STATUS_LABEL[p.status] ?? p.status}
                     color={STATUS_COLOR[p.status] ?? 'default'} />
                 </Box>
-                {/* 2행: 제목 (클릭 → 상세) */}
-                <Typography onClick={() => setSelectedPlan(p)}
-                  sx={{ fontWeight: 700, fontSize: '0.95rem', mb: 2, color: 'primary.main', cursor: 'pointer', textDecoration: 'underline' }}>
-                  {p.title || '-'}
-                </Typography>
                 {/* 3행: 실행 URL 버튼 — PC 와 동일한 text 스타일 */}
                 <Button variant="text" size="small" fullWidth startIcon={<LinkIcon fontSize="small" />}
                   onClick={() => window.open(url, '_blank', 'noopener,noreferrer,width=480,height=900')}

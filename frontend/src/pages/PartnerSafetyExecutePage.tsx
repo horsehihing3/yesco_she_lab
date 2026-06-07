@@ -6,6 +6,7 @@ import {
   Box, Typography, Button, TextField, Alert, CircularProgress,
 } from '@mui/material'
 import { siteSafetyPlanApi } from '../api/siteSafetyApi'
+import { partnerSafetyExecutionApi } from '../api/partnerSafetyExecutionApi'
 import SafetyChecklistTab, { SafetyChecklistTabRef } from '../components/ehs/SafetyChecklistTab'
 import SignaturePad from '../components/common/SignaturePad'
 import { useAlert } from '../contexts/AlertContext'
@@ -59,6 +60,34 @@ const PartnerSafetyExecutePage: React.FC = () => {
       const phone = randomPhone()
       const systemNo = randomSystem()
       const submittedAt = new Date().toISOString()
+
+      // 1) 조회 탭이 보는 PartnerSafetyExecution 레코드 생성 + 완료 처리
+      //    — 이것이 누락되어 있어 "조회 탭에 안 넘어가는" 버그가 발생했음
+      const created = await partnerSafetyExecutionApi.create({
+        planId: plan.id,
+        name: name.trim(),
+        companyCode: 'PARTNER',
+        phone,
+        systemCode: systemNo,
+        systemUid: externalId,
+        calledAt: submittedAt,
+        checklistTemplateId: linkedChecklistId,
+      })
+      await partnerSafetyExecutionApi.complete(created.id, {
+        signature: sign,
+      })
+
+      // 2) SiteSafetyPlan 상태도 DONE 으로 전환 (실행 탭에서 사라지도록)
+      try {
+        if (plan.status === 'APPROVED') {
+          await siteSafetyPlanApi.transition(plan.id, 'completionSubmit')
+        }
+        if (plan.status !== 'DONE') {
+          await siteSafetyPlanApi.transition(plan.id, 'complete')
+        }
+      } catch { /* 상태 전환 실패해도 실행 레코드는 생성됨 */ }
+
+      // 3) 관리자 화면 동기화용 localStorage
       const params = new URLSearchParams({
         planId: String(plan.id),
         name: name.trim(),
@@ -66,17 +95,19 @@ const PartnerSafetyExecutePage: React.FC = () => {
         externalId, phone, systemNo, submittedAt,
       })
       const url = `${window.location.origin}/api/external/partner-safety/submit?${params.toString()}`
-      // 원래 탭(상세 화면)이 읽도록 localStorage 에 저장 — storage 이벤트로 감지
       try {
         localStorage.setItem(STORAGE_KEY_PREFIX + plan.id, JSON.stringify({
           url, name: name.trim(), sign, externalId, phone, systemNo, submittedAt,
         }))
       } catch { /* ignore quota */ }
+
       showSuccess(t('partnerSafety.submitSuccess', '제출이 완료되었습니다.'))
       // 새 창 자동 닫기 — 약간의 딜레이로 토스트 노출 후 닫음
       setTimeout(() => { try { window.close() } catch { /* ignore */ } }, 800)
-    } catch {
-      showError(t('common.error', '오류가 발생했습니다.'))
+    } catch (e: any) {
+      // 디버그용 실패 사유 표시
+      const msg = e?.response?.data?.message || e?.message || ''
+      showError(`${t('common.error', '오류가 발생했습니다.')}${msg ? ' — ' + msg : ''}`)
     }
   }
 
@@ -128,6 +159,7 @@ const PartnerSafetyExecutePage: React.FC = () => {
             showSummary
             hideSignatures
             hideTemplateInfo
+            freshFill
           />
         ) : (
           <Alert severity="info">{t('partnerSafety.noChecklist', '연결된 체크리스트가 없습니다.')}</Alert>

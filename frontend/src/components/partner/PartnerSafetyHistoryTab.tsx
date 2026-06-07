@@ -95,7 +95,6 @@ const PartnerSafetyHistoryTab: React.FC = () => {
       const plan = e.planId ? planById.get(e.planId) : undefined
       return (
         plan?.title?.toLowerCase().includes(s) ||
-        plan?.planId?.toLowerCase().includes(s) ||
         e.name?.toLowerCase().includes(s)
       )
     })
@@ -245,13 +244,13 @@ const PartnerSafetyHistoryTab: React.FC = () => {
     <Box>
       {/* 검색 — 데스크탑 */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
-        <ListSearchBar sx={{ width: 320 }} placeholder="제목/계획번호/작성자 검색" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
+        <ListSearchBar sx={{ width: 320 }} placeholder="제목/작성자 검색" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
         <IconButton size="small" onClick={refresh}><RefreshIcon /></IconButton>
       </Box>
       {/* 검색 — 모바일 */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <ListSearchBar fullWidth placeholder="제목/계획번호/작성자 검색" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
+          <ListSearchBar fullWidth placeholder="제목/작성자 검색" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
           <IconButton size="small" onClick={refresh}
             sx={{ border: 1, borderColor: 'divider', borderRadius: 1, flexShrink: 0 }}>
             <RefreshIcon fontSize="small" />
@@ -264,7 +263,6 @@ const PartnerSafetyHistoryTab: React.FC = () => {
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
               <TableCell align="center" sx={{ fontWeight: 'bold', width: 60 }}>No</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold' }}>계획번호</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>제목</TableCell>
               <TableCell align="center" sx={{ fontWeight: 'bold' }}>체크리스트</TableCell>
               <TableCell align="center" sx={{ fontWeight: 'bold', width: 140 }}>작성자</TableCell>
@@ -273,9 +271,9 @@ const PartnerSafetyHistoryTab: React.FC = () => {
           </TableHead>
           <TableBody>
             {isLoading ? (
-              <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4 }}>{t('common.loading', '로딩 중...')}</TableCell></TableRow>
+              <TableRow><TableCell colSpan={5} align="center" sx={{ py: 4 }}>{t('common.loading', '로딩 중...')}</TableCell></TableRow>
             ) : filteredList.length === 0 ? (
-              <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+              <TableRow><TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                 <Typography color="text.secondary">완료된 실행이 없습니다.</Typography>
               </TableCell></TableRow>
             ) : (
@@ -284,7 +282,6 @@ const PartnerSafetyHistoryTab: React.FC = () => {
                 return (
                   <TableRow key={e.id} hover sx={{ cursor: 'pointer' }} onClick={() => setSelected(e)}>
                     <TableCell align="center">{idx + 1}</TableCell>
-                    <TableCell align="center" sx={{ fontWeight: 700 }}>{plan?.planId || ''}</TableCell>
                     <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>{plan?.title || ''}</TableCell>
                     <TableCell align="center">{getTemplateName(e.checklistTemplateId)}</TableCell>
                     <TableCell align="center">{e.name}</TableCell>
@@ -310,12 +307,7 @@ const PartnerSafetyHistoryTab: React.FC = () => {
             const plan = e.planId ? planById.get(e.planId) : undefined
             return (
               <Paper key={e.id} variant="outlined" sx={{ p: 1.5, cursor: 'pointer' }} onClick={() => setSelected(e)}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                  <Typography sx={{ fontFamily: 'monospace', fontSize: '0.75rem', color: 'primary.main', fontWeight: 700 }}>
-                    {plan?.planId || ''}
-                  </Typography>
-                </Box>
-                <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', mb: 0.5 }}>{plan?.title || ''}</Typography>
+                <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', mb: 0.5, color: 'primary.main' }}>{plan?.title || ''}</Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
                   체크리스트: {getTemplateName(e.checklistTemplateId)}
                 </Typography>
