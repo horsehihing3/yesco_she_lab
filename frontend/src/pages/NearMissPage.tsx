@@ -143,12 +143,16 @@ const NearMissPage: React.FC = () => {
   const [selectedResponsible, setSelectedResponsible] = useState<UserInfo | null>(null)
   // 조치사항 담당부서 — 부서선택 모달
   const [actionDeptModalOpen, setActionDeptModalOpen] = useState(false)
-  const [beforeImage, setBeforeImage] = useState<string | null>(null)
-  const [afterImage, setAfterImage] = useState<string | null>(null)
-  const [beforeFile, setBeforeFile] = useState<File | null>(null)
-  const [afterFile, setAfterFile] = useState<File | null>(null)
-  const [beforeDeleted, setBeforeDeleted] = useState(false)
-  const [afterDeleted, setAfterDeleted] = useState(false)
+  // 조치전/조치후 이미지 다중 등록 — overview files 와 동일한 패턴
+  const [newBeforeFiles, setNewBeforeFiles] = useState<File[]>([])           // 신규 업로드용
+  const [newBeforePreviews, setNewBeforePreviews] = useState<string[]>([])   // dataURL 미리보기
+  const [existingBeforeFiles, setExistingBeforeFiles] = useState<FileMetadata[]>([])
+  const [deletedBeforeFileIds, setDeletedBeforeFileIds] = useState<number[]>([])
+
+  const [newAfterFiles, setNewAfterFiles] = useState<File[]>([])
+  const [newAfterPreviews, setNewAfterPreviews] = useState<string[]>([])
+  const [existingAfterFiles, setExistingAfterFiles] = useState<FileMetadata[]>([])
+  const [deletedAfterFileIds, setDeletedAfterFileIds] = useState<number[]>([])
   const [overviewFiles, setOverviewFiles] = useState<File[]>([])
   const [existingOverviewFiles, setExistingOverviewFiles] = useState<FileMetadata[]>([])
   const [deletedOverviewFileIds, setDeletedOverviewFileIds] = useState<number[]>([])
@@ -156,6 +160,8 @@ const NearMissPage: React.FC = () => {
   const drawingImageRef = useRef<HTMLImageElement>(null)
   const beforeFileRef = useRef<HTMLInputElement>(null)
   const afterFileRef = useRef<HTMLInputElement>(null)
+  const beforeCameraRef = useRef<HTMLInputElement>(null)
+  const afterCameraRef = useRef<HTMLInputElement>(null)
   const overviewFileRef = useRef<HTMLInputElement>(null)
 
   // Fetch floor drawings from API
@@ -311,12 +317,8 @@ const NearMissPage: React.FC = () => {
     setViewNearMiss(null)
     setMarkerPosition(null)
     setMeasures([])
-    setBeforeImage(null)
-    setAfterImage(null)
-    setBeforeFile(null)
-    setAfterFile(null)
-    setBeforeDeleted(false)
-    setAfterDeleted(false)
+    setNewBeforeFiles([]); setNewBeforePreviews([]); setExistingBeforeFiles([]); setDeletedBeforeFileIds([])
+    setNewAfterFiles([]); setNewAfterPreviews([]); setExistingAfterFiles([]); setDeletedAfterFileIds([])
     setOverviewFiles([])
     setExistingOverviewFiles([])
     setDeletedOverviewFileIds([])
@@ -328,8 +330,8 @@ const NearMissPage: React.FC = () => {
   const handleNewClick = () => {
     setMarkerPosition(null)
     setMeasures([])
-    setBeforeImage(null)
-    setAfterImage(null)
+    setNewBeforeFiles([]); setNewBeforePreviews([]); setExistingBeforeFiles([]); setDeletedBeforeFileIds([])
+    setNewAfterFiles([]); setNewAfterPreviews([]); setExistingAfterFiles([]); setDeletedAfterFileIds([])
     setOverviewFiles([])
     setExistingOverviewFiles([])
     setDeletedOverviewFileIds([])
@@ -399,12 +401,8 @@ const NearMissPage: React.FC = () => {
       setMeasures([])
     }
     // 기존 이미지 로드
-    setBeforeImage(null)
-    setAfterImage(null)
-    setBeforeFile(null)
-    setAfterFile(null)
-    setBeforeDeleted(false)
-    setAfterDeleted(false)
+    setNewBeforeFiles([]); setNewBeforePreviews([]); setExistingBeforeFiles([]); setDeletedBeforeFileIds([])
+    setNewAfterFiles([]); setNewAfterPreviews([]); setExistingAfterFiles([]); setDeletedAfterFileIds([])
     setOverviewFiles([])
     setExistingOverviewFiles([])
     setDeletedOverviewFileIds([])
@@ -434,10 +432,8 @@ const NearMissPage: React.FC = () => {
       setMarkerPosition(null)
     }
     // 이미지 로드
-    setBeforeImage(null)
-    setAfterImage(null)
-    setBeforeFile(null)
-    setAfterFile(null)
+    setNewBeforeFiles([]); setNewBeforePreviews([]); setExistingBeforeFiles([])
+    setNewAfterFiles([]); setNewAfterPreviews([]); setExistingAfterFiles([])
     setExistingOverviewFiles([])
     if (nearMiss.nearMissId) {
       loadExistingImages(nearMiss.nearMissId)
@@ -517,61 +513,69 @@ const NearMissPage: React.FC = () => {
   }
 
   const handleImageUpload = (type: 'before' | 'after', e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
 
-    if (type === 'before') {
-      setBeforeFile(file)
-    } else {
-      setAfterFile(file)
-    }
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        if (type === 'before') {
-          setBeforeImage(event.target.result as string)
-        } else {
-          setAfterImage(event.target.result as string)
-        }
+    // 각 파일을 dataURL 로 변환 후 state 에 추가
+    Promise.all(files.map(file => new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = (ev) => resolve(ev.target?.result as string)
+      reader.readAsDataURL(file)
+    }))).then(previews => {
+      if (type === 'before') {
+        setNewBeforeFiles(prev => [...prev, ...files])
+        setNewBeforePreviews(prev => [...prev, ...previews])
+      } else {
+        setNewAfterFiles(prev => [...prev, ...files])
+        setNewAfterPreviews(prev => [...prev, ...previews])
       }
-    }
-    reader.readAsDataURL(file)
+    })
+
+    // 같은 파일 재선택 가능하도록 input value 초기화
+    e.target.value = ''
   }
 
-  const deleteExistingImages = async (entityType: string, nearMissId: string) => {
-    try {
-      const res = await axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/${entityType}/${nearMissId}`)
-      const files = res.data.data
-      if (files && files.length > 0) {
-        for (const f of files) {
-          await axiosInstance.delete(`/files/${f.id}`)
-        }
-      }
-    } catch {
-      // ignore
+  // 기존(서버) 이미지 삭제 — 삭제 큐에 ID 추가
+  const handleRemoveExistingImage = (type: 'before' | 'after', fileId: number) => {
+    if (type === 'before') {
+      setExistingBeforeFiles(prev => prev.filter(f => f.id !== fileId))
+      setDeletedBeforeFileIds(prev => [...prev, fileId])
+    } else {
+      setExistingAfterFiles(prev => prev.filter(f => f.id !== fileId))
+      setDeletedAfterFileIds(prev => [...prev, fileId])
+    }
+  }
+
+  // 신규 업로드 대기 이미지 삭제 — 인덱스로 제거
+  const handleRemoveNewImage = (type: 'before' | 'after', idx: number) => {
+    if (type === 'before') {
+      setNewBeforeFiles(prev => prev.filter((_, i) => i !== idx))
+      setNewBeforePreviews(prev => prev.filter((_, i) => i !== idx))
+    } else {
+      setNewAfterFiles(prev => prev.filter((_, i) => i !== idx))
+      setNewAfterPreviews(prev => prev.filter((_, i) => i !== idx))
     }
   }
 
   const uploadImages = async (nearMissId: string) => {
-    // 삭제된 이미지 서버에서도 삭제
-    if (beforeDeleted || beforeFile) {
-      await deleteExistingImages('NEAR_MISS_BEFORE', nearMissId)
+    // 삭제 큐에 들어간 기존 파일 개별 삭제
+    for (const fid of deletedBeforeFileIds) {
+      try { await axiosInstance.delete(`/files/${fid}`) } catch { /* ignore */ }
     }
-    if (afterDeleted || afterFile) {
-      await deleteExistingImages('NEAR_MISS_AFTER', nearMissId)
+    for (const fid of deletedAfterFileIds) {
+      try { await axiosInstance.delete(`/files/${fid}`) } catch { /* ignore */ }
     }
-    // 새 이미지 업로드
-    if (beforeFile) {
+    // 신규 이미지 다중 업로드
+    for (const file of newBeforeFiles) {
       const fd = new FormData()
-      fd.append('file', beforeFile)
+      fd.append('file', file)
       fd.append('entityType', 'NEAR_MISS_BEFORE')
       fd.append('entityId', nearMissId)
       await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
     }
-    if (afterFile) {
+    for (const file of newAfterFiles) {
       const fd = new FormData()
-      fd.append('file', afterFile)
+      fd.append('file', file)
       fd.append('entityType', 'NEAR_MISS_AFTER')
       fd.append('entityId', nearMissId)
       await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
@@ -604,12 +608,8 @@ const NearMissPage: React.FC = () => {
       const beforeFiles = beforeRes.data.data
       const afterFiles = afterRes.data.data
       const overviewFilesList = overviewRes.data.data
-      if (beforeFiles && beforeFiles.length > 0) {
-        setBeforeImage(`/api/files/${beforeFiles[0].id}`)
-      }
-      if (afterFiles && afterFiles.length > 0) {
-        setAfterImage(`/api/files/${afterFiles[0].id}`)
-      }
+      setExistingBeforeFiles(beforeFiles || [])
+      setExistingAfterFiles(afterFiles || [])
       if (overviewFilesList && overviewFilesList.length > 0) {
         setExistingOverviewFiles(overviewFilesList)
       } else {
@@ -1198,10 +1198,15 @@ const NearMissPage: React.FC = () => {
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, alignItems: 'stretch' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.beforeAction')}</Typography>
-              {beforeImage ? (
-                <Card sx={{ flex: 1 }}>
-                  <CardMedia component="img" image={beforeImage} alt={t('nearMiss.beforeAction')} sx={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} />
-                </Card>
+              {existingBeforeFiles.length > 0 ? (
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 1 }}>
+                  {existingBeforeFiles.map(f => (
+                    <Card key={f.id}>
+                      <CardMedia component="img" image={`/api/files/${f.id}`} alt={t('nearMiss.beforeAction')}
+                        sx={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
+                    </Card>
+                  ))}
+                </Box>
               ) : (
                 <Paper sx={{ minHeight: 200, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}>
                   <Typography color="text.secondary">{t('nearMiss.noImage')}</Typography>
@@ -1210,10 +1215,15 @@ const NearMissPage: React.FC = () => {
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.afterAction')}</Typography>
-              {afterImage ? (
-                <Card sx={{ flex: 1 }}>
-                  <CardMedia component="img" image={afterImage} alt={t('nearMiss.afterAction')} sx={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} />
-                </Card>
+              {existingAfterFiles.length > 0 ? (
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 1 }}>
+                  {existingAfterFiles.map(f => (
+                    <Card key={f.id}>
+                      <CardMedia component="img" image={`/api/files/${f.id}`} alt={t('nearMiss.afterAction')}
+                        sx={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
+                    </Card>
+                  ))}
+                </Box>
               ) : (
                 <Paper sx={{ minHeight: 200, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}>
                   <Typography color="text.secondary">{t('nearMiss.noImage')}</Typography>
@@ -1664,8 +1674,8 @@ const NearMissPage: React.FC = () => {
             </TableContainer>
           </Box>
 
-          {/* 모바일용 레이아웃 — 3개 한 줄 */}
-          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'row', gap: 1 }}>
+          {/* 모바일용 레이아웃 — 셀렉박스 하나씩 한 줄 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1, py: 0.75, borderRadius: 0.5, fontSize: '0.75rem', textAlign: 'center' }}>비상유형</Typography>
               <Controller name="emergencyType" control={control} defaultValue=""
@@ -1894,20 +1904,18 @@ const NearMissPage: React.FC = () => {
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setResponsibleModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
-              <Box sx={{ flex: 1 }}>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.scheduledDate')}</Typography>
-                <DatePickerField
-                  label=""
-                  value={newMeasure.dueDate}
-                  onChange={(value) => setNewMeasure({ ...newMeasure, dueDate: value })}
-                  placeholder={t('nearMiss.scheduledDate')}
-                />
-              </Box>
-              <Button variant="contained" size="small" onClick={handleAddMeasure} startIcon={<AddIcon />} sx={{ minWidth: 80, whiteSpace: 'nowrap', height: 40 }}>
-                {t('common.add')}
-              </Button>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.scheduledDate')}</Typography>
+              <DatePickerField
+                label=""
+                value={newMeasure.dueDate}
+                onChange={(value) => setNewMeasure({ ...newMeasure, dueDate: value })}
+                placeholder={t('nearMiss.scheduledDate')}
+              />
             </Box>
+            <Button variant="contained" fullWidth onClick={handleAddMeasure} startIcon={<AddIcon />}>
+              {t('common.add')}
+            </Button>
           </Box>
 
           <TableContainer sx={{ border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
@@ -1955,60 +1963,106 @@ const NearMissPage: React.FC = () => {
           {t('nearMiss.images')}
         </Typography>
         <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
-          <input ref={beforeFileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('before', e)} />
-          <input ref={afterFileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('after', e)} />
+          {/* 파일 input — multiple 로 다중 선택 지원 */}
+          <input ref={beforeFileRef} type="file" multiple accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('before', e)} />
+          <input ref={afterFileRef} type="file" multiple accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('after', e)} />
+          {/* 모바일 카메라 직접 촬영 — capture 는 multiple 미지원, 한 장씩 캡처 (반복 가능) */}
+          <input ref={beforeCameraRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={(e) => handleImageUpload('before', e)} />
+          <input ref={afterCameraRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={(e) => handleImageUpload('after', e)} />
           <input ref={overviewFileRef} type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.txt" style={{ display: 'none' }} onChange={handleOverviewFileSelect} />
 
           <Grid container spacing={0} sx={{ border: 1, borderColor: 'grey.300', alignItems: 'stretch' }}>
+            {/* 조치전 */}
             <Grid item xs={12} sm={6} sx={{ p: 2, borderRight: { xs: 0, sm: 1 }, borderBottom: { xs: 1, sm: 0 }, borderColor: 'grey.300', display: 'flex', flexDirection: 'column' }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.beforeAction')}</Typography>
-              {beforeImage ? (
-                <Card sx={{ position: 'relative', flex: 1 }}>
-                  <CardMedia component="img" image={beforeImage} alt={t('nearMiss.beforeAction')} sx={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} />
-                  <IconButton
-                    size="small"
-                    sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
-                    onClick={async () => { if (await showConfirm(t('nearMiss.confirmImageDelete'))) { setBeforeImage(null); setBeforeFile(null); setBeforeDeleted(true) } }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Card>
-              ) : (
-                <Paper
-                  sx={{ minHeight: 200, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}
-                  onClick={() => beforeFileRef.current?.click()}
-                >
+              {(existingBeforeFiles.length > 0 || newBeforePreviews.length > 0) && (
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 1, mb: 1.5 }}>
+                  {existingBeforeFiles.map(f => (
+                    <Card key={`exist-${f.id}`} sx={{ position: 'relative' }}>
+                      <CardMedia component="img" image={`/api/files/${f.id}`}
+                        sx={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
+                      <IconButton size="small"
+                        sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                        onClick={async () => { if (await showConfirm(t('nearMiss.confirmImageDelete'))) handleRemoveExistingImage('before', f.id) }}>
+                        <DeleteIcon sx={{ fontSize: 14 }} />
+                      </IconButton>
+                    </Card>
+                  ))}
+                  {newBeforePreviews.map((src, i) => (
+                    <Card key={`new-${i}`} sx={{ position: 'relative' }}>
+                      <CardMedia component="img" image={src}
+                        sx={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
+                      <IconButton size="small"
+                        sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                        onClick={() => handleRemoveNewImage('before', i)}>
+                        <DeleteIcon sx={{ fontSize: 14 }} />
+                      </IconButton>
+                    </Card>
+                  ))}
+                </Box>
+              )}
+              <Paper sx={{ minHeight: 80, flex: existingBeforeFiles.length === 0 && newBeforePreviews.length === 0 ? 1 : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300', gap: 1, p: 2 }}>
+                {existingBeforeFiles.length === 0 && newBeforePreviews.length === 0 && (
                   <PhotoCameraIcon sx={{ fontSize: 48, color: '#ccc', mb: 1 }} />
-                  <Button variant="outlined" size="small" startIcon={<CloudUploadIcon />}>
+                )}
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <Button variant="contained" size="small" startIcon={<PhotoCameraIcon />}
+                    sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+                    onClick={(e) => { e.stopPropagation(); beforeCameraRef.current?.click() }}>
+                    카메라
+                  </Button>
+                  <Button variant="outlined" size="small" startIcon={<CloudUploadIcon />}
+                    onClick={(e) => { e.stopPropagation(); beforeFileRef.current?.click() }}>
                     {t('nearMiss.imageUpload')}
                   </Button>
-                </Paper>
-              )}
+                </Box>
+              </Paper>
             </Grid>
+            {/* 조치후 */}
             <Grid item xs={12} sm={6} sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.afterAction')}</Typography>
-              {afterImage ? (
-                <Card sx={{ position: 'relative', flex: 1 }}>
-                  <CardMedia component="img" image={afterImage} alt={t('nearMiss.afterAction')} sx={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} />
-                  <IconButton
-                    size="small"
-                    sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
-                    onClick={async () => { if (await showConfirm(t('nearMiss.confirmImageDelete'))) { setAfterImage(null); setAfterFile(null); setAfterDeleted(true) } }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Card>
-              ) : (
-                <Paper
-                  sx={{ minHeight: 200, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}
-                  onClick={() => afterFileRef.current?.click()}
-                >
+              {(existingAfterFiles.length > 0 || newAfterPreviews.length > 0) && (
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 1, mb: 1.5 }}>
+                  {existingAfterFiles.map(f => (
+                    <Card key={`exist-${f.id}`} sx={{ position: 'relative' }}>
+                      <CardMedia component="img" image={`/api/files/${f.id}`}
+                        sx={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
+                      <IconButton size="small"
+                        sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                        onClick={async () => { if (await showConfirm(t('nearMiss.confirmImageDelete'))) handleRemoveExistingImage('after', f.id) }}>
+                        <DeleteIcon sx={{ fontSize: 14 }} />
+                      </IconButton>
+                    </Card>
+                  ))}
+                  {newAfterPreviews.map((src, i) => (
+                    <Card key={`new-${i}`} sx={{ position: 'relative' }}>
+                      <CardMedia component="img" image={src}
+                        sx={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
+                      <IconButton size="small"
+                        sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'error.main', color: 'white', '&:hover': { bgcolor: 'error.dark' } }}
+                        onClick={() => handleRemoveNewImage('after', i)}>
+                        <DeleteIcon sx={{ fontSize: 14 }} />
+                      </IconButton>
+                    </Card>
+                  ))}
+                </Box>
+              )}
+              <Paper sx={{ minHeight: 80, flex: existingAfterFiles.length === 0 && newAfterPreviews.length === 0 ? 1 : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300', gap: 1, p: 2 }}>
+                {existingAfterFiles.length === 0 && newAfterPreviews.length === 0 && (
                   <PhotoCameraIcon sx={{ fontSize: 48, color: '#ccc', mb: 1 }} />
-                  <Button variant="outlined" size="small" startIcon={<CloudUploadIcon />}>
+                )}
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <Button variant="contained" size="small" startIcon={<PhotoCameraIcon />}
+                    sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+                    onClick={(e) => { e.stopPropagation(); afterCameraRef.current?.click() }}>
+                    카메라
+                  </Button>
+                  <Button variant="outlined" size="small" startIcon={<CloudUploadIcon />}
+                    onClick={(e) => { e.stopPropagation(); afterFileRef.current?.click() }}>
                     {t('nearMiss.imageUpload')}
                   </Button>
-                </Paper>
-              )}
+                </Box>
+              </Paper>
             </Grid>
           </Grid>
         </Paper>
