@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import {
-  Box, Grid, Paper, Chip, CircularProgress,
+  Box, Grid, Paper, Chip, CircularProgress, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer, LinearProgress,
 } from '@mui/material'
 import { planApi, odStatsApi, workerApi } from '../../api/occupationalDiseaseApi'
@@ -34,8 +34,10 @@ const OdResultTab: React.FC = () => {
         <Grid item xs={6} sm={2.4}><StatCard color="purple" value={totalTargets}                       label="계획 누계 인원" /></Grid>
       </Grid>
 
-      <Paper variant="outlined">
-        {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
+      {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
+        <>
+        {/* PC 테이블 */}
+        <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
           <TableContainer>
             <Table size="small">
               <TableHead><TableRow>
@@ -46,7 +48,6 @@ const OdResultTab: React.FC = () => {
               </TableRow></TableHead>
               <TableBody>
                 {plans.map(p => {
-                  // 해당 plan의 완료자 (해당 org에서 검진 받은 사람)
                   const completed = workers.filter(w => w.examOrg && p.orgName.includes(w.examOrg.split(' ')[0])).length
                   const rate = p.targetCount > 0 ? Math.round(completed / p.targetCount * 100) : 0
                   return (
@@ -73,8 +74,45 @@ const OdResultTab: React.FC = () => {
               </TableBody>
             </Table>
           </TableContainer>
-        )}
-      </Paper>
+        </Paper>
+
+        {/* 모바일 카드 */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1 }}>
+          {plans.length === 0 ? (
+            <Paper variant="outlined" sx={{ p: 4, textAlign: 'center', color: 'text.disabled' }}>검진 결과가 없습니다</Paper>
+          ) : plans.map(p => {
+            const completed = workers.filter(w => w.examOrg && p.orgName.includes(w.examOrg.split(' ')[0])).length
+            const rate = p.targetCount > 0 ? Math.round(completed / p.targetCount * 100) : 0
+            return (
+              <Paper key={p.id} variant="outlined" sx={{ p: 1.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                  <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {p.orgName}
+                  </Typography>
+                  <Chip size="small" label={p.status} color={statusColor(p.status)} />
+                </Box>
+                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 0.5 }}>
+                  <Chip size="small" label={p.half} color={halfColor(p.half)} />
+                  <Chip size="small" variant="outlined" label={p.method} />
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                  {p.startDate} ~ {p.endDate} · 대상 {p.targetCount}명 / 완료 <Box component="span" sx={{ color: 'success.main', fontWeight: 700 }}>{completed}명</Box>
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                  <Box sx={{ flex: 1 }}>
+                    <LinearProgress variant="determinate" value={Math.min(rate, 100)} color={rate >= 90 ? 'success' : rate >= 60 ? 'warning' : 'error'} sx={{ height: 6, borderRadius: 1 }} />
+                  </Box>
+                  <Typography variant="caption" sx={{ minWidth: 40, textAlign: 'right', fontFamily: 'monospace' }}>{rate}%</Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                  담당: {p.mgr || '-'} · {p.hazardFactors || '-'}
+                </Typography>
+              </Paper>
+            )
+          })}
+        </Box>
+        </>
+      )}
     </Box>
   )
 }

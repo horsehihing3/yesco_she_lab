@@ -38,6 +38,7 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import SignaturePad from '../common/SignaturePad'
 import SignatureImage from '../common/SignatureImage'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
@@ -110,6 +111,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
   const { t } = useTranslation()
   const { showSuccess, showConfirm, showError } = useAlert()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
 
   // View mode state
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -635,7 +637,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                               label={file.originalFilename}
                               size="small"
                               onClick={() => handleDownloadFile(file.id, file.originalFilename)}
-                              sx={{ cursor: 'pointer' }}
+                              sx={{
+                                cursor: 'pointer',
+                                maxWidth: '100%',
+                                '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+                              }}
                             />
                           ))}
                         </Box>
@@ -741,7 +747,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                           label={file.originalFilename}
                           size="small"
                           onClick={() => handleDownloadFile(file.id, file.originalFilename)}
-                          sx={{ cursor: 'pointer' }}
+                          sx={{
+                            cursor: 'pointer',
+                            maxWidth: '100%',
+                            '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+                          }}
                         />
                       ))}
                     </Box>
@@ -809,7 +819,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
       <Box sx={{ mb: 3 }}>
         {/* 기본 정보 - 반응형 폼 레이아웃 */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('common.basicInfo')}</Typography>
-        <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }} accept=".pdf,.doc,.docx,.xls,.xlsx" />
+        <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }}
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.heic" />
+        {/* 모바일 카메라 직접 촬영용 — capture="environment" 로 후면 카메라 호출 */}
+        <input type="file" ref={cameraInputRef} onChange={handleFileSelect} style={{ display: 'none' }}
+          accept="image/*" capture="environment" />
 
         {/* PC용 테이블 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
@@ -895,13 +909,14 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
               ) : (
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                   {pendingFiles.map((file, idx) => (
-                    <Chip key={idx} label={file.name} size="small" onDelete={() => handleRemovePendingFile(idx)} />
+                    <Chip key={idx} label={file.name} size="small" onDelete={() => handleRemovePendingFile(idx)}
+                      sx={{ maxWidth: '100%', '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }} />
                   ))}
                 </Box>
               )}
               <Button variant="outlined" size="small" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()}>
                 {t('common.attach')}
-</Button>
+              </Button>
             </Box>
           </Box>
         </Box>
@@ -963,19 +978,27 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.attachments')}</Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', px: 1.5, py: 0.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, px: 1.5, py: 0.5, minWidth: 0, maxWidth: '100%' }}>
               {pendingFiles.length === 0 ? (
                 <Typography variant="body2" color="text.secondary">{t('common.noFile')}</Typography>
               ) : (
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', minWidth: 0, width: '100%' }}>
                   {pendingFiles.map((file, idx) => (
-                    <Chip key={idx} label={file.name} size="small" onDelete={() => handleRemovePendingFile(idx)} />
+                    <Chip key={idx} label={file.name} size="small" onDelete={() => handleRemovePendingFile(idx)}
+                      sx={{ maxWidth: '100%', '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }} />
                   ))}
                 </Box>
               )}
-              <Button variant="outlined" size="small" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()}>
-                {t('common.attach')}
-</Button>
+              {/* 액션 버튼 — 모바일 한 줄 50:50 분할 */}
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button fullWidth variant="outlined" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()}>
+                  {t('common.attach')}
+                </Button>
+                <Button fullWidth variant="contained" startIcon={<PhotoCameraIcon />}
+                  onClick={() => cameraInputRef.current?.click()}>
+                  카메라
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Box>

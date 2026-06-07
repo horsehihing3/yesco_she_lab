@@ -140,7 +140,9 @@ const HealthCheckupStatusTab: React.FC<Props> = ({ allowedTypes }) => {
         {isLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}><CircularProgress /></Box>
         ) : (
-          <TableContainer>
+          <>
+          {/* PC 테이블 */}
+          <TableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -182,6 +184,39 @@ const HealthCheckupStatusTab: React.FC<Props> = ({ allowedTypes }) => {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* 모바일 카드 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, p: 1.5 }}>
+            {plans.length === 0 ? (
+              <Typography color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>{t('common.noData', '데이터가 없습니다')}</Typography>
+            ) : plans.map(p => {
+              const rate = (p.targetCount || 0) > 0 ? Math.round(((p.completedCount || 0) / p.targetCount) * 100) : 0
+              return (
+                <Paper key={p.id} variant="outlined" sx={{ p: 1.5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {p.planName}
+                    </Typography>
+                    <Chip size="small" label={getStatusLabel(p.status) || p.status} color={STATUS_COLORS[p.status] || 'default'} />
+                  </Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                    {getTypeLabel(p.checkupType) || p.checkupType} · {p.targetDept || '-'}
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ flex: 1 }}>
+                      <LinearProgress variant="determinate" value={rate}
+                        sx={{ height: 8, borderRadius: 1,
+                          '& .MuiLinearProgress-bar': { backgroundColor: TYPE_COLORS[p.checkupType] || '#6366f1' } }}/>
+                    </Box>
+                    <Typography variant="caption" sx={{ minWidth: 80, textAlign: 'right', fontFamily: 'monospace' }}>
+                      {p.completedCount}/{p.targetCount} ({rate}%)
+                    </Typography>
+                  </Box>
+                </Paper>
+              )
+            })}
+          </Box>
+          </>
         )}
       </Paper>
     </Box>

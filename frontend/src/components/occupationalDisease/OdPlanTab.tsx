@@ -144,12 +144,17 @@ const OdPlanTab: React.FC = () => {
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="flex-end">
         {canSee(MENU, 'LIST', 'New', myRoles) && (
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}
+            sx={{ width: { xs: '100%', md: 'auto' } }}>
+            New
+          </Button>
         )}
       </Stack>
 
-      <Paper variant="outlined">
-        {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
+      {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
+        <>
+        {/* PC 테이블 */}
+        <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
           <TableContainer>
             <Table size="small">
               <TableHead><TableRow>
@@ -184,8 +189,43 @@ const OdPlanTab: React.FC = () => {
               </TableBody>
             </Table>
           </TableContainer>
-        )}
-      </Paper>
+        </Paper>
+
+        {/* 모바일 카드 */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1 }}>
+          {items.length === 0 ? (
+            <Paper variant="outlined" sx={{ p: 4, textAlign: 'center', color: 'text.disabled' }}>등록된 일정이 없습니다</Paper>
+          ) : items.map(p => (
+            <Paper key={p.id} variant="outlined" sx={{ p: 1.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {p.orgName}
+                </Typography>
+                <Chip size="small" label={p.status} color={statusColor(p.status)} />
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 0.5 }}>
+                <Chip size="small" label={p.half} color={halfColor(p.half)} />
+                <Chip size="small" variant="outlined" label={p.method} />
+              </Box>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                {p.startDate} ~ {p.endDate} · {p.targetCount}명
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                담당: {p.mgr || '-'} · {p.hazardFactors || '-'}
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5, mt: 0.5 }}>
+                {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+                  <IconButton size="small" onClick={() => openEdit(p)}><EditIcon fontSize="small" /></IconButton>
+                )}
+                {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                  <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="small" /></IconButton>
+                )}
+              </Box>
+            </Paper>
+          ))}
+        </Box>
+        </>
+      )}
 
       <Dialog open={open} onClose={closeDialog} maxWidth="md" fullWidth>
         <DialogTitle>{editing ? '검진계획 수정' : '검진계획 등록'}</DialogTitle>

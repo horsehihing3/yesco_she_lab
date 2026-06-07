@@ -450,13 +450,19 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
             placeholder={t('common.search', '검색')}
             sx={{ width: { xs: '100%', sm: 240 } }}
           />
-          <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
-          <Box sx={{ flex: 1 }} />
-          {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
-            <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
-              {t('common.new', '신규')}
+          {/* 액션 버튼 — 모바일에서 한 줄 100% 폭, PC 에서는 우측 정렬 */}
+          <Box sx={{ display: 'flex', gap: 1, width: { xs: '100%', md: 'auto' }, ml: { md: 'auto' } }}>
+            <Button onClick={handleReset} startIcon={<RefreshIcon />} variant="outlined" size="small"
+              sx={{ flex: { xs: 1, md: 'none' } }}>
+              {t('common.reset', '초기화')}
             </Button>
-          )}
+            {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+              <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small"
+                sx={{ flex: { xs: 1, md: 'none' } }}>
+                {t('common.new', '신규')}
+              </Button>
+            )}
+          </Box>
         </Box>
 
         {isLoading ? (
@@ -465,7 +471,8 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           <Alert severity="info">{t('common.noData', '데이터가 없습니다')}</Alert>
         ) : (
           <>
-            <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
+            {/* PC 테이블 */}
+            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -510,6 +517,31 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
                 </TableBody>
               </Table>
             </TableContainer>
+
+            {/* 모바일 카드 */}
+            <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1 }}>
+              {filteredItems.map(item => (
+                <Paper key={item.id} variant="outlined" onClick={() => handleRowClick(item)}
+                  sx={{ p: 1.5, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.planName}
+                    </Typography>
+                    <Chip size="small" label={getStatusLabel(item.status) || item.status} color={STATUS_COLORS[item.status] || 'default'} />
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 0.5, mb: 0.5 }}>
+                    <Chip size="small" variant="outlined" label={`${item.planYear}`} />
+                    <Chip size="small" variant="outlined" label={getTypeLabel(item.checkupType) || item.checkupType} color={TYPE_COLORS[item.checkupType] || 'default'} />
+                  </Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                    {item.targetDept || '-'} · 완료 {item.completedCount}/{item.targetCount}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace', display: 'block' }}>
+                    {item.planStartDate || ''} ~ {item.planEndDate || ''}
+                  </Typography>
+                </Paper>
+              ))}
+            </Box>
             {totalPages > 1 && (
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                 <Pagination count={totalPages} page={page + 1} onChange={(_, p) => setPage(p - 1)} />
