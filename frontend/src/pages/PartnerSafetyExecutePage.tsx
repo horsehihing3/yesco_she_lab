@@ -53,9 +53,8 @@ const PartnerSafetyExecutePage: React.FC = () => {
     if (!sign) { showError(t('partnerSafety.signRequired', '서명을 입력하세요.')); return }
 
     try {
-      if (linkedChecklistId && checklistRef.current) {
-        await checklistRef.current.save()
-      }
+      // 사용자가 입력한 체크리스트 응답을 캡처 (템플릿에 저장하지 않음 — 다른 작업자에게 영향 X)
+      const checklistData = checklistRef.current?.getSnapshot?.() || undefined
       const externalId = randomId()
       const phone = randomPhone()
       const systemNo = randomSystem()
@@ -75,6 +74,7 @@ const PartnerSafetyExecutePage: React.FC = () => {
       })
       await partnerSafetyExecutionApi.complete(created.id, {
         signature: sign,
+        checklistData,
       })
 
       // 2) SiteSafetyPlan 상태도 DONE 으로 전환 (실행 탭에서 사라지도록)

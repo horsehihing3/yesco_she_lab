@@ -12,6 +12,7 @@ import { partnerSafetyExecutionApi, PartnerSafetyExecution } from '../../api/par
 import { siteSafetyPlanApi } from '../../api/siteSafetyApi'
 import { fetchSafetyTemplates } from '../../api/safetyChecklistApi'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import SafetyChecklistTab from '../ehs/SafetyChecklistTab'
 
 type SnapshotItem = {
   categoryName: string
@@ -163,7 +164,7 @@ const PartnerSafetyHistoryTab: React.FC = () => {
           </FormRow>
         </FormTable>
 
-        {/* 체크리스트 — 실행 단위 스냅샷 (마스터 템플릿이 아님) */}
+        {/* 체크리스트 — 이 실행 record 의 응답 (다른 실행과 격리됨) */}
         {(() => {
           const snap = parseSnapshot(selected.checklistData)
           if (snap.length === 0) return null
@@ -221,37 +222,6 @@ const PartnerSafetyHistoryTab: React.FC = () => {
             </Paper>
           </>
         )}
-
-        {/* 최종 전송 URL — 서명 포함 모든 파라미터 */}
-        {(() => {
-          const params = new URLSearchParams({
-            token: selected.executionToken || '',
-            name: selected.name || '',
-            companyCode: selected.companyCode || '',
-            phone: selected.phone || '',
-            systemCode: selected.systemCode || '',
-            systemUid: selected.systemUid || '',
-            calledAt: selected.calledAt || '',
-            completedAt: selected.completedAt || '',
-            signature: selected.signature || '',
-          })
-          const finalUrl = `${window.location.origin}/api/external/partner-safety/submit?${params.toString()}`
-          return (
-            <>
-              <Typography variant="subtitle1" fontWeight="bold" color="text.primary" sx={{ mt: 3, mb: 2 }}>
-                최종 전송 URL
-              </Typography>
-              <Paper variant="outlined" sx={{ p: 2, bgcolor: 'background.paper' }}>
-                <Typography variant="body2" sx={{
-                  fontFamily: 'monospace', fontSize: '0.72rem',
-                  wordBreak: 'break-all', whiteSpace: 'pre-wrap',
-                }}>
-                  {finalUrl}
-                </Typography>
-              </Paper>
-            </>
-          )
-        })()}
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={() => setSelected(null)}

@@ -84,6 +84,8 @@ interface LocalCategory {
 export interface SafetyChecklistTabRef {
   save: () => Promise<void>
   isAllChecked: () => boolean
+  // 현재 체크리스트 응답을 JSON 문자열로 직렬화 (협력업체 실행 등 실행 단위 스냅샷 저장용)
+  getSnapshot: () => string
 }
 
 let tempIdCounter = 0
@@ -457,6 +459,18 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
     isAllChecked: () => {
       const allItems = localCategories.flatMap(c => c.items)
       return allItems.length > 0 && allItems.every(i => i.checkResult === 'PASS' || i.checkResult === 'FAIL' || i.checkResult === 'NA')
+    },
+    getSnapshot: () => {
+      const snap = localCategories.flatMap(cat => cat.items.map(item => ({
+        categoryName: cat.categoryName,
+        checkItem: item.checkItem,
+        legalBasis: item.legalBasis,
+        checkResult: item.checkResult,
+        finding: item.finding || undefined,
+        actionDeadline: item.actionDeadline || undefined,
+        actionComplete: item.actionComplete || undefined,
+      })))
+      return JSON.stringify(snap)
     },
   }))
 
