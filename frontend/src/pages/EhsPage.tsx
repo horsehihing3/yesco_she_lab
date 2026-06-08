@@ -32,9 +32,15 @@ const EhsPage: React.FC = () => {
   ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
 
   useEffect(() => {
+    // menuKey 쿼리가 있으면 인덱스 대신 menuKey 로 정확한 탭 매칭 — 메뉴 가시성 변동에도 안전
+    const menuKeyParam = searchParams.get('menuKey')
+    if (menuKeyParam) {
+      const idx = tabs.findIndex(t => t.menuKey === menuKeyParam)
+      if (idx >= 0) { setActiveTab(idx); return }
+    }
     const tab = parseInt(searchParams.get('tab') || '0', 10) || 0
     setActiveTab(Math.min(tab, Math.max(0, tabs.length - 1)))
-  }, [searchParams, tabs.length])
+  }, [searchParams, tabs])
 
   useEffect(() => {
     if (activeTab >= tabs.length && tabs.length > 0) setActiveTab(0)
