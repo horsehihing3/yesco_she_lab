@@ -4492,10 +4492,14 @@
     "dataByCategory": "분류별 자료 건수",
     "tabs": {
       "dashboard": "仪表板",
-      "data": "공정안전자료",
-      "moc": "변경관리 MOC",
-      "matrix": "위험성 매트릭스",
-      "incident": "사고보고"
+      "data": "工艺安全资料",
+      "moc": "MOC(变更管理)",
+      "matrix": "风险矩阵",
+      "incident": "事故报告",
+      "hazop": "HAZOP",
+      "wo": "Work Order",
+      "ptw": "PTW作业许可",
+      "pid": "P&ID查看器"
     }
   },
   "psmIncidentTab": {
@@ -4603,13 +4607,15 @@
     }
   },
   "menuManageTab": {
-    "label1": "전체숨김",
-    "label2": "숨김",
-    "section1": "역할 선택",
+    "label1": "全部隐藏",
+    "label2": "隐藏",
+    "section1": "选择角色",
     "label3": "全部",
-    "label4": "항상 모든 메뉴 접근",
-    "msg1": "저장되었습니다.",
-    "msg2": "저장 중 오류가 발생했습니다."
+    "label4": "始终可访问所有菜单",
+    "msg1": "已保存。",
+    "msg2": "保存时发生错误。",
+    "selectRoleHint": "选择角色后可设置菜单/选项卡访问权限",
+    "threeLevelHint": "按 组 › 页面 › 选项卡 3层进行管理"
   },
   "contractorManagementPage": {
     "section1": "작업자 정보",
@@ -4829,9 +4835,18 @@
     "msg4": "사업장명을 입력하세요"
   },
   "buttonManagePage": {
-    "msg1": "저장되었습니다.",
-    "msg2": "저장 중 오류가 발생했습니다.",
-    "dialogTitle1": "일반관리자 권한 지정"
+    "msg1": "已保存。",
+    "msg2": "保存时发生错误。",
+    "dialogTitle1": "指定一般管理员权限",
+    "visible": "显示",
+    "visibleIssue": "显示 (问题)",
+    "hidden": "隐藏",
+    "colMenu": "菜单",
+    "colStatus": "状态",
+    "colButton": "按钮",
+    "colGeneralAdmin": "一般管理员",
+    "colGeneralAdminPerm": "一般管理员权限",
+    "colNotes": "备注 / 问题"
   },
   "workplaceDrawingsPage": {
     "msg1": "이 사업장을 삭제하시겠습니까?"

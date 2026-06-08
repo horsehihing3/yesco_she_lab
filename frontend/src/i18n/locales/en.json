@@ -4496,10 +4496,14 @@
     "dataByCategory": "분류별 자료 건수",
     "tabs": {
       "dashboard": "Dashboard",
-      "data": "공정안전자료",
-      "moc": "변경관리 MOC",
-      "matrix": "위험성 매트릭스",
-      "incident": "사고보고"
+      "data": "Process Safety Data",
+      "moc": "MOC (Change Mgmt)",
+      "matrix": "Risk Matrix",
+      "incident": "Incident Report",
+      "hazop": "HAZOP",
+      "wo": "Work Order",
+      "ptw": "PTW",
+      "pid": "P&ID Viewer"
     }
   },
   "psmIncidentTab": {
@@ -4607,13 +4611,15 @@
     }
   },
   "menuManageTab": {
-    "label1": "전체숨김",
-    "label2": "숨김",
-    "section1": "역할 선택",
+    "label1": "Hide All",
+    "label2": "Hidden",
+    "section1": "Select Role",
     "label3": "All",
-    "label4": "항상 모든 메뉴 접근",
-    "msg1": "저장되었습니다.",
-    "msg2": "저장 중 오류가 발생했습니다."
+    "label4": "Always all menu access",
+    "msg1": "Saved.",
+    "msg2": "Error while saving.",
+    "selectRoleHint": "Select a role to configure menu/tab access",
+    "threeLevelHint": "Managed in 3 levels: Group › Page › Tab"
   },
   "contractorManagementPage": {
     "section1": "작업자 정보",
@@ -4833,9 +4839,18 @@
     "msg4": "사업장명을 입력하세요"
   },
   "buttonManagePage": {
-    "msg1": "저장되었습니다.",
-    "msg2": "저장 중 오류가 발생했습니다.",
-    "dialogTitle1": "일반관리자 권한 지정"
+    "msg1": "Saved.",
+    "msg2": "Error while saving.",
+    "dialogTitle1": "Assign General Admin Permission",
+    "visible": "Visible",
+    "visibleIssue": "Visible (Issue)",
+    "hidden": "Hidden",
+    "colMenu": "Menu",
+    "colStatus": "Status",
+    "colButton": "Button",
+    "colGeneralAdmin": "General Admin",
+    "colGeneralAdminPerm": "General Admin Permission",
+    "colNotes": "Notes / Issue"
   },
   "workplaceDrawingsPage": {
     "msg1": "이 사업장을 삭제하시겠습니까?"
