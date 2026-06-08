@@ -157,6 +157,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
   // 참석자 추가 모달
   const [attendeeDialogOpen, setAttendeeDialogOpen] = useState(false)
+  // 상세 화면 — 본인 서명 다이얼로그
+  const [signDialogOpen, setSignDialogOpen] = useState(false)
+  const [signingAttendeeId, setSigningAttendeeId] = useState<number | null>(null)
+  const [tempSignature, setTempSignature] = useState('')
+  const [signSaving, setSignSaving] = useState(false)
 
   const { user } = useAuth()
   const { canSee } = useButtonRules()
@@ -365,6 +370,39 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
     )
     if (confirmed && selectedCommittee) {
       deleteMutation.mutate(selectedCommittee.id)
+    }
+  }
+
+  // 상세 화면 — 현재 로그인 사용자와 참석자 행 매칭
+  const isMyRow = (attendee: any): boolean => {
+    if (!user) return false
+    const mail: string = attendee.attendeeMail || ''
+    if (user.email && mail === user.email) return true
+    if (user.username && mail.startsWith(user.username + '@')) return true
+    return user.name === attendee.attendeeName
+  }
+
+  const handleSignClick = (attendeeId: number) => {
+    setSigningAttendeeId(attendeeId)
+    setTempSignature('')
+    setSignDialogOpen(true)
+  }
+
+  const handleSignSave = async () => {
+    if (!signingAttendeeId || !selectedCommittee) return
+    setSignSaving(true)
+    try {
+      await axiosInstance.patch(
+        `/osh-committees/${selectedCommittee.id}/attendees/${signingAttendeeId}/signature`,
+        { signatureImage: tempSignature }
+      )
+      queryClient.invalidateQueries({ queryKey: ['oshCommitteeDetail'] })
+      setSignDialogOpen(false)
+      await showSuccess('서명이 저장됐습니다.')
+    } catch {
+      showError('서명 저장에 실패했습니다.')
+    } finally {
+      setSignSaving(false)
     }
   }
 
@@ -691,9 +729,20 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                         </TableCell>
                         <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', fontFamily: 'monospace', width: 140 }}>{(attendee as any).attendeePhone || ''}</TableCell>
                         <TableCell align="center" sx={{ p: 0.5 }}>
-                          {(attendee as any).signatureImage
-                            ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={60} maxWidth={180} style={{ display: 'block', margin: '0 auto' }} />
-                            : ''}
+                          {isMyRow(attendee) ? (
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                              {(attendee as any).signatureImage && (
+                                <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={60} maxWidth={180} style={{ display: 'block' }} />
+                              )}
+                              <Button size="small" variant="outlined" onClick={() => handleSignClick(attendee.id)}>
+                                {(attendee as any).signatureImage ? '재서명' : '서명하기'}
+                              </Button>
+                            </Box>
+                          ) : (
+                            (attendee as any).signatureImage
+                              ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={60} maxWidth={180} style={{ display: 'block', margin: '0 auto' }} />
+                              : ''
+                          )}
                         </TableCell>
                       </TableRow>
                     ))
@@ -790,9 +839,20 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                           </Typography>
                         )}
                       </Box>
-                      {(attendee as any).signatureImage
-                        ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={40} maxWidth={120} style={{ marginLeft: 8 }} />
-                        : null}
+                      {isMyRow(attendee) ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5, ml: 1 }}>
+                          {(attendee as any).signatureImage && (
+                            <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={40} maxWidth={120} />
+                          )}
+                          <Button size="small" variant="outlined" onClick={() => handleSignClick(attendee.id)}>
+                            {(attendee as any).signatureImage ? '재서명' : '서명하기'}
+                          </Button>
+                        </Box>
+                      ) : (
+                        (attendee as any).signatureImage
+                          ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={40} maxWidth={120} style={{ marginLeft: 8 }} />
+                          : null
+                      )}
                     </Box>
                   )
                 })
@@ -1150,6 +1210,20 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         useCompanyTree
         title={t('common.attendeeAdd')}
       />
+
+      {/* 본인 서명 다이얼로그 */}
+      <Dialog open={signDialogOpen} onClose={() => setSignDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>서명하기</DialogTitle>
+        <DialogContent dividers>
+          <SignaturePad value={tempSignature} onChange={setTempSignature} />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setSignDialogOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={handleSignSave} disabled={signSaving || !tempSignature}>
+            저장
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* 외부 참석자 입력 다이얼로그 — 프로젝트 공통 폼테이블 */}
       <Dialog open={externalDialogOpen} onClose={() => setExternalDialogOpen(false)} maxWidth="sm" fullWidth>
