@@ -71,7 +71,7 @@ const MENU_TREE: MenuNode[] = [
       { key: 'nav.ehsQna',          label: 'Q&A' },
       { key: 'emr.tabs.contacts',   label: '비상 연락망' },
     ]},
-    { key: 'nav.planKpiGoal', label: '계획·KPI·목표', children: [
+    { key: 'nav.planKpiGoal', label: 'KPI목표', children: [
       { key: 'pkg.overview',   label: '대시보드' },
       { key: 'pkg.annualPlan', label: '연간 계획' },
       { key: 'pkg.kpiStatus',  label: 'KPI 현황' },

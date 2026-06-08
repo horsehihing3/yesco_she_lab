@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { formatUserName } from '../../utils/userDisplay'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -366,6 +367,7 @@ const QnaTab: React.FC = () => {
       ...formData,
       authorName: user?.name || formData.authorName,
       authorDept: user?.department || formData.authorDept,
+      authorPosition: user?.position || formData.authorPosition,
       authorEmail: user?.email || formData.authorEmail,
     }
 
@@ -586,7 +588,7 @@ const QnaTab: React.FC = () => {
                 </Box>
                 <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                   <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.author')}</Typography>
-                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>{postDetail.authorName || ''}</Typography>
+                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>{formatUserName(postDetail.authorDept, postDetail.authorName, postDetail.authorPosition) || ''}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                   <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, minHeight: 200, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
@@ -704,7 +706,7 @@ const QnaTab: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('qna.author')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{postDetail.authorName || ''}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(postDetail.authorDept, postDetail.authorName, postDetail.authorPosition) || ''}</Typography>
               </Box>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.body')}</Typography>
@@ -831,7 +833,7 @@ const QnaTab: React.FC = () => {
               {t('qna.author')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
-              <Typography>{user?.name || ''}</Typography>
+              <Typography>{formatUserName(user?.department, user?.name, user?.position) || ''}</Typography>
             </Box>
           </Box>
 
@@ -936,7 +938,7 @@ const QnaTab: React.FC = () => {
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('qna.author')}</Typography>
-            <Typography sx={{ px: 1.5, py: 0.5 }}>{user?.name || ''}</Typography>
+            <Typography sx={{ px: 1.5, py: 0.5 }}>{formatUserName(user?.department, user?.name, user?.position) || ''}</Typography>
           </Box>
           <Box>
             <FormControlLabel

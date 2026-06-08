@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "no": "번호",
     "itemSuffix": "개",
@@ -176,7 +176,7 @@
     "ehs": "EHS 경영",
     "ehsCommunication": "커뮤니케이션",
     "ehsKpi": "계획, KPI, 목표",
-    "planKpiGoal": "계획\u00B7KPI\u00B7목표",
+    "planKpiGoal": "KPI목표",
     "contractorSafety": "협력사 안전",
     "occupationalDisease": "직업병 관리",
     "occupationalDiseaseMgmt": "직업병 관리",

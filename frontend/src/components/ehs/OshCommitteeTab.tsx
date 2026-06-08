@@ -1012,9 +1012,6 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           <Button size="small" variant="outlined" startIcon={<PersonSearchIcon />} onClick={handleOpenAttendeeDialog}>
             {t('osh.addInternalAttendee', '내부직원 추가')}
           </Button>
-          <Button size="small" variant="outlined" color="warning" startIcon={<AddIcon />} onClick={handleOpenExternalDialog}>
-            {t('osh.addExternalAttendee', '외부직원 추가')}
-          </Button>
         </Box>
 
         <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto', width: '100%' }}>

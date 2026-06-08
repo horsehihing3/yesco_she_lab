@@ -4,88 +4,67 @@
 <mapper namespace="com.smartehs.mapper.UserMapper">
 
     <resultMap id="UserResultMap" type="com.smartehs.model.User">
-        <id property="id" column="id"/>
-        <result property="username" column="username"/>
-        <result property="email" column="email"/>
-        <result property="name" column="name"/>
+        <id property="id" column="UIDNumber"/>
+        <result property="username" column="UID"/>
+        <result property="email" column="Email"/>
+        <result property="name" column="UserName"/>
         <result property="department" column="department"/>
-        <result property="company" column="company"/>
-        <result property="role" column="role"/>
-        <result property="password" column="password"/>
+        <result property="company" column="CompanyCode"/>
+        <result property="role" column="UserRole"/>
+        <result property="password" column="Password"/>
         <result property="active" column="active"/>
-        <result property="createdAt" column="created_at"/>
-        <result property="modifiedAt" column="modified_at"/>
+        <result property="createdAt" column="CreatedTime"/>
+        <result property="modifiedAt" column="UpdatedTime"/>
     </resultMap>
 
-    <!-- department 경로에서 마지막 세그먼트 추출: "A - B - C" → "C" -->
     <sql id="userColumns">
-        id, username, email, name,
-        PARSENAME(REPLACE(department, N' - ', N'.'), 1) as department,
-        company, role, password, active, created_at, modified_at
+        UIDNumber, UID, Email, UserName,
+        COALESCE(GroupName, DeptCode) AS department,
+        CompanyCode, UserRole, Password,
+        CASE WHEN UserStatus = '10' THEN 1 ELSE 0 END AS active,
+        CreatedTime, UpdatedTime
     </sql>
 
     <select id="findAll" resultMap="UserResultMap">
-        SELECT <include refid="userColumns"/> FROM tb_user ORDER BY created_at DESC
+        SELECT <include refid="userColumns"/> FROM T_IDM_USER ORDER BY CreatedTime DESC
     </select>
 
     <select id="findAllWithPaging" resultMap="UserResultMap">
-        SELECT <include refid="userColumns"/> FROM tb_user
-        ORDER BY created_at DESC
+        SELECT <include refid="userColumns"/> FROM T_IDM_USER
+        ORDER BY CreatedTime DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
     <select id="countAll" resultType="int">
-        SELECT COUNT(*) FROM tb_user
+        SELECT COUNT(*) FROM T_IDM_USER
     </select>
 
     <select id="findById" resultMap="UserResultMap">
-        SELECT <include refid="userColumns"/> FROM tb_user WHERE id = #{id}
+        SELECT <include refid="userColumns"/> FROM T_IDM_USER WHERE UIDNumber = #{id}
     </select>
 
     <select id="findByUsername" resultMap="UserResultMap">
-        SELECT <include refid="userColumns"/> FROM tb_user WHERE username = #{username}
+        SELECT <include refid="userColumns"/> FROM T_IDM_USER WHERE UID = #{username}
     </select>
 
     <select id="findByEmail" resultMap="UserResultMap">
-        SELECT <include refid="userColumns"/> FROM tb_user WHERE email = #{email}
+        SELECT <include refid="userColumns"/> FROM T_IDM_USER WHERE Email = #{email}
     </select>
 
     <select id="existsByUsername" resultType="int">
-        SELECT CASE WHEN EXISTS (SELECT 1 FROM tb_user WHERE username = #{username}) THEN 1 ELSE 0 END
+        SELECT CASE WHEN EXISTS (SELECT 1 FROM T_IDM_USER WHERE UID = #{username}) THEN 1 ELSE 0 END
     </select>
 
     <select id="existsByEmail" resultType="int">
-        SELECT CASE WHEN EXISTS (SELECT 1 FROM tb_user WHERE email = #{email}) THEN 1 ELSE 0 END
+        SELECT CASE WHEN EXISTS (SELECT 1 FROM T_IDM_USER WHERE Email = #{email}) THEN 1 ELSE 0 END
     </select>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tb_user (username, email, name, department, company, role, password, active, created_at, modified_at)
-        VALUES (#{username}, #{email}, #{name}, #{department}, #{company}, #{role}, #{password}, #{active}, GETDATE(), GETDATE())
-    </insert>
-
-    <update id="update">
-        UPDATE tb_user
-        SET username = #{username},
-            email = #{email},
-            name = #{name},
-            department = #{department},
-            company = #{company},
-            role = #{role},
-            password = #{password},
-            active = #{active},
-            modified_at = GETDATE()
-        WHERE id = #{id}
-    </update>
-
-    <delete id="delete">
-        DELETE FROM tb_user WHERE id = #{id}
-    </delete>
-
+    <!-- UserRole UPDATE only — T_IDM_USER INSERT/DELETE is forbidden per project rules -->
     <update id="updateRole">
-        UPDATE tb_user
-        SET role = #{role},
-            modified_at = GETDATE()
-        WHERE id = #{id}
+        UPDATE T_IDM_USER
+        SET UserRole = #{role},
+            UpdatedTime = GETDATE()
+        WHERE UIDNumber = #{id}
     </update>
 
 </mapper>

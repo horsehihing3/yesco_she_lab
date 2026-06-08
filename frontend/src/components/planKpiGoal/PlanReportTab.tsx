@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -163,7 +164,7 @@ const PlanReportTab: React.FC = () => {
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('pkg.planApprover', '계획 승인자')}</TableCell>
                 <TableCell>
-                  {[d.planApproverTeam, d.planApproverPosition, d.planApproverName].filter(Boolean).join(' / ') || ''}
+                  {formatUserName(d.planApproverTeam, d.planApproverName, d.planApproverPosition) || ''}
                 </TableCell>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('pkg.reportPlanApprovedAt', '계획 승인일')}</TableCell>
                 <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{formatDateTime(d.planApprovedAt)}</TableCell>
@@ -171,7 +172,7 @@ const PlanReportTab: React.FC = () => {
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('pkg.completionApprover', '완료 승인자')}</TableCell>
                 <TableCell>
-                  {[d.completionApproverTeam, d.completionApproverPosition, d.completionApproverName].filter(Boolean).join(' / ') || ''}
+                  {formatUserName(d.completionApproverTeam, d.completionApproverName, d.completionApproverPosition) || ''}
                 </TableCell>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('pkg.reportCompletionApprovedAt', '완료 승인일')}</TableCell>
                 <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{formatDateTime(d.completionApprovedAt)}</TableCell>

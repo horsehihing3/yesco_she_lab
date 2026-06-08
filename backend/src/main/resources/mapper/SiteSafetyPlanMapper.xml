@@ -23,15 +23,15 @@
         <result property="checklistTemplateId" column="checklist_template_id"/>
         <result property="approverName" column="approver_name"/>
         <result property="planApproverUserId" column="plan_approver_user_id"/>
-        <result property="planApproverTeam" column="plan_approver_team"/>
-        <result property="planApproverPosition" column="plan_approver_position"/>
-        <result property="planApproverName" column="plan_approver_name"/>
+        <result property="planApproverTeam"     column="plan_approver_team_x"/>
+        <result property="planApproverPosition" column="plan_approver_position_x"/>
+        <result property="planApproverName"     column="plan_approver_name_x"/>
         <result property="planApprovedAt" column="plan_approved_at"/>
         <result property="planApprovedBy" column="plan_approved_by"/>
         <result property="completionApproverUserId" column="completion_approver_user_id"/>
-        <result property="completionApproverTeam" column="completion_approver_team"/>
-        <result property="completionApproverPosition" column="completion_approver_position"/>
-        <result property="completionApproverName" column="completion_approver_name"/>
+        <result property="completionApproverTeam"     column="completion_approver_team_x"/>
+        <result property="completionApproverPosition" column="completion_approver_position_x"/>
+        <result property="completionApproverName"     column="completion_approver_name_x"/>
         <result property="repeatType" column="repeat_type"/>
         <result property="repeatInterval" column="repeat_interval"/>
         <result property="repeatDays" column="repeat_days"/>
@@ -51,11 +51,29 @@
         <result property="editingStartedAt" column="editing_started_at"/>
     </resultMap>
 
+    <sql id="liveUserJoins">
+        LEFT JOIN T_IDM_USER pu ON pu.UIDNumber = t.plan_approver_user_id
+        LEFT JOIN T_IDM_GROUP pg ON pg.GroupCode = pu.DeptCode AND pg.CompanyCode = '0100004'
+        LEFT JOIN T_IDM_USER cu ON cu.UIDNumber = t.completion_approver_user_id
+        LEFT JOIN T_IDM_GROUP cg ON cg.GroupCode = cu.DeptCode AND cg.CompanyCode = '0100004'
+    </sql>
+
+    <sql id="liveDisplayCols">
+        ISNULL(pg.GroupName, t.plan_approver_team)           AS plan_approver_team_x,
+        ISNULL(pu.UserName,  t.plan_approver_name)           AS plan_approver_name_x,
+        ISNULL((SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = pu.TitleCode AND h.Separator = 'TITLE'), t.plan_approver_position)   AS plan_approver_position_x,
+        ISNULL(cg.GroupName, t.completion_approver_team)     AS completion_approver_team_x,
+        ISNULL(cu.UserName,  t.completion_approver_name)     AS completion_approver_name_x,
+        ISNULL((SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = cu.TitleCode AND h.Separator = 'TITLE'), t.completion_approver_position) AS completion_approver_position_x
+    </sql>
+
     <select id="findByDeletedFalse" resultMap="R">
-        SELECT * FROM tb_site_safety_plan
-        WHERE deleted = 0
-        <if test="planType != null">AND plan_type = #{planType}</if>
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_site_safety_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.deleted = 0
+        <if test="planType != null">AND t.plan_type = #{planType}</if>
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
     <select id="countByDeletedFalse" resultType="int">
@@ -63,12 +81,19 @@
         WHERE deleted = 0
         <if test="planType != null">AND plan_type = #{planType}</if>
     </select>
-    <select id="findById" resultMap="R">SELECT * FROM tb_site_safety_plan WHERE id = #{id} AND deleted = 0</select>
+    <select id="findById" resultMap="R">
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_site_safety_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.id = #{id} AND t.deleted = 0
+    </select>
     <select id="findByStatus" resultMap="R">
-        SELECT * FROM tb_site_safety_plan
-        WHERE status = #{status} AND deleted = 0
-        <if test="planType != null">AND plan_type = #{planType}</if>
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_site_safety_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.status = #{status} AND t.deleted = 0
+        <if test="planType != null">AND t.plan_type = #{planType}</if>
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
     <select id="countByStatus" resultType="int">

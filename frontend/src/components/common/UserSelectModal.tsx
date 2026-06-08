@@ -38,6 +38,7 @@ export interface UserInfo {
   nameEn?: string
   nameZh?: string
   department: string
+  position?: string
   company: string
   role: string
 }
@@ -53,6 +54,7 @@ export interface CompanyTreeNode {
   nameEn?: string
   nameZh?: string
   department?: string
+  position?: string
   company?: string
   children: CompanyTreeNode[]
 }
@@ -110,6 +112,7 @@ const collectUsersUnder = (node: CompanyTreeNode, emailSuffix?: string): UserInf
         nameEn: n.nameEn,
         nameZh: n.nameZh,
         department: n.department || '',
+        position: n.position,
         company: n.company || '',
         role: '',
       })
@@ -225,6 +228,7 @@ const UserSelectModal = ({
               name: n.name || n.label || '',
               nameEn: n.nameEn, nameZh: n.nameZh,
               department: n.department || '',
+              position: n.position,
               company: n.company || '',
               role: '',
             })

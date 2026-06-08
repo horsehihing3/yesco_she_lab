@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+﻿import { useRef, useState, useEffect, useCallback } from 'react'
 import {
   Button, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Typography, Box, Chip, Tooltip,
@@ -55,7 +55,7 @@ const ADMIN_COMP:   Record<Role, boolean> = { guest: false, writer: false, admin
 const DEFAULT_MENU_DATA: MenuEntry[] = [
   // ── 연간계획 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 계획KPI목표 › 연간계획',
+    menuPath: 'EHS 경영 › KPI목표 › 연간계획',
     statuses: [
       {
         status: 'LIST', statusLabel: '목록', statusColor: 'primary',
@@ -83,7 +83,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── KPI 현황 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS경영 › 계획KPI목표 › KPI 현황',
+    menuPath: 'EHS 경영 › KPI목표 › KPI 현황',
     statuses: [
       {
         status: 'APPROVED', statusLabel: '작성중 (KPI 입력)', statusColor: 'default',

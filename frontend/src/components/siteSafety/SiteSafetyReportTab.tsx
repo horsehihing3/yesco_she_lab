@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import SignatureImage from '../common/SignatureImage'
 import { useQuery, useQueries } from '@tanstack/react-query'
@@ -142,9 +143,9 @@ const SiteSafetyReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>계획 승인자</TableCell>
-              <TableCell>{[item.planApproverTeam, item.planApproverPosition, item.planApproverName].filter(Boolean).join(' / ') || ''}</TableCell>
+              <TableCell>{formatUserName(item.planApproverTeam, item.planApproverName, item.planApproverPosition) || ''}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>점검자</TableCell>
-              <TableCell>{[item.inspectorTeam, item.inspectorPosition, item.inspectorName].filter(Boolean).join(' / ') || ''}</TableCell>
+              <TableCell>{formatUserName(item.inspectorTeam, item.inspectorName, item.inspectorPosition) || ''}</TableCell>
             </TableRow>
             {item.workDescription && (
               <TableRow>
@@ -211,7 +212,7 @@ const SiteSafetyReportTab: React.FC = () => {
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>점검자</TableCell>
               <TableCell sx={{ width: '30%' }}>
-                {[item.inspectorTeam, item.inspectorPosition, item.inspectorName].filter(Boolean).join(' / ') || '미지정'}
+                {formatUserName(item.inspectorTeam, item.inspectorName, item.inspectorPosition) || '미지정'}
               </TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>서명일시</TableCell>
               <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>

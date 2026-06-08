@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { Role } from '../../data/buttonManageData'
@@ -25,6 +25,7 @@ import ListSearchBar from '../common/ListSearchBar'
 import useCodeMap from '../../hooks/useCodeMap'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import GoalsTable, { GOAL_TEMPLATE, buildTemplateGoals } from './GoalsTable'
+import { formatUserName } from '../../utils/userDisplay'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -113,7 +114,7 @@ const AnnualPlanTab: React.FC = () => {
     description: '',
     writerUserId: authUser?.id ?? null,
     writerTeam: authUser?.department || '',
-    writerPosition: '',
+    writerPosition: authUser?.position || '',
     writerName: authUser?.name || '',
     planApproverUserId: null,
     planApproverTeam: '',
@@ -304,6 +305,7 @@ const AnnualPlanTab: React.FC = () => {
           ...f,
           planApproverUserId: u.id,
           planApproverTeam: u.department || '',
+          planApproverPosition: u.position || '',
           planApproverName: u.name,
         }))
       } else if (userPickTarget === 'completionApprover') {
@@ -311,6 +313,7 @@ const AnnualPlanTab: React.FC = () => {
           ...f,
           completionApproverUserId: u.id,
           completionApproverTeam: u.department || '',
+          completionApproverPosition: u.position || '',
           completionApproverName: u.name,
         }))
       } else if (typeof userPickTarget === 'object' && userPickTarget.kind === 'goalOwner') {
@@ -335,7 +338,7 @@ const AnnualPlanTab: React.FC = () => {
     return false
   }
   const { canSee } = useButtonRules()
-  const MENU_ANNUAL = 'EHS 경영 › 계획·KPI·목표 › 연간계획'
+  const MENU_ANNUAL = 'EHS 경영 › KPI목표 › 연간계획'
   const getRoles = (d: { writerUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
@@ -532,14 +535,14 @@ const AnnualPlanTab: React.FC = () => {
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{d.writerName || ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.writerTeam, d.writerName, d.writerPosition)}</Typography></Box>
             <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
             <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
           </Box>
           {d.modifiedAt && d.modifiedAt !== d.createdAt && (
             <Box sx={rowSx}>
               <Box sx={labelSx}>{t('pkg.modifier', '수정자')}</Box>
-              <Box sx={valBorderSx}><Typography variant="body2">{d.modifiedByName || ''}</Typography></Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.modifiedByTeam, d.modifiedByName, d.modifiedByPosition)}</Typography></Box>
               <Box sx={labelSx}>{t('pkg.modifiedDate', '수정일자')}</Box>
               <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.modifiedAt)}</Typography></Box>
             </Box>
@@ -547,11 +550,11 @@ const AnnualPlanTab: React.FC = () => {
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.planApprover', '계획 승인자')}</Box>
             <Box sx={valBorderSx}>
-              <Typography variant="body2">{d.planApproverName || ''}</Typography>
+              <Typography variant="body2">{formatUserName(d.planApproverTeam, d.planApproverName, d.planApproverPosition)}</Typography>
             </Box>
             <Box sx={labelSx}>{t('pkg.completionApprover', '완료 승인자')}</Box>
             <Box sx={valSx}>
-              <Typography variant="body2">{d.completionApproverName || ''}</Typography>
+              <Typography variant="body2">{formatUserName(d.completionApproverTeam, d.completionApproverName, d.completionApproverPosition)}</Typography>
             </Box>
           </Box>
           <Box sx={{ ...rowSx, borderBottom: 0 }}>
@@ -659,7 +662,7 @@ const AnnualPlanTab: React.FC = () => {
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
           <Box sx={valBorderSx}>
-            <Typography variant="body2">{formData.writerName || ''}</Typography>
+            <Typography variant="body2">{formatUserName(formData.writerTeam, formData.writerName, formData.writerPosition)}</Typography>
           </Box>
           <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
           <Box sx={valSx}>
@@ -672,7 +675,7 @@ const AnnualPlanTab: React.FC = () => {
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.modifier', '수정자')}</Box>
             <Box sx={valBorderSx}>
-              <Typography variant="body2">{detail.modifiedByName || ''}</Typography>
+              <Typography variant="body2">{formatUserName(detail.modifiedByTeam, detail.modifiedByName, detail.modifiedByPosition)}</Typography>
             </Box>
             <Box sx={labelSx}>{t('pkg.modifiedDate', '수정일자')}</Box>
             <Box sx={valSx}>
@@ -685,7 +688,7 @@ const AnnualPlanTab: React.FC = () => {
           <Box sx={valBorderSx}>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
               <TextField size="small" fullWidth InputProps={{ readOnly: true }}
-                value={formData.planApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                value={formatUserName(formData.planApproverTeam, formData.planApproverName, formData.planApproverPosition) || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('planApprover')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
@@ -695,7 +698,7 @@ const AnnualPlanTab: React.FC = () => {
           <Box sx={valSx}>
             <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', width: '100%' }}>
               <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
-                value={formData.completionApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                value={formatUserName(formData.completionApproverTeam, formData.completionApproverName, formData.completionApproverPosition) || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>

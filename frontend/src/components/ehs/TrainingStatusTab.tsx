@@ -13,6 +13,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { trainingApplicationApi } from '../../api/trainingApi'
 import { TrainingApplication } from '../../types/trainingApplication.types'
+import { formatUserName } from '../../utils/userDisplay'
 import useCodeMap from '../../hooks/useCodeMap'
 import RejectReasonDialog from '../common/RejectReasonDialog'
 
@@ -167,7 +168,7 @@ const TrainingStatusTab: React.FC = () => {
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('training.applicant', '신청자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{detail.applicantName}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(detail.applicantDept, detail.applicantName, detail.applicantPosition) || ''}</Typography></Box>
             <Box sx={labelSx}>{t('training.deptName', '부서명')}</Box>
             <Box sx={valSx}><Typography variant="body2">{detail.applicantDept || ''}</Typography></Box>
           </Box>

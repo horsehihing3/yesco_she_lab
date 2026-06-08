@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -132,9 +133,9 @@ const RiskAssessmentReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.planApprover', '계획 승인자')}</TableCell>
-              <TableCell>{[item.planApproverTeam, item.planApproverPosition, item.planApproverName].filter(Boolean).join(' / ') || ''}</TableCell>
+              <TableCell>{formatUserName(item.planApproverTeam, item.planApproverName, item.planApproverPosition) || ''}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.completionApprover', '완료 승인자')}</TableCell>
-              <TableCell>{[item.completionApproverTeam, item.completionApproverPosition, item.completionApproverName].filter(Boolean).join(' / ') || ''}</TableCell>
+              <TableCell>{formatUserName(item.completionApproverTeam, item.completionApproverName, item.completionApproverPosition) || ''}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.createdAt', '등록일')}</TableCell>

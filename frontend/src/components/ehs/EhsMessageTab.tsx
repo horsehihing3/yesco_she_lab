@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
@@ -91,10 +92,8 @@ const EhsMessageTab: React.FC = () => {
   const { showSuccess, showConfirm } = useAlert()
   const { user } = useAuth()
   const { codeList: categoryCodes, getLabel: getCategoryLabel } = useCodeMap('MESSAGE_CATEGORY')
-  const { codeList: targetCodes, getLabel: getTargetLabel } = useCodeMap('MESSAGE_TARGET')
   const { codeList: roleCodes, getLabel: getRoleLabel } = useCodeMap('MESSAGE_ROLE')
   const categories = categoryCodes.map(c => c.code)
-  const targets = targetCodes.map(c => c.code)
   const roles = roleCodes.map(c => c.code)
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchText, setSearchText] = useState('')
@@ -273,6 +272,7 @@ const EhsMessageTab: React.FC = () => {
       authorName: user?.name || data.authorName,
       authorDept: user?.department || data.authorDept,
       authorEmail: user?.email || data.authorEmail,
+      authorPosition: user?.position || data.authorPosition,
       authorCompany: user?.company || data.authorCompany,
       sourceLang: currentLang,
     }
@@ -397,7 +397,7 @@ const EhsMessageTab: React.FC = () => {
                   {t('common.writer')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
-                  <Typography>{user?.name || ''}</Typography>
+                  <Typography>{formatUserName(user?.department, user?.name, user?.position) || ''}</Typography>
                 </Box>
                 <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.position')}
@@ -459,23 +459,6 @@ const EhsMessageTab: React.FC = () => {
                       error={!!fieldState.error}
                       helperText={fieldState.error?.message}
                     />
-                  )}
-                />
-              </Box>
-              <Box>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.target')}</Typography>
-                <Controller
-                  name="subCategory"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControl fullWidth size="small">
-                      <Select {...field} displayEmpty>
-                        <MenuItem value="">{t('common.selectTarget')}</MenuItem>
-                        {targets.map((target) => (
-                          <MenuItem key={target} value={target}>{getTargetLabel(target)}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
                   )}
                 />
               </Box>
@@ -568,7 +551,7 @@ const EhsMessageTab: React.FC = () => {
             </Box>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.writer')}</Typography>
-              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center', borderRight: 1, borderColor: 'divider' }}>{viewMessage.authorName || ''}</Typography>
+              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center', borderRight: 1, borderColor: 'divider' }}>{formatUserName(viewMessage.authorDept, viewMessage.authorName, viewMessage.authorPosition) || ''}</Typography>
               <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.position')}</Typography>
               <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>{viewMessage.authorRole ? getRoleLabel(viewMessage.authorRole) : ''}</Typography>
             </Box>
@@ -588,16 +571,12 @@ const EhsMessageTab: React.FC = () => {
               <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMessage.title || ''}</Typography>
             </Box>
             <Box>
-              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.target')}</Typography>
-              <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMessage.subCategory ? getTargetLabel(viewMessage.subCategory) : ''}</Typography>
-            </Box>
-            <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.category')}</Typography>
               <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMessage.category ? getCategoryLabel(viewMessage.category) : ''}</Typography>
             </Box>
             <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.writer')}</Typography>
-              <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMessage.authorName || ''}</Typography>
+              <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(viewMessage.authorDept, viewMessage.authorName, viewMessage.authorPosition) || ''}</Typography>
             </Box>
             <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.position')}</Typography>
@@ -714,7 +693,7 @@ const EhsMessageTab: React.FC = () => {
                   {t('common.writer')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
-                  <Typography>{user?.name || ''}</Typography>
+                  <Typography>{formatUserName(user?.department, user?.name, user?.position) || ''}</Typography>
                 </Box>
                 <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.position')}
@@ -776,23 +755,6 @@ const EhsMessageTab: React.FC = () => {
                       error={!!fieldState.error}
                       helperText={fieldState.error?.message}
                     />
-                  )}
-                />
-              </Box>
-              <Box>
-                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.target')}</Typography>
-                <Controller
-                  name="subCategory"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControl fullWidth size="small">
-                      <Select {...field} displayEmpty>
-                        <MenuItem value="">{t('common.selectTarget')}</MenuItem>
-                        {targets.map((target) => (
-                          <MenuItem key={target} value={target}>{getTargetLabel(target)}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
                   )}
                 />
               </Box>

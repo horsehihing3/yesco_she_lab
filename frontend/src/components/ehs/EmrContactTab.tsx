@@ -201,7 +201,6 @@ const EmrContactTab: React.FC = () => {
                       <TableCell sx={headerCellSx}>{t('emr.contactId')}</TableCell>
                       <TableCell sx={headerCellSx}>{t('emr.organization')}</TableCell>
                       <TableCell sx={headerCellSx}>{t('emr.contactName')}</TableCell>
-                      <TableCell sx={headerCellSx}>{t('emr.phoneNumber')}</TableCell>
                       <TableCell sx={headerCellSx}>{t('emr.email')}</TableCell>
                       <TableCell sx={headerCellSx}>{t('emr.contactType')}</TableCell>
                       <TableCell sx={headerCellSx} align="center">{t('emr.isEmergency')}</TableCell>
@@ -213,7 +212,6 @@ const EmrContactTab: React.FC = () => {
                         <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{item.contactId}</TableCell>
                         <TableCell><Typography fontWeight={600} variant="body2">{item.organization}</Typography></TableCell>
                         <TableCell>{item.contactName}</TableCell>
-                        <TableCell align="center">{item.phoneNumber}</TableCell>
                         <TableCell align="center">{item.email || ''}</TableCell>
                         <TableCell align="center">{item.contactType === 'INTERNAL' ? t('emr.internal') : t('emr.external')}</TableCell>
                         <TableCell align="center">
@@ -238,9 +236,6 @@ const EmrContactTab: React.FC = () => {
                     {item.isEmergency && <Chip label={t('emr.isEmergency')} color="error" size="small" />}
                   </Box>
                   <Typography variant="body2" fontWeight={600}>{item.contactName}</Typography>
-                  <Typography variant="body1" fontWeight="bold" sx={{ color: 'primary.main', mt: 0.5 }}>
-                    {item.phoneNumber}
-                  </Typography>
                   <Typography variant="body2" color="text.secondary">
                     {item.email || ''} | {item.contactType === 'INTERNAL' ? t('emr.internal') : t('emr.external')}
                   </Typography>

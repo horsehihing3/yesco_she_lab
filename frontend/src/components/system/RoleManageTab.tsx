@@ -202,9 +202,9 @@ const RoleManageTab: React.FC = () => {
     return true
   }
 
-  // 부서 있는 사용자 + SYSTEM_ADMIN(슈퍼관리자)은 부서 없어도 표시
+  // TEAM_MEMBER는 부서 있는 경우만, 그 외 역할은 부서 여부 무관 표시
   const visibleUsers = useMemo(
-    () => dbUsers.filter(u => u.role === 'SYSTEM_ADMIN' || hasDept(u)),
+    () => dbUsers.filter(u => u.role !== 'TEAM_MEMBER' || hasDept(u)),
     [dbUsers, deptByUsername, deptByCode],
   )
 

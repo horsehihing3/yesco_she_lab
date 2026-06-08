@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -124,9 +125,9 @@ const EmrReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.planApprover', '계획 승인자')}</TableCell>
-              <TableCell>{[(item as any).planApproverTeam, (item as any).planApproverPosition, (item as any).planApproverName].filter(Boolean).join(' / ') || ''}</TableCell>
+              <TableCell>{formatUserName((item as any).planApproverTeam, (item as any).planApproverName, (item as any).planApproverPosition) || ''}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.completionApprover', '완료 승인자')}</TableCell>
-              <TableCell>{[(item as any).completionApproverTeam, (item as any).completionApproverPosition, (item as any).completionApproverName].filter(Boolean).join(' / ') || ''}</TableCell>
+              <TableCell>{formatUserName((item as any).completionApproverTeam, (item as any).completionApproverName, (item as any).completionApproverPosition) || ''}</TableCell>
             </TableRow>
             {(item as any).description && (
               <TableRow>

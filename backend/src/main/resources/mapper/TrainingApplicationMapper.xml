@@ -11,6 +11,7 @@
         <result property="courseDate" column="course_date"/>
         <result property="applicantName" column="applicant_name"/>
         <result property="applicantDept" column="applicant_dept"/>
+        <result property="applicantPosition" column="applicant_position_x"/>
         <result property="applicantEmpNo" column="applicant_emp_no"/>
         <result property="applicantPhone" column="applicant_phone"/>
         <result property="applicantUsername" column="applicant_username"/>
@@ -44,8 +45,15 @@
         </where>
     </sql>
 
+    <sql id="positionCol">
+        (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h
+         WHERE h.HRCode = (SELECT TOP 1 u.TitleCode FROM T_IDM_USER u WHERE u.UID = t.applicant_username AND u.UserStatus = '10')
+         AND h.Separator = 'TITLE') AS applicant_position_x
+    </sql>
+
     <select id="findAllWithPaging" resultMap="ResultMap">
-        SELECT * FROM tb_training_application
+        SELECT t.*, <include refid="positionCol"/>
+        FROM tb_training_application t
         <include refid="filterWhere"/>
         ORDER BY created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
@@ -57,7 +65,8 @@
     </select>
 
     <select id="findById" resultMap="ResultMap">
-        SELECT * FROM tb_training_application WHERE id = #{id} AND deleted = 0
+        SELECT t.*, <include refid="positionCol"/>
+        FROM tb_training_application t WHERE t.id = #{id} AND t.deleted = 0
     </select>
 
     <select id="countByApplicationNoStartingWith" resultType="int">

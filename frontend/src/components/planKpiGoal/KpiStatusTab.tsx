@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -64,7 +65,7 @@ const KpiStatusTab: React.FC = () => {
 
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 계획·KPI·목표 › KPI 현황'
+  const MENU = 'EHS 경영 › KPI목표 › KPI 현황'
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
   const getDetailRoles = (item: { writerUserId?: number|null; writerName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles = [...myRoles]
@@ -355,14 +356,14 @@ const KpiStatusTab: React.FC = () => {
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{d.writerName || ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.writerTeam, d.writerName, d.writerPosition)}</Typography></Box>
             <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
             <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
           </Box>
           {d.modifiedAt && d.modifiedAt !== d.createdAt && (
             <Box sx={rowSx}>
               <Box sx={labelSx}>{t('pkg.modifier', '수정자')}</Box>
-              <Box sx={valBorderSx}><Typography variant="body2">{d.modifiedByName || ''}</Typography></Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.modifiedByTeam, d.modifiedByName, d.modifiedByPosition)}</Typography></Box>
               <Box sx={labelSx}>{t('pkg.modifiedDate', '수정일자')}</Box>
               <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.modifiedAt)}</Typography></Box>
             </Box>
@@ -371,13 +372,13 @@ const KpiStatusTab: React.FC = () => {
             <Box sx={labelSx}>{t('pkg.planApprover', '계획 승인자')}</Box>
             <Box sx={valBorderSx}>
               <Typography variant="body2">
-                {[d.planApproverTeam, d.planApproverPosition, d.planApproverName].filter(Boolean).join(' / ') || ''}
+                {formatUserName(d.planApproverTeam, d.planApproverName, d.planApproverPosition) || ''}
               </Typography>
             </Box>
             <Box sx={labelSx}>{t('pkg.completionApprover', '완료 승인자')}</Box>
             <Box sx={valSx}>
               <Typography variant="body2">
-                {[d.completionApproverTeam, d.completionApproverPosition, d.completionApproverName].filter(Boolean).join(' / ') || ''}
+                {formatUserName(d.completionApproverTeam, d.completionApproverName, d.completionApproverPosition) || ''}
               </Typography>
             </Box>
           </Box>

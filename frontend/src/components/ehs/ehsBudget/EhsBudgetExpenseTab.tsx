@@ -22,6 +22,7 @@ import LoadingOverlay from '../../common/LoadingOverlay'
 import DepartmentSelectModal from '../../common/DepartmentSelectModal'
 import useCodeMap from '../../../hooks/useCodeMap'
 import { useAuth } from '../../../context/AuthContext'
+import { formatUserName } from '../../../utils/userDisplay'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -668,7 +669,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
         <Box sx={lastRowSx}>
           <Box sx={labelSx}>{t('budget.writer', '작성자')}</Box>
           <Box sx={valSx}>
-            <Typography variant="body2">{formData.writer || currentWriter}</Typography>
+            <Typography variant="body2">{formatUserName(user?.department, user?.name, user?.position) || formData.writer || currentWriter}</Typography>
           </Box>
         </Box>
       </Box>
