@@ -129,7 +129,7 @@ const EhsBudgetOverview: React.FC<EhsBudgetOverviewProps> = ({
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {kpiCards.map((card, idx) => (
-          <Grid item xs={6} md={2.4} key={idx}>
+          <Grid item xs={12} md={2.4} key={idx}>
             <Paper sx={{ p: 2.5, borderLeft: 4, borderColor: card.color }}>
               <Typography variant="body2" color="text.secondary">{card.label}</Typography>
               <Typography fontWeight="bold" sx={{ mt: 0.75, fontSize: { xs: '1.75rem', md: '2.25rem' }, lineHeight: 1.2 }}>
