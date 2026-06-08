@@ -41,12 +41,12 @@ const emptyForm = (): ProcessActivityFormRequest => ({
 
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const,
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const, bgcolor: 'grey.100' }
 
 const ProcessActivityWorkPage: React.FC = () => {
@@ -346,8 +346,8 @@ const ProcessActivityWorkPage: React.FC = () => {
         ) : (
           <>
             {/* PC Table */}
-            <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300' }}>
-              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider' }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={hSx} align="center" width={60}>{t('common.no', 'No')}</TableCell>
@@ -375,8 +375,8 @@ const ProcessActivityWorkPage: React.FC = () => {
             {/* Mobile Card List */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {items.map((f) => (
-                <Paper key={f.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(f.id)}>
-                  <Typography fontWeight="bold" sx={{ mb: 1 }}>{f.title}</Typography>
+                <Paper key={f.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleRowClick(f.id)}>
+                  <Typography fontWeight="bold" color="primary" sx={{ mb: 1 }}>{f.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
                     {t('processActivity.division', '부문명')}: {f.divisionName || ''} / {t('processActivity.department', '부서(팀)명')}: {f.departmentName || ''}
                   </Typography>
@@ -410,7 +410,7 @@ const ProcessActivityWorkPage: React.FC = () => {
 
       {/* 상단 정보 - PC */}
       <Paper variant="outlined" sx={{ mb: 2, overflow: 'hidden', display: { xs: 'none', md: 'block' } }}>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('common.title', '제목')}</Typography>
           <Box sx={valSx}>
             {isEditing ? (
@@ -418,7 +418,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2">{displayData.title || ''}</Typography>}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('processActivity.division', '부문명')}</Typography>
           <Box sx={valBorderSx}>
             {isEditing ? (
@@ -440,7 +440,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2">{displayData.departmentName || ''}</Typography>}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('processActivity.evaluator', '평가자')}</Typography>
           <Box sx={valBorderSx}>
             {isEditing ? (
@@ -464,7 +464,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{displayData.teamMembers || ''}</Typography>}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('common.description', '상세')}</Typography>
           <Box sx={valSx}>
             {isEditing ? (
@@ -473,7 +473,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           </Box>
         </Box>
         {/* 작성자 | 작성일자 */}
-        <Box sx={{ display: 'flex', borderBottom: ((displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt) ? 1 : 0, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: ((displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt) ? 1 : 0, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
           <Box sx={valBorderSx}>
             <Typography variant="body2">{(displayData as ProcessActivityForm).createdByName || ''}</Typography>
@@ -567,7 +567,7 @@ const ProcessActivityWorkPage: React.FC = () => {
       {/* 공정/활동 + 작업내용 테이블 */}
       <Paper variant="outlined" sx={{ mb: 2 }}>
         <TableContainer sx={{ overflowX: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 1100, '& td, & th': { borderRight: '1px solid', borderColor: 'grey.300' } }}>
+          <Table size="small" sx={{ minWidth: 1100, '& td, & th': { borderRight: '1px solid', borderColor: 'divider' } }}>
             <TableHead sx={{ bgcolor: 'grey.100' }}>
               <TableRow>
                 <TableCell sx={hSx} align="center" width={160}>{t('processActivity.majorCategory', '대분류')}</TableCell>

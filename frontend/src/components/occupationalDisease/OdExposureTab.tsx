@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, LinearProgress, Typography,
@@ -33,6 +34,7 @@ const emptyForm: Partial<OdExposure> = { factorClass: '화학적', status: 'ok',
 const MENU = '보건 관리 › 직업병 관리 › 노출관리'
 
 const OdExposureTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { user } = useAuth()
@@ -60,7 +62,7 @@ const OdExposureTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selected.id)
+    if (await showConfirm(t('odExposureTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(selected.id)
   }
   const handleSave = () => {
     if (!form.factorName) return
@@ -74,7 +76,7 @@ const OdExposureTab: React.FC = () => {
     const s = statusInfo(selected.status)
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>노출기록 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('odExposureTab.section1', '노출기록 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>분류</FormLabel><FormCell borderRight><Typography variant="body2">{selected.factorClass || ''}</Typography></FormCell><FormLabel>유해인자명</FormLabel><FormCell><Typography variant="body2" fontWeight={600}>{selected.factorName}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>노출 부서</FormLabel><FormCell borderRight><Typography variant="body2">{selected.dept || ''}</Typography></FormCell><FormLabel>공정명</FormLabel><FormCell><Typography variant="body2">{selected.processName || ''}</Typography></FormCell></FormRow>
@@ -152,10 +154,10 @@ const OdExposureTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.exposureDangerCount ?? 0} label="노출기준 초과" sub="즉시 개선" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.exposureDangerCount ?? 0} label={t('odExposureTab.label1', '노출기준 초과')} sub="즉시 개선" /></Grid>
         <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.exposureWarnCount ?? 0}   label="50% 이상 노출" sub="주의 관리" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.exposureOkCount ?? 0}     label="정상 범위" sub="50% 미만" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={items.length}                     label="측정 항목" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.exposureOkCount ?? 0}     label={t('odExposureTab.label2', '정상 범위')} sub="50% 미만" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={items.length}                     label={t('odExposureTab.label3', '측정 항목')} /></Grid>
       </Grid>
 
       {dangerList.length > 0 && (

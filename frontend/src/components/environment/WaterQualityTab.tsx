@@ -119,34 +119,34 @@ const WaterQualityTab: React.FC = () => {
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
       </Box>
 
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableHead>
             <TableRow>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>{t('common.no')}</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>{t('environment.measurementDate')}</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>{t('environment.measurementPoint')}</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>pH</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>BOD</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>COD</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>SS</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>T-N</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }}>T-P</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>{t('common.no')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>{t('environment.measurementDate')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>{t('environment.measurementPoint')}</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>pH</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>BOD</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>COD</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>SS</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>T-N</TableCell>
+              <TableCell align="center" sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }}>T-P</TableCell>
               <TableCell align="center" sx={{ fontWeight: 'bold', wordBreak: 'keep-all' }}>{t('environment.manager')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data && data.content.length > 0 ? data.content.map((item, idx) => (
               <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{page * 20 + idx + 1}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(item.measurementDate)}</TableCell>
-                <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.measurementPoint || ''}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatNum(item.ph)}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatNum(item.bod)}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatNum(item.cod)}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatNum(item.ss)}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatNum(item.tN)}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatNum(item.tP)}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{page * 20 + idx + 1}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatDate(item.measurementDate)}</TableCell>
+                <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{item.measurementPoint || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatNum(item.ph)}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatNum(item.bod)}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatNum(item.cod)}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatNum(item.ss)}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatNum(item.tN)}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatNum(item.tP)}</TableCell>
                 <TableCell align="center">{item.manager || ''}</TableCell>
               </TableRow>
             )) : (
@@ -195,19 +195,19 @@ const WaterQualityTab: React.FC = () => {
     ]
     return (
       <Box>
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
             {Array.from({ length: Math.ceil(fields.length / 2) }).map((_, rowIdx) => {
               const lastRow = rowIdx === Math.ceil(fields.length / 2) - 1
               return (
-                <Box key={rowIdx} sx={{ display: 'flex', ...(!lastRow && { borderBottom: 1, borderColor: 'grey.300' }) }}>
+                <Box key={rowIdx} sx={{ display: 'flex', ...(!lastRow && { borderBottom: 1, borderColor: 'divider' }) }}>
                   {[0, 1].map((colIdx) => {
                     const f = fields[rowIdx * 2 + colIdx]
                     return f ? (
-                      <React.Fragment key={`col${colIdx}`}><Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{f.label}</Typography>
-                        <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center', ...(colIdx === 0 && { borderRight: 1, borderColor: 'grey.300' }) }}>{f.value || ''}</Typography></React.Fragment>
+                      <React.Fragment key={`col${colIdx}`}><Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{f.label}</Typography>
+                        <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center', ...(colIdx === 0 && { borderRight: 1, borderColor: 'divider' }) }}>{f.value || ''}</Typography></React.Fragment>
                     ) : (
-                      <React.Fragment key={`col${colIdx}`}><Box sx={{ width: 128, bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300' }} />
-                        <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', ...(colIdx === 0 && { borderRight: 1, borderColor: 'grey.300' }) }} /></React.Fragment>
+                      <React.Fragment key={`col${colIdx}`}><Box sx={{ width: 128, bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider' }} />
+                        <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', ...(colIdx === 0 && { borderRight: 1, borderColor: 'divider' }) }} /></React.Fragment>
                     )
                   })}
                 </Box>
@@ -236,17 +236,17 @@ const WaterQualityTab: React.FC = () => {
     )
   }
 
-  const labelSx = { width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }
+  const labelSx = { width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }
   const cellSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-  const cellRSx = { ...cellSx, borderRight: 1, borderColor: 'grey.300' }
-  const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+  const cellRSx = { ...cellSx, borderRight: 1, borderColor: 'divider' }
+  const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
   const lastRowSx = { display: 'flex' }
   const mLabelSx = { mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }
 
   const renderFormView = () => (
     <Box>
       {/* PC Form */}
-      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
         <Box sx={rowSx}>
           <Typography sx={labelSx}>{t('environment.measurementDate')}</Typography>
           <Box sx={cellRSx}>

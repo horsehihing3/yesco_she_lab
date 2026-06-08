@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -32,6 +33,7 @@ const daysUntil = (d?: string) => {
 const emptyForm: Partial<PermitRenewal> = { stage: '검토' }
 
 const PermitRenewalTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
 
@@ -53,9 +55,9 @@ const PermitRenewalTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['permitLifecycleStats'] })
   }
 
-  const createM = useMutation({ mutationFn: permitRenewalApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitRenewal> }) => permitRenewalApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: permitRenewalApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: permitRenewalApi.create, onSuccess: () => { invalidate(); showSuccess(t('permitRenewalTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('permitRenewalTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitRenewal> }) => permitRenewalApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('permitRenewalTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('permitRenewalTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: permitRenewalApi.remove, onSuccess: () => { invalidate(); showSuccess(t('permitRenewalTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterStage !== 'all' && x.stage !== filterStage) return false
@@ -72,10 +74,10 @@ const PermitRenewalTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 갱신 항목을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('permitRenewalTab.msg6', '이 갱신 항목을 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.permitName) { showError('갱신 인허가명을 입력해주세요'); return }
+    if (!form.permitName) { showError(t('permitRenewalTab.msg7', '갱신 인허가명을 입력해주세요')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -85,7 +87,7 @@ const PermitRenewalTab: React.FC = () => {
     const pct = idx >= 0 ? ((idx + 1) / STAGES.length) * 100 : 0
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>갱신 항목 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('permitRenewalTab.section1', '갱신 항목 상세')}</Typography>
         <FormTable>
           <FormRow>
             <FormLabel>갱신 인허가명</FormLabel>
@@ -201,10 +203,10 @@ const PermitRenewalTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.rnActive ?? 0} label="진행 중" sub="갱신 워크플로우" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.rnWarn ?? 0}   label="심사·승인" sub="진행 중" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={(stats as any)?.rnDelay ?? 0} label="지연" sub="기한 초과" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.rnDone ?? 0}   label="완료" sub="갱신완료" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.rnActive ?? 0} label={t('permitRenewalTab.label1', '진행 중')} sub="갱신 워크플로우" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.rnWarn ?? 0}   label={t('permitRenewalTab.label2', '심사·승인')} sub="진행 중" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={(stats as any)?.rnDelay ?? 0} label={t('permitRenewalTab.label3', '지연')} sub="기한 초과" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.rnDone ?? 0}   label={t('permitRenewalTab.label4', '완료')} sub="갱신완료" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

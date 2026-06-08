@@ -529,14 +529,14 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 650, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 650, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('common.year')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('common.quarter')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 180, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('common.date')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('common.attendeeCount')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider' }} align="center">{t('common.year')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider' }} align="center">{t('common.quarter')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 180, borderRight: 1, borderColor: 'divider' }} align="center">{t('common.date')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('common.attendeeCount')}</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>{t('common.mainAgenda')}</TableCell>
             </TableRow>
           </TableHead>
@@ -550,10 +550,10 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             ) : (
               committees.map((item) => (
                 <TableRow key={item.id} hover onClick={() => handleRowClick(item)} sx={{ cursor: 'pointer' }}>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.oshYear}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.oshQuarter}{t('common.quarter')}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(item.oshDate)}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.attendeeCount || 0}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.oshYear}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.oshQuarter}{t('common.quarter')}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatDate(item.oshDate)}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.attendeeCount || 0}</TableCell>
                   <TableCell>{item.mainAgenda || ''}</TableCell>
                 </TableRow>
               ))
@@ -570,7 +570,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </Paper>
         ) : (
           committees.map((item) => (
-            <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(item)}>
+            <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(item)}>
               <Typography fontWeight="bold" sx={{ mb: 1 }}>{item.oshYear}년 {item.oshQuarter}분기</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 <Box sx={{ display: 'flex', gap: 1 }}>
@@ -607,27 +607,27 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             {/* 기본 정보 */}
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('common.basicInfo')}</Typography>
-            <TableContainer component={Paper} variant="outlined" sx={{ mb: 3, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'grey.300', py: 1.5 } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ mb: 3, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'divider', py: 1.5 } }}>
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.location')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.location')}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>
                       {committeeDetail.oshLocation}{committeeDetail.oshLocationDetail && ` - ${committeeDetail.oshLocationDetail}`}
                     </TableCell>
-                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.date')}</TableCell>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.date')}</TableCell>
                     <TableCell>{formatDate(committeeDetail.oshDate)}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.mainAgenda')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.mainAgenda')}</TableCell>
                     <TableCell colSpan={3} sx={{ whiteSpace: 'pre-wrap' }}>{committeeDetail.mainAgenda || ''}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.comment')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.comment')}</TableCell>
                     <TableCell colSpan={3}>{committeeDetail.comment || ''}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.attachments')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.attachments')}</TableCell>
                     <TableCell colSpan={3}>
                       {committeeFiles && committeeFiles.length > 0 ? (
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -657,13 +657,13 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             {/* 참석자 */}
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('common.attendee')}</Typography>
 
-            <TableContainer component={Paper} variant="outlined" sx={{ border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-              <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+              <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.100' }}>
-                    <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 170, whiteSpace: 'nowrap' }} align="center">{t('common.attendeeName')}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('osh.deptOrCompany', '부서 / 소속업체')}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 140 }} align="center">{t('common.contact', '연락처')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 170, whiteSpace: 'nowrap' }} align="center">{t('common.attendeeName')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('osh.deptOrCompany', '부서 / 소속업체')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 140 }} align="center">{t('common.contact', '연락처')}</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', width: 100 }} align="center">{t('common.signature', '서명')}</TableCell>
                   </TableRow>
                 </TableHead>
@@ -677,18 +677,18 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                   ) : (
                     committeeDetail.attendees.map((attendee) => (
                       <TableRow key={attendee.id}>
-                        <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', width: 170, whiteSpace: 'nowrap' }}>
+                        <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', width: 170, whiteSpace: 'nowrap' }}>
                           {attendee.attendeeName}
                           {(attendee as any).isExternal && (
                             <Chip size="small" label={t('osh.external', '외부')} color="warning" variant="outlined" sx={{ ml: 1, height: 18, fontSize: '0.65rem' }} />
                           )}
                         </TableCell>
-                        <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                        <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>
                           {(attendee as any).isExternal
                             ? ((attendee as any).attendeeCompany || '')
                             : ((attendee as any).attendeeDept || '')}
                         </TableCell>
-                        <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 140 }}>{(attendee as any).attendeePhone || ''}</TableCell>
+                        <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', fontFamily: 'monospace', width: 140 }}>{(attendee as any).attendeePhone || ''}</TableCell>
                         <TableCell align="center" sx={{ p: 0.5 }}>
                           {(attendee as any).signatureImage
                             ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={60} maxWidth={180} style={{ display: 'block', margin: '0 auto' }} />
@@ -773,7 +773,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                   const a = attendee as any
                   const deptOrCo = a.isExternal ? (a.attendeeCompany || '') : (a.attendeeDept || '')
                   return (
-                    <Box key={attendee.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1.5, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+                    <Box key={attendee.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1.5, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                           <Typography variant="body2" fontWeight={500}>{attendee.attendeeName}</Typography>
@@ -826,13 +826,13 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           accept="image/*" capture="environment" />
 
         {/* PC용 테이블 레이아웃 */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* Row 1: 장소 | 날짜 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.location')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', gap: 1 }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', gap: 1 }}>
               <FormControl size="small" sx={{ minWidth: 150 }}>
                 <Select
                   value={formData.oshLocation}
@@ -851,7 +851,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                 fullWidth
               />
             </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.date')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -863,8 +863,8 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </Box>
 
           {/* Row 2: 주요안건 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.mainAgenda')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -881,8 +881,8 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </Box>
 
           {/* Row 3: 코멘트 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.comment')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -900,7 +900,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
           {/* Row 4: 첨부파일 */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.attachments')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
@@ -1018,13 +1018,13 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         </Box>
 
         <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto', width: '100%' }}>
-          <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'grey.300', whiteSpace: 'nowrap' } }}>
+          <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'divider', whiteSpace: 'nowrap' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 100, whiteSpace: 'nowrap' }} align="center">{t('common.attendeeName')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('osh.deptOrCompany', '부서 / 소속업체')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 150, whiteSpace: 'nowrap' }} align="center">{t('common.contact', '연락처')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 400 }} align="center">{t('common.signature', '서명')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 100, whiteSpace: 'nowrap' }} align="center">{t('common.attendeeName')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('osh.deptOrCompany', '부서 / 소속업체')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 150, whiteSpace: 'nowrap' }} align="center">{t('common.contact', '연락처')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 400 }} align="center">{t('common.signature', '서명')}</TableCell>
                 <TableCell sx={{ width: 36, p: 0 }} align="center"></TableCell>
               </TableRow>
             </TableHead>
@@ -1038,15 +1038,15 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                   const currentSig = existingSignatures[attendee.id] ?? a.signatureImage ?? ''
                   return (
                     <TableRow key={`existing-${attendee.id}`}>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', width: 100, whiteSpace: 'nowrap' }}>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', width: 100, whiteSpace: 'nowrap' }}>
                         {attendee.attendeeName}
                         {a.isExternal && (
                           <Chip size="small" label={t('osh.external', '외부')} color="warning" variant="outlined" sx={{ ml: 1, height: 18, fontSize: '0.65rem' }} />
                         )}
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{deptOrCo}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 150, whiteSpace: 'nowrap' }}>{a.attendeePhone || ''}</TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', width: 400, p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{deptOrCo}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', fontFamily: 'monospace', width: 150, whiteSpace: 'nowrap' }}>{a.attendeePhone || ''}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', width: 400, p: 0.5 }}>
                         <SignaturePad
                           value={currentSig}
                           onChange={(v) => setExistingSignatures(prev => ({ ...prev, [attendee.id]: v }))}
@@ -1065,15 +1065,15 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                 const deptOrCo = attendee.isExternal ? (attendee.company || '') : (attendee.dept || '')
                 return (
                   <TableRow key={`pending-${attendee.userId}-${idx}`}>
-                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', width: 100, whiteSpace: 'nowrap' }}>
+                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', width: 100, whiteSpace: 'nowrap' }}>
                       {attendee.userName}
                       {attendee.isExternal && (
                         <Chip size="small" label={t('osh.external', '외부')} color="warning" variant="outlined" sx={{ ml: 1, height: 18, fontSize: '0.65rem' }} />
                       )}
                     </TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{deptOrCo}</TableCell>
-                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', fontFamily: 'monospace', width: 150, whiteSpace: 'nowrap' }}>{attendee.phone || ''}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', width: 400, p: 0.5 }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{deptOrCo}</TableCell>
+                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', fontFamily: 'monospace', width: 150, whiteSpace: 'nowrap' }}>{attendee.phone || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', width: 400, p: 0.5 }}>
                       <SignaturePad
                         value={attendee.signatureImage || ''}
                         onChange={(v) => setPendingAttendees(prev => prev.map((p, i) => i === idx ? { ...p, signatureImage: v } : p))}

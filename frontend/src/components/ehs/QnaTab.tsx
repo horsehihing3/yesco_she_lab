@@ -476,16 +476,16 @@ const QnaTab: React.FC = () => {
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 750, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 750, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', width: 60, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('common.no')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 90, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('qna.category')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('common.title')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('qna.author')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 70, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('qna.views')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 90, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('qna.answer')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 60, borderRight: 1, borderColor: 'divider' }} align="center">{t('common.no')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 90, borderRight: 1, borderColor: 'divider' }} align="center">{t('qna.category')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('common.title')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">{t('qna.author')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 70, borderRight: 1, borderColor: 'divider' }} align="center">{t('qna.views')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 90, borderRight: 1, borderColor: 'divider' }} align="center">{t('qna.answer')}</TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: 160 }} align="center">{t('common.createdAt')}</TableCell>
             </TableRow>
           </TableHead>
@@ -499,14 +499,14 @@ const QnaTab: React.FC = () => {
             ) : (
               posts.map((post) => (
                 <TableRow key={post.id} hover onClick={() => handleRowClick(post)} sx={{ cursor: 'pointer' }}>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{post.id}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{post.id}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                     <Chip label={getCategoryLabel(post.category)} color={categoryColorMap[post.category] || 'default'} size="small" />
                   </TableCell>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{post.title}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{post.authorName || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{post.views}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{post.title}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{post.authorName || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{post.views}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                     <Chip
                       label={post.isAnswered ? t('qna.answered') : t('qna.waiting')}
                       color={post.isAnswered ? 'success' : 'warning'}
@@ -529,7 +529,7 @@ const QnaTab: React.FC = () => {
           </Paper>
         ) : (
           posts.map((post) => (
-            <Paper key={post.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(post)}>
+            <Paper key={post.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(post)}>
               <Box sx={{ display: 'flex', gap: 1, mb: 1, alignItems: 'center' }}>
                 <Chip label={getCategoryLabel(post.category)} color={categoryColorMap[post.category] || 'default'} size="small" />
                 <Chip label={post.isAnswered ? t('qna.answered') : t('qna.waiting')} color={post.isAnswered ? 'success' : 'warning'} size="small" />
@@ -573,23 +573,23 @@ const QnaTab: React.FC = () => {
             {/* Question Box */}
             <Paper sx={{ p: 3 }}>
               <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('qna.question')}</Typography>
-              <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.title')}</Typography>
+              <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.title')}</Typography>
                   <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>{postDetail.title}</Typography>
                 </Box>
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.category')}</Typography>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.category')}</Typography>
                   <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
                     <Chip label={getCategoryLabel(postDetail.category)} color={categoryColorMap[postDetail.category] || 'default'} size="small" />
                   </Box>
                 </Box>
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.author')}</Typography>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.author')}</Typography>
                   <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>{postDetail.authorName || ''}</Typography>
                 </Box>
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, minHeight: 200, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, minHeight: 200, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('common.body')}
                   </Typography>
                   <Box sx={{ flex: 1, px: 2, py: 1.5, minHeight: 200, bgcolor: 'background.paper' }}>
@@ -597,7 +597,7 @@ const QnaTab: React.FC = () => {
                   </Box>
                 </Box>
                 <Box sx={{ display: 'flex' }}>
-                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.attachments')}</Typography>
+                  <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.attachments')}</Typography>
                   <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }}>
                     {postFiles && postFiles.length > 0 ? (
                       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -622,17 +622,17 @@ const QnaTab: React.FC = () => {
               </Typography>
 
               {postDetail.isAnswered && postDetail.answer && !showAnswerEditor ? (
-                <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                    <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.answerBy')}</Typography>
+                <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                    <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.answerBy')}</Typography>
                     <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>{postDetail.answerAuthorName || ''} {postDetail.answerAuthorDept ? `(${postDetail.answerAuthorDept})` : ''}</Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                    <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.answerDate')}</Typography>
+                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                    <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('qna.answerDate')}</Typography>
                     <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>{formatDate(postDetail.answerDate)}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex' }}>
-                    <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, minHeight: 150, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                    <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, minHeight: 150, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                       {t('qna.answer')}
                     </Typography>
                     <Box sx={{ flex: 1, px: 2, py: 1.5, minHeight: 150, bgcolor: 'background.paper' }}>
@@ -648,7 +648,7 @@ const QnaTab: React.FC = () => {
 
               {/* Answer Editor (Q&A admin only) */}
               {isQnaAdmin && showAnswerEditor && (
-                <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, p: 2, bgcolor: 'background.paper' }}>
+                <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2, bgcolor: 'background.paper' }}>
                   <RichTextEditor
                     value={answerText}
                     onChange={(value) => setAnswerText(value)}
@@ -756,14 +756,14 @@ const QnaTab: React.FC = () => {
                 </Box>
               </Box>
             ) : !showAnswerEditor ? (
-              <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'grey.50', border: 1, borderColor: 'grey.300' }}>
+              <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
                 <Typography variant="body2" color="text.secondary">{t('qna.noAnswer')}</Typography>
               </Paper>
             ) : null}
 
             {/* Answer Editor - Mobile */}
             {isQnaAdmin && showAnswerEditor && (
-              <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, p: 1.5, bgcolor: 'background.paper' }}>
+              <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 1.5, bgcolor: 'background.paper' }}>
                 <RichTextEditor
                   value={answerText}
                   onChange={(value) => setAnswerText(value)}
@@ -812,13 +812,13 @@ const QnaTab: React.FC = () => {
       <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }} />
 
         {/* PC Form Layout */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* Row 1: Title | Author */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.title')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
               <TextField
                 fullWidth
                 size="small"
@@ -827,7 +827,7 @@ const QnaTab: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               />
             </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('qna.author')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
@@ -836,11 +836,11 @@ const QnaTab: React.FC = () => {
           </Box>
 
           {/* Row 2: Category | Public */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('qna.category')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
               <FormControl size="small" fullWidth>
                 <Select
                   value={formData.category || 'GENERAL'}
@@ -853,7 +853,7 @@ const QnaTab: React.FC = () => {
                 </Select>
               </FormControl>
             </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('qna.isPublic')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
@@ -870,8 +870,8 @@ const QnaTab: React.FC = () => {
           </Box>
 
           {/* Row 3: Content */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.body')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -886,7 +886,7 @@ const QnaTab: React.FC = () => {
 
           {/* Row 4: Attachments */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.attachments')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>

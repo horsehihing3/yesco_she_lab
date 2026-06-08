@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, List, ListItemButton, ListItemText, Collapse, Divider,
@@ -134,6 +135,7 @@ interface TreeItemProps {
 }
 
 const TreeItem: React.FC<TreeItemProps> = ({ node, depth, selectedId, expandedIds, onSelect, onToggle }) => {
+  const { t } = useTranslation()
   const isLeaf = node.children.length === 0
   const isExpanded = expandedIds.has(node.id)
   const isSelected = selectedId === node.id
@@ -197,6 +199,7 @@ interface GaDialog { menuPath: string }
 
 // ── 메인 컴포넌트 ─────────────────────────────────────────────────────────────
 const ButtonManagePage: React.FC = () => {
+  const { t } = useTranslation()
   const { showSuccess, showError } = useAlert()
   const queryClient = useQueryClient()
   const [cellState, setCellState] = useState<Record<string, boolean>>(buildInitialState)
@@ -283,11 +286,11 @@ const ButtonManagePage: React.FC = () => {
       ...buildGaRulesToSave(gaState),
     ]),
     onSuccess: () => {
-      showSuccess('저장되었습니다.')
+      showSuccess(t('buttonManagePage.msg1', '저장되었습니다.'))
       setCheckedMenus(new Set())
       queryClient.invalidateQueries({ queryKey: ['buttonRules'] })
     },
-    onError: () => showError('저장 중 오류가 발생했습니다.'),
+    onError: () => showError(t('buttonManagePage.msg2', '저장 중 오류가 발생했습니다.')),
   })
 
   const savedState = useMemo(() => buildStateFromDb(dbRules ?? []), [dbRules])
@@ -450,7 +453,7 @@ const ButtonManagePage: React.FC = () => {
                             sx={{ bgcolor: 'grey.50', '& td': { borderColor: 'grey.200', py: 0.5 } }}>
                             {showMenu && showMenuCol && (
                               <TableCell rowSpan={totalRows} sx={{
-                                verticalAlign: 'top', pt: 1.5, borderRight: 1, borderColor: 'grey.300',
+                                verticalAlign: 'top', pt: 1.5, borderRight: 1, borderColor: 'divider',
                                 fontSize: '0.78rem', wordBreak: 'keep-all',
                               }}>
                                 {menu.menuPath.split(' › ').map((seg, i, arr) =>
@@ -460,7 +463,7 @@ const ButtonManagePage: React.FC = () => {
                                 )}
                               </TableCell>
                             )}
-                            <TableCell sx={{ verticalAlign: 'middle', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>
+                            <TableCell sx={{ verticalAlign: 'middle', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>
                               <Chip label={sg.statusLabel} color={sg.statusColor} size="small" sx={{ fontSize: '0.65rem', height: 20 }} />
                             </TableCell>
                             <TableCell colSpan={VISIBLE_ROLES.length + 1}
@@ -505,7 +508,7 @@ const ButtonManagePage: React.FC = () => {
 
                             {showMenu && showMenuCol && (
                               <TableCell rowSpan={totalRows} sx={{
-                                verticalAlign: 'top', pt: 1.5, borderRight: 1, borderColor: 'grey.300',
+                                verticalAlign: 'top', pt: 1.5, borderRight: 1, borderColor: 'divider',
                                 fontSize: '0.78rem', wordBreak: 'keep-all',
                               }}>
                                 {menu.menuPath.split(' › ').map((seg, i, arr) =>
@@ -519,7 +522,7 @@ const ButtonManagePage: React.FC = () => {
                             {showStatus && (
                               <TableCell rowSpan={sgRowSpan} sx={{
                                 verticalAlign: 'middle', textAlign: 'center',
-                                borderRight: 1, borderColor: 'grey.300',
+                                borderRight: 1, borderColor: 'divider',
                               }}>
                                 <Chip label={sg.statusLabel} color={sg.statusColor} size="small"
                                   sx={{ fontSize: '0.65rem', height: 20 }} />
@@ -533,7 +536,7 @@ const ButtonManagePage: React.FC = () => {
                               </TableCell>
                             )}
 
-                            <TableCell sx={{ fontSize: '0.8rem', borderRight: 1, borderColor: 'grey.300' }}>
+                            <TableCell sx={{ fontSize: '0.8rem', borderRight: 1, borderColor: 'divider' }}>
                               {btn.button}
                             </TableCell>
 
@@ -601,7 +604,7 @@ const ButtonManagePage: React.FC = () => {
 
       {/* ── 일반관리자 지정 다이얼로그 ────────────────────────────────────── */}
       <Dialog open={!!gaDialog} onClose={() => setGaDialog(null)} maxWidth="xs" fullWidth>
-        <DialogTitle sx={{ pb: 1, fontSize: '0.95rem' }}>일반관리자 권한 지정</DialogTitle>
+        <DialogTitle sx={{ pb: 1, fontSize: '0.95rem' }}>{t('buttonManagePage.dialogTitle1', '일반관리자 권한 지정')}</DialogTitle>
         <DialogContent sx={{ pt: 0 }}>
           {gaDialog && (
             <>

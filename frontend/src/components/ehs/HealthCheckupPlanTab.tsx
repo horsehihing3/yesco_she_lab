@@ -118,15 +118,15 @@ const TYPE_COLORS: Record<string, 'primary' | 'info' | 'error'> = {
 
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
-const lastRowSx = { display: 'flex', borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const lastRowSx = { display: 'flex', borderColor: 'divider' }
 
 const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedTypes }) => {
   const queryClient = useQueryClient()
@@ -472,7 +472,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
         ) : (
           <>
             {/* PC 테이블 */}
-            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
+            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -561,7 +561,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
 
     return (
       <Box>
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* 계획명 (맨 위) */}
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('healthCheckupPlan.planName', '계획명')}</Box>
@@ -639,7 +639,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
                 <Typography variant="body2" color="text.disabled">{t('common.noAttachments', '첨부파일이 없습니다')}</Typography>
               ) : (
                 files.map(f => (
-                  <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+                  <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                     <AttachFileIcon fontSize="small" />
                     <Typography variant="body2" sx={{ flex: 1 }}>
                       <a href={`${axiosInstance.defaults.baseURL}/files/${f.id}`} target="_blank" rel="noopener noreferrer">{f.fileName}</a>
@@ -706,7 +706,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   return (
     <Box>
       <LoadingOverlay open={isProcessing} />
-      <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
         {/* 계획명 — 맨 위 */}
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('healthCheckupPlan.planName', '계획명')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
@@ -853,7 +853,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
             {viewMode === 'create' && pendingFiles.length > 0 && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {pendingFiles.map((f, idx) => (
-                  <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+                  <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                     <AttachFileIcon fontSize="small" />
                     <Typography variant="body2" sx={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.name}</Typography>
                     <IconButton size="small" color="error" onClick={() => handleRemovePending(idx)}>
@@ -866,7 +866,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
             {viewMode === 'edit' && files.length > 0 && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {files.map(f => (
-                  <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+                  <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                     <AttachFileIcon fontSize="small" />
                     <Typography variant="body2" sx={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.fileName}</Typography>
                     <IconButton size="small" color="error" onClick={() => deleteFileMutation.mutate(f.id)}>

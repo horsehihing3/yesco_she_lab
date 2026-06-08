@@ -24,13 +24,13 @@ const statusColors: Record<string, 'default' | 'warning' | 'info' | 'success' | 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const, textAlign: 'center' as const }
 const labelSx = {
   width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', textAlign: 'center' as const, wordBreak: 'keep-all' as const,
 }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 export interface AuditFindingTabProps {
   variant?: 'audit' | 'legal-compliance'
@@ -89,7 +89,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
     const progress = selectedItem.totalChecklist > 0 ? Math.round((selectedItem.completedChecklist / selectedItem.totalChecklist) * 100) : 0
     return (
       <Box>
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('audit.auditId')}</Typography>
             <Box sx={valBorderSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.auditId}</Typography></Box>
@@ -269,7 +269,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
         <>
           <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer>
-              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={headerCellSx}>{t('audit.auditId')}</TableCell>
@@ -308,7 +308,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
           {/* Mobile */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {items.map((item) => (
-              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography fontWeight="bold">{item.auditName}</Typography>
                   <Typography variant="body2">{item.findingCount}</Typography>

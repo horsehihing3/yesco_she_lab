@@ -298,7 +298,7 @@ const EhsMessageTab: React.FC = () => {
     fontWeight: 'bold',
     bgcolor: 'grey.100',
     textAlign: 'center',
-    borderRight: 1, borderColor: 'grey.300',
+    borderRight: 1, borderColor: 'divider',
   }
 
   if (isLoading) {
@@ -324,10 +324,10 @@ const EhsMessageTab: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
             {/* PC용 테이블 레이아웃 */}
-            <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: 제목 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.title')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -350,11 +350,11 @@ const EhsMessageTab: React.FC = () => {
               </Box>
 
               {/* Row 2: 대상 | 카테고리 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.target')}
                 </Typography>
-                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
                   <Controller
                     name="subCategory"
                     control={control}
@@ -370,7 +370,7 @@ const EhsMessageTab: React.FC = () => {
                     )}
                   />
                 </Box>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.category')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -392,14 +392,14 @@ const EhsMessageTab: React.FC = () => {
               </Box>
 
               {/* Row 3: 작성자 | 직책 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.writer')}
                 </Typography>
-                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                   <Typography>{user?.name || ''}</Typography>
                 </Box>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.position')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -422,7 +422,7 @@ const EhsMessageTab: React.FC = () => {
 
               {/* Row 4: 본문 */}
               <Box sx={{ display: 'flex' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.body')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -555,25 +555,25 @@ const EhsMessageTab: React.FC = () => {
     return (
       <>
         {/* PC용 레이아웃 */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.title')}</Typography>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.title')}</Typography>
               <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>{viewMessage.title || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.target')}</Typography>
-              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center', borderRight: 1, borderColor: 'grey.300' }}>{viewMessage.subCategory ? getTargetLabel(viewMessage.subCategory) : ''}</Typography>
-              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.category')}</Typography>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.target')}</Typography>
+              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center', borderRight: 1, borderColor: 'divider' }}>{viewMessage.subCategory ? getTargetLabel(viewMessage.subCategory) : ''}</Typography>
+              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.category')}</Typography>
               <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>{viewMessage.category ? getCategoryLabel(viewMessage.category) : ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.writer')}</Typography>
-              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center', borderRight: 1, borderColor: 'grey.300' }}>{viewMessage.authorName || ''}</Typography>
-              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.position')}</Typography>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.writer')}</Typography>
+              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center', borderRight: 1, borderColor: 'divider' }}>{viewMessage.authorName || ''}</Typography>
+              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.position')}</Typography>
               <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>{viewMessage.authorRole ? getRoleLabel(viewMessage.authorRole) : ''}</Typography>
             </Box>
             <Box sx={{ display: 'flex' }}>
-              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>{t('common.body')}</Typography>
+              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>{t('common.body')}</Typography>
               <Box sx={{ flex: 1, px: 2, py: 1.5, minHeight: 200, bgcolor: 'background.paper' }}>
                 <HtmlContent content={viewMessage.detail} fallback="" />
               </Box>
@@ -641,10 +641,10 @@ const EhsMessageTab: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
             {/* PC용 테이블 레이아웃 */}
-            <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: 제목 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.title')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -667,11 +667,11 @@ const EhsMessageTab: React.FC = () => {
               </Box>
 
               {/* Row 2: 대상 | 카테고리 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.target')}
                 </Typography>
-                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
                   <Controller
                     name="subCategory"
                     control={control}
@@ -687,7 +687,7 @@ const EhsMessageTab: React.FC = () => {
                     )}
                   />
                 </Box>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.category')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -709,14 +709,14 @@ const EhsMessageTab: React.FC = () => {
               </Box>
 
               {/* Row 3: 작성자 | 직책 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.writer')}
                 </Typography>
-                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                   <Typography>{user?.name || ''}</Typography>
                 </Box>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.position')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -739,7 +739,7 @@ const EhsMessageTab: React.FC = () => {
 
               {/* Row 4: 본문 */}
               <Box sx={{ display: 'flex' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.body')}
                 </Typography>
                 <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -967,23 +967,23 @@ const EhsMessageTab: React.FC = () => {
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 750, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 750, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'grey.300', whiteSpace: 'nowrap' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'divider', whiteSpace: 'nowrap' }} align="center">
                 {t('common.position')}
               </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.author')}
               </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.category')}
               </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.title')}
               </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.createdAt')}
               </TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: 80 }} align="center">
@@ -1006,11 +1006,11 @@ const EhsMessageTab: React.FC = () => {
                   onClick={() => handleRowClick(message)}
                   sx={{ cursor: 'pointer' }}
                 >
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{message.authorRole ? getRoleLabel(message.authorRole) : ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{message.authorName || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{message.category ? getCategoryLabel(message.category) : ''}</TableCell>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{message.title}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{message.authorRole ? getRoleLabel(message.authorRole) : ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{message.authorName || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{message.category ? getCategoryLabel(message.category) : ''}</TableCell>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{message.title}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                     {message.createdAt ? new Date(message.createdAt).toISOString().substring(0, 10) : ''}
                   </TableCell>
                   <TableCell align="center">{message.views}</TableCell>
@@ -1029,7 +1029,7 @@ const EhsMessageTab: React.FC = () => {
           </Paper>
         ) : (
           filteredMessages.map((message) => (
-            <Paper key={message.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(message)}>
+            <Paper key={message.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(message)}>
               <Typography fontWeight="bold" sx={{ mb: 1 }}>{message.title}</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 <Box sx={{ display: 'flex', gap: 1 }}>

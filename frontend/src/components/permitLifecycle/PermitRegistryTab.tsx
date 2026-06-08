@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -41,6 +42,7 @@ const categoryColor = (c: string): 'success' | 'error' | 'secondary' | 'warning'
 const emptyForm: Partial<PermitRegistry> = { category: '환경' }
 
 const PermitRegistryTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
 
@@ -64,17 +66,17 @@ const PermitRegistryTab: React.FC = () => {
 
   const createM = useMutation({
     mutationFn: permitRegistryApi.create,
-    onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() },
-    onError: () => showError('등록 실패'),
+    onSuccess: () => { invalidate(); showSuccess(t('permitRegistryTab.msg1', '등록되었습니다')); handleBackToList() },
+    onError: () => showError(t('permitRegistryTab.msg2', '등록 실패')),
   })
   const updateM = useMutation({
     mutationFn: ({ id, e }: { id: number; e: Partial<PermitRegistry> }) => permitRegistryApi.update(id, e),
-    onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() },
-    onError: () => showError('수정 실패'),
+    onSuccess: () => { invalidate(); showSuccess(t('permitRegistryTab.msg3', '수정되었습니다')); handleBackToList() },
+    onError: () => showError(t('permitRegistryTab.msg4', '수정 실패')),
   })
   const deleteM = useMutation({
     mutationFn: permitRegistryApi.remove,
-    onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() },
+    onSuccess: () => { invalidate(); showSuccess(t('permitRegistryTab.msg5', '삭제되었습니다')); handleBackToList() },
   })
 
   const filtered = useMemo(() => list.filter((x) => {
@@ -92,10 +94,10 @@ const PermitRegistryTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 인허가를 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('permitRegistryTab.msg6', '이 인허가를 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.name || !form.category) { showError('분야·인허가 명칭 필수'); return }
+    if (!form.name || !form.category) { showError(t('permitRegistryTab.msg7', '분야·인허가 명칭 필수')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -105,7 +107,7 @@ const PermitRegistryTab: React.FC = () => {
     const st = computeStatus(selected)
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>인허가 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('permitRegistryTab.section1', '인허가 상세')}</Typography>
         <FormTable>
           <FormRow>
             <FormLabel>분야</FormLabel>
@@ -226,10 +228,10 @@ const PermitRegistryTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.regTotal ?? 0}   label="전체" sub="건" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.regValid ?? 0}   label="유효" sub="정상" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.regWarn ?? 0}    label="만료 임박" sub="90일 이내" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.regExpired ?? 0} label="만료" sub="즉시 조치" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.regTotal ?? 0}   label={t('permitRegistryTab.label1', '전체')} sub="건" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.regValid ?? 0}   label={t('permitRegistryTab.label2', '유효')} sub="정상" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.regWarn ?? 0}    label={t('permitRegistryTab.label3', '만료 임박')} sub="90일 이내" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.regExpired ?? 0} label={t('permitRegistryTab.label4', '만료')} sub="즉시 조치" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

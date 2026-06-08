@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import {
@@ -57,6 +58,7 @@ const emptyForm: Partial<OdPlan> = { half: '상반기', method: '내원검진', 
 const MENU = '보건 관리 › 직업병 관리 › 검진계획'
 
 const OdPlanTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { user } = useAuth()
@@ -136,10 +138,10 @@ const OdPlanTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"  value={stats?.planTotal ?? 0}        label="검진 계획 총계" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green" value={stats?.planDoneCount ?? 0}   label="완료" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.planPlannedCount ?? 0} label="계획·진행중" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="purple" value={totalTargets}                  label="누적 대상 인원" sub={`${items.length}개 일정`} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"  value={stats?.planTotal ?? 0}        label={t('odPlanTab.label1', '검진 계획 총계')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green" value={stats?.planDoneCount ?? 0}   label={t('odPlanTab.label2', '완료')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.planPlannedCount ?? 0} label={t('odPlanTab.label3', '계획·진행중')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="purple" value={totalTargets}                  label={t('odPlanTab.label4', '누적 대상 인원')} sub={`${items.length}개 일정`} /></Grid>
       </Grid>
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="flex-end">
@@ -180,7 +182,7 @@ const OdPlanTab: React.FC = () => {
                         <IconButton size="small" onClick={() => openEdit(p)}><EditIcon fontSize="inherit" /></IconButton>
                       )}
                       {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
-                        <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                        <IconButton size="small" onClick={async () => { if (await showConfirm(t('odPlanTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                       )}
                     </TableCell>
                   </TableRow>
@@ -218,7 +220,7 @@ const OdPlanTab: React.FC = () => {
                   <IconButton size="small" onClick={() => openEdit(p)}><EditIcon fontSize="small" /></IconButton>
                 )}
                 {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
-                  <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="small" /></IconButton>
+                  <IconButton size="small" onClick={async () => { if (await showConfirm(t('odPlanTab.msg2', '삭제하시겠습니까?'))) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="small" /></IconButton>
                 )}
               </Box>
             </Paper>
@@ -309,7 +311,7 @@ const OdPlanTab: React.FC = () => {
                   {!editing && pendingFiles.length > 0 && (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                       {pendingFiles.map((f, idx) => (
-                        <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+                        <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                           <AttachFileIcon fontSize="small" />
                           <Typography variant="body2" sx={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.name}</Typography>
                           <IconButton size="small" color="error" onClick={() => removePending(idx)}>
@@ -322,7 +324,7 @@ const OdPlanTab: React.FC = () => {
                   {editing && files.length > 0 && (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                       {files.map(f => (
-                        <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+                        <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                           <AttachFileIcon fontSize="small" />
                           <Typography variant="body2" sx={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.fileName}</Typography>
                           <IconButton size="small" color="error" onClick={() => deleteFileMut.mutate(f.id)}>

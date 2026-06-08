@@ -91,14 +91,14 @@ const PREVENTION_COLORS: Record<string, 'default' | 'success' | 'warning' | 'err
 
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
   const queryClient = useQueryClient()
@@ -484,7 +484,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           {/* Mobile cards */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {filteredItems.map((item) => (
-              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography fontWeight="bold">{item.factorName}</Typography>
                   {item.riskLevel && <Chip label={getRiskLabel(item.riskLevel)} color={RISK_COLORS[item.riskLevel] || 'default'} size="small" />}
@@ -513,7 +513,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
           {/* Left: Prevention Status */}
           <Paper sx={{ p: 2 }}>
-            <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2 }}>예방조치 현황</Typography>
+            <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2 }}>{t('hazardFactorTab.section1', '예방조치 현황')}</Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
               {items.filter(item => item.preventionDetail).slice(0, 4).map((item, idx) => {
                 const borderColor = PREVENTION_BORDER_COLORS[item.preventionStatus || ''] || '#9e9e9e'
@@ -541,7 +541,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
 
           {/* Right: Risk Level Distribution */}
           <Paper sx={{ p: 2 }}>
-            <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2 }}>위험도 분포</Typography>
+            <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2 }}>{t('hazardFactorTab.section2', '위험도 분포')}</Typography>
             {riskCodes.map(c => c.code).map(level => {
               const count = items.filter(i => i.riskLevel === level).length
               const pct = items.length > 0 ? (count / items.length * 100) : 0
@@ -573,7 +573,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
 
     const dLabelSx = { ...labelSx, width: 140, minWidth: 140 }
     const dValSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'grey.300' }
+    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'divider' }
 
     const fields: [string, React.ReactNode][] = [
       [t('dp.factorName'), item.factorName],
@@ -622,7 +622,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
     return (
       <>
           {/* PC detail */}
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
             {(() => {
               const rows: React.ReactNode[] = []
               for (let i = 0; i < fields.length; i += 2) {
@@ -675,8 +675,8 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
 
     // Common form rows for PC
     const renderPcForm = () => (
-      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('dp.factorName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
           <Box sx={valBorderSx}>
             <TextField fullWidth size="small" value={f.factorName} onChange={(e) => set({ factorName: e.target.value })} />
@@ -686,7 +686,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
             <TextField fullWidth size="small" value={f.category ?? ''} onChange={(e) => set({ category: e.target.value })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('dp.process')}</Typography>
           <Box sx={valBorderSx}>
             <TextField fullWidth size="small" value={f.process ?? ''} onChange={(e) => set({ process: e.target.value })} />
@@ -699,7 +699,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
             </Select>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('dp.preventionStatus')}</Typography>
           <Box sx={valBorderSx}>
             <Select fullWidth size="small" displayEmpty value={f.preventionStatus ?? ''} onChange={(e) => set({ preventionStatus: e.target.value })}>
@@ -712,7 +712,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
             <NumberField fullWidth size="small" value={f.preventionRate ?? null} onChange={(v) => set({ preventionRate: v ?? undefined })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('dp.lastCheckDate')}</Typography>
           <Box sx={valBorderSx}>
             <DatePickerField value={f.lastCheckDate || null} onChange={(v) => set({ lastCheckDate: v })} size="small" />
@@ -723,7 +723,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
             <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserSelectTarget('manager')}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('dp.managerDept')}</Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" value={f.managerDept || ''} InputProps={{ readOnly: true }} />
@@ -733,7 +733,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
         {/* Type-specific fields */}
         {hazardType === 'CHEMICAL' && (
           <>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('dp.casNumber')}</Typography>
               <Box sx={valBorderSx}>
                 <TextField fullWidth size="small" value={f.casNumber ?? ''} onChange={(e) => set({ casNumber: e.target.value })} />
@@ -743,7 +743,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
                 <TextField fullWidth size="small" value={f.measuredValue ?? ''} onChange={(e) => set({ measuredValue: e.target.value })} />
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('dp.exposureStandard')}</Typography>
               <Box sx={valSx}>
                 <TextField fullWidth size="small" value={f.exposureStandard ?? ''} onChange={(e) => set({ exposureStandard: e.target.value })} />
@@ -752,7 +752,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           </>
         )}
         {hazardType === 'PHYSICAL' && (
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('dp.measuredValue')}</Typography>
             <Box sx={valBorderSx}>
               <TextField fullWidth size="small" value={f.measuredValue ?? ''} onChange={(e) => set({ measuredValue: e.target.value })} />
@@ -764,7 +764,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           </Box>
         )}
         {hazardType === 'BIOLOGICAL' && (
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('dp.exposureRoute')}</Typography>
             <Box sx={valBorderSx}>
               <TextField fullWidth size="small" value={f.exposureRoute ?? ''} onChange={(e) => set({ exposureRoute: e.target.value })} />
@@ -779,7 +779,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           </Box>
         )}
         {hazardType === 'ERGONOMIC' && (
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('dp.assessmentMethod')}</Typography>
             <Box sx={valBorderSx}>
               <TextField fullWidth size="small" value={f.assessmentMethod ?? ''} onChange={(e) => set({ assessmentMethod: e.target.value })} />
@@ -792,7 +792,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
         )}
         {hazardType === 'PSYCHOSOCIAL' && (
           <>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('dp.targetGroup')}</Typography>
               <Box sx={valBorderSx}>
                 <TextField fullWidth size="small" value={f.targetGroup ?? ''} onChange={(e) => set({ targetGroup: e.target.value })} />
@@ -802,7 +802,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
                 <TextField fullWidth size="small" value={f.assessmentMethod ?? ''} onChange={(e) => set({ assessmentMethod: e.target.value })} />
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('dp.targetCount')}</Typography>
               <Box sx={valBorderSx}>
                 <NumberField fullWidth size="small" value={f.targetCount ?? null} onChange={(v) => set({ targetCount: v ?? undefined })} />
@@ -815,7 +815,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
           </>
         )}
 
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('dp.preventionDetail')}</Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" multiline rows={3} value={f.preventionDetail ?? ''} onChange={(e) => set({ preventionDetail: e.target.value })} />

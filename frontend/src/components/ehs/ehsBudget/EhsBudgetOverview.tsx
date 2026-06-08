@@ -41,12 +41,14 @@ const CHART_USED_COLOR = '#3B82F6'
 
 interface EhsBudgetOverviewProps {
   showYearSelector?: boolean
+  showCategoryStats?: boolean
   year?: number
   onYearChange?: (year: number) => void
 }
 
 const EhsBudgetOverview: React.FC<EhsBudgetOverviewProps> = ({
   showYearSelector = true,
+  showCategoryStats = true,
   year: externalYear,
   onYearChange,
 }) => {
@@ -138,6 +140,7 @@ const EhsBudgetOverview: React.FC<EhsBudgetOverviewProps> = ({
         ))}
       </Grid>
 
+      {showCategoryStats && (
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Paper sx={{ p: 2 }}>
@@ -191,6 +194,7 @@ const EhsBudgetOverview: React.FC<EhsBudgetOverviewProps> = ({
           </Paper>
         </Grid>
       </Grid>
+      )}
     </Box>
   )
 }

@@ -74,15 +74,15 @@ const STATUS_COLORS: Record<string, 'success' | 'info' | 'default' | 'error' | '
 
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', whiteSpace: 'nowrap' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
-const lastRowSx = { display: 'flex', borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const lastRowSx = { display: 'flex', borderColor: 'divider' }
 
 const MENU = '보건 관리 › 작업환경 측정 › 측정 계획'
 
@@ -343,7 +343,7 @@ const WemPlanTab: React.FC = () => {
           <Alert severity="info">{t('common.noData')}</Alert>
         ) : (
           <>
-            <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
+            <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -416,7 +416,7 @@ const WemPlanTab: React.FC = () => {
     return (
       <Box>
         {/* PC */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('wem.processName')}</Box>
             <Box sx={valBorderSx}><Typography variant="body2">{d.processName}</Typography></Box>
@@ -566,7 +566,7 @@ const WemPlanTab: React.FC = () => {
     <Box>
       <LoadingOverlay open={isProcessing} />
       {/* PC */}
-      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
         <Box sx={rowSx}>
           <Box sx={labelSx}>{formFields[0].label}</Box>
           <Box sx={valBorderSx}>{formFields[0].node}</Box>

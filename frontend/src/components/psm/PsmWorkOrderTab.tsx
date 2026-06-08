@@ -88,8 +88,8 @@ const PsmWorkOrderTab: React.FC = () => {
   const handleAddClick = () => { setSelectedId(null); setForm(emptyWo()); setViewMode('create') }
   const handleEditClick = () => { if (detail) { setForm({ ...detail }); setViewMode('edit') } }
   const handleSave = async () => {
-    if (!form.equipmentName?.trim()) { showError('설비명을 입력해 주세요.'); return }
-    if (!form.description?.trim()) { showError('작업 내용을 입력해 주세요.'); return }
+    if (!form.equipmentName?.trim()) { showError(t('psmWorkOrderTab.msg1', '설비명을 입력해 주세요.')); return }
+    if (!form.description?.trim()) { showError(t('psmWorkOrderTab.msg2', '작업 내용을 입력해 주세요.')); return }
     const ok = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!ok) return
     if (selectedId) updateMut.mutate({ id: selectedId, w: form })

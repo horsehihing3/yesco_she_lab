@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -27,6 +28,7 @@ const statusColor = (s?: string): 'success' | 'warning' | 'error' | 'default' =>
 const emptyForm: Partial<RadSource> = { sourceType: '방사선 발생장치', status: '유효' }
 
 const RadSourceTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['radSources'], queryFn: radSourceApi.list })
@@ -76,10 +78,10 @@ const RadSourceTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.sourceTotal ?? 0}   label="총 방사선원" sub="등록된 방사선원" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.sourceValid ?? 0}   label="유효 허가" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.sourceNear ?? 0}    label="허가 임박" sub="30일 이내 만료" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.sourceExpired ?? 0} label="허가 만료" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.sourceTotal ?? 0}   label={t('radSourceTab.label1', '총 방사선원')} sub="등록된 방사선원" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.sourceValid ?? 0}   label={t('radSourceTab.label2', '유효 허가')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.sourceNear ?? 0}    label={t('radSourceTab.label3', '허가 임박')} sub="30일 이내 만료" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.sourceExpired ?? 0} label={t('radSourceTab.label4', '허가 만료')} /></Grid>
       </Grid>
 
       <Alert severity="info" sx={{ mb: 2 }}>
@@ -89,11 +91,11 @@ const RadSourceTab: React.FC = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="관리번호/명칭/핵종 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
-        <TextField select size="small" sx={{ minWidth: 150 }} label="구분" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 150 }} label={t('radSourceTab.label5', '구분')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
-        <TextField select size="small" sx={{ minWidth: 120 }} label="상태" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 120 }} label={t('radSourceTab.label6', '상태')} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
@@ -132,7 +134,7 @@ const RadSourceTab: React.FC = () => {
                     <TableCell align="center"><Chip size="small" label={v.status} color={statusColor(v.status)} /></TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => openEdit(v)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('radSourceTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

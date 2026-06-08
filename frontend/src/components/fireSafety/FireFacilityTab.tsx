@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -29,6 +30,7 @@ const statusColor = (s?: string): 'success' | 'warning' | 'error' | 'info' | 'de
 const emptyForm: Partial<FireFacility> = { category: '소화설비', checkCycle: '연1회', status: '정상' }
 
 const FireFacilityTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['fireFacilities'], queryFn: fireFacilityApi.list })
@@ -80,12 +82,12 @@ const FireFacilityTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.facTotal ?? 0}    label="소방시설 총계" sub="5개 분류 등록" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.facOk ?? 0}       label="정상 작동" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="yellow" value={stats?.facWarn ?? 0}     label="점검 필요" sub="D-30 이내" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.facBad ?? 0}      label="불량·수리 중" sub="즉시 조치" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="blue"   value={`${stats?.facOkRate ?? 0}%`} label="전체 정상률" sub="목표 95% 이상" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="purple" value={stats?.planTotal ?? 0}   label="연간 점검 계획" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.facTotal ?? 0}    label={t('fireFacilityTab.label1', '소방시설 총계')} sub="5개 분류 등록" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.facOk ?? 0}       label={t('fireFacilityTab.label2', '정상 작동')} /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="yellow" value={stats?.facWarn ?? 0}     label={t('fireFacilityTab.label3', '점검 필요')} sub="D-30 이내" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.facBad ?? 0}      label={t('fireFacilityTab.label4', '불량·수리 중')} sub="즉시 조치" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="blue"   value={`${stats?.facOkRate ?? 0}%`} label={t('fireFacilityTab.label5', '전체 정상률')} sub="목표 95% 이상" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="purple" value={stats?.planTotal ?? 0}   label={t('fireFacilityTab.label6', '연간 점검 계획')} /></Grid>
       </Grid>
 
       {badItems.length > 0 && (
@@ -99,11 +101,11 @@ const FireFacilityTab: React.FC = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="시설명/관리번호/위치/법령 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
-        <TextField select size="small" sx={{ minWidth: 150 }} label="분류" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 150 }} label={t('fireFacilityTab.label7', '분류')} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
         </TextField>
-        <TextField select size="small" sx={{ minWidth: 130 }} label="상태" value={stFilter} onChange={e => setStFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 130 }} label={t('fireFacilityTab.label8', '상태')} value={stFilter} onChange={e => setStFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
@@ -148,7 +150,7 @@ const FireFacilityTab: React.FC = () => {
                     <TableCell align="center">{v.mgrName || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => openEdit(v)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireFacilityTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

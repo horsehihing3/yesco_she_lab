@@ -183,10 +183,10 @@ const EmergencyNotificationTab: React.FC = () => {
   const renderSendTab = () => (
     <Box sx={{ p: { xs: 1, sm: 2 } }}>
         {/* PC용 테이블 레이아웃 */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* 발송 방법 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('emergency.sendingMethod')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -202,8 +202,8 @@ const EmergencyNotificationTab: React.FC = () => {
           </Box>
 
           {/* 제목 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.title')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -218,8 +218,8 @@ const EmergencyNotificationTab: React.FC = () => {
           </Box>
 
           {/* 내용 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('emergency.content')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -236,7 +236,7 @@ const EmergencyNotificationTab: React.FC = () => {
 
           {/* 수신자 */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('emergency.recipient')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -259,7 +259,7 @@ const EmergencyNotificationTab: React.FC = () => {
                 )}
               </Box>
               {selectedRecipients.length > 0 && (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, p: 1, border: 1, borderColor: 'grey.300', borderRadius: 1, maxHeight: 150, overflowY: 'auto' }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, p: 1, border: 1, borderColor: 'divider', borderRadius: 1, maxHeight: 150, overflowY: 'auto' }}>
                   {selectedRecipients.map((user) => (
                     <Chip
                       key={user.id}
@@ -337,7 +337,7 @@ const EmergencyNotificationTab: React.FC = () => {
               </Typography>
             </Box>
             {selectedRecipients.length > 0 && (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, p: 1, border: 1, borderColor: 'grey.300', borderRadius: 1, maxHeight: 120, overflowY: 'auto' }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, p: 1, border: 1, borderColor: 'divider', borderRadius: 1, maxHeight: 120, overflowY: 'auto' }}>
                 {selectedRecipients.map((user) => (
                   <Chip
                     key={user.id}
@@ -385,8 +385,8 @@ const EmergencyNotificationTab: React.FC = () => {
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300' }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider' }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
               <TableCell sx={{ fontWeight: 'bold' }} align="center">{t('common.title')}</TableCell>
@@ -433,7 +433,7 @@ const EmergencyNotificationTab: React.FC = () => {
           filteredHistory.slice(historyPage * rowsPerPage, (historyPage + 1) * rowsPerPage).map((history) => (
             <Paper
               key={history.id}
-              sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }}
+              sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }}
               onClick={() => setHistoryDetailDialog(history)}
             >
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
@@ -490,7 +490,7 @@ const EmergencyNotificationTab: React.FC = () => {
 
       {/* Confirm Send Dialog */}
       <Dialog open={confirmDialogOpen} onClose={() => setConfirmDialogOpen(false)}>
-        <DialogTitle sx={{ borderBottom: 1, borderColor: 'grey.300' }}>{t('emergency.confirmSendTitle')}</DialogTitle>
+        <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider' }}>{t('emergency.confirmSendTitle')}</DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <Typography sx={{ mb: 2 }}>{t('emergency.confirmSendMessage')}</Typography>
           <Box sx={{ bgcolor: 'grey.100', p: 2, borderRadius: 1 }}>
@@ -512,15 +512,15 @@ const EmergencyNotificationTab: React.FC = () => {
 
       {/* History Detail Dialog */}
       <Dialog open={!!historyDetailDialog} onClose={() => setHistoryDetailDialog(null)} maxWidth="md" fullWidth sx={{ '& .MuiDialog-paper': { mx: { xs: 1, sm: 2 } } }}>
-        <DialogTitle sx={{ borderBottom: 1, borderColor: 'grey.300' }}>{t('emergency.sendingDetails')}</DialogTitle>
+        <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider' }}>{t('emergency.sendingDetails')}</DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           {historyDetailDialog && (
             <>
               {/* PC용 폼 테이블 레이아웃 */}
-              <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mt: 2 }}>
+              <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mt: 2 }}>
                 {/* 제목 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('common.title')}
                   </Typography>
                   <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
@@ -528,8 +528,8 @@ const EmergencyNotificationTab: React.FC = () => {
                   </Typography>
                 </Box>
                 {/* 내용 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('emergency.content')}
                   </Typography>
                   <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', minHeight: 80 }}>
@@ -537,14 +537,14 @@ const EmergencyNotificationTab: React.FC = () => {
                   </Typography>
                 </Box>
                 {/* 발송일시 | 발송방법 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('emergency.sendDateTime')}
                   </Typography>
-                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                     {formatDate(historyDetailDialog.sentAt)}
                   </Typography>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('emergency.sendingMethod')}
                   </Typography>
                   <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
@@ -553,13 +553,13 @@ const EmergencyNotificationTab: React.FC = () => {
                 </Box>
                 {/* 수신자 수 | 상태 */}
                 <Box sx={{ display: 'flex' }}>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('emergency.recipientCount')}
                   </Typography>
-                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                     {historyDetailDialog.recipientCount}
                   </Typography>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('common.status')}
                   </Typography>
                   <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>

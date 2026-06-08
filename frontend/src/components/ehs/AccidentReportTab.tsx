@@ -119,7 +119,7 @@ const AccidentReportTab: React.FC = () => {
 
   const borderCell = {
     border: '1px solid',
-    borderColor: 'grey.300',
+    borderColor: 'divider',
     px: 1,
     py: 0.75,
     fontSize: '0.85rem',
@@ -152,7 +152,7 @@ const AccidentReportTab: React.FC = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
         <Table size="small" sx={{ minWidth: 1400, borderCollapse: 'collapse' }}>
           <TableHead>
             <TableRow>

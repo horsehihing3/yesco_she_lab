@@ -45,21 +45,21 @@ const darkColors = {
 // - 라이트한 본문 배경 (#fafafa) + 흰색 카드
 // - 텍스트: 진한 네이비/회색
 const yescoColors = {
-  primary: '#E60012',         // LS Red (강조)
-  primaryHover: '#B8000F',
-  primaryLight: '#FF334D',
+  primary: '#0F4C81',         // 네이비 블루 (강조) — LS Red 대체
+  primaryHover: '#093561',
+  primaryLight: '#1f6dac',
   background: '#fafafa',
   sidebar: '#0F2147',         // 깊은 네이비
   sidebarBrand: '#0A1733',    // 더 깊은 네이비
   surface: '#ffffff',
   textPrimary: '#1a2332',     // 짙은 네이비-블랙
   textSecondary: '#5b6478',
-  border: '#e5e7eb',
+  border: '#0F2147',          // 진한 네이비 — 모든 border/divider 통일
   success: '#16a34a',
   warning: '#f97316',
   danger: '#dc2626',
-  tableHeader: '#f6f7fb',
-  tableHover: '#fff5f6',      // 옅은 붉은 톤
+  tableHeader: '#0F2147',     // 진한 네이비 헤더
+  tableHover: '#eef4fb',      // 옅은 블루 톤
 }
 
 const fontFamily = [
@@ -214,7 +214,7 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
           root: {
             boxShadow: mode === 'light' ? '0 1px 3px rgba(0,0,0,0.12)' : 'none',
             backgroundColor: mode === 'light' ? colors.surface : colors.sidebarBrand,
-            // YESCO: 진한 네이비 그라데이션 + 하단 붉은 강조선
+            // YESCO: 진한 네이비 그라데이션 + 하단 LS Red 강조선
             ...(isYesco && {
               backgroundImage: `linear-gradient(135deg, ${yescoNavyDeep} 0%, ${yescoNavy} 60%, #163267 100%)`,
               borderBottom: `3px solid ${yescoRed}`,
@@ -239,7 +239,7 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
           outlined: {
             borderColor: colors.border,
             ...(isYesco && {
-              borderColor: '#d8dce5',
+              borderColor: yescoNavy,
             }),
           },
         },
@@ -261,6 +261,11 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
             borderRadius: 8,
             border: `1px solid ${colors.border}`,
             overflow: 'hidden',
+            // 부모가 Paper variant="outlined" 인 경우 — 이중 외곽선 방지를 위해 자체 border 제거
+            '.MuiPaper-outlined &': {
+              border: 'none',
+              borderRadius: 0,
+            },
           },
         },
       },
@@ -268,12 +273,25 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
         styleOverrides: {
           root: {
             backgroundColor: colors.tableHeader,
+            // YESCO: 진한 네이비 헤더 + 흰 글씨 + 하단 LS Red 강조선 + 셀 사이 흰 톤 경계
+            // inline sx 의 `border: '1px solid'` shorthand 가 덮어쓰는 케이스를 막기 위해 reset 후 단방향만 적용
             ...(isYesco && {
-              backgroundColor: yescoNavy,
+              backgroundColor: `${yescoNavy} !important`,
               '& .MuiTableCell-head': {
-                color: '#ffffff',
-                backgroundColor: yescoNavy,
-                borderBottom: `2px solid ${yescoRed}`,
+                color: '#ffffff !important',
+                backgroundColor: `${yescoNavy} !important`,
+                border: 'none !important',
+                borderRight: `1px solid rgba(255,255,255,0.35) !important`,
+                // 빨간 강조선 — 단순 borderBottom 으로 단일선. 본문 row 와 인접해도 같은 두께라 자연스러움
+                borderBottom: `1px solid ${yescoRed} !important`,
+              },
+              // 1단 그룹 헤더 (colSpan만 있고 자식 헤더가 아래에 있는 셀) → 아래 sub 헤더와 자연스럽게 연결 (흰 톤)
+              '& tr:not(:last-child) .MuiTableCell-head:not([rowspan])': {
+                borderBottom: `1px solid rgba(255,255,255,0.35) !important`,
+              },
+              // 헤더 마지막 행의 마지막 셀만 우측 경계 제거 — rowSpan 셀이 :last-child 매치되는 케이스 방지
+              '& tr:last-child .MuiTableCell-head:last-child': {
+                borderRight: 'none !important',
               },
             }),
           },

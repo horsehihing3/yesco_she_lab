@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import {
@@ -61,6 +62,7 @@ const emptyForm: LegalLawRequest = {
 const MENU = 'EHS 경영 › 법규 대응 › 법규검토시스템'
 
 const LegalLawTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { user } = useAuth()
@@ -141,7 +143,7 @@ const LegalLawTab: React.FC = () => {
   }
   const handleDelete = async () => {
     if (!selectedItem) return
-    if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selectedItem.id)
+    if (await showConfirm(t('legalLawTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(selectedItem.id)
   }
   const handleReset = () => { setSearchInput(''); setSearch(''); setCatFilter(''); setStatusFilter('') }
 
@@ -151,10 +153,10 @@ const LegalLawTab: React.FC = () => {
       <Box>
         {/* Stat cards */}
         <Grid container spacing={1.5} sx={{ mb: 2 }}>
-          <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}             label="적용 법령 총계" /></Grid>
-          <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.pendingCount ?? 0}           label="검토 대기/검토중" /></Grid>
-          <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.doneCount ?? 0}              label="검토 완료" sub={`적용 ${stats?.doneApplyCount ?? 0} · 불해당 ${stats?.doneNotApplicableCount ?? 0}`} /></Grid>
-          <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.urgentCount ?? 0}            label="즉시 조치 필요" sub="시행일 임박" /></Grid>
+          <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}             label={t('legalLawTab.label1', '적용 법령 총계')} /></Grid>
+          <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.pendingCount ?? 0}           label={t('legalLawTab.label2', '검토 대기/검토중')} /></Grid>
+          <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.doneCount ?? 0}              label={t('legalLawTab.label3', '검토 완료')} sub={`적용 ${stats?.doneApplyCount ?? 0} · 불해당 ${stats?.doneNotApplicableCount ?? 0}`} /></Grid>
+          <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.urgentCount ?? 0}            label={t('legalLawTab.label4', '즉시 조치 필요')} sub="시행일 임박" /></Grid>
         </Grid>
 
         {/* Urgent banner */}
@@ -237,7 +239,7 @@ const LegalLawTab: React.FC = () => {
                       onClick={() => handleOpenDetail(l)}>
                       <TableCell align="center">{l.category}</TableCell>
                       <TableCell>
-                        <Box sx={{ fontWeight: 600 }}>{l.lawName}{l.urgent && <Chip size="small" label="긴급" color="error" sx={{ ml: 1 }} />}</Box>
+                        <Box sx={{ fontWeight: 600 }}>{l.lawName}{l.urgent && <Chip size="small" label={t('legalLawTab.label5', '긴급')} color="error" sx={{ ml: 1 }} />}</Box>
                         <Typography variant="caption" sx={{ color: 'info.main' }}>{l.clause}</Typography>
                       </TableCell>
                       <TableCell align="center">{l.enforceDate || ''}</TableCell>
@@ -277,7 +279,7 @@ const LegalLawTab: React.FC = () => {
             <FormCell>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="body2" fontWeight={600}>{selectedItem.lawName}</Typography>
-                {selectedItem.urgent && <Chip size="small" label="긴급" color="error" />}
+                {selectedItem.urgent && <Chip size="small" label={t('legalLawTab.label6', '긴급')} color="error" />}
               </Box>
             </FormCell>
           </FormRow>

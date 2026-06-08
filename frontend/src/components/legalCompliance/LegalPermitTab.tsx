@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography,
@@ -40,6 +41,7 @@ const emptyForm: LegalPermitRequest = {
 }
 
 const LegalPermitTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: permits = [], isLoading } = useQuery({ queryKey: ['legalPermits'], queryFn: permitApi.list })
@@ -100,10 +102,10 @@ const LegalPermitTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}  label="인허가 총 건수" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.validCount ?? 0}  label="유효 (정상)" sub="60일 이상 여유" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.warnCount ?? 0}   label="갱신 임박" sub="D-60 이내" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.urgentCount ?? 0} label="긴급 갱신" sub="D-30 이내" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}  label={t('legalPermitTab.label1', '인허가 총 건수')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.validCount ?? 0}  label={t('legalPermitTab.label2', '유효 (정상)')} sub="60일 이상 여유" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.warnCount ?? 0}   label={t('legalPermitTab.label3', '갱신 임박')} sub="D-60 이내" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.urgentCount ?? 0} label={t('legalPermitTab.label4', '긴급 갱신')} sub="D-30 이내" /></Grid>
       </Grid>
 
       {urgent.length > 0 && (
@@ -116,11 +118,11 @@ const LegalPermitTab: React.FC = () => {
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={1.5}>
-          <TextField select size="small" sx={{ minWidth: 130 }} label="유형" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+          <TextField select size="small" sx={{ minWidth: 130 }} label={t('legalPermitTab.label5', '유형')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
             <MenuItem value="">전체</MenuItem>
             {PERMIT_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
           </TextField>
-          <TextField select size="small" sx={{ minWidth: 130 }} label="분류" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+          <TextField select size="small" sx={{ minWidth: 130 }} label={t('legalPermitTab.label6', '분류')} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
             <MenuItem value="">전체</MenuItem>
             {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
           </TextField>
@@ -186,7 +188,7 @@ const LegalPermitTab: React.FC = () => {
                     {p.category && <Chip size="small" label={p.category} variant="outlined" />}
                     {p.renewalPeriod && <Chip size="small" label={`${p.renewalPeriod} 주기`} variant="outlined" sx={{ ml: 'auto !important' }} />}
                     <IconButton size="small" onClick={() => openEdit(p)}><EditIcon fontSize="inherit" /></IconButton>
-                    <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                    <IconButton size="small" onClick={async () => { if (await showConfirm(t('legalPermitTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                   </Stack>
                 </Paper>
               </Grid>

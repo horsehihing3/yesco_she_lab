@@ -36,10 +36,10 @@ const STATUS_COLORS: Record<string, 'default' | 'info' | 'success' | 'warning' |
   REQUESTED: 'info', APPROVED: 'success', ISSUED: 'success', RETURNED: 'default', REJECTED: 'error', CANCELLED: 'default',
 }
 
-const labelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+const labelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
 const valSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 const PpeRequestTab: React.FC = () => {
@@ -154,7 +154,7 @@ const PpeRequestTab: React.FC = () => {
     return (
       <Box>
         {/* PC 2열 */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.requestId')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requestId}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.status')}</Typography><Box sx={valSx}><Chip label={getStatusLabel(selectedItem.status)} color={STATUS_COLORS[selectedItem.status] || 'default'} size="small" /></Box></Box>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.itemName')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.itemName}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.category')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{getCategoryLabel(selectedItem.itemCategory || '')}</Typography></Box></Box>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.model')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.itemModel || ''}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.quantity')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.quantity}</Typography></Box></Box>
@@ -226,7 +226,7 @@ const PpeRequestTab: React.FC = () => {
     return (
       <Box>
         {/* PC 폼 */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('ppeReq.selectEquipment')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valSx}>
@@ -319,7 +319,7 @@ const PpeRequestTab: React.FC = () => {
         {/* Mobile Cards */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
           {items.map(item => (
-            <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+            <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography fontWeight="bold">{item.itemName}</Typography>
                 <Chip label={getStatusLabel(item.status)} color={STATUS_COLORS[item.status] || 'default'} size="small" />

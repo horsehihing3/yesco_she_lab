@@ -112,7 +112,7 @@ const WaterReportTab: React.FC = () => {
           1. {t('water.report.measurementInfo', '측정 정보')}
         </Typography>
         <TableContainer sx={{ mb: 3 }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableBody>
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('water.report.date', '측정일')}</TableCell>
@@ -128,7 +128,7 @@ const WaterReportTab: React.FC = () => {
           2. {t('water.report.measurementValues', '측정값')}
         </Typography>
         <TableContainer sx={{ mb: 3 }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableHead>
               <TableRow>
                 <TableCell align="center" sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('water.report.itemName', '항목')}</TableCell>
@@ -163,7 +163,7 @@ const WaterReportTab: React.FC = () => {
           </Table>
         </TableContainer>
 
-        <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'grey.300', textAlign: 'center' }}>
+        <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
             {hasExceedance
               ? t('water.report.exceedanceNote', `※ ${exceeded.length}개 항목에서 기준 초과`)
@@ -188,7 +188,7 @@ const WaterReportTab: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }} className="no-print">레포트</Typography>
+      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }} className="no-print">{t('common.report', '레포트')}</Typography>
     <ReportListWrapper<any>
       items={filtered}
       columns={columns}

@@ -78,7 +78,7 @@ const ChemicalSafetyTab: React.FC = () => {
           ) : (
             <>
               <TableContainer sx={{ display: { xs: 'none', md: 'block' }, overflowX: 'auto' }}>
-                <Table size="small" sx={{ minWidth: 500, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <Table size="small" sx={{ minWidth: 500, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 'bold' }}>{t('chem.nameKo')}</TableCell>
@@ -121,7 +121,7 @@ const ChemicalSafetyTab: React.FC = () => {
       <Paper sx={{ p: 2 }}>
         <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2 }}>{t('chem.safety.emergencyProcedures')}</Typography>
         <TableContainer sx={{ display: { xs: 'none', md: 'block' }, overflowX: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 700, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <Table size="small" sx={{ minWidth: 700, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontWeight: 'bold' }}>{t('chem.nameKo')}</TableCell>

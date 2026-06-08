@@ -445,7 +445,7 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
       // embedded 부모(EmrDrillTab/AuditExecutionTab/AuditFindingTab)가 자체 success 토스트를 띄우므로 중복 방지
       if (!embedded) showSuccess(t('common.saveSuccess', '저장되었습니다.'))
     } catch {
-      showError('저장에 실패했습니다.')
+      showError(t('safetyChecklistTab.msg1', '저장에 실패했습니다.'))
     } finally {
       setIsSaving(false)
     }
@@ -513,9 +513,9 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
       {!hideTemplateInfo && (
       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight="bold" color="text.primary" sx={{ mb: 2 }}>{t('checklist.checklistInfo', '체크리스트 정보')}</Typography>
-        <Paper sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', color: 'text.primary', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
+        <Paper sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', color: 'text.primary', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
               {t('common.title', '제목')}
             </Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
@@ -526,8 +526,8 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
               )}
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', color: 'text.primary', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', color: 'text.primary', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
               {t('common.description', '설명')}
             </Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
@@ -539,7 +539,7 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
             </Box>
           </Box>
           <Box sx={{ display: 'flex' }}>
-            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', color: 'text.primary', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
+            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', color: 'text.primary', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
               {t('common.createdAt', '작성일자')}
             </Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
@@ -820,7 +820,7 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
             [t('safetyChecklist.reviewerSign', '검토자'), 'reviewerName', 'reviewerSign', 'reviewerSignDate'],
             [t('safetyChecklist.approverSign', '승인자'), 'approverName', 'approverSign', 'approverSignDate'],
           ] as [string, string, string, string][]).map(([title, nameKey, signKey, dateKey]) => (
-            <Paper key={nameKey} sx={{ p: 2, border: 1, borderColor: 'grey.300' }}>
+            <Paper key={nameKey} sx={{ p: 2, border: 1, borderColor: 'divider' }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5, bgcolor: 'primary.main', color: 'white', px: 1.5, py: 0.75, borderRadius: 0.5, textAlign: 'center' }}>{title}</Typography>
               <Box sx={{ mb: 1.5 }}>
                 <Typography variant="caption" fontWeight="bold" sx={{ mb: 0.5, display: 'block' }}>{t('common.name', '성명')}</Typography>

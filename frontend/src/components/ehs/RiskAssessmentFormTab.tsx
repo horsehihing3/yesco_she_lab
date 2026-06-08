@@ -311,9 +311,9 @@ const RiskAssessmentFormTab: React.FC<RiskAssessmentFormTabProps> = ({ formId: p
       <LoadingOverlay open={isSaving} message="처리 중..." />
 
       {/* Title & Description */}
-      <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-          <Box sx={{ width: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem' }}>
+      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ width: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem' }}>
             {t('common.title', '제목')} {isEditing && <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>}
           </Box>
           <Box sx={{ flex: 1, px: 2, py: 1, display: 'flex', alignItems: 'center' }}>
@@ -323,7 +323,7 @@ const RiskAssessmentFormTab: React.FC<RiskAssessmentFormTabProps> = ({ formId: p
           </Box>
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Box sx={{ width: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem' }}>
+          <Box sx={{ width: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem' }}>
             {t('common.description', '설명')}
           </Box>
           <Box sx={{ flex: 1, px: 2, py: 1, display: 'flex', alignItems: 'center' }}>
@@ -344,8 +344,8 @@ const RiskAssessmentFormTab: React.FC<RiskAssessmentFormTabProps> = ({ formId: p
       )}
 
       {/* Items table - 배관연구팀 양식 헤더 구조 (협력사 탭 패턴 동일) */}
-      <TableContainer component={Paper} sx={{ border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 2000, borderCollapse: 'collapse', '& .MuiTableCell-root': { border: '1px solid', borderColor: 'grey.300', wordBreak: 'keep-all', fontSize: '0.85rem', px: 1, py: 0.75 } }}>
+      <TableContainer component={Paper} sx={{ border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 2000, borderCollapse: 'collapse', '& .MuiTableCell-root': { border: '1px solid', borderColor: 'divider', wordBreak: 'keep-all', fontSize: '0.85rem', px: 1, py: 0.75 } }}>
           <TableHead>
             {/* 1열 헤더 (그룹) */}
             <TableRow sx={{ bgcolor: 'grey.100' }}>

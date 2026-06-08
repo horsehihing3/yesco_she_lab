@@ -204,8 +204,11 @@ const EhsBudgetCompareTab: React.FC = () => {
         ) : (
           <>
             {/* PC Table */}
-            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
-              <Table size="small">
+            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
+              <Table size="small" sx={{
+                '& td, & th': { borderRight: '1px solid', borderColor: 'divider' },
+                '& td:last-child, & th:last-child': { borderRight: 'none' },
+              }}>
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
                     <TableCell sx={hSx} align="center">{t('budget.category', '분류')}</TableCell>
@@ -257,7 +260,7 @@ const EhsBudgetCompareTab: React.FC = () => {
             {/* Mobile Card List */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {aggregates.categoryStats.map((c) => (
-                <Paper key={c.category} sx={{ p: 2, border: 1, borderColor: 'grey.300' }}>
+                <Paper key={c.category} sx={{ p: 2, border: 1, borderColor: 'divider' }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                     <Chip label={getCategoryLabel(c.category) || c.category} size="small" />
                     <Typography variant="body2" fontWeight="bold" sx={{ color: getRateColor(c.rate) }}>

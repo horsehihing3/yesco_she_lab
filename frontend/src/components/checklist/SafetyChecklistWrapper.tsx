@@ -142,8 +142,8 @@ const SafetyChecklistWrapper: React.FC<SafetyChecklistWrapperProps> = ({ categor
       ) : (
         <>
           {/* PC Table */}
-          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ ...headerCellSx, width: 48, p: 0 }} align="center"></TableCell>
@@ -177,7 +177,7 @@ const SafetyChecklistWrapper: React.FC<SafetyChecklistWrapperProps> = ({ categor
           {/* Mobile Cards */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {filtered.map((tmpl: SafetyChecklistTemplate) => (
-              <Paper key={tmpl.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => setSelectedId(tmpl.id)}>
+              <Paper key={tmpl.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => setSelectedId(tmpl.id)}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                   <Box onClick={(e) => e.stopPropagation()}>
                     <Radio size="small" checked={copyTargetId === tmpl.id}

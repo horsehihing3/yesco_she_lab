@@ -55,15 +55,15 @@ const deleteCourse = async (id: number): Promise<void> => {
 
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
-const lastRowSx = { display: 'flex', borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const lastRowSx = { display: 'flex', borderColor: 'divider' }
 
 const TrainingCourseTab: React.FC = () => {
   const queryClient = useQueryClient()
@@ -250,7 +250,7 @@ const TrainingCourseTab: React.FC = () => {
           <Alert severity="info">{t('common.noData', '데이터가 없습니다')}</Alert>
         ) : (
           <>
-            <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
+            <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -307,7 +307,7 @@ const TrainingCourseTab: React.FC = () => {
     if (!d) return <Alert severity="error">{t('common.noData', '데이터가 없습니다')}</Alert>
     return (
       <Box>
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('trainingCourse.courseCode', '코드')}</Box>
             <Box sx={valBorderSx}><Typography variant="body2"><code>{d.courseCode}</code></Typography></Box>
@@ -360,7 +360,7 @@ const TrainingCourseTab: React.FC = () => {
   return (
     <Box>
       <LoadingOverlay open={isProcessing} />
-      <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('trainingCourse.courseCode', '코드')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Box>
           <Box sx={valBorderSx}>

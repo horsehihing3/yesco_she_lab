@@ -20,10 +20,10 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
-const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 const emptyForm = { reportYear: new Date().getFullYear(), chemicalName: '', casNumber: '', annualUsage: 0, unit: '', usagePurpose: '', reportDeadline: '', submitDate: '', status: 'COLLECTING' }
 
@@ -89,7 +89,7 @@ const UsageReportTab: React.FC = () => {
   if (viewMode === 'detail' && selectedItem) {
     return (
       <Box>
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
             <Box sx={rowSx}><Typography sx={labelSx}>{t('chem.usageReport.reportYear')}</Typography><Box sx={valBorderSx}><Typography variant="body2">{selectedItem.reportYear}</Typography></Box><Typography sx={labelSx}>{t('chem.usageReport.chemicalName')}</Typography><Box sx={valSx}><Typography variant="body2">{selectedItem.chemicalName}</Typography></Box></Box>
             <Box sx={rowSx}><Typography sx={labelSx}>{t('chem.casNumber')}</Typography><Box sx={valBorderSx}><Typography variant="body2">{selectedItem.casNumber || ''}</Typography></Box><Typography sx={labelSx}>{t('chem.usageReport.annualUsage')}</Typography><Box sx={valSx}><Typography variant="body2">{selectedItem.annualUsage?.toLocaleString() ?? ''}</Typography></Box></Box>
             <Box sx={rowSx}><Typography sx={labelSx}>{t('chem.unit')}</Typography><Box sx={valBorderSx}><Typography variant="body2">{selectedItem.unit || ''}</Typography></Box><Typography sx={labelSx}>{t('chem.usageReport.usagePurpose')}</Typography><Box sx={valSx}><Typography variant="body2">{selectedItem.usagePurpose || ''}</Typography></Box></Box>
@@ -115,7 +115,7 @@ const UsageReportTab: React.FC = () => {
     return (
       <Box>
         {/* PC Form */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('chem.usageReport.reportYear')}</Typography>
             <Box sx={valBorderSx}><NumberField fullWidth size="small" thousandSeparator={false} value={form.reportYear} onChange={(v) => setForm({ ...form, reportYear: v ?? 0 })} /></Box>
@@ -258,7 +258,7 @@ const UsageReportTab: React.FC = () => {
         <>
           <Paper>
             <TableContainer sx={{ overflowX: 'auto' }}>
-              <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={hSx}>{t('chem.usageReport.reportYear')}</TableCell>

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Box, Tabs, Tab } from '@mui/material'
 import { SiteSafetyPlanContent } from './SiteSafetyManagementPage'
 import PartnerSafetyExecuteTab from '../components/partner/PartnerSafetyExecuteTab'
@@ -7,13 +8,14 @@ import { useMenuRule } from '../hooks/useMenuRule'
 
 // 협력 업체 안전 관리 — 현장 안전 관리 구조 재사용 (대시보드/레포트 제외)
 const PartnerSafetyMgmtPage: React.FC = () => {
+  const { t } = useTranslation()
   const { isMenuHidden } = useMenuRule()
   const [activeTab, setActiveTab] = useState(0)
 
   const tabs = useMemo(() => [
-    { menuKey: 'partner-safety.tab.manage',  label: '관리', component: <SiteSafetyPlanContent mode="plan" planType="PARTNER" /> },
-    { menuKey: 'partner-safety.tab.execute', label: '실행', component: <PartnerSafetyExecuteTab /> },
-    { menuKey: 'partner-safety.tab.view',    label: '조회', component: <PartnerSafetyHistoryTab /> },
+    { menuKey: 'partner-safety.tab.manage', label: t('partner-safety.tab.manage', '관리'), component: <SiteSafetyPlanContent mode="plan" planType="PARTNER" /> },
+    { menuKey: 'partner-safety.tab.execute', label: t('partner-safety.tab.execute', '실행'), component: <PartnerSafetyExecuteTab /> },
+    { menuKey: 'partner-safety.tab.view', label: t('partner-safety.tab.view', '조회'), component: <PartnerSafetyHistoryTab /> },
   ].filter(tab => !isMenuHidden(tab.menuKey)), [isMenuHidden])
 
   useEffect(() => {

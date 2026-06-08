@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -37,6 +38,7 @@ const emptyForm: Partial<DpInfect> = { programType: '예방접종', status: '완
 const MENU = '보건 관리 › 질병예방 관리 › 감염병'
 
 const DpInfectTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
@@ -62,9 +64,9 @@ const DpInfectTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['dpMgmtStats'] })
   }
 
-  const createM = useMutation({ mutationFn: dpInfectApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpInfect> }) => dpInfectApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: dpInfectApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: dpInfectApi.create, onSuccess: () => { invalidate(); showSuccess(t('dpInfectTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('dpInfectTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpInfect> }) => dpInfectApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('dpInfectTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('dpInfectTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: dpInfectApi.remove, onSuccess: () => { invalidate(); showSuccess(t('dpInfectTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterType !== 'all' && x.programType !== filterType) return false
@@ -78,10 +80,10 @@ const DpInfectTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 기록을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('dpInfectTab.msg6', '이 기록을 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.workerName || !form.programType) { showError('근로자명·프로그램 유형 필수'); return }
+    if (!form.workerName || !form.programType) { showError(t('dpInfectTab.msg7', '근로자명·프로그램 유형 필수')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -89,7 +91,7 @@ const DpInfectTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>감염병 기록 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('dpInfectTab.section1', '감염병 기록 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>근로자명</FormLabel><FormCell borderRight><Typography variant="body2" fontWeight={600}>{selected.workerName}</Typography></FormCell><FormLabel>부서</FormLabel><FormCell><Typography variant="body2">{selected.department || ''}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>프로그램 유형</FormLabel><FormCell borderRight><Chip size="small" label={selected.programType} color={typeColor(selected.programType)} variant="outlined" /></FormCell><FormLabel>상태</FormLabel><FormCell><Typography variant="body2">{selected.status || ''}</Typography></FormCell></FormRow>
@@ -170,10 +172,10 @@ const DpInfectTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.infectTotal ?? 0} label="전체 기록" sub="예방·검진·발생" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.infectVac ?? 0}   label="예방접종" sub="등록 건수" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.infectDue ?? 0}   label="검진 임박" sub="30일 이내" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.infectEvent ?? 0} label="발생·노출" sub="대응 중" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.infectTotal ?? 0} label={t('dpInfectTab.label1', '전체 기록')} sub="예방·검진·발생" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.infectVac ?? 0}   label={t('dpInfectTab.label2', '예방접종')} sub="등록 건수" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.infectDue ?? 0}   label={t('dpInfectTab.label3', '검진 임박')} sub="30일 이내" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.infectEvent ?? 0} label={t('dpInfectTab.label4', '발생·노출')} sub="대응 중" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

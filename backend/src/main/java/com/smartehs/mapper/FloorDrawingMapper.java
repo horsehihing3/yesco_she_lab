@@ -26,4 +26,7 @@ public interface FloorDrawingMapper {
     void delete(@Param("id") Long id);
 
     void softDelete(@Param("id") Long id);
+
+    /** 사업장 이름 변경 시 도면 테이블의 name/site 컬럼 cascade rename */
+    int renameSite(@Param("oldName") String oldName, @Param("newName") String newName);
 }

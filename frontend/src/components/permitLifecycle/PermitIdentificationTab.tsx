@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -27,6 +28,7 @@ const statusColor = (s?: string): 'success' | 'warning' | 'error' | 'default' =>
 const emptyForm: Partial<PermitIdentification> = { status: '검토중' }
 
 const PermitIdentificationTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
 
@@ -50,17 +52,17 @@ const PermitIdentificationTab: React.FC = () => {
 
   const createM = useMutation({
     mutationFn: permitIdentApi.create,
-    onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() },
-    onError: () => showError('등록에 실패했습니다'),
+    onSuccess: () => { invalidate(); showSuccess(t('permitIdentificationTab.msg1', '등록되었습니다')); handleBackToList() },
+    onError: () => showError(t('permitIdentificationTab.msg2', '등록에 실패했습니다')),
   })
   const updateM = useMutation({
     mutationFn: ({ id, e }: { id: number; e: Partial<PermitIdentification> }) => permitIdentApi.update(id, e),
-    onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() },
-    onError: () => showError('수정에 실패했습니다'),
+    onSuccess: () => { invalidate(); showSuccess(t('permitIdentificationTab.msg3', '수정되었습니다')); handleBackToList() },
+    onError: () => showError(t('permitIdentificationTab.msg4', '수정에 실패했습니다')),
   })
   const deleteM = useMutation({
     mutationFn: permitIdentApi.remove,
-    onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() },
+    onSuccess: () => { invalidate(); showSuccess(t('permitIdentificationTab.msg5', '삭제되었습니다')); handleBackToList() },
   })
 
   const filtered = useMemo(() => list.filter((x) => {
@@ -79,10 +81,10 @@ const PermitIdentificationTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 식별 항목을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('permitIdentificationTab.msg6', '이 식별 항목을 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.equipmentName) { showError('설비명을 입력해주세요'); return }
+    if (!form.equipmentName) { showError(t('permitIdentificationTab.msg7', '설비명을 입력해주세요')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -90,7 +92,7 @@ const PermitIdentificationTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>식별 항목 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('permitIdentificationTab.section1', '식별 항목 상세')}</Typography>
         <FormTable>
           <FormRow>
             <FormLabel>설비·시설명</FormLabel>
@@ -200,10 +202,10 @@ const PermitIdentificationTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.identTotal ?? 0}  label="전체 식별" sub="건" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.identDone ?? 0}   label="식별완료" sub="인허가 매핑 완료" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.identReview ?? 0} label="검토 중" sub="대상 여부 판정 중" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.identMiss ?? 0}   label="미식별" sub="조치 필요" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.identTotal ?? 0}  label={t('permitIdentificationTab.label1', '전체 식별')} sub="건" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.identDone ?? 0}   label={t('permitIdentificationTab.label2', '식별완료')} sub="인허가 매핑 완료" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.identReview ?? 0} label={t('permitIdentificationTab.label3', '검토 중')} sub="대상 여부 판정 중" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.identMiss ?? 0}   label={t('permitIdentificationTab.label4', '미식별')} sub="조치 필요" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

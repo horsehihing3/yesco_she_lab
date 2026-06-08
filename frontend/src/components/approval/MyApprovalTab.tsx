@@ -16,7 +16,7 @@ const ROWS_PER_PAGE = 10
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 const labelSx = {
   width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
@@ -159,7 +159,7 @@ const MyApprovalTab: React.FC = () => {
   }
 
   const tableSx = {
-    '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' },
+    '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' },
     '& .MuiTableCell-root:last-child': { borderRight: 'none' },
     '& tbody tr:last-child td': { borderBottom: 'none' },
   }
@@ -173,7 +173,7 @@ const MyApprovalTab: React.FC = () => {
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
             {t('approval.pendingApprovals')}
           </Typography>
-          <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {isLoadingPending ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress size={24} /></Box>
             ) : pendingList.length === 0 ? (
@@ -225,7 +225,7 @@ const MyApprovalTab: React.FC = () => {
                     <Box
                       key={row.id}
                       sx={{
-                        p: 1.5, cursor: 'pointer', borderBottom: 1, borderColor: 'grey.300',
+                        p: 1.5, cursor: 'pointer', borderBottom: 1, borderColor: 'divider',
                         bgcolor: selectedItem?.id === row.id ? 'action.selected' : 'transparent',
                         '&:last-child': { borderBottom: 0 },
                       }}
@@ -253,7 +253,7 @@ const MyApprovalTab: React.FC = () => {
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
             {t('approval.preview')}
           </Typography>
-          <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', minHeight: 300 }}>
+          <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', minHeight: 300 }}>
             {!selectedItem ? (
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300 }}>
                 <Typography color="text.secondary" variant="body2">{t('approval.selectToPreview')}</Typography>
@@ -270,7 +270,7 @@ const MyApprovalTab: React.FC = () => {
                   { label: t('approval.requestDate'), value: formatDate(selectedItem.requestDate) },
                   { label: t('approval.content'), value: parseContent(selectedItem.content).description || selectedItem.content || '' },
                 ].map((field, idx, arr) => (
-                  <Box key={idx} sx={{ display: 'flex', borderBottom: idx < arr.length - 1 ? 1 : 0, borderColor: 'grey.300' }}>
+                  <Box key={idx} sx={{ display: 'flex', borderBottom: idx < arr.length - 1 ? 1 : 0, borderColor: 'divider' }}>
                     <Typography sx={labelSx}>{field.label}</Typography>
                     <Box sx={valueSx}>
                       {field.chip ? (
@@ -284,7 +284,7 @@ const MyApprovalTab: React.FC = () => {
 
                 {/* Reject Reason Input */}
                 {rejectMode && (
-                  <Box sx={{ p: 2, borderTop: 1, borderColor: 'grey.300' }}>
+                  <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
                     <Typography variant="body2" fontWeight="bold" sx={{ mb: 1 }}>{t('approval.rejectReason')}</Typography>
                     <TextField
                       fullWidth
@@ -300,7 +300,7 @@ const MyApprovalTab: React.FC = () => {
 
                 {/* Action Buttons */}
                 {selectedItem.status === 'PENDING' && (
-                  <Box sx={{ display: 'flex', gap: 1, p: 2, borderTop: 1, borderColor: 'grey.300', justifyContent: 'flex-end' }}>
+                  <Box sx={{ display: 'flex', gap: 1, p: 2, borderTop: 1, borderColor: 'divider', justifyContent: 'flex-end' }}>
                     {!rejectMode ? (
                       <>
                         <Button variant="contained" color="success" onClick={handleApprove} disabled={approveMut.isPending}>
@@ -332,7 +332,7 @@ const MyApprovalTab: React.FC = () => {
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
         {t('approval.myDrafted')}
       </Typography>
-      <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
         {isLoadingDrafted ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress size={24} /></Box>
         ) : draftedList.length === 0 ? (
@@ -377,7 +377,7 @@ const MyApprovalTab: React.FC = () => {
             {/* Mobile Cards */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, p: 1 }}>
               {draftedList.map((row) => (
-                <Paper key={row.id} sx={{ p: 1.5, border: 1, borderColor: 'grey.300' }}>
+                <Paper key={row.id} sx={{ p: 1.5, border: 1, borderColor: 'divider' }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                     <Typography fontWeight="bold" variant="body2">{row.title}</Typography>
                     <Chip label={getStatusLabel(row.status)} size="small" color={getStatusColor(row.status)} />
@@ -396,7 +396,7 @@ const MyApprovalTab: React.FC = () => {
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
         {t('approval.approvalHistory')}
       </Typography>
-      <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
         {isLoadingHistory ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress size={24} /></Box>
         ) : historyList.length === 0 ? (
@@ -439,7 +439,7 @@ const MyApprovalTab: React.FC = () => {
             {/* Mobile Cards */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, p: 1 }}>
               {historyList.map((row) => (
-                <Paper key={row.id} sx={{ p: 1.5, border: 1, borderColor: 'grey.300' }}>
+                <Paper key={row.id} sx={{ p: 1.5, border: 1, borderColor: 'divider' }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                     <Typography fontWeight="bold" variant="body2">{row.title}</Typography>
                     <Chip label={getStatusLabel(row.status)} size="small" color={getStatusColor(row.status)} />

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { fmtPhone } from '../../utils/phoneFormat'
@@ -42,6 +43,7 @@ const emptyForm: Partial<PartnerVisitor> = {
 type Mode = 'list' | 'view' | 'edit' | 'create'
 
 const PartnerVisitorTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['partnerVisitors'], queryFn: partnerVisitorApi.list })
@@ -123,7 +125,7 @@ const PartnerVisitorTab: React.FC = () => {
     else if (mode === 'create') createMut.mutate(form)
   }
   const handleDelete = async () => {
-    if (selected && await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selected.id)
+    if (selected && await showConfirm(t('partnerVisitorTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(selected.id)
   }
 
   // ====== DETAIL PAGE ======
@@ -284,11 +286,11 @@ const PartnerVisitorTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.visitorToday ?? 0}   label="오늘 방문자" sub={`입장 중 ${stats?.visitorInside ?? 0}명`} /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.visitorMonth ?? 0}   label="이번 달 방문자" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={items.filter(v => v.education === '완료').length} label="교육 이수" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.visitorNoEdu ?? 0}   label="교육 미이수" sub="입장 보류" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.visitorBlocked ?? 0} label="출입금지" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.visitorToday ?? 0}   label={t('partnerVisitorTab.label1', '오늘 방문자')} sub={`입장 중 ${stats?.visitorInside ?? 0}명`} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.visitorMonth ?? 0}   label={t('partnerVisitorTab.label2', '이번 달 방문자')} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={items.filter(v => v.education === '완료').length} label={t('partnerVisitorTab.label3', '교육 이수')} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.visitorNoEdu ?? 0}   label={t('partnerVisitorTab.label4', '교육 미이수')} sub="입장 보류" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.visitorBlocked ?? 0} label={t('partnerVisitorTab.label5', '출입금지')} /></Grid>
       </Grid>
 
       <Alert severity="info" sx={{ mb: 2 }}>
@@ -298,7 +300,7 @@ const PartnerVisitorTab: React.FC = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
         <ListSearchBar fullWidth placeholder="성명/업체명/목적 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
-        <TextField select size="small" sx={{ minWidth: 130 }} label="상태" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 130 }} label={t('partnerVisitorTab.label6', '상태')} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>

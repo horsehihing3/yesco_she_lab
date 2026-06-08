@@ -19,11 +19,11 @@ import type { ChemicalClp } from '../../types/chemical.types'
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const metricCardSx = { p: 2, textAlign: 'center', borderRadius: 1, border: 1, borderColor: 'grey.300' }
-const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
+const metricCardSx = { p: 2, textAlign: 'center', borderRadius: 1, border: 1, borderColor: 'divider' }
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 const emptyForm = { chemicalName: '', casNumber: '', clpClassification: '', signalWord: 'Danger', hCodes: '', pCodes: '', lastUpdated: '', status: 'LATEST' }
 
@@ -78,7 +78,7 @@ const ClpTab: React.FC = () => {
     return (
       <Box>
         {/* PC */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
             <Box sx={rowSx}>
               <Typography sx={labelSx}>{t('chem.clp.chemicalName', '화학물질명')}</Typography>
               <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.chemicalName}</Typography></Box>
@@ -142,7 +142,7 @@ const ClpTab: React.FC = () => {
     return (
       <Box>
         {/* PC Form */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('chem.clp.chemicalName', '화학물질명')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valBorderSx}><TextField fullWidth size="small" value={form.chemicalName} onChange={e => setForm({ ...form, chemicalName: e.target.value })} /></Box>

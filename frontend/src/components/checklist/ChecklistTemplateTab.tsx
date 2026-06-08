@@ -352,18 +352,18 @@ const ChecklistTemplateTab: React.FC = () => {
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 650, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 650, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', width: 48, borderRight: 1, borderColor: 'grey.300', p: 0 }} align="center"></TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 60, borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', width: 48, borderRight: 1, borderColor: 'divider', p: 0 }} align="center"></TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 60, borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.no', 'No')}
               </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.title')}
               </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.author')}
               </TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: 120 }} align="center">
@@ -381,15 +381,15 @@ const ChecklistTemplateTab: React.FC = () => {
             ) : (
               alerts.map((row: ChecklistTemplateMaster, idx: number) => (
                 <TableRow key={row.id} hover onClick={() => handleRowClick(row.id)} sx={{ cursor: 'pointer' }}>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300', p: 0 }} onClick={(e) => e.stopPropagation()}>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', p: 0 }} onClick={(e) => e.stopPropagation()}>
                     <Radio size="small" checked={copyTargetId === row.id}
                       onChange={() => setCopyTargetId(row.id)} value={row.id} name="copy-radio" />
                   </TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                     {page * rowsPerPage + idx + 1}
                   </TableCell>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.title}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.modUser || row.regUser}</TableCell>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{row.title}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.modUser || row.regUser}</TableCell>
                   <TableCell align="center">{row.createdAt?.substring(0, 10)}</TableCell>
                 </TableRow>
               ))
@@ -406,7 +406,7 @@ const ChecklistTemplateTab: React.FC = () => {
           </Paper>
         ) : (
           alerts.map((row: ChecklistTemplateMaster) => (
-            <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(row.id)}>
+            <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(row.id)}>
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1 }}>
                 <Box onClick={(e) => e.stopPropagation()} sx={{ display: 'flex', alignItems: 'center' }}>
                   <Radio size="small" checked={copyTargetId === row.id}
@@ -454,7 +454,7 @@ const ChecklistTemplateTab: React.FC = () => {
     </>
   )
 
-  const detailLabelSx = { width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap' }
+  const detailLabelSx = { width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap' }
 
   // ===== DETAIL VIEW =====
   const renderDetailView = () => (
@@ -467,18 +467,18 @@ const ChecklistTemplateTab: React.FC = () => {
         <>
           {/* PC Detail */}
           <Paper sx={{ display: { xs: 'none', md: 'block' }, p: 3, bgcolor: 'grey.50' }}>
-            <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: 제목 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={{ ...detailLabelSx }}>{t('common.title')}</Typography>
                 <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>
                   {detailData.title}
                 </Typography>
               </Box>
               {/* Row 2: 점검일자 | 점검자 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={{ ...detailLabelSx }}>{t('checklist.checkDate')}</Typography>
-                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', borderRight: 1, borderColor: 'grey.300' }}>
+                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', borderRight: 1, borderColor: 'divider' }}>
                   {detailData.checkDate || ''}
                 </Typography>
                 <Typography sx={{ ...detailLabelSx }}>{t('checklist.checker')}</Typography>
@@ -487,9 +487,9 @@ const ChecklistTemplateTab: React.FC = () => {
                 </Typography>
               </Box>
               {/* Row 3: 점검책임자 | 시설관리자 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={{ ...detailLabelSx }}>{t('checklist.checkManager')}</Typography>
-                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', borderRight: 1, borderColor: 'grey.300' }}>
+                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', borderRight: 1, borderColor: 'divider' }}>
                   {detailData.checkManager || ''}
                 </Typography>
                 <Typography sx={{ ...detailLabelSx }}>{t('checklist.facilityManager')}</Typography>
@@ -500,7 +500,7 @@ const ChecklistTemplateTab: React.FC = () => {
               {/* Row 4: 작성자 | 등록일 */}
               <Box sx={{ display: 'flex' }}>
                 <Typography sx={{ ...detailLabelSx }}>{t('common.author')}</Typography>
-                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', borderRight: 1, borderColor: 'grey.300' }}>
+                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', borderRight: 1, borderColor: 'divider' }}>
                   {detailData.modUser || detailData.regUser || ''}
                 </Typography>
                 <Typography sx={{ ...detailLabelSx }}>{t('common.createdAt')}</Typography>
@@ -516,8 +516,8 @@ const ChecklistTemplateTab: React.FC = () => {
           {detailData.items && detailData.items.length > 0 && (
             <Paper sx={{ display: { xs: 'none', md: 'block' }, mt: 2, p: 2 }}>
               <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>{t('checklist.items')}</Typography>
-              <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
-                <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300', px: 2, py: 1.5 }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
+                <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider', px: 2, py: 1.5 }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 'bold', whiteSpace: 'nowrap', bgcolor: 'grey.100' }}>{t('checklist.category')}</TableCell>
@@ -556,7 +556,7 @@ const ChecklistTemplateTab: React.FC = () => {
             <Box sx={{ display: { xs: 'block', md: 'none' }, mt: 2 }}>
               <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>{t('checklist.items')}</Typography>
               {detailData.items.map((item, idx) => (
-                <Paper key={idx} sx={{ p: 1.5, mb: 1, border: 1, borderColor: 'grey.300' }}>
+                <Paper key={idx} sx={{ p: 1.5, mb: 1, border: 1, borderColor: 'divider' }}>
                   <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5 }}>
                     {item.category ? `[${item.category}] ` : ''}{item.checkItem || ''}
                   </Typography>
@@ -633,7 +633,7 @@ const ChecklistTemplateTab: React.FC = () => {
   )
 
   // ===== CREATE / EDIT VIEW =====
-  const labelSx = { width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', whiteSpace: 'nowrap' }
+  const labelSx = { width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', whiteSpace: 'nowrap' }
 
   const renderFormView = () => (
     <>
@@ -641,8 +641,8 @@ const ChecklistTemplateTab: React.FC = () => {
 
       {/* PC Form */}
       <Paper sx={{ display: { xs: 'none', md: 'block' }, p: 3, bgcolor: 'grey.50' }}>
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={{ ...labelSx }}>
               {t('common.title')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
@@ -650,9 +650,9 @@ const ChecklistTemplateTab: React.FC = () => {
               <TextField fullWidth size="small" placeholder={t('common.enterTitle')} value={formTitle} onChange={(e) => setFormTitle(e.target.value)} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={{ ...labelSx }}>{t('checklist.checkDate')}</Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
               <DatePickerField value={formCheckDate} onChange={(v) => setFormCheckDate(v)} />
             </Box>
             <Typography sx={{ ...labelSx }}>{t('checklist.checker')}</Typography>
@@ -661,9 +661,9 @@ const ChecklistTemplateTab: React.FC = () => {
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => openUserModal('checker')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={{ ...labelSx }}>{t('checklist.checkManager')}</Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 1 }}>
               <TextField fullWidth size="small" value={formCheckManager} InputProps={{ readOnly: true }} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => openUserModal('checkManager')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
@@ -733,8 +733,8 @@ const ChecklistTemplateTab: React.FC = () => {
           <Typography variant="subtitle1" fontWeight="bold">{t('checklist.items')}</Typography>
           <Button size="small" startIcon={<AddCircleOutlineIcon />} onClick={() => handleAddRow(formItems.length - 1)}>{t('checklist.addRow')}</Button>
         </Box>
-        <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 1100, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
+          <Table size="small" sx={{ minWidth: 1100, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableHead>
               <TableRow>
                 {columns.map((col) => (
@@ -772,7 +772,7 @@ const ChecklistTemplateTab: React.FC = () => {
       <Box sx={{ display: { xs: 'block', md: 'none' }, mt: 2 }}>
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>{t('checklist.items')}</Typography>
         {formItems.map((item, idx) => (
-          <Paper key={idx} sx={{ p: 1.5, mb: 1, border: 1, borderColor: 'grey.300' }}>
+          <Paper key={idx} sx={{ p: 1.5, mb: 1, border: 1, borderColor: 'divider' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
               <Typography variant="body2" fontWeight="bold">#{idx + 1}</Typography>
               <IconButton size="small" color="error" onClick={() => handleRemoveRow(idx)} disabled={formItems.length <= 1}><DeleteIcon fontSize="small" /></IconButton>

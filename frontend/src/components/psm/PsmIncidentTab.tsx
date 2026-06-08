@@ -81,7 +81,7 @@ const PsmIncidentTab: React.FC = () => {
   const handleAddClick = () => { setSelectedId(null); setForm(emptyIncident()); setViewMode('create'); setStep(0) }
   const handleEditClick = () => { if (detail) { setForm({ ...detail }); setViewMode('edit'); setStep(0) } }
   const handleSave = async () => {
-    if (!form.location?.trim()) { showError('발생 장소를 입력해 주세요.'); return }
+    if (!form.location?.trim()) { showError(t('psmIncidentTab.msg1', '발생 장소를 입력해 주세요.')); return }
     const ok = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!ok) return
     if (selectedId) updateMut.mutate({ id: selectedId, i: form })
@@ -111,7 +111,7 @@ const PsmIncidentTab: React.FC = () => {
     return (
       <Box>
         <Box sx={{ display: 'flex', mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="subtitle1" fontWeight="bold">사고보고</Typography>
+          <Typography variant="subtitle1" fontWeight="bold">{t('psmIncidentTab.section1', '사고보고')}</Typography>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>{t('common.new', '신규 등록')}</Button>
         </Box>
         {isLoading ? <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
@@ -266,7 +266,7 @@ const PsmIncidentTab: React.FC = () => {
       {/* Step 2: 원인 분석 */}
       {step === 1 && (
         <>
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1.5 }}>직접 원인 분석</Typography>
+          <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('psmIncidentTab.section2', '직접 원인 분석')}</Typography>
           <FormTable>
             <FormRow>
               <FormLabel>불안전한 행동<br/>(Human Factor)</FormLabel>
@@ -313,7 +313,7 @@ const PsmIncidentTab: React.FC = () => {
       {/* Step 3: 피해 현황 */}
       {step === 2 && (
         <>
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1.5 }}>인명 피해</Typography>
+          <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('psmIncidentTab.section3', '인명 피해')}</Typography>
           <FormTable>
             <FormRow>
               <FormLabel>사망자</FormLabel>
@@ -338,7 +338,7 @@ const PsmIncidentTab: React.FC = () => {
             </FormRow>
           </FormTable>
 
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 3, mb: 1.5 }}>설비·재산·환경 피해</Typography>
+          <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 3, mb: 1.5 }}>{t('psmIncidentTab.section4', '설비·재산·환경 피해')}</Typography>
           <FormTable>
             <FormRow>
               <FormLabel>피해 설비</FormLabel>
@@ -383,7 +383,7 @@ const PsmIncidentTab: React.FC = () => {
       {step === 3 && (
         <>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-            <Typography variant="subtitle2" fontWeight="bold">즉시 조치</Typography>
+            <Typography variant="subtitle2" fontWeight="bold">{t('psmIncidentTab.section5', '즉시 조치')}</Typography>
             {isEdit && <Button size="small" startIcon={<AddIcon />} onClick={() => updateActions([...actions, { no: actions.length + 1, desc: '' }])}>행 추가</Button>}
           </Box>
           <Paper variant="outlined">
@@ -416,7 +416,7 @@ const PsmIncidentTab: React.FC = () => {
             </TableContainer>
           </Paper>
 
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 3, mb: 1.5 }}>재발방지 대책</Typography>
+          <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 3, mb: 1.5 }}>{t('psmIncidentTab.section6', '재발방지 대책')}</Typography>
           <FormTable>
             <FormRow>
               <FormLabel>기술적 대책</FormLabel>

@@ -77,9 +77,9 @@ const CarbonReportTab: React.FC = () => {
     }))
   }, [records])
 
-  const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' as const }
+  const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' as const }
   const lastHeaderCellSx = { fontWeight: 'bold', wordBreak: 'keep-all' as const }
-  const cellSx = { borderRight: 1, borderColor: 'grey.300' }
+  const cellSx = { borderRight: 1, borderColor: 'divider' }
 
   const statCards = [
     { label: t('carbon.report.totalEmission'), value: `${stats.totalEmission.toLocaleString(undefined, { maximumFractionDigits: 2 })} tCO₂eq`, color: '#1976d2' },
@@ -129,7 +129,7 @@ const CarbonReportTab: React.FC = () => {
               {t('carbon.report.bySource')}
             </Typography>
             <TableContainer sx={{ overflowX: 'auto' }}>
-              <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell align="center" sx={headerCellSx}>{t('carbon.report.source')}</TableCell>
@@ -162,7 +162,7 @@ const CarbonReportTab: React.FC = () => {
               {t('carbon.report.monthlyTrend')}
             </Typography>
             <TableContainer sx={{ overflowX: 'auto' }}>
-              <Table size="small" sx={{ minWidth: 560, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" sx={{ minWidth: 560, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell align="center" sx={headerCellSx}>{t('carbon.report.month')}</TableCell>

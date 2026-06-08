@@ -785,32 +785,32 @@ const NearMissPage: React.FC = () => {
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.occWorkplace')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.author')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.department')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 110, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.occDateTime')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.progressStatus')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.manager')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('nearMiss.scheduledDate')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'divider' }} align="center">{t('nearMiss.occWorkplace')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider' }} align="center">{t('nearMiss.author')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('nearMiss.department')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 110, borderRight: 1, borderColor: 'divider' }} align="center">{t('nearMiss.occDateTime')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider' }} align="center">{t('nearMiss.progressStatus')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider' }} align="center">{t('nearMiss.manager')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('nearMiss.scheduledDate')}</TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: 100 }} align="center">{t('nearMiss.completedDate')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredContent.map((nearMiss) => (
               <TableRow key={nearMiss.id} hover onClick={() => handleRowClick(nearMiss)} sx={{ cursor: 'pointer' }}>
-                <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.occSite ? `${nearMiss.occSite}${nearMiss.occFloor ? ` - ${nearMiss.occFloor}` : ''}` : nearMiss.workPlaceName || ''}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.authorName || ''}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.authorDept || ''}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(nearMiss.createdAt)}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{nearMiss.occSite ? `${nearMiss.occSite}${nearMiss.occFloor ? ` - ${nearMiss.occFloor}` : ''}` : nearMiss.workPlaceName || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{nearMiss.authorName || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{nearMiss.authorDept || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatDate(nearMiss.createdAt)}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                   <Chip label={statusKeys[nearMiss.status] || nearMiss.status} size="small" color={statusColors[nearMiss.status]} />
                 </TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.managerName || ''}</TableCell>
-                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{nearMiss.dueDate ? formatDate(nearMiss.dueDate) : ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{nearMiss.managerName || ''}</TableCell>
+                <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{nearMiss.dueDate ? formatDate(nearMiss.dueDate) : ''}</TableCell>
                 <TableCell align="center">{nearMiss.completedDate ? formatDate(nearMiss.completedDate) : ''}</TableCell>
               </TableRow>
             ))}
@@ -833,7 +833,7 @@ const NearMissPage: React.FC = () => {
           </Paper>
         ) : (
           filteredContent.map((nearMiss) => (
-            <Paper key={nearMiss.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(nearMiss)}>
+            <Paper key={nearMiss.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(nearMiss)}>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', mb: 1 }}>
                 <Chip label={statusKeys[nearMiss.status] || nearMiss.status} size="small" color={statusColors[nearMiss.status]} />
               </Box>
@@ -886,22 +886,22 @@ const NearMissPage: React.FC = () => {
         <Box sx={{ mb: 3 }}>
           {/* PC용 테이블 레이아웃 */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-            <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 0: 발생일시 | 성명 | 소속 */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('nearMiss.occDateTimeLabel')}
                 </Typography>
-                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                   {formatDate(viewNearMiss.createdAt)}
                 </Typography>
-                <Typography sx={{ width: 80, minWidth: 80, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Typography sx={{ width: 80, minWidth: 80, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('nearMiss.name')}
                 </Typography>
-                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                   {viewNearMiss.authorName || ''}
                 </Typography>
-                <Typography sx={{ width: 80, minWidth: 80, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Typography sx={{ width: 80, minWidth: 80, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('nearMiss.department')}
                 </Typography>
                 <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
@@ -911,10 +911,10 @@ const NearMissPage: React.FC = () => {
               {/* Row 2-3: 발생장소 + 발생개요 (왼쪽) / 도면 영역 (오른쪽) */}
               <Box sx={{ display: 'flex' }}>
                 {/* 왼쪽 영역: 발생장소 + 발생개요 */}
-                <Box sx={{ flex: 1, borderRight: 1, borderColor: 'grey.300', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ flex: 1, borderRight: 1, borderColor: 'divider', display: 'flex', flexDirection: 'column' }}>
                   {/* 발생장소 */}
-                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                    <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                    <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                       {t('nearMiss.occLocation')}
                     </Typography>
                     <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>
@@ -923,7 +923,7 @@ const NearMissPage: React.FC = () => {
                   </Box>
                   {/* 발생개요 */}
                   <Box sx={{ display: 'flex', flex: 1 }}>
-                    <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                    <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 1, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                       {t('nearMiss.occOverview')}
                     </Typography>
                     <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }}>
@@ -1055,8 +1055,8 @@ const NearMissPage: React.FC = () => {
           사고 대응 분류
         </Typography>
         <Box sx={{ mb: 3 }}>
-          <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
-            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' } }}>
+          <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'divider' } }}>
+            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' } }}>
               <TableBody>
                 <TableRow>
                   <TableCell sx={{ width: 110, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center' }}>비상유형</TableCell>
@@ -1078,11 +1078,11 @@ const NearMissPage: React.FC = () => {
         <Box sx={{ mb: 3 }}>
           {/* PC용 테이블 레이아웃 */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
-              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'divider' } }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.intensity')}</TableCell>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('nearMiss.intensity')}</TableCell>
                     <TableCell>
                       <RadioGroup row value={viewNearMiss.intensity || ''}>
                         {intensityLevelKeys.map((level) => (
@@ -1098,7 +1098,7 @@ const NearMissPage: React.FC = () => {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.frequency')}</TableCell>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('nearMiss.frequency')}</TableCell>
                     <TableCell>
                       <RadioGroup row value={viewNearMiss.frequency || ''}>
                         {frequencyLevelKeys.map((level) => (
@@ -1156,14 +1156,14 @@ const NearMissPage: React.FC = () => {
           {t('nearMiss.measures')}
         </Typography>
         <Box sx={{ mb: 3 }}>
-        <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.measures')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.responsibleDept')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.responsiblePerson')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.scheduledDate')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.measures')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.responsibleDept')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.responsiblePerson')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.scheduledDate')}</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', width: 120, textAlign: 'center' }}>{t('nearMiss.completedDate')}</TableCell>
               </TableRow>
             </TableHead>
@@ -1171,10 +1171,10 @@ const NearMissPage: React.FC = () => {
               {viewNearMiss.actions && viewNearMiss.actions.length > 0 ? (
                 viewNearMiss.actions.map((action, idx) => (
                   <TableRow key={action.id || idx}>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{action.improvementMeasures || ''}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{action.manageDept || ''}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{action.responsiblePerson || ''}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{action.planDate ? action.planDate.substring(0, 10) : ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{action.improvementMeasures || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{action.manageDept || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{action.responsiblePerson || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{action.planDate ? action.planDate.substring(0, 10) : ''}</TableCell>
                     <TableCell sx={{ textAlign: 'center' }}>{action.completeDate ? action.completeDate.substring(0, 10) : ''}</TableCell>
                   </TableRow>
                 ))
@@ -1194,7 +1194,7 @@ const NearMissPage: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           {t('nearMiss.images')}
         </Typography>
-        <Paper sx={{ p: 3, bgcolor: 'grey.50', border: 1, borderColor: 'grey.300' }}>
+        <Paper sx={{ p: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, alignItems: 'stretch' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.beforeAction')}</Typography>
@@ -1208,7 +1208,7 @@ const NearMissPage: React.FC = () => {
                   ))}
                 </Box>
               ) : (
-                <Paper sx={{ minHeight: 200, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}>
+                <Paper sx={{ minHeight: 200, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'divider' }}>
                   <Typography color="text.secondary">{t('nearMiss.noImage')}</Typography>
                 </Paper>
               )}
@@ -1225,7 +1225,7 @@ const NearMissPage: React.FC = () => {
                   ))}
                 </Box>
               ) : (
-                <Paper sx={{ minHeight: 200, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300' }}>
+                <Paper sx={{ minHeight: 200, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'divider' }}>
                   <Typography color="text.secondary">{t('nearMiss.noImage')}</Typography>
                 </Paper>
               )}
@@ -1275,15 +1275,15 @@ const NearMissPage: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           {t(`nearMiss.nearMissInfoByType.${activeTab}`)}
         </Typography>
-        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* PC용 테이블 레이아웃 */}
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {/* Row 0: 발생일시 | 성명 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.occDateTimeLabel')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', gap: 1, alignItems: 'center' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', gap: 1, alignItems: 'center' }}>
                 <Controller
                   name="occDate"
                   control={control}
@@ -1325,13 +1325,13 @@ const NearMissPage: React.FC = () => {
                   )}
                 />
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.name')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
                 <TextField fullWidth size="small" placeholder={t('nearMiss.name')} {...register('authorName')} />
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.department')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1341,14 +1341,14 @@ const NearMissPage: React.FC = () => {
             {/* Row 1: 발생장소 + 발생개요 (왼쪽) / 도면 영역 (오른쪽) */}
             <Box sx={{ display: 'flex' }}>
               {/* 왼쪽 영역: 발생장소 + 발생개요 */}
-              <Box sx={{ flex: 1, borderRight: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ flex: 1, borderRight: 1, borderColor: 'divider' }}>
                 {/* 발생장소 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('nearMiss.occLocation')}
                   </Typography>
                   <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
-                    <Box sx={{ display: 'flex', gap: 1, px: 2, py: 1, borderBottom: 1, borderColor: 'grey.300' }}>
+                    <Box sx={{ display: 'flex', gap: 1, px: 2, py: 1, borderBottom: 1, borderColor: 'divider' }}>
                       <TextField
                         size="small"
                         sx={{ cursor: 'pointer', '& input': { cursor: 'pointer' }, minWidth: 250 }}
@@ -1374,11 +1374,11 @@ const NearMissPage: React.FC = () => {
                 </Box>
                 {/* 발생개요 */}
                 <Box sx={{ display: 'flex' }}>
-                  <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('nearMiss.occOverview')}
                   </Typography>
                   <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
-                    <Box sx={{ px: 2, py: 1, borderBottom: 1, borderColor: 'grey.300' }}>
+                    <Box sx={{ px: 2, py: 1, borderBottom: 1, borderColor: 'divider' }}>
                       <TextField fullWidth size="small" placeholder={t('nearMiss.incidentDescription')} multiline rows={3} {...register('occInfo')} />
                     </Box>
                     <Box sx={{ px: 2, py: 1 }}>
@@ -1582,7 +1582,7 @@ const NearMissPage: React.FC = () => {
               </Box>
             </Box>
             {/* 도면 이미지 - 클릭하여 위치 표시 */}
-            <Box sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 1, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+            <Box sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 1, border: 1, borderColor: 'divider', borderRadius: 1 }}>
               {isLoadingDrawingImage ? (
                 <Box sx={{ width: '100%', minHeight: 150, bgcolor: 'grey.200', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 1 }}>
                   <CircularProgress size={32} />
@@ -1622,11 +1622,11 @@ const NearMissPage: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           사고 대응 분류
         </Typography>
-        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* PC용 테이블 레이아웃 */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
-              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'divider' } }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableBody>
                   <TableRow>
                     <TableCell sx={{ width: 110, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center' }}>비상유형</TableCell>
@@ -1722,14 +1722,14 @@ const NearMissPage: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           {t('nearMiss.riskIdentification')}
         </Typography>
-        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* PC용 테이블 레이아웃 */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
-              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'divider' } }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.intensity')}</TableCell>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('nearMiss.intensity')}</TableCell>
                     <TableCell>
                       <Controller
                         name="intensity"
@@ -1752,7 +1752,7 @@ const NearMissPage: React.FC = () => {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.frequency')}</TableCell>
+                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('nearMiss.frequency')}</TableCell>
                     <TableCell>
                       <Controller
                         name="frequency"
@@ -1830,12 +1830,12 @@ const NearMissPage: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           {t('nearMiss.measures')}
         </Typography>
-        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* PC용 테이블 레이아웃 */}
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
             {/* Row 1: 조치사항 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.measures')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1843,18 +1843,18 @@ const NearMissPage: React.FC = () => {
               </Box>
             </Box>
             {/* Row 2: 담당부서 | 책임자 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.responsibleDept')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                 <TextField fullWidth size="small" placeholder={t('nearMiss.responsibleDept')}
                   value={newMeasure.department} InputProps={{ readOnly: true }} />
                 <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setActionDeptModalOpen(true)}>
                   <PersonSearchIcon fontSize="small" />
                 </Button>
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.responsiblePerson')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
@@ -1864,7 +1864,7 @@ const NearMissPage: React.FC = () => {
             </Box>
             {/* Row 3: 예정일 | 추가 버튼 */}
             <Box sx={{ display: 'flex' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.scheduledDate')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -1918,15 +1918,15 @@ const NearMissPage: React.FC = () => {
             </Button>
           </Box>
 
-          <TableContainer sx={{ border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-            <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+          <TableContainer sx={{ border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.measures')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.responsibleDept')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.responsiblePerson')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.scheduledDate')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{t('nearMiss.completedDate')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.measures')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.responsibleDept')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.responsiblePerson')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.scheduledDate')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{t('nearMiss.completedDate')}</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', width: 60, textAlign: 'center' }}>{t('common.delete')}</TableCell>
                 </TableRow>
               </TableHead>
@@ -1940,11 +1940,11 @@ const NearMissPage: React.FC = () => {
                 ) : (
                   measures.map((measure) => (
                     <TableRow key={measure.id}>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{measure.content}</TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{measure.department}</TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{measure.responsible}</TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{measure.dueDate}</TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', textAlign: 'center' }}>{measure.completedDate || ''}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{measure.content}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{measure.department}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{measure.responsible}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{measure.dueDate}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{measure.completedDate || ''}</TableCell>
                       <TableCell align="center">
                         <IconButton size="small" onClick={() => handleRemoveMeasure(measure.id)}>
                           <DeleteIcon fontSize="small" />
@@ -1962,7 +1962,7 @@ const NearMissPage: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           {t('nearMiss.images')}
         </Typography>
-        <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50' }}>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* 파일 input — multiple 로 다중 선택 지원 */}
           <input ref={beforeFileRef} type="file" multiple accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('before', e)} />
           <input ref={afterFileRef} type="file" multiple accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('after', e)} />
@@ -1971,9 +1971,9 @@ const NearMissPage: React.FC = () => {
           <input ref={afterCameraRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={(e) => handleImageUpload('after', e)} />
           <input ref={overviewFileRef} type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.txt" style={{ display: 'none' }} onChange={handleOverviewFileSelect} />
 
-          <Grid container spacing={0} sx={{ border: 1, borderColor: 'grey.300', alignItems: 'stretch' }}>
+          <Grid container spacing={0} sx={{ border: 1, borderColor: 'divider', alignItems: 'stretch' }}>
             {/* 조치전 */}
-            <Grid item xs={12} sm={6} sx={{ p: 2, borderRight: { xs: 0, sm: 1 }, borderBottom: { xs: 1, sm: 0 }, borderColor: 'grey.300', display: 'flex', flexDirection: 'column' }}>
+            <Grid item xs={12} sm={6} sx={{ p: 2, borderRight: { xs: 0, sm: 1 }, borderBottom: { xs: 1, sm: 0 }, borderColor: 'divider', display: 'flex', flexDirection: 'column' }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('nearMiss.beforeAction')}</Typography>
               {(existingBeforeFiles.length > 0 || newBeforePreviews.length > 0) && (
                 <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 1, mb: 1.5 }}>
@@ -2001,7 +2001,7 @@ const NearMissPage: React.FC = () => {
                   ))}
                 </Box>
               )}
-              <Paper sx={{ minHeight: 80, flex: existingBeforeFiles.length === 0 && newBeforePreviews.length === 0 ? 1 : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300', gap: 1, p: 2 }}>
+              <Paper sx={{ minHeight: 80, flex: existingBeforeFiles.length === 0 && newBeforePreviews.length === 0 ? 1 : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'divider', gap: 1, p: 2 }}>
                 {existingBeforeFiles.length === 0 && newBeforePreviews.length === 0 && (
                   <PhotoCameraIcon sx={{ fontSize: 48, color: '#ccc', mb: 1 }} />
                 )}
@@ -2047,7 +2047,7 @@ const NearMissPage: React.FC = () => {
                   ))}
                 </Box>
               )}
-              <Paper sx={{ minHeight: 80, flex: existingAfterFiles.length === 0 && newAfterPreviews.length === 0 ? 1 : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'grey.300', gap: 1, p: 2 }}>
+              <Paper sx={{ minHeight: 80, flex: existingAfterFiles.length === 0 && newAfterPreviews.length === 0 ? 1 : 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.200', border: 1, borderColor: 'divider', gap: 1, p: 2 }}>
                 {existingAfterFiles.length === 0 && newAfterPreviews.length === 0 && (
                   <PhotoCameraIcon sx={{ fontSize: 48, color: '#ccc', mb: 1 }} />
                 )}

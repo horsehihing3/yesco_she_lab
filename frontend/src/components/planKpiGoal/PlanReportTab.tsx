@@ -130,7 +130,7 @@ const PlanReportTab: React.FC = () => {
           1. {t('pkg.reportOverviewTitle', '계획 개요')}
         </Typography>
         <TableContainer sx={{ mb: 3 }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableBody>
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('pkg.formNo', '서식번호')}</TableCell>
@@ -196,7 +196,7 @@ const PlanReportTab: React.FC = () => {
           />
         </Box>
 
-        <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'grey.300', textAlign: 'center' }}>
+        <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
             {t('audit.report.footer', '본 보고서는 EHS 시스템에서 자동 생성되었습니다.')}
           </Typography>

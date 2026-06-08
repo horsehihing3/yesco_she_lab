@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -40,6 +41,7 @@ const resultColor = (r?: string): 'success' | 'warning' | 'error' | 'default' =>
 const emptyForm: Partial<PermitInspection> = { frequency: '월', inspectionType: '법정', lastResult: '적합' }
 
 const PermitInspectionTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
 
@@ -61,9 +63,9 @@ const PermitInspectionTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['permitLifecycleStats'] })
   }
 
-  const createM = useMutation({ mutationFn: permitInspectionApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitInspection> }) => permitInspectionApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: permitInspectionApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: permitInspectionApi.create, onSuccess: () => { invalidate(); showSuccess(t('permitInspectionTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('permitInspectionTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitInspection> }) => permitInspectionApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('permitInspectionTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('permitInspectionTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: permitInspectionApi.remove, onSuccess: () => { invalidate(); showSuccess(t('permitInspectionTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterFreq !== 'all' && x.frequency !== filterFreq) return false
@@ -77,10 +79,10 @@ const PermitInspectionTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 점검 항목을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('permitInspectionTab.msg6', '이 점검 항목을 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.inspectionName || !form.frequency || !form.nextDate) { showError('점검명·주기·차기 점검일 필수'); return }
+    if (!form.inspectionName || !form.frequency || !form.nextDate) { showError(t('permitInspectionTab.msg7', '점검명·주기·차기 점검일 필수')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -89,7 +91,7 @@ const PermitInspectionTab: React.FC = () => {
     const st = statusBadge(selected.nextDate)
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>점검 항목 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('permitInspectionTab.section1', '점검 항목 상세')}</Typography>
         <FormTable>
           <FormRow>
             <FormLabel>점검 명칭</FormLabel>
@@ -205,10 +207,10 @@ const PermitInspectionTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.ipTotal ?? 0}   label="총 점검 항목" sub="정기 점검" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={(stats?.ipTotal ?? 0) - (stats?.ipNear ?? 0) - (stats?.ipOverdue ?? 0)} label="정상" sub="기한 내" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.ipNear ?? 0}    label="임박 (D-30)" sub="곧 만기" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.ipOverdue ?? 0} label="미실시" sub="기한 초과" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.ipTotal ?? 0}   label={t('permitInspectionTab.label1', '총 점검 항목')} sub="정기 점검" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={(stats?.ipTotal ?? 0) - (stats?.ipNear ?? 0) - (stats?.ipOverdue ?? 0)} label={t('permitInspectionTab.label2', '정상')} sub="기한 내" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.ipNear ?? 0}    label={t('permitInspectionTab.label3', '임박 (D-30)')} sub="곧 만기" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.ipOverdue ?? 0} label={t('permitInspectionTab.label4', '미실시')} sub="기한 초과" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

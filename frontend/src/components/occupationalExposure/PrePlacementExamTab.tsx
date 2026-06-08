@@ -50,7 +50,7 @@ const labelCellSx = {
   px: 2,
   py: 1.5,
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
   display: 'flex',
   alignItems: 'center',
   fontSize: '0.875rem',
@@ -70,7 +70,7 @@ const valueCellSx = {
 const valueCellBorderSx = {
   ...valueCellSx,
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
 }
 
 const formLabelSx = {
@@ -85,7 +85,7 @@ const formValueSx = {
   py: 1,
   bgcolor: 'background.paper',
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
 }
 
 // ===== Helper Functions =====
@@ -453,17 +453,17 @@ const PrePlacementExamTab: React.FC = () => {
       ) : (
         <>
           {/* Table - PC */}
-          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-            <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.prePlacementExam.employeeId')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.prePlacementExam.employeeName')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.prePlacementExam.employeeDept')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.prePlacementExam.examYear')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.prePlacementExam.targetJob')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.prePlacementExam.examResult')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.prePlacementExam.status')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.prePlacementExam.employeeId')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.prePlacementExam.employeeName')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.prePlacementExam.employeeDept')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.prePlacementExam.examYear')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.prePlacementExam.targetJob')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.prePlacementExam.examResult')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.prePlacementExam.status')}</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', width: 110 }} align="center">{t('occupationalExposure.prePlacementExam.examDate')}</TableCell>
                 </TableRow>
               </TableHead>
@@ -476,12 +476,12 @@ const PrePlacementExamTab: React.FC = () => {
                       sx={{ cursor: 'pointer' }}
                       onClick={() => handleViewDetail(row.id)}
                     >
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.employeeId}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.employeeName || ''}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.employeeDept || ''}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.examYear}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.targetJob || ''}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.employeeId}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.employeeName || ''}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.employeeDept || ''}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.examYear}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.targetJob || ''}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                         {row.examResult ? (
                           <Chip
                             label={examResultLabels[row.examResult] || row.examResult}
@@ -490,7 +490,7 @@ const PrePlacementExamTab: React.FC = () => {
                           />
                         ) : ''}
                       </TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                         <Chip
                           label={examStatusLabels[row.status] || row.status}
                           color={getStatusColor(row.status)}
@@ -515,7 +515,7 @@ const PrePlacementExamTab: React.FC = () => {
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {listQuery.data?.content?.length ? (
               listQuery.data.content.map((row) => (
-                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleViewDetail(row.id)}>
+                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleViewDetail(row.id)}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                     <Typography fontWeight="bold" sx={{ flex: 1 }}>{row.employeeName || ''} ({row.employeeId})</Typography>
                     <Chip
@@ -597,36 +597,36 @@ const PrePlacementExamTab: React.FC = () => {
       <Box sx={{ overflow: 'hidden' }}>
         {/* ===== Detail Info - PC Table Form ===== */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, p: 3, bgcolor: 'grey.50', mb: 3 }}>
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.employeeId')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.employeeId}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.employeeName')}</Typography>
             <Typography sx={valueCellSx}>{d.employeeName || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.employeeDept')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.employeeDept || ''}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.employeeEmail')}</Typography>
             <Typography sx={valueCellSx}>{d.employeeEmail || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.examYear')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.examYear}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.examDate')}</Typography>
             <Typography sx={valueCellSx}>{formatDate(d.examDate)}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.hospital')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.hospital || ''}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.targetJob')}</Typography>
             <Typography sx={valueCellSx}>{d.targetJob || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.hazardousFactors')}</Typography>
             <Typography sx={{ ...valueCellSx, whiteSpace: 'pre-wrap' }}>{d.hazardousFactors || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.examResult')}</Typography>
             <Box sx={valueCellBorderSx}>
               {d.examResult ? (
@@ -646,15 +646,15 @@ const PrePlacementExamTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.resultDetail')}</Typography>
             <Typography sx={{ ...valueCellSx, whiteSpace: 'pre-wrap' }}>{d.resultDetail || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.restrictionDetail')}</Typography>
             <Typography sx={{ ...valueCellSx, whiteSpace: 'pre-wrap' }}>{d.restrictionDetail || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.prePlacementExam.followUpRequired')}</Typography>
             <Typography sx={valueCellBorderSx}>
               {d.followUpRequired ? t('common.yes') : t('common.no')}
@@ -750,9 +750,9 @@ const PrePlacementExamTab: React.FC = () => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Form - PC */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           {/* Row 1: employeeId / employeeName */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('occupationalExposure.prePlacementExam.employeeId')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -779,7 +779,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 2: employeeDept / employeeEmail */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.prePlacementExam.employeeDept')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -802,7 +802,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 3: examYear / examDate */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('occupationalExposure.prePlacementExam.examYear')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -842,7 +842,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 4: targetJob / hospital */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.prePlacementExam.targetJob')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -865,7 +865,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 5: hazardousFactors (full width) */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.prePlacementExam.hazardousFactors')}</Typography>
             <Box sx={{ ...formValueSx, borderRight: 0 }}>
               <Controller
@@ -878,7 +878,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 6: examResult / status */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.prePlacementExam.examResult')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -927,7 +927,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 7: resultDetail (full width multiline) */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.prePlacementExam.resultDetail')}</Typography>
             <Box sx={{ ...formValueSx, borderRight: 0 }}>
               <Controller
@@ -940,7 +940,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 8: restrictionDetail (full width multiline) */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.prePlacementExam.restrictionDetail')}</Typography>
             <Box sx={{ ...formValueSx, borderRight: 0 }}>
               <Controller
@@ -953,7 +953,7 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 9: followUpRequired / followUpDate */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.prePlacementExam.followUpRequired')}</Typography>
             <Box sx={{ ...formValueSx, display: 'flex', alignItems: 'center' }}>
               <Controller

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useMenuRule } from '../hooks/useMenuRule'
@@ -12,6 +13,7 @@ import DpThermalTab from '../components/diseasePreventionMgmt/DpThermalTab'
 import DpInfectTab from '../components/diseasePreventionMgmt/DpInfectTab'
 
 const DiseasePreventionMgmtPage: React.FC = () => {
+  const { t } = useTranslation()
   const { isMenuHidden } = useMenuRule()
   const [searchParams, setSearchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState(0)
@@ -21,14 +23,14 @@ const DiseasePreventionMgmtPage: React.FC = () => {
   }
 
   const tabs = useMemo(() => [
-    { menuKey: 'disease-prev.tab.dashboard', label: '대시보드',     component: <DpDashboardTab onGoTab={(t) => { setActiveTab(t); setSearchParams({ tab: String(t) }) }} /> },
-    { menuKey: 'disease-prev.tab.msd',       label: '근골격계',     component: <DpMsdTab /> },
-    { menuKey: 'disease-prev.tab.cvd',       label: '뇌심혈관',     component: <DpCvdTab /> },
-    { menuKey: 'disease-prev.tab.stress',    label: '직무스트레스', component: <DpStressTab /> },
-    { menuKey: 'disease-prev.tab.resp',      label: '호흡기·피부', component: <DpRespiTab /> },
-    { menuKey: 'disease-prev.tab.hearing',   label: '청력보존',     component: <DpHearingTab /> },
-    { menuKey: 'disease-prev.tab.thermal',   label: '온열·한랭',   component: <DpThermalTab /> },
-    { menuKey: 'disease-prev.tab.infect',    label: '감염병',       component: <DpInfectTab /> },
+    { menuKey: 'disease-prev.tab.dashboard', label: t('disease-prev.tab.dashboard', '대시보드'),     component: <DpDashboardTab onGoTab={(t) => { setActiveTab(t); setSearchParams({ tab: String(t) }) }} /> },
+    { menuKey: 'disease-prev.tab.msd', label: t('disease-prev.tab.msd', '근골격계'),     component: <DpMsdTab /> },
+    { menuKey: 'disease-prev.tab.cvd', label: t('disease-prev.tab.cvd', '뇌심혈관'),     component: <DpCvdTab /> },
+    { menuKey: 'disease-prev.tab.stress', label: t('disease-prev.tab.stress', '직무스트레스'), component: <DpStressTab /> },
+    { menuKey: 'disease-prev.tab.resp', label: t('disease-prev.tab.resp', '호흡기·피부'), component: <DpRespiTab /> },
+    { menuKey: 'disease-prev.tab.hearing', label: t('disease-prev.tab.hearing', '청력보존'),     component: <DpHearingTab /> },
+    { menuKey: 'disease-prev.tab.thermal', label: t('disease-prev.tab.thermal', '온열·한랭'),   component: <DpThermalTab /> },
+    { menuKey: 'disease-prev.tab.infect', label: t('disease-prev.tab.infect', '감염병'),       component: <DpInfectTab /> },
   ].filter(tab => !isMenuHidden(tab.menuKey)), [isMenuHidden, setSearchParams])
 
   useEffect(() => {

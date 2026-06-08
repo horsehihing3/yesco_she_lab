@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -33,6 +34,7 @@ const statusColor = (s: string): 'success' | 'info' | 'warning' | 'error' =>
 const emptyForm: Partial<PermitReporting> = { status: '준비중', frequency: '연' }
 
 const PermitReportingTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
 
@@ -54,9 +56,9 @@ const PermitReportingTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['permitLifecycleStats'] })
   }
 
-  const createM = useMutation({ mutationFn: permitReportingApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitReporting> }) => permitReportingApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: permitReportingApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: permitReportingApi.create, onSuccess: () => { invalidate(); showSuccess(t('permitReportingTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('permitReportingTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitReporting> }) => permitReportingApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('permitReportingTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('permitReportingTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: permitReportingApi.remove, onSuccess: () => { invalidate(); showSuccess(t('permitReportingTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterStatus !== 'all' && x.status !== filterStatus) return false
@@ -70,10 +72,10 @@ const PermitReportingTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 보고서를 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('permitReportingTab.msg6', '이 보고서를 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.reportName) { showError('보고서명을 입력해주세요'); return }
+    if (!form.reportName) { showError(t('permitReportingTab.msg7', '보고서명을 입력해주세요')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -81,7 +83,7 @@ const PermitReportingTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>보고서 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('permitReportingTab.section1', '보고서 상세')}</Typography>
         <FormTable>
           <FormRow>
             <FormLabel>보고서명</FormLabel>
@@ -189,10 +191,10 @@ const PermitReportingTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="purple" value={stats?.rpTotal ?? 0}   label="전체 보고서" sub="법정 보고" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.rpDone ?? 0}    label="제출 완료" sub="금년 제출" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.rpNear ?? 0}    label="임박" sub="30일 이내" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.rpOverdue ?? 0} label="지연" sub="기한 초과" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="purple" value={stats?.rpTotal ?? 0}   label={t('permitReportingTab.label1', '전체 보고서')} sub="법정 보고" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.rpDone ?? 0}    label={t('permitReportingTab.label2', '제출 완료')} sub="금년 제출" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.rpNear ?? 0}    label={t('permitReportingTab.label3', '임박')} sub="30일 이내" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.rpOverdue ?? 0} label={t('permitReportingTab.label4', '지연')} sub="기한 초과" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

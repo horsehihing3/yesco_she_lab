@@ -143,23 +143,23 @@ ${detailLines || '(상세 결과 없음)'}
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
               {checkup.employeeName} {t('healthCheckup.aiReport.title')} ({checkup.checkupYear})
             </Typography>
-            <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+            <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
               {[
                 [t('healthCheckup.employeeName'), checkup.employeeName || '', t('healthCheckup.employeeDept'), checkup.employeeDept || ''],
                 [t('healthCheckup.checkupYear'), String(checkup.checkupYear || ''), t('healthCheckup.checkupType'), checkup.checkupType || ''],
                 [t('healthCheckup.checkupDate'), checkup.checkupDate || '', t('healthCheckup.overallResult'), checkup.overallResult || ''],
                 [t('healthCheckup.hospital'), checkup.hospital || '', '', ''],
               ].map((row, idx, arr) => (
-                <Box key={idx} sx={{ display: 'flex', borderBottom: idx < arr.length - 1 ? 1 : 0, borderColor: 'grey.300' }}>
-                  <Typography sx={{ width: '15%', minWidth: 90, bgcolor: 'grey.100', fontWeight: 'bold', px: 1.5, py: 1, fontSize: '0.875rem', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+                <Box key={idx} sx={{ display: 'flex', borderBottom: idx < arr.length - 1 ? 1 : 0, borderColor: 'divider' }}>
+                  <Typography sx={{ width: '15%', minWidth: 90, bgcolor: 'grey.100', fontWeight: 'bold', px: 1.5, py: 1, fontSize: '0.875rem', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                     {row[0]}
                   </Typography>
-                  <Typography sx={{ flex: row[2] ? undefined : 1, width: row[2] ? '35%' : undefined, px: 1.5, py: 1, fontSize: '0.875rem', borderRight: row[2] ? 1 : 0, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+                  <Typography sx={{ flex: row[2] ? undefined : 1, width: row[2] ? '35%' : undefined, px: 1.5, py: 1, fontSize: '0.875rem', borderRight: row[2] ? 1 : 0, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                     {row[1]}
                   </Typography>
                   {row[2] && (
                     <>
-                      <Typography sx={{ width: '15%', minWidth: 90, bgcolor: 'grey.100', fontWeight: 'bold', px: 1.5, py: 1, fontSize: '0.875rem', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+                      <Typography sx={{ width: '15%', minWidth: 90, bgcolor: 'grey.100', fontWeight: 'bold', px: 1.5, py: 1, fontSize: '0.875rem', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                         {row[2]}
                       </Typography>
                       <Typography sx={{ width: '35%', px: 1.5, py: 1, fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
@@ -193,7 +193,7 @@ ${detailLines || '(상세 결과 없음)'}
           <Box sx={{
             '& h1': { fontSize: '1.4rem', fontWeight: 700, mt: 2, mb: 1 },
             '& h2': { fontSize: '1.2rem', fontWeight: 700, mt: 2.5, mb: 1 },
-            '& hr': { border: 'none', borderTop: 1, borderColor: 'grey.300', my: 2 },
+            '& hr': { border: 'none', borderTop: 1, borderColor: 'divider', my: 2 },
             '& h3': { fontSize: '1.05rem', fontWeight: 600, mt: 2, mb: 0.5 },
             '& p': { mb: 1, lineHeight: 1.7 },
             '& ul, & ol': { pl: 3, mb: 1 },

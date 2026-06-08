@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -33,6 +34,7 @@ const emptyForm: Partial<DpRespi> = { exposureType: '유기용제', status: '정
 const MENU = '보건 관리 › 질병예방 관리 › 호흡기피부'
 
 const DpRespiTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
@@ -58,9 +60,9 @@ const DpRespiTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['dpMgmtStats'] })
   }
 
-  const createM = useMutation({ mutationFn: dpRespiApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpRespi> }) => dpRespiApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: dpRespiApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: dpRespiApi.create, onSuccess: () => { invalidate(); showSuccess(t('dpRespiTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('dpRespiTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpRespi> }) => dpRespiApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('dpRespiTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('dpRespiTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: dpRespiApi.remove, onSuccess: () => { invalidate(); showSuccess(t('dpRespiTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterExp !== 'all' && x.exposureType !== filterExp) return false
@@ -74,10 +76,10 @@ const DpRespiTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 항목을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('dpRespiTab.msg6', '이 항목을 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.workerName || !form.exposureType) { showError('근로자명·노출 유형 필수'); return }
+    if (!form.workerName || !form.exposureType) { showError(t('dpRespiTab.msg7', '근로자명·노출 유형 필수')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -85,7 +87,7 @@ const DpRespiTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>호흡기·피부 노출 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('dpRespiTab.section1', '호흡기·피부 노출 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>근로자명</FormLabel><FormCell borderRight><Typography variant="body2" fontWeight={600}>{selected.workerName}</Typography></FormCell><FormLabel>부서</FormLabel><FormCell><Typography variant="body2">{selected.department || ''}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>노출 유형</FormLabel><FormCell><Chip size="small" label={selected.exposureType} color="info" variant="outlined" /></FormCell></FormRow>
@@ -200,10 +202,10 @@ const DpRespiTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.respiTotal ?? 0}    label="노출자" sub="관리 대상" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.respiOk ?? 0}       label="정상" sub="검사 적합" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.respiWatch ?? 0}    label="요관찰" sub="추적 검사" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.respiAbnormal ?? 0} label="이상소견" sub="전문의 진료" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.respiTotal ?? 0}    label={t('dpRespiTab.label1', '노출자')} sub="관리 대상" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.respiOk ?? 0}       label={t('dpRespiTab.label2', '정상')} sub="검사 적합" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.respiWatch ?? 0}    label={t('dpRespiTab.label3', '요관찰')} sub="추적 검사" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.respiAbnormal ?? 0} label={t('dpRespiTab.label4', '이상소견')} sub="전문의 진료" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

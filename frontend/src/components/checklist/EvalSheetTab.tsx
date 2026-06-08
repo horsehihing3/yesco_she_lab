@@ -374,8 +374,8 @@ const EvalSheetTab: React.FC = () => {
         ) : (
           <>
             {/* PC Table */}
-            <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ ...headerCellSx, width: 48, p: 0 }} align="center"></TableCell>
@@ -405,7 +405,7 @@ const EvalSheetTab: React.FC = () => {
             {/* Mobile Cards */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {listRows.map((row) => (
-                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }}
+                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }}
                   onClick={() => { setSelectedMetaId(row.id); setIsEditing(false); setIsCreating(false); setViewMode('detail') }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                     <Box onClick={(e) => e.stopPropagation()}>
@@ -437,16 +437,16 @@ const EvalSheetTab: React.FC = () => {
     return sums
   })()
 
-  const labelCellSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' } as const
+  const labelCellSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' } as const
 
   return (
     <Box>
       {/* 체크리스트 정보 */}
       <Box sx={{ mb: 2 }}>
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>{t('checklist.checklistInfo', '체크리스트 정보')}</Typography>
-        <Paper sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Paper sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* 제목 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Box sx={labelCellSx}>{t('common.title', '제목')}</Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
               {isEditing ? (
@@ -461,7 +461,7 @@ const EvalSheetTab: React.FC = () => {
             </Box>
           </Box>
           {/* 설명 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Box sx={labelCellSx}>{t('common.description', '설명')}</Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
               {isEditing ? (

@@ -684,15 +684,15 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
       </Box>
 
       {/* Main Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('safetyWork.workName')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 220, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('safetyWork.location')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('safetyWork.manager')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('safetyWork.managerDept')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 240, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('safetyWork.period')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyWork.workName')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 220, borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyWork.location')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyWork.manager')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyWork.managerDept')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 240, borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyWork.period')}</TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: 80 }} align="center">{t('common.status')}</TableCell>
             </TableRow>
           </TableHead>
@@ -706,11 +706,11 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
             ) : (
               safetyWorks.map((item) => (
                 <TableRow key={item.id} hover onClick={() => handleRowClick(item)} sx={{ cursor: 'pointer' }}>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.title}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.location || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.managerName || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.managerDept || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatPeriod(item.startDate, item.endDate)}</TableCell>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{item.title}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.location || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.managerName || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.managerDept || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatPeriod(item.startDate, item.endDate)}</TableCell>
                   <TableCell align="center">{getStatusChip(item.status)}</TableCell>
                 </TableRow>
               ))
@@ -727,7 +727,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
           </Paper>
         ) : (
           safetyWorks.map((item) => (
-            <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(item)}>
+            <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(item)}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                 <Typography fontWeight="bold" sx={{ flex: 1 }}>{item.title}</Typography>
                 {getStatusChip(item.status)}
@@ -775,16 +775,16 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
           <Paper sx={{ p: 3, mb: 3, bgcolor: 'grey.50' }}>
           {/* PC용 테이블 레이아웃 */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {/* Row 1: 작업명 | 작업기간 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.workName')}
               </Typography>
-              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                 {workDetail.title || ''}
               </Typography>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.workPeriod')}
               </Typography>
               <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
@@ -793,20 +793,20 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
             </Box>
 
             {/* Row 2: 작업장소 | 협력업체 | 협력업체 담당자명 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.location')}
               </Typography>
-              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                 {workDetail.location || ''}
               </Typography>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.partners')}
               </Typography>
-              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                 {workDetail.partners || ''}
               </Typography>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.partnersContactName')}
               </Typography>
               <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
@@ -815,14 +815,14 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
             </Box>
 
             {/* Row 3: 담당자 | 담당팀 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.manager')}
               </Typography>
-              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                 {workDetail.managerName || ''}
               </Typography>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.managerDept')}
               </Typography>
               <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
@@ -832,13 +832,13 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
 
             {/* Row 4: 소속팀장(승인자) | 상태 */}
             <Box sx={{ display: 'flex' }}>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.teamLeader')}
               </Typography>
-              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+              <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                 {workDetail.approverName || ''}
               </Typography>
-              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('common.status')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -906,9 +906,9 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
           <Paper sx={{ p: 3, mb: 3, bgcolor: 'grey.50' }}>
           {/* PC용 */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 160, minWidth: 160, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 160, minWidth: 160, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.safetyPlan')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
@@ -929,7 +929,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
               </Box>
             </Box>
             <Box sx={{ display: 'flex' }}>
-              <Typography sx={{ width: 160, minWidth: 160, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 160, minWidth: 160, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.riskAssessmentDoc')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
@@ -991,7 +991,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
                 {detailPhotos.map((photo) => (
                   <Box
                     key={photo.id}
-                    sx={{ width: 100, height: 100, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'grey.300', cursor: 'pointer' }}
+                    sx={{ width: 100, height: 100, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'divider', cursor: 'pointer' }}
                     onClick={async () => {
                       const res = await axiosInstance.get(`/files/${photo.id}`, { responseType: 'blob' })
                       const url = URL.createObjectURL(new Blob([res.data]))
@@ -1078,18 +1078,18 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
         {/* 작업 정보 - PC용 테이블 레이아웃 */}
         <Paper sx={{ p: { xs: 2, md: 3 }, bgcolor: 'grey.50', mb: 3 }}>
           {/* PC용 테이블 레이아웃 */}
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {/* Row 1: 작업명 | 작업기간 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.workName')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                 <Controller name="title" control={control} rules={{ required: t('safetyWork.enterWorkNameValidation') }} render={({ field, fieldState }) => (
                   <TextField {...field} size="small" fullWidth error={!!fieldState.error} helperText={fieldState.error?.message} placeholder={t('safetyWork.enterWorkName')} />
                 )} />
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.workPeriod')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -1103,24 +1103,24 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
               </Box>
             </Box>
             {/* Row 2: 작업장소 | 협력업체 | 협력업체 담당자명 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.location')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                 <Controller name="location" control={control} rules={{ required: t('safetyWork.enterLocation') }} render={({ field, fieldState }) => (
                   <TextField {...field} size="small" fullWidth error={!!fieldState.error} helperText={fieldState.error?.message} placeholder={t('safetyWork.enterLocation')} />
                 )} />
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.partners')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                 <Controller name="partners" control={control} render={({ field }) => (
                   <TextField {...field} size="small" fullWidth placeholder={t('safetyWork.enterPartners')} />
                 )} />
               </Box>
-              <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.partnersContactName')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
@@ -1130,17 +1130,17 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
               </Box>
             </Box>
             {/* Row 3: 담당자 | 담당팀 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.manager')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                 <Controller name="managerName" control={control} render={({ field }) => (
                   <TextField {...field} size="small" fullWidth InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={selectedManager ? getManagerDisplayName(selectedManager) : field.value} />
                 )} />
                 <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setManagerModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.managerDept')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
@@ -1151,10 +1151,10 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
             </Box>
             {/* Row 4: 소속팀장 | 상태 */}
             <Box sx={{ display: 'flex' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('safetyWork.teamLeader')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -1164,7 +1164,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
                 />
                 <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setTeamLeaderModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('common.status')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
@@ -1290,10 +1290,10 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
             </MenuItem>
           </Menu>
         </Box>
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           {/* 안전작업계획서 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: { xs: 120, md: 160 }, minWidth: { xs: 120, md: 160 }, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', wordBreak: 'keep-all' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: { xs: 120, md: 160 }, minWidth: { xs: 120, md: 160 }, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', wordBreak: 'keep-all' }}>
               {t('safetyWork.safetyPlan')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
@@ -1313,7 +1313,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
           </Box>
           {/* 위험성 평가서 */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: { xs: 120, md: 160 }, minWidth: { xs: 120, md: 160 }, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', wordBreak: 'keep-all' }}>
+            <Typography sx={{ width: { xs: 120, md: 160 }, minWidth: { xs: 120, md: 160 }, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', wordBreak: 'keep-all' }}>
               {t('safetyWork.riskAssessmentDoc')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
@@ -1345,7 +1345,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
             .map((photo) => (
               <Box
                 key={photo.id}
-                sx={{ position: 'relative', width: 100, height: 100, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'grey.300', cursor: 'pointer' }}
+                sx={{ position: 'relative', width: 100, height: 100, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'divider', cursor: 'pointer' }}
                 onClick={async () => {
                   const res = await axiosInstance.get(`/files/${photo.id}`, { responseType: 'blob' })
                   const url = URL.createObjectURL(new Blob([res.data]))
@@ -1372,7 +1372,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
           {pendingPhotoUrls.map((url, idx) => (
             <Box
               key={`pending-${idx}`}
-              sx={{ position: 'relative', width: 100, height: 100, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'grey.300', cursor: 'pointer' }}
+              sx={{ position: 'relative', width: 100, height: 100, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'divider', cursor: 'pointer' }}
               onClick={() => { setPhotoPreviewUrl(url); setPhotoPreviewOpen(true) }}
             >
               <Box component="img" src={url} alt={`photo-${idx}`} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -1388,7 +1388,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
           {/* Add button */}
           {(existingPhotos.filter((p) => !deletedPhotoIds.includes(p.id)).length + pendingPhotos.length) < 10 && (
             <Box
-              sx={{ width: 100, height: 100, borderRadius: 1, border: '2px dashed', borderColor: 'grey.400', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' } }}
+              sx={{ width: 100, height: 100, borderRadius: 1, border: '2px dashed', borderColor: 'divider', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' } }}
               onClick={() => photoFileRef.current?.click()}
             >
               <AddPhotoAlternateIcon sx={{ fontSize: 28, color: 'grey.500' }} />

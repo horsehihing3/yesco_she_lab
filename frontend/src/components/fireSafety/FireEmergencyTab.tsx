@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip,
@@ -29,6 +30,7 @@ const emptyContact: Partial<FireContact> = { orgType: '내부담당' }
 const emptyDrill: Partial<FireDrill> = { drillType: '소방훈련 (전체 대피)', fireDeptObs: '없음', result: '양호', drillDate: new Date().toISOString().slice(0, 10) }
 
 const FireEmergencyTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: contacts = [], isLoading: l1 } = useQuery({ queryKey: ['fireContacts'], queryFn: fireContactApi.list })
@@ -74,17 +76,17 @@ const FireEmergencyTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.drillTotal ?? 0}   label="총 훈련 이력" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.drillYear ?? 0}    label="올해 훈련 실시" sub={`${new Date().getFullYear()}년`} /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="blue"   value={stats?.contactTotal ?? 0} label="비상 연락처" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="purple" value={drillsYear.filter(d => d.result === '우수').length} label="우수 평가" sub="올해" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="yellow" value={drillsYear.filter(d => d.fireDeptObs?.startsWith('있음')).length} label="소방서 참관" sub="올해" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={drills.length === 0 ? 0 : '0건'} label="올해 화재" sub="무사고 운영" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.drillTotal ?? 0}   label={t('fireEmergencyTab.label1', '총 훈련 이력')} /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.drillYear ?? 0}    label={t('fireEmergencyTab.label2', '올해 훈련 실시')} sub={`${new Date().getFullYear()}년`} /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="blue"   value={stats?.contactTotal ?? 0} label={t('fireEmergencyTab.label3', '비상 연락처')} /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="purple" value={drillsYear.filter(d => d.result === '우수').length} label={t('fireEmergencyTab.label4', '우수 평가')} sub="올해" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="yellow" value={drillsYear.filter(d => d.fireDeptObs?.startsWith('있음')).length} label={t('fireEmergencyTab.label5', '소방서 참관')} sub="올해" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={drills.length === 0 ? 0 : '0건'} label={t('fireEmergencyTab.label6', '올해 화재')} sub="무사고 운영" /></Grid>
       </Grid>
 
       {/* ===== Contacts ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>비상 연락망</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('fireEmergencyTab.section1', '비상 연락망')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setCEditing(null); setCForm(emptyContact); setCOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       <Paper variant="outlined" sx={{ mb: 3 }}>
@@ -115,7 +117,7 @@ const FireEmergencyTab: React.FC = () => {
                     <TableCell>{v.coverage || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => { setCEditing(v); setCForm({ ...v }); setCOpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) cDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireEmergencyTab.msg1', '삭제하시겠습니까?'))) cDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -128,7 +130,7 @@ const FireEmergencyTab: React.FC = () => {
 
       {/* ===== Drills ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>소방·방제 훈련 이력</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('fireEmergencyTab.section2', '소방·방제 훈련 이력')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setDEditing(null); setDForm(emptyDrill); setDOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       <Paper variant="outlined">
@@ -161,7 +163,7 @@ const FireEmergencyTab: React.FC = () => {
                     <TableCell sx={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.improvement || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => { setDEditing(v); setDForm({ ...v }); setDOpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) dDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireEmergencyTab.msg2', '삭제하시겠습니까?'))) dDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

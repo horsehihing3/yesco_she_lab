@@ -313,18 +313,18 @@ const TrainingApplyTab: React.FC = () => {
                 {t('training.applicantInfo', '신청자 정보')}
               </Typography>
               {/* 공통 form-table 패턴: 좌측 라벨 + 우측 값. 모달 폭에 맞춰 라벨 96px */}
-              <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+              <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
                 {(() => {
                   const labelSx = {
                     width: 96, minWidth: 96, fontWeight: 'bold', bgcolor: 'grey.100',
-                    px: 1.5, py: 1, borderRight: 1, borderColor: 'grey.300',
+                    px: 1.5, py: 1, borderRight: 1, borderColor: 'divider',
                     display: 'flex', alignItems: 'center', fontSize: '0.8rem',
                     justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const,
                   }
                   const valSx = { flex: 1, px: 1.5, py: 0.75, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-                  const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
-                  const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
-                  const lastRowSx = { display: 'flex', borderColor: 'grey.300' }
+                  const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
+                  const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+                  const lastRowSx = { display: 'flex', borderColor: 'divider' }
                   return (
                     <>
                       <Box sx={rowSx}>

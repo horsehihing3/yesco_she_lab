@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -46,6 +47,7 @@ const retentionBadge = (d: PermitDocument): { label: string; color: 'success' | 
 const emptyForm: Partial<PermitDocument> = { docType: '허가증', retentionYears: 5 }
 
 const PermitDocumentTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
 
@@ -67,9 +69,9 @@ const PermitDocumentTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['permitLifecycleStats'] })
   }
 
-  const createM = useMutation({ mutationFn: permitDocumentApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitDocument> }) => permitDocumentApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: permitDocumentApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: permitDocumentApi.create, onSuccess: () => { invalidate(); showSuccess(t('permitDocumentTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('permitDocumentTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitDocument> }) => permitDocumentApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('permitDocumentTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('permitDocumentTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: permitDocumentApi.remove, onSuccess: () => { invalidate(); showSuccess(t('permitDocumentTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterType !== 'all' && x.docType !== filterType) return false
@@ -95,10 +97,10 @@ const PermitDocumentTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 문서를 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('permitDocumentTab.msg6', '이 문서를 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.docName || !form.docType || !form.issueDate) { showError('문서명·종류·발급일 필수'); return }
+    if (!form.docName || !form.docType || !form.issueDate) { showError(t('permitDocumentTab.msg7', '문서명·종류·발급일 필수')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -108,7 +110,7 @@ const PermitDocumentTab: React.FC = () => {
     const dd = disposalDate(selected)
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>문서 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('permitDocumentTab.section1', '문서 상세')}</Typography>
         <FormTable>
           <FormRow>
             <FormLabel>문서명</FormLabel>
@@ -209,10 +211,10 @@ const PermitDocumentTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.dcTotal ?? 0} label="전체 문서" sub="건" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={computed.active} label="보존 중" sub="유효 보존" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={computed.near}   label="폐기 임박" sub="1년 이내" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={computed.disp}   label="폐기 대상" sub="보존기간 종료" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.dcTotal ?? 0} label={t('permitDocumentTab.label1', '전체 문서')} sub="건" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={computed.active} label={t('permitDocumentTab.label2', '보존 중')} sub="유효 보존" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={computed.near}   label={t('permitDocumentTab.label3', '폐기 임박')} sub="1년 이내" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={computed.disp}   label={t('permitDocumentTab.label4', '폐기 대상')} sub="보존기간 종료" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

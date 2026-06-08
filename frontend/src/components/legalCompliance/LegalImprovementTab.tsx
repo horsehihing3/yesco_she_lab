@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography, Avatar,
@@ -58,6 +59,7 @@ const emptyForm: LegalImprovementRequest = {
 }
 
 const LegalImprovementTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['legalImprovements'], queryFn: improvementApi.list })
@@ -122,19 +124,19 @@ const LegalImprovementTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}    label="전체 개선 과제" sub="이번 연도" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.registerCount ?? 0} label="등록 / 검토중" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.progressCount ?? 0} label="개선 진행중" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.doneCount ?? 0}     label="완료 종결" sub={`종결률 ${stats?.closeRate ?? 0}%`} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}    label={t('legalImprovementTab.label1', '전체 개선 과제')} sub="이번 연도" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.registerCount ?? 0} label={t('legalImprovementTab.label2', '등록 / 검토중')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.progressCount ?? 0} label={t('legalImprovementTab.label3', '개선 진행중')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.doneCount ?? 0}     label={t('legalImprovementTab.label4', '완료 종결')} sub={`종결률 ${stats?.closeRate ?? 0}%`} /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={1.5}>
-          <TextField select size="small" sx={{ minWidth: 130 }} label="구분" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+          <TextField select size="small" sx={{ minWidth: 130 }} label={t('legalImprovementTab.label5', '구분')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
             <MenuItem value="">전체</MenuItem>
             {IMP_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
           </TextField>
-          <TextField select size="small" sx={{ minWidth: 150 }} label="중요도" value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
+          <TextField select size="small" sx={{ minWidth: 150 }} label={t('legalImprovementTab.label6', '중요도')} value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
             <MenuItem value="">전체</MenuItem>
             {PRIORITIES.map(p => <MenuItem key={p.code} value={p.code}>{p.label}</MenuItem>)}
           </TextField>
@@ -181,7 +183,7 @@ const LegalImprovementTab: React.FC = () => {
                           </Stack>
                           <Box>
                             <IconButton size="small" onClick={() => openEdit(i)}><EditIcon fontSize="inherit" /></IconButton>
-                            <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(i.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                            <IconButton size="small" onClick={async () => { if (await showConfirm(t('legalImprovementTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(i.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                           </Box>
                         </Stack>
                       </Paper>

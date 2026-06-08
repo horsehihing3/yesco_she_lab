@@ -22,12 +22,12 @@ const ROWS_PER_PAGE = 10
 
 const labelSx = {
   width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valueSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }
-const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'grey.300' }
+const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'divider' }
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 // content 파싱: "requestId | description"
@@ -195,9 +195,9 @@ const ApprovalManagePage: React.FC = () => {
       <Box>
         {/* PC Detail */}
         <Paper sx={{ p: 3, mb: 3, bgcolor: 'grey.50', display: { xs: 'none', md: 'block' } }}>
-          <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {fieldPairs.map((pair, idx) => (
-              <Box key={idx} sx={{ display: 'flex', borderBottom: idx < fieldPairs.length - 1 ? 1 : 0, borderColor: 'grey.300' }}>
+              <Box key={idx} sx={{ display: 'flex', borderBottom: idx < fieldPairs.length - 1 ? 1 : 0, borderColor: 'divider' }}>
                 {pair.length === 2 ? (
                   <>
                     {renderCell(pair[0], true)}
@@ -215,7 +215,7 @@ const ApprovalManagePage: React.FC = () => {
 
         {/* Mobile Detail */}
         <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
-          <Paper sx={{ p: 2, border: 1, borderColor: 'grey.300' }}>
+          <Paper sx={{ p: 2, border: 1, borderColor: 'divider' }}>
             {allFields.map((field, idx) => {
               const val = dataMap[field.key] || ''
               return (
@@ -307,7 +307,7 @@ const ApprovalManagePage: React.FC = () => {
           {/* PC Table */}
           <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer>
-              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={headerCellSx} align="center">{t('approval.approvalId')}</TableCell>
@@ -340,7 +340,7 @@ const ApprovalManagePage: React.FC = () => {
           {/* Mobile Cards */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {approvals.map((row) => (
-              <Paper key={row.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleOpenDetail(row)}>
+              <Paper key={row.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleOpenDetail(row)}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography fontWeight="bold" variant="body2">{row.title}</Typography>
                   <Chip label={getStatusLabel(row.status)} size="small" color={getStatusColor(row.status)} />

@@ -54,7 +54,7 @@ const labelCellSx = {
   px: 2,
   py: 1.5,
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
   display: 'flex',
   alignItems: 'center',
   fontSize: '0.875rem',
@@ -74,7 +74,7 @@ const valueCellSx = {
 const valueCellBorderSx = {
   ...valueCellSx,
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
 }
 
 const formLabelSx = {
@@ -89,7 +89,7 @@ const formValueSx = {
   py: 1,
   bgcolor: 'background.paper',
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
 }
 
 
@@ -523,16 +523,16 @@ const SafetyEducationTab: React.FC = () => {
       ) : (
         <>
           {/* Table - PC */}
-          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-            <Table size="small" sx={{ minWidth: 800, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 800, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.title')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.educationType')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 110, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.educationDate')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.educationHours')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.instructorName')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.attendeeCount')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.title')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.educationType')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 110, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.educationDate')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.educationHours')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.instructorName')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.attendeeCount')}</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', width: 80 }} align="center">{t('occupationalExposure.safetyEducation.status')}</TableCell>
                 </TableRow>
               </TableHead>
@@ -545,12 +545,12 @@ const SafetyEducationTab: React.FC = () => {
                       sx={{ cursor: 'pointer' }}
                       onClick={() => handleViewDetail(row.id)}
                     >
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.title}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{educationTypeLabels[row.educationType] || row.educationType}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(row.educationDate)}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.educationHours ?? ''}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.instructorName || ''}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.attendeeCount}</TableCell>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{row.title}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{educationTypeLabels[row.educationType] || row.educationType}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatDate(row.educationDate)}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.educationHours ?? ''}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.instructorName || ''}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.attendeeCount}</TableCell>
                       <TableCell align="center">
                         <Chip
                           label={statusLabels[row.status] || row.status}
@@ -575,7 +575,7 @@ const SafetyEducationTab: React.FC = () => {
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {listQuery.data?.content?.length ? (
               listQuery.data.content.map((row) => (
-                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleViewDetail(row.id)}>
+                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleViewDetail(row.id)}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                     <Typography fontWeight="bold" sx={{ flex: 1 }}>{row.title}</Typography>
                     <Chip
@@ -647,40 +647,40 @@ const SafetyEducationTab: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
           {t('occupationalExposure.safetyEducation.educationInfo')}
         </Typography>
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.title')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.title}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.educationType')}</Typography>
             <Typography sx={valueCellSx}>{educationTypeLabels[d.educationType] || d.educationType}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.educationCategory')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.educationCategory || ''}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.educationDate')}</Typography>
             <Typography sx={valueCellSx}>{formatDate(d.educationDate)}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.educationHours')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.educationHours ?? ''}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.location')}</Typography>
             <Typography sx={valueCellSx}>{d.location || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.instructorName')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.instructorName || ''}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.instructorOrg')}</Typography>
             <Typography sx={valueCellSx}>{d.instructorOrg || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.hazardousFactors')}</Typography>
             <Typography sx={{ ...valueCellSx, whiteSpace: 'pre-wrap' }}>{d.hazardousFactors || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.educationContent')}</Typography>
             <Typography sx={{ ...valueCellSx, whiteSpace: 'pre-wrap' }}>{d.educationContent || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.attendeeCount')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.attendeeCount}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.safetyEducation.status')}</Typography>
@@ -730,16 +730,16 @@ const SafetyEducationTab: React.FC = () => {
 
         <Box sx={{ mb: 3 }}>
         {/* Attendees - PC Table */}
-        <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          <Table size="small" sx={{ minWidth: 800, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+        <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+          <Table size="small" sx={{ minWidth: 800, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.attendeeName')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.attendeeEmail')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.attendeeDept')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.attendeeCompany')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 100 }} align="center">{t('occupationalExposure.safetyEducation.isSigned')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 110 }} align="center">{t('occupationalExposure.safetyEducation.signatureDate')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.attendeeName')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.attendeeEmail')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.attendeeDept')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.attendeeCompany')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 100 }} align="center">{t('occupationalExposure.safetyEducation.isSigned')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 110 }} align="center">{t('occupationalExposure.safetyEducation.signatureDate')}</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', width: 160 }} align="center">{t('occupationalExposure.safetyEducation.actions')}</TableCell>
               </TableRow>
             </TableHead>
@@ -747,11 +747,11 @@ const SafetyEducationTab: React.FC = () => {
               {d.attendees && d.attendees.length > 0 ? (
                 d.attendees.map((attendee) => (
                   <TableRow key={attendee.id} hover>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{attendee.attendeeName || ''}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{attendee.attendeeEmail || ''}</TableCell>
-                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{attendee.attendeeDept || ''}</TableCell>
-                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{attendee.attendeeCompany || ''}</TableCell>
-                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{attendee.attendeeName || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{attendee.attendeeEmail || ''}</TableCell>
+                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{attendee.attendeeDept || ''}</TableCell>
+                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{attendee.attendeeCompany || ''}</TableCell>
+                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                       <Chip
                         label={attendee.isSigned
                           ? t('occupationalExposure.safetyEducation.signed')
@@ -760,7 +760,7 @@ const SafetyEducationTab: React.FC = () => {
                         size="small"
                       />
                     </TableCell>
-                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(attendee.signatureDate)}</TableCell>
+                    <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatDate(attendee.signatureDate)}</TableCell>
                     <TableCell align="center">
                       <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
                         {!attendee.isSigned && (
@@ -801,7 +801,7 @@ const SafetyEducationTab: React.FC = () => {
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 3 }}>
           {d.attendees && d.attendees.length > 0 ? (
             d.attendees.map((attendee) => (
-              <Paper key={attendee.id} sx={{ p: 2, border: 1, borderColor: 'grey.300' }}>
+              <Paper key={attendee.id} sx={{ p: 2, border: 1, borderColor: 'divider' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                   <Typography fontWeight="bold">{attendee.attendeeName || ''}</Typography>
                   <Chip
@@ -886,8 +886,8 @@ const SafetyEducationTab: React.FC = () => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Form - PC */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('occupationalExposure.safetyEducation.title')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -931,7 +931,7 @@ const SafetyEducationTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.safetyEducation.educationCategory')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -957,7 +957,7 @@ const SafetyEducationTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.safetyEducation.educationHours')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -985,7 +985,7 @@ const SafetyEducationTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.safetyEducation.instructorName')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -1007,7 +1007,7 @@ const SafetyEducationTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.safetyEducation.hazardousFactors')}</Typography>
             <Box sx={{ ...formValueSx, borderRight: 0 }}>
               <Controller
@@ -1019,7 +1019,7 @@ const SafetyEducationTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.safetyEducation.educationContent')}</Typography>
             <Box sx={{ ...formValueSx, borderRight: 0 }}>
               <Controller
@@ -1031,7 +1031,7 @@ const SafetyEducationTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.safetyEducation.status')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -1195,15 +1195,15 @@ const SafetyEducationTab: React.FC = () => {
         </Box>
 
         {/* Attendees Editable Table - PC */}
-        <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto', mb: 3 }}>
-          <Table size="small" sx={{ minWidth: 700, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+        <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto', mb: 3 }}>
+          <Table size="small" sx={{ minWidth: 700, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.attendeeName')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.safetyEducation.attendeeEmail')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.attendeeDept')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.attendeeCompany')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.employeeId')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.attendeeName')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.safetyEducation.attendeeEmail')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.attendeeDept')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.attendeeCompany')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 120 }} align="center">{t('occupationalExposure.safetyEducation.employeeId')}</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', width: 60 }} align="center">{t('common.delete')}</TableCell>
               </TableRow>
             </TableHead>
@@ -1211,7 +1211,7 @@ const SafetyEducationTab: React.FC = () => {
               {attendeeRows.length > 0 ? (
                 attendeeRows.map((row, idx) => (
                   <TableRow key={idx}>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                       <TextField
                         value={row.attendeeName}
                         onChange={(e) => handleAttendeeRowChange(idx, 'attendeeName', e.target.value)}
@@ -1220,7 +1220,7 @@ const SafetyEducationTab: React.FC = () => {
                         placeholder={t('occupationalExposure.safetyEducation.attendeeName')}
                       />
                     </TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                       <TextField
                         value={row.attendeeEmail}
                         onChange={(e) => handleAttendeeRowChange(idx, 'attendeeEmail', e.target.value)}
@@ -1229,7 +1229,7 @@ const SafetyEducationTab: React.FC = () => {
                         placeholder={t('occupationalExposure.safetyEducation.attendeeEmail')}
                       />
                     </TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                       <TextField
                         value={row.attendeeDept}
                         onChange={(e) => handleAttendeeRowChange(idx, 'attendeeDept', e.target.value)}
@@ -1238,7 +1238,7 @@ const SafetyEducationTab: React.FC = () => {
                         placeholder={t('occupationalExposure.safetyEducation.attendeeDept')}
                       />
                     </TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                       <TextField
                         value={row.attendeeCompany}
                         onChange={(e) => handleAttendeeRowChange(idx, 'attendeeCompany', e.target.value)}
@@ -1247,7 +1247,7 @@ const SafetyEducationTab: React.FC = () => {
                         placeholder={t('occupationalExposure.safetyEducation.attendeeCompany')}
                       />
                     </TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                       <TextField
                         value={row.employeeId}
                         onChange={(e) => handleAttendeeRowChange(idx, 'employeeId', e.target.value)}
@@ -1278,7 +1278,7 @@ const SafetyEducationTab: React.FC = () => {
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 3 }}>
           {attendeeRows.length > 0 ? (
             attendeeRows.map((row, idx) => (
-              <Paper key={idx} sx={{ p: 2, border: 1, borderColor: 'grey.300' }}>
+              <Paper key={idx} sx={{ p: 2, border: 1, borderColor: 'divider' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                   <Typography variant="body2" fontWeight="bold">
                     {t('occupationalExposure.safetyEducation.attendee')} #{idx + 1}
