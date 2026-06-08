@@ -7,6 +7,7 @@ export interface User {
   deptCode?: string
   company?: string
   role: string
+  position?: string
 }
 
 export interface LoginRequest {

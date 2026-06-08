@@ -33,13 +33,19 @@
         <result column="Password" property="password"/>
         <result column="UserRole" property="userRole"/>
         <result column="GroupName" property="groupName"/>
+        <result column="titleName" property="titleName"/>
     </resultMap>
 
-    <!-- 부서명(GroupName)을 포함한 사용자 조회용 공통 SELECT -->
+    <!-- 부서명(GroupName) + 직위명(titleName)을 포함한 사용자 조회용 공통 SELECT -->
     <sql id="userWithGroupCols">
         i.UIDNumber, i.CompanyCode, i.DeptCode, i.UserName,
         i.Email, i.UID, i.UserStatus, i.ObjectCategory, i.Password, i.UserRole,
-        g.GroupName
+        g.GroupName,
+        (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = i.TitleCode AND h.Separator = 'TITLE') AS titleName
+    </sql>
+
+    <sql id="userWithGroupJoins">
+        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
     </sql>
 
     <select id="findActiveCompanies" resultMap="IdmCompanyResultMap">
@@ -62,8 +68,9 @@
 
     <select id="findActiveEmployees" resultMap="IdmUserResultMap">
         SELECT UIDNumber, CompanyCode, DeptCode, UserName,
-               Email, UID, UserStatus, ObjectCategory, Password, UserRole
-        FROM T_IDM_USER
+               Email, UID, UserStatus, ObjectCategory, Password, UserRole,
+               (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = i.TitleCode AND h.Separator = 'TITLE') AS titleName
+        FROM T_IDM_USER i
         WHERE UserStatus = '10'
           AND CompanyCode = '0100004'
         ORDER BY CompanyCode, DeptCode, UserName
@@ -72,7 +79,7 @@
     <select id="findByUid" resultMap="IdmUserResultMap">
         SELECT <include refid="userWithGroupCols"/>
         FROM T_IDM_USER i
-        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
+        <include refid="userWithGroupJoins"/>
         WHERE i.UID = #{uid}
           AND i.UserStatus = '10'
     </select>
@@ -80,7 +87,7 @@
     <select id="findByUidNumber" resultMap="IdmUserResultMap">
         SELECT <include refid="userWithGroupCols"/>
         FROM T_IDM_USER i
-        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
+        <include refid="userWithGroupJoins"/>
         WHERE i.UIDNumber = #{uidNumber}
           AND i.UserStatus = '10'
     </select>
@@ -88,7 +95,7 @@
     <select id="findByEmail" resultMap="IdmUserResultMap">
         SELECT <include refid="userWithGroupCols"/>
         FROM T_IDM_USER i
-        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
+        <include refid="userWithGroupJoins"/>
         WHERE i.Email = #{email}
           AND i.UserStatus = '10'
     </select>
@@ -96,7 +103,7 @@
     <select id="findAllWithPassword" resultMap="IdmUserResultMap">
         SELECT <include refid="userWithGroupCols"/>
         FROM T_IDM_USER i
-        LEFT JOIN T_IDM_GROUP g ON i.DeptCode = g.GroupCode AND i.CompanyCode = g.CompanyCode
+        <include refid="userWithGroupJoins"/>
         WHERE i.UserStatus = '10'
           AND i.Password IS NOT NULL
           AND i.Password != ''

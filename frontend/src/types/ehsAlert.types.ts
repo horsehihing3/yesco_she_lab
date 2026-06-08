@@ -9,6 +9,7 @@ export interface EhsAlert {
   detailZh?: string
   authorName?: string
   authorDept?: string
+  authorPosition?: string
   authorEmail?: string
   authorCompany?: string
   isAutoRegistration: boolean
@@ -26,6 +27,7 @@ export interface EhsAlertRequest {
   detailZh?: string
   authorName?: string
   authorDept?: string
+  authorPosition?: string
   authorEmail?: string
   authorCompany?: string
   isAutoRegistration?: boolean

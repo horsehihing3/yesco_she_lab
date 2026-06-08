@@ -74,7 +74,13 @@ export interface AuditPlan {
   completionApprovedAt?: string | null
   completionApprovedBy?: string | null
   createdByUserId?: number | null
+  createdByTeam?: string | null
   createdByName?: string | null
+  createdByPosition?: string | null
+  modifiedByUserId?: number | null
+  modifiedByName?: string | null
+  modifiedByTeam?: string | null
+  modifiedByPosition?: string | null
   rejectReason?: string | null
   status: AuditPlanStatus
   createdAt: string
@@ -141,10 +147,14 @@ export interface Audit {
   completionApprovedBy?: string | null
   // 작성자 (로그인 사용자 자동 입력)
   createdByUserId?: number | null
+  createdByTeam?: string | null
   createdByName?: string | null
+  createdByPosition?: string | null
   // 수정자 (수정 시 자동 갱신)
   modifiedByUserId?: number | null
   modifiedByName?: string | null
+  modifiedByTeam?: string | null
+  modifiedByPosition?: string | null
   // 완료 결재 반려 사유
   rejectReason?: string | null
   createdAt: string

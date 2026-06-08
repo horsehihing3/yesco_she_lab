@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -155,7 +156,9 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
       ...emptyForm,
       auditDate: todayStr(),
       createdByUserId: authUser?.id ?? null,
+      createdByTeam: authUser?.department || '',
       createdByName: authUser?.name || '',
+      createdByPosition: authUser?.position || '',
       ...(leader ? {
         planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
         completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
@@ -179,7 +182,9 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
       completionApproverPosition: item.completionApproverPosition || '',
       completionApproverName: item.completionApproverName || '',
       createdByUserId: item.createdByUserId ?? null,
+      createdByTeam: item.createdByTeam || '',
       createdByName: item.createdByName || '',
+      createdByPosition: item.createdByPosition || '',
     })
     setViewMode('edit')
   }
@@ -392,7 +397,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('audit.createdByName', '작성자')}</Typography>
             <Box sx={valBorderSx}>
-              <Typography variant="body2">{selectedItem.createdByName || ''}</Typography>
+              <Typography variant="body2">{formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || ''}</Typography>
             </Box>
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={valSx}>
@@ -405,7 +410,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Box sx={rowSx}>
               <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
               <Box sx={valBorderSx}>
-                <Typography variant="body2">{(selectedItem as any).modifiedByName || ''}</Typography>
+                <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)}</Typography>
               </Box>
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
               <Box sx={valSx}>
@@ -419,9 +424,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Typography sx={labelSx}>{t('audit.planApprover', '계획 승인자')}</Typography>
             <Box sx={valBorderSx}>
               <Typography variant="body2">
-                {selectedItem.planApproverName
-                  ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
-                  : ''}
+                {formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)}
                 {selectedItem.planApprovedAt && (
                   <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                     ({selectedItem.planApprovedBy || ''} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16)})
@@ -432,9 +435,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Typography sx={labelSx}>{t('audit.completionApprover', '완료 승인자')}</Typography>
             <Box sx={valSx}>
               <Typography variant="body2">
-                {selectedItem.completionApproverName
-                  ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
-                  : ''}
+                {formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)}
                 {selectedItem.completionApprovedAt && (
                   <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                     ({selectedItem.completionApprovedBy || ''} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16)})
@@ -476,21 +477,15 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             [t('audit.purpose', '목적'), linkedPlan?.purpose],
             [t('common.notes', '비고'), selectedItem.notes || linkedPlan?.notes],
             [t('common.status'), getAuditStatusLabel(selectedItem.status)],
-            [t('audit.createdByName', '작성자'), selectedItem.createdByName || ''],
+            [t('audit.createdByName', '작성자'), formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)],
             [t('audit.createdAt', '작성일자'),
               selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
             ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
-              [t('common.modifier', '수정자'), (selectedItem as any).modifiedByName || ''],
+              [t('common.modifier', '수정자'), formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
               [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
             ] : []),
-            [t('audit.planApprover', '계획 승인자'),
-              selectedItem.planApproverName
-                ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
-                : ''],
-            [t('audit.completionApprover', '완료 승인자'),
-              selectedItem.completionApproverName
-                ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
-                : ''],
+            [t('audit.planApprover', '계획 승인자'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
+            [t('audit.completionApprover', '완료 승인자'), formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)],
             [t('audit.completionApprovedAt', '완료 승인일시'),
               selectedItem.completionApprovedAt ? selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16) : ''],
             ...(checklistTemplateId ? [
@@ -762,7 +757,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             </Box>
             <Typography sx={labelSx}>{t('audit.createdByName', '작성자')}</Typography>
             <Box sx={valSx}>
-              <Typography variant="body2">{form.createdByName || authUser?.name || authUser?.username || ''}</Typography>
+              <Typography variant="body2">{formatUserName(form.createdByTeam, form.createdByName || authUser?.name || authUser?.username, form.createdByPosition) || ''}</Typography>
             </Box>
           </Box>
           <Box sx={rowSx}>
@@ -832,7 +827,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('audit.createdByName', '작성자')}
             </Typography>
-            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{form.createdByName || authUser?.name || authUser?.username || ''}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(form.createdByTeam || authUser?.department, form.createdByName || authUser?.name, form.createdByPosition || authUser?.position) || ''}</Typography>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.summary', '요약')}</Typography>

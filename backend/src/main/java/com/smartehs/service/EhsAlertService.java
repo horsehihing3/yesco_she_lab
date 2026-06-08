@@ -113,6 +113,7 @@ public class EhsAlertService {
                 .detailZh(detailZh)
                 .authorName(request.getAuthorName())
                 .authorDept(request.getAuthorDept())
+                .authorPosition(request.getAuthorPosition())
                 .authorEmail(request.getAuthorEmail())
                 .authorCompany(request.getAuthorCompany())
                 .isAutoRegistration(request.getIsAutoRegistration() != null ? request.getIsAutoRegistration() : false)
@@ -172,6 +173,7 @@ public class EhsAlertService {
         alert.setDetailZh(detailZh);
         alert.setAuthorName(request.getAuthorName());
         alert.setAuthorDept(request.getAuthorDept());
+        alert.setAuthorPosition(request.getAuthorPosition());
         alert.setAuthorEmail(request.getAuthorEmail());
         alert.setAuthorCompany(request.getAuthorCompany());
         if (request.getIsAutoRegistration() != null) {

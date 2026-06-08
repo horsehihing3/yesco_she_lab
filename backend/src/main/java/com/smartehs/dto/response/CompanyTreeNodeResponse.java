@@ -20,6 +20,7 @@ public class CompanyTreeNodeResponse {
     private String nameEn;
     private String nameZh;
     private String department;
+    private String position;
     private String company;
 
     private List<CompanyTreeNodeResponse> children;

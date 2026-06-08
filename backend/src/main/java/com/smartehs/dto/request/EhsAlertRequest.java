@@ -19,6 +19,8 @@ public class EhsAlertRequest {
 
     private String authorDept;
 
+    private String authorPosition;
+
     private String authorEmail;
 
     private String authorCompany;

@@ -15,6 +15,7 @@ public class QnaPostRequest {
     private String category;
     private String authorName;
     private String authorDept;
+    private String authorPosition;
     private String authorEmail;
     private Boolean isPublic;
 }

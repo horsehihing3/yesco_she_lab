@@ -42,7 +42,13 @@ public class LegalComplianceExec {
     private LocalDateTime completionApprovedAt;
     private String completionApprovedBy;
     private Long createdByUserId;
+    private String createdByTeam;
     private String createdByName;
+    private String createdByPosition;
+    private Long modifiedByUserId;
+    private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
     private String rejectReason;
     private Boolean deleted;
     private LocalDateTime createdAt;

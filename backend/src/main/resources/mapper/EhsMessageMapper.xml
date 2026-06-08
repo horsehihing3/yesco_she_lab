@@ -14,11 +14,12 @@
         <result property="recipient" column="recipient"/>
         <result property="recipientGroup" column="recipient_group"/>
         <result property="referrer" column="referrer"/>
-        <result property="authorName" column="author_name"/>
-        <result property="authorRole" column="author_role"/>
-        <result property="authorEmail" column="author_email"/>
-        <result property="authorDept" column="author_dept"/>
-        <result property="authorCompany" column="author_company"/>
+        <result property="authorName"     column="author_name_x"/>
+        <result property="authorRole"     column="author_role"/>
+        <result property="authorEmail"    column="author_email"/>
+        <result property="authorDept"     column="author_dept_x"/>
+        <result property="authorPosition" column="author_position_x"/>
+        <result property="authorCompany"  column="author_company"/>
         <result property="views" column="views"/>
         <result property="sendDate" column="send_date"/>
         <result property="detail" column="detail"/>
@@ -30,13 +31,29 @@
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
 
+    <sql id="liveAuthorJoins">
+        LEFT JOIN T_IDM_USER au ON au.UserName = t.author_name AND au.UserStatus = '10' AND au.CompanyCode = '0100004'
+        LEFT JOIN T_IDM_GROUP ag ON ag.GroupCode = au.DeptCode AND ag.CompanyCode = '0100004'
+    </sql>
+
+    <sql id="liveAuthorCols">
+        ISNULL(au.UserName,  t.author_name) AS author_name_x,
+        ISNULL(ag.GroupName, t.author_dept) AS author_dept_x,
+        (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = au.TitleCode AND h.Separator = 'TITLE') AS author_position_x
+    </sql>
+
     <select id="findAll" resultMap="EhsMessageResultMap">
-        SELECT * FROM tb_ehs_message ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_message t
+        <include refid="liveAuthorJoins"/>
+        ORDER BY t.created_at DESC
     </select>
 
     <select id="findAllWithPaging" resultMap="EhsMessageResultMap">
-        SELECT * FROM tb_ehs_message
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_message t
+        <include refid="liveAuthorJoins"/>
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -45,17 +62,25 @@
     </select>
 
     <select id="findById" resultMap="EhsMessageResultMap">
-        SELECT * FROM tb_ehs_message WHERE id = #{id}
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_message t
+        <include refid="liveAuthorJoins"/>
+        WHERE t.id = #{id}
     </select>
 
     <select id="findByMessageId" resultMap="EhsMessageResultMap">
-        SELECT * FROM tb_ehs_message WHERE message_id = #{messageId}
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_message t
+        <include refid="liveAuthorJoins"/>
+        WHERE t.message_id = #{messageId}
     </select>
 
     <select id="findByTitleContaining" resultMap="EhsMessageResultMap">
-        SELECT * FROM tb_ehs_message
-        WHERE title LIKE '%' + #{title} + '%'
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_message t
+        <include refid="liveAuthorJoins"/>
+        WHERE t.title LIKE '%' + #{title} + '%'
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -65,9 +90,11 @@
     </select>
 
     <select id="findByCategory" resultMap="EhsMessageResultMap">
-        SELECT * FROM tb_ehs_message
-        WHERE category = #{category}
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_message t
+        <include refid="liveAuthorJoins"/>
+        WHERE t.category = #{category}
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 

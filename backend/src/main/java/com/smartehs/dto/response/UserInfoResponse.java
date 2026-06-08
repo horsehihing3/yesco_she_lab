@@ -20,6 +20,7 @@ public class UserInfoResponse {
     private String deptCode;
     private String company;
     private String role;
+    private String position;
 
     public static UserInfoResponse fromIdmUser(IdmUser user) {
         return UserInfoResponse.builder()
@@ -31,6 +32,7 @@ public class UserInfoResponse {
                 .deptCode(user.getDeptCode())
                 .company(user.getCompanyCode())
                 .role(user.getUserRole() != null ? user.getUserRole() : "TEAM_MEMBER")
+                .position(user.getTitleName())
                 .build();
     }
 }

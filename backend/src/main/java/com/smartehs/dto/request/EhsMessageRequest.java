@@ -35,6 +35,8 @@ public class EhsMessageRequest {
 
     private String authorDept;
 
+    private String authorPosition;
+
     private String authorCompany;
 
     private LocalDateTime sendDate;

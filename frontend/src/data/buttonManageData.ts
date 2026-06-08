@@ -220,7 +220,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 연간계획 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 계획·KPI·목표 › 연간계획', menuKey: 'pkg.annualPlan',
+    menuPath: 'EHS 경영 › KPI목표 › 연간계획', menuKey: 'pkg.annualPlan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
@@ -240,7 +240,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── KPI 현황 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 계획·KPI·목표 › KPI 현황', menuKey: 'pkg.kpiStatus',
+    menuPath: 'EHS 경영 › KPI목표 › KPI 현황', menuKey: 'pkg.kpiStatus',
     statuses: [
       { status: 'APPROVED', statusLabel: '작성중 (KPI 입력)', statusColor: 'default',
         statusNote: 'KPI현황 탭: 연간계획 APPROVED 상태를 "작성중"으로 표시',
@@ -461,7 +461,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     menuPath: '안전 관리 › 위험성 평가', menuKey: 'nav.riskAssessment',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: 'isAdmin = true 하드코딩 — 모든 사용자가 관리자로 처리됨' }] },
+        buttons: [{ button: 'New', roles: ALL_ON }] },
       { status: 'draft', statusLabel: '작성중', statusColor: 'default',
         buttons: [
           { button: '계획 결재 상신', roles: ALL_ON, issue: 'isAdmin = true 하드코딩' },

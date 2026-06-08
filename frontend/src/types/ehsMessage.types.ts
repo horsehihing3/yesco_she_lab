@@ -16,6 +16,7 @@ export interface EhsMessage {
   authorRole?: string
   authorEmail?: string
   authorDept?: string
+  authorPosition?: string
   authorCompany?: string
   views: number
   sendDate?: string
@@ -40,6 +41,7 @@ export interface EhsMessageRequest {
   authorRole?: string
   authorEmail?: string
   authorDept?: string
+  authorPosition?: string
   authorCompany?: string
   sendDate?: string
   entireOrNot?: boolean

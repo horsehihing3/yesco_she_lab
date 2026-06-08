@@ -12,8 +12,9 @@
         <result property="detail" column="detail"/>
         <result property="detailEn" column="detail_en"/>
         <result property="detailZh" column="detail_zh"/>
-        <result property="authorName" column="author_name"/>
-        <result property="authorDept" column="author_dept"/>
+        <result property="authorName" column="author_name_x"/>
+        <result property="authorDept" column="author_dept_x"/>
+        <result property="authorPosition" column="author_position_x"/>
         <result property="authorEmail" column="author_email"/>
         <result property="authorCompany" column="author_company"/>
         <result property="isAutoRegistration" column="is_auto_registration"/>
@@ -22,13 +23,29 @@
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
 
+    <sql id="liveAuthorJoins">
+        LEFT JOIN T_IDM_USER au ON au.UserName = t.author_name AND au.UserStatus = '10' AND au.CompanyCode = '0100004'
+        LEFT JOIN T_IDM_GROUP ag ON ag.GroupCode = au.DeptCode AND ag.CompanyCode = '0100004'
+    </sql>
+
+    <sql id="liveAuthorCols">
+        ISNULL(au.UserName,  t.author_name) AS author_name_x,
+        ISNULL(ag.GroupName, t.author_dept) AS author_dept_x,
+        (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = au.TitleCode AND h.Separator = 'TITLE') AS author_position_x
+    </sql>
+
     <select id="findAll" resultMap="EhsAlertResultMap">
-        SELECT * FROM tb_ehs_alert ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_alert t
+        <include refid="liveAuthorJoins"/>
+        ORDER BY t.created_at DESC
     </select>
 
     <select id="findAllWithPaging" resultMap="EhsAlertResultMap">
-        SELECT * FROM tb_ehs_alert
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_alert t
+        <include refid="liveAuthorJoins"/>
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -37,17 +54,25 @@
     </select>
 
     <select id="findById" resultMap="EhsAlertResultMap">
-        SELECT * FROM tb_ehs_alert WHERE id = #{id}
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_alert t
+        <include refid="liveAuthorJoins"/>
+        WHERE t.id = #{id}
     </select>
 
     <select id="findByAlertId" resultMap="EhsAlertResultMap">
-        SELECT * FROM tb_ehs_alert WHERE alert_id = #{alertId}
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_alert t
+        <include refid="liveAuthorJoins"/>
+        WHERE t.alert_id = #{alertId}
     </select>
 
     <select id="findByTitleContaining" resultMap="EhsAlertResultMap">
-        SELECT * FROM tb_ehs_alert
-        WHERE title LIKE '%' + #{title} + '%'
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveAuthorCols"/>
+        FROM tb_ehs_alert t
+        <include refid="liveAuthorJoins"/>
+        WHERE t.title LIKE '%' + #{title} + '%'
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 

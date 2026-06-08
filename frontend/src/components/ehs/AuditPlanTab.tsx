@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState } from 'react'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import ListSearchBar from '../common/ListSearchBar'
@@ -234,7 +235,9 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
     setForm({
       ...emptyForm,
       createdByUserId: user?.id ?? null,
+      createdByTeam: user?.department || '',
       createdByName: user?.name || '',
+      createdByPosition: user?.position || '',
       planStartDate: todayStr(),
       planEndDate: weekFromTodayStr(),
       ...(leader ? {
@@ -268,7 +271,9 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
       completionApproverPosition: target.completionApproverPosition || '',
       completionApproverName: target.completionApproverName || '',
       createdByUserId: target.createdByUserId ?? null,
+      createdByTeam: target.createdByTeam || '',
       createdByName: target.createdByName || '',
+      createdByPosition: target.createdByPosition || '',
     })
     setViewMode('edit')
   }
@@ -593,7 +598,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={labelSx}>{t('audit.creator', '작성자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{selectedItem.createdByName || ''}</Typography>
+                <Typography variant="body2">{formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || ''}</Typography>
               </Box>
               <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -607,7 +612,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
                 <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
                 <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="body2">{(selectedItem as any).modifiedByName || ''}</Typography>
+                  <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)}</Typography>
                 </Box>
                 <Typography sx={labelSx}>{t('common.modifiedAt', '수정일')}</Typography>
                 <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -622,9 +627,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Typography sx={labelSx}>{t('audit.planApprover', '계획 승인자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">
-                  {selectedItem.planApproverName
-                    ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
-                    : ''}
+                  {formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)}
                   {selectedItem.planApprovedAt && (
                     <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                       ({selectedItem.planApprovedBy || ''} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16)})
@@ -635,9 +638,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Typography sx={labelSx}>{t('audit.completionApprover', '완료 승인자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">
-                  {selectedItem.completionApproverName
-                    ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
-                    : ''}
+                  {formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)}
                   {selectedItem.completionApprovedAt && (
                     <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                       ({selectedItem.completionApprovedBy || ''} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16)})
@@ -675,24 +676,18 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               [t('audit.planEndDate'), selectedItem.planEndDate || ''],
               [t('audit.purpose'), selectedItem.purpose || ''],
               [t('common.notes', '비고'), selectedItem.notes || ''],
-              [t('audit.creator', '작성자'), selectedItem.createdByName || ''],
+              [t('audit.creator', '작성자'), formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)],
               [t('audit.createdAt', '작성일자'),
                 selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
               ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt
                 ? [
-                    [t('common.modifier', '수정자'), (selectedItem as any).modifiedByName || ''],
+                    [t('common.modifier', '수정자'), formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
                     [t('common.modifiedAt', '수정일'),
                       selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
                   ] as Array<[string, string]>
                 : []),
-              [t('audit.planApprover', '계획 승인자'),
-                selectedItem.planApproverName
-                  ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
-                  : ''],
-              [t('audit.completionApprover', '완료 승인자'),
-                selectedItem.completionApproverName
-                  ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
-                  : ''],
+              [t('audit.planApprover', '계획 승인자'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
+              [t('audit.completionApprover', '완료 승인자'), formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)],
             ] as Array<[string, string]>).map(([label, value], i) => (
               <Box key={i}>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography>
@@ -841,7 +836,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('audit.creator', '작성자')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body2">{form.createdByName || user?.name || user?.username || ''}</Typography>
+              <Typography variant="body2">{formatUserName(form.createdByTeam, form.createdByName || user?.name || user?.username, form.createdByPosition) || ''}</Typography>
             </Box>
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -855,7 +850,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{(selectedItem as any)?.modifiedByName || user?.name || ''}</Typography>
+                <Typography variant="body2">{formatUserName(selectedItem?.modifiedByTeam, selectedItem?.modifiedByName, selectedItem?.modifiedByPosition) || formatUserName(user?.department, user?.name, user?.position)}</Typography>
               </Box>
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -871,7 +866,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               {t('audit.planApprover', '계획 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={form.planApproverName || ''} InputProps={{ readOnly: true }}
+              <TextField fullWidth size="small" value={formatUserName(form.planApproverTeam, form.planApproverName, form.planApproverPosition) || ''} InputProps={{ readOnly: true }}
                 placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowPlanApproverModal(true)}>
                 <PersonSearchIcon fontSize="small" />
@@ -881,7 +876,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               {t('audit.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ ...valueSx, display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField fullWidth size="small" value={form.completionApproverName || ''} InputProps={{ readOnly: true }}
+              <TextField fullWidth size="small" value={formatUserName(form.completionApproverTeam, form.completionApproverName, form.completionApproverPosition) || ''} InputProps={{ readOnly: true }}
                 placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowCompletionApproverModal(true)}>
                 <PersonSearchIcon fontSize="small" />
@@ -960,7 +955,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           {/* 작성자 / 생성일 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.creator', '작성자')}</Typography>
-            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{form.createdByName || user?.name || user?.username || ''}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(form.createdByTeam || user?.department, form.createdByName || user?.name, form.createdByPosition || user?.position) || ''}</Typography>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.createdAt', '작성일자')}</Typography>
@@ -971,7 +966,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             <>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifier', '수정자')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{(selectedItem as any)?.modifiedByName || user?.name || ''}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(selectedItem?.modifiedByTeam, selectedItem?.modifiedByName, selectedItem?.modifiedByPosition) || formatUserName(user?.department, user?.name, user?.position)}</Typography>
               </Box>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifiedAt', '수정일')}</Typography>
@@ -985,7 +980,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               {t('audit.planApprover', '계획 승인자')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField size="small" fullWidth value={form.planApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <TextField size="small" fullWidth value={formatUserName(form.planApproverTeam, form.planApproverName, form.planApproverPosition) || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowPlanApproverModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
@@ -995,7 +990,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               {t('audit.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              <TextField size="small" fullWidth value={form.completionApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+              <TextField size="small" fullWidth value={formatUserName(form.completionApproverTeam, form.completionApproverName, form.completionApproverPosition) || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowCompletionApproverModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
@@ -1048,6 +1043,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                 ...form,
                 planApproverUserId: u.id,
                 planApproverTeam: u.department || '',
+                planApproverPosition: u.position || '',
                 planApproverName: u.name,
               })
             }
@@ -1068,6 +1064,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                 ...form,
                 completionApproverUserId: u.id,
                 completionApproverTeam: u.department || '',
+                completionApproverPosition: u.position || '',
                 completionApproverName: u.name,
               })
             }

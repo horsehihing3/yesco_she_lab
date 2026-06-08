@@ -2,9 +2,9 @@ package com.smartehs.service;
 
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.EhsMessageCommentMapper;
-import com.smartehs.mapper.UserMapper;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.EhsMessageComment;
-import com.smartehs.model.User;
+import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ import java.util.List;
 public class EhsMessageCommentService {
 
     private final EhsMessageCommentMapper commentMapper;
-    private final UserMapper userMapper;
+    private final IdmMapper idmMapper;
 
     @Transactional(readOnly = true)
     public List<EhsMessageComment> findByMessageId(Long messageId) {
@@ -31,10 +31,10 @@ public class EhsMessageCommentService {
         c.setContent(input.getContent());
 
         if (username != null && !"system".equals(username)) {
-            User u = userMapper.findByUsername(username);
+            IdmUser u = idmMapper.findByUid(username);
             if (u != null) {
-                c.setAuthorName(u.getName() != null ? u.getName() : u.getUsername());
-                c.setAuthorDept(u.getDepartment());
+                c.setAuthorName(u.getUserName() != null ? u.getUserName() : u.getUid());
+                c.setAuthorDept(u.getGroupName() != null ? u.getGroupName() : u.getDeptCode());
                 c.setAuthorEmail(u.getEmail());
             } else {
                 c.setAuthorName(username);

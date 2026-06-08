@@ -18,22 +18,22 @@
         <result property="checklistTemplateId" column="checklist_template_id"/>
         <result property="notes" column="notes"/>
         <result property="status" column="status"/>
-        <result property="writerUserId" column="writer_user_id"/>
-        <result property="writerTeam" column="writer_team"/>
-        <result property="writerPosition" column="writer_position"/>
-        <result property="writerName" column="writer_name"/>
+        <result property="writerUserId"   column="writer_user_id"/>
+        <result property="writerTeam"     column="writer_team_x"/>
+        <result property="writerPosition" column="writer_position_x"/>
+        <result property="writerName"     column="writer_name_x"/>
         <result property="modifiedByUserId" column="modified_by_user_id"/>
-        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="modifiedByName"   column="modified_by_name"/>
         <result property="planApproverUserId" column="plan_approver_user_id"/>
-        <result property="planApproverTeam" column="plan_approver_team"/>
-        <result property="planApproverPosition" column="plan_approver_position"/>
-        <result property="planApproverName" column="plan_approver_name"/>
+        <result property="planApproverTeam"     column="plan_approver_team_x"/>
+        <result property="planApproverPosition" column="plan_approver_position_x"/>
+        <result property="planApproverName"     column="plan_approver_name_x"/>
         <result property="planApprovedAt" column="plan_approved_at"/>
         <result property="planApprovedBy" column="plan_approved_by"/>
         <result property="completionApproverUserId" column="completion_approver_user_id"/>
-        <result property="completionApproverTeam" column="completion_approver_team"/>
-        <result property="completionApproverPosition" column="completion_approver_position"/>
-        <result property="completionApproverName" column="completion_approver_name"/>
+        <result property="completionApproverTeam"     column="completion_approver_team_x"/>
+        <result property="completionApproverPosition" column="completion_approver_position_x"/>
+        <result property="completionApproverName"     column="completion_approver_name_x"/>
         <result property="completionApprovedAt" column="completion_approved_at"/>
         <result property="completionApprovedBy" column="completion_approved_by"/>
         <result property="approved" column="approved"/>
@@ -43,25 +43,33 @@
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
 
-    <sql id="cols">
-        id, plan_id, plan_type, plan_name, description, response_steps,
-        responsible_dept, responsible_name,
-        training_start_date, training_end_date,
-        resource_ids, checklist_template_id, notes,
-        status,
-        writer_user_id, writer_team, writer_position, writer_name,
-        modified_by_user_id, modified_by_name,
-        plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
-        plan_approved_at, plan_approved_by,
-        completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
-        completion_approved_at, completion_approved_by,
-        approved, reject_reason, deleted, created_at, modified_at
+    <sql id="liveUserJoins">
+        LEFT JOIN T_IDM_USER wu ON wu.UIDNumber = t.writer_user_id
+        LEFT JOIN T_IDM_GROUP wg ON wg.GroupCode = wu.DeptCode AND wg.CompanyCode = '0100004'
+        LEFT JOIN T_IDM_USER pu ON pu.UIDNumber = t.plan_approver_user_id
+        LEFT JOIN T_IDM_GROUP pg ON pg.GroupCode = pu.DeptCode AND pg.CompanyCode = '0100004'
+        LEFT JOIN T_IDM_USER cu ON cu.UIDNumber = t.completion_approver_user_id
+        LEFT JOIN T_IDM_GROUP cg ON cg.GroupCode = cu.DeptCode AND cg.CompanyCode = '0100004'
+    </sql>
+
+    <sql id="liveDisplayCols">
+        ISNULL(wg.GroupName, t.writer_team)              AS writer_team_x,
+        ISNULL(wu.UserName,  t.writer_name)              AS writer_name_x,
+        ISNULL((SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = wu.TitleCode AND h.Separator = 'TITLE'), t.writer_position)          AS writer_position_x,
+        ISNULL(pg.GroupName, t.plan_approver_team)       AS plan_approver_team_x,
+        ISNULL(pu.UserName,  t.plan_approver_name)       AS plan_approver_name_x,
+        ISNULL((SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = pu.TitleCode AND h.Separator = 'TITLE'), t.plan_approver_position)   AS plan_approver_position_x,
+        ISNULL(cg.GroupName, t.completion_approver_team) AS completion_approver_team_x,
+        ISNULL(cu.UserName,  t.completion_approver_name) AS completion_approver_name_x,
+        ISNULL((SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = cu.TitleCode AND h.Separator = 'TITLE'), t.completion_approver_position) AS completion_approver_position_x
     </sql>
 
     <select id="findByDeletedFalse" resultMap="EmergencyPlanResultMap">
-        SELECT <include refid="cols"/> FROM tb_emergency_plan
-        WHERE deleted = 0
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_emergency_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.deleted = 0
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -70,13 +78,18 @@
     </select>
 
     <select id="findById" resultMap="EmergencyPlanResultMap">
-        SELECT <include refid="cols"/> FROM tb_emergency_plan WHERE id = #{id} AND deleted = 0
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_emergency_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.id = #{id} AND t.deleted = 0
     </select>
 
     <select id="findByPlanType" resultMap="EmergencyPlanResultMap">
-        SELECT <include refid="cols"/> FROM tb_emergency_plan
-        WHERE plan_type = #{planType} AND deleted = 0
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_emergency_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.plan_type = #{planType} AND t.deleted = 0
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -163,7 +176,10 @@
     </update>
 
     <select id="findByChecklistTemplateId" resultMap="EmergencyPlanResultMap">
-        SELECT <include refid="cols"/> FROM tb_emergency_plan WHERE checklist_template_id = #{checklistTemplateId} AND deleted = 0
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_emergency_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.checklist_template_id = #{checklistTemplateId} AND t.deleted = 0
     </select>
 
 </mapper>

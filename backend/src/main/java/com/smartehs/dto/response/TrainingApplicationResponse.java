@@ -18,6 +18,7 @@ public class TrainingApplicationResponse {
     private String courseDate;
     private String applicantName;
     private String applicantDept;
+    private String applicantPosition;
     private String applicantEmpNo;
     private String applicantPhone;
     private String applicantUsername;
@@ -43,6 +44,7 @@ public class TrainingApplicationResponse {
                 .courseDate(e.getCourseDate())
                 .applicantName(e.getApplicantName())
                 .applicantDept(e.getApplicantDept())
+                .applicantPosition(e.getApplicantPosition())
                 .applicantEmpNo(e.getApplicantEmpNo())
                 .applicantPhone(e.getApplicantPhone())
                 .applicantUsername(e.getApplicantUsername())

@@ -3,7 +3,7 @@ import { Box, Tab, Tabs, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import RiskAssessmentDashboardTab from '../components/ehs/RiskAssessmentDashboardTab'
 import RiskAssessmentTab from '../components/ehs/RiskAssessmentTab'
-import RiskAssessmentOfficeWorkTab from '../components/ehs/RiskAssessmentOfficeWorkTab'
+// import RiskAssessmentOfficeWorkTab from '../components/ehs/RiskAssessmentOfficeWorkTab'
 import RiskAssessmentReportTab from '../components/ehs/RiskAssessmentReportTab'
 
 const RiskAssessmentPage: React.FC = () => {
@@ -15,7 +15,7 @@ const RiskAssessmentPage: React.FC = () => {
     t('common.plan', '계획'),
     t('common.management', '관리'),
     t('riskAssessment.managementAdmin', '관리(관리자)'),
-    t('riskAssessment.officeWork', '사무업무'),
+    // t('riskAssessment.officeWork', '사무업무'),
     t('common.report', '레포트'),
   ]
 
@@ -30,7 +30,7 @@ const RiskAssessmentPage: React.FC = () => {
         <Tab label={t('common.plan', '계획')} />
         <Tab label={t('common.management', '관리')} />
         <Tab label={t('riskAssessment.managementAdmin', '관리(관리자)')} />
-        <Tab label={t('riskAssessment.officeWork', '사무업무')} />
+        {/* <Tab label={t('riskAssessment.officeWork', '사무업무')} /> */}
         <Tab label={t('common.report', '레포트')} />
       </Tabs>
       <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
@@ -40,8 +40,8 @@ const RiskAssessmentPage: React.FC = () => {
       {activeTab === 1 && <RiskAssessmentTab mode="plan" />}
       {activeTab === 2 && <RiskAssessmentTab mode="management" />}
       {activeTab === 3 && <RiskAssessmentTab mode="admin" />}
-      {activeTab === 4 && <RiskAssessmentOfficeWorkTab />}
-      {activeTab === 5 && <RiskAssessmentReportTab />}
+      {/* {activeTab === 4 && <RiskAssessmentOfficeWorkTab />} */}
+      {activeTab === 4 && <RiskAssessmentReportTab />}
     </Box>
   )
 }

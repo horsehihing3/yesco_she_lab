@@ -52,7 +52,15 @@ public class LegalCompliancePlanController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<LegalCompliancePlan>> update(@PathVariable Long id, @RequestBody LegalCompliancePlan plan) {
+    public ResponseEntity<ApiResponse<LegalCompliancePlan>> update(
+            @PathVariable Long id, @RequestBody LegalCompliancePlan plan, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                plan.setModifiedByUserId(u.getUidNumber());
+                plan.setModifiedByName(u.getUserName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(service.update(id, plan)));
     }
 

@@ -8,8 +8,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * tb_button_rule 메뉴 경로 rename 마이그레이션
- * '안전교육 신청' → '교육 신청' 으로 통일
+ * tb_button_rule 버튼/메뉴 경로 rename 마이그레이션
+ * - '안전교육 신청' → '교육 신청'
+ * - 위험성 평가 LIST '신규 등록' → 'New'
  */
 @Slf4j
 @Order(101)
@@ -21,18 +22,27 @@ public class ButtonRuleMenuPathMigrationInitializer implements CommandLineRunner
 
     @Override
     public void run(String... args) {
+        migrate(
+            "SELECT COUNT(*) FROM tb_button_rule WHERE menu_path = N'EHS경영 › 교육훈련 › 안전교육 신청'",
+            "UPDATE tb_button_rule SET menu_path = N'EHS경영 › 교육훈련 › 교육 신청' WHERE menu_path = N'EHS경영 › 교육훈련 › 안전교육 신청'",
+            "menu_path rename: '안전교육 신청' → '교육 신청'"
+        );
+        migrate(
+            "SELECT COUNT(*) FROM tb_button_rule WHERE menu_path = N'안전 관리 › 위험성 평가' AND button_name = N'신규 등록'",
+            "UPDATE tb_button_rule SET button_name = N'New' WHERE menu_path = N'안전 관리 › 위험성 평가' AND button_name = N'신규 등록'",
+            "위험성 평가 LIST 버튼 rename: '신규 등록' → 'New'"
+        );
+    }
+
+    private void migrate(String countSql, String updateSql, String label) {
         try {
-            Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM tb_button_rule WHERE menu_path = N'EHS경영 › 교육훈련 › 안전교육 신청'",
-                Integer.class);
+            Integer count = jdbcTemplate.queryForObject(countSql, Integer.class);
             if (count != null && count > 0) {
-                jdbcTemplate.update(
-                    "UPDATE tb_button_rule SET menu_path = N'EHS경영 › 교육훈련 › 교육 신청' " +
-                    "WHERE menu_path = N'EHS경영 › 교육훈련 › 안전교육 신청'");
-                log.info("tb_button_rule 메뉴 경로 rename: '안전교육 신청' → '교육 신청' ({}건)", count);
+                jdbcTemplate.update(updateSql);
+                log.info("tb_button_rule {}: {}건", label, count);
             }
         } catch (Exception e) {
-            log.warn("ButtonRuleMenuPathMigrationInitializer 실패 — 서버는 계속 기동", e);
+            log.warn("ButtonRuleMigration 실패 ({}): {}", label, e.getMessage());
         }
     }
 }

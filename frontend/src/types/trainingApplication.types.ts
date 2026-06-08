@@ -6,6 +6,7 @@ export interface TrainingApplication {
   courseDate: string | null
   applicantName: string
   applicantDept: string | null
+  applicantPosition?: string | null
   applicantEmpNo: string | null
   applicantPhone: string | null
   applicantUsername: string | null

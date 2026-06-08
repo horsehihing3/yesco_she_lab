@@ -14,6 +14,7 @@ public class QnaPost {
     private String category;
     private String authorName;
     private String authorDept;
+    private String authorPosition;
     private String authorEmail;
     private Integer views;
     private Boolean isAnswered;

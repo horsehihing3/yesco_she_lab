@@ -17,6 +17,7 @@ public class TrainingApplication {
     private String courseDate;          // snapshot
     private String applicantName;
     private String applicantDept;
+    private String applicantPosition;
     private String applicantEmpNo;
     private String applicantPhone;
     private String applicantUsername;

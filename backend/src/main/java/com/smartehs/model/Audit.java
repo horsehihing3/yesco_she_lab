@@ -46,10 +46,14 @@ public class Audit {
     private String completionApprovedBy;
     // 작성자 (감사 실시 등록자, 로그인 사용자 자동 입력)
     private Long createdByUserId;
+    private String createdByTeam;
     private String createdByName;
+    private String createdByPosition;
     // 수정자 (마지막으로 수정한 사용자 — 수정 시 자동 갱신)
     private Long modifiedByUserId;
     private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
     // 완료 결재 반려 사유
     private String rejectReason;
     private Boolean deleted;

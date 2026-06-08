@@ -19,6 +19,7 @@ public class EhsAlert {
     private String detailZh;
     private String authorName;
     private String authorDept;
+    private String authorPosition;
     private String authorEmail;
     private String authorCompany;
     private Boolean isAutoRegistration;

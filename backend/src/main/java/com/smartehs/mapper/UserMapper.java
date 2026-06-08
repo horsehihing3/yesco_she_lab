@@ -25,11 +25,5 @@ public interface UserMapper {
 
     int existsByEmail(@Param("email") String email);
 
-    void insert(User user);
-
-    void update(User user);
-
-    void delete(@Param("id") Long id);
-
     void updateRole(@Param("id") Long id, @Param("role") String role);
 }

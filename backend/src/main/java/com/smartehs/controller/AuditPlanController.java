@@ -67,7 +67,15 @@ public class AuditPlanController {
 
     @PutMapping("/{id}")
     @Operation(summary = "감사 계획 수정")
-    public ResponseEntity<ApiResponse<AuditPlan>> update(@PathVariable Long id, @RequestBody AuditPlan auditPlan) {
+    public ResponseEntity<ApiResponse<AuditPlan>> update(
+            @PathVariable Long id, @RequestBody AuditPlan auditPlan, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                auditPlan.setModifiedByUserId(u.getUidNumber());
+                auditPlan.setModifiedByName(u.getUserName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(auditPlanService.update(id, auditPlan)));
     }
 

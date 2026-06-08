@@ -29,6 +29,7 @@ public class EhsMessageResponse {
     private String detailEn;
     private String detailZh;
     private String authorName;
+    private String authorPosition;
     private String authorRole;
     private String authorEmail;
     private String authorDept;
@@ -55,6 +56,7 @@ public class EhsMessageResponse {
                 .detailEn(entity.getDetailEn())
                 .detailZh(entity.getDetailZh())
                 .authorName(entity.getAuthorName())
+                .authorPosition(entity.getAuthorPosition())
                 .authorRole(entity.getAuthorRole())
                 .authorEmail(entity.getAuthorEmail())
                 .authorDept(entity.getAuthorDept())
@@ -79,6 +81,7 @@ public class EhsMessageResponse {
                 .referrer(entity.getReferrer())
                 .detail(MultiLanguageUtil.getLocalizedText(entity.getDetail(), entity.getDetailEn(), entity.getDetailZh()))
                 .authorName(entity.getAuthorName())
+                .authorPosition(entity.getAuthorPosition())
                 .authorRole(entity.getAuthorRole())
                 .authorEmail(entity.getAuthorEmail())
                 .authorDept(entity.getAuthorDept())

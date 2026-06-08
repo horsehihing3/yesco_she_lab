@@ -1,7 +1,9 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.mapper.LegalComplianceLogMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.LegalComplianceExec;
 import com.smartehs.model.LegalComplianceLog;
 import com.smartehs.model.LegalComplianceLogItem;
@@ -25,6 +27,7 @@ public class LegalComplianceExecController {
 
     private final LegalComplianceExecService service;
     private final LegalComplianceLogMapper logMapper;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<LegalComplianceExec>>> findAll(
@@ -50,14 +53,29 @@ public class LegalComplianceExecController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<LegalComplianceExec>> create(@RequestBody LegalComplianceExec exec) {
+    public ResponseEntity<ApiResponse<LegalComplianceExec>> create(
+            @RequestBody LegalComplianceExec exec, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                exec.setCreatedByUserId(u.getUidNumber());
+                exec.setCreatedByName(u.getUserName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(service.create(exec)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<LegalComplianceExec>> update(@PathVariable Long id, @RequestBody LegalComplianceExec exec, Authentication authentication) {
-        String username = authentication != null ? authentication.getName() : "system";
-        exec.setModifiedBy(username);
+    public ResponseEntity<ApiResponse<LegalComplianceExec>> update(
+            @PathVariable Long id, @RequestBody LegalComplianceExec exec, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                exec.setModifiedBy(u.getUserName());
+                exec.setModifiedByUserId(u.getUidNumber());
+                exec.setModifiedByName(u.getUserName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(service.update(id, exec)));
     }
 

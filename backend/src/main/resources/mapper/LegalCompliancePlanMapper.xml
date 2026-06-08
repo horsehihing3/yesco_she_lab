@@ -34,17 +34,41 @@
         <result property="completionApprovedAt" column="completion_approved_at"/>
         <result property="completionApprovedBy" column="completion_approved_by"/>
         <result property="createdByUserId" column="created_by_user_id"/>
-        <result property="createdByName" column="created_by_name"/>
+        <result property="createdByTeam"     column="created_by_team_x"/>
+        <result property="createdByName"     column="created_by_name_x"/>
+        <result property="createdByPosition" column="created_by_position_x"/>
+        <result property="modifiedByUserId"   column="modified_by_user_id"/>
+        <result property="modifiedByName"     column="modified_by_name_x"/>
+        <result property="modifiedByTeam"     column="modified_by_team_x"/>
+        <result property="modifiedByPosition" column="modified_by_position_x"/>
         <result property="rejectReason" column="reject_reason"/>
         <result property="deleted" column="deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
 
+    <sql id="liveUserJoins">
+        LEFT JOIN T_IDM_USER wu ON wu.UIDNumber = t.created_by_user_id
+        LEFT JOIN T_IDM_GROUP wg ON wg.GroupCode = wu.DeptCode AND wg.CompanyCode = '0100004'
+        LEFT JOIN T_IDM_USER mu ON mu.UIDNumber = t.modified_by_user_id
+        LEFT JOIN T_IDM_GROUP mg ON mg.GroupCode = mu.DeptCode AND mg.CompanyCode = '0100004'
+    </sql>
+
+    <sql id="liveDisplayCols">
+        wg.GroupName                            AS created_by_team_x,
+        ISNULL(wu.UserName, t.created_by_name)  AS created_by_name_x,
+        (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = wu.TitleCode AND h.Separator = 'TITLE') AS created_by_position_x,
+        ISNULL(mu.UserName, t.modified_by_name) AS modified_by_name_x,
+        mg.GroupName                            AS modified_by_team_x,
+        (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = mu.TitleCode AND h.Separator = 'TITLE') AS modified_by_position_x
+    </sql>
+
     <select id="findByDeletedFalse" resultMap="R">
-        SELECT * FROM tb_legal_compliance_plan
-        WHERE deleted = 0
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_legal_compliance_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.deleted = 0
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -53,13 +77,18 @@
     </select>
 
     <select id="findById" resultMap="R">
-        SELECT * FROM tb_legal_compliance_plan WHERE id = #{id} AND deleted = 0
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_legal_compliance_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.id = #{id} AND t.deleted = 0
     </select>
 
     <select id="findByStatus" resultMap="R">
-        SELECT * FROM tb_legal_compliance_plan
-        WHERE status = #{status} AND deleted = 0
-        ORDER BY created_at DESC
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_legal_compliance_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.status = #{status} AND t.deleted = 0
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -107,6 +136,8 @@
             completion_approver_team     = #{completionApproverTeam},
             completion_approver_position = #{completionApproverPosition},
             completion_approver_name     = #{completionApproverName},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name    = #{modifiedByName},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>
@@ -138,7 +169,10 @@
     </update>
 
     <select id="findByChecklistTemplateId" resultMap="R">
-        SELECT * FROM tb_legal_compliance_plan WHERE checklist_template_id = #{checklistTemplateId} AND deleted = 0
+        SELECT t.*, <include refid="liveDisplayCols"/>
+        FROM tb_legal_compliance_plan t
+        <include refid="liveUserJoins"/>
+        WHERE t.checklist_template_id = #{checklistTemplateId} AND t.deleted = 0
     </select>
 
 </mapper>

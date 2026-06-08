@@ -16,4 +16,6 @@ public class IdmUser {
     private String userRole;
     // T_IDM_GROUP JOIN으로 조회되는 부서명 (DeptCode → GroupName)
     private String groupName;
+    // T_IDM_HRCODE JOIN으로 조회되는 직위명 (TitleCode → Name)
+    private String titleName;
 }

@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -52,7 +53,7 @@ const buildEmptyForm = (authUser: ReturnType<typeof useAuth>['user']): Emergency
   status: 'DRAFT',
   writerUserId: authUser?.id ?? null,
   writerTeam: authUser?.department || '',
-  writerPosition: '',
+  writerPosition: authUser?.position || '',
   writerName: authUser?.name || '',
   planApproverUserId: null, planApproverTeam: '', planApproverPosition: '', planApproverName: '',
   completionApproverUserId: null, completionApproverTeam: '', completionApproverPosition: '', completionApproverName: '',
@@ -106,9 +107,9 @@ const EmrPlanTab: React.FC = () => {
     if (users.length > 0 && userPickTarget) {
       const u = users[0]
       if (userPickTarget === 'planApprover') {
-        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name }))
+        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverPosition: u.position || '', planApproverName: u.name }))
       } else if (userPickTarget === 'completionApprover') {
-        setForm(f => ({ ...f, completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name }))
+        setForm(f => ({ ...f, completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverPosition: u.position || '', completionApproverName: u.name }))
       }
     }
     setUserPickTarget(null)
@@ -462,7 +463,7 @@ const EmrPlanTab: React.FC = () => {
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
               <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{selectedItem.writerName || ''}</Typography>
+                <Typography variant="body2">{formatUserName(selectedItem.writerTeam, selectedItem.writerName, selectedItem.writerPosition) || ''}</Typography>
               </Box>
               <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -489,7 +490,7 @@ const EmrPlanTab: React.FC = () => {
               <Typography sx={labelSx}>{t('emr.planApprover')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="body2">
-                  {[selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''}
+                  {formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition) || ''}
                 </Typography>
                 {selectedItem.planApprovedAt && (
                   <Typography variant="caption" color="text.secondary">
@@ -500,7 +501,7 @@ const EmrPlanTab: React.FC = () => {
               <Typography sx={labelSx}>{t('emr.completionApprover')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="body2">
-                  {[selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''}
+                  {formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition) || ''}
                 </Typography>
                 {selectedItem.completionApprovedAt && (
                   <Typography variant="caption" color="text.secondary">
@@ -534,15 +535,15 @@ const EmrPlanTab: React.FC = () => {
               [t('common.description'), selectedItem.description || ''],
               [t('emr.responseSteps'), selectedItem.responseSteps || ''],
               [t('common.notes'), selectedItem.notes || ''],
-              [t('common.creator', '작성자'), selectedItem.writerName || ''],
+              [t('common.creator', '작성자'), formatUserName(selectedItem.writerTeam, selectedItem.writerName, selectedItem.writerPosition) || ''],
               [t('audit.createdAt', '작성일자'),
                 selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
               ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
                 [t('common.modifier', '수정자'), selectedItem.modifiedByName || ''],
                 [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
               ] as Array<[string, string]> : []),
-              [t('emr.planApprover'), [selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''],
-              [t('emr.completionApprover'), [selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''],
+              [t('emr.planApprover'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
+              [t('emr.completionApprover'), formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)],
             ].map(([label, value], i) => (
               <Box key={i}>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography>
@@ -693,7 +694,7 @@ const EmrPlanTab: React.FC = () => {
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body2">{form.writerName || authUser?.name || authUser?.username || ''}</Typography>
+              <Typography variant="body2">{formatUserName(form.writerTeam || authUser?.department, form.writerName || authUser?.name, form.writerPosition || authUser?.position) || ''}</Typography>
             </Box>
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -721,12 +722,12 @@ const EmrPlanTab: React.FC = () => {
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
             <Typography sx={labelSx}>{t('emr.planApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valueBorderSx, gap: 1, display: 'flex', alignItems: 'center' }}>
-              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={form.planApproverName || ''} InputProps={{ readOnly: true }} />
+              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={formatUserName(form.planApproverTeam, form.planApproverName, form.planApproverPosition) || ''} InputProps={{ readOnly: true }} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('planApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
             <Typography sx={labelSx}>{t('emr.completionApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valueSx, gap: 0.5, display: 'flex', alignItems: 'center' }}>
-              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
+              <TextField size="small" sx={{ flex: 1, minWidth: 0 }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={formatUserName(form.completionApproverTeam, form.completionApproverName, form.completionApproverPosition) || ''} InputProps={{ readOnly: true }} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
@@ -805,7 +806,7 @@ const EmrPlanTab: React.FC = () => {
           {/* 작성자 / 작성일자 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.creator', '작성자')}</Typography>
-            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{form.writerName || authUser?.name || authUser?.username || ''}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(form.writerTeam || authUser?.department, form.writerName || authUser?.name, form.writerPosition || authUser?.position) || ''}</Typography>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.createdAt', '작성일자')}</Typography>
@@ -834,7 +835,7 @@ const EmrPlanTab: React.FC = () => {
               {t('emr.planApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={form.planApproverName || ''} InputProps={{ readOnly: true }} />
+              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={formatUserName(form.planApproverTeam, form.planApproverName, form.planApproverPosition) || ''} InputProps={{ readOnly: true }} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('planApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
@@ -843,7 +844,7 @@ const EmrPlanTab: React.FC = () => {
               {t('emr.completionApprover')} <Typography component="span" sx={{ color: 'error.main' }}>*</Typography>
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={form.completionApproverName || ''} InputProps={{ readOnly: true }} />
+              <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={formatUserName(form.completionApproverTeam, form.completionApproverName, form.completionApproverPosition) || ''} InputProps={{ readOnly: true }} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setUserPickTarget('completionApprover')}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>

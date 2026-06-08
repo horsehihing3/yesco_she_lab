@@ -131,6 +131,7 @@ public class EhsMessageService {
                 .authorRole(request.getAuthorRole())
                 .authorEmail(request.getAuthorEmail())
                 .authorDept(request.getAuthorDept())
+                .authorPosition(request.getAuthorPosition())
                 .authorCompany(request.getAuthorCompany())
                 .sendDate(request.getSendDate())
                 .entireOrNot(request.getEntireOrNot() != null ? request.getEntireOrNot() : true)
@@ -197,6 +198,7 @@ public class EhsMessageService {
         message.setAuthorRole(request.getAuthorRole());
         message.setAuthorEmail(request.getAuthorEmail());
         message.setAuthorDept(request.getAuthorDept());
+        message.setAuthorPosition(request.getAuthorPosition());
         message.setAuthorCompany(request.getAuthorCompany());
         if (request.getSendDate() != null) {
             message.setSendDate(request.getSendDate());

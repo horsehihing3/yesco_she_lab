@@ -87,6 +87,7 @@ public class IdmService {
                     .email(user.getEmail())
                     .name(user.getUserName())
                     .department(group.getGroupName())
+                    .position(user.getTitleName())
                     .company(rootLabel)
                     .children(List.of())
                     .build());

@@ -15,6 +15,7 @@ public class QnaPostResponse {
     private String category;
     private String authorName;
     private String authorDept;
+    private String authorPosition;
     private String authorEmail;
     private Integer views;
     private Boolean isAnswered;
@@ -34,6 +35,7 @@ public class QnaPostResponse {
                 .category(entity.getCategory())
                 .authorName(entity.getAuthorName())
                 .authorDept(entity.getAuthorDept())
+                .authorPosition(entity.getAuthorPosition())
                 .authorEmail(entity.getAuthorEmail())
                 .views(entity.getViews())
                 .isAnswered(entity.getIsAnswered())

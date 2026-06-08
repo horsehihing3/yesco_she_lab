@@ -5,6 +5,7 @@ export interface QnaPost {
   category: string
   authorName: string
   authorDept: string
+  authorPosition?: string
   authorEmail: string
   views: number
   isAnswered: boolean
@@ -23,6 +24,7 @@ export interface QnaPostRequest {
   category?: string
   authorName?: string
   authorDept?: string
+  authorPosition?: string
   authorEmail?: string
   isPublic?: boolean
 }

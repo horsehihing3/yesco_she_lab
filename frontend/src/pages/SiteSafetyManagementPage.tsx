@@ -1,3 +1,4 @@
+﻿import { formatUserName } from '../utils/userDisplay'
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { fmtPhone } from '../utils/phoneFormat'
 import { todayStr, weekFromTodayStr } from '../utils/dateDefaults'
@@ -588,11 +589,11 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             <FormLabel>계획 승인자</FormLabel>
             <FormCell borderRight>
               {isReadonly ? (
-                <Typography variant="body2">{(view as any).planApproverName || ''}</Typography>
+                <Typography variant="body2">{formatUserName((view as any).planApproverTeam, (view as any).planApproverName, (view as any).planApproverPosition)}</Typography>
               ) : (
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                   <TextField fullWidth size="small" InputProps={{ readOnly: true }}
-                    value={(view as any).planApproverName || ''} placeholder="조직도에서 선택" />
+                    value={formatUserName((view as any).planApproverTeam, (view as any).planApproverName, (view as any).planApproverPosition)} placeholder="조직도에서 선택" />
                   <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
                     <PersonSearchIcon fontSize="small" />
                   </Button>
@@ -602,11 +603,11 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             <FormLabel>완료 승인자</FormLabel>
             <FormCell>
               {isReadonly ? (
-                <Typography variant="body2">{(view as any).completionApproverName || ''}</Typography>
+                <Typography variant="body2">{formatUserName((view as any).completionApproverTeam, (view as any).completionApproverName, (view as any).completionApproverPosition)}</Typography>
               ) : (
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                   <TextField fullWidth size="small" InputProps={{ readOnly: true }}
-                    value={(view as any).completionApproverName || ''} placeholder="조직도에서 선택" />
+                    value={formatUserName((view as any).completionApproverTeam, (view as any).completionApproverName, (view as any).completionApproverPosition)} placeholder="조직도에서 선택" />
                   <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                     <PersonSearchIcon fontSize="small" />
                   </Button>
@@ -864,11 +865,11 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           <FormLabel>계획 승인자</FormLabel>
           <FormCell borderRight>
             {isReadonly ? (
-              <Typography variant="body2">{(view as any).planApproverName || ''}</Typography>
+              <Typography variant="body2">{formatUserName((view as any).planApproverTeam, (view as any).planApproverName, (view as any).planApproverPosition)}</Typography>
             ) : (
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 <TextField fullWidth size="small" InputProps={{ readOnly: true }}
-                  value={(view as any).planApproverName || ''} placeholder="조직도에서 선택" />
+                  value={formatUserName((view as any).planApproverTeam, (view as any).planApproverName, (view as any).planApproverPosition)} placeholder="조직도에서 선택" />
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
                   <PersonSearchIcon fontSize="small" />
                 </Button>
@@ -878,11 +879,11 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
           <FormLabel>완료 승인자</FormLabel>
           <FormCell>
             {isReadonly ? (
-              <Typography variant="body2">{(view as any).completionApproverName || ''}</Typography>
+              <Typography variant="body2">{formatUserName((view as any).completionApproverTeam, (view as any).completionApproverName, (view as any).completionApproverPosition)}</Typography>
             ) : (
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 <TextField fullWidth size="small" InputProps={{ readOnly: true }}
-                  value={(view as any).completionApproverName || ''} placeholder="조직도에서 선택" />
+                  value={formatUserName((view as any).completionApproverTeam, (view as any).completionApproverName, (view as any).completionApproverPosition)} placeholder="조직도에서 선택" />
                 <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                   <PersonSearchIcon fontSize="small" />
                 </Button>

@@ -362,7 +362,7 @@ const ProcessActivityWorkPage: React.FC = () => {
                   {items.map((f, idx) => (
                     <TableRow key={f.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(f.id)}>
                       <TableCell align="center">{idx + 1}</TableCell>
-                      <TableCell><Typography variant="body2" fontWeight={600} color="primary">{f.title}</Typography></TableCell>
+                      <TableCell><Typography variant="body2" fontWeight={600}>{f.title}</Typography></TableCell>
                       <TableCell align="center">{f.divisionName || ''}</TableCell>
                       <TableCell align="center">{f.departmentName || ''}</TableCell>
                       <TableCell align="center">{f.evaluator || ''}</TableCell>
@@ -376,7 +376,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {items.map((f) => (
                 <Paper key={f.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(f.id)}>
-                  <Typography fontWeight="bold" color="primary" sx={{ mb: 1 }}>{f.title}</Typography>
+                  <Typography fontWeight="bold" sx={{ mb: 1 }}>{f.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
                     {t('processActivity.division', '부문명')}: {f.divisionName || ''} / {t('processActivity.department', '부서(팀)명')}: {f.departmentName || ''}
                   </Typography>

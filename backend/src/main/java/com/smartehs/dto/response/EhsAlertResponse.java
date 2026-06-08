@@ -25,6 +25,7 @@ public class EhsAlertResponse {
     private String detailZh;
     private String authorName;
     private String authorDept;
+    private String authorPosition;
     private String authorEmail;
     private String authorCompany;
     private Boolean isAutoRegistration;
@@ -47,6 +48,7 @@ public class EhsAlertResponse {
                 .detailZh(entity.getDetailZh())
                 .authorName(entity.getAuthorName())
                 .authorDept(entity.getAuthorDept())
+                .authorPosition(entity.getAuthorPosition())
                 .authorEmail(entity.getAuthorEmail())
                 .authorCompany(entity.getAuthorCompany())
                 .isAutoRegistration(entity.getIsAutoRegistration())
@@ -67,6 +69,7 @@ public class EhsAlertResponse {
                 .detail(MultiLanguageUtil.getLocalizedText(entity.getDetail(), entity.getDetailEn(), entity.getDetailZh()))
                 .authorName(entity.getAuthorName())
                 .authorDept(entity.getAuthorDept())
+                .authorPosition(entity.getAuthorPosition())
                 .authorEmail(entity.getAuthorEmail())
                 .authorCompany(entity.getAuthorCompany())
                 .isAutoRegistration(entity.getIsAutoRegistration())

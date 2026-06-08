@@ -23,6 +23,7 @@ public class EhsMessage {
     private String authorRole;
     private String authorEmail;
     private String authorDept;
+    private String authorPosition;
     private String authorCompany;
     private Integer views;
     private LocalDateTime sendDate;
