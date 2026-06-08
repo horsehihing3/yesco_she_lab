@@ -81,6 +81,7 @@ import DiseasePreventionMgmtPage from './pages/DiseasePreventionMgmtPage'
 import ContractorRegistrationPage from './pages/ContractorRegistrationPage'
 import ButtonManagePage from './pages/ButtonManagePage'
 import MenuManageTab from './components/system/MenuManageTab'
+import OshSignPage from './pages/OshSignPage'
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -117,6 +118,8 @@ function App() {
     <Routes>
       {/* Public Routes */}
       <Route path="/login" element={<LoginPage />} />
+      {/* OSH 위원회 이메일 서명 (로그인 불필요) */}
+      <Route path="/osh-sign/:token" element={<OshSignPage />} />
       {/* 협력 업체 안전 관리 실행 — 작업자용 새 창 (Layout/사이드바 없이 독립 페이지) */}
       <Route path="/partner-safety-execute/:planId" element={
         <ProtectedRoute>

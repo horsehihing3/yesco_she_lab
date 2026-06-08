@@ -162,6 +162,9 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
   const [signingAttendeeId, setSigningAttendeeId] = useState<number | null>(null)
   const [tempSignature, setTempSignature] = useState('')
   const [signSaving, setSignSaving] = useState(false)
+  // 이메일 서명 링크 발송 상태
+  const [sendingLinks, setSendingLinks] = useState(false)
+  const [linksSent, setLinksSent] = useState(false)
 
   const { user } = useAuth()
   const { canSee } = useButtonRules()
@@ -326,6 +329,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
   const handleRowClick = (committee: OSHCommittee) => {
     setSelectedCommittee(committee)
+    setLinksSent(false)
     setViewMode('detail')
   }
 
@@ -403,6 +407,25 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
       showError('서명 저장에 실패했습니다.')
     } finally {
       setSignSaving(false)
+    }
+  }
+
+  const handleSendSignLinks = async () => {
+    if (!selectedCommittee) return
+    const msg = linksSent
+      ? '이미 발송했습니다. 다시 발송하겠습니까?'
+      : '참석자들에게 이메일 서명 링크를 발송하시겠습니까?'
+    const confirmed = await showConfirm(msg)
+    if (!confirmed) return
+    setSendingLinks(true)
+    try {
+      const res = await axiosInstance.post(`/osh-committees/${selectedCommittee.id}/send-sign-links`)
+      setLinksSent(true)
+      await showSuccess(res.data.message || '서명 링크를 발송했습니다.')
+    } catch {
+      showError('서명 링크 발송에 실패했습니다.')
+    } finally {
+      setSendingLinks(false)
     }
   }
 
@@ -755,6 +778,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ width: 'auto' }}>{t('common.backToList')}</Button>
               {canEdit && (
+                <Button variant="contained" color="info" onClick={handleSendSignLinks} disabled={sendingLinks} sx={{ width: 'auto' }}>
+                  {sendingLinks ? '발송 중...' : '발송'}
+                </Button>
+              )}
+              {canEdit && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
               )}
               {canDel && (
@@ -860,8 +888,13 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             </Box>
 
             {/* Action Buttons */}
-            <Box sx={{ display: 'flex', gap: 1, mt: 3 }}>
+            <Box sx={{ display: 'flex', gap: 1, mt: 3, flexWrap: 'wrap' }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1 }}>{t('common.backToList')}</Button>
+              {canEdit && (
+                <Button variant="contained" color="info" onClick={handleSendSignLinks} disabled={sendingLinks} sx={{ flex: 1 }}>
+                  {sendingLinks ? '발송 중...' : '발송'}
+                </Button>
+              )}
               {canEdit && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('common.edit')}</Button>
               )}
