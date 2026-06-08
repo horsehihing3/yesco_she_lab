@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Typography, CircularProgress, Chip, LinearProgress,
@@ -24,6 +25,7 @@ const statusColor = (s: string): 'success' | 'warning' | 'error' | 'default' => 
 }
 
 const FacilityStatusTab: React.FC = () => {
+  const { t } = useTranslation()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['facilityEquipments'], queryFn: equipmentApi.list })
   const { data: stats } = useQuery({ queryKey: ['facilityEquipmentsStats'], queryFn: equipmentApi.stats })
 
@@ -58,14 +60,14 @@ const FacilityStatusTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.totalCount ?? 0}        label="전체 관리 기구" sub="등록 대장 기준" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={`${stats?.complianceRate ?? 0}%`} label="전체 준수율"   sub={`정상 ${stats?.okCount ?? 0}/${stats?.totalCount ?? 0}`} /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={byCategory.length}            label="분류 종류"     sub="압력·크레인·화학 등" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.expiredCount ?? 0}     label="만료 건수"     sub="즉시 조치 필요" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.totalCount ?? 0}        label={t('facilityStatusTab.label1', '전체 관리 기구')} sub="등록 대장 기준" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={`${stats?.complianceRate ?? 0}%`} label={t('facilityStatusTab.label2', '전체 준수율')}   sub={`정상 ${stats?.okCount ?? 0}/${stats?.totalCount ?? 0}`} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={byCategory.length}            label={t('facilityStatusTab.label3', '분류 종류')}     sub="압력·크레인·화학 등" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.expiredCount ?? 0}     label={t('facilityStatusTab.label4', '만료 건수')}     sub="즉시 조치 필요" /></Grid>
         <Grid item xs={6} sm={2.4}><StatCard color="purple" value={stats?.nearCount ?? 0}        label="D-30 임박"      sub="사전 일정 수립" /></Grid>
       </Grid>
 
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, mt: 2 }}>분류별 검사 준수율</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, mt: 2 }}>{t('facilityStatusTab.section1', '분류별 검사 준수율')}</Typography>
       <Grid container spacing={1.5} sx={{ mb: 3 }}>
         {byCategory.map(c => (
           <Grid item xs={6} sm={4} md={2} key={c.cat}>
@@ -87,7 +89,7 @@ const FacilityStatusTab: React.FC = () => {
         ))}
       </Grid>
 
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, mt: 2 }}>설치위치별 기구 현황</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, mt: 2 }}>{t('facilityStatusTab.section2', '설치위치별 기구 현황')}</Typography>
       <Grid container spacing={1.5} sx={{ mb: 3 }}>
         {byLocation.map(l => {
           const pct = Math.round(l.ok / l.total * 100)
@@ -117,7 +119,7 @@ const FacilityStatusTab: React.FC = () => {
         })}
       </Grid>
 
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, mt: 2 }}>전체 현황 리스트</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, mt: 2 }}>{t('facilityStatusTab.section3', '전체 현황 리스트')}</Typography>
       <Paper variant="outlined">
         <TableContainer>
           <Table size="small">

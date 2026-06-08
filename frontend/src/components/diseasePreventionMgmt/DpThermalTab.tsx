@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -34,6 +35,7 @@ const emptyForm: Partial<DpThermal> = { thermalType: '온열', severity: '경증
 const MENU = '보건 관리 › 질병예방 관리 › 온열한랭'
 
 const DpThermalTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
@@ -59,9 +61,9 @@ const DpThermalTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['dpMgmtStats'] })
   }
 
-  const createM = useMutation({ mutationFn: dpThermalApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpThermal> }) => dpThermalApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: dpThermalApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: dpThermalApi.create, onSuccess: () => { invalidate(); showSuccess(t('dpThermalTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('dpThermalTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpThermal> }) => dpThermalApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('dpThermalTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('dpThermalTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: dpThermalApi.remove, onSuccess: () => { invalidate(); showSuccess(t('dpThermalTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterType !== 'all' && x.thermalType !== filterType) return false
@@ -75,10 +77,10 @@ const DpThermalTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 기록을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('dpThermalTab.msg6', '이 기록을 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.thermalType || !form.occurDate) { showError('유형·발생일 필수'); return }
+    if (!form.thermalType || !form.occurDate) { showError(t('dpThermalTab.msg7', '유형·발생일 필수')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -86,7 +88,7 @@ const DpThermalTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>온열·한랭 기록 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('dpThermalTab.section1', '온열·한랭 기록 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>유형</FormLabel><FormCell borderRight><Chip size="small" label={selected.thermalType} color={typeColor(selected.thermalType)} /></FormCell><FormLabel>발생일</FormLabel><FormCell><Typography variant="body2" fontFamily="monospace">{selected.occurDate}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>발생 위치</FormLabel><FormCell><Typography variant="body2">{selected.location || ''}</Typography></FormCell></FormRow>
@@ -184,10 +186,10 @@ const DpThermalTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.thermalTotal ?? 0}  label="관리 대상" sub="옥외·고온·한랭" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.thermalCases ?? 0}  label="발생 사례" sub="금년 누적" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.thermalSevere ?? 0} label="중증·중등도" sub="병원 이송" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.thermalAction ?? 0} label="예방조치" sub="작업중지 발령" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.thermalTotal ?? 0}  label={t('dpThermalTab.label1', '관리 대상')} sub="옥외·고온·한랭" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.thermalCases ?? 0}  label={t('dpThermalTab.label2', '발생 사례')} sub="금년 누적" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.thermalSevere ?? 0} label={t('dpThermalTab.label3', '중증·중등도')} sub="병원 이송" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.thermalAction ?? 0} label={t('dpThermalTab.label4', '예방조치')} sub="작업중지 발령" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

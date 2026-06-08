@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -32,6 +33,7 @@ const emptyForm: Partial<RadMeasurement> = {
 }
 
 const RadMeasurementTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['radMeasurements'], queryFn: radMeasurementApi.list })
@@ -79,10 +81,10 @@ const RadMeasurementTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.measureTotal ?? 0} label="총 측정 기록" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={items.filter(v => v.evaluation === '정상').length} label="정상 평가" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={items.filter(v => v.evaluation === '주의').length} label="주의 평가" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.measureOverCount ?? 0} label="기준 초과" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.measureTotal ?? 0} label={t('radMeasurementTab.label1', '총 측정 기록')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={items.filter(v => v.evaluation === '정상').length} label={t('radMeasurementTab.label2', '정상 평가')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={items.filter(v => v.evaluation === '주의').length} label={t('radMeasurementTab.label3', '주의 평가')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.measureOverCount ?? 0} label={t('radMeasurementTab.label4', '기준 초과')} /></Grid>
       </Grid>
 
       <Alert severity="info" sx={{ mb: 2 }}>
@@ -92,7 +94,7 @@ const RadMeasurementTab: React.FC = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="구역/지점/측정자 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
-        <TextField select size="small" sx={{ minWidth: 130 }} label="평가" value={evalFilter} onChange={e => setEvalFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 130 }} label={t('radMeasurementTab.label5', '평가')} value={evalFilter} onChange={e => setEvalFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {EVALS.map(e => <MenuItem key={e} value={e}>{e}</MenuItem>)}
         </TextField>
@@ -131,7 +133,7 @@ const RadMeasurementTab: React.FC = () => {
                     <TableCell align="center"><Chip size="small" label={v.evaluation || '-'} color={evalColor(v.evaluation)} /></TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => openEdit(v)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('radMeasurementTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

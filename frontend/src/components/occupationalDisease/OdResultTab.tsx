@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import {
   Box, Grid, Paper, Chip, CircularProgress, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer, LinearProgress,
@@ -14,6 +15,7 @@ const statusColor = (s: string): 'success' | 'info' | 'warning' | 'error' | 'def
 }
 
 const OdResultTab: React.FC = () => {
+  const { t } = useTranslation()
   const { data: plans = [], isLoading } = useQuery({ queryKey: ['odPlans'], queryFn: planApi.list })
   const { data: workers = [] } = useQuery({ queryKey: ['odWorkers'], queryFn: workerApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })
@@ -27,11 +29,11 @@ const OdResultTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={completedPlans.length}             label="검진 완료 회차" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={completedTargets}                  label="누적 완료 인원" sub={`${plans.filter(p => p.half).map(p => p.half).filter((v, i, a) => a.indexOf(v) === i).join(' · ')}`} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={completedPlans.length}             label={t('odResultTab.label1', '검진 완료 회차')} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={completedTargets}                  label={t('odResultTab.label2', '누적 완료 인원')} sub={`${plans.filter(p => p.half).map(p => p.half).filter((v, i, a) => a.indexOf(v) === i).join(' · ')}`} /></Grid>
         <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={cd}                                 label="C·D 판정자" sub={`이상소견율 ${cdRate}%`} /></Grid>
         <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.workerD1Count ?? 0}        label="D1 직업병" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={totalTargets}                       label="계획 누계 인원" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={totalTargets}                       label={t('odResultTab.label3', '계획 누계 인원')} /></Grid>
       </Grid>
 
       {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (

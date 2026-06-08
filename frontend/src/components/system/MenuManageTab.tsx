@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Paper, Typography, List, ListItemButton, ListItemText,
@@ -304,6 +305,7 @@ const DEPTH_STYLES = [
 ]
 
 const MenuManageTab: React.FC = () => {
+  const { t } = useTranslation()
   const { isDarkMode } = useThemeMode()
   const { showSuccess, showError } = useAlert()
   const queryClient = useQueryClient()
@@ -340,10 +342,10 @@ const MenuManageTab: React.FC = () => {
   const saveMutation = useMutation({
     mutationFn: () => saveMenuRules(buildRulesToSave(hiddenSet)),
     onSuccess: () => {
-      showSuccess('저장되었습니다.')
+      showSuccess(t('menuManageTab.msg1', '저장되었습니다.'))
       queryClient.invalidateQueries({ queryKey: ['menuRules'] })
     },
-    onError: () => showError('저장 중 오류가 발생했습니다.'),
+    onError: () => showError(t('menuManageTab.msg2', '저장 중 오류가 발생했습니다.')),
   })
 
   const filteredRoles = useMemo(() => {
@@ -470,13 +472,13 @@ const MenuManageTab: React.FC = () => {
           </Typography>
           {isForcedHidden && (
             <Chip
-              label="전체숨김" size="small"
+              label={t('menuManageTab.label1', '전체숨김')} size="small"
               sx={{ mr: 0.5, fontSize: '0.6rem', height: 16, bgcolor: 'error.light', color: 'error.dark' }}
             />
           )}
           {!isForcedHidden && selfHidden && (
             <Chip
-              label="숨김" size="small"
+              label={t('menuManageTab.label2', '숨김')} size="small"
               sx={{ mr: 0.5, fontSize: '0.6rem', height: 16, bgcolor: 'warning.light', color: 'warning.dark' }}
             />
           )}
@@ -503,7 +505,7 @@ const MenuManageTab: React.FC = () => {
 
       {/* ── 왼쪽: 역할 목록 ──────────────────────────────────────────────── */}
       <Paper sx={{ width: '25%', minWidth: 230, p: 2, bgcolor: paperBg, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>역할 선택</Typography>
+        <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>{t('menuManageTab.section1', '역할 선택')}</Typography>
         <TextField
           size="small" fullWidth placeholder="역할 검색"
           value={roleSearch} onChange={e => setRoleSearch(e.target.value)}
@@ -526,7 +528,7 @@ const MenuManageTab: React.FC = () => {
                     primaryTypographyProps={{ fontSize: '0.8rem', fontWeight: isSelected ? 'bold' : 'normal' }}
                   />
                   {r.value === 'SYSTEM_ADMIN'
-                    ? <Chip label="전체" size="small" color="primary" sx={{ fontSize: '0.6rem', height: 18 }} />
+                    ? <Chip label={t('menuManageTab.label3', '전체')} size="small" color="primary" sx={{ fontSize: '0.6rem', height: 18 }} />
                     : hiddenCount > 0
                       ? <Chip label={`${hiddenCount}숨김`} size="small" color="warning" sx={{ fontSize: '0.6rem', height: 18 }} />
                       : null
@@ -556,7 +558,7 @@ const MenuManageTab: React.FC = () => {
                 bgcolor: GROUP_COLORS[selectedRoleMeta?.group ?? ''] ?? 'grey.400' }} />
               <Typography variant="subtitle2" fontWeight="bold">{selectedRoleMeta?.label}</Typography>
               {isSysAdmin && (
-                <Chip label="항상 모든 메뉴 접근" color="primary" size="small" sx={{ ml: 1, fontSize: '0.7rem' }} />
+                <Chip label={t('menuManageTab.label4', '항상 모든 메뉴 접근')} color="primary" size="small" sx={{ ml: 1, fontSize: '0.7rem' }} />
               )}
               <Box sx={{ flex: 1 }} />
               {changedCount > 0 && (

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Typography, TextField, Button, IconButton, Paper, Stack,
@@ -70,6 +71,7 @@ const CommentRow: React.FC<CommentRowProps> = ({
   onReplyToggle, onEditToggle, onReplyTextChange, onEditTextChange,
   onSubmitReply, onSubmitEdit, onDelete, pending,
 }) => {
+  const { t } = useTranslation()
   const canModify = !!myName && comment.authorName === myName
   const isReplyOpen = replyOpenId === comment.id
   const isEditOpen = editOpenId === comment.id
@@ -148,6 +150,7 @@ interface Props {
 }
 
 const EhsAlertCommentsSection: React.FC<Props> = ({ alertId }) => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { user } = useAuth()
   const { showConfirm, showError } = useAlert()
@@ -180,7 +183,7 @@ const EhsAlertCommentsSection: React.FC<Props> = ({ alertId }) => {
       qc.invalidateQueries({ queryKey: ['ehsAlertComments', alertId] })
       setNewComment(''); setReplyText(''); setReplyOpenId(null)
     },
-    onError: () => showError('댓글 등록에 실패했습니다.'),
+    onError: () => showError(t('ehsAlertCommentsSection.msg1', '댓글 등록에 실패했습니다.')),
   })
 
   const updateMut = useMutation({
@@ -189,13 +192,13 @@ const EhsAlertCommentsSection: React.FC<Props> = ({ alertId }) => {
       qc.invalidateQueries({ queryKey: ['ehsAlertComments', alertId] })
       setEditOpenId(null); setEditText('')
     },
-    onError: () => showError('수정에 실패했습니다.'),
+    onError: () => showError(t('ehsAlertCommentsSection.msg2', '수정에 실패했습니다.')),
   })
 
   const deleteMut = useMutation({
     mutationFn: (id: number) => deleteComment(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['ehsAlertComments', alertId] }),
-    onError: () => showError('삭제에 실패했습니다.'),
+    onError: () => showError(t('ehsAlertCommentsSection.msg3', '삭제에 실패했습니다.')),
   })
 
   const handleNewSubmit = () => {
@@ -219,7 +222,7 @@ const EhsAlertCommentsSection: React.FC<Props> = ({ alertId }) => {
   }
 
   const handleDelete = async (id: number) => {
-    if (await showConfirm('삭제하시겠습니까? 답글이 있는 경우 함께 삭제됩니다.')) {
+    if (await showConfirm(t('ehsAlertCommentsSection.msg4', '삭제하시겠습니까? 답글이 있는 경우 함께 삭제됩니다.'))) {
       deleteMut.mutate(id)
     }
   }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useMenuRule } from '../hooks/useMenuRule'
@@ -11,18 +12,19 @@ import PermitReportingTab from '../components/permitLifecycle/PermitReportingTab
 import PermitDocumentTab from '../components/permitLifecycle/PermitDocumentTab'
 
 const PermitLifecyclePage: React.FC = () => {
+  const { t } = useTranslation()
   const { isMenuHidden } = useMenuRule()
   const [searchParams, setSearchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState(0)
 
   const tabs = useMemo(() => [
-    { menuKey: 'permit-lc.tab.register',  label: '식별·등록', component: <PermitIdentificationTab /> },
-    { menuKey: 'permit-lc.tab.ledger',    label: '대장 관리', component: <PermitRegistryTab /> },
-    { menuKey: 'permit-lc.tab.renew',     label: '갱신·만료', component: <PermitRenewalTab /> },
-    { menuKey: 'permit-lc.tab.change',    label: '변경관리',  component: <PermitChangeTab /> },
-    { menuKey: 'permit-lc.tab.selfcheck', label: '자체점검',  component: <PermitInspectionTab /> },
-    { menuKey: 'permit-lc.tab.report',    label: '보고·신고', component: <PermitReportingTab /> },
-    { menuKey: 'permit-lc.tab.evidence',  label: '증빙·기록', component: <PermitDocumentTab /> },
+    { menuKey: 'permit-lc.tab.register', label: t('permit-lc.tab.register', '식별·등록'), component: <PermitIdentificationTab /> },
+    { menuKey: 'permit-lc.tab.ledger', label: t('permit-lc.tab.ledger', '대장 관리'), component: <PermitRegistryTab /> },
+    { menuKey: 'permit-lc.tab.renew', label: t('permit-lc.tab.renew', '갱신·만료'), component: <PermitRenewalTab /> },
+    { menuKey: 'permit-lc.tab.change', label: t('permit-lc.tab.change', '변경관리'),  component: <PermitChangeTab /> },
+    { menuKey: 'permit-lc.tab.selfcheck', label: t('permit-lc.tab.selfcheck', '자체점검'),  component: <PermitInspectionTab /> },
+    { menuKey: 'permit-lc.tab.report', label: t('permit-lc.tab.report', '보고·신고'), component: <PermitReportingTab /> },
+    { menuKey: 'permit-lc.tab.evidence', label: t('permit-lc.tab.evidence', '증빙·기록'), component: <PermitDocumentTab /> },
   ].filter(tab => !isMenuHidden(tab.menuKey)), [isMenuHidden])
 
   useEffect(() => {

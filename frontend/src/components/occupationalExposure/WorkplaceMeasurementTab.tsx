@@ -56,7 +56,7 @@ const labelCellSx = {
   px: 2,
   py: 1.5,
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
   display: 'flex',
   alignItems: 'center',
   fontSize: '0.875rem',
@@ -76,7 +76,7 @@ const valueCellSx = {
 const valueCellBorderSx = {
   ...valueCellSx,
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
 }
 
 const formLabelSx = {
@@ -91,7 +91,7 @@ const formValueSx = {
   py: 1,
   bgcolor: 'background.paper',
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
 }
 
 // ===== API Functions =====
@@ -458,17 +458,17 @@ const WorkplaceMeasurementTab: React.FC = () => {
       ) : (
         <>
           {/* Table - PC */}
-          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-            <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 900, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell sx={{ fontWeight: 'bold', width: 200, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.measurementId')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.measurementYear')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.measurementHalf')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', minWidth: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.measurementSite')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', minWidth: 200, width: 200, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.measurementAgency')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.status')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.overallResult')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 200, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.measurementId')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.measurementYear')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.measurementHalf')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', minWidth: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.measurementSite')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', minWidth: 200, width: 200, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.measurementAgency')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.status')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.overallResult')}</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', minWidth: 110, width: 110 }} align="center">{t('occupationalExposure.measurement.measurementDate')}</TableCell>
                 </TableRow>
               </TableHead>
@@ -481,19 +481,19 @@ const WorkplaceMeasurementTab: React.FC = () => {
                       sx={{ cursor: 'pointer' }}
                       onClick={() => handleViewDetail(row.id)}
                     >
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.measurementId}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.measurementYear}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{halfLabels[row.measurementHalf]}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.measurementSite || ''}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.measurementAgency || ''}</TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.measurementId}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.measurementYear}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{halfLabels[row.measurementHalf]}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.measurementSite || ''}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.measurementAgency || ''}</TableCell>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                         <Chip
                           label={statusLabels[row.status]}
                           color={getStatusColor(row.status)}
                           size="small"
                         />
                       </TableCell>
-                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                      <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>
                         {row.overallResult ? (
                           <Chip
                             label={resultLabels[row.overallResult]}
@@ -520,7 +520,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {listQuery.data?.content?.length ? (
               listQuery.data.content.map((row) => (
-                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleViewDetail(row.id)}>
+                <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleViewDetail(row.id)}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                     <Typography fontWeight="bold" sx={{ flex: 1 }}>{row.measurementId}</Typography>
                     <Chip
@@ -599,30 +599,30 @@ const WorkplaceMeasurementTab: React.FC = () => {
           {t('occupationalExposure.measurement.measurementInfo')}
         </Typography>
         <Paper sx={{ display: { xs: 'none', md: 'block' }, p: 3, bgcolor: 'grey.50', mb: 3 }}>
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.measurement.measurementId')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.measurementId}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.measurement.measurementYear')}</Typography>
             <Typography sx={valueCellSx}>{d.measurementYear}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.measurement.measurementHalf')}</Typography>
             <Typography sx={valueCellBorderSx}>{halfLabels[d.measurementHalf]}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.measurement.measurementDate')}</Typography>
             <Typography sx={valueCellSx}>{formatDate(d.measurementDate)}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.measurement.measurementAgency')}</Typography>
             <Typography sx={valueCellBorderSx}>{d.measurementAgency || ''}</Typography>
             <Typography sx={labelCellSx}>{t('occupationalExposure.measurement.measurementSite')}</Typography>
             <Typography sx={valueCellSx}>{d.measurementSite || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.measurement.measurementSiteDetail')}</Typography>
             <Typography sx={{ ...valueCellSx, flex: 3 }}>{d.measurementSiteDetail || ''}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelCellSx}>{t('occupationalExposure.measurement.status')}</Typography>
             <Box sx={valueCellBorderSx}>
               <Chip label={statusLabels[d.status]} color={getStatusColor(d.status)} size="small" />
@@ -675,7 +675,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
         {/* Detail Table - PC */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, mb: 3 }}>
           <TableContainer>
-            <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }} align="center">{t('occupationalExposure.measurement.hazardousFactor')}</TableCell>
@@ -724,7 +724,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 3 }}>
           {d.details && d.details.length > 0 ? (
             d.details.map((detail, idx) => (
-              <Paper key={idx} sx={{ p: 2, border: 1, borderColor: 'grey.300' }}>
+              <Paper key={idx} sx={{ p: 2, border: 1, borderColor: 'divider' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                   <Typography fontWeight="bold" sx={{ flex: 1 }}>{detail.hazardousFactor}</Typography>
                   <Chip
@@ -791,8 +791,8 @@ const WorkplaceMeasurementTab: React.FC = () => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Form - PC */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('occupationalExposure.measurement.measurementYear')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -848,7 +848,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.measurement.measurementDate')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -870,7 +870,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('occupationalExposure.measurement.measurementSite')}</Typography>
             <Box sx={formValueSx}>
               <Controller
@@ -892,7 +892,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('occupationalExposure.measurement.status')}
             </Typography>
@@ -1062,20 +1062,20 @@ const WorkplaceMeasurementTab: React.FC = () => {
               {t('occupationalExposure.measurement.addRow')}
             </Button>
           </Box>
-          <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
-            <Table size="small" sx={{ minWidth: 1100, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+          <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1100, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.hazardousFactor')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 120, whiteSpace: 'nowrap' }} align="center">{t('occupationalExposure.measurement.factorType')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.workProcess')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 90 }} align="center">{t('occupationalExposure.measurement.measurementValue')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 90 }} align="center">{t('occupationalExposure.measurement.exposureStandard')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 60 }} align="center">{t('occupationalExposure.measurement.unit')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 130, whiteSpace: 'nowrap' }} align="center">{t('occupationalExposure.measurement.resultRatio')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 100 }} align="center">{t('occupationalExposure.measurement.resultStatus')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 100, whiteSpace: 'nowrap' }} align="center">{t('occupationalExposure.measurement.employeeCount')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.measurement.notes')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.hazardousFactor')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 120, whiteSpace: 'nowrap' }} align="center">{t('occupationalExposure.measurement.factorType')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.workProcess')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 90 }} align="center">{t('occupationalExposure.measurement.measurementValue')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 90 }} align="center">{t('occupationalExposure.measurement.exposureStandard')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 60 }} align="center">{t('occupationalExposure.measurement.unit')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 130, whiteSpace: 'nowrap' }} align="center">{t('occupationalExposure.measurement.resultRatio')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 100 }} align="center">{t('occupationalExposure.measurement.resultStatus')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 100, whiteSpace: 'nowrap' }} align="center">{t('occupationalExposure.measurement.employeeCount')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.measurement.notes')}</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', width: 60, minWidth: 60, whiteSpace: 'nowrap' }} align="center">{t('common.delete')}</TableCell>
                 </TableRow>
               </TableHead>
@@ -1083,7 +1083,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                 {detailRows.length > 0 ? (
                   detailRows.map((row, idx) => (
                     <TableRow key={idx}>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <TextField
                           value={row.hazardousFactor}
                           onChange={(e) => handleDetailRowChange(idx, 'hazardousFactor', e.target.value)}
@@ -1092,7 +1092,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           placeholder={t('occupationalExposure.measurement.hazardousFactor')}
                         />
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <Select
                           value={row.factorType || 'CHEMICAL'}
                           onChange={(e) => handleDetailRowChange(idx, 'factorType', e.target.value)}
@@ -1105,7 +1105,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           ))}
                         </Select>
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <TextField
                           value={row.workProcess}
                           onChange={(e) => handleDetailRowChange(idx, 'workProcess', e.target.value)}
@@ -1114,7 +1114,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           placeholder={t('occupationalExposure.measurement.workProcess')}
                         />
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <TextField
                           value={row.measurementValue}
                           onChange={(e) => handleDetailRowChange(idx, 'measurementValue', e.target.value)}
@@ -1122,7 +1122,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           fullWidth
                         />
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <TextField
                           value={row.exposureStandard}
                           onChange={(e) => handleDetailRowChange(idx, 'exposureStandard', e.target.value)}
@@ -1130,7 +1130,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           fullWidth
                         />
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <Select
                           value={row.unit || ''}
                           onChange={(e) => handleDetailRowChange(idx, 'unit', e.target.value)}
@@ -1142,7 +1142,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           {unitCodes.map((c) => <MenuItem key={c.code} value={c.codeValue || c.code}>{getUnitLabel(c.code)}</MenuItem>)}
                         </Select>
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <NumberField
                           value={row.resultRatio ?? ''}
                           onChange={(v) => handleDetailRowChange(idx, 'resultRatio', v ?? undefined)}
@@ -1150,7 +1150,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           fullWidth
                         />
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <Select
                           value={row.resultStatus || 'normal'}
                           onChange={(e) => handleDetailRowChange(idx, 'resultStatus', e.target.value)}
@@ -1163,7 +1163,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           ))}
                         </Select>
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <NumberField
                           value={row.employeeCount ?? ''}
                           onChange={(v) => handleDetailRowChange(idx, 'employeeCount', v ?? undefined)}
@@ -1171,7 +1171,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
                           fullWidth
                         />
                       </TableCell>
-                      <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                      <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                         <TextField
                           value={row.notes}
                           onChange={(e) => handleDetailRowChange(idx, 'notes', e.target.value)}
@@ -1207,7 +1207,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
           </Box>
           {detailRows.length > 0 ? (
             detailRows.map((row, idx) => (
-              <Paper key={idx} sx={{ p: 2, mb: 1.5, border: 1, borderColor: 'grey.300' }}>
+              <Paper key={idx} sx={{ p: 2, mb: 1.5, border: 1, borderColor: 'divider' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
                   <Typography variant="body2" fontWeight="bold">#{idx + 1}</Typography>
                   <IconButton size="small" onClick={() => handleRemoveDetailRow(idx)} sx={{ color: 'text.primary' }}>

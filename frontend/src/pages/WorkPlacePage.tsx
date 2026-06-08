@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
@@ -40,6 +41,7 @@ const fetchWorkPlaces = async (page: number, size: number): Promise<PageResponse
 }
 
 const WorkPlacePage: React.FC = () => {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const theme = useTheme()
   const { showConfirm, showSuccess } = useAlert()
@@ -60,7 +62,7 @@ const WorkPlacePage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workplaces'] })
       handleCloseDialog()
-      showSuccess('사업장이 등록되었습니다.')
+      showSuccess(t('workPlacePage.msg1', '사업장이 등록되었습니다.'))
     },
   })
 
@@ -70,7 +72,7 @@ const WorkPlacePage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workplaces'] })
       handleCloseDialog()
-      showSuccess('사업장이 수정되었습니다.')
+      showSuccess(t('workPlacePage.msg2', '사업장이 수정되었습니다.'))
     },
   })
 
@@ -111,7 +113,7 @@ const WorkPlacePage: React.FC = () => {
   }
 
   const handleDelete = async (id: number) => {
-    const confirmed = await showConfirm('이 사업장을 삭제하시겠습니까?')
+    const confirmed = await showConfirm(t('workPlacePage.msg3', '이 사업장을 삭제하시겠습니까?'))
     if (confirmed) {
       deleteMutation.mutate(id)
     }
@@ -148,26 +150,26 @@ const WorkPlacePage: React.FC = () => {
         <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>Place</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>Floor</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>Created</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>Place</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>Floor</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>Status</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>Created</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }} align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {data?.content.map((workPlace) => (
               <TableRow key={workPlace.id} hover>
-                <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{workPlace.place}</TableCell>
-                <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{workPlace.floor || ''}</TableCell>
-                <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{workPlace.place}</TableCell>
+                <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{workPlace.floor || ''}</TableCell>
+                <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>
                   <Chip
                     label={workPlace.used ? 'Active' : 'Inactive'}
                     size="small"
                     color={workPlace.used ? 'success' : 'default'}
                   />
                 </TableCell>
-                <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(workPlace.createdAt)}</TableCell>
+                <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{formatDate(workPlace.createdAt)}</TableCell>
                 <TableCell align="right">
                   <IconButton size="small" onClick={() => handleOpenDialog(workPlace)}>
                     <EditIcon fontSize="small" />

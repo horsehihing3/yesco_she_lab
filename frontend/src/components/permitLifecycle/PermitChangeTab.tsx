@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -32,6 +33,7 @@ const impactColor = (s?: string): 'success' | 'error' | 'warning' | 'default' =>
 const emptyForm: Partial<PermitChange> = { changeType: '설비증설', status: '검토중', impactAssessment: '검토중' }
 
 const PermitChangeTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
 
@@ -53,9 +55,9 @@ const PermitChangeTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['permitLifecycleStats'] })
   }
 
-  const createM = useMutation({ mutationFn: permitChangeApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitChange> }) => permitChangeApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: permitChangeApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: permitChangeApi.create, onSuccess: () => { invalidate(); showSuccess(t('permitChangeTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('permitChangeTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<PermitChange> }) => permitChangeApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('permitChangeTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('permitChangeTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: permitChangeApi.remove, onSuccess: () => { invalidate(); showSuccess(t('permitChangeTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterType !== 'all' && x.changeType !== filterType) return false
@@ -69,10 +71,10 @@ const PermitChangeTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 변경관리 항목을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('permitChangeTab.msg6', '이 변경관리 항목을 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.title || !form.changeType) { showError('변경 유형·제목 필수'); return }
+    if (!form.title || !form.changeType) { showError(t('permitChangeTab.msg7', '변경 유형·제목 필수')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -80,7 +82,7 @@ const PermitChangeTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>변경관리 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('permitChangeTab.section1', '변경관리 상세')}</Typography>
         <FormTable>
           <FormRow>
             <FormLabel>변경 유형</FormLabel>
@@ -200,10 +202,10 @@ const PermitChangeTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="purple" value={stats?.chTotal ?? 0}    label="전체 MOC" sub="변경요청" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.chReview ?? 0}   label="검토 중" sub="영향평가 단계" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.chProgress ?? 0} label="허가 진행" sub="신청·심사 중" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.chDone ?? 0}     label="완료" sub="이행완료" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="purple" value={stats?.chTotal ?? 0}    label={t('permitChangeTab.label1', '전체 MOC')} sub="변경요청" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.chReview ?? 0}   label={t('permitChangeTab.label2', '검토 중')} sub="영향평가 단계" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.chProgress ?? 0} label={t('permitChangeTab.label3', '허가 진행')} sub="신청·심사 중" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.chDone ?? 0}     label={t('permitChangeTab.label4', '완료')} sub="이행완료" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

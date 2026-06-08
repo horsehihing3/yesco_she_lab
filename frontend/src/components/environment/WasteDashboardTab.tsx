@@ -219,7 +219,7 @@ const WasteDashboardTab: React.FC = () => {
     { label: t('waste.dashboard.completed'), value: stats?.completedCount ?? 0, borderColor: '#10B981' },
   ]
 
-  const cellSx = { borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' as const }
+  const cellSx = { borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' as const }
 
   return (
     <Box>
@@ -338,7 +338,7 @@ const WasteDashboardTab: React.FC = () => {
       {/* PC Table */}
       <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' }, borderRadius: 2, overflow: 'hidden', mb: 2 }}>
         <TableContainer sx={{ overflowX: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 650, '& .MuiTableCell-root': { borderColor: 'grey.300' }, '& .MuiTableBody-root .MuiTableRow-root:hover': { backgroundColor: isDarkMode ? '#1e293b !important' : '#f9fafb !important' } }}>
+          <Table size="small" sx={{ minWidth: 650, '& .MuiTableCell-root': { borderColor: 'divider' }, '& .MuiTableBody-root .MuiTableRow-root:hover': { backgroundColor: isDarkMode ? '#1e293b !important' : '#f9fafb !important' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: isDarkMode ? '#27272a' : 'grey.100' }}>
                 <TableCell align="center" sx={{ fontWeight: 'bold', ...cellSx }}>{t('common.no')}</TableCell>

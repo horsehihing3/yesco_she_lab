@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -69,6 +70,7 @@ const fmtDateTime = (s?: string) => {
 }
 
 const IncidentResponsePage: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
 
@@ -105,18 +107,18 @@ const IncidentResponsePage: React.FC = () => {
 
   const createM = useMutation({
     mutationFn: incidentResponseApi.create,
-    onSuccess: () => { invalidate(); backToList(); showSuccess('등록되었습니다') },
-    onError: () => showError('등록에 실패했습니다'),
+    onSuccess: () => { invalidate(); backToList(); showSuccess(t('incidentResponsePage.msg1', '등록되었습니다')) },
+    onError: () => showError(t('incidentResponsePage.msg2', '등록에 실패했습니다')),
   })
   const updateM = useMutation({
     mutationFn: ({ id, e }: { id: number; e: Partial<IncidentResponse> }) => incidentResponseApi.update(id, e),
-    onSuccess: () => { invalidate(); backToList(); showSuccess('수정되었습니다') },
-    onError: () => showError('수정에 실패했습니다'),
+    onSuccess: () => { invalidate(); backToList(); showSuccess(t('incidentResponsePage.msg3', '수정되었습니다')) },
+    onError: () => showError(t('incidentResponsePage.msg4', '수정에 실패했습니다')),
   })
   const deleteM = useMutation({
     mutationFn: incidentResponseApi.remove,
-    onSuccess: () => { invalidate(); backToList(); showSuccess('삭제되었습니다') },
-    onError: () => showError('삭제에 실패했습니다'),
+    onSuccess: () => { invalidate(); backToList(); showSuccess(t('incidentResponsePage.msg5', '삭제되었습니다')) },
+    onError: () => showError(t('incidentResponsePage.msg6', '삭제에 실패했습니다')),
   })
 
   const filtered = useMemo(() => {
@@ -151,7 +153,7 @@ const IncidentResponsePage: React.FC = () => {
 
   const handleSave = async () => {
     if (!form.title || !form.location || !form.reportedAt) {
-      showError('필수 항목(제목·발생장소·보고일시)을 입력해주세요')
+      showError(t('incidentResponsePage.msg7', '필수 항목(제목·발생장소·보고일시)을 입력해주세요'))
       return
     }
     const payload: Partial<IncidentResponse> = {
@@ -164,7 +166,7 @@ const IncidentResponsePage: React.FC = () => {
 
   const handleDelete = async () => {
     if (!editing) return
-    if (!(await showConfirm('이 사고 대응 기록을 삭제하시겠습니까?'))) return
+    if (!(await showConfirm(t('incidentResponsePage.msg8', '이 사고 대응 기록을 삭제하시겠습니까?')))) return
     deleteM.mutate(editing.id)
   }
 
@@ -338,7 +340,7 @@ const IncidentResponsePage: React.FC = () => {
         </Box>
         <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
           <Chip size="small" label={STATUS_LABEL[viewing.status] || viewing.status} color={STATUS_COLOR[viewing.status] || 'default'} />
-          {viewing.isDrill && <Chip size="small" label="훈련" color="secondary" />}
+          {viewing.isDrill && <Chip size="small" label={t('incidentResponsePage.label1', '훈련')} color="secondary" />}
           {viewing.severity && (
             <Chip size="small" label={SEVERITY_LABEL[viewing.severity] || viewing.severity}
               color={SEVERITY_COLOR[viewing.severity] || 'default'} variant="outlined" />
@@ -376,7 +378,7 @@ const IncidentResponsePage: React.FC = () => {
           <Button variant="contained" onClick={handleEditFromDetail}
             sx={{ flex: { xs: '1 1 calc(33% - 4px)', md: 'none' } }}>수정</Button>
           <Button variant="contained" color="error" onClick={async () => {
-            if (await showConfirm('이 사고 대응 기록을 삭제하시겠습니까?')) deleteM.mutate(viewing.id)
+            if (await showConfirm(t('incidentResponsePage.msg9', '이 사고 대응 기록을 삭제하시겠습니까?'))) deleteM.mutate(viewing.id)
           }} sx={{ flex: { xs: '1 1 calc(33% - 4px)', md: 'none' } }}>삭제</Button>
         </Box>
       </Box>
@@ -388,11 +390,11 @@ const IncidentResponsePage: React.FC = () => {
     <Box>
       {/* KPI 5장 */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.issued ?? 0}     label="발령 중" sub="긴급 대응" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.responding ?? 0} label="대응 중" sub="진행 중" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.closed ?? 0}     label="종료" sub="완료" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={stats?.drill ?? 0}      label="훈련" sub="훈련 건수" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.total ?? 0}      label="전체" sub="누적" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.issued ?? 0}     label={t('incidentResponsePage.label2', '발령 중')} sub="긴급 대응" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.responding ?? 0} label={t('incidentResponsePage.label3', '대응 중')} sub="진행 중" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.closed ?? 0}     label={t('incidentResponsePage.label4', '종료')} sub="완료" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={stats?.drill ?? 0}      label={t('incidentResponsePage.label5', '훈련')} sub="훈련 건수" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.total ?? 0}      label={t('incidentResponsePage.label6', '전체')} sub="누적" /></Grid>
       </Grid>
 
       {/* ─── 데스크탑(md+) 헤더 ─── */}
@@ -473,7 +475,7 @@ const IncidentResponsePage: React.FC = () => {
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>
                       {item.isDrill && (
-                        <Chip size="small" label="훈련" color="secondary" sx={{ mr: 1, height: 20, fontSize: '0.7rem' }} />
+                        <Chip size="small" label={t('incidentResponsePage.label7', '훈련')} color="secondary" sx={{ mr: 1, height: 20, fontSize: '0.7rem' }} />
                       )}
                       {item.title}
                     </TableCell>

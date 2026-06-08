@@ -62,4 +62,12 @@
         UPDATE tb_floor_drawing SET active = 0, modified_at = GETDATE() WHERE id = #{id}
     </update>
 
+    <update id="renameSite">
+        UPDATE tb_floor_drawing
+        SET name = CASE WHEN name = #{oldName} THEN #{newName} ELSE name END,
+            site = CASE WHEN site = #{oldName} THEN #{newName} ELSE site END,
+            modified_at = GETDATE()
+        WHERE name = #{oldName} OR site = #{oldName}
+    </update>
+
 </mapper>

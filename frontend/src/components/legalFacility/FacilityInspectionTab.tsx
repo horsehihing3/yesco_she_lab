@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -37,6 +38,7 @@ const emptyForm: Partial<FacilityInspection> = {
 }
 
 const FacilityInspectionTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['facilityInspections'], queryFn: inspectionApi.list })
@@ -66,11 +68,11 @@ const FacilityInspectionTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.totalCount ?? 0}        label="검사 이력 총계" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.passCount ?? 0}        label="합격" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.conditionalCount ?? 0} label="조건부합격" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.failCount ?? 0}        label="불합격" sub="개선 필요" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={`${stats?.passRate ?? 0}%`}    label="검사 합격률" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.totalCount ?? 0}        label={t('facilityInspectionTab.label1', '검사 이력 총계')} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.passCount ?? 0}        label={t('facilityInspectionTab.label2', '합격')} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.conditionalCount ?? 0} label={t('facilityInspectionTab.label3', '조건부합격')} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.failCount ?? 0}        label={t('facilityInspectionTab.label4', '불합격')} sub="개선 필요" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={`${stats?.passRate ?? 0}%`}    label={t('facilityInspectionTab.label5', '검사 합격률')} /></Grid>
       </Grid>
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="flex-end">
@@ -112,7 +114,7 @@ const FacilityInspectionTab: React.FC = () => {
               )}
               <Stack direction="row" spacing={0.5} sx={{ mt: 1 }} justifyContent="flex-end">
                 <IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="inherit" /></IconButton>
-                <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('facilityInspectionTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
               </Stack>
             </Paper>
           ))}

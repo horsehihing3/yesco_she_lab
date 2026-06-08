@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -33,6 +34,7 @@ const emptyForm: Partial<DpMsd> = { riskLevel: '중간', status: '요관찰' }
 const MENU = '보건 관리 › 질병예방 관리 › 근골격계'
 
 const DpMsdTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
@@ -58,9 +60,9 @@ const DpMsdTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['dpMgmtStats'] })
   }
 
-  const createM = useMutation({ mutationFn: dpMsdApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpMsd> }) => dpMsdApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: dpMsdApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: dpMsdApi.create, onSuccess: () => { invalidate(); showSuccess(t('dpMsdTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('dpMsdTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpMsd> }) => dpMsdApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('dpMsdTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('dpMsdTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: dpMsdApi.remove, onSuccess: () => { invalidate(); showSuccess(t('dpMsdTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterRisk !== 'all' && x.riskLevel !== filterRisk) return false
@@ -74,10 +76,10 @@ const DpMsdTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 평가를 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('dpMsdTab.msg6', '이 평가를 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.workerName) { showError('근로자명을 입력해주세요'); return }
+    if (!form.workerName) { showError(t('dpMsdTab.msg7', '근로자명을 입력해주세요')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -85,7 +87,7 @@ const DpMsdTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>근골격계 평가 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('dpMsdTab.section1', '근골격계 평가 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>근로자명</FormLabel><FormCell borderRight><Typography variant="body2" fontWeight={600}>{selected.workerName}</Typography></FormCell><FormLabel>부서</FormLabel><FormCell><Typography variant="body2">{selected.department || ''}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>직위·직무</FormLabel><FormCell><Typography variant="body2">{selected.jobTitle || ''}</Typography></FormCell></FormRow>
@@ -198,10 +200,10 @@ const DpMsdTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.msdTotal ?? 0} label="평가 건수" sub="총 작업분석" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.msdLow ?? 0}   label="낮음" sub="REBA 1~3" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.msdMid ?? 0}   label="중간" sub="REBA 4~7" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.msdHigh ?? 0}  label="높음" sub="REBA 8~15" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.msdTotal ?? 0} label={t('dpMsdTab.label1', '평가 건수')} sub="총 작업분석" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.msdLow ?? 0}   label={t('dpMsdTab.label2', '낮음')} sub="REBA 1~3" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.msdMid ?? 0}   label={t('dpMsdTab.label3', '중간')} sub="REBA 4~7" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.msdHigh ?? 0}  label={t('dpMsdTab.label4', '높음')} sub="REBA 8~15" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

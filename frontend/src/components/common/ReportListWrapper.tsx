@@ -77,7 +77,7 @@ function ReportListWrapper<T extends { id?: string | number }>({
               '& .MuiTableRow-root': {
                 display: 'block',
                 borderBottom: '1px solid',
-                borderColor: 'grey.300',
+                borderColor: 'divider',
               },
               '& .MuiTableRow-root:last-child': { borderBottom: 'none' },
               '& .MuiTableCell-root': {

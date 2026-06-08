@@ -83,7 +83,7 @@ const AirEmissionReportTab: React.FC = () => {
           1. {t('airEmission.report.measurementInfo', '측정 정보')}
         </Typography>
         <TableContainer sx={{ mb: 3 }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableBody>
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('airEmission.report.date', '측정일')}</TableCell>
@@ -119,7 +119,7 @@ const AirEmissionReportTab: React.FC = () => {
           </Table>
         </TableContainer>
 
-        <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'grey.300', textAlign: 'center' }}>
+        <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
             {t('airEmission.report.reportFooter', '본 보고서는 EHS 시스템에서 자동 생성되었습니다.')}
           </Typography>
@@ -144,7 +144,7 @@ const AirEmissionReportTab: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }} className="no-print">레포트</Typography>
+      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }} className="no-print">{t('common.report', '레포트')}</Typography>
     <ReportListWrapper<AirEmission>
       items={filtered}
       columns={columns}

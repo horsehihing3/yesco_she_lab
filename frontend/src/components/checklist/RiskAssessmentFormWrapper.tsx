@@ -281,7 +281,7 @@ const RiskAssessmentFormWrapper: React.FC = () => {
       await queryClient.refetchQueries({ queryKey: ['riskAssessmentForms'], type: 'active' })
       if (keyword.trim()) setKeyword('') // 검색어 걸려있어 새 항목이 안보이는 경우 대비
       if (created === 0) {
-        showWarning('등록된 양식이 없습니다. (모두 실패하거나 동일 제목이 이미 존재할 수 있음)')
+        showWarning(t('riskAssessmentFormWrapper.msg1', '등록된 양식이 없습니다. (모두 실패하거나 동일 제목이 이미 존재할 수 있음)'))
       } else {
         showSuccess(`${created}개 양식, 총 ${parsed.reduce((s, f) => s + f.items.length, 0)}개 항목이 등록되었습니다.`)
       }
@@ -358,8 +358,8 @@ const RiskAssessmentFormWrapper: React.FC = () => {
       ) : (
         <>
           {/* PC Table */}
-          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ ...headerCellSx, width: 48, p: 0 }} align="center"></TableCell>
@@ -386,7 +386,7 @@ const RiskAssessmentFormWrapper: React.FC = () => {
           {/* Mobile Cards */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {filtered.map((item: RiskAssessmentFormMaster) => (
-              <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => setSelectedId(item.id)}>
+              <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => setSelectedId(item.id)}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                   <Box onClick={(e) => e.stopPropagation()}>
                     <Radio size="small" checked={copyTargetId === item.id}

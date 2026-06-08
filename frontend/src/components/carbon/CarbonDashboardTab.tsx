@@ -157,9 +157,9 @@ const CarbonDashboardTab: React.FC = () => {
     { label: t('carbon.dashboard.scope3'), value: stats?.scope3 != null ? stats.scope3.toLocaleString() : '0', borderColor: '#ff9800' },
   ]
 
-  const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' as const }
+  const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' as const }
   const lastHeaderCellSx = { fontWeight: 'bold', wordBreak: 'keep-all' as const }
-  const cellSx = { borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }
+  const cellSx = { borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }
 
   return (
     <Box>
@@ -284,12 +284,12 @@ const CarbonDashboardTab: React.FC = () => {
         sx={{
           display: { xs: 'none', md: 'block' },
           border: 1,
-          borderColor: 'grey.300',
+          borderColor: 'divider',
           overflowX: 'auto',
           bgcolor: cardBgColor,
         }}
       >
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableHead>
             <TableRow>
               <TableCell align="center" sx={headerCellSx}>{t('common.no')}</TableCell>

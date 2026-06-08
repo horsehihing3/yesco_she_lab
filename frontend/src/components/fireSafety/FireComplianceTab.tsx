@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -40,6 +41,7 @@ const emptyComp: Partial<FireCompliance> = { rate: 0 }
 const emptyReport: Partial<FireReport> = { status: '계획' }
 
 const FireComplianceTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: comps = [], isLoading: l1 } = useQuery({ queryKey: ['fireCompliances'], queryFn: fireComplianceApi.list })
@@ -92,12 +94,12 @@ const FireComplianceTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2}><StatCard color="green"  value={`${overallRate}%`} label="전체 준수율" sub="종합" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="blue"   value={okCount}    label="이행 완료" sub="95% 이상" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="yellow" value={partCount}  label="부분 이행" sub="75~94%" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={ngCount}    label="미이행" sub="75% 미만" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="purple" value={reports.filter(r => r.status === '예정').length} label="제출 예정" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="blue"   value={reports.filter(r => r.status === '완료').length} label="제출 완료" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="green"  value={`${overallRate}%`} label={t('fireComplianceTab.label1', '전체 준수율')} sub="종합" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="blue"   value={okCount}    label={t('fireComplianceTab.label2', '이행 완료')} sub="95% 이상" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="yellow" value={partCount}  label={t('fireComplianceTab.label3', '부분 이행')} sub="75~94%" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={ngCount}    label={t('fireComplianceTab.label4', '미이행')} sub="75% 미만" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="purple" value={reports.filter(r => r.status === '예정').length} label={t('fireComplianceTab.label5', '제출 예정')} /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="blue"   value={reports.filter(r => r.status === '완료').length} label={t('fireComplianceTab.label6', '제출 완료')} /></Grid>
       </Grid>
 
       <Alert severity={overallRate >= 95 ? 'success' : overallRate >= 75 ? 'warning' : 'error'} sx={{ mb: 2 }}>
@@ -108,7 +110,7 @@ const FireComplianceTab: React.FC = () => {
       {/* 전체 준수율 바 */}
       <Paper variant="outlined" sx={{ p: 2.5, mb: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-          <Typography variant="subtitle1" fontWeight={700}>전체 법령 준수율</Typography>
+          <Typography variant="subtitle1" fontWeight={700}>{t('fireComplianceTab.section1', '전체 법령 준수율')}</Typography>
           <Typography variant="h5" fontWeight={900} color={overallRate >= 95 ? 'success.main' : overallRate >= 75 ? 'warning.main' : 'error.main'}>
             {overallRate}%
           </Typography>
@@ -118,7 +120,7 @@ const FireComplianceTab: React.FC = () => {
 
       {/* 준수 항목 카드 */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>법령 준수 현황</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('fireComplianceTab.section2', '법령 준수 현황')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setCEditing(null); setCForm(emptyComp); setCOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       {l1 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
@@ -147,7 +149,7 @@ const FireComplianceTab: React.FC = () => {
                     ))}
                     <Stack direction="row" justifyContent="flex-end" spacing={0.5} sx={{ mt: 1 }}>
                       <IconButton size="small" onClick={() => { setCEditing(c); setCForm({ ...c }); setCOpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) cDelete.mutate(c.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireComplianceTab.msg1', '삭제하시겠습니까?'))) cDelete.mutate(c.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </Stack>
                   </CardContent>
                 </Card>
@@ -162,7 +164,7 @@ const FireComplianceTab: React.FC = () => {
 
       {/* ===== Reports ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>법정 보고·제출 일정</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('fireComplianceTab.section3', '법정 보고·제출 일정')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setREditing(null); setRForm({ ...emptyReport, lastSubmit: todayStr(), nextSubmit: daysFromTodayStr(365) }); setROpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       <Paper variant="outlined">
@@ -193,7 +195,7 @@ const FireComplianceTab: React.FC = () => {
                     <TableCell>{v.note || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => { setREditing(v); setRForm({ ...v }); setROpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) rDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireComplianceTab.msg2', '삭제하시겠습니까?'))) rDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

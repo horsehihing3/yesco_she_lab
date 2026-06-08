@@ -43,14 +43,14 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 // Style constants
 const labelCellSx = {
   width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center',
 }
 const valueCellSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }
-const valueCellBorderSx = { ...valueCellSx, borderRight: 1, borderColor: 'grey.300' }
+const valueCellBorderSx = { ...valueCellSx, borderRight: 1, borderColor: 'divider' }
 const formLabelSx = { ...labelCellSx, width: 100, minWidth: 100 }
-const formValueSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }
+const formValueSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }
 
 // API functions
 const fetchIssuances = async (params: { page: number; size: number; name?: string }): Promise<PageResponse<PpeIssuance>> => {
@@ -433,17 +433,17 @@ const PpeIssuanceTab: React.FC = () => {
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 800, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 800, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.ppeIssuance.employeeId')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.ppeIssuance.employeeName')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.ppeIssuance.employeeDept')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.ppeIssuance.ppeType')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.ppeIssuance.ppeName')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 60, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.ppeIssuance.quantity')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 110, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('occupationalExposure.ppeIssuance.issuanceDate')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.ppeIssuance.employeeId')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.ppeIssuance.employeeName')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.ppeIssuance.employeeDept')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.ppeIssuance.ppeType')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.ppeIssuance.ppeName')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 60, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.ppeIssuance.quantity')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 110, borderRight: 1, borderColor: 'divider' }} align="center">{t('occupationalExposure.ppeIssuance.issuanceDate')}</TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: 80 }} align="center">{t('occupationalExposure.ppeIssuance.receivedSignature')}</TableCell>
             </TableRow>
           </TableHead>
@@ -457,13 +457,13 @@ const PpeIssuanceTab: React.FC = () => {
             ) : (
               issuances.map((item) => (
                 <TableRow key={item.id} hover onClick={() => handleRowClick(item)} sx={{ cursor: 'pointer' }}>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.employeeId}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.employeeName || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.employeeDept || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{getPpeLabel(item.ppeType)}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.ppeName || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.quantity}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(item.issuanceDate)}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.employeeId}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.employeeName || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.employeeDept || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{getPpeLabel(item.ppeType)}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.ppeName || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.quantity}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatDate(item.issuanceDate)}</TableCell>
                   <TableCell align="center">
                     <Chip
                       label={item.receivedSignature ? t('occupationalExposure.ppeIssuance.signed') : t('occupationalExposure.ppeIssuance.unsigned')}
@@ -487,7 +487,7 @@ const PpeIssuanceTab: React.FC = () => {
           </Paper>
         ) : (
           issuances.map((item) => (
-            <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(item)}>
+            <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(item)}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                 <Typography fontWeight="bold">{item.employeeName || item.employeeId}</Typography>
                 <Chip
@@ -538,23 +538,23 @@ const PpeIssuanceTab: React.FC = () => {
         <>
           {/* PC Detail Layout */}
           <Paper sx={{ display: { xs: 'none', md: 'block' }, p: 3, bgcolor: 'grey.50' }}>
-            <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: employeeId | employeeName */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.employeeId')}</Typography>
                 <Box sx={valueCellBorderSx}><Typography variant="body2">{issuanceDetail.employeeId || ''}</Typography></Box>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.employeeName')}</Typography>
                 <Box sx={valueCellSx}><Typography variant="body2">{issuanceDetail.employeeName || ''}</Typography></Box>
               </Box>
               {/* Row 2: employeeDept | employeeEmail */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.employeeDept')}</Typography>
                 <Box sx={valueCellBorderSx}><Typography variant="body2">{issuanceDetail.employeeDept || ''}</Typography></Box>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.employeeEmail')}</Typography>
                 <Box sx={valueCellSx}><Typography variant="body2">{issuanceDetail.employeeEmail || ''}</Typography></Box>
               </Box>
               {/* Row 3: ppeType | ppeName */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.ppeType')}</Typography>
                 <Box sx={valueCellBorderSx}>
                   {issuanceDetail.ppeImageFileId && imageThumbnails[issuanceDetail.ppeImageFileId] ? (
@@ -565,7 +565,7 @@ const PpeIssuanceTab: React.FC = () => {
                       placement="top"
                       arrow
                       slotProps={{
-                        tooltip: { sx: { bgcolor: 'white', p: 1, border: 1, borderColor: 'grey.300', boxShadow: 3, maxWidth: 'none', display: 'flex', justifyContent: 'center' } },
+                        tooltip: { sx: { bgcolor: 'white', p: 1, border: 1, borderColor: 'divider', boxShadow: 3, maxWidth: 'none', display: 'flex', justifyContent: 'center' } },
                         arrow: { sx: { color: 'white' } },
                       }}
                     >
@@ -579,28 +579,28 @@ const PpeIssuanceTab: React.FC = () => {
                 <Box sx={valueCellSx}><Typography variant="body2">{issuanceDetail.ppeName || ''}</Typography></Box>
               </Box>
               {/* Row 4: ppeModel | quantity */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.ppeModel')}</Typography>
                 <Box sx={valueCellBorderSx}><Typography variant="body2">{issuanceDetail.ppeModel || ''}</Typography></Box>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.quantity')}</Typography>
                 <Box sx={valueCellSx}><Typography variant="body2">{issuanceDetail.quantity}</Typography></Box>
               </Box>
               {/* Row 5: issuanceDate | expiryDate */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.issuanceDate')}</Typography>
                 <Box sx={valueCellBorderSx}><Typography variant="body2">{formatDate(issuanceDetail.issuanceDate)}</Typography></Box>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.expiryDate')}</Typography>
                 <Box sx={valueCellSx}><Typography variant="body2">{formatDate(issuanceDetail.expiryDate)}</Typography></Box>
               </Box>
               {/* Row 6: hazardousFactor | issuanceReason */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.hazardousFactor')}</Typography>
                 <Box sx={valueCellBorderSx}><Typography variant="body2">{issuanceDetail.hazardousFactor || ''}</Typography></Box>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.issuanceReason')}</Typography>
                 <Box sx={valueCellSx}><Typography variant="body2">{issuanceDetail.issuanceReason || ''}</Typography></Box>
               </Box>
               {/* Row 7: receivedSignature | signatureDate */}
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={labelCellSx}>{t('occupationalExposure.ppeIssuance.receivedSignature')}</Typography>
                 <Box sx={valueCellBorderSx}>
                   <Chip
@@ -667,7 +667,7 @@ const PpeIssuanceTab: React.FC = () => {
                 <Box sx={{ px: 1.5, py: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography variant="body2">{getPpeLabel(issuanceDetail.ppeType)}</Typography>
                   {issuanceDetail.ppeImageFileId && imageThumbnails[issuanceDetail.ppeImageFileId] && (
-                    <Box component="img" src={imageThumbnails[issuanceDetail.ppeImageFileId]} alt="PPE" sx={{ width: 36, height: 36, objectFit: 'contain', borderRadius: 0.5, border: 1, borderColor: 'grey.300' }} />
+                    <Box component="img" src={imageThumbnails[issuanceDetail.ppeImageFileId]} alt="PPE" sx={{ width: 36, height: 36, objectFit: 'contain', borderRadius: 0.5, border: 1, borderColor: 'divider' }} />
                   )}
                 </Box>
               </Box>
@@ -752,9 +752,9 @@ const PpeIssuanceTab: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Paper sx={{ p: { xs: 2, md: 3 }, bgcolor: 'grey.50', mb: 3 }}>
           {/* PC Form Layout */}
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {/* Row 1: employeeId | employeeName */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={formLabelSx}>
                 {t('occupationalExposure.ppeIssuance.employeeId')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
               </Typography>
@@ -780,7 +780,7 @@ const PpeIssuanceTab: React.FC = () => {
               </Box>
             </Box>
             {/* Row 2: employeeDept | employeeEmail */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={formLabelSx}>{t('occupationalExposure.ppeIssuance.employeeDept')}</Typography>
               <Box sx={formValueSx}>
                 <Controller
@@ -803,7 +803,7 @@ const PpeIssuanceTab: React.FC = () => {
               </Box>
             </Box>
             {/* Row 3: ppeType | ppeImage */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={formLabelSx}>
                 {t('occupationalExposure.ppeIssuance.ppeType')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
               </Typography>
@@ -870,7 +870,7 @@ const PpeIssuanceTab: React.FC = () => {
               </Box>
             </Box>
             {/* Row 4: ppeName | ppeModel */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={formLabelSx}>{t('occupationalExposure.ppeIssuance.ppeName')}</Typography>
               <Box sx={formValueSx}>
                 <Controller
@@ -893,7 +893,7 @@ const PpeIssuanceTab: React.FC = () => {
               </Box>
             </Box>
             {/* Row 5: quantity | issuanceDate */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={formLabelSx}>{t('occupationalExposure.ppeIssuance.quantity')}</Typography>
               <Box sx={formValueSx}>
                 <Controller
@@ -929,7 +929,7 @@ const PpeIssuanceTab: React.FC = () => {
               </Box>
             </Box>
             {/* Row 6: expiryDate | hazardousFactor */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={formLabelSx}>{t('occupationalExposure.ppeIssuance.expiryDate')}</Typography>
               <Box sx={formValueSx}>
                 <Controller
@@ -955,7 +955,7 @@ const PpeIssuanceTab: React.FC = () => {
               </Box>
             </Box>
             {/* Row 7: issuanceReason */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={formLabelSx}>{t('occupationalExposure.ppeIssuance.issuanceReason')}</Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
                 <Controller

@@ -21,12 +21,12 @@ import BodyDiagram, { regionBodyParts } from '../common/BodyDiagram'
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valueSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }
-const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'grey.300' }
+const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'divider' }
 
 const statusColors: Record<string, 'success' | 'warning' | 'error' | 'info' | 'default'> = {
   COMPLETED: 'success', SCHEDULED: 'info', PENDING: 'warning', OVERDUE: 'error',
@@ -149,38 +149,38 @@ const HealthCheckupAdminTab: React.FC = () => {
         {/* Checkup Info - PC */}
         <Box sx={{ mb: 3, display: { xs: 'none', md: 'block' } }}>
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('healthCheckup.checkupInfo')}</Typography>
-          <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.checkupId')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.checkupId}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.checkupStatus')}</Typography>
               <Box sx={valueSx}><Chip label={getStatusLabel(selectedItem.checkupStatus) || selectedItem.checkupStatus} size="small" color={statusColors[selectedItem.checkupStatus] || 'default'} /></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.employeeName')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2" fontWeight={600}>{selectedItem.employeeName || ''}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.employeeDept')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.employeeDept || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.employeeId')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2">{selectedItem.employeeId || ''}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.employeeEmail')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.employeeEmail || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.checkupYear')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2">{selectedItem.checkupYear}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.checkupType')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.checkupType || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.checkupDate')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.checkupDate?.substring(0, 10) || ''}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.hospital')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.hospital || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.overallResult')}</Typography>
               <Box sx={valueBorderSx}>
                 {selectedItem.overallResult
@@ -337,7 +337,7 @@ const HealthCheckupAdminTab: React.FC = () => {
           {/* PC Table */}
           <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer>
-              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={headerCellSx} align="center">{t('healthCheckup.checkupId')}</TableCell>
@@ -378,7 +378,7 @@ const HealthCheckupAdminTab: React.FC = () => {
           {/* Mobile Card List */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {items.map((item) => (
-              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
+              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography fontWeight="bold">{item.employeeName}</Typography>
                   <Chip label={getStatusLabel(item.checkupStatus) || item.checkupStatus} size="small" color={statusColors[item.checkupStatus] || 'default'} />

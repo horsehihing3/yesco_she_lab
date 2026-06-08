@@ -52,12 +52,12 @@ const RISK_COLORS: Record<string, 'default' | 'success' | 'warning' | 'error'> =
 // Style constants
 const labelSx = {
   width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }
-const valSxBorder = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valSxBorder = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 // =============================================
@@ -285,7 +285,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           return
         }
       } catch {
-        showError('편집 잠금 확인에 실패했습니다.')
+        showError(t('contractorManagementPage.msg1', '편집 잠금 확인에 실패했습니다.'))
         return
       }
     }
@@ -354,17 +354,17 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   }
 
   const handleSubmit = async (item: ContractorPlan) => {
-    const ok = await showConfirm('승인 요청하시겠습니까?')
+    const ok = await showConfirm(t('contractorManagementPage.msg2', '승인 요청하시겠습니까?'))
     if (ok) submitMutation.mutate(item.id)
   }
 
   const handleApprove = async (item: ContractorPlan) => {
-    const ok = await showConfirm('승인하시겠습니까?')
+    const ok = await showConfirm(t('contractorManagementPage.msg3', '승인하시겠습니까?'))
     if (ok) approveMutation.mutate(item.id)
   }
 
   const handleReject = async (item: ContractorPlan) => {
-    const ok = await showConfirm('반려하시겠습니까?')
+    const ok = await showConfirm(t('contractorManagementPage.msg4', '반려하시겠습니까?'))
     if (ok) rejectMutation.mutate(item.id)
   }
 
@@ -532,7 +532,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           {/* Mobile Card List */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {items.map((item) => (
-              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography fontWeight="bold">{item.title}</Typography>
                   <Chip label={getStatusLabel(item.status)} color={STATUS_COLORS[item.status] || 'default'} variant="outlined" size="small" />
@@ -560,15 +560,15 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   if (viewMode === 'detail' && selectedItem) {
     const dLabelSx = { ...labelSx, width: 140, minWidth: 140 }
     const dValSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'grey.300' }
-    const dRowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'divider' }
+    const dRowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{tabTitle}</Typography>
 
         {/* PC 2-column */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>ID</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.planId}</Typography></Box><Typography sx={dLabelSx}>상태</Typography><Box sx={dValSx}><Chip label={getStatusLabel(selectedItem.status)} color={STATUS_COLORS[selectedItem.status] || 'default'} variant="outlined" size="small" /></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>제목</Typography><Box sx={{ ...dValSx, borderBottom: 0 }}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.title}</Typography></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>작업유형</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{getPermitTypeLabel(selectedItem.workType || '')}</Typography></Box><Typography sx={dLabelSx}>위험등급</Typography><Box sx={dValSx}><Chip label={getRiskLabel(selectedItem.riskLevel || '')} color={RISK_COLORS[selectedItem.riskLevel || ''] || 'default'} size="small" /></Box></Box>
@@ -638,7 +638,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
         {/* 작업자 정보 */}
         {detailWorkers && detailWorkers.length > 0 && (
           <>
-            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>작업자 정보</Typography>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>{t('contractorManagementPage.section1', '작업자 정보')}</Typography>
             {/* PC */}
             <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, mb: 3, border: '1px solid', borderColor: 'divider' }}>
               <Table size="small" sx={{ '& td, & th': { borderRight: '1px solid', borderColor: 'divider', px: 1.5, py: 1 }, '& td:last-child, & th:last-child': { borderRight: 'none' } }}>
@@ -665,7 +665,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             {/* Mobile */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 3 }}>
               {detailWorkers.map((w, idx) => (
-                <Paper key={w.id} sx={{ p: 1.5, border: 1, borderColor: 'grey.300' }}>
+                <Paper key={w.id} sx={{ p: 1.5, border: 1, borderColor: 'divider' }}>
                   <Typography variant="body2" fontWeight="bold">{idx + 1}. {w.workerName}</Typography>
                   <Typography variant="caption" color="text.secondary">{w.workerPhone || ''} | {w.companyName || ''}</Typography>
                 </Paper>
@@ -715,7 +715,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               {showPlan && (status === 'DRAFT' || status === 'REJECTED') && canSee(MENU, 'DRAFT/REJECTED', '계획 결재 상신', itemRoles) && (
                 <Button variant="contained" color="info" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
                   onClick={async () => {
-                    const ok = await showConfirm('계획 결재를 상신하시겠습니까?')
+                    const ok = await showConfirm(t('contractorManagementPage.msg5', '계획 결재를 상신하시겠습니까?'))
                     if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'submit' })
                   }}>계획 결재 상신</Button>
               )}
@@ -728,7 +728,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               {showPlan && status === 'PENDING_APPROVAL' && canSee(MENU, 'PENDING_APPROVAL', '계획 결재 승인', itemRoles) && (
                 <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
                   onClick={async () => {
-                    const ok = await showConfirm('계획 결재를 승인하시겠습니까?')
+                    const ok = await showConfirm(t('contractorManagementPage.msg6', '계획 결재를 승인하시겠습니까?'))
                     if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'approve' })
                   }}>계획 결재 승인</Button>
               )}
@@ -748,7 +748,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               {showApproval && status === 'APPROVED' && canSee(MENU, 'APPROVED', '완료 결재 상신', itemRoles) && (
                 <Button variant="contained" color="info" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
                   onClick={async () => {
-                    const ok = await showConfirm('완료 결재를 상신하시겠습니까?')
+                    const ok = await showConfirm(t('contractorManagementPage.msg7', '완료 결재를 상신하시겠습니까?'))
                     if (!ok) return
                     try {
                       if (checklistRef.current) await checklistRef.current.save()
@@ -765,7 +765,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               {showApproval && status === 'COMPLETION_PENDING' && canSee(MENU, 'COMPLETION_PENDING', '완료 결재 승인', itemRoles) && (
                 <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
                   onClick={async () => {
-                    const ok = await showConfirm('완료 결재를 승인하시겠습니까?')
+                    const ok = await showConfirm(t('contractorManagementPage.msg8', '완료 결재를 승인하시겠습니까?'))
                     if (ok) transitionMutation.mutate({ id: selectedItem.id, action: 'complete' })
                   }}>완료 결재 승인</Button>
               )}
@@ -806,14 +806,14 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
         <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{tabTitle}</Typography>
 
         {/* Desktop form - table-style layout */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {/* Row: title */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>제목<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valSx}><TextField fullWidth size="small" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></Box>
           </Box>
           {/* Row: workType + riskLevel */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>작업유형</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" displayEmpty value={form.workType || ''} onChange={(e) => setForm({ ...form, workType: e.target.value })}>
@@ -830,7 +830,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: workLocation + workersCount */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>작업장소</Typography>
             <Box sx={valSxBorder}>
               <TextField fullWidth size="small" value={form.workLocation || ''} onChange={(e) => setForm({ ...form, workLocation: e.target.value })} />
@@ -841,7 +841,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: workStartDate + workEndDate */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>시작일</Typography>
             <Box sx={valSxBorder}>
               <DatePickerField value={form.workStartDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={form.workEndDate?.substring(0, 10)} />
@@ -852,17 +852,17 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: workDescription */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>작업내용</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={2} value={form.workDescription || ''} onChange={(e) => setForm({ ...form, workDescription: e.target.value })} /></Box>
           </Box>
           {/* Row: safetyMeasures */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>안전조치</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={2} value={form.safetyMeasures || ''} onChange={(e) => setForm({ ...form, safetyMeasures: e.target.value })} /></Box>
           </Box>
           {/* Row: requiredPpe + hazardFactors */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>보호구</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" multiple displayEmpty
@@ -886,7 +886,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: emergencyContact + notes */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>비상연락처</Typography>
             <Box sx={valSxBorder}>
               <TextField fullWidth size="small" value={form.emergencyContact || ''} onChange={(e) => { const nums = e.target.value.replace(/[^0-9]/g, '').slice(0, 11); let formatted = nums; if (nums.length > 7) formatted = nums.slice(0,3) + '-' + nums.slice(3,7) + '-' + nums.slice(7); else if (nums.length > 3) formatted = nums.slice(0,3) + '-' + nums.slice(3); setForm({ ...form, emergencyContact: formatted }) }} inputProps={{ inputMode: 'numeric', maxLength: 13 }} />
@@ -897,7 +897,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: 일정 반복 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>일정 반복</Typography>
             <Box sx={{ ...valSx, flexDirection: 'column', gap: 1, py: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setForm({ ...form, repeatType: 'NONE', repeatInterval: undefined })}>
@@ -940,17 +940,17 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
                     })}
                   </Box>
                   <Box sx={{ display: 'flex', gap: 0.5, mt: 1, flexWrap: 'wrap' }}>
-                    <Chip label="월·수·금" size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'MON,WED,FRI' }) }} sx={{ cursor: 'pointer' }} />
-                    <Chip label="화·목" size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'TUE,THU' }) }} sx={{ cursor: 'pointer' }} />
-                    <Chip label="평일" size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'MON,TUE,WED,THU,FRI' }) }} sx={{ cursor: 'pointer' }} />
-                    <Chip label="주말" size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'SAT,SUN' }) }} sx={{ cursor: 'pointer' }} />
+                    <Chip label={t('contractorManagementPage.label1', '월·수·금')} size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'MON,WED,FRI' }) }} sx={{ cursor: 'pointer' }} />
+                    <Chip label={t('contractorManagementPage.label2', '화·목')} size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'TUE,THU' }) }} sx={{ cursor: 'pointer' }} />
+                    <Chip label={t('contractorManagementPage.label3', '평일')} size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'MON,TUE,WED,THU,FRI' }) }} sx={{ cursor: 'pointer' }} />
+                    <Chip label={t('contractorManagementPage.label4', '주말')} size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'SAT,SUN' }) }} sx={{ cursor: 'pointer' }} />
                   </Box>
                 </Box>
               </Box>
             </Box>
           </Box>
           {/* Row: 작성자 | 작성일자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>작성자</Typography>
             <Box sx={valSxBorder}>
               <Typography variant="body2">{selectedItem ? (selectedItem.modifiedBy || user?.name || '') : (user?.name || '')}</Typography>
@@ -964,7 +964,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           </Box>
           {/* Row: 수정자 | 수정일자 — 수정 모드에서만 표시 */}
           {viewMode === 'edit' && selectedItem && (
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>수정자</Typography>
               <Box sx={valSxBorder}>
                 <Typography variant="body2">{user?.name || ''}</Typography>
@@ -976,12 +976,12 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           )}
           {/* Row: 계획 승인자 | 완료 승인자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>
               계획 승인자
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
-            <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center', py: 1, borderRight: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center', py: 1, borderRight: 1, borderColor: 'divider' }}>
               <TextField fullWidth size="small" value={form.planApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder="조직도에서 선택" />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
@@ -1001,7 +1001,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Workers section (먼저) */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>작업자 정보</Typography>
             <Box sx={{ ...valSx, flexDirection: 'column', py: 2 }}>
               {workers.map((w, idx) => (
@@ -1170,10 +1170,10 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
                     })}
                   </Box>
                   <Box sx={{ display: 'flex', gap: 0.5, mt: 1, flexWrap: 'wrap' }}>
-                    <Chip label="월·수·금" size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'MON,WED,FRI' }) }} sx={{ cursor: 'pointer' }} />
-                    <Chip label="화·목" size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'TUE,THU' }) }} sx={{ cursor: 'pointer' }} />
-                    <Chip label="평일" size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'MON,TUE,WED,THU,FRI' }) }} sx={{ cursor: 'pointer' }} />
-                    <Chip label="주말" size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'SAT,SUN' }) }} sx={{ cursor: 'pointer' }} />
+                    <Chip label={t('contractorManagementPage.label5', '월·수·금')} size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'MON,WED,FRI' }) }} sx={{ cursor: 'pointer' }} />
+                    <Chip label={t('contractorManagementPage.label6', '화·목')} size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'TUE,THU' }) }} sx={{ cursor: 'pointer' }} />
+                    <Chip label={t('contractorManagementPage.label7', '평일')} size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'MON,TUE,WED,THU,FRI' }) }} sx={{ cursor: 'pointer' }} />
+                    <Chip label={t('contractorManagementPage.label8', '주말')} size="small" variant="outlined" onClick={(e) => { e.stopPropagation(); setForm({ ...form, repeatType: 'WEEKDAYS', repeatDays: 'SAT,SUN' }) }} sx={{ cursor: 'pointer' }} />
                   </Box>
                 </Box>
               </Box>
@@ -1234,7 +1234,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작업자 정보</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 1 }}>
               {workers.map((w, idx) => (
-                <Box key={idx} sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: 1.5, border: 1, borderColor: 'grey.300', borderRadius: 1 }}>
+                <Box key={idx} sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: 1.5, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                   <TextField size="small" fullWidth placeholder="작업자명" value={w.workerName} onChange={(e) => { const nw = [...workers]; nw[idx] = { ...nw[idx], workerName: e.target.value }; setWorkers(nw) }} />
                   <TextField select size="small" fullWidth value={w.companyName || ''}
                     SelectProps={{ displayEmpty: true }}
@@ -1297,6 +1297,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
 // Main Page with 3 Tabs
 // =============================================
 const ContractorManagementPage: React.FC = () => {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
 
   return (
@@ -1308,11 +1309,11 @@ const ContractorManagementPage: React.FC = () => {
         scrollButtons="auto"
         sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}
       >
-        <Tab label="대시보드" />
-        <Tab label="계획" />
-        <Tab label="평가서조회 담당승인자" />
-        <Tab label="전체조회 (어드민)" />
-        <Tab label="레포트" />
+        <Tab label={t('contractor.tabs.dashboard', '대시보드')} />
+        <Tab label={t('contractor.tabs.plan', '계획')} />
+        <Tab label={t('contractor.tabs.approval', '평가서조회 담당승인자')} />
+        <Tab label={t('contractor.tabs.adminView', '전체조회 (어드민)')} />
+        <Tab label={t('contractor.tabs.report', '레포트')} />
       </Tabs>
       {activeTab === 0 && <ContractorDashboardTab />}
       {activeTab === 1 && <ContractorPlanContent mode="plan" />}

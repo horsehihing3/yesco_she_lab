@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -26,6 +27,7 @@ const zoneColor = (t?: string): 'error' | 'warning' | 'info' | 'default' =>
 const emptyForm: Partial<RadZone> = { zoneType: '방사선관리구역', measureCycle: '월 1회' }
 
 const RadZoneTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['radZones'], queryFn: radZoneApi.list })
@@ -73,10 +75,10 @@ const RadZoneTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.zoneTotal ?? 0} label="총 구역" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={items.filter(v => v.zoneType === '방사선관리구역').length} label="방사선관리구역" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={items.filter(v => v.zoneType === '방사선작업구역').length} label="방사선작업구역" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={items.filter(v => v.zoneType === '감시구역').length} label="감시구역" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.zoneTotal ?? 0} label={t('radZoneTab.label1', '총 구역')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={items.filter(v => v.zoneType === '방사선관리구역').length} label={t('radZoneTab.label2', '방사선관리구역')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={items.filter(v => v.zoneType === '방사선작업구역').length} label={t('radZoneTab.label3', '방사선작업구역')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={items.filter(v => v.zoneType === '감시구역').length} label={t('radZoneTab.label4', '감시구역')} /></Grid>
       </Grid>
 
       <Alert severity="info" sx={{ mb: 2 }}>
@@ -86,7 +88,7 @@ const RadZoneTab: React.FC = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="구역명/위치 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
-        <TextField select size="small" sx={{ minWidth: 170 }} label="구역구분" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 170 }} label={t('radZoneTab.label5', '구역구분')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {ZONE_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
@@ -123,7 +125,7 @@ const RadZoneTab: React.FC = () => {
                     <TableCell align="center">{v.standardValue || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => openEdit(v)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('radZoneTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

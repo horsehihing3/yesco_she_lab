@@ -262,9 +262,9 @@ const RoleManageTab: React.FC = () => {
     } catch { showError(t('role.updateFailed')) }
   }
 
-  const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' as const }
+  const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' as const }
   const lastHeaderCellSx = { fontWeight: 'bold', wordBreak: 'keep-all' as const }
-  const cellSx = { borderRight: 1, borderColor: 'grey.300' }
+  const cellSx = { borderRight: 1, borderColor: 'divider' }
 
   if (isLoading) {
     return (
@@ -352,7 +352,7 @@ const RoleManageTab: React.FC = () => {
                 </Button>
               </Box>
               <TableContainer>
-                <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                   <TableHead>
                     <TableRow>
                       <TableCell align="center" sx={{ ...headerCellSx, width: 50 }}>{t('common.no')}</TableCell>

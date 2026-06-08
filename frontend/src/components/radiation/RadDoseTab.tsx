@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -30,6 +31,7 @@ const evalColor = (dose?: number): 'success' | 'warning' | 'error' | 'default' =
 const emptyForm: Partial<RadDose> = { dosimeterType: 'TLD', measureMonth: new Date().toISOString().slice(0, 7) }
 
 const RadDoseTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['radDoses'], queryFn: radDoseApi.list })
@@ -79,10 +81,10 @@ const RadDoseTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={(stats?.doseAvg ?? 0).toFixed(2)}  label="월평균 유효선량" sub="mSv (전체 평균)" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={(stats?.doseMax ?? 0).toFixed(2)}  label="월최대 유효선량" sub="mSv" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.doseOverLimit ?? 0} label="연간 한도 초과" sub={`20 mSv/y 기준`} /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={items.length} label="측정 기록" sub="누적 등록 건수" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={(stats?.doseAvg ?? 0).toFixed(2)}  label={t('radDoseTab.label1', '월평균 유효선량')} sub="mSv (전체 평균)" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={(stats?.doseMax ?? 0).toFixed(2)}  label={t('radDoseTab.label2', '월최대 유효선량')} sub="mSv" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.doseOverLimit ?? 0} label={t('radDoseTab.label3', '연간 한도 초과')} sub={`20 mSv/y 기준`} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={items.length} label={t('radDoseTab.label4', '측정 기록')} sub="누적 등록 건수" /></Grid>
       </Grid>
 
       <Alert severity="info" sx={{ mb: 2 }}>
@@ -92,7 +94,7 @@ const RadDoseTab: React.FC = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="종사자/부서 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
-        <TextField select size="small" sx={{ minWidth: 140 }} label="측정월" value={monthFilter} onChange={e => setMonthFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 140 }} label={t('radDoseTab.label5', '측정월')} value={monthFilter} onChange={e => setMonthFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {months.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
         </TextField>
@@ -131,7 +133,7 @@ const RadDoseTab: React.FC = () => {
                     <TableCell align="center"><Chip size="small" label={v.effectiveDose != null ? (v.effectiveDose >= ANNUAL_LIMIT ? '초과' : v.effectiveDose >= ANNUAL_LIMIT * 0.5 ? '주의' : '정상') : '-'} color={evalColor(v.effectiveDose)} /></TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => openEdit(v)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('radDoseTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

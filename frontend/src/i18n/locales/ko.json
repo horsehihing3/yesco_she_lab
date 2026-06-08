@@ -2310,6 +2310,13 @@
     }
   },
   "contractor": {
+    "tabs": {
+      "dashboard": "대시보드",
+      "plan": "계획",
+      "approval": "평가서조회 담당승인자",
+      "adminView": "전체조회 (어드민)",
+      "report": "레포트"
+    },
     "planId": "계획번호",
     "title": "작업명",
     "workType": "작업 유형",
@@ -2334,6 +2341,20 @@
       "completionDate": "완료일",
       "noData": "레포트로 출력 가능한 협력사 작업이 없습니다."
     }
+  },
+  "siteSafety": {
+    "tabs": {
+      "dashboard": "대시보드",
+      "plan": "계획",
+      "approval": "평가서조회 담당승인자",
+      "adminView": "전체조회 (어드민)",
+      "report": "레포트"
+    }
+  },
+  "contractorReg": {
+    "complete": "등록 완료!",
+    "completeDesc1": "협력 업체 정보가 성공적으로 등록되었습니다.",
+    "completeDesc2": "승인 검토 후 담당자가 안내드리겠습니다."
   },
   "ergo": {
     "searchPlaceholder": "작업공정, 작업자 검색",

@@ -31,14 +31,14 @@ const TYPE_COLORS: Record<string, 'primary' | 'secondary'> = {
 
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 const EhsKpiPlanPage: React.FC = () => {
   const { t } = useTranslation()
@@ -255,7 +255,7 @@ const EhsKpiPlanPage: React.FC = () => {
             {/* Mobile cards */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {items.map((item) => (
-                <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+                <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography fontWeight="bold">{item.indicatorName}</Typography>
                     <Chip label={getTypeLabel(item.indicatorType) || item.indicatorType} color={TYPE_COLORS[item.indicatorType] || 'default'} size="small" />
@@ -288,12 +288,12 @@ const EhsKpiPlanPage: React.FC = () => {
     if (!selectedItem) return null
     const dLabelSx = { ...labelSx, width: 140, minWidth: 140 }
     const dValSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'grey.300' }
+    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'divider' }
 
     return (
       <>
         <Paper sx={{ p: 3, mb: 3, bgcolor: 'grey.50' }}>
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             <Box sx={rowSx}>
               <Typography sx={dLabelSx}>{t('kpiPlan.indicatorType', '지표유형')}</Typography>
               <Box sx={dValBorderSx}><Chip label={getTypeLabel(selectedItem.indicatorType) || selectedItem.indicatorType} color={TYPE_COLORS[selectedItem.indicatorType] || 'default'} size="small" /></Box>
@@ -389,8 +389,8 @@ const EhsKpiPlanPage: React.FC = () => {
   const renderFormView = () => (
     <>
       {/* PC form */}
-      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('kpiPlan.indicatorType', '지표유형')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
           <Box sx={valBorderSx}>
             <Select fullWidth size="small" displayEmpty value={form.indicatorType} onChange={(e) => setForm({ ...form, indicatorType: e.target.value })}>
@@ -403,7 +403,7 @@ const EhsKpiPlanPage: React.FC = () => {
             <TextField fullWidth size="small" value={form.indicatorName} onChange={(e) => setForm({ ...form, indicatorName: e.target.value })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('kpiPlan.planYear', '계획연도')}</Typography>
           <Box sx={valBorderSx}>
             <NumberField fullWidth size="small" thousandSeparator={false} value={form.planYear ?? null} onChange={(v) => setForm({ ...form, planYear: v ?? undefined })} />
@@ -416,7 +416,7 @@ const EhsKpiPlanPage: React.FC = () => {
             </Select>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('kpiPlan.department', '부서')}</Typography>
           <Box sx={valBorderSx}>
             <TextField fullWidth size="small" value={form.department ?? ''} onChange={(e) => setForm({ ...form, department: e.target.value })} />
@@ -427,7 +427,7 @@ const EhsKpiPlanPage: React.FC = () => {
             <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('kpiPlan.period', '측정주기')}</Typography>
           <Box sx={valBorderSx}>
             <Select fullWidth size="small" displayEmpty value={form.measurementPeriod ?? ''} onChange={(e) => setForm({ ...form, measurementPeriod: e.target.value })}>
@@ -443,7 +443,7 @@ const EhsKpiPlanPage: React.FC = () => {
             </Select>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('kpiPlan.targetValue', '목표값')}</Typography>
           <Box sx={valBorderSx}>
             <NumberField fullWidth size="small" value={form.targetValue ?? null} onChange={(v) => setForm({ ...form, targetValue: v ?? undefined })} />
@@ -453,13 +453,13 @@ const EhsKpiPlanPage: React.FC = () => {
             <NumberField fullWidth size="small" value={form.currentValue ?? null} onChange={(v) => setForm({ ...form, currentValue: v ?? undefined })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('kpiPlan.achievementRate', '달성률')}</Typography>
           <Box sx={valSx}>
             <NumberField fullWidth size="small" value={form.achievementRate ?? null} onChange={(v) => setForm({ ...form, achievementRate: v ?? undefined })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('kpiPlan.startDate', '시작일')}</Typography>
           <Box sx={valBorderSx}>
             <DatePickerField value={form.startDate || null} onChange={(v) => setForm({ ...form, startDate: v })} size="small" />
@@ -469,7 +469,7 @@ const EhsKpiPlanPage: React.FC = () => {
             <DatePickerField value={form.endDate || null} onChange={(v) => setForm({ ...form, endDate: v })} size="small" />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('kpiPlan.description', '설명')}</Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" multiline rows={2} value={form.description ?? ''} onChange={(e) => setForm({ ...form, description: e.target.value })} />

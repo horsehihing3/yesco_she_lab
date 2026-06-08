@@ -191,14 +191,14 @@ const ChecklistResultTab: React.FC = () => {
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 650, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 650, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.title')}
               </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'grey.300' }} align="center">
+              <TableCell sx={{ fontWeight: 'bold', width: 140, borderRight: 1, borderColor: 'divider' }} align="center">
                 {t('common.author')}
               </TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: 120 }} align="center">
@@ -216,8 +216,8 @@ const ChecklistResultTab: React.FC = () => {
             ) : (
               items.map((row: ChecklistTemplateMaster) => (
                 <TableRow key={row.id} hover onClick={() => handleRowClick(row.id)} sx={{ cursor: 'pointer' }}>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.title}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{row.modUser || row.regUser}</TableCell>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{row.title}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.modUser || row.regUser}</TableCell>
                   <TableCell align="center">{row.createdAt?.substring(0, 10)}</TableCell>
                 </TableRow>
               ))
@@ -234,7 +234,7 @@ const ChecklistResultTab: React.FC = () => {
           </Paper>
         ) : (
           items.map((row: ChecklistTemplateMaster) => (
-            <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(row.id)}>
+            <Paper key={row.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(row.id)}>
               <Typography fontWeight="bold" sx={{ mb: 1 }}>{row.title}</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 <Box sx={{ display: 'flex', gap: 1 }}>
@@ -262,9 +262,9 @@ const ChecklistResultTab: React.FC = () => {
     <>
     <Paper sx={{ p: { xs: 2, md: 3 }, bgcolor: 'grey.50', width: '100%', boxSizing: 'border-box' }}>
       {/* Title (read-only) */}
-      <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
         <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ width: { xs: 80, md: 128 }, minWidth: { xs: 80, md: 128 }, fontWeight: 'bold', bgcolor: 'grey.100', px: { xs: 1, md: 2 }, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
+          <Typography sx={{ width: { xs: 80, md: 128 }, minWidth: { xs: 80, md: 128 }, fontWeight: 'bold', bgcolor: 'grey.100', px: { xs: 1, md: 2 }, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
             {t('common.title')}
           </Typography>
           <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
@@ -278,18 +278,18 @@ const ChecklistResultTab: React.FC = () => {
         <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
           {t('checklist.items')}
         </Typography>
-        <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto', mb: 2 }}>
-          <Table size="small" sx={{ minWidth: 1000, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+        <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto', mb: 2 }}>
+          <Table size="small" sx={{ minWidth: 1000, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 40 }} align="center">#</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 40 }} align="center">#</TableCell>
                 {columns.map((col) => (
                   <TableCell
                     key={col.key}
                     sx={{
                       fontWeight: 'bold',
                       borderRight: 1,
-                      borderColor: 'grey.300',
+                      borderColor: 'divider',
                       whiteSpace: 'nowrap',
                       minWidth: col.key === 'checkContent' || col.key === 'checkStandard' ? 150 : col.key === 'category' ? 80 : 100,
                     }}
@@ -304,9 +304,9 @@ const ChecklistResultTab: React.FC = () => {
             <TableBody>
               {formItems.map((item, idx) => (
                 <TableRow key={idx}>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{idx + 1}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{idx + 1}</TableCell>
                   {columns.map((col) => (
-                    <TableCell key={col.key} sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                    <TableCell key={col.key} sx={{ borderRight: 1, borderColor: 'divider' }}>
                       <TextField
                         value={item[col.key] || ''}
                         onChange={(e) => handleItemChange(idx, col.key, e.target.value)}
@@ -337,7 +337,7 @@ const ChecklistResultTab: React.FC = () => {
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
         <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>{t('checklist.items')}</Typography>
         {formItems.map((item, idx) => (
-          <Paper key={idx} sx={{ p: 2, mb: 1.5, border: 1, borderColor: 'grey.300' }}>
+          <Paper key={idx} sx={{ p: 2, mb: 1.5, border: 1, borderColor: 'divider' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
               <Typography variant="body2" fontWeight="bold">#{idx + 1}</Typography>
               <IconButton size="small" color="error" onClick={() => handleRemoveRow(idx)} disabled={formItems.length <= 1}>

@@ -1,14 +1,18 @@
 package com.smartehs.service;
 
 import com.smartehs.dto.request.WorkplaceSiteRequest;
+import com.smartehs.mapper.FloorDrawingMapper;
 import com.smartehs.mapper.WorkplaceSiteMapper;
 import com.smartehs.model.WorkplaceSite;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WorkplaceSiteService {
@@ -16,6 +20,7 @@ public class WorkplaceSiteService {
     private static final String BUILDING_NUMBER_PREFIX = "B30-";
 
     private final WorkplaceSiteMapper mapper;
+    private final FloorDrawingMapper floorDrawingMapper;
 
     public List<WorkplaceSite> findAll() {
         return mapper.findAll();
@@ -51,7 +56,17 @@ public class WorkplaceSiteService {
     @Transactional
     public WorkplaceSite update(Long id, WorkplaceSiteRequest req) {
         WorkplaceSite site = findById(id);
-        site.setSiteName(req.getSiteName());
+        String oldName = site.getSiteName();
+        String newName = req.getSiteName();
+        // 사업장명이 바뀌면 도면 테이블에 매칭되어 있는 행도 함께 rename
+        // (도면은 siteName 문자열로 매칭되므로 이름이 바뀌면 미지정 그룹으로 떨어짐)
+        if (newName != null && !Objects.equals(oldName, newName)) {
+            int updated = floorDrawingMapper.renameSite(oldName, newName);
+            if (updated > 0) {
+                log.info("Cascade renamed {} floor drawings: {} -> {}", updated, oldName, newName);
+            }
+        }
+        site.setSiteName(newName);
         site.setSiteCode(req.getSiteCode());
         site.setSiteType(req.getSiteType());
         site.setIndustry(req.getIndustry());

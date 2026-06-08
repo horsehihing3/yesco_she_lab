@@ -107,9 +107,9 @@ const PsmPtwTab: React.FC = () => {
   const handleEditClick = () => { if (detail) { setForm({ ...detail }); setViewMode('edit') } }
 
   const handleSave = async () => {
-    if (!form.workName?.trim()) { showError('작업명을 입력해 주세요.'); return }
-    if (!form.permitType) { showError('허가 유형을 선택해 주세요.'); return }
-    if (!form.startAt || !form.endAt) { showError('시작/종료 일시를 입력해 주세요.'); return }
+    if (!form.workName?.trim()) { showError(t('psmPtwTab.msg1', '작업명을 입력해 주세요.')); return }
+    if (!form.permitType) { showError(t('psmPtwTab.msg2', '허가 유형을 선택해 주세요.')); return }
+    if (!form.startAt || !form.endAt) { showError(t('psmPtwTab.msg3', '시작/종료 일시를 입력해 주세요.')); return }
     const ok = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!ok) return
     if (selectedId) updateMut.mutate({ id: selectedId, p: form })
@@ -148,7 +148,7 @@ const PsmPtwTab: React.FC = () => {
     return (
       <Box>
         <Box sx={{ display: 'flex', mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="subtitle1" fontWeight="bold">안전작업허가서 (PTW)</Typography>
+          <Typography variant="subtitle1" fontWeight="bold">{t('psmPtwTab.section1', '안전작업허가서 (PTW)')}</Typography>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>{t('common.new', '신규 등록')}</Button>
         </Box>
         {isLoading ? <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
@@ -210,7 +210,7 @@ const PsmPtwTab: React.FC = () => {
       </Box>
 
       {/* 작업 기본 정보 */}
-      <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>작업 기본 정보</Typography>
+      <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>{t('psmPtwTab.section2', '작업 기본 정보')}</Typography>
       <FormTable>
         <FormRow>
           <FormLabel required>허가 유형</FormLabel>
@@ -297,7 +297,7 @@ const PsmPtwTab: React.FC = () => {
       {/* 작업 전 안전 점검 */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 3, mb: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="subtitle2" fontWeight="bold">작업 전 안전 점검</Typography>
+          <Typography variant="subtitle2" fontWeight="bold">{t('psmPtwTab.section3', '작업 전 안전 점검')}</Typography>
           <Chip size="small" label={`${checks.filter(c => c.checked).length} / ${checks.length} (${progress}%)`}
             color={progress === 100 ? 'success' : progress >= 50 ? 'warning' : 'default'} />
         </Box>
@@ -340,7 +340,7 @@ const PsmPtwTab: React.FC = () => {
       </Paper>
 
       {/* 서명 / 승인 */}
-      <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 3, mb: 1 }}>서명 / 승인</Typography>
+      <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 3, mb: 1 }}>{t('psmPtwTab.section4', '서명 / 승인')}</Typography>
       <FormTable>
         <FormRow>
           <FormLabel>작업 책임자<br/>서명</FormLabel>

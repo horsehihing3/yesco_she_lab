@@ -249,8 +249,8 @@ const ContractorEvalTab = () => {
         ) : (
           <>
             {/* PC Table */}
-            <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ ...listHeaderSx, width: 40 }} align="center">{t('common.no')}</TableCell>
@@ -272,7 +272,7 @@ const ContractorEvalTab = () => {
             {/* Mobile Cards */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {filtered.map((tmpl) => (
-                <Paper key={tmpl.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleTemplateClick(tmpl)}>
+                <Paper key={tmpl.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleTemplateClick(tmpl)}>
                   <Typography fontWeight="bold" color="primary" sx={{ mb: 0.5 }}>{tmpl.templateName}</Typography>
                   <Typography variant="caption" color="text.secondary">{t('checklist.itemCount', '항목 수')}: {tmpl.itemCount || 0}</Typography>
                 </Paper>
@@ -291,7 +291,7 @@ const ContractorEvalTab = () => {
     fontSize: '0.8rem',
     whiteSpace: 'nowrap',
     borderRight: '1px solid',
-    borderColor: 'grey.300',
+    borderColor: 'divider',
     py: 1,
     px: 1,
     textAlign: 'center' as const,
@@ -304,15 +304,15 @@ const ContractorEvalTab = () => {
     borderColor: 'divider',
   }
 
-  const infoLabelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }
+  const infoLabelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }
 
   return (
     <Box>
       {/* 체크리스트 정보 */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('checklist.checklistInfo', '체크리스트 정보')}</Typography>
-        <Paper sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Paper sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Box sx={infoLabelSx}>{t('common.title', '제목')}</Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
               {viewMode === 'edit' ? (
@@ -351,7 +351,7 @@ const ContractorEvalTab = () => {
       ) : (
         <>
           <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-            <Table size="small" sx={{ minWidth: 2400, '& td, & th': { borderRight: '1px solid', borderColor: 'grey.300' } }}>
+            <Table size="small" sx={{ minWidth: 2400, '& td, & th': { borderRight: '1px solid', borderColor: 'divider' } }}>
               <TableHead>
                 {/* Row 1 */}
                 <TableRow>
@@ -563,8 +563,8 @@ const ContractorEvalTab = () => {
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>
               {t('contractorEval.signatures', '평가자 / 승인자 서명')}
             </Typography>
-            <Paper sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-              <Table size="small" sx={{ '& td, & th': { borderRight: '1px solid', borderColor: 'grey.300' } }}>
+            <Paper sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+              <Table size="small" sx={{ '& td, & th': { borderRight: '1px solid', borderColor: 'divider' } }}>
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.100' }}>
                     <TableCell align="center" sx={{ fontWeight: 'bold', width: 120 }}>{t('common.role', '구분')}</TableCell>

@@ -27,12 +27,12 @@ const statusColors: Record<string, 'default' | 'warning' | 'primary' | 'success'
 
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valueSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }
-const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'grey.300' }
+const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'divider' }
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 // 비활성화 상태에서도 입력값 글씨색만 활성과 동일 (placeholder 는 기본 disabled 회색 유지)
@@ -221,7 +221,7 @@ const EmrIncidentTab: React.FC = () => {
             {/* PC Table */}
             <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
               <TableContainer>
-                <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                   <TableHead>
                     <TableRow>
                       <TableCell sx={headerCellSx}>{t('emr.responseId')}</TableCell>
@@ -252,7 +252,7 @@ const EmrIncidentTab: React.FC = () => {
             {/* Mobile Card List */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {items.map((item) => (
-                <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
+                <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography fontWeight="bold">{item.title}</Typography>
                     <Chip label={getStatusLabel(item.status)} color={statusColors[item.status] || 'default'} size="small" />
@@ -282,8 +282,8 @@ const EmrIncidentTab: React.FC = () => {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           {/* PC Detail */}
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('emr.responseId')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.responseId}</Typography>
@@ -293,7 +293,7 @@ const EmrIncidentTab: React.FC = () => {
                 <Chip label={getStatusLabel(selectedItem.status)} color={statusColors[selectedItem.status] || 'default'} size="small" />
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('emr.title')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontWeight={600}>{selectedItem.title}</Typography>
@@ -303,7 +303,7 @@ const EmrIncidentTab: React.FC = () => {
                 <Typography variant="body2">{getTypeLabel(selectedItem.emergencyType)}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('emr.location')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{selectedItem.location || ''}</Typography>
@@ -313,7 +313,7 @@ const EmrIncidentTab: React.FC = () => {
                 <Typography variant="body2">{selectedItem.drillYn ? 'Y' : 'N'}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('emr.reporter')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{selectedItem.reporterName || ''} {selectedItem.reporterDept ? `(${selectedItem.reporterDept})` : ''}</Typography>
@@ -323,7 +323,7 @@ const EmrIncidentTab: React.FC = () => {
                 <Typography variant="body2">{selectedItem.commanderName || ''} {selectedItem.commanderDept ? `(${selectedItem.commanderDept})` : ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('emr.reportedAt')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.reportedAt || ''}</Typography>
@@ -333,7 +333,7 @@ const EmrIncidentTab: React.FC = () => {
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.resolvedAt || ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('emr.casualties')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{selectedItem.casualtiesCount ?? ''}</Typography>
@@ -343,13 +343,13 @@ const EmrIncidentTab: React.FC = () => {
                 <Typography variant="body2">{selectedItem.damageDescription || ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('common.description')}</Typography>
               <Box sx={valueSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.description || ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('emr.actionsTaken')}</Typography>
               <Box sx={valueSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.actionsTaken || ''}</Typography>
@@ -402,8 +402,8 @@ const EmrIncidentTab: React.FC = () => {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         {/* PC Form */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('emr.title')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
@@ -416,7 +416,7 @@ const EmrIncidentTab: React.FC = () => {
               </Select>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('emr.status')}</Typography>
             <Box sx={valueBorderSx}>
               <Select fullWidth size="small" value={form.status || 'STANDBY'} onChange={(e) => setForm({ ...form, status: e.target.value })} displayEmpty>
@@ -429,7 +429,7 @@ const EmrIncidentTab: React.FC = () => {
               <TextField fullWidth size="small" value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('emr.reporter')}</Typography>
             <Box sx={valueBorderSx}>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -444,7 +444,7 @@ const EmrIncidentTab: React.FC = () => {
               <TextField fullWidth size="small" value={form.reporterDept || ''} disabled sx={disabledTextSx} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('emr.commander')}</Typography>
             <Box sx={valueBorderSx}>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -459,7 +459,7 @@ const EmrIncidentTab: React.FC = () => {
               <TextField fullWidth size="small" value={form.commanderDept || ''} disabled sx={disabledTextSx} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('emr.casualties')}</Typography>
             <Box sx={valueBorderSx}>
               <NumberField fullWidth size="small" value={form.casualtiesCount ?? ''} onChange={(v) => setForm({ ...form, casualtiesCount: v ?? undefined })} />
@@ -469,25 +469,25 @@ const EmrIncidentTab: React.FC = () => {
               <FormControlLabel control={<Checkbox checked={form.drillYn || false} onChange={(e) => setForm({ ...form, drillYn: e.target.checked })} />} label="" />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('common.description')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={3} value={form.description || ''} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('emr.damageDescription')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={2} value={form.damageDescription || ''} onChange={(e) => setForm({ ...form, damageDescription: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('emr.actionsTaken')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={3} value={form.actionsTaken || ''} onChange={(e) => setForm({ ...form, actionsTaken: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('emr.lessonsLearned')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={3} value={form.lessonsLearned || ''} onChange={(e) => setForm({ ...form, lessonsLearned: e.target.value })} />

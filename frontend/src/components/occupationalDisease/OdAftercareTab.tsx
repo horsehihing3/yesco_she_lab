@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography,
@@ -38,6 +39,7 @@ const emptyFit: Partial<OdFitness> = { evalResult: '조건부 적합', doneStatu
 const MENU = '보건 관리 › 직업병 관리 › 사후관리'
 
 const OdAftercareTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { user } = useAuth()
@@ -76,7 +78,7 @@ const OdAftercareTab: React.FC = () => {
   const handleAftEditClick = () => { if (selectedAft) { setForm({ ...selectedAft }); setViewMode('aftercare-edit') } }
   const handleAftDeleteClick = async () => {
     if (!selectedAft) return
-    if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selectedAft.id)
+    if (await showConfirm(t('odAftercareTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(selectedAft.id)
   }
   const handleAftSave = () => {
     if (!form.workerName) return
@@ -90,7 +92,7 @@ const OdAftercareTab: React.FC = () => {
   const handleFitEditClick = () => { if (selectedFit) { setFitForm({ ...selectedFit }); setViewMode('fitness-edit') } }
   const handleFitDeleteClick = async () => {
     if (!selectedFit) return
-    if (await showConfirm('삭제하시겠습니까?')) deleteFitMut.mutate(selectedFit.id)
+    if (await showConfirm(t('odAftercareTab.msg2', '삭제하시겠습니까?'))) deleteFitMut.mutate(selectedFit.id)
   }
   const handleFitSave = () => {
     if (!fitForm.workerName) return
@@ -105,7 +107,7 @@ const OdAftercareTab: React.FC = () => {
     const actions = (selectedAft.actionsText || '').split('\n').filter(Boolean)
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>사후관리 조치 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('odAftercareTab.section1', '사후관리 조치 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>대상자</FormLabel><FormCell borderRight><Typography variant="body2" fontWeight={600}>{selectedAft.workerName}</Typography></FormCell><FormLabel>부서</FormLabel><FormCell><Typography variant="body2">{selectedAft.dept || ''}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>검진 판정</FormLabel><FormCell borderRight><Chip size="small" label={selectedAft.judge} color={judgeColor(selectedAft.judge)} /></FormCell><FormLabel>유해인자</FormLabel><FormCell><Typography variant="body2">{selectedAft.factor || ''}</Typography></FormCell></FormRow>
@@ -192,7 +194,7 @@ const OdAftercareTab: React.FC = () => {
   if (viewMode === 'fitness-detail' && selectedFit) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>업무적합성 평가 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('odAftercareTab.section2', '업무적합성 평가 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>대상자</FormLabel><FormCell><Typography variant="body2" fontWeight={600}>{selectedFit.workerName}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>부서</FormLabel><FormCell borderRight><Typography variant="body2">{selectedFit.dept || ''}</Typography></FormCell><FormLabel>질환명</FormLabel><FormCell><Typography variant="body2">{selectedFit.disease || ''}</Typography></FormCell></FormRow>
@@ -261,10 +263,10 @@ const OdAftercareTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.aftercareUrgentCount ?? 0} label="즉시 조치 필요" sub="D1·C2 판정자" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={items.filter(a => !a.urgent).length} label="요관찰 (추적)" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={fits.length}                       label="적합성 평가" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.aftercareDoneCount ?? 0}    label="사후관리 완결" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.aftercareUrgentCount ?? 0} label={t('odAftercareTab.label1', '즉시 조치 필요')} sub="D1·C2 판정자" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={items.filter(a => !a.urgent).length} label={t('odAftercareTab.label2', '요관찰 (추적)')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={fits.length}                       label={t('odAftercareTab.label3', '적합성 평가')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.aftercareDoneCount ?? 0}    label={t('odAftercareTab.label4', '사후관리 완결')} /></Grid>
       </Grid>
 
       {urgentList.length > 0 && (
@@ -316,7 +318,7 @@ const OdAftercareTab: React.FC = () => {
       )}
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 2, mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>업무적합성 평가 현황</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('odAftercareTab.section3', '업무적합성 평가 현황')}</Typography>
         {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
           <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={handleFitAddClick}>New</Button>
         )}

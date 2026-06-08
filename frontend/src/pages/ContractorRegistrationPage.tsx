@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { fmtPhone } from '../utils/phoneFormat'
 import ReadTextField from '../components/common/ReadTextField'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -96,6 +97,7 @@ const StarRating: React.FC<{ value: number; onChange?: (v: number) => void; read
 // 메인 페이지
 // ─────────────────────────────────────────────
 const ContractorRegistrationPage: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
@@ -176,9 +178,9 @@ const ContractorRegistrationPage: React.FC = () => {
       try { await uploadPendingFiles(created.id) } catch { /* 파일 업로드 실패는 별도 안내 — 등록 자체는 유지 */ }
       qc.invalidateQueries({ queryKey: ['contractorRegistrations'] })
       setSubmittedResult(created)
-      showSuccess('등록되었습니다.')
+      showSuccess(t('contractorRegistrationPage.msg1', '등록되었습니다.'))
     },
-    onError: () => showError('등록에 실패했습니다.'),
+    onError: () => showError(t('contractorRegistrationPage.msg2', '등록에 실패했습니다.')),
   })
 
   const updateMut = useMutation({
@@ -187,20 +189,20 @@ const ContractorRegistrationPage: React.FC = () => {
     onSuccess: async (updated) => {
       try { await uploadPendingFiles(updated.id) } catch { /* ignore upload error */ }
       qc.invalidateQueries({ queryKey: ['contractorRegistrations'] })
-      showSuccess('저장되었습니다.')
+      showSuccess(t('contractorRegistrationPage.msg3', '저장되었습니다.'))
       backToList()
     },
-    onError: () => showError('저장에 실패했습니다.'),
+    onError: () => showError(t('contractorRegistrationPage.msg4', '저장에 실패했습니다.')),
   })
 
   const deleteMut = useMutation({
     mutationFn: (id: number) => contractorRegistrationApi.delete(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['contractorRegistrations'] })
-      showSuccess('삭제되었습니다.')
+      showSuccess(t('contractorRegistrationPage.msg5', '삭제되었습니다.'))
       backToList()
     },
-    onError: () => showError('삭제에 실패했습니다.'),
+    onError: () => showError(t('contractorRegistrationPage.msg6', '삭제에 실패했습니다.')),
   })
 
   // ─── Handlers ─────────────────────────────
@@ -248,7 +250,7 @@ const ContractorRegistrationPage: React.FC = () => {
   }
 
   const handleDelete = async (item: ContractorRegistration) => {
-    if (await showConfirm('정말로 삭제하시겠습니까?')) {
+    if (await showConfirm(t('contractorRegistrationPage.msg7', '정말로 삭제하시겠습니까?'))) {
       deleteMut.mutate(item.id)
     }
   }
@@ -257,13 +259,13 @@ const ContractorRegistrationPage: React.FC = () => {
   const validateStep = (s: number): boolean => {
     if (s === 0) {
       if (!form.bizNum || !form.companyName || !form.ceoName) {
-        showError('사업자등록번호 / 업체명 / 대표자명 은 필수입니다.')
+        showError(t('contractorRegistrationPage.msg8', '사업자등록번호 / 업체명 / 대표자명 은 필수입니다.'))
         return false
       }
     }
     if (s === 2) {
       if (!form.safetyMgrName || !form.safetyMgrTel) {
-        showError('안전보건 담당자 성명·휴대전화 는 필수입니다.')
+        showError(t('contractorRegistrationPage.msg9', '안전보건 담당자 성명·휴대전화 는 필수입니다.'))
         return false
       }
     }
@@ -271,11 +273,11 @@ const ContractorRegistrationPage: React.FC = () => {
       // 신규 등록 시에만 사업자등록증·동의 필수 체크
       if (viewMode === 'create') {
         if (!namedFiles.bizLicense) {
-          showError('사업자등록증을 첨부해주세요.')
+          showError(t('contractorRegistrationPage.msg10', '사업자등록증을 첨부해주세요.'))
           return false
         }
         if (!agree1 || !agree2 || !agree3) {
-          showError('동의 항목을 모두 확인해주세요.')
+          showError(t('contractorRegistrationPage.msg11', '동의 항목을 모두 확인해주세요.'))
           return false
         }
       }
@@ -303,7 +305,7 @@ const ContractorRegistrationPage: React.FC = () => {
         {/* ─── 데스크탑(md+) : 한 줄 ─── */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
           <ListSearchBar sx={{ width: 380 }} placeholder="업체명 / 사업자번호 / 등록번호 / 대표자 검색" value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
-          <TextField select size="small" sx={{ width: 140 }} label="상태"
+          <TextField select size="small" sx={{ width: 140 }} label={t('contractorRegistrationPage.label1', '상태')}
             value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">전체</MenuItem>
             <MenuItem value="APPROVED">승인</MenuItem>
@@ -328,7 +330,7 @@ const ContractorRegistrationPage: React.FC = () => {
               <RefreshIcon fontSize="small" />
             </IconButton>
           </Box>
-          <TextField select size="small" fullWidth label="상태"
+          <TextField select size="small" fullWidth label={t('contractorRegistrationPage.label2', '상태')}
             value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">전체</MenuItem>
             <MenuItem value="APPROVED">승인</MenuItem>
@@ -579,9 +581,11 @@ const ContractorRegistrationPage: React.FC = () => {
 // ═════════════════════════════════════════════
 // Step 0 — 기본정보
 // ═════════════════════════════════════════════
-const Step0Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React.Dispatch<React.SetStateAction<ContractorRegistrationRequest>>; isReadonly: boolean }> = ({ form, setForm, isReadonly }) => (
+const Step0Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React.Dispatch<React.SetStateAction<ContractorRegistrationRequest>>; isReadonly: boolean }> = ({ form, setForm, isReadonly }) => {
+  const { t } = useTranslation()
+  return (
   <Box>
-    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>사업자 기본정보</Typography>
+    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>{t('contractorRegistrationPage.section1', '사업자 기본정보')}</Typography>
     <FormTable>
       <FormRow>
         <FormLabel required>사업자등록번호</FormLabel>
@@ -624,7 +628,7 @@ const Step0Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
       </FormRow>
     </FormTable>
 
-    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>사업장 소재지</Typography>
+    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('contractorRegistrationPage.section2', '사업장 소재지')}</Typography>
     <FormTable>
       <FormRow>
         <FormLabel>우편번호</FormLabel>
@@ -647,7 +651,7 @@ const Step0Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
       </FormRow>
     </FormTable>
 
-    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>연락처</Typography>
+    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('contractorRegistrationPage.section3', '연락처')}</Typography>
     <FormTable>
       <FormRow>
         <FormLabel>대표 전화번호</FormLabel>
@@ -685,12 +689,14 @@ const Step0Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
       </FormRow>
     </FormTable>
   </Box>
-)
+  )
+}
 
 // ═════════════════════════════════════════════
 // Step 1 — 안전보건
 // ═════════════════════════════════════════════
 const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React.Dispatch<React.SetStateAction<ContractorRegistrationRequest>>; isReadonly: boolean }> = ({ form, setForm, isReadonly }) => {
+  const { t } = useTranslation()
   const certs = csvToArr(form.certifications)
   const hazards = csvToArr(form.hazardFactors)
   const toggleCsv = (key: 'certifications' | 'hazardFactors', value: string) => {
@@ -700,7 +706,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
   }
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>안전보건 자격·인증</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>{t('contractorRegistrationPage.section4', '안전보건 자격·인증')}</Typography>
       <FormTable>
         <FormRow>
           <FormLabel>산업안전보건법 적용</FormLabel>
@@ -737,7 +743,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
         </FormRow>
       </FormTable>
 
-      <Typography variant="subtitle2" fontWeight={600} sx={{ mt: 2, mb: 1, color: 'text.secondary' }}>보유 인증 (다중선택)</Typography>
+      <Typography variant="subtitle2" fontWeight={600} sx={{ mt: 2, mb: 1, color: 'text.secondary' }}>{t('contractorRegistrationPage.section5', '보유 인증 (다중선택)')}</Typography>
       <Paper variant="outlined" sx={{ p: 1.5, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
         {CERT_OPTS.map(o => (
           <Chip key={o} label={o} size="small"
@@ -748,7 +754,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
         ))}
       </Paper>
 
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>위험성 평가</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('contractorRegistrationPage.section6', '위험성 평가')}</Typography>
       <FormTable>
         <FormRow last>
           <FormLabel>위험성평가 실시</FormLabel>
@@ -766,7 +772,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
         </FormRow>
       </FormTable>
 
-      <Typography variant="subtitle2" fontWeight={600} sx={{ mt: 2, mb: 1, color: 'text.secondary' }}>주요 취급 유해·위험요인 (다중선택)</Typography>
+      <Typography variant="subtitle2" fontWeight={600} sx={{ mt: 2, mb: 1, color: 'text.secondary' }}>{t('contractorRegistrationPage.section7', '주요 취급 유해·위험요인 (다중선택)')}</Typography>
       <Paper variant="outlined" sx={{ p: 1.5, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
         {HAZARD_OPTS.map(o => (
           <Chip key={o} label={o} size="small"
@@ -777,7 +783,7 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
         ))}
       </Paper>
 
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>협력업체 등급 설정</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('contractorRegistrationPage.section8', '협력업체 등급 설정')}</Typography>
       <FormTable>
         <FormRow>
           <FormLabel>안전관리 수준</FormLabel>
@@ -811,9 +817,11 @@ const Step1Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
 // ═════════════════════════════════════════════
 // Step 2 — 담당자
 // ═════════════════════════════════════════════
-const Step2Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React.Dispatch<React.SetStateAction<ContractorRegistrationRequest>>; isReadonly: boolean }> = ({ form, setForm, isReadonly }) => (
+const Step2Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React.Dispatch<React.SetStateAction<ContractorRegistrationRequest>>; isReadonly: boolean }> = ({ form, setForm, isReadonly }) => {
+  const { t } = useTranslation()
+  return (
   <Box>
-    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>안전보건 담당자 (협력업체측)</Typography>
+    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>{t('contractorRegistrationPage.section9', '안전보건 담당자 (협력업체측)')}</Typography>
     <FormTable>
       <FormRow>
         <FormLabel required>성명</FormLabel>
@@ -853,7 +861,7 @@ const Step2Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
       </FormRow>
     </FormTable>
 
-    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>보건담당자</Typography>
+    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('contractorRegistrationPage.section10', '보건담당자')}</Typography>
     <FormTable>
       <FormRow>
         <FormLabel>성명</FormLabel>
@@ -888,7 +896,7 @@ const Step2Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
       </FormRow>
     </FormTable>
 
-    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>당사 내부 담당자</Typography>
+    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('contractorRegistrationPage.section11', '당사 내부 담당자')}</Typography>
     <FormTable>
       <FormRow>
         <FormLabel>담당팀</FormLabel>
@@ -922,7 +930,8 @@ const Step2Panel: React.FC<{ form: ContractorRegistrationRequest; setForm: React
       </FormRow>
     </FormTable>
   </Box>
-)
+  )
+}
 
 // ═════════════════════════════════════════════
 // Step 3 — 서류·계약
@@ -946,7 +955,7 @@ const UploadBox: React.FC<{
       <Box
         onClick={() => !isReadonly && ref.current?.click()}
         sx={{
-          border: '1px dashed', borderColor: 'grey.400', borderRadius: 1, p: 2,
+          border: '1px dashed', borderColor: 'divider', borderRadius: 1, p: 2,
           minHeight: 96, display: 'flex', flexDirection: 'column', alignItems: 'center',
           justifyContent: 'center', cursor: isReadonly ? 'default' : 'pointer',
           bgcolor: file ? 'action.hover' : 'transparent',
@@ -988,10 +997,11 @@ const Step3Panel: React.FC<{
   agree3: boolean; setAgree3: (v: boolean) => void
 }> = ({ form, setForm, isReadonly, namedFiles, setNamedFiles, extraFiles, setExtraFiles,
        agree1, setAgree1, agree2, setAgree2, agree3, setAgree3 }) => {
+  const { t } = useTranslation()
   const extraInputRef = React.useRef<HTMLInputElement>(null)
   return (
   <Box>
-    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>계약 정보</Typography>
+    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>{t('contractorRegistrationPage.section12', '계약 정보')}</Typography>
     <FormTable>
       <FormRow>
         <FormLabel>계약 시작일</FormLabel>
@@ -1027,19 +1037,19 @@ const Step3Panel: React.FC<{
       </FormRow>
     </FormTable>
 
-    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>제출 서류</Typography>
+    <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('contractorRegistrationPage.section13', '제출 서류')}</Typography>
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-        <UploadBox label="사업자등록증" required hint="PDF, JPG, PNG (최대 10MB)"
+        <UploadBox label={t('contractorRegistrationPage.label3', '사업자등록증')} required hint="PDF, JPG, PNG (최대 10MB)"
           file={namedFiles.bizLicense} isReadonly={isReadonly}
           onSelect={(f) => setNamedFiles(prev => ({ ...prev, bizLicense: f }))} />
-        <UploadBox label="안전관리자 선임 서류"
+        <UploadBox label={t('contractorRegistrationPage.label4', '안전관리자 선임 서류')}
           file={namedFiles.safetyMgrAssign} isReadonly={isReadonly}
           onSelect={(f) => setNamedFiles(prev => ({ ...prev, safetyMgrAssign: f }))} />
-        <UploadBox label="위험성평가 확인서"
+        <UploadBox label={t('contractorRegistrationPage.label5', '위험성평가 확인서')}
           file={namedFiles.riskEval} isReadonly={isReadonly}
           onSelect={(f) => setNamedFiles(prev => ({ ...prev, riskEval: f }))} />
-        <UploadBox label="보험가입증명서"
+        <UploadBox label={t('contractorRegistrationPage.label6', '보험가입증명서')}
           file={namedFiles.insurance} isReadonly={isReadonly}
           onSelect={(f) => setNamedFiles(prev => ({ ...prev, insurance: f }))} />
       </Box>
@@ -1048,7 +1058,7 @@ const Step3Panel: React.FC<{
         <Box
           onClick={() => !isReadonly && extraInputRef.current?.click()}
           sx={{
-            border: '1px dashed', borderColor: 'grey.400', borderRadius: 1, p: 2,
+            border: '1px dashed', borderColor: 'divider', borderRadius: 1, p: 2,
             minHeight: 64, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             cursor: isReadonly ? 'default' : 'pointer',
             '&:hover': { borderColor: isReadonly ? 'grey.400' : 'primary.main' },
@@ -1075,15 +1085,15 @@ const Step3Panel: React.FC<{
 
     {!isReadonly && (
       <>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>동의 확인</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('contractorRegistrationPage.section14', '동의 확인')}</Typography>
         <Paper variant="outlined" sx={{ p: 2 }}>
           <Stack spacing={1}>
             <FormControlLabel control={<Checkbox size="small" checked={agree1} onChange={e => setAgree1(e.target.checked)} />}
-              label="안전보건 관리규정 및 협력업체 준수사항을 확인하였습니다." />
+              label={t('contractorRegistrationPage.label7', '안전보건 관리규정 및 협력업체 준수사항을 확인하였습니다.')} />
             <FormControlLabel control={<Checkbox size="small" checked={agree2} onChange={e => setAgree2(e.target.checked)} />}
-              label="개인정보 수집·이용에 동의합니다." />
+              label={t('contractorRegistrationPage.label8', '개인정보 수집·이용에 동의합니다.')} />
             <FormControlLabel control={<Checkbox size="small" checked={agree3} onChange={e => setAgree3(e.target.checked)} />}
-              label="입력한 정보가 사실임을 확인합니다." />
+              label={t('contractorRegistrationPage.label9', '입력한 정보가 사실임을 확인합니다.')} />
           </Stack>
         </Paper>
       </>
@@ -1100,6 +1110,7 @@ const Step4Panel: React.FC<{
   submittedResult: ContractorRegistration | null
   onReset: () => void
 }> = ({ form, submittedResult, onReset }) => {
+  const { t } = useTranslation()
   const rows = useMemo(() => {
     const r: Array<[string, string | number | null | undefined]> = [
       ['업체명', form.companyName],
@@ -1141,9 +1152,9 @@ const Step4Panel: React.FC<{
     return (
       <Paper variant="outlined" sx={{ p: 5, textAlign: 'center' }}>
         <CheckCircleOutlineIcon sx={{ fontSize: 64, color: 'success.main', mb: 2 }} />
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 1 }}>등록 완료!</Typography>
+        <Typography variant="h6" fontWeight={700} sx={{ mb: 1 }}>{t('contractorReg.complete', '등록 완료!')}</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          협력 업체 정보가 성공적으로 등록되었습니다.<br />승인 검토 후 담당자가 안내드리겠습니다.
+          {t('contractorReg.completeDesc1', '협력 업체 정보가 성공적으로 등록되었습니다.')}<br />{t('contractorReg.completeDesc2', '승인 검토 후 담당자가 안내드리겠습니다.')}
         </Typography>
         <Chip label={`등록번호: ${submittedResult.regNo}`} color="primary" variant="outlined"
           sx={{ fontSize: 14, fontWeight: 700, py: 2.5, px: 1 }} />
@@ -1156,7 +1167,7 @@ const Step4Panel: React.FC<{
 
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>등록 정보 최종 확인</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 1, mb: 1 }}>{t('contractorRegistrationPage.section15', '등록 정보 최종 확인')}</Typography>
       {rows.length === 0 ? (
         <Paper variant="outlined">
           <Typography variant="body2" color="text.disabled" sx={{ p: 4, textAlign: 'center' }}>

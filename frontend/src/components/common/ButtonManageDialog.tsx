@@ -1089,7 +1089,7 @@ const ButtonManageDialog: React.FC<Props> = ({ open, onClose }) => {
                       sx={{ bgcolor: 'grey.50', '& td': { borderColor: 'grey.200', py: 0.5 } }}>
                       {showMenu && (
                         <TableCell rowSpan={totalRows} sx={{
-                          verticalAlign: 'top', pt: 1.5, borderRight: 1, borderColor: 'grey.300',
+                          verticalAlign: 'top', pt: 1.5, borderRight: 1, borderColor: 'divider',
                           fontSize: '0.78rem', wordBreak: 'keep-all',
                         }}>
                           {menu.menuPath.split(' › ').map((seg, i, arr) =>
@@ -1099,7 +1099,7 @@ const ButtonManageDialog: React.FC<Props> = ({ open, onClose }) => {
                           )}
                         </TableCell>
                       )}
-                      <TableCell sx={{ verticalAlign: 'middle', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>
+                      <TableCell sx={{ verticalAlign: 'middle', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>
                         <Chip label={sg.statusLabel} color={sg.statusColor} size="small" sx={{ fontSize: '0.65rem', height: 20 }} />
                       </TableCell>
                       <TableCell colSpan={ROLES.length + 2}
@@ -1123,7 +1123,7 @@ const ButtonManageDialog: React.FC<Props> = ({ open, onClose }) => {
 
                       {showMenu && (
                         <TableCell rowSpan={totalRows} sx={{
-                          verticalAlign: 'top', pt: 1.5, borderRight: 1, borderColor: 'grey.300',
+                          verticalAlign: 'top', pt: 1.5, borderRight: 1, borderColor: 'divider',
                           fontSize: '0.78rem', wordBreak: 'keep-all',
                         }}>
                           {menu.menuPath.split(' › ').map((seg, i, arr) =>
@@ -1137,7 +1137,7 @@ const ButtonManageDialog: React.FC<Props> = ({ open, onClose }) => {
                       {showStatus && (
                         <TableCell rowSpan={sgRowSpan} sx={{
                           verticalAlign: 'middle', textAlign: 'center',
-                          borderRight: 1, borderColor: 'grey.300',
+                          borderRight: 1, borderColor: 'divider',
                         }}>
                           <Chip label={sg.statusLabel} color={sg.statusColor} size="small"
                             sx={{ fontSize: '0.65rem', height: 20 }} />
@@ -1150,7 +1150,7 @@ const ButtonManageDialog: React.FC<Props> = ({ open, onClose }) => {
                         </TableCell>
                       )}
 
-                      <TableCell sx={{ fontSize: '0.8rem', borderRight: 1, borderColor: 'grey.300' }}>
+                      <TableCell sx={{ fontSize: '0.8rem', borderRight: 1, borderColor: 'divider' }}>
                         {btn.button}
                       </TableCell>
 

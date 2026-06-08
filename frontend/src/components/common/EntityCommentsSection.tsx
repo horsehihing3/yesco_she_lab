@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Typography, TextField, Button, IconButton, Paper, Stack,
@@ -54,6 +55,7 @@ const CommentRow: React.FC<CommentRowProps> = ({
   onReplyToggle, onEditToggle, onReplyTextChange, onEditTextChange,
   onSubmitReply, onSubmitEdit, onDelete, pending,
 }) => {
+  const { t } = useTranslation()
   const canModify = !!myName && comment.authorName === myName
   const isReplyOpen = replyOpenId === comment.id
   const isEditOpen = editOpenId === comment.id
@@ -136,6 +138,7 @@ interface Props {
 }
 
 const EntityCommentsSection: React.FC<Props> = ({ entityId, basePath, queryKey }) => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { user } = useAuth()
   const { showConfirm, showError } = useAlert()
@@ -173,7 +176,7 @@ const EntityCommentsSection: React.FC<Props> = ({ entityId, basePath, queryKey }
       qc.invalidateQueries({ queryKey: [queryKey, entityId] })
       setNewComment(''); setReplyText(''); setReplyOpenId(null)
     },
-    onError: () => showError('댓글 등록에 실패했습니다.'),
+    onError: () => showError(t('entityCommentsSection.msg1', '댓글 등록에 실패했습니다.')),
   })
 
   const updateMut = useMutation({
@@ -185,7 +188,7 @@ const EntityCommentsSection: React.FC<Props> = ({ entityId, basePath, queryKey }
       qc.invalidateQueries({ queryKey: [queryKey, entityId] })
       setEditOpenId(null); setEditText('')
     },
-    onError: () => showError('수정에 실패했습니다.'),
+    onError: () => showError(t('entityCommentsSection.msg2', '수정에 실패했습니다.')),
   })
 
   const deleteMut = useMutation({
@@ -193,7 +196,7 @@ const EntityCommentsSection: React.FC<Props> = ({ entityId, basePath, queryKey }
       await axiosInstance.delete(`${basePath}/comments/${id}`)
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: [queryKey, entityId] }),
-    onError: () => showError('삭제에 실패했습니다.'),
+    onError: () => showError(t('entityCommentsSection.msg3', '삭제에 실패했습니다.')),
   })
 
   const handleNewSubmit = () => {
@@ -217,7 +220,7 @@ const EntityCommentsSection: React.FC<Props> = ({ entityId, basePath, queryKey }
   }
 
   const handleDelete = async (id: number) => {
-    if (await showConfirm('삭제하시겠습니까? 답글이 있는 경우 함께 삭제됩니다.')) {
+    if (await showConfirm(t('entityCommentsSection.msg4', '삭제하시겠습니까? 답글이 있는 경우 함께 삭제됩니다.'))) {
       deleteMut.mutate(id)
     }
   }

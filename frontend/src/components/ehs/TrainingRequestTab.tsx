@@ -26,12 +26,12 @@ const statusColors: Record<string, 'success' | 'warning' | 'error' | 'default'> 
 }
 const labelSx = {
   width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valueSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }
-const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'grey.300' }
+const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'divider' }
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const, textAlign: 'center' as const }
 
 const api = {
@@ -187,7 +187,7 @@ const TrainingRequestTab: React.FC = () => {
             {/* PC Table */}
             <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
               <TableContainer>
-                <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                   <TableHead>
                     <TableRow>
                       <TableCell sx={headerCellSx}>{t('occupationalExposure.safetyEducation.educationId')}</TableCell>
@@ -222,7 +222,7 @@ const TrainingRequestTab: React.FC = () => {
             {/* Mobile Cards */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {items.map((item) => (
-                <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
+                <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography fontWeight="bold" variant="body2">{item.title}</Typography>
                     <Chip label={getStatusLabel(item.status)} color={statusColors[item.status] || 'default'} size="small" />
@@ -249,36 +249,36 @@ const TrainingRequestTab: React.FC = () => {
     return (
       <Box>
         {/* PC */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationId')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.educationId}</Typography></Box>
               <Typography sx={labelSx}>{t('common.status')}</Typography>
               <Box sx={valueSx}><Chip label={getStatusLabel(selectedItem.status)} color={statusColors[selectedItem.status] || 'default'} size="small" /></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('common.title')}</Typography>
               <Box sx={valueSx}><Typography variant="body2" fontWeight={600}>{selectedItem.title}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationType')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2">{getTypeLabel(selectedItem.educationType)}</Typography></Box>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationDate')}</Typography>
               <Box sx={valueSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.educationDate}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationHours')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2">{selectedItem.educationHours ? `${selectedItem.educationHours}h` : ''}</Typography></Box>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.location')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.location || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.instructorName')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2">{selectedItem.instructorName || ''}</Typography></Box>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.instructorOrg')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.instructorOrg || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.attendeeCount')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2">{selectedItem.attendeeCount}</Typography></Box>
               <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationCategory')}</Typography>
@@ -291,7 +291,7 @@ const TrainingRequestTab: React.FC = () => {
         </Box>
         {/* Mobile */}
         <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
-          <Paper sx={{ p: 2, border: 1, borderColor: 'grey.300' }}>
+          <Paper sx={{ p: 2, border: 1, borderColor: 'divider' }}>
             {[
               [t('occupationalExposure.safetyEducation.educationId'), selectedItem.educationId],
               [t('common.status'), getStatusLabel(selectedItem.status)],
@@ -329,14 +329,14 @@ const TrainingRequestTab: React.FC = () => {
     return (
       <Box>
         {/* PC Form */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('common.title')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationType')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <Select fullWidth size="small" value={form.educationType} onChange={(e) => setForm({ ...form, educationType: e.target.value as any })} displayEmpty>
@@ -349,7 +349,7 @@ const TrainingRequestTab: React.FC = () => {
               <DatePickerField value={form.educationDate || null} onChange={(v) => setForm({ ...form, educationDate: v || '' })} size="small" />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.educationHours')}</Typography>
             <Box sx={valueBorderSx}>
               <NumberField fullWidth size="small" value={form.educationHours || ''} onChange={(v) => setForm({ ...form, educationHours: v ?? undefined })} />
@@ -359,7 +359,7 @@ const TrainingRequestTab: React.FC = () => {
               <TextField fullWidth size="small" value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('occupationalExposure.safetyEducation.instructorName')}</Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.instructorName || ''} onChange={(e) => setForm({ ...form, instructorName: e.target.value })} />

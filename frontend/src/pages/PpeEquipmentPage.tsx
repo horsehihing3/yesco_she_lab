@@ -44,10 +44,10 @@ const STATUS_CHIP: Record<PpeEquipmentStatus, { color: 'success' | 'warning' | '
   LOW_STOCK: { color: 'info', label: 'ppe.statusLowStock' },
 }
 
-const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -254,7 +254,7 @@ const PpeEquipmentPage: React.FC = () => {
     return (
       <>
         {/* PC Detail */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('ppe.itemName')}</Typography>
             <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.name}</Typography></Box>
@@ -314,7 +314,7 @@ const PpeEquipmentPage: React.FC = () => {
         </Paper>
 
         {/* Mobile Detail */}
-        <Paper sx={{ display: { xs: 'block', md: 'none' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'block', md: 'none' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {[
             [t('ppe.itemName'), selectedItem.name],
             [t('ppe.category'), getCategoryLabel(selectedItem.category)],
@@ -327,12 +327,12 @@ const PpeEquipmentPage: React.FC = () => {
             [t('ppe.department'), selectedItem.department || ''],
             [t('ppe.notes'), selectedItem.notes || ''],
           ].map(([label, value], i) => (
-            <Box key={i} sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box key={i} sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{label}</Typography>
               <Box sx={valSx}><Typography variant="body2">{value}</Typography></Box>
             </Box>
           ))}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{t('ppe.wearRate')}</Typography>
             <Box sx={valSx}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -371,7 +371,7 @@ const PpeEquipmentPage: React.FC = () => {
     return (
       <>
         {/* PC Form */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {/* Row 1: 항목명 + 분류 */}
           <Box sx={rowSx}>
             <Typography sx={labelSx}>
@@ -637,7 +637,7 @@ const PpeEquipmentPage: React.FC = () => {
           <>
             {/* PC Table */}
             <TableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={headerCellSx}>{t('ppe.itemName')}</TableCell>

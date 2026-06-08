@@ -760,7 +760,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { t } = useTranslation()
-  const { showConfirm, showSuccess } = useAlert()
+  const { showConfirm, showSuccess, showError } = useAlert()
 
   // 상태
   const [selectedFloorId, setSelectedFloorId] = useState<number | null>(null)
@@ -837,26 +837,32 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
 
   // 사업장 → 도면 트리 데이터
   // 사업장이 등록되어 있으면 사업장 트리, 사업장에 매칭되지 않는 도면은 "(미지정)" 그룹으로
+  // 한 도면은 반드시 한 그룹에만 속해야 함 (TreeItem id 중복 방지)
   const groupedBySite = useMemo(() => {
     const parseFloorNum = (s: string | undefined) => parseInt(String(s || '').replace(/[^\d-]/g, '')) || 0
     const result: Array<{ site: WorkplaceSite | null; drawings: FloorData[] }> = []
+    const assigned = new Set<number>()
 
-    // 등록된 사업장별 그룹
+    // 등록된 사업장별 그룹 — site 컬럼 우선 매칭, 비어있을 때만 name 폴백
     for (const site of workplaceSites) {
       const drawings = floorData
-        .filter(f => f.name === site.siteName || f.site === site.siteName)
+        .filter(f => {
+          if (assigned.has(f.id)) return false
+          if (f.site) return f.site === site.siteName
+          return f.name === site.siteName
+        })
         .sort((a, b) => {
           const na = parseFloorNum(a.floor); const nb = parseFloorNum(b.floor)
           if (na !== nb) return nb - na
           return (a.floor || '').localeCompare(b.floor || '')
         })
+      drawings.forEach(d => assigned.add(d.id))
       result.push({ site, drawings })
     }
 
-    // 사업장에 매칭되지 않는 도면 (legacy)
-    const matchedNames = new Set(workplaceSites.map(s => s.siteName))
+    // 어떤 사업장에도 할당되지 않은 도면 (legacy)
     const unmatched = floorData
-      .filter(f => !matchedNames.has(f.name) && !matchedNames.has(f.site))
+      .filter(f => !assigned.has(f.id))
       .sort((a, b) => {
         const na = parseFloorNum(a.floor); const nb = parseFloorNum(b.floor)
         if (na !== nb) return nb - na
@@ -885,7 +891,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
   })
 
   const handleDeleteSite = async (id: number) => {
-    if (await showConfirm('이 사업장을 삭제하시겠습니까?')) {
+    if (await showConfirm(t('workplaceDrawingsPage.msg1', '이 사업장을 삭제하시겠습니까?'))) {
       deleteSiteMutation.mutate(id)
     }
   }
@@ -939,7 +945,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                     {siteLabel}
                   </Typography>
                 </Box>
-                {site && !readOnly && (
+                {!readOnly && (
                   <Box
                     className="site-actions"
                     sx={{
@@ -961,21 +967,32 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                       },
                     }}
                   >
-                    <Tooltip title="이 사업장에 도면 추가" arrow>
-                      <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleOpenDrawingDialog(undefined, site) }}>
-                        <AddIcon sx={{ fontSize: 16 }} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="사업장 수정" arrow>
-                      <IconButton size="small" onClick={(e) => { e.stopPropagation(); setEditingSite(site); setSiteDialogOpen(true) }}>
-                        <EditIcon sx={{ fontSize: 16 }} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="사업장 삭제" arrow>
-                      <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id) }}>
-                        <DeleteIcon sx={{ fontSize: 16, color: 'error.main' }} />
-                      </IconButton>
-                    </Tooltip>
+                    {site ? (
+                      <>
+                        <Tooltip title="이 사업장에 도면 추가" arrow>
+                          <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleOpenDrawingDialog(undefined, site) }}>
+                            <AddIcon sx={{ fontSize: 16 }} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="사업장 수정" arrow>
+                          <IconButton size="small" onClick={(e) => { e.stopPropagation(); setEditingSite(site); setSiteDialogOpen(true) }}>
+                            <EditIcon sx={{ fontSize: 16 }} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="사업장 삭제" arrow>
+                          <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleDeleteSite(site.id) }}>
+                            <DeleteIcon sx={{ fontSize: 16, color: 'error.main' }} />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    ) : (
+                      // 미지정 그룹: 새 사업장 등록 다이얼로그로 안내
+                      <Tooltip title="사업장 등록 — 등록 후 도면 수정에서 사업장으로 이동" arrow>
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); setEditingSite(null); setSiteDialogOpen(true) }}>
+                          <AddIcon sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </Box>
                 )}
               </Box>
@@ -1200,6 +1217,11 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
     if (editingDrawing) {
       updateDrawingMutation.mutate({ id: editingDrawing.id, request: drawingForm })
     } else {
+      // 신규 등록 시 이미지 1개 이상 필수
+      if (pendingImageFiles.length === 0) {
+        showError(t('workplaceDrawing.imageRequired', '도면 이미지를 1개 이상 등록하세요'))
+        return
+      }
       createDrawingMutation.mutate(drawingForm)
     }
   }
@@ -1343,7 +1365,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           {/* PC Layout */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
             <Paper sx={{ width: 320, flexShrink: 0, overflow: 'auto' }}>
-              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">{t('factory.selectWorkplace')}</Typography>
                 {renderSiteAddButton()}
               </Box>
@@ -1358,7 +1380,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           {/* Mobile */}
           <Box sx={{ display: { xs: 'block', md: 'none' } }}>
             <Paper sx={{ mb: 2 }}>
-              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">{t('factory.selectWorkplace')}</Typography>
                 {renderSiteAddButton()}
               </Box>
@@ -1387,7 +1409,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
             {/* Left Panel - 사업장/층 선택 */}
             <Paper sx={{ width: 320, flexShrink: 0, overflow: 'auto' }}>
-              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">
                   {t('factory.selectWorkplace')}
                 </Typography>
@@ -1795,13 +1817,13 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
         <DialogTitle>{editingDrawing ? t('workplaceDrawing.editDrawing') : t('workplaceDrawing.registerDrawing')}</DialogTitle>
         <DialogContent>
           {/* PC용 테이블 레이아웃 */}
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mt: 2 }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mt: 2 }}>
             {/* Row 1: 도면명 | 사업장 — 사업장은 항상 readOnly (사업장 수정에서만 변경) */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('workplaceDrawing.drawingName')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -1810,7 +1832,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                   helperText="사업장명은 [사업장 수정]에서 변경 가능"
                 />
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('workplace.title')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1823,11 +1845,11 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
               </Box>
             </Box>
             {/* Row 2: 층 | 설명 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('common.floor')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -1836,7 +1858,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                   onChange={(e) => setDrawingForm({ ...drawingForm, floor: e.target.value })}
                 />
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('common.description')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1851,7 +1873,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
             </Box>
             {/* Row 3: 도면 이미지 */}
             <Box sx={{ display: 'flex' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('workplaceDrawing.drawingImage')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1881,7 +1903,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                           src={`/api/files/${file.id}`}
                           alt={file.originalFilename}
                           onClick={() => setPreviewImageUrl(`/api/files/${file.id}`)}
-                          sx={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 1, border: 1, borderColor: 'grey.300', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+                          sx={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 1, border: 1, borderColor: 'divider', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
                         />
                         <Box
                           onClick={() => setPreviewImageUrl(`/api/files/${file.id}`)}
@@ -1994,7 +2016,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                         src={`/api/files/${file.id}`}
                         alt={file.originalFilename}
                         onClick={() => setPreviewImageUrl(`/api/files/${file.id}`)}
-                        sx={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 1, border: 1, borderColor: 'grey.300', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+                        sx={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 1, border: 1, borderColor: 'divider', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
                       />
                       <Box
                         onClick={() => setPreviewImageUrl(`/api/files/${file.id}`)}
@@ -2050,7 +2072,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           <Button
             variant="contained"
             onClick={handleSaveDrawing}
-            disabled={!drawingForm.name || !drawingForm.site || createDrawingMutation.isPending || updateDrawingMutation.isPending}
+            disabled={!drawingForm.name || !drawingForm.site || (!editingDrawing && pendingImageFiles.length === 0) || createDrawingMutation.isPending || updateDrawingMutation.isPending}
             sx={{ flex: { xs: 1, sm: 'none' } }}
           >
             {t('common.save')}

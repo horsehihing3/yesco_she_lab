@@ -653,18 +653,18 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
       </Box>
 
       {/* Table - PC */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 1100, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 1100, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', width: 200, borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.region')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }} align="center">{t('common.title')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.author')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.department')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.riskRegisterCount')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }} align="center">{t('common.status')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.approver')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.completedDate')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 200, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.region')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('common.title')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.author')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.department')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 100, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.riskRegisterCount')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('common.status')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.approver')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.completedDate')}</TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: 100, wordBreak: 'keep-all' }} align="center">{t('riskAssessment.assessmentCount')}</TableCell>
             </TableRow>
           </TableHead>
@@ -678,14 +678,14 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
             ) : (
               assessments.map((item) => (
                 <TableRow key={item.id} hover onClick={() => handleRowClick(item)} sx={{ cursor: 'pointer' }}>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.site}</TableCell>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.title}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.authorName || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.authorDept || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.riskRegisterCount}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{getStatusChip(item.status)}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{item.approverName || ''}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>{formatDate(item.completedDate)}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.site}</TableCell>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{item.title}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.authorName || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.authorDept || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.riskRegisterCount}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{getStatusChip(item.status)}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{item.approverName || ''}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{formatDate(item.completedDate)}</TableCell>
                   <TableCell align="center">{item.officeCount}/{item.fieldCount}/{(item as RiskAssessment).outsourceCount ?? 0}</TableCell>
                 </TableRow>
               ))
@@ -702,7 +702,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Paper>
         ) : (
           assessments.map((item) => (
-            <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(item)}>
+            <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(item)}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                 <Typography fontWeight="bold" sx={{ flex: 1 }}>{item.title}</Typography>
                 {getStatusChip(item.status)}
@@ -747,25 +747,25 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('riskAssessment.basicInfo')}</Typography>
 
             {/* PC용 테이블 레이아웃 */}
-            <TableContainer component={Paper} variant="outlined" sx={{ display: { xs: 'none', md: 'block' }, overflowX: 'auto', '& .MuiPaper-root': { borderColor: 'grey.300' } }}>
-              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+            <TableContainer component={Paper} variant="outlined" sx={{ display: { xs: 'none', md: 'block' }, overflowX: 'auto', '& .MuiPaper-root': { borderColor: 'divider' } }}>
+              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.title')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{assessmentDetail.title}</TableCell>
-                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.region')}</TableCell>
+                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.title')}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{assessmentDetail.title}</TableCell>
+                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.region')}</TableCell>
                     <TableCell>{assessmentDetail.site}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.author')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{assessmentDetail.authorName || ''}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.department')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.author')}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{assessmentDetail.authorName || ''}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.department')}</TableCell>
                     <TableCell>{assessmentDetail.authorDept || ''}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('common.status')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{getStatusChip(assessmentDetail.status)}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.completedDate')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.status')}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{getStatusChip(assessmentDetail.status)}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.completedDate')}</TableCell>
                     <TableCell>{formatDate(assessmentDetail.completedDate)}</TableCell>
                   </TableRow>
                 </TableBody>
@@ -933,13 +933,13 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('riskAssessment.basicInfo')}</Typography>
 
         {/* PC용 테이블 레이아웃 */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* Row 1: 제목 | 지역 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.title')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
               <TextField
                 fullWidth
                 size="small"
@@ -949,7 +949,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                 required
               />
             </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.region')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -966,14 +966,14 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 2: 작성자 | 소속 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.author')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">{formData.authorName || user?.name || user?.username || ''}</Typography>
             </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.department')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -989,10 +989,10 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Box>
           {/* Row 3: 이메일 | 소속사 */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.email')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
               <TextField
                 fullWidth
                 size="small"
@@ -1119,7 +1119,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
   const renderProcessItem = (process: RiskActivityProcessRequest, _itemNumber: number, globalIndex: number, readOnly: boolean) => {
     const labelSx = {
       width: 160, minWidth: 160, fontWeight: 'bold', bgcolor: 'grey.100',
-      px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+      px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
       display: 'flex', alignItems: 'center', fontSize: '0.875rem',
       justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center', whiteSpace: 'pre-line',
     }
@@ -1130,7 +1130,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
         {/* PC 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           {/* Row 1: 세부활동, 공정 내용 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('riskAssessment.detailActivityProcess')}</Typography>
             <Box sx={{ flex: 1, px: 2, py: 1 }}>
               {readOnly ? (
@@ -1143,7 +1143,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Box>
 
           {/* Row 3: 작업발생주기(빈도) - Radio buttons */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('riskAssessment.frequencyLabel')}</Typography>
             <Box sx={{ flex: 1, px: 2, py: 0.5, display: 'flex', alignItems: 'center' }}>
               {readOnly ? (
@@ -1163,9 +1163,9 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Box>
 
           {/* Row 4: 작업시간 | 작업자(적정) | 작업자(현황) */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('riskAssessment.workHoursPerSession')}</Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: 'divider' }}>
               {readOnly ? (
                 <Typography variant="body2" sx={{ py: 0.5 }}>{process.workHours || ''}</Typography>
               ) : (
@@ -1174,7 +1174,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
               )}
             </Box>
             <Typography sx={smallLabelSx}>{t('riskAssessment.workerAppropriate')}</Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: 'divider' }}>
               {readOnly ? (
                 <Typography variant="body2" sx={{ py: 0.5 }}>{process.worker || ''}</Typography>
               ) : (
@@ -1286,7 +1286,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
 
     const categoryLabelSx = {
       width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-      borderRight: 1, borderColor: 'grey.300',
+      borderRight: 1, borderColor: 'divider',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center',
       borderBottom: isLast ? 0 : 1,
@@ -1295,7 +1295,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
     return (
       <>
         {/* PC 레이아웃 */}
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, borderBottom: isLast ? 0 : 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, borderBottom: isLast ? 0 : 1, borderColor: 'divider' }}>
           <Typography sx={categoryLabelSx}>
             {displayNum}. {categoryName}
           </Typography>
@@ -1312,8 +1312,8 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Box>
         </Box>
         {/* 모바일 레이아웃 */}
-        <Box sx={{ display: { xs: 'block', md: 'none' }, borderBottom: isLast ? 0 : 1, borderColor: 'grey.300' }}>
-          <Typography sx={{ fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1, borderBottom: 1, borderColor: 'grey.300', fontSize: '0.875rem' }}>
+        <Box sx={{ display: { xs: 'block', md: 'none' }, borderBottom: isLast ? 0 : 1, borderColor: 'divider' }}>
+          <Typography sx={{ fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1, borderBottom: 1, borderColor: 'divider', fontSize: '0.875rem' }}>
             {displayNum}. {categoryName}
           </Typography>
           {content === 'process' && process ? (
@@ -1500,7 +1500,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
 
       {/* 위험도 매트릭스 Dialog */}
       <Dialog open={guideDialogOpen} onClose={() => setGuideDialogOpen(false)} maxWidth="lg" fullWidth sx={{ '& .MuiDialog-paper': { mx: { xs: 1, sm: 2 } }, '& .MuiTableCell-root': { border: '1px solid', borderColor: 'divider' } }}>
-        <DialogTitle sx={{ borderBottom: 1, borderColor: 'grey.300', pb: { xs: 1.5, sm: 2 }, pt: { xs: 1.5, sm: 2 }, px: { xs: 2, sm: 3 }, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+        <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: { xs: 1.5, sm: 2 }, pt: { xs: 1.5, sm: 2 }, px: { xs: 2, sm: 3 }, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' }, wordBreak: 'keep-all' }}>
               {t('riskAssessment.gradeGuide').replace(' (', '\n(').split('\n').map((line, i) => (
@@ -1621,7 +1621,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                       </TableCell>
                       <TableCell align="center" sx={{ wordBreak: 'keep-all' }}>{t(`riskAssessment.${criteria.rangeKey}`)}</TableCell>
                       <TableCell align="center">
-                        <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: colorMap[grade] || '#e0e0e0', mx: 'auto', border: '1px solid', borderColor: 'grey.400' }} />
+                        <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: colorMap[grade] || '#e0e0e0', mx: 'auto', border: '1px solid', borderColor: 'divider' }} />
                       </TableCell>
                       <TableCell sx={{ wordBreak: 'keep-all' }}>{t(`riskAssessment.${criteria.actionKey}`)}</TableCell>
                     </TableRow>

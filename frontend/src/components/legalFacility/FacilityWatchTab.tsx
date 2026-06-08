@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography, LinearProgress,
@@ -40,6 +41,7 @@ const emptyWatchForm: Partial<FacilityWatch> = { riskGrade: 'B', facilityType: '
 const emptyCheckForm: Partial<FacilityWatchCheck> = { anomaly: '이상없음' }
 
 const FacilityWatchTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: watches = [], isLoading } = useQuery({ queryKey: ['facilityWatches'], queryFn: watchApi.list })
@@ -89,11 +91,11 @@ const FacilityWatchTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.riskACount ?? 0} label="위험등급 A (긴급)" sub="즉시 점검·조치" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.riskBCount ?? 0} label="위험등급 B (주의)" sub="주기적 모니터링" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.riskCCount ?? 0} label="위험등급 C (관찰)" sub="분기 1회 점검" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.totalCount ?? 0} label="총 관심시설"      sub="등록 관리 중" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={checks.length}          label="총 점검 기록"      /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.riskACount ?? 0} label={t('facilityWatchTab.label1', '위험등급 A (긴급)')} sub="즉시 점검·조치" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.riskBCount ?? 0} label={t('facilityWatchTab.label2', '위험등급 B (주의)')} sub="주기적 모니터링" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.riskCCount ?? 0} label={t('facilityWatchTab.label3', '위험등급 C (관찰)')} sub="분기 1회 점검" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.totalCount ?? 0} label={t('facilityWatchTab.label4', '총 관심시설')}      sub="등록 관리 중" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={checks.length}          label={t('facilityWatchTab.label5', '총 점검 기록')}      /></Grid>
       </Grid>
 
       {urgentList.length > 0 && (
@@ -105,11 +107,11 @@ const FacilityWatchTab: React.FC = () => {
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={1.5}>
-          <TextField select size="small" sx={{ minWidth: 150 }} label="위험등급" value={riskFilter} onChange={e => setRiskFilter(e.target.value)}>
+          <TextField select size="small" sx={{ minWidth: 150 }} label={t('facilityWatchTab.label6', '위험등급')} value={riskFilter} onChange={e => setRiskFilter(e.target.value)}>
             <MenuItem value="">전체</MenuItem>
             {RISK_GRADES.map(r => <MenuItem key={r.code} value={r.code}>{r.label}</MenuItem>)}
           </TextField>
-          <TextField select size="small" sx={{ minWidth: 180 }} label="시설 유형" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+          <TextField select size="small" sx={{ minWidth: 180 }} label={t('facilityWatchTab.label7', '시설 유형')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
             <MenuItem value="">전체</MenuItem>
             {FACILITY_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
           </TextField>
@@ -155,7 +157,7 @@ const FacilityWatchTab: React.FC = () => {
                   </Grid>
                   <Stack direction="row" spacing={0.5} sx={{ mt: 1.5 }} justifyContent="flex-end">
                     <IconButton size="small" onClick={() => openEdit(w)}><EditIcon fontSize="inherit" /></IconButton>
-                    <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteWatchMut.mutate(w.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                    <IconButton size="small" onClick={async () => { if (await showConfirm(t('facilityWatchTab.msg1', '삭제하시겠습니까?'))) deleteWatchMut.mutate(w.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     {w.riskGrade === 'A' && <Button size="small" variant="outlined" color="error" onClick={() => { setCheckForm({ ...emptyCheckForm, watchId: w.id, facilityName: w.name, facilityType: w.facilityType, riskGrade: w.riskGrade }); setCheckOpen(true) }}>긴급조치</Button>}
                   </Stack>
                 </Box>
@@ -166,7 +168,7 @@ const FacilityWatchTab: React.FC = () => {
       )}
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 2, mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>최근 점검 이력</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('facilityWatchTab.section1', '최근 점검 이력')}</Typography>
         <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => { setCheckForm(emptyCheckForm); setCheckOpen(true) }}>New</Button>
       </Stack>
       <Paper variant="outlined">
@@ -264,7 +266,7 @@ const FacilityWatchTab: React.FC = () => {
 
       {/* 점검 기록 모달 */}
       <Dialog open={checkOpen} onClose={() => setCheckOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>관심시설 점검 기록</DialogTitle>
+        <DialogTitle>{t('facilityWatchTab.dialogTitle1', '관심시설 점검 기록')}</DialogTitle>
         <DialogContent dividers>
           <FormTable>
             <FormRow>

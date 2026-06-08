@@ -32,14 +32,14 @@ const msdsChipColor = (status?: string): 'success' | 'warning' | 'error' | 'defa
   return 'default'
 }
 
-const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', wordBreak: 'keep-all' }
+const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }
 const lastHeaderCellSx = { fontWeight: 'bold', wordBreak: 'keep-all' }
-const cellBorderSx = { borderRight: 1, borderColor: 'grey.300' }
+const cellBorderSx = { borderRight: 1, borderColor: 'divider' }
 
-const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 const emptyForm = { vendorName: '', representative: '', contactPerson: '', phone: '', supplyItemsCount: 0, msdsStatus: '', lastTransactionDate: '', grade: '' }
 
@@ -98,7 +98,7 @@ const VendorListTab: React.FC = () => {
     return (
       <Box>
         {/* PC */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
             <Box sx={rowSx}>
               <Typography sx={labelSx}>{t('chem.vendor.vendorCode')}</Typography>
               <Box sx={valBorderSx}><Typography variant="body2">{selectedItem.vendorCode}</Typography></Box>
@@ -161,7 +161,7 @@ const VendorListTab: React.FC = () => {
     return (
       <Box>
         {/* PC Form */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('chem.vendor.vendorName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valBorderSx}><TextField fullWidth size="small" value={form.vendorName} onChange={e => setForm({ ...form, vendorName: e.target.value })} /></Box>
@@ -308,8 +308,8 @@ const VendorListTab: React.FC = () => {
       </Box>
 
       {/* PC Table */}
-      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', overflowX: 'auto' }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+      <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableHead>
             <TableRow>
               <TableCell align="center" sx={headerCellSx}>{t('chem.vendor.vendorCode')}</TableCell>

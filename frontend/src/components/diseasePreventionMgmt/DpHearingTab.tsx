@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -32,6 +33,7 @@ const emptyForm: Partial<DpHearing> = { status: '정상', examType: '정기' }
 const MENU = '보건 관리 › 질병예방 관리 › 청력보존'
 
 const DpHearingTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
@@ -57,9 +59,9 @@ const DpHearingTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['dpMgmtStats'] })
   }
 
-  const createM = useMutation({ mutationFn: dpHearingApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpHearing> }) => dpHearingApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: dpHearingApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: dpHearingApi.create, onSuccess: () => { invalidate(); showSuccess(t('dpHearingTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('dpHearingTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpHearing> }) => dpHearingApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('dpHearingTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('dpHearingTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: dpHearingApi.remove, onSuccess: () => { invalidate(); showSuccess(t('dpHearingTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterStatus !== 'all' && x.status !== filterStatus) return false
@@ -73,10 +75,10 @@ const DpHearingTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 기록을 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('dpHearingTab.msg6', '이 기록을 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.workerName) { showError('근로자명을 입력해주세요'); return }
+    if (!form.workerName) { showError(t('dpHearingTab.msg7', '근로자명을 입력해주세요')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -84,7 +86,7 @@ const DpHearingTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>청력 검사 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('dpHearingTab.section1', '청력 검사 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>근로자명</FormLabel><FormCell borderRight><Typography variant="body2" fontWeight={600}>{selected.workerName}</Typography></FormCell><FormLabel>부서</FormLabel><FormCell><Typography variant="body2">{selected.department || ''}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>소음 (dB)</FormLabel><FormCell borderRight><Typography variant="body2" fontFamily="monospace">{selected.noiseLevel ?? ''}</Typography></FormCell><FormLabel>노출시간 (h/일)</FormLabel><FormCell><Typography variant="body2" fontFamily="monospace">{selected.exposureHours ?? ''}</Typography></FormCell></FormRow>
@@ -189,10 +191,10 @@ const DpHearingTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.hearingTotal ?? 0} label="노출자" sub="85dB 이상" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.hearingOk ?? 0}    label="정상" sub="기준 이내" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.hearingTotal ?? 0} label={t('dpHearingTab.label1', '노출자')} sub="85dB 이상" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.hearingOk ?? 0}    label={t('dpHearingTab.label2', '정상')} sub="기준 이내" /></Grid>
         <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.hearingSts ?? 0}   label="STS 발생" sub="청력 악화" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.hearingD ?? 0}     label="소음성 난청" sub="D1·D2 판정" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.hearingD ?? 0}     label={t('dpHearingTab.label3', '소음성 난청')} sub="D1·D2 판정" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

@@ -106,10 +106,10 @@ const WasteDisposalTab: React.FC = () => {
 
   const paperBg = isDarkMode ? '#18181b' : 'background.paper'
 
-  const formLabelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+  const formLabelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
   const formValSx = { flex: 1, px: 2, py: 1, display: 'flex', alignItems: 'center' }
-  const formValBorderSx = { ...formValSx, borderRight: 1, borderColor: 'grey.300' }
-  const formRowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+  const formValBorderSx = { ...formValSx, borderRight: 1, borderColor: 'divider' }
+  const formRowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
   return (
     <Box>
@@ -119,7 +119,7 @@ const WasteDisposalTab: React.FC = () => {
           {t('waste.disposal.requestForm')}
         </Typography>
         {/* PC Form */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           <Box sx={formRowSx}>
             <Typography sx={formLabelSx}>{t('waste.disposal.selectWaste')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={formValBorderSx}>

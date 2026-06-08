@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -34,6 +35,7 @@ const emptyFac: Partial<DisasterFacility> = { facType: '방유제', checkCycle: 
 const emptyInsp: Partial<DisasterInspection> = { anomaly: '이상없음', doneStatus: '완료', inspDate: new Date().toISOString().slice(0, 10) }
 
 const DisasterFacilityTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['disasterFacilities'], queryFn: disasterFacApi.list })
@@ -94,12 +96,12 @@ const DisasterFacilityTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.disTotal ?? 0} label="방제시설 총계" sub="8개 유형 등록" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.disOk ?? 0}    label="정상 가동" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="yellow" value={stats?.disWarn ?? 0}  label="점검 필요" sub="분기 기한 도래" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.disBad ?? 0}   label="이상 발생" sub="즉시 조치 필요" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="blue"   value={insps.length}         label="점검 이력" sub="누적 기록" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="purple" value={insps.filter(i => i.doneStatus === '진행중').length} label="조치 진행" sub="개선 작업" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.disTotal ?? 0} label={t('disasterFacilityTab.label1', '방제시설 총계')} sub="8개 유형 등록" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.disOk ?? 0}    label={t('disasterFacilityTab.label2', '정상 가동')} /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="yellow" value={stats?.disWarn ?? 0}  label={t('disasterFacilityTab.label3', '점검 필요')} sub="분기 기한 도래" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.disBad ?? 0}   label={t('disasterFacilityTab.label4', '이상 발생')} sub="즉시 조치 필요" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="blue"   value={insps.length}         label={t('disasterFacilityTab.label5', '점검 이력')} sub="누적 기록" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="purple" value={insps.filter(i => i.doneStatus === '진행중').length} label={t('disasterFacilityTab.label6', '조치 진행')} sub="개선 작업" /></Grid>
       </Grid>
 
       {badItems.length > 0 && (
@@ -112,7 +114,7 @@ const DisasterFacilityTab: React.FC = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="시설명/위치/화학물질 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
-        <TextField select size="small" sx={{ minWidth: 170 }} label="유형" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 170 }} label={t('disasterFacilityTab.label7', '유형')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
@@ -156,7 +158,7 @@ const DisasterFacilityTab: React.FC = () => {
                     <TableCell align="center">{v.mgrName || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => { setEditing(v); setForm({ ...v }); setOpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) remove.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('disasterFacilityTab.msg1', '삭제하시겠습니까?'))) remove.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -169,7 +171,7 @@ const DisasterFacilityTab: React.FC = () => {
 
       {/* ===== 방제시설 점검 이력 ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>방제시설 점검 이력</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('disasterFacilityTab.section1', '방제시설 점검 이력')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setIEditing(null); setIForm(emptyInsp); setIOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       <Paper variant="outlined">
@@ -204,7 +206,7 @@ const DisasterFacilityTab: React.FC = () => {
                     <TableCell align="center">{v.nextCheck || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => { setIEditing(v); setIForm({ ...v }); setIOpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) iDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('disasterFacilityTab.msg2', '삭제하시겠습니까?'))) iDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -97,16 +97,16 @@ const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'defa
 // ===== Table Cell Styles =====
 const labelCellSx = {
   width: 110, minWidth: 110, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const,
 }
 const valueCellSx = {
   flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center',
 }
-const valueCellBorderSx = { ...valueCellSx, borderRight: 1, borderColor: 'grey.300' }
+const valueCellBorderSx = { ...valueCellSx, borderRight: 1, borderColor: 'divider' }
 const formLabelSx = { ...labelCellSx, width: 100, minWidth: 100 }
-const formValueSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'grey.300' }
+const formValueSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }
 
 // ===== View Mode =====
 type MyViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -344,7 +344,7 @@ const MyHealthCheckupPage: React.FC = () => {
           {/* PC Table */}
           <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer>
-              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }} align="center">{t('healthCheckup.checkupYear')}</TableCell>
@@ -379,7 +379,7 @@ const MyHealthCheckupPage: React.FC = () => {
           {/* Mobile Card List */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {checkups.map((item) => (
-              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
+              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography fontWeight="bold">{item.checkupYear} - {item.checkupType || ''}</Typography>
                   <Chip label={t(`healthCheckup.statusLabels.${item.checkupStatus}`)} size="small" color={getStatusColor(item.checkupStatus)} />
@@ -412,32 +412,32 @@ const MyHealthCheckupPage: React.FC = () => {
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
             {t('healthCheckup.checkupInfo')}
           </Typography>
-          <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.employeeId')}</Typography>
               <Typography sx={valueCellBorderSx}>{selectedItem.employeeId || ''}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.employeeName')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.employeeName || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.employeeDept')}</Typography>
               <Typography sx={valueCellBorderSx}>{selectedItem.employeeDept || ''}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.employeeEmail')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.employeeEmail || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.checkupYear')}</Typography>
               <Typography sx={valueCellBorderSx}>{selectedItem.checkupYear}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.checkupType')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.checkupType || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.checkupDate')}</Typography>
               <Typography sx={valueCellBorderSx}>{selectedItem.checkupDate?.substring(0, 10) || ''}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.hospital')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.hospital || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.overallResult')}</Typography>
               <Box sx={valueCellBorderSx}>
                 {selectedItem.overallResult ? <Chip label={selectedItem.overallResult} size="small" color={getOverallResultColor(selectedItem.overallResult)} /> : ''}
@@ -459,7 +459,7 @@ const MyHealthCheckupPage: React.FC = () => {
         {/* Checkup Info - Mobile */}
         <Paper sx={{ display: { xs: 'block', md: 'none' }, p: 2, mb: 3, bgcolor: 'grey.50' }}>
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>{t('healthCheckup.checkupInfo')}</Typography>
-          <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, p: 2 }}>
+          <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2 }}>
             {[
               { label: t('healthCheckup.employeeId'), value: selectedItem.employeeId || '' },
               { label: t('healthCheckup.employeeName'), value: selectedItem.employeeName || '' },
@@ -535,9 +535,9 @@ const MyHealthCheckupPage: React.FC = () => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Form - PC */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           {/* Employee info - auto-filled & disabled */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('healthCheckup.employeeId')}</Typography>
             <Box sx={formValueSx}>
               <Controller name="employeeId" control={control} render={({ field }) => (
@@ -551,7 +551,7 @@ const MyHealthCheckupPage: React.FC = () => {
               )} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('healthCheckup.employeeDept')}</Typography>
             <Box sx={formValueSx}>
               <Controller name="employeeDept" control={control} render={({ field }) => (
@@ -566,7 +566,7 @@ const MyHealthCheckupPage: React.FC = () => {
             </Box>
           </Box>
           {/* Editable fields */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('healthCheckup.checkupYear')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -594,7 +594,7 @@ const MyHealthCheckupPage: React.FC = () => {
               )} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('healthCheckup.checkupStatus')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -621,7 +621,7 @@ const MyHealthCheckupPage: React.FC = () => {
               )} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('healthCheckup.checkupDate')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -659,7 +659,7 @@ const MyHealthCheckupPage: React.FC = () => {
               )} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>{t('healthCheckup.nextCheckupDate')}</Typography>
             <Box sx={formValueSx}>
               <Controller name="nextCheckupDate" control={control} render={({ field }) => (
@@ -829,15 +829,15 @@ const MyHealthCheckupPage: React.FC = () => {
                   {t('healthCheckup.allBodyParts')}
                 </Button>
               </Box>
-              <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
-                <Table size="small" sx={{ minWidth: 700, '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+              <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
+                <Table size="small" sx={{ minWidth: 700, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
                   <TableHead>
                     <TableRow sx={{ bgcolor: 'grey.100' }}>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 140 }} align="center">{t('healthCheckup.bodyPart')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 120 }} align="center">{t('healthCheckup.category')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('healthCheckup.resultValue')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', display: { xs: 'none', md: 'table-cell' } }} align="center">{t('healthCheckup.referenceRange')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300', width: 100 }} align="center">{t('healthCheckup.resultStatus')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 140 }} align="center">{t('healthCheckup.bodyPart')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 120 }} align="center">{t('healthCheckup.category')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.resultValue')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', display: { xs: 'none', md: 'table-cell' } }} align="center">{t('healthCheckup.referenceRange')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 100 }} align="center">{t('healthCheckup.resultStatus')}</TableCell>
                       <TableCell sx={{ fontWeight: 'bold', width: 80 }} align="center">{t('common.delete')}</TableCell>
                     </TableRow>
                   </TableHead>
@@ -845,7 +845,7 @@ const MyHealthCheckupPage: React.FC = () => {
                     {detailRows.length > 0 ? (
                       detailRows.map((row, idx) => (
                         <TableRow key={idx}>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                             <Select
                               value={row.bodyPart}
                               onChange={(e) => handleDetailRowChange(idx, 'bodyPart', e.target.value)}
@@ -858,16 +858,16 @@ const MyHealthCheckupPage: React.FC = () => {
                               ))}
                             </Select>
                           </TableCell>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                             <TextField value={row.category} onChange={(e) => handleDetailRowChange(idx, 'category', e.target.value)} size="small" fullWidth placeholder={t('healthCheckup.category')} />
                           </TableCell>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                             <TextField value={row.resultValue} onChange={(e) => handleDetailRowChange(idx, 'resultValue', e.target.value)} size="small" fullWidth placeholder={t('healthCheckup.resultValue')} />
                           </TableCell>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5, display: { xs: 'none', md: 'table-cell' } }}>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5, display: { xs: 'none', md: 'table-cell' } }}>
                             <TextField value={row.referenceRange} onChange={(e) => handleDetailRowChange(idx, 'referenceRange', e.target.value)} size="small" fullWidth placeholder={t('healthCheckup.referenceRange')} />
                           </TableCell>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300', p: 0.5 }}>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider', p: 0.5 }}>
                             <Select value={row.resultStatus || 'normal'} onChange={(e) => handleDetailRowChange(idx, 'resultStatus', e.target.value)} size="small" fullWidth displayEmpty>
                               <MenuItem value="" disabled>선택하세요</MenuItem>
                               <MenuItem value="normal">{t('healthCheckup.resultStatusLabels.normal')}</MenuItem>

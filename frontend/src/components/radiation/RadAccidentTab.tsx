@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography,
@@ -33,6 +34,7 @@ const emptyDrill: Partial<RadDrill> = {
 }
 
 const RadAccidentTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: accidents = [], isLoading: accLoading } = useQuery({ queryKey: ['radAccidents'], queryFn: radAccidentApi.list })
@@ -95,10 +97,10 @@ const RadAccidentTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.accidentTotal ?? 0} label="총 사고 기록" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.accidentOpen ?? 0}  label="조사 진행 중" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={accidents.filter(a => a.status === '종결').length} label="종결" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="purple" value={drills.length} label="비상훈련 실시" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.accidentTotal ?? 0} label={t('radAccidentTab.label1', '총 사고 기록')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.accidentOpen ?? 0}  label={t('radAccidentTab.label2', '조사 진행 중')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={accidents.filter(a => a.status === '종결').length} label={t('radAccidentTab.label3', '종결')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="purple" value={drills.length} label={t('radAccidentTab.label4', '비상훈련 실시')} /></Grid>
       </Grid>
 
       <Alert severity="warning" sx={{ mb: 2 }}>
@@ -106,7 +108,7 @@ const RadAccidentTab: React.FC = () => {
       </Alert>
 
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>방사선 사고·비상 이력</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('radAccidentTab.section1', '방사선 사고·비상 이력')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openAccCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
@@ -132,11 +134,11 @@ const RadAccidentTab: React.FC = () => {
                     <TableCell>{v.location || '-'}</TableCell>
                     <TableCell sx={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.cause || '-'}</TableCell>
                     <TableCell sx={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.response || '-'}</TableCell>
-                    <TableCell align="center">{v.nrscReported ? <Chip size="small" label="보고" color="success" /> : <Chip size="small" label="미보고" color="default" />}</TableCell>
+                    <TableCell align="center">{v.nrscReported ? <Chip size="small" label={t('radAccidentTab.label5', '보고')} color="success" /> : <Chip size="small" label={t('radAccidentTab.label6', '미보고')} color="default" />}</TableCell>
                     <TableCell align="center"><Chip size="small" label={v.status || '-'} color={accStatusColor(v.status)} /></TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => openAccEdit(v)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) accDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('radAccidentTab.msg1', '삭제하시겠습니까?'))) accDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -148,7 +150,7 @@ const RadAccidentTab: React.FC = () => {
       </Paper>
 
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>비상 훈련 이력</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('radAccidentTab.section2', '비상 훈련 이력')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openDrillCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
@@ -178,7 +180,7 @@ const RadAccidentTab: React.FC = () => {
                     <TableCell sx={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.improvement || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => openDrillEdit(v)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) drillDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('radAccidentTab.msg2', '삭제하시겠습니까?'))) drillDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

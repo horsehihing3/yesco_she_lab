@@ -28,6 +28,7 @@ import UserSelectModal from '../components/common/UserSelectModal'
 import type { UserInfo } from '../components/common/UserSelectModal'
 import EhsBudgetOverview from '../components/ehs/ehsBudget/EhsBudgetOverview'
 import SafetyGoalProgressTable from '../components/planKpiGoal/SafetyGoalProgressTable'
+import WeatherWidget from '../components/dashboard/WeatherWidget'
 
 // shadcn/ui v4 chart colors (Tailwind v4 blue palette)
 const COLORS = {
@@ -493,10 +494,9 @@ const BarMixed = () => {
 
 const PLAN_DOT_COLORS = ['#2A9D8F', '#E76F51', '#264653', '#E9C46A', '#F4A261', '#6A4C93', '#1982C4', '#FF595E']
 
-// 목표 추진 현황 표 (클릭 시 계획/KPI/목표 - 목표 관리 탭으로 이동)
+// 안전 목표 통계 표 — 클릭 이동 비활성 (통계 전용 표시)
 const GoalProgressTable = () => {
-  const navigate = useNavigate()
-  return <SafetyGoalProgressTable onClick={() => navigate('/plan-kpi-goal?tab=3')} />
+  return <SafetyGoalProgressTable />
 }
 
 // 팀별 위험성평가 - 개선전/개선후 세로 막대 차트
@@ -953,13 +953,25 @@ const GeneralDashboard: React.FC = () => {
   const radialCards = useRadialCards()
 
   return (
-    <Box sx={{ p: 0 }}>
-      {/* EHS 예산 개요 - 분류별/분기별 집행 현황 */}
+    <Box sx={{ p: 0, position: 'relative' }}>
+      {/* 날씨/온도 위젯 — 지도형 대시보드와 동일하게 플로팅(우측 하단 고정) */}
+      <Box
+        sx={{
+          position: 'fixed',
+          right: { xs: 8, md: 24 },
+          bottom: { xs: 16, md: 32 },
+          zIndex: 1200,
+        }}
+      >
+        <WeatherWidget isMobile={false} />
+      </Box>
+
+      {/* EHS 예산 개요 - 분기별 집행 현황 */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
           {t('generalDashboard.budgetExecution', '예산 및 집행')}
         </Typography>
-        <EhsBudgetOverview showYearSelector={false} />
+        <EhsBudgetOverview showYearSelector={false} showCategoryStats={false} />
       </Box>
 
       {/* 목표 추진 현황 표 (팀별 위험성평가 상단) */}

@@ -17,10 +17,10 @@ import useCodeMap from '../../hooks/useCodeMap'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
-const labelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+const labelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
 const valSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 const ChemicalInventoryTab: React.FC = () => {
@@ -73,7 +73,7 @@ const ChemicalInventoryTab: React.FC = () => {
     return (
       <Box>
           {/* PC 2열 */}
-          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
             <Box sx={rowSx}><Typography sx={dLabelSx}>{t('chem.nameKo')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.chemicalNameKo}</Typography></Box><Typography sx={dLabelSx}>{t('chem.nameEn')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.chemicalNameEn || ''}</Typography></Box></Box>
             <Box sx={rowSx}><Typography sx={dLabelSx}>{t('chem.casNumber')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.casNumber || ''}</Typography></Box><Typography sx={dLabelSx}>{t('chem.hazardClass')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{getHazardLabel(selectedItem.hazardClass)}</Typography></Box></Box>
             <Box sx={rowSx}><Typography sx={dLabelSx}>{t('chem.quantity')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.storageQuantity} {selectedItem.unit}</Typography></Box><Typography sx={dLabelSx}>{t('chem.maxLimit')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.maxStorageLimit ? `${selectedItem.maxStorageLimit} ${selectedItem.unit}` : ''}</Typography></Box></Box>
@@ -106,7 +106,7 @@ const ChemicalInventoryTab: React.FC = () => {
     return (
       <Box>
         {/* PC 폼 */}
-        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           <Box sx={rowSx}><Typography sx={labelSx}>{t('chem.nameKo')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography><Box sx={valBorderSx}><TextField fullWidth size="small" value={form.chemicalNameKo} onChange={(e) => setForm({ ...form, chemicalNameKo: e.target.value })} /></Box><Typography sx={labelSx}>{t('chem.nameEn')}</Typography><Box sx={valSx}><TextField fullWidth size="small" value={form.chemicalNameEn || ''} onChange={(e) => setForm({ ...form, chemicalNameEn: e.target.value })} /></Box></Box>
           <Box sx={rowSx}><Typography sx={labelSx}>{t('chem.casNumber')}</Typography><Box sx={valBorderSx}><TextField fullWidth size="small" placeholder="ex) 67-64-1" value={form.casNumber || ''} onChange={(e) => setForm({ ...form, casNumber: e.target.value })} /></Box><Typography sx={labelSx}>{t('chem.hazardClass')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography><Box sx={valSx}><Select fullWidth size="small" displayEmpty value={form.hazardClass} onChange={(e) => setForm({ ...form, hazardClass: e.target.value })}><MenuItem value="" disabled>{t('chem.selectHazard')}</MenuItem>{hazardCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getHazardLabel(c.code)}</MenuItem>)}</Select></Box></Box>
           <Box sx={rowSx}><Typography sx={labelSx}>{t('chem.quantity')}</Typography><Box sx={valBorderSx}><NumberField fullWidth size="small" value={form.storageQuantity || ''} onChange={(v) => setForm({ ...form, storageQuantity: v ?? 0 })} /></Box><Typography sx={labelSx}>{t('chem.unit')}</Typography><Box sx={valBorderSx}><Select fullWidth size="small" displayEmpty value={form.unit || ''} onChange={(e) => setForm({ ...form, unit: e.target.value })}><MenuItem value="" disabled>{t('chem.selectUnit')}</MenuItem>{unitCodes.map((c) => <MenuItem key={c.code} value={c.code}>{getUnitLabel(c.code)}</MenuItem>)}</Select></Box><Typography sx={labelSx}>{t('chem.maxLimit')}</Typography><Box sx={valSx}><NumberField fullWidth size="small" value={form.maxStorageLimit || ''} onChange={(v) => setForm({ ...form, maxStorageLimit: v ?? 0 })} /></Box></Box>
@@ -237,7 +237,7 @@ const ChemicalInventoryTab: React.FC = () => {
         {/* PC Table */}
         <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
           <TableContainer>
-            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+            <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
               <TableHead><TableRow>
                 <TableCell sx={hSx}>{t('chem.nameKo')}</TableCell>
                 <TableCell sx={hSx}>{t('chem.casNumber')}</TableCell>
@@ -270,7 +270,7 @@ const ChemicalInventoryTab: React.FC = () => {
         {/* Mobile Card List */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
           {items.map((item) => (
-            <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+            <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography fontWeight="bold">{item.chemicalNameKo}</Typography>
                 <Chip label={getStatusLabel(item.status)} size="small" color={item.status === 'IN_USE' ? 'success' : item.status === 'PENDING_DISPOSAL' ? 'warning' : 'default'} />

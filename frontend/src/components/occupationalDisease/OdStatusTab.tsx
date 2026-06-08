@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, CircularProgress, Typography,
@@ -42,6 +43,7 @@ const emptyForm: Partial<OdWorker> = { division: '정기', gender: '남', job: '
 const MENU = '보건 관리 › 직업병 관리 › 검진현황'
 
 const OdStatusTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { user } = useAuth()
@@ -76,7 +78,7 @@ const OdStatusTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selected.id)
+    if (await showConfirm(t('odStatusTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(selected.id)
   }
   const handleSave = () => {
     if (!form.name || !form.employeeNo) return
@@ -108,7 +110,7 @@ const OdStatusTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>대상자 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('odStatusTab.section1', '대상자 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>사번</FormLabel><FormCell borderRight><Typography variant="body2" fontFamily="monospace">{selected.employeeNo}</Typography></FormCell><FormLabel>성명</FormLabel><FormCell><Typography variant="body2" fontWeight={600}>{selected.name}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>부서</FormLabel><FormCell borderRight><Typography variant="body2">{selected.dept || ''}</Typography></FormCell><FormLabel>직종</FormLabel><FormCell><Typography variant="body2">{selected.job || ''}</Typography></FormCell></FormRow>
@@ -202,11 +204,11 @@ const OdStatusTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.workerTotal ?? 0}        label="검진 대상자" sub={`완료 ${stats?.workerCompletedCount ?? 0}`} /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.workerCompletedCount ?? 0} label="검진 완료" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.workerTotal ?? 0}        label={t('odStatusTab.label1', '검진 대상자')} sub={`완료 ${stats?.workerCompletedCount ?? 0}`} /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.workerCompletedCount ?? 0} label={t('odStatusTab.label2', '검진 완료')} /></Grid>
         <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.workerCCount ?? 0}       label="C판정 (요관찰)" /></Grid>
         <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.workerD1Count ?? 0}     label="D1판정 (직업병)" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={stats?.workerMissedCount ?? 0} label="미수검" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={stats?.workerMissedCount ?? 0} label={t('odStatusTab.label3', '미수검')} /></Grid>
       </Grid>
 
       <Box sx={{ mb: 2 }}>

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -35,6 +36,7 @@ const emptyForm: Partial<DpCvd> = { riskLevel: '중위험', gender: '남' }
 const MENU = '보건 관리 › 질병예방 관리 › 뇌심혈관'
 
 const DpCvdTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
@@ -60,9 +62,9 @@ const DpCvdTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['dpMgmtStats'] })
   }
 
-  const createM = useMutation({ mutationFn: dpCvdApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpCvd> }) => dpCvdApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: dpCvdApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: dpCvdApi.create, onSuccess: () => { invalidate(); showSuccess(t('dpCvdTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('dpCvdTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpCvd> }) => dpCvdApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('dpCvdTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('dpCvdTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: dpCvdApi.remove, onSuccess: () => { invalidate(); showSuccess(t('dpCvdTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterRisk !== 'all' && x.riskLevel !== filterRisk) return false
@@ -76,10 +78,10 @@ const DpCvdTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 평가를 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('dpCvdTab.msg6', '이 평가를 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.workerName || !form.riskLevel || !form.assessmentDate) { showError('근로자명·위험도·평가일 필수'); return }
+    if (!form.workerName || !form.riskLevel || !form.assessmentDate) { showError(t('dpCvdTab.msg7', '근로자명·위험도·평가일 필수')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -88,7 +90,7 @@ const DpCvdTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>뇌심혈관 평가 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('dpCvdTab.section1', '뇌심혈관 평가 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>근로자명</FormLabel><FormCell borderRight><Typography variant="body2" fontWeight={600}>{selected.workerName}</Typography></FormCell><FormLabel>부서</FormLabel><FormCell><Typography variant="body2">{selected.department || ''}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>나이</FormLabel><FormCell borderRight><Typography variant="body2">{selected.age ?? ''}세</Typography></FormCell><FormLabel>성별</FormLabel><FormCell><Typography variant="body2">{selected.gender || ''}</Typography></FormCell></FormRow>
@@ -237,10 +239,10 @@ const DpCvdTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.cvdTotal ?? 0} label="평가 대상" sub="전체 근로자" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.cvdLow ?? 0}   label="저위험" sub="일반 관리" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.cvdMid ?? 0}   label="중위험" sub="생활습관 개선" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.cvdHigh ?? 0}  label="고위험" sub="전문의 진료" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.cvdTotal ?? 0} label={t('dpCvdTab.label1', '평가 대상')} sub="전체 근로자" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.cvdLow ?? 0}   label={t('dpCvdTab.label2', '저위험')} sub="일반 관리" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.cvdMid ?? 0}   label={t('dpCvdTab.label3', '중위험')} sub="생활습관 개선" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.cvdHigh ?? 0}  label={t('dpCvdTab.label4', '고위험')} sub="전문의 진료" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">

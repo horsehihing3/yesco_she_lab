@@ -67,15 +67,15 @@ const CATEGORY_COLORS: Record<string, 'error' | 'success' | 'info' | 'warning' |
 
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const,
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
-const lastRowSx = { display: 'flex', borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const lastRowSx = { display: 'flex', borderColor: 'divider' }
 
 const formatNumber = (n: number | null | undefined): string => {
   if (n == null) return '0'
@@ -339,7 +339,7 @@ const EhsBudgetPlanTab: React.FC = () => {
         ) : (
           <>
             {/* 테이블 - PC : 번호 / 연도 / 분류 / 항목명 / 항목금액 / 계획총액 / 점유율 / 비고 */}
-            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
+            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -379,7 +379,7 @@ const EhsBudgetPlanTab: React.FC = () => {
             {/* Mobile Card List */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {filteredItems.map((item, idx) => (
-                <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(item)}>
+                <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(item)}>
                   <Box sx={{ display: 'flex', gap: 1, mb: 1, alignItems: 'center' }}>
                     <Typography variant="caption" color="text.secondary">#{idx + 1}</Typography>
                     <Chip label={`${item.budgetYear}`} size="small" variant="outlined" />
@@ -428,7 +428,7 @@ const EhsBudgetPlanTab: React.FC = () => {
     return (
       <Box>
        <Box sx={{ overflowX: 'auto' }}>
-        <Box sx={{ minWidth: 720, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ minWidth: 720, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('budget.year', '연도')}</Box>
             <Box sx={valBorderSx}><Typography variant="body2">{d.budgetYear}</Typography></Box>
@@ -498,7 +498,7 @@ const EhsBudgetPlanTab: React.FC = () => {
     <Box>
       <LoadingOverlay open={isProcessing} />
      <Box sx={{ overflowX: 'auto' }}>
-      <Box sx={{ minWidth: 720, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+      <Box sx={{ minWidth: 720, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('budget.year', '연도')}</Box>
           <Box sx={valBorderSx}>

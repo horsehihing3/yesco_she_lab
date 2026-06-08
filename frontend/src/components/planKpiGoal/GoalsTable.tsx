@@ -14,10 +14,12 @@ export interface GoalTemplate {
   goalRowSpan: number
 }
 export const GOAL_TEMPLATE: GoalTemplate[] = [
-  { goalText: 'Ⅰ. 재해율 0.5% 미만',                     goalRowSpan: 1, subGoal: '외근 중 교통사고,\n안전사고 발생 zero화' },
-  { goalText: 'Ⅱ. 산업안전보건교육 이수율 100%',         goalRowSpan: 2, subGoal: '근로자 정기 안전보건교육\n100% 달성' },
-  { goalText: null,                                        goalRowSpan: 0, subGoal: 'MSDS 확인 및 교육 시행' },
-  { goalText: 'Ⅲ. 구성원 건강검진 수검률 99% 이상',     goalRowSpan: 1, subGoal: '구성원 건강검진 수검률\n100% 달성' },
+  { goalText: 'Ⅰ. 재해율 0.5% 미만',                 goalRowSpan: 2, subGoal: '구성원 안전문화 활성화' },
+  { goalText: null,                                    goalRowSpan: 0, subGoal: '업무용차량 교통사고 감소' },
+  { goalText: 'Ⅱ. 산업안전보건교육 이수율 100%',     goalRowSpan: 3, subGoal: '정기 안전보건교육 이수' },
+  { goalText: null,                                    goalRowSpan: 0, subGoal: '작업 전 특별교육 수강' },
+  { goalText: null,                                    goalRowSpan: 0, subGoal: '팀별 MSDS 확인 및 교육 이수' },
+  { goalText: 'Ⅲ. 구성원 건강검진',                  goalRowSpan: 1, subGoal: '건강검진 수검률 100% 달성' },
 ]
 
 export const buildTemplateGoals = (): EhsPlanGoal[] => GOAL_TEMPLATE.map((tpl, idx) => ({
@@ -67,9 +69,17 @@ const GoalsTable: React.FC<GoalsTableProps> = ({ goals, mode, onChange, onPickOw
   const dark = theme.palette.mode === 'dark'
   const headerBg = dark ? 'rgba(255,255,255,0.06)' : 'grey.100'
   const goalBg = dark ? 'rgba(76, 175, 80, 0.16)' : '#E8F1E6'
-  const baseBorder = { border: '1px solid', borderColor: 'divider' }
+  // 4면 모두 박으면 인접 셀과 겹쳐 두 줄로 보이므로 우측+하단만 적용. 좌/상은 인접 셀의 우/하 border 가 처리.
+  const baseBorder = { borderRight: '1px solid', borderBottom: '1px solid', borderColor: 'divider' }
   const cellSx = { ...baseBorder, px: 1, py: 0.75, fontSize: '0.85rem', verticalAlign: 'middle' as const, color: 'text.primary' }
-  const headSx = { ...cellSx, fontWeight: 700, textAlign: 'center' as const, bgcolor: headerBg, whiteSpace: 'nowrap' as const }
+  // YESCO 모드: 헤더는 theme override(진한 네이비 배경 + 흰 톤 borderRight)가 자동 적용되므로 inline 추가 처리 없음
+  const headSx = {
+    ...cellSx,
+    fontWeight: 700,
+    textAlign: 'center' as const,
+    bgcolor: headerBg,
+    whiteSpace: 'nowrap' as const,
+  }
   const goalCellSx = { ...cellSx, bgcolor: goalBg, textAlign: 'center' as const, fontWeight: 700, whiteSpace: 'pre-line' as const }
 
   const planEditable = mode === 'plan'

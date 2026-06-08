@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography, LinearProgress,
@@ -73,6 +74,7 @@ const emptyForm: LegalObligationRequest = {
 }
 
 const LegalObligationTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['legalObligations'], queryFn: obligationApi.list })
@@ -153,10 +155,10 @@ const LegalObligationTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={`${overallRate}%`}            label="전체 이행률" sub="목표 100%" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}        label="의무 항목 총계" sub={`이행완료 ${stats?.doneCount ?? 0}건`} /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.doingCount ?? 0}        label="진행 중 / 예정" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={(stats?.delayCount ?? 0) + (stats?.failCount ?? 0)} label="미이행 / 지연" sub="개선 조치 필요" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={`${overallRate}%`}            label={t('legalObligationTab.label1', '전체 이행률')} sub="목표 100%" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.totalCount ?? 0}        label={t('legalObligationTab.label2', '의무 항목 총계')} sub={`이행완료 ${stats?.doneCount ?? 0}건`} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.doingCount ?? 0}        label={t('legalObligationTab.label3', '진행 중 / 예정')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={(stats?.delayCount ?? 0) + (stats?.failCount ?? 0)} label={t('legalObligationTab.label4', '미이행 / 지연')} sub="개선 조치 필요" /></Grid>
       </Grid>
 
       {/* 분류별 이행률 */}
@@ -186,11 +188,11 @@ const LegalObligationTab: React.FC = () => {
         <ListSearchBar fullWidth placeholder="의무명/법령/담당부서 검색"
           value={searchInput} onChange={setSearchInput} onSearch={applySearch}
         />
-        <TextField select size="small" sx={{ minWidth: 150 }} label="유형" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 150 }} label={t('legalObligationTab.label5', '유형')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {OBL_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
-        <TextField select size="small" sx={{ minWidth: 130 }} label="상태" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 130 }} label={t('legalObligationTab.label6', '상태')} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s.code} value={s.code}>{s.label}</MenuItem>)}
         </TextField>
@@ -249,7 +251,7 @@ const LegalObligationTab: React.FC = () => {
                     <Typography variant="body2" fontWeight={600}>{o.nextDueDate || '수시'}</Typography>
                     <Stack direction="row" justifyContent="flex-end" sx={{ mt: 0.5 }}>
                       <IconButton size="small" onClick={() => openEdit(o)}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(o.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('legalObligationTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(o.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </Stack>
                   </Grid>
                 </Grid>

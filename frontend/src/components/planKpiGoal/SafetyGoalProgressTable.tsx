@@ -1,10 +1,46 @@
+import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import axiosInstance from '../../api/axiosInstance'
+import { ApiResponse } from '../../types/common.types'
+import { EhsPlan, EhsPlanGoal } from '../../types/planKpiGoal.types'
+import { GOAL_TEMPLATE } from './GoalsTable'
 
+// 호환용 — 이전 GeneralDashboard 호출이 onClick 을 넘겨도 안전하도록 받지만 사용 안 함
 type Props = {
-  onClick?: () => void
+  onClick?: () => void  // 무시됨 (통계 표 — 클릭 이동 비활성)
 }
 
-const SafetyGoalProgressTable: React.FC<Props> = ({ onClick }) => {
+const currentYear = new Date().getFullYear()
+
+const fetchApprovedPlans = async (year: number): Promise<EhsPlan[]> => {
+  const res = await axiosInstance.get<ApiResponse<EhsPlan[]>>(`/ehs-plans/approved?year=${year}`)
+  return res.data.data || []
+}
+
+// 같은 세부 목표끼리 plan들의 goal 값을 병합 (가장 최신 plan 우선)
+const mergeGoalsBySubGoal = (plans: EhsPlan[]): Record<string, EhsPlanGoal> => {
+  const result: Record<string, EhsPlanGoal> = {}
+  // 작성일 오름차순 → 같은 키면 뒤쪽이 덮어쓰므로 최신 값이 남음
+  const sorted = [...plans].sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''))
+  for (const p of sorted) {
+    for (const g of (p.goals || [])) {
+      const key = (g.subGoal || '').trim()
+      if (!key) continue
+      result[key] = g
+    }
+  }
+  return result
+}
+
+const SafetyGoalProgressTable: React.FC<Props> = () => {
+  const { data: approved = [] } = useQuery({
+    queryKey: ['safetyGoalProgress-approved', currentYear],
+    queryFn: () => fetchApprovedPlans(currentYear),
+  })
+
+  const goalsBySub = useMemo(() => mergeGoalsBySubGoal(approved), [approved])
+
   const hSx = {
     bgcolor: 'grey.100',
     fontWeight: 'bold',
@@ -27,26 +63,31 @@ const SafetyGoalProgressTable: React.FC<Props> = ({ onClick }) => {
     textAlign: 'center' as const,
   }
 
+  const renderQ = (g: EhsPlanGoal | undefined, q: 'q1' | 'q2' | 'q3' | 'q4') => {
+    if (!g || !g[q]) return ''
+    return '○'
+  }
+
   return (
     <TableContainer
       component={Paper}
-      onClick={onClick}
+      variant="outlined"
       sx={{
         overflowX: 'auto',
         border: 1,
-        borderColor: 'grey.300',
-        cursor: onClick ? 'pointer' : 'default',
-        transition: 'box-shadow 0.2s',
-        ...(onClick ? { '&:hover': { boxShadow: 3 } } : {}),
+        borderColor: 'divider',
       }}
     >
-      <Table size="small" sx={{ minWidth: 900, '& td, & th': { borderRight: '1px solid', borderBottom: '1px solid', borderColor: 'grey.300' } }}>
+      <Table size="small" sx={{
+        minWidth: 900,
+        '& td, & th': { borderRight: '1px solid', borderBottom: '1px solid', borderColor: 'divider' },
+      }}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ ...hSx, minWidth: 160 }} rowSpan={2}>목 표</TableCell>
             <TableCell sx={{ ...hSx, minWidth: 180 }} rowSpan={2}>세부 목표</TableCell>
-            <TableCell sx={{ ...hSx, width: 110 }} rowSpan={2}>실행<br />(2026년)</TableCell>
-            <TableCell sx={{ ...hSx, minWidth: 160 }} rowSpan={2}>목표<br />(2026년)</TableCell>
+            <TableCell sx={{ ...hSx, width: 110 }} rowSpan={2}>실행<br />({currentYear}년)</TableCell>
+            <TableCell sx={{ ...hSx, minWidth: 160 }} rowSpan={2}>목표<br />({currentYear}년)</TableCell>
             <TableCell sx={hSx} colSpan={4}>추진결과</TableCell>
           </TableRow>
           <TableRow>
@@ -57,45 +98,23 @@ const SafetyGoalProgressTable: React.FC<Props> = ({ onClick }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          <TableRow>
-            <TableCell sx={goalLabelSx}>Ⅰ. 재해율 0.5% 미만</TableCell>
-            <TableCell sx={cSx}>외근 중 교통사고, 안전사고 발생 zero화</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>95%</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>실행</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>97%</TableCell>
-            <TableCell sx={cSx}></TableCell>
-            <TableCell sx={cSx}></TableCell>
-            <TableCell sx={cSx}></TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell sx={goalLabelSx} rowSpan={2}>Ⅱ. 산업안전보건교육 이수율 100%</TableCell>
-            <TableCell sx={cSx}>근로자 정기 안전보건 교육 100% 달성</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>85%</TableCell>
-            <TableCell sx={cSx}>1. 4회(분기교육)<br />2. 전원이수</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>100%</TableCell>
-            <TableCell sx={cSx}></TableCell>
-            <TableCell sx={cSx}></TableCell>
-            <TableCell sx={cSx}></TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell sx={cSx}>MSDS 확인 및 교육 시행</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>98%</TableCell>
-            <TableCell sx={cSx}>1. MSDS 기본/특별 교육 실시</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>98%</TableCell>
-            <TableCell sx={cSx}></TableCell>
-            <TableCell sx={cSx}></TableCell>
-            <TableCell sx={cSx}></TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell sx={goalLabelSx}>Ⅲ. 구성원 건강검진 수검률 99% 이상</TableCell>
-            <TableCell sx={cSx}>구성원 건강검진 수검률 100% 달성</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>95%</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>100%</TableCell>
-            <TableCell sx={{ ...cSx, textAlign: 'center' }}>100%</TableCell>
-            <TableCell sx={cSx}></TableCell>
-            <TableCell sx={cSx}></TableCell>
-            <TableCell sx={cSx}></TableCell>
-          </TableRow>
+          {GOAL_TEMPLATE.map((tpl, idx) => {
+            const goal = goalsBySub[tpl.subGoal.trim()]
+            return (
+              <TableRow key={idx}>
+                {tpl.goalRowSpan > 0 && (
+                  <TableCell sx={goalLabelSx} rowSpan={tpl.goalRowSpan}>{tpl.goalText}</TableCell>
+                )}
+                <TableCell sx={cSx}>{tpl.subGoal}</TableCell>
+                <TableCell sx={{ ...cSx, textAlign: 'center', whiteSpace: 'pre-line' }}>{goal?.prevResult || ''}</TableCell>
+                <TableCell sx={{ ...cSx, textAlign: 'center', whiteSpace: 'pre-line' }}>{goal?.targetValue || ''}</TableCell>
+                <TableCell sx={{ ...cSx, textAlign: 'center' }}>{renderQ(goal, 'q1')}</TableCell>
+                <TableCell sx={{ ...cSx, textAlign: 'center' }}>{renderQ(goal, 'q2')}</TableCell>
+                <TableCell sx={{ ...cSx, textAlign: 'center' }}>{renderQ(goal, 'q3')}</TableCell>
+                <TableCell sx={{ ...cSx, textAlign: 'center' }}>{renderQ(goal, 'q4')}</TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </TableContainer>

@@ -30,12 +30,12 @@ const IMPROVE_COLORS: Record<string, 'default' | 'warning' | 'info' | 'success'>
 // Style constants
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 const ErgonomicsPage: React.FC = () => {
@@ -283,7 +283,7 @@ const ErgonomicsPage: React.FC = () => {
           {/* Mobile Card List */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             {items.map((item) => (
-              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+              <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography fontWeight="bold">{item.workProcess}</Typography>
                   <Chip label={getRiskLabel(item.riskLevel || '')} color={RISK_COLORS[item.riskLevel || ''] || 'default'} size="small" />
@@ -315,8 +315,8 @@ const ErgonomicsPage: React.FC = () => {
     // 2열 배치: [라벨1, 값1, 라벨2, 값2] 또는 전체폭 [라벨, 값]
     const dLabelSx = { ...labelSx, width: 140, minWidth: 140 }
     const dValSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'grey.300' }
-    const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'divider' }
+    const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
     return (
       <>
@@ -324,7 +324,7 @@ const ErgonomicsPage: React.FC = () => {
 
         <Paper sx={{ p: 3, mb: 3, bgcolor: 'grey.50' }}>
         {/* PC: 2열 배치 */}
-        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           <Box sx={rowSx}>
             <Typography sx={dLabelSx}>{t('ergo.assessId')}</Typography>
             <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.assessmentId}</Typography></Box>
@@ -421,8 +421,8 @@ const ErgonomicsPage: React.FC = () => {
       </Typography>
 
       {/* PC form - table-style layout */}
-      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+      <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.assessType')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
           <Box sx={valBorderSx}>
             <Select fullWidth size="small" displayEmpty value={form.assessType} onChange={(e) => setForm({ ...form, assessType: e.target.value })}>
@@ -435,19 +435,19 @@ const ErgonomicsPage: React.FC = () => {
             <DatePickerField value={form.assessDate || null} onChange={(v) => setForm({ ...form, assessDate: v })} size="small" />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.workProcess')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" value={form.workProcess} onChange={(e) => setForm({ ...form, workProcess: e.target.value })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.description')}</Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" multiline rows={2} value={form.workDescription || ''} onChange={(e) => setForm({ ...form, workDescription: e.target.value })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.worker')}</Typography>
           <Box sx={{ ...valBorderSx, display: 'flex', alignItems: 'center' }}>
             <TextField fullWidth size="small" value={form.workerName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
@@ -458,14 +458,14 @@ const ErgonomicsPage: React.FC = () => {
             <TextField fullWidth size="small" value={form.department || ''} InputProps={{ readOnly: true }} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.assessor')}</Typography>
           <Box sx={{ ...valSx, display: 'flex', alignItems: 'center' }}>
             <TextField fullWidth size="small" value={form.assessorName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
             <Button variant="outlined" size="small" sx={{ ml: 1, minWidth: 40 }} onClick={() => setAssessorModalOpen(true)}><PersonSearchIcon fontSize="small" /></Button>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.score')}</Typography>
           <Box sx={valBorderSx}>
             <NumberField fullWidth size="small" value={form.score || ''} onChange={(v) => setForm({ ...form, score: v ?? 0 })} />
@@ -478,25 +478,25 @@ const ErgonomicsPage: React.FC = () => {
             </Select>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.bodyParts')}</Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" placeholder="SHOULDER,LOWER_BACK" value={form.affectedBodyParts || ''} onChange={(e) => setForm({ ...form, affectedBodyParts: e.target.value })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.symptoms')}</Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" multiline rows={2} value={form.symptoms || ''} onChange={(e) => setForm({ ...form, symptoms: e.target.value })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ergo.improvementAction')}</Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" multiline rows={2} value={form.improvementAction || ''} onChange={(e) => setForm({ ...form, improvementAction: e.target.value })} />
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('ppe.notes')}</Typography>
           <Box sx={valSx}>
             <TextField fullWidth size="small" multiline rows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />

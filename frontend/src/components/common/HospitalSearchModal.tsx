@@ -36,7 +36,7 @@ const formLabelSx = {
   px: 2,
   py: 1.5,
   borderRight: 1,
-  borderColor: 'grey.300',
+  borderColor: 'divider',
   display: 'flex',
   alignItems: 'center',
   fontSize: '0.875rem',
@@ -132,9 +132,9 @@ const HospitalSearchModal = ({ open, onClose, onSelect, initialValue }: Hospital
       </DialogTitle>
       <DialogContent sx={{ pt: 2 }}>
         {/* Form Table */}
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {/* Hospital Name Row */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('healthCheckup.hospitalName')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -176,7 +176,7 @@ const HospitalSearchModal = ({ open, onClose, onSelect, initialValue }: Hospital
 
         {/* Daum Postcode Embed */}
         {showPostcode && (
-          <Box sx={{ mb: 2, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+          <Box sx={{ mb: 2, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             <DaumPostcodeEmbed
               onComplete={handlePostcodeComplete}
               style={{ height: 400 }}
@@ -187,7 +187,7 @@ const HospitalSearchModal = ({ open, onClose, onSelect, initialValue }: Hospital
 
         {/* Google Map */}
         {isLoaded && (
-          <Box sx={{ height: 300, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ height: 300, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'divider' }}>
             <GoogleMap
               center={mapCenter}
               zoom={mapZoom}

@@ -80,8 +80,8 @@ const PsmMocTab: React.FC = () => {
   const handleAddClick = () => { setSelectedId(null); setForm(emptyForm()); setViewMode('create') }
   const handleEditClick = () => { if (detail) { setForm({ ...detail }); setViewMode('edit') } }
   const handleSave = async () => {
-    if (!form.title?.trim()) { showError('변경 제목을 입력해 주세요.'); return }
-    if (!form.changeType) { showError('변경 유형을 선택해 주세요.'); return }
+    if (!form.title?.trim()) { showError(t('psmMocTab.msg1', '변경 제목을 입력해 주세요.')); return }
+    if (!form.changeType) { showError(t('psmMocTab.msg2', '변경 유형을 선택해 주세요.')); return }
     const ok = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!ok) return
     if (selectedId) updateMut.mutate({ id: selectedId, m: form })
@@ -99,7 +99,7 @@ const PsmMocTab: React.FC = () => {
     return (
       <Box>
         <Box sx={{ display: 'flex', mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="subtitle1" fontWeight="bold">변경관리 (MOC)</Typography>
+          <Typography variant="subtitle1" fontWeight="bold">{t('psmMocTab.section1', '변경관리 (MOC)')}</Typography>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>{t('common.new', '신규 등록')}</Button>
         </Box>
         {isLoading ? (

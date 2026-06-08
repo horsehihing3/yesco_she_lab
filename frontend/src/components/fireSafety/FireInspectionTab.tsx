@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -36,6 +37,7 @@ const emptyIssue: Partial<FireIssue> = { issueType: '조건부합격', status: '
 const emptyPlan: Partial<FirePlan> = { status: '계획' }
 
 const FireInspectionTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: insps = [], isLoading: l1 } = useQuery({ queryKey: ['fireInspections'], queryFn: fireInspectionApi.list })
@@ -99,12 +101,12 @@ const FireInspectionTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.issueOpen ?? 0}    label="불량·지적 미결" sub="즉시 개선" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="yellow" value={plans.filter(p => p.status === '예정').length} label="점검 예정" sub="일정 확정" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.inspPassed ?? 0}   label="합격" sub="점검 결과" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="blue"   value={stats?.inspTotal ?? 0}    label="총 점검 이력" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="purple" value={stats?.issueDone ?? 0}    label="지적 완료" sub="개선 이행" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.inspFailed ?? 0}   label="불합격" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.issueOpen ?? 0}    label={t('fireInspectionTab.label1', '불량·지적 미결')} sub="즉시 개선" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="yellow" value={plans.filter(p => p.status === '예정').length} label={t('fireInspectionTab.label2', '점검 예정')} sub="일정 확정" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.inspPassed ?? 0}   label={t('fireInspectionTab.label3', '합격')} sub="점검 결과" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="blue"   value={stats?.inspTotal ?? 0}    label={t('fireInspectionTab.label4', '총 점검 이력')} /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="purple" value={stats?.issueDone ?? 0}    label={t('fireInspectionTab.label5', '지적 완료')} sub="개선 이행" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.inspFailed ?? 0}   label={t('fireInspectionTab.label6', '불합격')} /></Grid>
       </Grid>
 
       {issuesOpen.length > 0 && (
@@ -116,7 +118,7 @@ const FireInspectionTab: React.FC = () => {
 
       {/* ===== Issues ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>미결 지적사항 추적</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('fireInspectionTab.section1', '미결 지적사항 추적')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setSEditing(null); setSForm(emptyIssue); setSOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       <Paper variant="outlined" sx={{ mb: 3 }}>
@@ -156,7 +158,7 @@ const FireInspectionTab: React.FC = () => {
                     <TableCell align="center">{v.ownerName || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => { setSEditing(v); setSForm({ ...v }); setSOpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) sDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireInspectionTab.msg1', '삭제하시겠습니까?'))) sDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -169,7 +171,7 @@ const FireInspectionTab: React.FC = () => {
 
       {/* ===== Inspections ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>점검 이력</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('fireInspectionTab.section2', '점검 이력')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setIEditing(null); setIForm(emptyInsp); setIOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       <Paper variant="outlined" sx={{ mb: 3 }}>
@@ -202,7 +204,7 @@ const FireInspectionTab: React.FC = () => {
                     <TableCell align="center">{v.submitDate || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => { setIEditing(v); setIForm({ ...v }); setIOpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) iDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireInspectionTab.msg2', '삭제하시겠습니까?'))) iDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -215,7 +217,7 @@ const FireInspectionTab: React.FC = () => {
 
       {/* ===== Plans ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>연간 법정 점검 계획</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('fireInspectionTab.section3', '연간 법정 점검 계획')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setPEditing(null); setPForm(emptyPlan); setPOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
       <Paper variant="outlined">
@@ -246,7 +248,7 @@ const FireInspectionTab: React.FC = () => {
                     <TableCell align="center"><Chip size="small" label={v.status} color={planStatusColor(v.status)} /></TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
                       <IconButton size="small" onClick={() => { setPEditing(v); setPForm({ ...v }); setPOpen(true) }}><EditIcon fontSize="inherit" /></IconButton>
-                      <IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) pDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
+                      <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireInspectionTab.msg3', '삭제하시겠습니까?'))) pDelete.mutate(v.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

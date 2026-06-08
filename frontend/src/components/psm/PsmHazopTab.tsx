@@ -70,7 +70,7 @@ const PsmHazopTab: React.FC = () => {
   const handleAddClick = () => { setSelectedId(null); setForm({ ...emptyHazop(), items: [emptyItem(1)] }); setViewMode('create') }
   const handleEditClick = () => { if (detail) { setForm({ ...detail, items: [...(detail.items || [])] }); setViewMode('edit') } }
   const handleSave = async () => {
-    if (!form.nodeName?.trim()) { showError('노드명을 입력해 주세요.'); return }
+    if (!form.nodeName?.trim()) { showError(t('psmHazopTab.msg1', '노드명을 입력해 주세요.')); return }
     const ok = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!ok) return
     if (selectedId) updateMut.mutate({ id: selectedId, h: form })
@@ -223,7 +223,7 @@ const PsmHazopTab: React.FC = () => {
       </Box>
       <Paper variant="outlined">
         <TableContainer>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderColor: 'grey.300' } }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderColor: 'divider' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
                 <TableCell sx={{ fontWeight: 'bold', width: 40 }}>#</TableCell>

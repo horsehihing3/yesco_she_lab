@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Box, Typography, Paper, Grid, Chip,
 } from '@mui/material'
@@ -37,6 +38,7 @@ const NODES: PidNode[] = [
 ]
 
 const PsmPidTab: React.FC = () => {
+  const { t } = useTranslation()
   const [selectedId, setSelectedId] = useState<string>('R201')
   const selected = NODES.find(n => n.id === selectedId)
 
@@ -100,7 +102,7 @@ const PsmPidTab: React.FC = () => {
           </Paper>
 
           <Paper variant="outlined" sx={{ p: 2 }}>
-            <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1.5 }}>설비 목록</Typography>
+            <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1.5 }}>{t('psmPidTab.section1', '설비 목록')}</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
               {NODES.map(n => (
                 <Chip key={n.id}

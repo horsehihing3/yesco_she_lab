@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -26,6 +27,7 @@ const emptyForm: Partial<OdOrg> = { orgType: '특수검진 전문기관' }
 const MENU = '보건 관리 › 직업병 관리 › 검진관리'
 
 const OdManageTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { user } = useAuth()
@@ -52,7 +54,7 @@ const OdManageTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selected.id)
+    if (await showConfirm(t('odManageTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(selected.id)
   }
   const handleSave = () => {
     if (!form.name) return
@@ -67,7 +69,7 @@ const OdManageTab: React.FC = () => {
   if (viewMode === 'detail' && selected) {
     return (
       <Box>
-        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>검진기관 상세</Typography>
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('odManageTab.section1', '검진기관 상세')}</Typography>
         <FormTable>
           <FormRow><FormLabel>기관명</FormLabel><FormCell><Typography variant="body2" fontWeight={600}>{selected.name}</Typography></FormCell></FormRow>
           <FormRow><FormLabel>대표 의사</FormLabel><FormCell borderRight><Typography variant="body2">{selected.doctor || ''}</Typography></FormCell><FormLabel>지정 유형</FormLabel><FormCell><Typography variant="body2">{selected.orgType || ''}</Typography></FormCell></FormRow>
@@ -134,14 +136,14 @@ const OdManageTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"  value={orgs.length}             label="계약 검진기관" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green" value={totalTargets}              label="대상자 명부" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={`₩${(totalCost/1000000).toFixed(1)}M`} label="연간 검진 예산" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="purple" value={ORG_TYPES.length}          label="기관 유형 수" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"  value={orgs.length}             label={t('odManageTab.label1', '계약 검진기관')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green" value={totalTargets}              label={t('odManageTab.label2', '대상자 명부')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={`₩${(totalCost/1000000).toFixed(1)}M`} label={t('odManageTab.label3', '연간 검진 예산')} /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="purple" value={ORG_TYPES.length}          label={t('odManageTab.label4', '기관 유형 수')} /></Grid>
       </Grid>
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="space-between" alignItems="center">
-        <Typography variant="subtitle1" fontWeight={700}>검진기관 관리</Typography>
+        <Typography variant="subtitle1" fontWeight={700}>{t('odManageTab.section2', '검진기관 관리')}</Typography>
         {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
         )}
@@ -157,7 +159,7 @@ const OdManageTab: React.FC = () => {
                     <Box sx={{ width: 40, height: 40, borderRadius: 1.5, bgcolor: 'primary.light', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}><LocalHospitalIcon color="primary" /></Box>
                     <Box><Typography fontWeight={700}>{o.name}</Typography><Typography variant="caption" color="text.secondary">{o.orgType}</Typography></Box>
                   </Stack>
-                  <Chip size="small" label="계약중" color="success" />
+                  <Chip size="small" label={t('odManageTab.label5', '계약중')} color="success" />
                 </Stack>
                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>{o.doctor} · 검진 인자: {o.factors}</Typography>
                 <Divider sx={{ my: 1 }} />

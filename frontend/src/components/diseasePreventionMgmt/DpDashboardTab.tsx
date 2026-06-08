@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { Box, Grid, Paper, Typography, CircularProgress } from '@mui/material'
 import { dpMgmtStatsApi } from '../../api/diseasePreventionMgmtApi'
 import StatCard from '../legalCompliance/StatCard'
@@ -29,6 +30,7 @@ const PROGRAM_LIST = [
 ]
 
 const DpDashboardTab: React.FC<{ onGoTab?: (tab: number) => void }> = ({ onGoTab }) => {
+  const { t } = useTranslation()
   const { data: stats, isLoading } = useQuery({ queryKey: ['dpMgmtStats'], queryFn: dpMgmtStatsApi.get })
 
   if (isLoading) return <Box sx={{ p: 6, textAlign: 'center' }}><CircularProgress /></Box>
@@ -56,10 +58,10 @@ const DpDashboardTab: React.FC<{ onGoTab?: (tab: number) => void }> = ({ onGoTab
     <Box>
       {/* KPI 5장 */}
       <Grid container spacing={1.5} sx={{ mb: 3 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={totalWorkers}     label="관리 대상자" sub="전체 근로자" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={midRisk}          label="중위험군" sub="관찰·관리 필요" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={highRisk}         label="고위험군" sub="즉시 개입" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="purple" value={monthEvents.length} label="금월 활동" sub="예정 프로그램" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={totalWorkers}     label={t('dpDashboardTab.label1', '관리 대상자')} sub="전체 근로자" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={midRisk}          label={t('dpDashboardTab.label2', '중위험군')} sub="관찰·관리 필요" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={highRisk}         label={t('dpDashboardTab.label3', '고위험군')} sub="즉시 개입" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="purple" value={monthEvents.length} label={t('dpDashboardTab.label4', '금월 활동')} sub="예정 프로그램" /></Grid>
       </Grid>
 
       {/* 7대 프로그램 카드 */}
@@ -88,7 +90,7 @@ const DpDashboardTab: React.FC<{ onGoTab?: (tab: number) => void }> = ({ onGoTab
       </Grid>
 
       {/* 연간 캘린더 */}
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>연간 보건관리 캘린더</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>{t('dpDashboardTab.section1', '연간 보건관리 캘린더')}</Typography>
       <Grid container spacing={1}>
         {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
           const evs = ANNUAL_CALENDAR[m] || []

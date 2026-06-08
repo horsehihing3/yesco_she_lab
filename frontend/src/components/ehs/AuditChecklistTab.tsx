@@ -302,7 +302,7 @@ const AuditChecklistTab: React.FC = () => {
             {/* PC Table */}
             <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
               <TableContainer sx={{ overflowX: 'auto' }}>
-                <Table size="small" stickyHeader sx={{ minWidth: 800, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                <Table size="small" stickyHeader sx={{ minWidth: 800, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                   <TableHead>
                     <TableRow>
                       <TableCell sx={headerCellSx}>{t('audit.templateId')}</TableCell>
@@ -329,7 +329,7 @@ const AuditChecklistTab: React.FC = () => {
             {/* Mobile Card List */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {items.map((item) => (
-                <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'grey.300', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
+                <Paper key={item.id} sx={{ p: 2, border: 1, borderColor: 'divider', cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
                   <Typography fontWeight="bold">{item.templateName || item.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
                     {getAuditTypeLabel(item.auditType)} | {item.items?.length || 0} {t('audit.items')}
@@ -419,7 +419,7 @@ const AuditChecklistTab: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         {/* 체크리스트 입력 */}
         <Paper sx={{ mb: 3, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1.5, borderBottom: 1, borderColor: 'grey.300' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
             <Typography variant="subtitle1" fontWeight="bold" sx={{ pl: 1 }}>
               {t('audit.checklistContent', '체크리스트 내용')}
             </Typography>
@@ -484,7 +484,7 @@ const AuditChecklistTab: React.FC = () => {
                 <Alert severity="info" sx={{ m: 2 }}>{t('audit.noItems', '항목이 없습니다.')}</Alert>
               ) : (
                 <TableContainer sx={{ overflowX: 'auto' }}>
-                  <Table size="small" sx={{ minWidth: 800, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300', py: 0.75 }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+                  <Table size="small" sx={{ minWidth: 800, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider', py: 0.75 }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                     <TableHead>
                       <TableRow>
                         <TableCell sx={headerCellSx} align="center" width={50}>{t('common.no', '번호')}</TableCell>

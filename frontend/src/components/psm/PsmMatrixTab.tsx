@@ -82,7 +82,7 @@ const PsmMatrixTab: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>위험성 매트릭스 (5×5)</Typography>
+      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>{t('psmMatrixTab.section1', '위험성 매트릭스 (5×5)')}</Typography>
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={7}>

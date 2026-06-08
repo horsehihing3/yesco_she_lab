@@ -530,8 +530,8 @@ const SafetyRulesTab: React.FC = () => {
         minHeight: { xs: 'auto', md: 450 }
       }}>
         {/* Folder Tree - Left Panel */}
-        <Paper sx={{ width: { xs: '100%', md: 250 }, flexShrink: 0, overflow: 'auto', maxHeight: { xs: 200, md: 'none' } }}>
-          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Paper variant="outlined" sx={{ width: { xs: '100%', md: 250 }, flexShrink: 0, overflow: 'auto', maxHeight: { xs: 200, md: 'none' }, border: 1, borderColor: 'divider' }}>
+          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider' }}>
             <Typography variant="subtitle2" fontWeight="bold">
               {t('safetyRules.folder')}
             </Typography>
@@ -551,8 +551,8 @@ const SafetyRulesTab: React.FC = () => {
         </Paper>
 
         {/* File List - Center Panel */}
-        <TableContainer component={Paper} sx={{ flex: 1, overflowX: 'auto', minHeight: { xs: 300, md: 'auto' } }}>
-          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300' }}>
+        <TableContainer component={Paper} variant="outlined" sx={{ flex: 1, overflowX: 'auto', minHeight: { xs: 300, md: 'auto' }, border: 1, borderColor: 'divider' }}>
+          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider' }}>
             <Typography variant="subtitle2" fontWeight="bold">
               {getFolderName(selectedFolder)}
             </Typography>
@@ -560,9 +560,9 @@ const SafetyRulesTab: React.FC = () => {
           <Table size="small" stickyHeader sx={{ minWidth: 500 }}>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('safetyRules.filename')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 100, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('safetyRules.fileSize')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 120, borderRight: 1, borderColor: 'grey.300' }} align="center">{t('safetyRules.registeredDate')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyRules.filename')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyRules.fileSize')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyRules.registeredDate')}</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 100 }} align="center">
                   {t('safetyRules.actions')}
                 </TableCell>
@@ -584,7 +584,7 @@ const SafetyRulesTab: React.FC = () => {
                     onClick={() => handleFileClick(file)}
                     sx={{ cursor: 'pointer' }}
                   >
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {getFileIcon(file)}
                         <Typography variant="body2">{file.originalFilename}</Typography>
@@ -616,12 +616,12 @@ const SafetyRulesTab: React.FC = () => {
                         )}
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>
                       <Typography variant="body2" color="text.secondary">
                         {formatFileSize(file.fileSize)}
                       </Typography>
                     </TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>
                       <Typography variant="body2" color="text.secondary">
                         {file.createdAt ? new Date(file.createdAt).toISOString().substring(0, 10) : ''}
                       </Typography>
@@ -656,8 +656,8 @@ const SafetyRulesTab: React.FC = () => {
         </TableContainer>
 
         {/* Preview Panel - Right Panel */}
-        <Paper sx={{ width: { xs: '100%', md: 350 }, flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: { xs: 250, md: 'auto' }, overflow: 'hidden' }}>
-          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'grey.300' }}>
+        <Paper variant="outlined" sx={{ width: { xs: '100%', md: 350 }, flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: { xs: 250, md: 'auto' }, overflow: 'hidden', border: 1, borderColor: 'divider' }}>
+          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider' }}>
             <Typography variant="subtitle2" fontWeight="bold">
               {t('safetyRules.preview')}
             </Typography>

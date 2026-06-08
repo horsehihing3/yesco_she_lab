@@ -88,7 +88,7 @@ const AuditReportTab: React.FC = () => {
         1. {t('audit.report.overviewTitle', '감사 개요')}
       </Typography>
       <TableContainer sx={{ mb: 3 }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableBody>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('audit.auditId')}</TableCell>
@@ -127,12 +127,12 @@ const AuditReportTab: React.FC = () => {
         2. {t('audit.report.findingsTitle', '부적합 사항')} ({findings.length}{t('audit.report.count', '건')})
       </Typography>
       {findings.length === 0 ? (
-        <Box sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, p: 3, mb: 3, textAlign: 'center' }}>
+        <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 3, mb: 3, textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">{t('audit.report.noFindings', '부적합 사항이 없습니다.')}</Typography>
         </Box>
       ) : (
         <TableContainer sx={{ mb: 3 }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'grey.300' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableHead>
               <TableRow>
                 <TableCell align="center" sx={headerCellSx}>{t('common.no')}</TableCell>
@@ -156,7 +156,7 @@ const AuditReportTab: React.FC = () => {
       )}
 
       {/* Footer */}
-      <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'grey.300', textAlign: 'center' }}>
+      <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
         <Typography variant="body2" color="text.secondary">
           {t('audit.report.footer', '본 보고서는 EHS 시스템에서 자동 생성되었습니다.')}
         </Typography>

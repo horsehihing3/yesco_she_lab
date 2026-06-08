@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography,
@@ -67,6 +68,7 @@ const emptyForm: Partial<FacilityEquipment> = {
 }
 
 const FacilityEquipmentTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { data: items = [], isLoading } = useQuery({ queryKey: ['facilityEquipments'], queryFn: equipmentApi.list })
@@ -130,11 +132,11 @@ const FacilityEquipmentTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.totalCount ?? 0}     label="등록 기구 총계" sub="압력·크레인·화학설비 등" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.okCount ?? 0}        label="정상 관리 중" sub="유효 검사 완료" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.expiredCount ?? 0}   label="검사기간 만료" sub="즉시 조치 필요" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="yellow" value={stats?.totalCount ?? 0}     label={t('facilityEquipmentTab.label1', '등록 기구 총계')} sub="압력·크레인·화학설비 등" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="green"  value={stats?.okCount ?? 0}        label={t('facilityEquipmentTab.label2', '정상 관리 중')} sub="유효 검사 완료" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="red"    value={stats?.expiredCount ?? 0}   label={t('facilityEquipmentTab.label3', '검사기간 만료')} sub="즉시 조치 필요" /></Grid>
         <Grid item xs={6} sm={2.4}><StatCard color="blue"   value={stats?.nearCount ?? 0}      label="D-30 이내 검사" sub="사전 일정 수립" /></Grid>
-        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={stats?.suspendedCount ?? 0} label="폐기 / 휴지" sub="관리 제외" /></Grid>
+        <Grid item xs={6} sm={2.4}><StatCard color="purple" value={stats?.suspendedCount ?? 0} label={t('facilityEquipmentTab.label4', '폐기 / 휴지')} sub="관리 제외" /></Grid>
       </Grid>
 
       {urgentList.length > 0 && (
@@ -150,15 +152,15 @@ const FacilityEquipmentTab: React.FC = () => {
         <ListSearchBar placeholder="기구명/관리번호/위치 검색"
           value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
-        <TextField select size="small" sx={{ minWidth: 150 }} label="분류" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 150 }} label={t('facilityEquipmentTab.label5', '분류')} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
         </TextField>
-        <TextField select size="small" sx={{ minWidth: 130 }} label="상태" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 130 }} label={t('facilityEquipmentTab.label6', '상태')} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
-        <TextField select size="small" sx={{ minWidth: 130 }} label="위치" value={locFilter} onChange={e => setLocFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 130 }} label={t('facilityEquipmentTab.label7', '위치')} value={locFilter} onChange={e => setLocFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {LOCATIONS.map(l => <MenuItem key={l} value={l}>{l}</MenuItem>)}
         </TextField>
@@ -209,7 +211,7 @@ const FacilityEquipmentTab: React.FC = () => {
                       <TableCell>{e.ownerName}<br /><Typography component="span" variant="caption" color="text.disabled">{e.ownerDept}</Typography></TableCell>
                       <TableCell align="right">
                         <Tooltip title="수정"><IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="inherit" /></IconButton></Tooltip>
-                        <Tooltip title="삭제"><IconButton size="small" onClick={async () => { if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="inherit" /></IconButton></Tooltip>
+                        <Tooltip title="삭제"><IconButton size="small" onClick={async () => { if (await showConfirm(t('facilityEquipmentTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="inherit" /></IconButton></Tooltip>
                       </TableCell>
                     </TableRow>
                   )

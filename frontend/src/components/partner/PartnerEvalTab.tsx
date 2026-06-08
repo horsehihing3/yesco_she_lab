@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
@@ -55,6 +56,7 @@ const emptyForm: Partial<PartnerEval> = {
 type Mode = 'list' | 'view' | 'edit' | 'create'
 
 const PartnerEvalTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm } = useAlert()
   const { user } = useAuth()
@@ -139,7 +141,7 @@ const PartnerEvalTab: React.FC = () => {
     else if (mode === 'create') createMut.mutate(form)
   }
   const handleDelete = async () => {
-    if (selected && await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selected.id)
+    if (selected && await showConfirm(t('partnerEvalTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(selected.id)
   }
 
   // ====== DETAIL / EDIT / CREATE PAGE ======
@@ -387,12 +389,12 @@ const PartnerEvalTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={2}><StatCard color="blue"   value={stats?.evalTotal ?? 0}        label="등록 협력업체" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.evalACount ?? 0}       label="우수 (A등급)" sub="90점 이상" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="blue"   value={stats?.evalBCount ?? 0}       label="양호 (B등급)" sub="75~89점" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="yellow" value={stats?.evalCCount ?? 0}       label="개선 (C등급)" sub="60~74점" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.evalDCount ?? 0}       label="불량 (D등급)" sub="60점 미만" /></Grid>
-        <Grid item xs={6} sm={2}><StatCard color="purple" value={stats?.evalPlannedCount ?? 0} label="평가 예정" sub="이번 분기" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="blue"   value={stats?.evalTotal ?? 0}        label={t('partnerEvalTab.label1', '등록 협력업체')} /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="green"  value={stats?.evalACount ?? 0}       label={t('partnerEvalTab.label2', '우수 (A등급)')} sub="90점 이상" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="blue"   value={stats?.evalBCount ?? 0}       label={t('partnerEvalTab.label3', '양호 (B등급)')} sub="75~89점" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="yellow" value={stats?.evalCCount ?? 0}       label={t('partnerEvalTab.label4', '개선 (C등급)')} sub="60~74점" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="red"    value={stats?.evalDCount ?? 0}       label={t('partnerEvalTab.label5', '불량 (D등급)')} sub="60점 미만" /></Grid>
+        <Grid item xs={6} sm={2}><StatCard color="purple" value={stats?.evalPlannedCount ?? 0} label={t('partnerEvalTab.label6', '평가 예정')} sub="이번 분기" /></Grid>
       </Grid>
 
       {dGrade.length > 0 && (
@@ -406,7 +408,7 @@ const PartnerEvalTab: React.FC = () => {
       {/* ─── 데스크탑 헤더 ─── */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
         <ListSearchBar sx={{ width: 320 }} placeholder="업체명/담당자/업종 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
-        <TextField select size="small" sx={{ width: 130 }} label="등급" value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}>
+        <TextField select size="small" sx={{ width: 130 }} label={t('partnerEvalTab.label7', '등급')} value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {['A', 'B', 'C', 'D'].map(g => <MenuItem key={g} value={g}>{g}</MenuItem>)}
         </TextField>
@@ -420,7 +422,7 @@ const PartnerEvalTab: React.FC = () => {
       {/* ─── 모바일 헤더 ─── */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
         <ListSearchBar fullWidth placeholder="업체명/담당자/업종 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
-        <TextField select size="small" fullWidth label="등급" value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}>
+        <TextField select size="small" fullWidth label={t('partnerEvalTab.label8', '등급')} value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {['A', 'B', 'C', 'D'].map(g => <MenuItem key={g} value={g}>{g}</MenuItem>)}
         </TextField>

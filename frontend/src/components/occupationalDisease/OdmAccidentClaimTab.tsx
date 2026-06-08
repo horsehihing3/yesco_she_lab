@@ -48,14 +48,14 @@ const STATUS_COLORS: Record<string, 'default' | 'info' | 'warning' | 'success' |
 
 const labelSx = {
   width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valSxBorder = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valSxBorder = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 const sectionHeaderSx = {
   bgcolor: 'primary.main', color: 'white', py: 1, px: 2, fontWeight: 'bold', mb: 0,
@@ -159,7 +159,7 @@ const OdmAccidentClaimTab: React.FC = () => {
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['accidentClaims'] })
       queryClient.invalidateQueries({ queryKey: ['accidentClaimDetail'] })
-      await showSuccess('제출되었습니다')
+      await showSuccess(t('odmAccidentClaimTab.msg1', '제출되었습니다'))
       handleBackToList()
     },
   })
@@ -198,7 +198,7 @@ const OdmAccidentClaimTab: React.FC = () => {
       await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
     }
     await loadDocFiles(docId, docType, selectedItem.claimId)
-    showSuccess('파일이 업로드되었습니다')
+    showSuccess(t('odmAccidentClaimTab.msg2', '파일이 업로드되었습니다'))
   }
 
   const handleFileDelete = async (fileId: number, docId: number, docType: string) => {
@@ -296,7 +296,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
   const handleSubmitClaim = async () => {
     if (!selectedItem) return
-    const confirmed = await showConfirm('신청서를 제출하시겠습니까?')
+    const confirmed = await showConfirm(t('odmAccidentClaimTab.msg3', '신청서를 제출하시겠습니까?'))
     if (confirmed) {
       submitMutation.mutate(selectedItem.id)
     }
@@ -304,7 +304,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
   const handleSave = async () => {
     if (!formData.workerName) {
-      showWarning('근로자명은 필수입니다')
+      showWarning(t('odmAccidentClaimTab.msg4', '근로자명은 필수입니다'))
       return
     }
     const confirmed = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
@@ -337,7 +337,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
   // ===== Helper: Read-only row =====
   const DetailRow = ({ items: rowItems, isLast }: { items: { label: string; value: React.ReactNode }[]; isLast?: boolean }) => (
-    <Box sx={isLast ? { display: 'flex', borderColor: 'grey.300' } : rowSx}>
+    <Box sx={isLast ? { display: 'flex', borderColor: 'divider' } : rowSx}>
       {rowItems.map((item, idx) => (
         <Box key={idx} sx={{ display: 'contents' }}>
           <Box sx={labelSx}>{item.label}</Box>
@@ -444,7 +444,7 @@ const OdmAccidentClaimTab: React.FC = () => {
             </Box>
 
             {/* Desktop Table View */}
-            <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto', display: { xs: 'none', md: 'block' } }}>
+            <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto', display: { xs: 'none', md: 'block' } }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -562,60 +562,60 @@ const OdmAccidentClaimTab: React.FC = () => {
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           {/* Section 1: 재해근로자 인적사항 */}
           <SectionHeader title="1. 재해근로자 인적사항" />
-          <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
             <DetailRow items={[
-              { label: '근로자명', value: d.workerName },
-              { label: '주민등록번호', value: d.workerSsn },
+              { label: t('tab.근로자명', '근로자명'), value: d.workerName },
+              { label: t('tab.주민등록번호', '주민등록번호'), value: d.workerSsn },
             ]} />
             <DetailRow items={[
-              { label: '전화번호', value: d.workerPhone },
-              { label: '주소', value: d.workerAddress },
+              { label: t('tab.전화번호', '전화번호'), value: d.workerPhone },
+              { label: t('tab.주소', '주소'), value: d.workerAddress },
             ]} />
             <DetailRow items={[
-              { label: '직종', value: d.workerJobType },
-              { label: '입사일', value: d.workerJoinDate },
+              { label: t('tab.직종', '직종'), value: d.workerJobType },
+              { label: t('tab.입사일', '입사일'), value: d.workerJoinDate },
             ]} />
             <DetailRow items={[
-              { label: '소속부서', value: d.workerDept },
+              { label: t('tab.소속부서', '소속부서'), value: d.workerDept },
             ]} isLast />
           </Box>
 
           {/* Section 2: 사업장 사항 */}
           <SectionHeader title="2. 사업장 사항" />
-          <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
             <DetailRow items={[
-              { label: '사업장명', value: d.companyName },
-              { label: '대표자', value: d.companyRepName },
+              { label: t('tab.사업장명', '사업장명'), value: d.companyName },
+              { label: t('tab.대표자', '대표자'), value: d.companyRepName },
             ]} />
             <DetailRow items={[
-              { label: '사업자번호', value: d.companyBizNo },
-              { label: '전화번호', value: d.companyPhone },
+              { label: t('tab.사업자번호', '사업자번호'), value: d.companyBizNo },
+              { label: t('tab.전화번호', '전화번호'), value: d.companyPhone },
             ]} />
             <DetailRow items={[
-              { label: '주소', value: d.companyAddress },
-              { label: '업종', value: d.companyIndustry },
+              { label: t('tab.주소', '주소'), value: d.companyAddress },
+              { label: t('tab.업종', '업종'), value: d.companyIndustry },
             ]} />
             <DetailRow items={[
-              { label: '근로자수', value: d.companyWorkersCount != null ? `${d.companyWorkersCount}명` : undefined },
+              { label: t('tab.근로자수', '근로자수'), value: d.companyWorkersCount != null ? `${d.companyWorkersCount}명` : undefined },
             ]} isLast />
           </Box>
 
           {/* Section 3: 직업병 관련 */}
           <SectionHeader title="3. 직업병 관련" />
-          <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
             <DetailRow items={[
-              { label: '직업병명', value: d.diseaseName },
-              { label: '질병코드', value: d.diseaseCode },
+              { label: t('tab.직업병명', '직업병명'), value: d.diseaseName },
+              { label: t('tab.질병코드', '질병코드'), value: d.diseaseCode },
             ]} />
             <DetailRow items={[
-              { label: '발병일', value: d.onsetDate },
-              { label: '진단일', value: d.diagnosisDate },
+              { label: t('tab.발병일', '발병일'), value: d.onsetDate },
+              { label: t('tab.진단일', '진단일'), value: d.diagnosisDate },
             ]} />
             <DetailRow items={[
-              { label: '유해인자 노출기간', value: d.exposurePeriod },
-              { label: '유해인자', value: d.exposureFactor },
+              { label: t('tab.유해인자노출기간', '유해인자 노출기간'), value: d.exposurePeriod },
+              { label: t('tab.유해인자', '유해인자'), value: d.exposureFactor },
             ]} />
-            <Box sx={{ display: 'flex', borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderColor: 'divider' }}>
               <Box sx={labelSx}>직업력</Box>
               <Box sx={valSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{d.workHistory || ''}</Typography>
@@ -625,27 +625,27 @@ const OdmAccidentClaimTab: React.FC = () => {
 
           {/* Section 4: 요양급여 신청 */}
           <SectionHeader title="4. 요양급여 신청" />
-          <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
             <DetailRow items={[
-              { label: '의료기관명', value: d.hospitalName },
-              { label: '진료과', value: d.hospitalDept },
+              { label: t('tab.의료기관명', '의료기관명'), value: d.hospitalName },
+              { label: t('tab.진료과', '진료과'), value: d.hospitalDept },
             ]} />
             <DetailRow items={[
-              { label: '치료시작일', value: d.treatmentStartDate },
-              { label: '치료종료일', value: d.treatmentEndDate },
+              { label: t('tab.치료시작일', '치료시작일'), value: d.treatmentStartDate },
+              { label: t('tab.치료종료일', '치료종료일'), value: d.treatmentEndDate },
             ]} />
             <DetailRow items={[
-              { label: '치료유형', value: d.treatmentType },
+              { label: t('tab.치료유형', '치료유형'), value: d.treatmentType },
             ]} />
             <DetailRow items={[
-              { label: '신청인', value: d.applicantName },
-              { label: '관계', value: d.applicantRelation },
+              { label: t('tab.신청인', '신청인'), value: d.applicantName },
+              { label: t('tab.관계', '관계'), value: d.applicantRelation },
             ]} />
             <DetailRow items={[
-              { label: '신청일', value: d.applyDate },
-              { label: '상태', value: d.status ? <Chip label={getStatusLabel(d.status) || d.status} color={STATUS_COLORS[d.status] || 'default'} size="small" /> : undefined },
+              { label: t('tab.신청일', '신청일'), value: d.applyDate },
+              { label: t('tab.상태', '상태'), value: d.status ? <Chip label={getStatusLabel(d.status) || d.status} color={STATUS_COLORS[d.status] || 'default'} size="small" /> : undefined },
             ]} />
-            <Box sx={{ display: 'flex', borderColor: 'grey.300' }}>
+            <Box sx={{ display: 'flex', borderColor: 'divider' }}>
               <Box sx={labelSx}>비고</Box>
               <Box sx={valSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{d.notes || ''}</Typography>
@@ -673,7 +673,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
         {/* Section 5: 첨부서류 목록 */}
         <SectionHeader title="5. 첨부서류 목록" />
-        <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
           {docsLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress size={24} /></Box>
           ) : !docs || docs.length === 0 ? (
@@ -805,7 +805,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
   // ===== RENDER: Create / Edit =====
   const FormRow = ({ children, isLast }: { children: React.ReactNode; isLast?: boolean }) => (
-    <Box sx={isLast ? { display: 'flex', borderColor: 'grey.300' } : rowSx}>{children}</Box>
+    <Box sx={isLast ? { display: 'flex', borderColor: 'divider' } : rowSx}>{children}</Box>
   )
 
   const FormField = ({ label, children, isLast }: { label: string; children: React.ReactNode; isLast?: boolean }) => (
@@ -819,51 +819,51 @@ const OdmAccidentClaimTab: React.FC = () => {
     {
       title: '1. 재해근로자 인적사항',
       fields: [
-        { label: '근로자명', node: <TextField size="small" fullWidth value={formData.workerName || ''} onChange={(e) => setFormData({ ...formData, workerName: e.target.value })} /> },
-        { label: '주민등록번호', node: <TextField size="small" fullWidth value={formData.workerSsn || ''} onChange={(e) => setFormData({ ...formData, workerSsn: e.target.value })} /> },
-        { label: '전화번호', node: <TextField size="small" fullWidth value={formData.workerPhone || ''} onChange={handlePhoneChange('workerPhone')} placeholder="010-0000-0000" /> },
-        { label: '주소', node: <TextField size="small" fullWidth value={formData.workerAddress || ''} onChange={(e) => setFormData({ ...formData, workerAddress: e.target.value })} /> },
-        { label: '직종', node: <TextField size="small" fullWidth value={formData.workerJobType || ''} onChange={(e) => setFormData({ ...formData, workerJobType: e.target.value })} /> },
-        { label: '입사일', node: <DatePickerField value={formData.workerJoinDate || ''} onChange={(v) => setFormData({ ...formData, workerJoinDate: v })} /> },
-        { label: '소속부서', node: <TextField size="small" fullWidth value={formData.workerDept || ''} onChange={(e) => setFormData({ ...formData, workerDept: e.target.value })} /> },
+        { label: t('tab.근로자명', '근로자명'), node: <TextField size="small" fullWidth value={formData.workerName || ''} onChange={(e) => setFormData({ ...formData, workerName: e.target.value })} /> },
+        { label: t('tab.주민등록번호', '주민등록번호'), node: <TextField size="small" fullWidth value={formData.workerSsn || ''} onChange={(e) => setFormData({ ...formData, workerSsn: e.target.value })} /> },
+        { label: t('tab.전화번호', '전화번호'), node: <TextField size="small" fullWidth value={formData.workerPhone || ''} onChange={handlePhoneChange('workerPhone')} placeholder="010-0000-0000" /> },
+        { label: t('tab.주소', '주소'), node: <TextField size="small" fullWidth value={formData.workerAddress || ''} onChange={(e) => setFormData({ ...formData, workerAddress: e.target.value })} /> },
+        { label: t('tab.직종', '직종'), node: <TextField size="small" fullWidth value={formData.workerJobType || ''} onChange={(e) => setFormData({ ...formData, workerJobType: e.target.value })} /> },
+        { label: t('tab.입사일', '입사일'), node: <DatePickerField value={formData.workerJoinDate || ''} onChange={(v) => setFormData({ ...formData, workerJoinDate: v })} /> },
+        { label: t('tab.소속부서', '소속부서'), node: <TextField size="small" fullWidth value={formData.workerDept || ''} onChange={(e) => setFormData({ ...formData, workerDept: e.target.value })} /> },
       ],
     },
     {
       title: '2. 사업장 사항',
       fields: [
-        { label: '사업장명', node: <TextField size="small" fullWidth value={formData.companyName || ''} onChange={(e) => setFormData({ ...formData, companyName: e.target.value })} /> },
-        { label: '대표자', node: <TextField size="small" fullWidth value={formData.companyRepName || ''} onChange={(e) => setFormData({ ...formData, companyRepName: e.target.value })} /> },
-        { label: '사업자번호', node: <TextField size="small" fullWidth value={formData.companyBizNo || ''} onChange={(e) => setFormData({ ...formData, companyBizNo: e.target.value })} /> },
-        { label: '전화번호', node: <TextField size="small" fullWidth value={formData.companyPhone || ''} onChange={handlePhoneChange('companyPhone')} placeholder="02-0000-0000" /> },
-        { label: '주소', node: <TextField size="small" fullWidth value={formData.companyAddress || ''} onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })} /> },
-        { label: '업종', node: <TextField size="small" fullWidth value={formData.companyIndustry || ''} onChange={(e) => setFormData({ ...formData, companyIndustry: e.target.value })} /> },
-        { label: '근로자수', node: <NumberField size="small" fullWidth value={formData.companyWorkersCount ?? undefined} onChange={(v) => setFormData({ ...formData, companyWorkersCount: v ? Number(v) : undefined })} /> },
+        { label: t('tab.사업장명', '사업장명'), node: <TextField size="small" fullWidth value={formData.companyName || ''} onChange={(e) => setFormData({ ...formData, companyName: e.target.value })} /> },
+        { label: t('tab.대표자', '대표자'), node: <TextField size="small" fullWidth value={formData.companyRepName || ''} onChange={(e) => setFormData({ ...formData, companyRepName: e.target.value })} /> },
+        { label: t('tab.사업자번호', '사업자번호'), node: <TextField size="small" fullWidth value={formData.companyBizNo || ''} onChange={(e) => setFormData({ ...formData, companyBizNo: e.target.value })} /> },
+        { label: t('tab.전화번호', '전화번호'), node: <TextField size="small" fullWidth value={formData.companyPhone || ''} onChange={handlePhoneChange('companyPhone')} placeholder="02-0000-0000" /> },
+        { label: t('tab.주소', '주소'), node: <TextField size="small" fullWidth value={formData.companyAddress || ''} onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })} /> },
+        { label: t('tab.업종', '업종'), node: <TextField size="small" fullWidth value={formData.companyIndustry || ''} onChange={(e) => setFormData({ ...formData, companyIndustry: e.target.value })} /> },
+        { label: t('tab.근로자수', '근로자수'), node: <NumberField size="small" fullWidth value={formData.companyWorkersCount ?? undefined} onChange={(v) => setFormData({ ...formData, companyWorkersCount: v ? Number(v) : undefined })} /> },
       ],
     },
     {
       title: '3. 직업병 관련',
       fields: [
-        { label: '직업병명', node: <TextField size="small" fullWidth value={formData.diseaseName || ''} onChange={(e) => setFormData({ ...formData, diseaseName: e.target.value })} /> },
-        { label: '질병코드', node: <TextField size="small" fullWidth value={formData.diseaseCode || ''} onChange={(e) => setFormData({ ...formData, diseaseCode: e.target.value })} /> },
-        { label: '발병일', node: <DatePickerField value={formData.onsetDate || ''} onChange={(v) => setFormData({ ...formData, onsetDate: v })} /> },
-        { label: '진단일', node: <DatePickerField value={formData.diagnosisDate || ''} onChange={(v) => setFormData({ ...formData, diagnosisDate: v })} /> },
-        { label: '유해인자 노출기간', node: <TextField size="small" fullWidth value={formData.exposurePeriod || ''} onChange={(e) => setFormData({ ...formData, exposurePeriod: e.target.value })} /> },
-        { label: '유해인자', node: <TextField size="small" fullWidth value={formData.exposureFactor || ''} onChange={(e) => setFormData({ ...formData, exposureFactor: e.target.value })} /> },
-        { label: '직업력', node: <TextField size="small" fullWidth multiline rows={3} value={formData.workHistory || ''} onChange={(e) => setFormData({ ...formData, workHistory: e.target.value })} /> },
+        { label: t('tab.직업병명', '직업병명'), node: <TextField size="small" fullWidth value={formData.diseaseName || ''} onChange={(e) => setFormData({ ...formData, diseaseName: e.target.value })} /> },
+        { label: t('tab.질병코드', '질병코드'), node: <TextField size="small" fullWidth value={formData.diseaseCode || ''} onChange={(e) => setFormData({ ...formData, diseaseCode: e.target.value })} /> },
+        { label: t('tab.발병일', '발병일'), node: <DatePickerField value={formData.onsetDate || ''} onChange={(v) => setFormData({ ...formData, onsetDate: v })} /> },
+        { label: t('tab.진단일', '진단일'), node: <DatePickerField value={formData.diagnosisDate || ''} onChange={(v) => setFormData({ ...formData, diagnosisDate: v })} /> },
+        { label: t('tab.유해인자노출기간', '유해인자 노출기간'), node: <TextField size="small" fullWidth value={formData.exposurePeriod || ''} onChange={(e) => setFormData({ ...formData, exposurePeriod: e.target.value })} /> },
+        { label: t('tab.유해인자', '유해인자'), node: <TextField size="small" fullWidth value={formData.exposureFactor || ''} onChange={(e) => setFormData({ ...formData, exposureFactor: e.target.value })} /> },
+        { label: t('tab.직업력', '직업력'), node: <TextField size="small" fullWidth multiline rows={3} value={formData.workHistory || ''} onChange={(e) => setFormData({ ...formData, workHistory: e.target.value })} /> },
       ],
     },
     {
       title: '4. 요양급여 신청',
       fields: [
-        { label: '의료기관명', node: <TextField size="small" fullWidth value={formData.hospitalName || ''} onChange={(e) => setFormData({ ...formData, hospitalName: e.target.value })} /> },
-        { label: '진료과', node: <TextField size="small" fullWidth value={formData.hospitalDept || ''} onChange={(e) => setFormData({ ...formData, hospitalDept: e.target.value })} /> },
-        { label: '치료시작일', node: <DatePickerField value={formData.treatmentStartDate || ''} onChange={(v) => setFormData({ ...formData, treatmentStartDate: v })} /> },
-        { label: '치료종료일', node: <DatePickerField value={formData.treatmentEndDate || ''} onChange={(v) => setFormData({ ...formData, treatmentEndDate: v })} /> },
-        { label: '치료유형', node: <TextField size="small" fullWidth value={formData.treatmentType || ''} onChange={(e) => setFormData({ ...formData, treatmentType: e.target.value })} /> },
-        { label: '신청인', node: <TextField size="small" fullWidth value={formData.applicantName || ''} onChange={(e) => setFormData({ ...formData, applicantName: e.target.value })} /> },
-        { label: '관계', node: <TextField size="small" fullWidth value={formData.applicantRelation || ''} onChange={(e) => setFormData({ ...formData, applicantRelation: e.target.value })} /> },
-        { label: '신청일', node: <DatePickerField value={formData.applyDate || ''} onChange={(v) => setFormData({ ...formData, applyDate: v })} /> },
-        { label: '비고', node: <TextField size="small" fullWidth multiline rows={2} value={formData.notes || ''} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} /> },
+        { label: t('tab.의료기관명', '의료기관명'), node: <TextField size="small" fullWidth value={formData.hospitalName || ''} onChange={(e) => setFormData({ ...formData, hospitalName: e.target.value })} /> },
+        { label: t('tab.진료과', '진료과'), node: <TextField size="small" fullWidth value={formData.hospitalDept || ''} onChange={(e) => setFormData({ ...formData, hospitalDept: e.target.value })} /> },
+        { label: t('tab.치료시작일', '치료시작일'), node: <DatePickerField value={formData.treatmentStartDate || ''} onChange={(v) => setFormData({ ...formData, treatmentStartDate: v })} /> },
+        { label: t('tab.치료종료일', '치료종료일'), node: <DatePickerField value={formData.treatmentEndDate || ''} onChange={(v) => setFormData({ ...formData, treatmentEndDate: v })} /> },
+        { label: t('tab.치료유형', '치료유형'), node: <TextField size="small" fullWidth value={formData.treatmentType || ''} onChange={(e) => setFormData({ ...formData, treatmentType: e.target.value })} /> },
+        { label: t('tab.신청인', '신청인'), node: <TextField size="small" fullWidth value={formData.applicantName || ''} onChange={(e) => setFormData({ ...formData, applicantName: e.target.value })} /> },
+        { label: t('tab.관계', '관계'), node: <TextField size="small" fullWidth value={formData.applicantRelation || ''} onChange={(e) => setFormData({ ...formData, applicantRelation: e.target.value })} /> },
+        { label: t('tab.신청일', '신청일'), node: <DatePickerField value={formData.applyDate || ''} onChange={(v) => setFormData({ ...formData, applyDate: v })} /> },
+        { label: t('tab.비고', '비고'), node: <TextField size="small" fullWidth multiline rows={2} value={formData.notes || ''} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} /> },
       ],
     },
   ]
@@ -876,33 +876,33 @@ const OdmAccidentClaimTab: React.FC = () => {
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         {/* Section 1: 재해근로자 인적사항 */}
         <SectionHeader title="1. 재해근로자 인적사항" />
-        <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
           <FormRow>
-            <FormField label="근로자명">
+            <FormField label={t('odmAccidentClaimTab.label1', '근로자명')}>
               <TextField size="small" fullWidth value={formData.workerName || ''} onChange={(e) => setFormData({ ...formData, workerName: e.target.value })} />
             </FormField>
-            <FormField label="주민등록번호" isLast>
+            <FormField label={t('odmAccidentClaimTab.label2', '주민등록번호')} isLast>
               <TextField size="small" fullWidth value={formData.workerSsn || ''} onChange={(e) => setFormData({ ...formData, workerSsn: e.target.value })} />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="전화번호">
+            <FormField label={t('odmAccidentClaimTab.label3', '전화번호')}>
               <TextField size="small" fullWidth value={formData.workerPhone || ''} onChange={handlePhoneChange('workerPhone')} placeholder="010-0000-0000" />
             </FormField>
-            <FormField label="주소" isLast>
+            <FormField label={t('odmAccidentClaimTab.label4', '주소')} isLast>
               <TextField size="small" fullWidth value={formData.workerAddress || ''} onChange={(e) => setFormData({ ...formData, workerAddress: e.target.value })} />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="직종">
+            <FormField label={t('odmAccidentClaimTab.label5', '직종')}>
               <TextField size="small" fullWidth value={formData.workerJobType || ''} onChange={(e) => setFormData({ ...formData, workerJobType: e.target.value })} />
             </FormField>
-            <FormField label="입사일" isLast>
+            <FormField label={t('odmAccidentClaimTab.label6', '입사일')} isLast>
               <DatePickerField value={formData.workerJoinDate || ''} onChange={(v) => setFormData({ ...formData, workerJoinDate: v })} />
             </FormField>
           </FormRow>
           <FormRow isLast>
-            <FormField label="소속부서" isLast>
+            <FormField label={t('odmAccidentClaimTab.label7', '소속부서')} isLast>
               <TextField size="small" fullWidth value={formData.workerDept || ''} onChange={(e) => setFormData({ ...formData, workerDept: e.target.value })} />
             </FormField>
           </FormRow>
@@ -910,33 +910,33 @@ const OdmAccidentClaimTab: React.FC = () => {
 
         {/* Section 2: 사업장 사항 */}
         <SectionHeader title="2. 사업장 사항" />
-        <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
           <FormRow>
-            <FormField label="사업장명">
+            <FormField label={t('odmAccidentClaimTab.label8', '사업장명')}>
               <TextField size="small" fullWidth value={formData.companyName || ''} onChange={(e) => setFormData({ ...formData, companyName: e.target.value })} />
             </FormField>
-            <FormField label="대표자" isLast>
+            <FormField label={t('odmAccidentClaimTab.label9', '대표자')} isLast>
               <TextField size="small" fullWidth value={formData.companyRepName || ''} onChange={(e) => setFormData({ ...formData, companyRepName: e.target.value })} />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="사업자번호">
+            <FormField label={t('odmAccidentClaimTab.label10', '사업자번호')}>
               <TextField size="small" fullWidth value={formData.companyBizNo || ''} onChange={(e) => setFormData({ ...formData, companyBizNo: e.target.value })} />
             </FormField>
-            <FormField label="전화번호" isLast>
+            <FormField label={t('odmAccidentClaimTab.label11', '전화번호')} isLast>
               <TextField size="small" fullWidth value={formData.companyPhone || ''} onChange={handlePhoneChange('companyPhone')} placeholder="02-0000-0000" />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="주소">
+            <FormField label={t('odmAccidentClaimTab.label12', '주소')}>
               <TextField size="small" fullWidth value={formData.companyAddress || ''} onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })} />
             </FormField>
-            <FormField label="업종" isLast>
+            <FormField label={t('odmAccidentClaimTab.label13', '업종')} isLast>
               <TextField size="small" fullWidth value={formData.companyIndustry || ''} onChange={(e) => setFormData({ ...formData, companyIndustry: e.target.value })} />
             </FormField>
           </FormRow>
           <FormRow isLast>
-            <FormField label="근로자수" isLast>
+            <FormField label={t('odmAccidentClaimTab.label14', '근로자수')} isLast>
               <NumberField size="small" fullWidth value={formData.companyWorkersCount ?? null} onChange={(v) => setFormData({ ...formData, companyWorkersCount: v ?? undefined })} />
             </FormField>
           </FormRow>
@@ -944,33 +944,33 @@ const OdmAccidentClaimTab: React.FC = () => {
 
         {/* Section 3: 직업병 관련 */}
         <SectionHeader title="3. 직업병 관련" />
-        <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
           <FormRow>
-            <FormField label="직업병명">
+            <FormField label={t('odmAccidentClaimTab.label15', '직업병명')}>
               <TextField size="small" fullWidth value={formData.diseaseName || ''} onChange={(e) => setFormData({ ...formData, diseaseName: e.target.value })} />
             </FormField>
-            <FormField label="질병코드" isLast>
+            <FormField label={t('odmAccidentClaimTab.label16', '질병코드')} isLast>
               <TextField size="small" fullWidth value={formData.diseaseCode || ''} onChange={(e) => setFormData({ ...formData, diseaseCode: e.target.value })} />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="발병일">
+            <FormField label={t('odmAccidentClaimTab.label17', '발병일')}>
               <DatePickerField value={formData.onsetDate || ''} onChange={(v) => setFormData({ ...formData, onsetDate: v })} />
             </FormField>
-            <FormField label="진단일" isLast>
+            <FormField label={t('odmAccidentClaimTab.label18', '진단일')} isLast>
               <DatePickerField value={formData.diagnosisDate || ''} onChange={(v) => setFormData({ ...formData, diagnosisDate: v })} />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="유해인자 노출기간">
+            <FormField label={t('odmAccidentClaimTab.label19', '유해인자 노출기간')}>
               <TextField size="small" fullWidth value={formData.exposurePeriod || ''} onChange={(e) => setFormData({ ...formData, exposurePeriod: e.target.value })} />
             </FormField>
-            <FormField label="유해인자" isLast>
+            <FormField label={t('odmAccidentClaimTab.label20', '유해인자')} isLast>
               <TextField size="small" fullWidth value={formData.exposureFactor || ''} onChange={(e) => setFormData({ ...formData, exposureFactor: e.target.value })} />
             </FormField>
           </FormRow>
           <FormRow isLast>
-            <FormField label="직업력" isLast>
+            <FormField label={t('odmAccidentClaimTab.label21', '직업력')} isLast>
               <TextField size="small" fullWidth multiline rows={3} value={formData.workHistory || ''} onChange={(e) => setFormData({ ...formData, workHistory: e.target.value })} />
             </FormField>
           </FormRow>
@@ -978,41 +978,41 @@ const OdmAccidentClaimTab: React.FC = () => {
 
         {/* Section 4: 요양급여 신청 */}
         <SectionHeader title="4. 요양급여 신청" />
-        <Box sx={{ border: 1, borderColor: 'grey.300', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
           <FormRow>
-            <FormField label="의료기관명">
+            <FormField label={t('odmAccidentClaimTab.label22', '의료기관명')}>
               <TextField size="small" fullWidth value={formData.hospitalName || ''} onChange={(e) => setFormData({ ...formData, hospitalName: e.target.value })} />
             </FormField>
-            <FormField label="진료과" isLast>
+            <FormField label={t('odmAccidentClaimTab.label23', '진료과')} isLast>
               <TextField size="small" fullWidth value={formData.hospitalDept || ''} onChange={(e) => setFormData({ ...formData, hospitalDept: e.target.value })} />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="치료시작일">
+            <FormField label={t('odmAccidentClaimTab.label24', '치료시작일')}>
               <DatePickerField value={formData.treatmentStartDate || ''} onChange={(v) => setFormData({ ...formData, treatmentStartDate: v })} />
             </FormField>
-            <FormField label="치료종료일" isLast>
+            <FormField label={t('odmAccidentClaimTab.label25', '치료종료일')} isLast>
               <DatePickerField value={formData.treatmentEndDate || ''} onChange={(v) => setFormData({ ...formData, treatmentEndDate: v })} />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="치료유형">
+            <FormField label={t('odmAccidentClaimTab.label26', '치료유형')}>
               <TextField size="small" fullWidth value={formData.treatmentType || ''} onChange={(e) => setFormData({ ...formData, treatmentType: e.target.value })} />
             </FormField>
-            <FormField label="신청인" isLast>
+            <FormField label={t('odmAccidentClaimTab.label27', '신청인')} isLast>
               <TextField size="small" fullWidth value={formData.applicantName || ''} onChange={(e) => setFormData({ ...formData, applicantName: e.target.value })} />
             </FormField>
           </FormRow>
           <FormRow>
-            <FormField label="관계">
+            <FormField label={t('odmAccidentClaimTab.label28', '관계')}>
               <TextField size="small" fullWidth value={formData.applicantRelation || ''} onChange={(e) => setFormData({ ...formData, applicantRelation: e.target.value })} />
             </FormField>
-            <FormField label="신청일" isLast>
+            <FormField label={t('odmAccidentClaimTab.label29', '신청일')} isLast>
               <DatePickerField value={formData.applyDate || ''} onChange={(v) => setFormData({ ...formData, applyDate: v })} />
             </FormField>
           </FormRow>
           <FormRow isLast>
-            <FormField label="비고" isLast>
+            <FormField label={t('odmAccidentClaimTab.label30', '비고')} isLast>
               <TextField size="small" fullWidth multiline rows={2} value={formData.notes || ''} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
             </FormField>
           </FormRow>

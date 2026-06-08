@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Box,
   Typography,
@@ -152,14 +153,14 @@ const BodyDiagram: React.FC<{
             {t('healthCheckup.allParts')}
           </Button>
         </Box>
-        <TableContainer sx={{ border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderColor: 'grey.300', whiteSpace: 'nowrap' } }}>
+        <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
+          <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderColor: 'divider', whiteSpace: 'nowrap' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('healthCheckup.bodyPart')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('healthCheckup.category')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('healthCheckup.resultValue')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">{t('healthCheckup.referenceRange')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.bodyPart')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.category')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.resultValue')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.referenceRange')}</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }} align="center">{t('healthCheckup.resultStatus')}</TableCell>
               </TableRow>
             </TableHead>
@@ -167,10 +168,10 @@ const BodyDiagram: React.FC<{
               {filteredDetails.length > 0 ? (
                 filteredDetails.map((detail, idx) => (
                   <TableRow key={idx} hover>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{t(`healthCheckup.bodyParts.${detail.bodyPart}`)}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{detail.category}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{detail.resultValue || ''}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{detail.referenceRange || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{t(`healthCheckup.bodyParts.${detail.bodyPart}`)}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{detail.category}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{detail.resultValue || ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{detail.referenceRange || ''}</TableCell>
                     <TableCell align="center">
                       <Chip
                         label={t(`healthCheckup.resultStatusLabels.${detail.resultStatus}`)}

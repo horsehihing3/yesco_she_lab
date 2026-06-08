@@ -77,14 +77,14 @@ const STATUS_COLORS: Record<string, 'success' | 'info' | 'warning' | 'default' |
 
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'grey.300',
+  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'grey.300' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'grey.300' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
 
 const AnnualPlanTab: React.FC = () => {
   const queryClient = useQueryClient()
@@ -423,7 +423,7 @@ const AnnualPlanTab: React.FC = () => {
           <Alert severity="info">{t('common.noData')}</Alert>
         ) : (
           <>
-            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'grey.300', borderRadius: 1, overflowX: 'auto' }}>
+            <TableContainer sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -458,7 +458,7 @@ const AnnualPlanTab: React.FC = () => {
             {/* Mobile Cards */}
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
               {filteredItems.map((item) => (
-                <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'grey.300' }} onClick={() => handleRowClick(item)}>
+                <Paper key={item.id} sx={{ p: 2, cursor: 'pointer', border: 1, borderColor: 'divider' }} onClick={() => handleRowClick(item)}>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1 }}>
                     <Chip label={getStatusChipLabel(item.status)} color={STATUS_COLORS[item.status] || 'default'} size="small" />
                     <Typography variant="caption" color="text.secondary">{FORM_NO} · {item.planYear}</Typography>
@@ -511,7 +511,7 @@ const AnnualPlanTab: React.FC = () => {
        )}
 
        <Box sx={{ overflowX: 'auto' }}>
-        <Box sx={{ minWidth: 720, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+        <Box sx={{ minWidth: 720, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.formNo', '서식번호')}</Box>
             <Box sx={valBorderSx}><Typography variant="body2">{FORM_NO}</Typography></Box>
@@ -621,7 +621,7 @@ const AnnualPlanTab: React.FC = () => {
     <Box>
       <LoadingOverlay open={isProcessing} />
      <Box sx={{ overflowX: 'auto' }}>
-      <Box sx={{ minWidth: 720, border: 1, borderColor: 'grey.300', borderRadius: 1, overflow: 'hidden' }}>
+      <Box sx={{ minWidth: 720, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('pkg.formNo', '서식번호')}</Box>
           <Box sx={valBorderSx}><Typography variant="body2">{FORM_NO}</Typography></Box>

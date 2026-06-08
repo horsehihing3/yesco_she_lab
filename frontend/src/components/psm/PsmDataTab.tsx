@@ -90,8 +90,8 @@ const PsmDataTab: React.FC = () => {
     setViewMode('edit')
   }
   const handleSave = async () => {
-    if (!form.code?.trim()) { showError('번호를 입력해 주세요.'); return }
-    if (!form.nameKo?.trim()) { showError('명칭을 입력해 주세요.'); return }
+    if (!form.code?.trim()) { showError(t('psmDataTab.msg1', '번호를 입력해 주세요.')); return }
+    if (!form.nameKo?.trim()) { showError(t('psmDataTab.msg2', '명칭을 입력해 주세요.')); return }
     const ok = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!ok) return
     if (selectedId) updateMut.mutate({ id: selectedId, d: form })

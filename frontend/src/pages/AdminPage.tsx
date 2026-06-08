@@ -355,10 +355,10 @@ const AdminPage: React.FC = () => {
                 <Table size="small" sx={{ minWidth: 650 }}>
                   <TableHead>
                     <TableRow sx={{ bgcolor: 'grey.100' }}>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>{t('common.name')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>{t('emergency.email')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>{t('emergency.department')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>{t('emergency.position')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('common.name')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('emergency.email')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('emergency.department')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('emergency.position')}</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }} align="center">
                         {t('common.status')}
                       </TableCell>
@@ -374,10 +374,10 @@ const AdminPage: React.FC = () => {
                     ) : (
                       filteredUsers.map((user) => (
                         <TableRow key={user.id} hover>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{user.name}</TableCell>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{user.email}</TableCell>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{user.department || ''}</TableCell>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{user.position || ''}</TableCell>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{user.name}</TableCell>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{user.email}</TableCell>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{user.department || ''}</TableCell>
+                          <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{user.position || ''}</TableCell>
                           <TableCell align="center">
                             <Chip
                               label={user.active ? t('common.active') : t('common.inactive')}
@@ -594,23 +594,23 @@ const AdminPage: React.FC = () => {
             <Table size="small" sx={{ minWidth: 800 }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }}>{t('admin.division')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('admin.division')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                     {t('admin.months.jan')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                     {t('admin.months.feb')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                     {t('admin.months.mar')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                     {t('admin.months.apr')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                     {t('admin.months.may')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'grey.300' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
                     {t('admin.months.jun')}
                   </TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }} align="center">
@@ -620,37 +620,37 @@ const AdminPage: React.FC = () => {
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{t('nearMiss.title')}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>12</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>15</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>8</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>14</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>18</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>13</TableCell>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{t('nearMiss.title')}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>12</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>15</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>8</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>14</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>18</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>13</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                     80
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{t('riskAssessment.title')}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>5</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>8</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>12</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>6</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>10</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>9</TableCell>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.title')}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>5</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>8</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>12</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>6</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>10</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>9</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                     50
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ borderRight: 1, borderColor: 'grey.300' }}>{t('safetyWork.title')}</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>22</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>28</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>18</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>25</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>32</TableCell>
-                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'grey.300' }}>27</TableCell>
+                  <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{t('safetyWork.title')}</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>22</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>28</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>18</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>25</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>32</TableCell>
+                  <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>27</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                     152
                   </TableCell>

@@ -189,7 +189,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
     onSuccess: (_updated, variables) => {
       qc.invalidateQueries({ queryKey: ['siteSafety'] })
       qc.invalidateQueries({ queryKey: ['partnerSafetyExecuteList'] })
-      showSuccess('처리되었습니다.')
+      showSuccess(t('siteSafetyManagementPage.msg1', '처리되었습니다.'))
       // 승인·반려·완료 등 결재 액션 이후에는 목록으로 복귀 (상세에 남으면 상태 불일치 혼선)
       if (['submit', 'approve', 'reject', 'completionSubmit', 'complete'].includes(variables.action)) {
         handleBackToList()
@@ -269,8 +269,8 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
   const handleSave = () => {
     if (isPartner) {
-      if (!form.title) { showError('제목을 입력해 주세요.'); return }
-      if (!form.checklistTemplateId) { showError('체크리스트를 선택해 주세요.'); return }
+      if (!form.title) { showError(t('siteSafetyManagementPage.msg2', '제목을 입력해 주세요.')); return }
+      if (!form.checklistTemplateId) { showError(t('siteSafetyManagementPage.msg3', '체크리스트를 선택해 주세요.')); return }
       const payload = {
         ...form,
         planType,
@@ -280,8 +280,8 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
       else createMut.mutate(payload)
       return
     }
-    if (!form.title) { showError('제목을 입력해 주세요.'); return }
-    if (!form.checklistTemplateId) { showError('체크리스트를 선택해 주세요.'); return }
+    if (!form.title) { showError(t('siteSafetyManagementPage.msg4', '제목을 입력해 주세요.')); return }
+    if (!form.checklistTemplateId) { showError(t('siteSafetyManagementPage.msg5', '체크리스트를 선택해 주세요.')); return }
     const payload = { ...form, planType }
     if (selected) updateMut.mutate({ id: selected.id, req: payload })
     else createMut.mutate(payload)
@@ -344,7 +344,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         {/* ─── 데스크탑(md+) 헤더 ─── */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
           <ListSearchBar sx={{ width: 320 }} placeholder="제목/계획번호/작성자 검색" value={searchTextInput} onChange={setSearchTextInput} onSearch={applySearch} />
-          <TextField select size="small" sx={{ width: 140 }} label="상태"
+          <TextField select size="small" sx={{ width: 140 }} label={t('siteSafetyManagementPage.label1', '상태')}
             value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">전체</MenuItem>
             <MenuItem value="DRAFT">작성중</MenuItem>
@@ -369,7 +369,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
               <RefreshIcon fontSize="small" />
             </IconButton>
           </Box>
-          <TextField select size="small" fullWidth label="상태"
+          <TextField select size="small" fullWidth label={t('siteSafetyManagementPage.label2', '상태')}
             value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(0) }}>
             <MenuItem value="">전체</MenuItem>
             <MenuItem value="DRAFT">작성중</MenuItem>
@@ -736,7 +736,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                 {canEdit && <Button variant="contained" onClick={() => selected && handleOpenEdit(selected)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>}
                 {canEdit && <Button variant="contained" color="error" onClick={() => selected && handleDelete(selected)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>}
                 {canSubmit && <Button variant="contained" color="info" onClick={async () => {
-                  if (await showConfirm('계획 결재를 상신하시겠습니까?') && selected) {
+                  if (await showConfirm(t('siteSafetyManagementPage.msg6', '계획 결재를 상신하시겠습니까?')) && selected) {
                     transitionMut.mutate({ id: selected.id, action: 'submit' })
                   }
                 }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>계획 결재 상신</Button>}
@@ -759,7 +759,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                   if (reason && selected) transitionMut.mutate({ id: selected.id, action: 'reject', rejectReason: reason })
                 }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>반려</Button>}
                 {canApprove && <Button variant="contained" color="success" onClick={async () => {
-                  if (await showConfirm('계획 결재를 승인하시겠습니까?') && selected) {
+                  if (await showConfirm(t('siteSafetyManagementPage.msg7', '계획 결재를 승인하시겠습니까?')) && selected) {
                     transitionMut.mutate({ id: selected.id, action: 'approve' })
                   }
                 }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>계획 결재 승인</Button>}
@@ -769,7 +769,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
           {isReadonly && isApprovalMode && selected?.status === 'APPROVED' && (
             <Button variant="contained" color="info" onClick={async () => {
-              if (await showConfirm('완료 처리하시겠습니까?') && selected) {
+              if (await showConfirm(t('siteSafetyManagementPage.msg8', '완료 처리하시겠습니까?')) && selected) {
                 transitionMut.mutate({ id: selected.id, action: 'complete' })
               }
             }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>완료 처리</Button>
@@ -1002,7 +1002,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
       </FormTable>
 
       {/* ============ 작업자 정보 ============ */}
-      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>작업자 정보</Typography>
+      <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('siteSafetyManagementPage.section1', '작업자 정보')}</Typography>
       {(() => {
         const WorkerContent = (
           <>
@@ -1059,7 +1059,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
       {/* ============ 체크리스트 정보 (평가서조회 탭에서만) ============ */}
       {isReadonly && isApprovalMode && (
         <>
-          <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>체크리스트 정보</Typography>
+          <Typography variant="subtitle1" fontWeight={700} sx={{ mt: 3, mb: 1 }}>{t('siteSafetyManagementPage.section2', '체크리스트 정보')}</Typography>
           <FormTable>
             <FormRow last>
               <FormLabel>체크리스트</FormLabel>
@@ -1099,7 +1099,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             <Button variant="contained" onClick={() => selected && handleOpenEdit(selected)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
             <Button variant="contained" color="error" onClick={() => selected && handleDelete(selected)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
             <Button variant="contained" color="info" onClick={async () => {
-              if (await showConfirm('계획 결재를 상신하시겠습니까?') && selected) {
+              if (await showConfirm(t('siteSafetyManagementPage.msg9', '계획 결재를 상신하시겠습니까?')) && selected) {
                 transitionMut.mutate({ id: selected.id, action: 'submit' })
               }
             }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>계획 결재 상신</Button>
@@ -1114,7 +1114,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
               if (reason && selected) transitionMut.mutate({ id: selected.id, action: 'reject', rejectReason: reason })
             }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>반려</Button>
             <Button variant="contained" color="success" onClick={async () => {
-              if (await showConfirm('계획 결재를 승인하시겠습니까?') && selected) {
+              if (await showConfirm(t('siteSafetyManagementPage.msg10', '계획 결재를 승인하시겠습니까?')) && selected) {
                 transitionMut.mutate({ id: selected.id, action: 'approve' })
               }
             }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>계획 결재 승인</Button>
@@ -1124,7 +1124,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         {/* 평가서조회 탭 - APPROVED: 완료 처리 */}
         {isReadonly && isApprovalMode && selected?.status === 'APPROVED' && (
           <Button variant="contained" color="info" onClick={async () => {
-            if (await showConfirm('완료 처리하시겠습니까?') && selected) {
+            if (await showConfirm(t('siteSafetyManagementPage.msg11', '완료 처리하시겠습니까?')) && selected) {
               transitionMut.mutate({ id: selected.id, action: 'complete' })
             }
           }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>완료 처리</Button>
@@ -1145,16 +1145,17 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 // Main Page (4 tabs)
 // ===================================================================
 const SiteSafetyManagementPage: React.FC = () => {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
   return (
     <Box>
       <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
         sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
-        <Tab label="대시보드" />
-        <Tab label="계획" />
-        <Tab label="평가서조회 담당승인자" />
-        <Tab label="전체조회 (어드민)" />
-        <Tab label="레포트" />
+        <Tab label={t('siteSafety.tabs.dashboard', '대시보드')} />
+        <Tab label={t('siteSafety.tabs.plan', '계획')} />
+        <Tab label={t('siteSafety.tabs.approval', '평가서조회 담당승인자')} />
+        <Tab label={t('siteSafety.tabs.adminView', '전체조회 (어드민)')} />
+        <Tab label={t('siteSafety.tabs.report', '레포트')} />
       </Tabs>
       {activeTab === 0 && <SiteSafetyDashboardTab />}
       {activeTab === 1 && <SiteSafetyPlanContent mode="plan" />}

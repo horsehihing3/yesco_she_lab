@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Typography,
@@ -35,6 +36,7 @@ const emptyForm: Partial<DpStress> = { riskLevel: '잠재', hasCounseling: false
 const MENU = '보건 관리 › 질병예방 관리 › 직무스트레스'
 
 const DpStressTab: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
@@ -60,9 +62,9 @@ const DpStressTab: React.FC = () => {
     qc.invalidateQueries({ queryKey: ['dpMgmtStats'] })
   }
 
-  const createM = useMutation({ mutationFn: dpStressApi.create, onSuccess: () => { invalidate(); showSuccess('등록되었습니다'); handleBackToList() }, onError: () => showError('등록 실패') })
-  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpStress> }) => dpStressApi.update(id, e), onSuccess: () => { invalidate(); showSuccess('수정되었습니다'); handleBackToList() }, onError: () => showError('수정 실패') })
-  const deleteM = useMutation({ mutationFn: dpStressApi.remove, onSuccess: () => { invalidate(); showSuccess('삭제되었습니다'); handleBackToList() } })
+  const createM = useMutation({ mutationFn: dpStressApi.create, onSuccess: () => { invalidate(); showSuccess(t('dpStressTab.msg1', '등록되었습니다')); handleBackToList() }, onError: () => showError(t('dpStressTab.msg2', '등록 실패')) })
+  const updateM = useMutation({ mutationFn: ({ id, e }: { id: number; e: Partial<DpStress> }) => dpStressApi.update(id, e), onSuccess: () => { invalidate(); showSuccess(t('dpStressTab.msg3', '수정되었습니다')); handleBackToList() }, onError: () => showError(t('dpStressTab.msg4', '수정 실패')) })
+  const deleteM = useMutation({ mutationFn: dpStressApi.remove, onSuccess: () => { invalidate(); showSuccess(t('dpStressTab.msg5', '삭제되었습니다')); handleBackToList() } })
 
   const filtered = useMemo(() => list.filter((x) => {
     if (filterRisk !== 'all' && x.riskLevel !== filterRisk) return false
@@ -76,10 +78,10 @@ const DpStressTab: React.FC = () => {
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setViewMode('edit') } }
   const handleDeleteClick = async () => {
     if (!selected) return
-    if (await showConfirm('이 평가를 삭제하시겠습니까?')) deleteM.mutate(selected.id)
+    if (await showConfirm(t('dpStressTab.msg6', '이 평가를 삭제하시겠습니까?'))) deleteM.mutate(selected.id)
   }
   const handleSave = () => {
-    if (!form.workerName) { showError('근로자명을 입력해주세요'); return }
+    if (!form.workerName) { showError(t('dpStressTab.msg7', '근로자명을 입력해주세요')); return }
     if (viewMode === 'edit' && selected) updateM.mutate({ id: selected.id, e: form })
     else createM.mutate(form)
   }
@@ -198,10 +200,10 @@ const DpStressTab: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
-        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.stressTotal ?? 0} label="평가 인원" sub="KOSS-26 응답" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.stressLow ?? 0}   label="정상" sub="스트레스 낮음" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.stressMid ?? 0}   label="잠재 스트레스" sub="관찰 필요" /></Grid>
-        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.stressHigh ?? 0}  label="고위험" sub="상담 연계" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="blue"   value={stats?.stressTotal ?? 0} label={t('dpStressTab.label1', '평가 인원')} sub="KOSS-26 응답" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="green"  value={stats?.stressLow ?? 0}   label={t('dpStressTab.label2', '정상')} sub="스트레스 낮음" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="yellow" value={stats?.stressMid ?? 0}   label={t('dpStressTab.label3', '잠재 스트레스')} sub="관찰 필요" /></Grid>
+        <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.stressHigh ?? 0}  label={t('dpStressTab.label4', '고위험')} sub="상담 연계" /></Grid>
       </Grid>
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
@@ -249,7 +251,7 @@ const DpStressTab: React.FC = () => {
                       </TableCell>
                       <TableCell align="center"><Chip size="small" label={x.riskLevel || '-'} color={riskColor(x.riskLevel)} /></TableCell>
                       <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{x.assessmentDate || '-'}</TableCell>
-                      <TableCell align="center">{x.hasCounseling ? <Chip size="small" label="진행중" color="info" /> : '-'}</TableCell>
+                      <TableCell align="center">{x.hasCounseling ? <Chip size="small" label={t('dpStressTab.label5', '진행중')} color="info" /> : '-'}</TableCell>
                     </TableRow>
                   )
                 })}

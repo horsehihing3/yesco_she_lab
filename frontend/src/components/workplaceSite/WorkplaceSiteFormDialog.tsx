@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
   TextField, MenuItem, Typography, Box,
@@ -33,6 +34,7 @@ const emptyForm: WorkplaceSiteRequest = {
 }
 
 const WorkplaceSiteFormDialog: React.FC<Props> = ({ open, editing, onClose }) => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showSuccess, showError } = useAlert()
   const [form, setForm] = useState<WorkplaceSiteRequest>(emptyForm)
@@ -68,7 +70,7 @@ const WorkplaceSiteFormDialog: React.FC<Props> = ({ open, editing, onClose }) =>
       showSuccess(`사업장이 등록되었습니다 (${created.buildingNumber})`)
       onClose()
     },
-    onError: () => showError('등록 실패'),
+    onError: () => showError(t('workplaceSiteFormDialog.msg1', '등록 실패')),
   })
 
   const updateM = useMutation({
@@ -76,15 +78,18 @@ const WorkplaceSiteFormDialog: React.FC<Props> = ({ open, editing, onClose }) =>
       workplaceSiteApi.update(id, req),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['workplaceSites'] })
-      showSuccess('수정되었습니다')
+      // 사업장 이름이 바뀌면 백엔드에서 floor_drawing 테이블도 cascade rename되므로
+      // 도면 캐시도 함께 무효화하지 않으면 매칭이 깨진 상태로 표시됨
+      qc.invalidateQueries({ queryKey: ['floorDrawings'] })
+      showSuccess(t('workplaceSiteFormDialog.msg2', '수정되었습니다'))
       onClose()
     },
-    onError: () => showError('수정 실패'),
+    onError: () => showError(t('workplaceSiteFormDialog.msg3', '수정 실패')),
   })
 
   const handleSave = () => {
     if (!form.siteName?.trim()) {
-      showError('사업장명을 입력하세요')
+      showError(t('workplaceSiteFormDialog.msg4', '사업장명을 입력하세요'))
       return
     }
     if (editing) updateM.mutate({ id: editing.id, req: form })
