@@ -443,7 +443,10 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
             }),
           }}
         >
-          <Box component="img" src="/assets/logo-com4in-w.png" alt="COM4IN" sx={{ height: 40 }} />
+          {/* 모드별 YESCO 로고: 다크 → logo_yesco.png(밝은 글자) / 라이트·예스코 → logo_yesco_on.png */}
+          <Box component="img"
+            src={isDarkMode ? '/assets/logo_yesco.png' : '/assets/logo_yesco_on.png'}
+            alt="YESCO SHE" />
         </Box>
       )}
 

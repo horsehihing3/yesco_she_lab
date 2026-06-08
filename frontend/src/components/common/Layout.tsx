@@ -18,7 +18,11 @@ const Layout: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileToolsOpen, setMobileToolsOpen] = useState(false)
-  const { isDarkMode } = useThemeMode()
+  const { isDarkMode, isYescoMode } = useThemeMode()
+  // 라이트/예스코 모드 = 흰색 AppBar + 어두운 아이콘 / 다크 모드 = 어두운 AppBar + 흰색 아이콘
+  const appBarBg = isDarkMode ? '#09090b' : '#ffffff'
+  const appBarText = isDarkMode ? '#ffffff' : '#0f172a'
+  const appBarBorder = isDarkMode ? '1px solid #27272a' : '1px solid #e5e7eb'
   const theme = useTheme()
   const navigate = useNavigate()
 
@@ -44,13 +48,16 @@ const Layout: React.FC = () => {
         sx={{
           width: '100vw',
           left: 0,
-          backgroundColor: isDarkMode ? '#09090b' : '#0f172a',
+          backgroundColor: appBarBg,
+          color: appBarText,
           boxShadow: 'none',
           borderRadius: 0,
           borderTop: 'none',
           borderLeft: 'none',
           borderRight: 'none',
-          borderBottom: isDarkMode ? '1px solid #27272a' : 'none',
+          borderBottom: appBarBorder,
+          // 예스코 모드: 하단 LS Red 강조선
+          ...(isYescoMode && { borderBottom: '3px solid #E60012' }),
           zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
@@ -60,13 +67,15 @@ const Layout: React.FC = () => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' }, color: 'white' }}
+            sx={{ mr: 2, display: { md: 'none' }, color: appBarText }}
           >
             <MenuIcon />
           </IconButton>
           {/* Logo */}
           <Box onClick={() => navigate('/')} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }}>
-            <Box component="img" src="/assets/logo-com4in-w.png" alt="COM4IN" sx={{ height: 46 }} />
+            <Box component="img"
+              src={isDarkMode ? '/assets/logo_yesco.png' : '/assets/logo_yesco_on.png'}
+              alt="YESCO SHE" />
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           {/* Desktop: show header buttons inline */}
@@ -79,8 +88,8 @@ const Layout: React.FC = () => {
             size="small"
             sx={{
               display: { xs: 'flex', md: 'none' },
-              color: 'white',
-              '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
+              color: appBarText,
+              '&:hover': { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' },
             }}
           >
             {mobileToolsOpen ? <CloseIcon /> : <MoreVertIcon />}
@@ -97,8 +106,9 @@ const Layout: React.FC = () => {
           left: 0,
           right: 0,
           zIndex: (theme) => theme.zIndex.drawer + 2,
-          backgroundColor: isDarkMode ? '#09090b' : '#0f172a',
-          borderBottom: isDarkMode ? '1px solid #27272a' : '1px solid rgba(255,255,255,0.15)',
+          backgroundColor: appBarBg,
+          color: appBarText,
+          borderBottom: appBarBorder,
           boxShadow: '0 4px 6px -1px rgba(0,0,0,0.3)',
         }}
       >
