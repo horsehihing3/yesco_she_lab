@@ -16,4 +16,5 @@ public class IdmUser {
     private String userRole;
     // T_IDM_GROUP JOIN으로 조회되는 부서명 (DeptCode → GroupName)
     private String groupName;
+    private String mobile;
 }

@@ -105,7 +105,7 @@ const years = Array.from({ length: 5 }, (_, i) => currentYear - i)
 const quarterOptions = ['전체', '1분기', '2분기', '3분기', '4분기']
 
 const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
-  menuPath = 'EHS경영 › 커뮤니케이션 › 산업안전보건 위원회',
+  menuPath = 'EHS 경영 › 커뮤니케이션 › 산업안전보건 위원회',
 }) => {
   const queryClient = useQueryClient()
   const { t } = useTranslation()
@@ -421,6 +421,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         // 이메일 누락 시 unique placeholder — backend 가 attendeeMail 로 dedup
         userEmail: u.email || (u.username ? `${u.username}@hankook.com` : `user-${u.id}@hankook.com`),
         dept: u.department,
+        phone: u.phone,
       }))
     if (additions.length === 0) return
 

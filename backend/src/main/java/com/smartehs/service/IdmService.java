@@ -88,6 +88,7 @@ public class IdmService {
                     .name(user.getUserName())
                     .department(group.getGroupName())
                     .company(rootLabel)
+                    .phone(user.getMobile())
                     .children(List.of())
                     .build());
         }

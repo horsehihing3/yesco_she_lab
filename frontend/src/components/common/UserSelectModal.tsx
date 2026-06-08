@@ -40,6 +40,7 @@ export interface UserInfo {
   department: string
   company: string
   role: string
+  phone?: string
 }
 
 export interface CompanyTreeNode {
@@ -54,6 +55,7 @@ export interface CompanyTreeNode {
   nameZh?: string
   department?: string
   company?: string
+  phone?: string
   children: CompanyTreeNode[]
 }
 
@@ -112,6 +114,7 @@ const collectUsersUnder = (node: CompanyTreeNode, emailSuffix?: string): UserInf
         department: n.department || '',
         company: n.company || '',
         role: '',
+        phone: n.phone,
       })
     }
     if (n.children) n.children.forEach(walk)
@@ -227,6 +230,7 @@ const UserSelectModal = ({
               department: n.department || '',
               company: n.company || '',
               role: '',
+              phone: n.phone,
             })
           }
           if (n.children?.length) walk(n.children)

@@ -33,13 +33,14 @@
         <result column="Password" property="password"/>
         <result column="UserRole" property="userRole"/>
         <result column="GroupName" property="groupName"/>
+        <result column="Mobile" property="mobile"/>
     </resultMap>
 
     <!-- 부서명(GroupName)을 포함한 사용자 조회용 공통 SELECT -->
     <sql id="userWithGroupCols">
         i.UIDNumber, i.CompanyCode, i.DeptCode, i.UserName,
         i.Email, i.UID, i.UserStatus, i.ObjectCategory, i.Password, i.UserRole,
-        g.GroupName
+        i.Mobile, g.GroupName
     </sql>
 
     <select id="findActiveCompanies" resultMap="IdmCompanyResultMap">
@@ -62,7 +63,7 @@
 
     <select id="findActiveEmployees" resultMap="IdmUserResultMap">
         SELECT UIDNumber, CompanyCode, DeptCode, UserName,
-               Email, UID, UserStatus, ObjectCategory, Password, UserRole
+               Email, UID, UserStatus, ObjectCategory, Password, UserRole, Mobile
         FROM T_IDM_USER
         WHERE UserStatus = '10'
           AND CompanyCode = '0100004'
