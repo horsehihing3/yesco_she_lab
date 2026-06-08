@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { Role } from '../../data/buttonManageData'
@@ -489,7 +490,7 @@ const EmrPlanTab: React.FC = () => {
               <Typography sx={labelSx}>{t('emr.planApprover')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="body2">
-                  {[selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''}
+                  {fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)}
                 </Typography>
                 {selectedItem.planApprovedAt && (
                   <Typography variant="caption" color="text.secondary">
@@ -500,7 +501,7 @@ const EmrPlanTab: React.FC = () => {
               <Typography sx={labelSx}>{t('emr.completionApprover')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="body2">
-                  {[selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''}
+                  {fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)}
                 </Typography>
                 {selectedItem.completionApprovedAt && (
                   <Typography variant="caption" color="text.secondary">
@@ -541,8 +542,8 @@ const EmrPlanTab: React.FC = () => {
                 [t('common.modifier', '수정자'), selectedItem.modifiedByName || ''],
                 [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
               ] as Array<[string, string]> : []),
-              [t('emr.planApprover'), [selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''],
-              [t('emr.completionApprover'), [selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''],
+              [t('emr.planApprover'), fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)],
+              [t('emr.completionApprover'), fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)],
             ].map(([label, value], i) => (
               <Box key={i}>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography>

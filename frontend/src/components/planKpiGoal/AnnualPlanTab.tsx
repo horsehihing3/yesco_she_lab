@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { Role } from '../../data/buttonManageData'
@@ -532,7 +533,7 @@ const AnnualPlanTab: React.FC = () => {
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{d.writerName || ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{fmtPerson(d.writerName, d.writerTeam, d.writerPosition)}</Typography></Box>
             <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
             <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
           </Box>
@@ -547,11 +548,11 @@ const AnnualPlanTab: React.FC = () => {
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.planApprover', '계획 승인자')}</Box>
             <Box sx={valBorderSx}>
-              <Typography variant="body2">{d.planApproverName || ''}</Typography>
+              <Typography variant="body2">{fmtPerson(d.planApproverName, d.planApproverTeam, d.planApproverPosition)}</Typography>
             </Box>
             <Box sx={labelSx}>{t('pkg.completionApprover', '완료 승인자')}</Box>
             <Box sx={valSx}>
-              <Typography variant="body2">{d.completionApproverName || ''}</Typography>
+              <Typography variant="body2">{fmtPerson(d.completionApproverName, d.completionApproverTeam, d.completionApproverPosition)}</Typography>
             </Box>
           </Box>
           <Box sx={{ ...rowSx, borderBottom: 0 }}>

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { fmtPerson } from '../../utils/personFormat'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import ListSearchBar from '../common/ListSearchBar'
@@ -154,9 +155,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
             <Typography sx={labelSx}>{t('audit.planApprover', '계획 승인자')}</Typography>
             <Box sx={valBorderSx}>
               <Typography variant="body2">
-                {selectedItem.planApproverName
-                  ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
-                  : ''}
+                {fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)}
                 {selectedItem.planApprovedAt && (
                   <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                     ({selectedItem.planApprovedBy || ''} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16)})
@@ -167,9 +166,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
             <Typography sx={labelSx}>{t('audit.completionApprover', '완료 승인자')}</Typography>
             <Box sx={valSx}>
               <Typography variant="body2">
-                {selectedItem.completionApproverName
-                  ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
-                  : ''}
+                {fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)}
                 {selectedItem.completionApprovedAt && (
                   <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                     ({selectedItem.completionApprovedBy || ''} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16)})
@@ -211,14 +208,8 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
               [t('common.modifier', '수정자'), (selectedItem as any).modifiedByName || ''],
               [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
             ] : []),
-            [t('audit.planApprover', '계획 승인자'),
-              selectedItem.planApproverName
-                ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
-                : ''],
-            [t('audit.completionApprover', '완료 승인자'),
-              selectedItem.completionApproverName
-                ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
-                : ''],
+            [t('audit.planApprover', '계획 승인자'), fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)],
+            [t('audit.completionApprover', '완료 승인자'), fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)],
             [t('audit.checklistProgress'), `${selectedItem.completedChecklist}/${selectedItem.totalChecklist}`],
             [t('audit.findingCount'), String(selectedItem.findingCount)],
           ].filter(([, v]) => v).map(([label, value], i) => (

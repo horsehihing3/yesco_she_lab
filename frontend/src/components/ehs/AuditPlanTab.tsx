@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { fmtPerson } from '../../utils/personFormat'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import ListSearchBar from '../common/ListSearchBar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -622,9 +623,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Typography sx={labelSx}>{t('audit.planApprover', '계획 승인자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">
-                  {selectedItem.planApproverName
-                    ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
-                    : ''}
+                  {fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)}
                   {selectedItem.planApprovedAt && (
                     <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                       ({selectedItem.planApprovedBy || ''} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16)})
@@ -635,9 +634,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Typography sx={labelSx}>{t('audit.completionApprover', '완료 승인자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">
-                  {selectedItem.completionApproverName
-                    ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
-                    : ''}
+                  {fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)}
                   {selectedItem.completionApprovedAt && (
                     <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                       ({selectedItem.completionApprovedBy || ''} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16)})
@@ -685,14 +682,8 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                       selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
                   ] as Array<[string, string]>
                 : []),
-              [t('audit.planApprover', '계획 승인자'),
-                selectedItem.planApproverName
-                  ? `${selectedItem.planApproverName}${selectedItem.planApproverTeam ? ` (${selectedItem.planApproverTeam})` : ''}`
-                  : ''],
-              [t('audit.completionApprover', '완료 승인자'),
-                selectedItem.completionApproverName
-                  ? `${selectedItem.completionApproverName}${selectedItem.completionApproverTeam ? ` (${selectedItem.completionApproverTeam})` : ''}`
-                  : ''],
+              [t('audit.planApprover', '계획 승인자'), fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)],
+              [t('audit.completionApprover', '완료 승인자'), fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)],
             ] as Array<[string, string]>).map(([label, value], i) => (
               <Box key={i}>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography>

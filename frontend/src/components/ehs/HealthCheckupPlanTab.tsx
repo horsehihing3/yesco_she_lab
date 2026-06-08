@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, TextField, Button, Table, TableBody, TableCell,
@@ -627,9 +628,9 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           {/* 계획 승인자 | 완료 승인자 */}
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('healthCheckupPlan.planApprover', '계획 승인자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{d.planApproverName || '-'}{d.planApproverTeam ? ` (${d.planApproverTeam})` : ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{fmtPerson(d.planApproverName, d.planApproverTeam, d.planApproverPosition) || '-'}</Typography></Box>
             <Box sx={labelSx}>{t('healthCheckupPlan.completionApprover', '완료 승인자')}</Box>
-            <Box sx={valSx}><Typography variant="body2">{d.completionApproverName || '-'}{d.completionApproverTeam ? ` (${d.completionApproverTeam})` : ''}</Typography></Box>
+            <Box sx={valSx}><Typography variant="body2">{fmtPerson(d.completionApproverName, d.completionApproverTeam, d.completionApproverPosition) || '-'}</Typography></Box>
           </Box>
           {/* 첨부파일 — 맨 아래 */}
           <Box sx={lastRowSx}>

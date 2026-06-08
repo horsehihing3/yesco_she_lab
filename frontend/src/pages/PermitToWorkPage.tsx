@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import { fmtPerson } from '../utils/personFormat'
 import { useButtonRules } from '../hooks/useButtonRules'
 import { Role } from '../data/buttonManageData'
 import { fmtPhone } from '../utils/phoneFormat'
@@ -556,7 +557,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               <Typography sx={dLabelSx}>{t('common.planApprover', '계획 승인자')}</Typography>
               <Box sx={dValBorderSx}>
                 <Typography variant="body2" sx={{ py: 0.5 }}>
-                  {[selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''}
+                  {fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)}
                   {selectedItem.planApprovedAt && (
                     <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                       ({selectedItem.planApprovedBy} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 19)})
@@ -567,7 +568,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               <Typography sx={dLabelSx}>{t('common.completionApprover', '완료 승인자')}</Typography>
               <Box sx={dValSx}>
                 <Typography variant="body2" sx={{ py: 0.5 }}>
-                  {[selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''}
+                  {fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)}
                   {selectedItem.completionApprovedAt && (
                     <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                       ({selectedItem.completionApprovedBy} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 19)})

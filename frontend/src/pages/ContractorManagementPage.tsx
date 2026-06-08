@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { fmtPerson } from '../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -595,7 +596,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography></Box>
             </Box>
           )}
-          <Box sx={dRowSx}><Typography sx={dLabelSx}>계획 승인자</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{[selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''}{selectedItem.planApprovedAt && <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>({selectedItem.planApprovedBy} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 19)})</Typography>}</Typography></Box><Typography sx={dLabelSx}>완료 승인자</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{[selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''}{selectedItem.completionApprovedAt && <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>({selectedItem.completionApprovedBy} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 19)})</Typography>}</Typography></Box></Box>
+          <Box sx={dRowSx}><Typography sx={dLabelSx}>계획 승인자</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)}{selectedItem.planApprovedAt && <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>({selectedItem.planApprovedBy} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 19)})</Typography>}</Typography></Box><Typography sx={dLabelSx}>완료 승인자</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)}{selectedItem.completionApprovedAt && <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>({selectedItem.completionApprovedBy} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 19)})</Typography>}</Typography></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>체크리스트</Typography><Box sx={{ ...dValSx, flex: 3 }}><Typography variant="body2" sx={{ py: 0.5 }}>{getTemplateName(selectedItem.checklistTemplateId)}</Typography></Box></Box>
         </Box>
 
@@ -624,8 +625,8 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               ['수정자', selectedItem.modifiedBy || ''],
               ['수정일자', selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
             ] : []),
-            ['계획 승인자', [selectedItem.planApproverTeam, selectedItem.planApproverPosition, selectedItem.planApproverName].filter(Boolean).join(' / ') || ''],
-            ['완료 승인자', [selectedItem.completionApproverTeam, selectedItem.completionApproverPosition, selectedItem.completionApproverName].filter(Boolean).join(' / ') || ''],
+            ['계획 승인자', fmtPerson(selectedItem.planApproverName, selectedItem.planApproverTeam, selectedItem.planApproverPosition)],
+            ['완료 승인자', fmtPerson(selectedItem.completionApproverName, selectedItem.completionApproverTeam, selectedItem.completionApproverPosition)],
             ['체크리스트', getTemplateName(selectedItem.checklistTemplateId)],
           ].filter(([, v]) => v).map(([label, value], i) => (
             <Box key={i}>

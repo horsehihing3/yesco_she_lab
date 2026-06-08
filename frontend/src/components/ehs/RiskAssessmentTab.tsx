@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
@@ -935,7 +936,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       <TableRow>
                         <TableCell sx={{ ...lblCellSx, width: 130, minWidth: 130, whiteSpace: 'nowrap' }}>{t('riskAssessment.planApprover', '계획 승인자')}</TableCell>
                         <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: assessmentDetail.planApproverName ? 'left' : 'center' }}>
-                          {[assessmentDetail.planApproverTeam, assessmentDetail.planApproverPosition, assessmentDetail.planApproverName].filter(Boolean).join(' / ') || ''}
+                          {fmtPerson(assessmentDetail.planApproverName, assessmentDetail.planApproverTeam, assessmentDetail.planApproverPosition)}
                           {assessmentDetail.planApprovedAt && (
                             <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                               ({assessmentDetail.planApprovedBy} | {assessmentDetail.planApprovedAt.replace('T', ' ').substring(0, 19)})
@@ -944,7 +945,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                         </TableCell>
                         <TableCell sx={{ ...lblCellSx, width: 130, minWidth: 130, whiteSpace: 'nowrap' }}>{t('riskAssessment.completionApprover', '완료 승인자')}</TableCell>
                         <TableCell sx={{ textAlign: assessmentDetail.completionApproverName ? 'left' : 'center' }}>
-                          {[assessmentDetail.completionApproverTeam, assessmentDetail.completionApproverPosition, assessmentDetail.completionApproverName].filter(Boolean).join(' / ') || ''}
+                          {fmtPerson(assessmentDetail.completionApproverName, assessmentDetail.completionApproverTeam, assessmentDetail.completionApproverPosition)}
                           {assessmentDetail.completionApprovedAt && (
                             <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                               ({assessmentDetail.completionApprovedBy} | {assessmentDetail.completionApprovedAt.replace('T', ' ').substring(0, 19)})
@@ -1005,11 +1006,11 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   )}
                   <Box>
                     <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.planApprover', '계획 승인자')}</Typography>
-                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{[assessmentDetail.planApproverTeam, assessmentDetail.planApproverPosition, assessmentDetail.planApproverName].filter(Boolean).join(' / ') || ''}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{fmtPerson(assessmentDetail.planApproverName, assessmentDetail.planApproverTeam, assessmentDetail.planApproverPosition)}</Typography>
                   </Box>
                   <Box>
                     <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.completionApprover', '완료 승인자')}</Typography>
-                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{[assessmentDetail.completionApproverTeam, assessmentDetail.completionApproverPosition, assessmentDetail.completionApproverName].filter(Boolean).join(' / ') || ''}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{fmtPerson(assessmentDetail.completionApproverName, assessmentDetail.completionApproverTeam, assessmentDetail.completionApproverPosition)}</Typography>
                   </Box>
                   <Box>
                     <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('common.checklist', '체크리스트')}</Typography>

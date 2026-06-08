@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -534,7 +535,7 @@ const EmrDrillTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.writer')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">
-                {[linkedPlan?.writerTeam, linkedPlan?.writerPosition, linkedPlan?.writerName].filter(Boolean).join(' / ') || ''}
+                {fmtPerson(linkedPlan?.writerName, linkedPlan?.writerTeam, linkedPlan?.writerPosition)}
               </Typography>
             </Box>
           </Box>
@@ -543,7 +544,7 @@ const EmrDrillTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.planApprover')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2">
-                {[linkedPlan?.planApproverTeam, linkedPlan?.planApproverPosition, linkedPlan?.planApproverName].filter(Boolean).join(' / ') || ''}
+                {fmtPerson(linkedPlan?.planApproverName, linkedPlan?.planApproverTeam, linkedPlan?.planApproverPosition)}
               </Typography>
               {linkedPlan?.planApprovedAt && (
                 <Typography variant="caption" color="text.secondary">
@@ -554,7 +555,7 @@ const EmrDrillTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.completionApprover')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2">
-                {[linkedPlan?.completionApproverTeam, linkedPlan?.completionApproverPosition, linkedPlan?.completionApproverName].filter(Boolean).join(' / ') || ''}
+                {fmtPerson(linkedPlan?.completionApproverName, linkedPlan?.completionApproverTeam, linkedPlan?.completionApproverPosition)}
               </Typography>
               {linkedPlan?.completionApprovedAt && (
                 <Typography variant="caption" color="text.secondary">
