@@ -80,6 +80,8 @@ public class EhsAnnualPlanService {
                 .writerName(request.getWriterName())
                 .modifiedByUserId(request.getWriterUserId())
                 .modifiedByName(request.getWriterName())
+                .modifiedByTeam(request.getWriterTeam())
+                .modifiedByPosition(request.getWriterPosition())
                 .planApproverUserId(request.getPlanApproverUserId())
                 .planApproverTeam(request.getPlanApproverTeam())
                 .planApproverPosition(request.getPlanApproverPosition())
@@ -115,6 +117,8 @@ public class EhsAnnualPlanService {
         plan.setWriterName(request.getWriterName());
         plan.setModifiedByUserId(request.getModifiedByUserId());
         plan.setModifiedByName(request.getModifiedByName());
+        plan.setModifiedByTeam(request.getModifiedByTeam());
+        plan.setModifiedByPosition(request.getModifiedByPosition());
         plan.setPlanApproverUserId(request.getPlanApproverUserId());
         plan.setPlanApproverTeam(request.getPlanApproverTeam());
         plan.setPlanApproverPosition(request.getPlanApproverPosition());

@@ -61,6 +61,8 @@ public class EhsAnnualPlanController {
             if (idmUser != null) {
                 request.setWriterUserId(idmUser.getUidNumber());
                 request.setWriterName(idmUser.getUserName());
+                request.setWriterTeam(idmUser.getGroupName());
+                request.setWriterPosition(idmUser.getTitleName());
             }
         }
         EhsAnnualPlanResponse plan = ehsAnnualPlanService.create(request);
@@ -78,6 +80,8 @@ public class EhsAnnualPlanController {
             if (idmUser != null) {
                 request.setModifiedByUserId(idmUser.getUidNumber());
                 request.setModifiedByName(idmUser.getUserName());
+                request.setModifiedByTeam(idmUser.getGroupName());
+                request.setModifiedByPosition(idmUser.getTitleName());
             }
         }
         EhsAnnualPlanResponse plan = ehsAnnualPlanService.update(id, request);

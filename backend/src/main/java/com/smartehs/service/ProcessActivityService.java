@@ -105,8 +105,12 @@ public class ProcessActivityService {
                 .teamMembers(r.getTeamMembers())
                 .createdByUserId(r.getCreatedByUserId())
                 .createdByName(r.getCreatedByName())
+                .createdByTeam(r.getCreatedByTeam())
+                .createdByPosition(r.getCreatedByPosition())
                 .modifiedByUserId(r.getModifiedByUserId())
                 .modifiedByName(r.getModifiedByName())
+                .modifiedByTeam(r.getModifiedByTeam())
+                .modifiedByPosition(r.getModifiedByPosition())
                 .build();
     }
 

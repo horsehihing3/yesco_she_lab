@@ -19,8 +19,12 @@
         <result property="remarks" column="remarks"/>
         <result property="createdByUserId" column="created_by_user_id"/>
         <result property="createdByName" column="created_by_name"/>
+        <result property="createdByTeam" column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
         <result property="modifiedByUserId" column="modified_by_user_id"/>
         <result property="modifiedByName" column="modified_by_name"/>
+        <result property="modifiedByTeam" column="modified_by_team"/>
+        <result property="modifiedByPosition" column="modified_by_position"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
@@ -52,11 +56,12 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_wem_plan (plan_year, process_name, department, hazard_type, measurement_cycle, last_measurement_date, next_measurement_date, status, measurement_agency, agency_code, contract_period, remarks,
-            created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+            created_by_user_id, created_by_name, created_by_team, created_by_position,
+            modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
             created_at, modified_at)
         VALUES (#{planYear}, #{processName}, #{department}, #{hazardType}, #{measurementCycle}, #{lastMeasurementDate}, #{nextMeasurementDate}, #{status}, #{measurementAgency}, #{agencyCode}, #{contractPeriod}, #{remarks},
-            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
-            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
             GETDATE(), GETDATE())
     </insert>
 
@@ -76,6 +81,8 @@
             remarks = #{remarks},
             modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
             modified_by_name = #{modifiedByName},
+            modified_by_team = #{modifiedByTeam},
+            modified_by_position = #{modifiedByPosition},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

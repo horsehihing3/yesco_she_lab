@@ -39,6 +39,11 @@ public class PermitToWork {
     private Integer totalChecklist;
     private Integer completedChecklist;
     private Integer findingCount;
+    // 작성자
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private String modifiedBy;
     private Boolean deleted;
     // 계획 / 완료 결재 분리

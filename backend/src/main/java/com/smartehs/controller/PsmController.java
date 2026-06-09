@@ -39,28 +39,28 @@ public class PsmController {
         if (u == null) return;
         if (target instanceof PsmData) {
             PsmData d = (PsmData) target;
-            if (isCreate) { d.setCreatedByUserId(u.getUidNumber()); d.setCreatedByName(u.getUserName()); }
-            d.setModifiedByUserId(u.getUidNumber()); d.setModifiedByName(u.getUserName());
+            if (isCreate) { d.setCreatedByUserId(u.getUidNumber()); d.setCreatedByName(u.getUserName()); d.setCreatedByTeam(u.getGroupName()); d.setCreatedByPosition(u.getTitleName()); }
+            d.setModifiedByUserId(u.getUidNumber()); d.setModifiedByName(u.getUserName()); d.setModifiedByTeam(u.getGroupName()); d.setModifiedByPosition(u.getTitleName());
         } else if (target instanceof PsmMoc) {
             PsmMoc m = (PsmMoc) target;
-            if (isCreate) { m.setCreatedByUserId(u.getUidNumber()); m.setCreatedByName(u.getUserName()); }
-            m.setModifiedByUserId(u.getUidNumber()); m.setModifiedByName(u.getUserName());
+            if (isCreate) { m.setCreatedByUserId(u.getUidNumber()); m.setCreatedByName(u.getUserName()); m.setCreatedByTeam(u.getGroupName()); m.setCreatedByPosition(u.getTitleName()); }
+            m.setModifiedByUserId(u.getUidNumber()); m.setModifiedByName(u.getUserName()); m.setModifiedByTeam(u.getGroupName()); m.setModifiedByPosition(u.getTitleName());
         } else if (target instanceof PsmHazop) {
             PsmHazop h = (PsmHazop) target;
-            if (isCreate) { h.setCreatedByUserId(u.getUidNumber()); h.setCreatedByName(u.getUserName()); }
-            h.setModifiedByUserId(u.getUidNumber()); h.setModifiedByName(u.getUserName());
+            if (isCreate) { h.setCreatedByUserId(u.getUidNumber()); h.setCreatedByName(u.getUserName()); h.setCreatedByTeam(u.getGroupName()); h.setCreatedByPosition(u.getTitleName()); }
+            h.setModifiedByUserId(u.getUidNumber()); h.setModifiedByName(u.getUserName()); h.setModifiedByTeam(u.getGroupName()); h.setModifiedByPosition(u.getTitleName());
         } else if (target instanceof PsmWo) {
             PsmWo w = (PsmWo) target;
-            if (isCreate) { w.setCreatedByUserId(u.getUidNumber()); w.setCreatedByName(u.getUserName()); }
-            w.setModifiedByUserId(u.getUidNumber()); w.setModifiedByName(u.getUserName());
+            if (isCreate) { w.setCreatedByUserId(u.getUidNumber()); w.setCreatedByName(u.getUserName()); w.setCreatedByTeam(u.getGroupName()); w.setCreatedByPosition(u.getTitleName()); }
+            w.setModifiedByUserId(u.getUidNumber()); w.setModifiedByName(u.getUserName()); w.setModifiedByTeam(u.getGroupName()); w.setModifiedByPosition(u.getTitleName());
         } else if (target instanceof PsmIncident) {
             PsmIncident i = (PsmIncident) target;
-            if (isCreate) { i.setCreatedByUserId(u.getUidNumber()); i.setCreatedByName(u.getUserName()); }
-            i.setModifiedByUserId(u.getUidNumber()); i.setModifiedByName(u.getUserName());
+            if (isCreate) { i.setCreatedByUserId(u.getUidNumber()); i.setCreatedByName(u.getUserName()); i.setCreatedByTeam(u.getGroupName()); i.setCreatedByPosition(u.getTitleName()); }
+            i.setModifiedByUserId(u.getUidNumber()); i.setModifiedByName(u.getUserName()); i.setModifiedByTeam(u.getGroupName()); i.setModifiedByPosition(u.getTitleName());
         } else if (target instanceof PsmPtw) {
             PsmPtw p = (PsmPtw) target;
-            if (isCreate) { p.setCreatedByUserId(u.getUidNumber()); p.setCreatedByName(u.getUserName()); }
-            p.setModifiedByUserId(u.getUidNumber()); p.setModifiedByName(u.getUserName());
+            if (isCreate) { p.setCreatedByUserId(u.getUidNumber()); p.setCreatedByName(u.getUserName()); p.setCreatedByTeam(u.getGroupName()); p.setCreatedByPosition(u.getTitleName()); }
+            p.setModifiedByUserId(u.getUidNumber()); p.setModifiedByName(u.getUserName()); p.setModifiedByTeam(u.getGroupName()); p.setModifiedByPosition(u.getTitleName());
         }
     }
 

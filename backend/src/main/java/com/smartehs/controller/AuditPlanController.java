@@ -60,6 +60,8 @@ public class AuditPlanController {
             if (idmUser != null) {
                 auditPlan.setCreatedByUserId(idmUser.getUidNumber());
                 auditPlan.setCreatedByName(idmUser.getUserName());
+                auditPlan.setCreatedByTeam(idmUser.getGroupName());
+                auditPlan.setCreatedByPosition(idmUser.getTitleName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(auditPlanService.create(auditPlan)));
@@ -74,6 +76,8 @@ public class AuditPlanController {
             if (u != null) {
                 auditPlan.setModifiedByUserId(u.getUidNumber());
                 auditPlan.setModifiedByName(u.getUserName());
+                auditPlan.setModifiedByTeam(u.getGroupName());
+                auditPlan.setModifiedByPosition(u.getTitleName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(auditPlanService.update(id, auditPlan)));

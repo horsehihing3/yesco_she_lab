@@ -51,6 +51,11 @@ public class SiteSafetyPlan {
     private Integer totalChecklist;
     private Integer completedChecklist;
     private Integer findingCount;
+    // 작성자
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private String modifiedBy;
     private Boolean deleted;
     private LocalDateTime createdAt;

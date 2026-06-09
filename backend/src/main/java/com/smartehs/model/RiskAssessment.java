@@ -15,8 +15,11 @@ public class RiskAssessment {
     private String titleEn;
     private String titleZh;
     private String site;
+    private Long authorUserId;
     private String authorName;
     private String authorDept;
+    private String authorTeam;
+    private String authorPosition;
     private String authorMail;
     // 호환용: 기존 단일 결재자
     private String approverName;

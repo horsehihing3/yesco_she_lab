@@ -68,6 +68,62 @@ frontend/src/
 - **기존 API 응답 구조 무단 변경 금지** — 프론트 9개 파일이 `/api/users/company-tree` 응답 구조 의존
 - **application.yml DB 비밀번호 환경변수 전환 필요** — 현재 하드코딩 상태 (납품 전 필수)
 - **백엔드 수정 후 서버 재시작 필수**
+- **작성자·수정자·계획승인자·완료승인자는 4개 필드 모두 DB에 저장** — 상세 패턴은 아래 **사람 필드 표준 패턴** 섹션 참조. 신규 테이블도 동일 패턴 적용.
+
+## 사람 필드 표준 패턴
+
+> 작성자·수정자·계획승인자·완료승인자 관련 작업 시 아래 순서를 그대로 따른다.
+
+### 1. DB 컬럼 (Flyway migration 필수)
+| 역할 | 컬럼 4개 세트 |
+|------|--------------|
+| 작성자 | `created_by_user_id BIGINT`, `created_by_name NVARCHAR(100)`, `created_by_team NVARCHAR(100)`, `created_by_position NVARCHAR(50)` |
+| 수정자 | `modified_by_user_id`, `modified_by_name`, `modified_by_team`, `modified_by_position` (동일 타입) |
+| 계획승인자 | `plan_approver_user_id`, `plan_approver_name`, `plan_approver_team`, `plan_approver_position` |
+| 완료승인자 | `completion_approver_user_id`, `completion_approver_name`, `completion_approver_team`, `completion_approver_position` |
+
+### 2. Java Model
+```java
+private Long createdByUserId;
+private String createdByName;
+private String createdByTeam;
+private String createdByPosition;
+// 수정자·승인자도 동일 4개 세트
+```
+
+### 3. MyBatis Mapper XML
+- **resultMap**: `created_by_team → createdByTeam`, `created_by_position → createdByPosition` 매핑 추가
+- **INSERT**: 컬럼/VALUES에 `created_by_team`, `created_by_position` 추가
+- **UPDATE SET**: `modified_by_team = #{modifiedByTeam}`, `modified_by_position = #{modifiedByPosition}` 추가
+- **SELECT**: `SELECT t.*` 만 사용 — `liveUserJoins` / `liveDisplayCols` 절대 금지
+
+### 4. Controller / Service — IdmUser 매핑
+```java
+// IdmUser 메서드 → 필드 매핑
+u.getUidNumber()  → createdByUserId   (Long)
+u.getUserName()   → createdByName
+u.getGroupName()  → createdByTeam     (T_IDM_GROUP.GroupName)
+u.getTitleName()  → createdByPosition (T_IDM_HRCODE.Name where Separator='TITLE')
+```
+- **CREATE**: createdBy 4개 + modifiedBy 4개 모두 현재 로그인 사용자로 설정
+- **UPDATE**: modifiedBy 4개만 현재 로그인 사용자로 갱신
+- 승인자는 프론트에서 선택한 값을 그대로 저장 (컨트롤러에서 덮어쓰지 않음)
+
+### 5. 프론트엔드 표시
+```ts
+// frontend/src/utils/personFormat.ts
+fmtPerson(name, team, position)  // → "팀명 / 성명 직위"
+```
+- 모든 폼 상세/등록/수정 화면에서 작성자·수정자·승인자 표시 시 `fmtPerson` 사용
+
+### 6. 작업 체크리스트 (신규 테이블 추가 시)
+- [ ] Flyway `V{n}__` migration — ALTER TABLE ADD 4개 컬럼 (IF COL_LENGTH 조건부)
+- [ ] Java Model — 4개 필드 추가
+- [ ] Mapper XML — resultMap / INSERT / UPDATE 수정, SELECT에서 liveJoin 제거
+- [ ] Controller 또는 Service — IdmUser에서 team/position 설정
+- [ ] 프론트 폼 — fmtPerson 적용 확인
+
+---
 
 ## 보안 규칙 (납품 전 반드시 해결)
 

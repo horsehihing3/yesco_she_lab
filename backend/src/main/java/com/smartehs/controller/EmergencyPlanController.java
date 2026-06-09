@@ -57,8 +57,12 @@ public class EmergencyPlanController {
             if (idmUser != null) {
                 emergencyPlan.setWriterUserId(idmUser.getUidNumber());
                 emergencyPlan.setWriterName(idmUser.getUserName());
+                emergencyPlan.setWriterTeam(idmUser.getGroupName());
+                emergencyPlan.setWriterPosition(idmUser.getTitleName());
                 emergencyPlan.setModifiedByUserId(idmUser.getUidNumber());
                 emergencyPlan.setModifiedByName(idmUser.getUserName());
+                emergencyPlan.setModifiedByTeam(idmUser.getGroupName());
+                emergencyPlan.setModifiedByPosition(idmUser.getTitleName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(emergencyPlanService.create(emergencyPlan)));
@@ -72,6 +76,8 @@ public class EmergencyPlanController {
             if (idmUser != null) {
                 emergencyPlan.setModifiedByUserId(idmUser.getUidNumber());
                 emergencyPlan.setModifiedByName(idmUser.getUserName());
+                emergencyPlan.setModifiedByTeam(idmUser.getGroupName());
+                emergencyPlan.setModifiedByPosition(idmUser.getTitleName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(emergencyPlanService.update(id, emergencyPlan)));

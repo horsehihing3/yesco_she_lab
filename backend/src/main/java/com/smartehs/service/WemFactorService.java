@@ -85,8 +85,12 @@ public class WemFactorService {
         if (currentUser != null) {
             factor.setCreatedByUserId(currentUser.getUidNumber());
             factor.setCreatedByName(currentUser.getUserName());
+            factor.setCreatedByTeam(currentUser.getGroupName());
+            factor.setCreatedByPosition(currentUser.getTitleName());
             factor.setModifiedByUserId(currentUser.getUidNumber());
             factor.setModifiedByName(currentUser.getUserName());
+            factor.setModifiedByTeam(currentUser.getGroupName());
+            factor.setModifiedByPosition(currentUser.getTitleName());
         }
 
         wemFactorMapper.insert(factor);
@@ -116,6 +120,8 @@ public class WemFactorService {
         if (currentUser != null) {
             factor.setModifiedByUserId(currentUser.getUidNumber());
             factor.setModifiedByName(currentUser.getUserName());
+            factor.setModifiedByTeam(currentUser.getGroupName());
+            factor.setModifiedByPosition(currentUser.getTitleName());
         }
 
         wemFactorMapper.update(factor);

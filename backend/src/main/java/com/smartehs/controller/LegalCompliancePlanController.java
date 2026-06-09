@@ -46,7 +46,12 @@ public class LegalCompliancePlanController {
             @RequestBody LegalCompliancePlan plan, Authentication authentication) {
         if (authentication != null) {
             IdmUser idmUser = idmMapper.findByUid(authentication.getName());
-            if (idmUser != null) { plan.setCreatedByUserId(idmUser.getUidNumber()); plan.setCreatedByName(idmUser.getUserName()); }
+            if (idmUser != null) {
+                plan.setCreatedByUserId(idmUser.getUidNumber());
+                plan.setCreatedByName(idmUser.getUserName());
+                plan.setCreatedByTeam(idmUser.getGroupName());
+                plan.setCreatedByPosition(idmUser.getTitleName());
+            }
         }
         return ResponseEntity.ok(ApiResponse.success(service.create(plan)));
     }
@@ -59,6 +64,8 @@ public class LegalCompliancePlanController {
             if (u != null) {
                 plan.setModifiedByUserId(u.getUidNumber());
                 plan.setModifiedByName(u.getUserName());
+                plan.setModifiedByTeam(u.getGroupName());
+                plan.setModifiedByPosition(u.getTitleName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(service.update(id, plan)));

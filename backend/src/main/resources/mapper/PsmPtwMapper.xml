@@ -26,8 +26,12 @@
         <result property="relatedWoNo" column="related_wo_no"/>
         <result property="createdByUserId" column="created_by_user_id"/>
         <result property="createdByName" column="created_by_name"/>
+        <result property="createdByTeam" column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
         <result property="modifiedByUserId" column="modified_by_user_id"/>
         <result property="modifiedByName" column="modified_by_name"/>
+        <result property="modifiedByTeam" column="modified_by_team"/>
+        <result property="modifiedByPosition" column="modified_by_position"/>
         <result property="deleted" column="deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
@@ -39,7 +43,8 @@
         supervisor_sign, supervisor_signed_at,
         ehs_approver_name, ehs_approved_at, ops_approver_name, ops_approved_at,
         status, reject_reason, related_moc_no, related_wo_no,
-        created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+        created_by_user_id, created_by_name, created_by_team, created_by_position,
+        modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
         deleted, created_at, modified_at
     </sql>
 
@@ -71,7 +76,8 @@
             supervisor_sign, supervisor_signed_at,
             ehs_approver_name, ehs_approved_at, ops_approver_name, ops_approved_at,
             status, reject_reason, related_moc_no, related_wo_no,
-            created_by_user_id, created_by_name, modified_by_user_id, modified_by_name,
+            created_by_user_id, created_by_name, created_by_team, created_by_position,
+            modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
             deleted, created_at, modified_at
         ) VALUES (
             #{ptwNo}, #{permitType}, #{workName}, #{workLocation},
@@ -80,8 +86,8 @@
             #{supervisorSign}, #{supervisorSignedAt},
             #{ehsApproverName}, #{ehsApprovedAt}, #{opsApproverName}, #{opsApprovedAt},
             COALESCE(#{status}, 'DRAFT'), #{rejectReason}, #{relatedMocNo}, #{relatedWoNo},
-            #{createdByUserId,jdbcType=BIGINT}, #{createdByName},
-            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName},
+            #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
             0, GETDATE(), GETDATE())
     </insert>
 
@@ -98,6 +104,8 @@
             related_moc_no = #{relatedMocNo}, related_wo_no = #{relatedWoNo},
             modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
             modified_by_name = #{modifiedByName},
+            modified_by_team = #{modifiedByTeam},
+            modified_by_position = #{modifiedByPosition},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

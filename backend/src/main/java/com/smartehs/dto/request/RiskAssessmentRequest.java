@@ -13,7 +13,10 @@ public class RiskAssessmentRequest {
     private Long formId;
     private String title;
     private String site;
+    private Long authorUserId;
     private String authorName;
+    private String authorTeam;
+    private String authorPosition;
     private String authorDept;
     private String authorMail;
     private String approverName;

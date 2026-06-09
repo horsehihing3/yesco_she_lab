@@ -44,8 +44,12 @@ public class PsmData {
 
     private Long createdByUserId;
     private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private Long modifiedByUserId;
     private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
     private Boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

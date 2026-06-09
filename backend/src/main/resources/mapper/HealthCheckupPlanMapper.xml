@@ -20,41 +20,29 @@
         <result property="createdBy" column="created_by"/>
         <result property="createdByName" column="created_by_name"/>
         <result property="createdByDept" column="created_by_dept"/>
+        <result property="createdByTeam" column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
         <result property="modifiedByUserId" column="modified_by_user_id"/>
         <result property="modifiedByName" column="modified_by_name"/>
+        <result property="modifiedByTeam" column="modified_by_team"/>
+        <result property="modifiedByPosition" column="modified_by_position"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
         <result property="planApproverUserId" column="plan_approver_user_id"/>
-        <result property="planApproverTeam"     column="plan_approver_team_x"/>
-        <result property="planApproverPosition" column="plan_approver_position_x"/>
-        <result property="planApproverName"     column="plan_approver_name_x"/>
+        <result property="planApproverTeam"     column="plan_approver_team"/>
+        <result property="planApproverPosition" column="plan_approver_position"/>
+        <result property="planApproverName"     column="plan_approver_name"/>
         <result property="planApprovedAt" column="plan_approved_at"/>
         <result property="planApprovedBy" column="plan_approved_by"/>
         <result property="completionApproverUserId" column="completion_approver_user_id"/>
-        <result property="completionApproverTeam"     column="completion_approver_team_x"/>
-        <result property="completionApproverPosition" column="completion_approver_position_x"/>
-        <result property="completionApproverName"     column="completion_approver_name_x"/>
+        <result property="completionApproverTeam"     column="completion_approver_team"/>
+        <result property="completionApproverPosition" column="completion_approver_position"/>
+        <result property="completionApproverName"     column="completion_approver_name"/>
         <result property="completionApprovedAt" column="completion_approved_at"/>
         <result property="completionApprovedBy" column="completion_approved_by"/>
         <result property="writer" column="writer"/>
         <result property="rejectReason" column="reject_reason"/>
     </resultMap>
-
-    <sql id="liveUserJoins">
-        LEFT JOIN T_IDM_USER pu ON pu.UIDNumber = t.plan_approver_user_id
-        LEFT JOIN T_IDM_GROUP pg ON pg.GroupCode = pu.DeptCode AND pg.CompanyCode = '0100004'
-        LEFT JOIN T_IDM_USER cu ON cu.UIDNumber = t.completion_approver_user_id
-        LEFT JOIN T_IDM_GROUP cg ON cg.GroupCode = cu.DeptCode AND cg.CompanyCode = '0100004'
-    </sql>
-
-    <sql id="liveDisplayCols">
-        ISNULL(pg.GroupName, t.plan_approver_team)           AS plan_approver_team_x,
-        ISNULL(pu.UserName,  t.plan_approver_name)           AS plan_approver_name_x,
-        ISNULL((SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = pu.TitleCode AND h.Separator = 'TITLE'), t.plan_approver_position)   AS plan_approver_position_x,
-        ISNULL(cg.GroupName, t.completion_approver_team)     AS completion_approver_team_x,
-        ISNULL(cu.UserName,  t.completion_approver_name)     AS completion_approver_name_x,
-        ISNULL((SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = cu.TitleCode AND h.Separator = 'TITLE'), t.completion_approver_position) AS completion_approver_position_x
-    </sql>
 
     <sql id="filterWhere">
         <where>
@@ -65,9 +53,8 @@
     </sql>
 
     <select id="findAllWithPaging" resultMap="HealthCheckupPlanResultMap">
-        SELECT t.*, <include refid="liveDisplayCols"/>
+        SELECT t.*
         FROM tb_health_checkup_plan t
-        <include refid="liveUserJoins"/>
         <include refid="filterWhere"/>
         ORDER BY t.plan_year DESC, t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
@@ -79,9 +66,8 @@
     </select>
 
     <select id="findById" resultMap="HealthCheckupPlanResultMap">
-        SELECT t.*, <include refid="liveDisplayCols"/>
+        SELECT t.*
         FROM tb_health_checkup_plan t
-        <include refid="liveUserJoins"/>
         WHERE t.id = #{id}
     </select>
 
@@ -89,7 +75,7 @@
         INSERT INTO tb_health_checkup_plan
         (plan_year, checkup_type, plan_name, target_dept, target_count, completed_count,
          hazard_factors, hospital, plan_start_date, plan_end_date, status, notes,
-         created_by, created_by_name, created_by_dept,
+         created_by, created_by_name, created_by_dept, created_by_team, created_by_position,
          plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
          completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
          writer,
@@ -97,7 +83,7 @@
         VALUES
         (#{planYear}, #{checkupType}, #{planName}, #{targetDept}, #{targetCount}, #{completedCount},
          #{hazardFactors}, #{hospital}, #{planStartDate}, #{planEndDate}, #{status}, #{notes},
-         #{createdBy}, #{createdByName}, #{createdByDept},
+         #{createdBy}, #{createdByName}, #{createdByDept}, #{createdByTeam}, #{createdByPosition},
          #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
          #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
          #{writer},
@@ -129,6 +115,8 @@
             writer          = #{writer},
             modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
             modified_by_name    = #{modifiedByName},
+            modified_by_team    = #{modifiedByTeam},
+            modified_by_position = #{modifiedByPosition},
             modified_at     = GETDATE()
         WHERE id = #{id}
     </update>

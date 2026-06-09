@@ -1,8 +1,10 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.ContractorPlan;
 import com.smartehs.model.ContractorWorker;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.ContractorPlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +26,7 @@ import java.util.Map;
 public class ContractorPlanController {
 
     private final ContractorPlanService contractorPlanService;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "협력사 계획 전체 목록 조회")
@@ -48,7 +51,17 @@ public class ContractorPlanController {
 
     @PostMapping
     @Operation(summary = "협력사 계획 등록")
-    public ResponseEntity<ApiResponse<ContractorPlan>> create(@RequestBody ContractorPlan plan) {
+    public ResponseEntity<ApiResponse<ContractorPlan>> create(
+            @RequestBody ContractorPlan plan, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                plan.setCreatedByUserId(u.getUidNumber());
+                plan.setCreatedByName(u.getUserName());
+                plan.setCreatedByTeam(u.getGroupName());
+                plan.setCreatedByPosition(u.getTitleName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(contractorPlanService.create(plan)));
     }
 

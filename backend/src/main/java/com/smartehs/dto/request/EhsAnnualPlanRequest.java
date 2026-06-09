@@ -30,6 +30,8 @@ public class EhsAnnualPlanRequest {
     // 수정자 (컨트롤러에서 인증된 사용자로 자동 채움)
     private Long modifiedByUserId;
     private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
 
     // 계획 승인자 (필수)
     private Long planApproverUserId;

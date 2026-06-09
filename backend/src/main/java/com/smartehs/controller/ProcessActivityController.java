@@ -29,9 +29,13 @@ public class ProcessActivityController {
         if (isCreate) {
             req.setCreatedByUserId(u.getUidNumber());
             req.setCreatedByName(u.getUserName());
+            req.setCreatedByTeam(u.getGroupName());
+            req.setCreatedByPosition(u.getTitleName());
         }
         req.setModifiedByUserId(u.getUidNumber());
         req.setModifiedByName(u.getUserName());
+        req.setModifiedByTeam(u.getGroupName());
+        req.setModifiedByPosition(u.getTitleName());
     }
 
     @GetMapping

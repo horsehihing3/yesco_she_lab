@@ -60,6 +60,8 @@ public class LegalComplianceExecController {
             if (u != null) {
                 exec.setCreatedByUserId(u.getUidNumber());
                 exec.setCreatedByName(u.getUserName());
+                exec.setCreatedByTeam(u.getGroupName());
+                exec.setCreatedByPosition(u.getTitleName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(service.create(exec)));
@@ -74,6 +76,8 @@ public class LegalComplianceExecController {
                 exec.setModifiedBy(u.getUserName());
                 exec.setModifiedByUserId(u.getUidNumber());
                 exec.setModifiedByName(u.getUserName());
+                exec.setModifiedByTeam(u.getGroupName());
+                exec.setModifiedByPosition(u.getTitleName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(service.update(id, exec)));

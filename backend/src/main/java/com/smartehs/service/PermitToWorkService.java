@@ -121,6 +121,10 @@ public class PermitToWorkService {
                 .completionApproverTeam(request.getCompletionApproverTeam())
                 .completionApproverPosition(request.getCompletionApproverPosition())
                 .completionApproverName(request.getCompletionApproverName())
+                .createdByUserId(request.getCreatedByUserId())
+                .createdByName(request.getCreatedByName())
+                .createdByTeam(request.getCreatedByTeam())
+                .createdByPosition(request.getCreatedByPosition())
                 .deleted(false)
                 .build();
         mapper.insert(permit);

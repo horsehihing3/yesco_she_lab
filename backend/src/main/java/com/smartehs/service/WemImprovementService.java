@@ -88,8 +88,12 @@ public class WemImprovementService {
         if (currentUser != null) {
             improvement.setCreatedByUserId(currentUser.getUidNumber());
             improvement.setCreatedByName(currentUser.getUserName());
+            improvement.setCreatedByTeam(currentUser.getGroupName());
+            improvement.setCreatedByPosition(currentUser.getTitleName());
             improvement.setModifiedByUserId(currentUser.getUidNumber());
             improvement.setModifiedByName(currentUser.getUserName());
+            improvement.setModifiedByTeam(currentUser.getGroupName());
+            improvement.setModifiedByPosition(currentUser.getTitleName());
         }
 
         wemImprovementMapper.insert(improvement);
@@ -122,6 +126,8 @@ public class WemImprovementService {
         if (currentUser != null) {
             improvement.setModifiedByUserId(currentUser.getUidNumber());
             improvement.setModifiedByName(currentUser.getUserName());
+            improvement.setModifiedByTeam(currentUser.getGroupName());
+            improvement.setModifiedByPosition(currentUser.getTitleName());
         }
 
         wemImprovementMapper.update(improvement);

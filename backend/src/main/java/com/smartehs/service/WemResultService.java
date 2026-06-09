@@ -75,8 +75,12 @@ public class WemResultService {
         if (currentUser != null) {
             result.setCreatedByUserId(currentUser.getUidNumber());
             result.setCreatedByName(currentUser.getUserName());
+            result.setCreatedByTeam(currentUser.getGroupName());
+            result.setCreatedByPosition(currentUser.getTitleName());
             result.setModifiedByUserId(currentUser.getUidNumber());
             result.setModifiedByName(currentUser.getUserName());
+            result.setModifiedByTeam(currentUser.getGroupName());
+            result.setModifiedByPosition(currentUser.getTitleName());
         }
 
         wemResultMapper.insert(result);
@@ -107,6 +111,8 @@ public class WemResultService {
         if (currentUser != null) {
             result.setModifiedByUserId(currentUser.getUidNumber());
             result.setModifiedByName(currentUser.getUserName());
+            result.setModifiedByTeam(currentUser.getGroupName());
+            result.setModifiedByPosition(currentUser.getTitleName());
         }
 
         wemResultMapper.update(result);

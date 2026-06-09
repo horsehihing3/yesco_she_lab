@@ -1,6 +1,8 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.SiteSafetyPlan;
 import com.smartehs.model.SiteSafetyWorker;
 import com.smartehs.service.SiteSafetyPlanService;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class SiteSafetyPlanController {
 
     private final SiteSafetyPlanService svc;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<SiteSafetyPlan>>> findAll(
@@ -43,7 +46,17 @@ public class SiteSafetyPlanController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<SiteSafetyPlan>> create(@RequestBody SiteSafetyPlan plan) {
+    public ResponseEntity<ApiResponse<SiteSafetyPlan>> create(
+            @RequestBody SiteSafetyPlan plan, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                plan.setCreatedByUserId(u.getUidNumber());
+                plan.setCreatedByName(u.getUserName());
+                plan.setCreatedByTeam(u.getGroupName());
+                plan.setCreatedByPosition(u.getTitleName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(svc.create(plan)));
     }
 

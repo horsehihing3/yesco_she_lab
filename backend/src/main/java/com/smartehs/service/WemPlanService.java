@@ -74,8 +74,12 @@ public class WemPlanService {
         if (currentUser != null) {
             plan.setCreatedByUserId(currentUser.getUidNumber());
             plan.setCreatedByName(currentUser.getUserName());
+            plan.setCreatedByTeam(currentUser.getGroupName());
+            plan.setCreatedByPosition(currentUser.getTitleName());
             plan.setModifiedByUserId(currentUser.getUidNumber());
             plan.setModifiedByName(currentUser.getUserName());
+            plan.setModifiedByTeam(currentUser.getGroupName());
+            plan.setModifiedByPosition(currentUser.getTitleName());
         }
 
         wemPlanMapper.insert(plan);
@@ -105,6 +109,8 @@ public class WemPlanService {
         if (currentUser != null) {
             plan.setModifiedByUserId(currentUser.getUidNumber());
             plan.setModifiedByName(currentUser.getUserName());
+            plan.setModifiedByTeam(currentUser.getGroupName());
+            plan.setModifiedByPosition(currentUser.getTitleName());
         }
 
         wemPlanMapper.update(plan);

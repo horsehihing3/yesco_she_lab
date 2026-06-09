@@ -57,7 +57,16 @@ public class AuditController {
 
     @PostMapping
     @Operation(summary = "감사 등록")
-    public ResponseEntity<ApiResponse<Audit>> create(@RequestBody Audit audit) {
+    public ResponseEntity<ApiResponse<Audit>> create(@RequestBody Audit audit, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                audit.setCreatedByUserId(u.getUidNumber());
+                audit.setCreatedByName(u.getUserName());
+                audit.setCreatedByTeam(u.getGroupName());
+                audit.setCreatedByPosition(u.getTitleName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(auditService.create(audit)));
     }
 
@@ -71,6 +80,8 @@ public class AuditController {
             if (u != null) {
                 audit.setModifiedByUserId(u.getUidNumber());
                 audit.setModifiedByName(u.getUserName());
+                audit.setModifiedByTeam(u.getGroupName());
+                audit.setModifiedByPosition(u.getTitleName());
             }
         }
         return ResponseEntity.ok(ApiResponse.success(auditService.update(id, audit)));

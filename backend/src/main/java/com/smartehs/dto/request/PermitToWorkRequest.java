@@ -44,4 +44,9 @@ public class PermitToWorkRequest {
     private String completionApproverTeam;
     private String completionApproverPosition;
     private String completionApproverName;
+    // 작성자
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
 }

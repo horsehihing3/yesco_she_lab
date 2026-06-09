@@ -38,6 +38,8 @@ public class EmergencyPlan {
     // 수정자 (마지막으로 수정한 사용자 — 수정 시 자동 갱신)
     private Long modifiedByUserId;
     private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
 
     // 계획 승인자 (비상계획 탭에서 PENDING_APPROVAL → APPROVED)
     private Long planApproverUserId;

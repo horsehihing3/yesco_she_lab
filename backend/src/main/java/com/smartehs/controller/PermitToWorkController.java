@@ -3,7 +3,9 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.PermitToWorkRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.PermitToWorkResponse;
+import com.smartehs.mapper.IdmMapper;
 import com.smartehs.mapper.PermitWorkerMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.PermitWorker;
 import com.smartehs.service.PermitToWorkService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,6 +27,7 @@ public class PermitToWorkController {
 
     private final PermitToWorkService service;
     private final PermitWorkerMapper permitWorkerMapper;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "작업 허가 전체 조회")
@@ -68,7 +72,18 @@ public class PermitToWorkController {
 
     @PostMapping
     @Operation(summary = "작업 허가 등록")
-    public ResponseEntity<ApiResponse<PermitToWorkResponse>> create(@Valid @RequestBody PermitToWorkRequest request) {
+    public ResponseEntity<ApiResponse<PermitToWorkResponse>> create(
+            @Valid @RequestBody PermitToWorkRequest request,
+            Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                request.setCreatedByUserId(u.getUidNumber());
+                request.setCreatedByName(u.getUserName());
+                request.setCreatedByTeam(u.getGroupName());
+                request.setCreatedByPosition(u.getTitleName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(service.create(request)));
     }
 

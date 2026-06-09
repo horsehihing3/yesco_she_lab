@@ -64,6 +64,8 @@ public class HealthCheckupPlanService {
                 .createdBy(currentUser != null ? currentUser.getUid() : null)
                 .createdByName(currentUser != null ? currentUser.getUserName() : null)
                 .createdByDept(currentUser != null ? (currentUser.getGroupName() != null ? currentUser.getGroupName() : currentUser.getDeptCode()) : null)
+                .createdByTeam(currentUser != null ? currentUser.getGroupName() : null)
+                .createdByPosition(currentUser != null ? currentUser.getTitleName() : null)
                 .planApproverUserId(req.getPlanApproverUserId())
                 .planApproverTeam(req.getPlanApproverTeam())
                 .planApproverPosition(req.getPlanApproverPosition())
@@ -110,6 +112,8 @@ public class HealthCheckupPlanService {
         if (currentUser != null) {
             plan.setModifiedByUserId(currentUser.getUidNumber());
             plan.setModifiedByName(currentUser.getUserName());
+            plan.setModifiedByTeam(currentUser.getGroupName());
+            plan.setModifiedByPosition(currentUser.getTitleName());
         }
 
         mapper.update(plan);

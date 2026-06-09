@@ -9,6 +9,8 @@ import com.smartehs.dto.response.RiskActivityProcessResponse;
 import com.smartehs.dto.response.RiskAssessmentDetailResponse;
 import com.smartehs.dto.response.RiskAssessmentResponse;
 import com.smartehs.dto.response.RiskRegisterResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.RiskAssessmentLog;
 import com.smartehs.service.RiskAssessmentLogService;
 import com.smartehs.service.RiskAssessmentService;
@@ -31,6 +33,7 @@ public class RiskAssessmentController {
 
     private final RiskAssessmentService riskAssessmentService;
     private final RiskAssessmentLogService riskAssessmentLogService;
+    private final IdmMapper idmMapper;
 
     // ==================== Risk Assessment ====================
 
@@ -71,7 +74,20 @@ public class RiskAssessmentController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<RiskAssessmentResponse>> create(@RequestBody RiskAssessmentRequest request) {
+    public ResponseEntity<ApiResponse<RiskAssessmentResponse>> create(
+            @RequestBody RiskAssessmentRequest request,
+            Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                request.setAuthorUserId(u.getUidNumber());
+                request.setAuthorTeam(u.getGroupName());
+                request.setAuthorPosition(u.getTitleName());
+                if (request.getAuthorName() == null || request.getAuthorName().isBlank()) {
+                    request.setAuthorName(u.getUserName());
+                }
+            }
+        }
         RiskAssessmentResponse response = riskAssessmentService.create(request);
         return ResponseEntity.ok(ApiResponse.success("위험성 평가가 생성되었습니다.", response));
     }
