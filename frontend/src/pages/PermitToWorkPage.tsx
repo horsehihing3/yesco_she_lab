@@ -831,28 +831,6 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               </Box>
             </Box>
           )}
-          {/* 첨부파일 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={labelSx}>{t('common.attachments', '첨부파일')}</Typography>
-            <Box sx={{ ...valSx, flexDirection: 'column', gap: 1 }}>
-              <Button variant="outlined" size="small" component="label" startIcon={<AttachFileIcon />}>
-                {t('common.selectFile', '파일 선택')}
-                <input type="file" hidden multiple onChange={(e) => { if (e.target.files) setAttachFiles(prev => [...prev, ...Array.from(e.target.files!)]) }} />
-              </Button>
-              {existingFiles.filter(f => !deletedFileIds.includes(f.id)).map(f => (
-                <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2">{f.fileName}</Typography>
-                  <IconButton size="small" onClick={() => setDeletedFileIds(prev => [...prev, f.id])} color="error"><DeleteIcon fontSize="small" /></IconButton>
-                </Box>
-              ))}
-              {attachFiles.map((f, idx) => (
-                <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2" color="primary">{f.name}</Typography>
-                  <IconButton size="small" onClick={() => setAttachFiles(prev => prev.filter((_, i) => i !== idx))} color="error"><DeleteIcon fontSize="small" /></IconButton>
-                </Box>
-              ))}
-            </Box>
-          </Box>
           {/* External worker rows */}
           {isExternalMode && (
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -895,6 +873,28 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
                 placeholder={t('common.selectFromOrg', '조직도에서 선택')}
                 value={form.completionApproverName || ''} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => { setUserPickTarget('completionApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
+            </Box>
+          </Box>
+          {/* 첨부파일 */}
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Typography sx={labelSx}>{t('common.attachments', '첨부파일')}</Typography>
+            <Box sx={{ ...valSx, flexDirection: 'column', gap: 1 }}>
+              <Button variant="outlined" size="small" component="label" startIcon={<AttachFileIcon />}>
+                {t('common.selectFile', '파일 선택')}
+                <input type="file" hidden multiple onChange={(e) => { if (e.target.files) setAttachFiles(prev => [...prev, ...Array.from(e.target.files!)]) }} />
+              </Button>
+              {existingFiles.filter(f => !deletedFileIds.includes(f.id)).map(f => (
+                <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="body2">{f.fileName}</Typography>
+                  <IconButton size="small" onClick={() => setDeletedFileIds(prev => [...prev, f.id])} color="error"><DeleteIcon fontSize="small" /></IconButton>
+                </Box>
+              ))}
+              {attachFiles.map((f, idx) => (
+                <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="body2" color="primary">{f.name}</Typography>
+                  <IconButton size="small" onClick={() => setAttachFiles(prev => prev.filter((_, i) => i !== idx))} color="error"><DeleteIcon fontSize="small" /></IconButton>
+                </Box>
+              ))}
             </Box>
           </Box>
           {/* 체크리스트 — 맨 아래 */}
@@ -1020,27 +1020,6 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Typography>
             <TextField size="small" fullWidth value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
           </Box>
-          <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
-              {t('common.attachments', '첨부파일')}
-            </Typography>
-            <Button variant="outlined" size="small" component="label" startIcon={<AttachFileIcon />}>
-              {t('common.selectFile', '파일 선택')}
-              <input type="file" hidden multiple onChange={(e) => { if (e.target.files) setAttachFiles(prev => [...prev, ...Array.from(e.target.files!)]) }} />
-            </Button>
-            {existingFiles.filter(f => !deletedFileIds.includes(f.id)).map(f => (
-              <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                <Typography variant="body2">{f.fileName}</Typography>
-                <IconButton size="small" onClick={() => setDeletedFileIds(prev => [...prev, f.id])} color="error"><DeleteIcon fontSize="small" /></IconButton>
-              </Box>
-            ))}
-            {attachFiles.map((f, idx) => (
-              <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                <Typography variant="body2" color="primary">{f.name}</Typography>
-                <IconButton size="small" onClick={() => setAttachFiles(prev => prev.filter((_, i) => i !== idx))} color="error"><DeleteIcon fontSize="small" /></IconButton>
-              </Box>
-            ))}
-          </Box>
           {/* External workers - mobile */}
           {isExternalMode && (
             <Box>
@@ -1069,6 +1048,28 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               </Box>
             </Box>
           )}
+          {/* 첨부파일 - mobile */}
+          <Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
+              {t('common.attachments', '첨부파일')}
+            </Typography>
+            <Button variant="outlined" size="small" component="label" startIcon={<AttachFileIcon />}>
+              {t('common.selectFile', '파일 선택')}
+              <input type="file" hidden multiple onChange={(e) => { if (e.target.files) setAttachFiles(prev => [...prev, ...Array.from(e.target.files!)]) }} />
+            </Button>
+            {existingFiles.filter(f => !deletedFileIds.includes(f.id)).map(f => (
+              <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                <Typography variant="body2">{f.fileName}</Typography>
+                <IconButton size="small" onClick={() => setDeletedFileIds(prev => [...prev, f.id])} color="error"><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            ))}
+            {attachFiles.map((f, idx) => (
+              <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                <Typography variant="body2" color="primary">{f.name}</Typography>
+                <IconButton size="small" onClick={() => setAttachFiles(prev => prev.filter((_, i) => i !== idx))} color="error"><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            ))}
+          </Box>
           {/* Checklist + Inspector - mobile (맨 아래) */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
