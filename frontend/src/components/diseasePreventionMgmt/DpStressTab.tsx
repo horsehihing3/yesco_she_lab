@@ -230,7 +230,7 @@ const DpStressTab: React.FC = () => {
                   <TableCell sx={{ fontWeight: 'bold' }}>부서</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 120 }}>KOSS-26 총점</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 100 }}>위험도</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', width: 100 }}>평가일</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 'bold', width: 120, whiteSpace: 'nowrap' }}>평가일</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold', width: 90 }}>상담</TableCell>
                 </TableRow>
               </TableHead>
@@ -250,7 +250,7 @@ const DpStressTab: React.FC = () => {
                         </Stack>
                       </TableCell>
                       <TableCell align="center"><Chip size="small" label={x.riskLevel || '-'} color={riskColor(x.riskLevel)} /></TableCell>
-                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{x.assessmentDate || '-'}</TableCell>
+                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>{x.assessmentDate || '-'}</TableCell>
                       <TableCell align="center">{x.hasCounseling ? <Chip size="small" label={t('dpStressTab.label5', '진행중')} color="info" /> : '-'}</TableCell>
                     </TableRow>
                   )

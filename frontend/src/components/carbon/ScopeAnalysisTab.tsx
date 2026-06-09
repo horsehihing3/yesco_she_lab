@@ -84,8 +84,7 @@ const ScopeAnalysisTab: React.FC = () => {
               sx={{
                 p: 3,
                 bgcolor: paperBg,
-                borderLeft: 4,
-                borderColor: SCOPE_COLORS[card.scope],
+                borderLeft: 4, borderColor: SCOPE_COLORS[card.scope], borderLeftColor: SCOPE_COLORS[card.scope],
               }}
             >
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>

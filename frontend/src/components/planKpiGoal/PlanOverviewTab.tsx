@@ -99,7 +99,7 @@ const PlanOverviewTab: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {kpiCards.map((card, idx) => (
           <Grid item xs={6} md={3} key={idx}>
-            <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Paper sx={(theme: any) => ({ p: 2, display: 'flex', alignItems: 'center', gap: 2, ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
               <Box sx={{ color: card.color, display: 'flex', alignItems: 'center' }}>
                 {card.icon}
               </Box>
@@ -116,7 +116,7 @@ const PlanOverviewTab: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {/* Left: KPI Achievement Status */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, height: '100%' }}>
+          <Paper sx={(theme: any) => ({ p: 2, height: '100%', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               {t('pkg.kpiAchievementStatus')}
             </Typography>

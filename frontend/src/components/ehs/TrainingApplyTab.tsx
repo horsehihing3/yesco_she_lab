@@ -171,7 +171,7 @@ const TrainingApplyTab: React.FC = () => {
           { label: t('training.kpiHours', '올해 이수시간'),      value: `${kpi.hours}h / 16h`, color: '#10b981' },
         ].map((c, i) => (
           <Grid item xs={6} md={3} key={i}>
-            <Paper sx={{ p: 2, borderLeft: 4, borderColor: c.color }}>
+            <Paper sx={(theme: any) => ({ p: 2, borderLeft: 4, borderColor: c.color, borderLeftColor: c.color, ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: c.color }) })}>
               <Typography variant="caption" color="text.secondary">{c.label}</Typography>
               <Typography variant="h5" fontWeight="bold">{c.value}</Typography>
             </Paper>
@@ -246,7 +246,7 @@ const TrainingApplyTab: React.FC = () => {
             const full = pct >= 100 || c.status === 'CLOSED' || c.status === 'ENDED'
             return (
               <Grid item xs={12} sm={6} md={4} key={c.id}>
-                <Paper sx={{ overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Paper sx={(theme: any) => ({ overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
                   <Box sx={{ bgcolor: CARD_BANNER, color: '#fff', p: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Chip label={getCategoryLabel(c.category || '') || c.category || ''} size="small"
                       sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: '#fff', fontWeight: 'bold', height: 22 }} />

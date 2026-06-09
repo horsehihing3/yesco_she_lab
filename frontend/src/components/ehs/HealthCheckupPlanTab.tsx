@@ -410,7 +410,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
             { label: t('healthCheckupPlan.kpiCompleted', '완료'),    value: completedCount, color: '#22c55e' },
           ].map((card, idx) => (
             <Grid item xs={6} md={3} key={idx}>
-              <Paper sx={{ p: 2, borderLeft: 4, borderColor: card.color }}>
+              <Paper sx={{ p: 2, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color}}>
                 <Typography variant="caption" color="text.secondary">{card.label}</Typography>
                 <Typography variant="h5" fontWeight="bold">{card.value}</Typography>
               </Paper>

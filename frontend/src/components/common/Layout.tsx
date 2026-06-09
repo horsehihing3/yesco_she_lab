@@ -19,10 +19,10 @@ const Layout: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileToolsOpen, setMobileToolsOpen] = useState(false)
   const { isDarkMode, isYescoMode } = useThemeMode()
-  // 라이트/예스코 모드 = 흰색 AppBar + 어두운 아이콘 / 다크 모드 = 어두운 AppBar + 흰색 아이콘
-  const appBarBg = isDarkMode ? '#09090b' : '#ffffff'
-  const appBarText = isDarkMode ? '#ffffff' : '#0f172a'
-  const appBarBorder = isDarkMode ? '1px solid #27272a' : '1px solid #e5e7eb'
+  // 다크 모드만 별도 검정 / 라이트·예스코 = 어두운 네이비 (공통) + 흰색 아이콘
+  const appBarBg = isDarkMode ? '#09090b' : '#0f172a'
+  const appBarText = '#ffffff'
+  const appBarBorder = isDarkMode ? '1px solid #27272a' : 'none'
   const theme = useTheme()
   const navigate = useNavigate()
 
@@ -89,7 +89,7 @@ const Layout: React.FC = () => {
             sx={{
               display: { xs: 'flex', md: 'none' },
               color: appBarText,
-              '&:hover': { backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' },
+              '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
             }}
           >
             {mobileToolsOpen ? <CloseIcon /> : <MoreVertIcon />}

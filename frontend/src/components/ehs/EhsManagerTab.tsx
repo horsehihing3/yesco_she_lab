@@ -252,14 +252,13 @@ const EhsManagerTab: React.FC = () => {
             disableGutters
             elevation={0}
             sx={{
-              mb: 1,
-              border: 1,
-              borderColor: 'divider',
-              borderRadius: '4px !important',
+              mb: 1, border: 1, borderColor: 'divider', borderRadius: 0, overflow: 'hidden',
               '&:before': { display: 'none' },
+              '&:first-of-type': { borderRadius: 0 },
+              '&:last-of-type': { borderRadius: 0 },
             }}
           >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: 'grey.50', fontWeight: 'bold' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: 'grey.50', fontWeight: 'bold', borderBottom: 1, borderColor: 'divider' }}>
               <Typography fontWeight="bold">{getCategoryTitle(category)}</Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ p: 0 }}>

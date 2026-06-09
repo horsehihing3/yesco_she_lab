@@ -1364,14 +1364,14 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
         <>
           {/* PC Layout */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
-            <Paper sx={{ width: 320, flexShrink: 0, overflow: 'auto' }}>
+            <Paper sx={(theme: any) => ({ width: 320, flexShrink: 0, overflow: 'auto', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
               <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">{t('factory.selectWorkplace')}</Typography>
                 {renderSiteAddButton()}
               </Box>
               <Box sx={{ p: 1 }}>{renderBuildingTree()}</Box>
             </Paper>
-            <Paper sx={{ flex: 1, p: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Paper sx={(theme: any) => ({ flex: 1, p: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
               <Alert severity="info" sx={{ width: '100%' }}>
                 트리에서 사업장을 선택하고 사업장 노드의 <strong>+</strong> 버튼을 눌러 도면을 추가하세요.
               </Alert>
@@ -1408,7 +1408,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           {/* PC Layout */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
             {/* Left Panel - 사업장/층 선택 */}
-            <Paper sx={{ width: 320, flexShrink: 0, overflow: 'auto' }}>
+            <Paper sx={(theme: any) => ({ width: 320, flexShrink: 0, overflow: 'auto', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
               <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">
                   {t('factory.selectWorkplace')}
@@ -1421,7 +1421,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
             </Paper>
 
             {/* Right Panel - 도면 표시 */}
-            <Paper sx={{ flex: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
+            <Paper sx={(theme: any) => ({ flex: 1, p: 3, display: 'flex', flexDirection: 'column', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                 <Box>
                   <Typography variant="h6" fontWeight="bold">

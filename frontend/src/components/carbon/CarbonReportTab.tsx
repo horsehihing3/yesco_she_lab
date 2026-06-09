@@ -106,8 +106,7 @@ const CarbonReportTab: React.FC = () => {
               sx={{
                 p: 3,
                 bgcolor: paperBg,
-                borderLeft: 4,
-                borderColor: card.color,
+                borderLeft: 4, borderColor: card.color, borderLeftColor: card.color,
               }}
             >
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>

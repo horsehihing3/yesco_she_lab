@@ -79,7 +79,7 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
   const yescoNavy = '#0F2147'
   const yescoNavyDeep = '#0A1733'
   const yescoRed = '#E60012'
-  return createTheme({
+  const theme = createTheme({
     palette: {
       mode,
       primary: {
@@ -214,14 +214,9 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
           root: {
             boxShadow: mode === 'light' ? '0 1px 3px rgba(0,0,0,0.12)' : 'none',
             backgroundColor: mode === 'light' ? colors.surface : colors.sidebarBrand,
-            backgroundImage: 'none',
-            // YESCO: 흰색 배경 + 하단 LS Red 강조선 (네이비 그라데이션 제거)
+            // YESCO: 라이트와 공통 어두운 AppBar + 하단 LS Red 강조선 (브랜드 표식)
             ...(isYesco && {
-              backgroundColor: '#ffffff',
-              backgroundImage: 'none',
               borderBottom: `3px solid ${yescoRed}`,
-              boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-              color: '#0f172a',
             }),
           },
         },
@@ -243,7 +238,16 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
             borderColor: colors.border,
             ...(isYesco && {
               borderColor: yescoNavy,
+              // 좌측 색띠 카드 (inline `borderColor: card.color` 패턴) 의 위·우·아래 면을 yesco navy 로 덮어씀.
+              // 좌측은 inline 의 `borderLeftColor` 또는 4 면 shorthand 가 적용되어 카드 색 유지
+              borderTopColor: `${yescoNavy} !important`,
+              borderRightColor: `${yescoNavy} !important`,
+              borderBottomColor: `${yescoNavy} !important`,
             }),
+            // 내부 TableContainer 가 모서리에서 살짝 튀어나오는 현상 방지 — Paper 둥근 모서리에 맞춰 자식 잘림
+            '&:has(.MuiTableContainer-root)': {
+              overflow: 'hidden',
+            },
           },
         },
       },
@@ -547,6 +551,8 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
       },
     },
   })
+  ;(theme as any).isYesco = isYesco
+  return theme
 }
 
 export const createLightTheme = (): Theme => createBaseTheme(lightColors, 'light', 'light')

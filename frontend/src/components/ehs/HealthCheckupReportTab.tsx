@@ -102,7 +102,7 @@ const HealthCheckupReportTab: React.FC<Props> = ({ allowedTypes, title }) => {
           { label: t('healthCheckupReport.overallRate', '전체 수검률'), value: `${totals.overallRate}%`, color: '#f59e0b' },
         ].map((c, i) => (
           <Grid item xs={6} md={3} key={i}>
-            <Paper sx={{ p: 2, borderLeft: 4, borderColor: c.color }}>
+            <Paper sx={{ p: 2, borderLeft: 4, borderColor: c.color, borderLeftColor: c.color}}>
               <Typography variant="caption" color="text.secondary">{c.label}</Typography>
               <Typography variant="h5" fontWeight="bold">{c.value}</Typography>
             </Paper>

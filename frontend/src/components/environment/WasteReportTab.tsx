@@ -120,7 +120,7 @@ const WasteReportTab: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {statCards.map((card, idx) => (
           <Grid item xs={6} md={3} key={idx}>
-            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, borderLeft: 4, borderColor: card.color }}>
+            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color}}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>{card.label}</Typography>
               <Typography variant="h5" fontWeight="bold">{card.value}</Typography>
             </Paper>

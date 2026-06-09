@@ -125,7 +125,7 @@ const EhsBudgetCompareTab: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {kpiCards.map((card, idx) => (
           <Grid item xs={12} md={2.4} key={idx}>
-            <Paper sx={{ p: 2.5, borderLeft: 4, borderColor: card.color }}>
+            <Paper sx={(theme: any) => ({ p: 2.5, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color, ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: card.color }) })}>
               <Typography variant="body2" color="text.secondary">{card.label}</Typography>
               <Typography fontWeight="bold" sx={{ mt: 0.75, fontSize: { xs: '1.75rem', md: '2.25rem' }, lineHeight: 1.2 }}>
                 {card.value}
@@ -138,7 +138,7 @@ const EhsBudgetCompareTab: React.FC = () => {
       {/* Single category bar chart (분기별 누적 차트는 분기 폐기로 제거) */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12}>
-          <Paper sx={{ p: 2, height: '100%' }}>
+          <Paper sx={(theme: any) => ({ p: 2, height: '100%', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               {t('budget.compareTitle', '분류별 집행 현황')}
             </Typography>

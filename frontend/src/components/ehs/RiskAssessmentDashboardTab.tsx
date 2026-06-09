@@ -21,7 +21,7 @@ const STATUS_DEFAULTS: Record<string, string> = {
 }
 
 const KpiCard: React.FC<{ label: string; value: number | string; color?: string }> = ({ label, value, color = CHART_COLORS.blue }) => (
-  <Paper sx={{ p: 2.5, borderLeft: 4, borderColor: color }}>
+  <Paper sx={(theme: any) => ({ p: 2.5, borderLeft: 4, borderColor: color, borderLeftColor: color, ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: color }) })}>
     <Typography variant="caption" color="text.secondary">{label}</Typography>
     <Typography variant="h4" fontWeight="bold" sx={{ mt: 0.5 }}>{value}</Typography>
   </Paper>

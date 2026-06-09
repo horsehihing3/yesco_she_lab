@@ -271,25 +271,25 @@ const WarehouseTab: React.FC = () => {
       {/* Metrics */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.warehouse.totalWarehouse')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="primary.main">{warehouseCount}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.warehouse.storedItems')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="info.main">{totalItems}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.warehouse.hazardWarehouse')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="error.main">{hazardousCount}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.erp.expiringSoon')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="warning.main">{expiringCount}</Typography>
           </Paper>

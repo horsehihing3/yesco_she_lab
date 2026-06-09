@@ -208,7 +208,7 @@ const TrainingCourseTab: React.FC = () => {
             { label: t('trainingCourse.kpiLegal', '법정필수'),  value: legalCount, color: '#ef4444' },
           ].map((c, i) => (
             <Grid item xs={4} key={i}>
-              <Paper sx={{ p: 2, borderLeft: 4, borderColor: c.color }}>
+              <Paper sx={(theme: any) => ({ p: 2, borderLeft: 4, borderColor: c.color, borderLeftColor: c.color, ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: c.color }) })}>
                 <Typography variant="caption" color="text.secondary">{c.label}</Typography>
                 <Typography variant="h5" fontWeight="bold">{c.value}</Typography>
               </Paper>
