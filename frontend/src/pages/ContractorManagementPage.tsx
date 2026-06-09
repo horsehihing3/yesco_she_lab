@@ -1,5 +1,6 @@
 ﻿import { formatUserName } from '../utils/userDisplay'
 import React, { useState, useEffect, useRef } from 'react'
+import { fmtPerson } from '../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {

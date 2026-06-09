@@ -1,5 +1,6 @@
 ﻿import { formatUserName } from '../utils/userDisplay'
 import { useState, useRef, useEffect, useMemo } from 'react'
+import { fmtPerson } from '../utils/personFormat'
 import { useButtonRules } from '../hooks/useButtonRules'
 import { Role } from '../data/buttonManageData'
 import { fmtPhone } from '../utils/phoneFormat'

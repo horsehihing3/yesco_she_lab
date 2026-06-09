@@ -50,7 +50,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/actuator/health",
                                 "/files/**",
-                                "/translation/**"
+                                "/translation/**",
+                                "/osh-sign/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -105,7 +105,7 @@ const years = Array.from({ length: 5 }, (_, i) => currentYear - i)
 const quarterOptions = ['전체', '1분기', '2분기', '3분기', '4분기']
 
 const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
-  menuPath = 'EHS경영 › 커뮤니케이션 › 산업안전보건 위원회',
+  menuPath = 'EHS 경영 › 커뮤니케이션 › 산업안전보건 위원회',
 }) => {
   const queryClient = useQueryClient()
   const { t } = useTranslation()
@@ -157,6 +157,14 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
   // 참석자 추가 모달
   const [attendeeDialogOpen, setAttendeeDialogOpen] = useState(false)
+  // 상세 화면 — 본인 서명 다이얼로그
+  const [signDialogOpen, setSignDialogOpen] = useState(false)
+  const [signingAttendeeId, setSigningAttendeeId] = useState<number | null>(null)
+  const [tempSignature, setTempSignature] = useState('')
+  const [signSaving, setSignSaving] = useState(false)
+  // 이메일 서명 링크 발송 상태
+  const [sendingLinks, setSendingLinks] = useState(false)
+  const [linksSent, setLinksSent] = useState(false)
 
   const { user } = useAuth()
   const { canSee } = useButtonRules()
@@ -321,6 +329,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
   const handleRowClick = (committee: OSHCommittee) => {
     setSelectedCommittee(committee)
+    setLinksSent(false)
     setViewMode('detail')
   }
 
@@ -365,6 +374,58 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
     )
     if (confirmed && selectedCommittee) {
       deleteMutation.mutate(selectedCommittee.id)
+    }
+  }
+
+  // 상세 화면 — 현재 로그인 사용자와 참석자 행 매칭
+  const isMyRow = (attendee: any): boolean => {
+    if (!user) return false
+    const mail: string = attendee.attendeeMail || ''
+    if (user.email && mail === user.email) return true
+    if (user.username && mail.startsWith(user.username + '@')) return true
+    return user.name === attendee.attendeeName
+  }
+
+  const handleSignClick = (attendeeId: number) => {
+    setSigningAttendeeId(attendeeId)
+    setTempSignature('')
+    setSignDialogOpen(true)
+  }
+
+  const handleSignSave = async () => {
+    if (!signingAttendeeId || !selectedCommittee) return
+    setSignSaving(true)
+    try {
+      await axiosInstance.patch(
+        `/osh-committees/${selectedCommittee.id}/attendees/${signingAttendeeId}/signature`,
+        { signatureImage: tempSignature }
+      )
+      queryClient.invalidateQueries({ queryKey: ['oshCommitteeDetail'] })
+      setSignDialogOpen(false)
+      await showSuccess('서명이 저장됐습니다.')
+    } catch {
+      showError('서명 저장에 실패했습니다.')
+    } finally {
+      setSignSaving(false)
+    }
+  }
+
+  const handleSendSignLinks = async () => {
+    if (!selectedCommittee) return
+    const msg = linksSent
+      ? '이미 발송했습니다. 다시 발송하겠습니까?'
+      : '참석자들에게 이메일 서명 링크를 발송하시겠습니까?'
+    const confirmed = await showConfirm(msg)
+    if (!confirmed) return
+    setSendingLinks(true)
+    try {
+      const res = await axiosInstance.post(`/osh-committees/${selectedCommittee.id}/send-sign-links`)
+      setLinksSent(true)
+      await showSuccess(res.data.message || '서명 링크를 발송했습니다.')
+    } catch {
+      showError('서명 링크 발송에 실패했습니다.')
+    } finally {
+      setSendingLinks(false)
     }
   }
 
@@ -421,6 +482,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         // 이메일 누락 시 unique placeholder — backend 가 attendeeMail 로 dedup
         userEmail: u.email || (u.username ? `${u.username}@hankook.com` : `user-${u.id}@hankook.com`),
         dept: u.department,
+        phone: u.phone,
       }))
     if (additions.length === 0) return
 
@@ -690,9 +752,20 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                         </TableCell>
                         <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider', fontFamily: 'monospace', width: 140 }}>{(attendee as any).attendeePhone || ''}</TableCell>
                         <TableCell align="center" sx={{ p: 0.5 }}>
-                          {(attendee as any).signatureImage
-                            ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={60} maxWidth={180} style={{ display: 'block', margin: '0 auto' }} />
-                            : ''}
+                          {isMyRow(attendee) ? (
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                              {(attendee as any).signatureImage && (
+                                <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={60} maxWidth={180} style={{ display: 'block' }} />
+                              )}
+                              <Button size="small" variant="outlined" onClick={() => handleSignClick(attendee.id)}>
+                                {(attendee as any).signatureImage ? '재서명' : '서명하기'}
+                              </Button>
+                            </Box>
+                          ) : (
+                            (attendee as any).signatureImage
+                              ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={60} maxWidth={180} style={{ display: 'block', margin: '0 auto' }} />
+                              : ''
+                          )}
                         </TableCell>
                       </TableRow>
                     ))
@@ -704,6 +777,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ width: 'auto' }}>{t('common.backToList')}</Button>
+              {canEdit && (
+                <Button variant="contained" color="info" onClick={handleSendSignLinks} disabled={sendingLinks} sx={{ width: 'auto' }}>
+                  {sendingLinks ? '발송 중...' : '발송'}
+                </Button>
+              )}
               {canEdit && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
               )}
@@ -789,9 +867,20 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                           </Typography>
                         )}
                       </Box>
-                      {(attendee as any).signatureImage
-                        ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={40} maxWidth={120} style={{ marginLeft: 8 }} />
-                        : null}
+                      {isMyRow(attendee) ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5, ml: 1 }}>
+                          {(attendee as any).signatureImage && (
+                            <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={40} maxWidth={120} />
+                          )}
+                          <Button size="small" variant="outlined" onClick={() => handleSignClick(attendee.id)}>
+                            {(attendee as any).signatureImage ? '재서명' : '서명하기'}
+                          </Button>
+                        </Box>
+                      ) : (
+                        (attendee as any).signatureImage
+                          ? <SignatureImage src={(attendee as any).signatureImage} alt="signature" maxHeight={40} maxWidth={120} style={{ marginLeft: 8 }} />
+                          : null
+                      )}
                     </Box>
                   )
                 })
@@ -799,8 +888,13 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             </Box>
 
             {/* Action Buttons */}
-            <Box sx={{ display: 'flex', gap: 1, mt: 3 }}>
+            <Box sx={{ display: 'flex', gap: 1, mt: 3, flexWrap: 'wrap' }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1 }}>{t('common.backToList')}</Button>
+              {canEdit && (
+                <Button variant="contained" color="info" onClick={handleSendSignLinks} disabled={sendingLinks} sx={{ flex: 1 }}>
+                  {sendingLinks ? '발송 중...' : '발송'}
+                </Button>
+              )}
               {canEdit && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('common.edit')}</Button>
               )}
@@ -1146,6 +1240,20 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         useCompanyTree
         title={t('common.attendeeAdd')}
       />
+
+      {/* 본인 서명 다이얼로그 */}
+      <Dialog open={signDialogOpen} onClose={() => setSignDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>서명하기</DialogTitle>
+        <DialogContent dividers>
+          <SignaturePad value={tempSignature} onChange={setTempSignature} />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={() => setSignDialogOpen(false)}>취소</Button>
+          <Button variant="contained" onClick={handleSignSave} disabled={signSaving || !tempSignature}>
+            저장
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* 외부 참석자 입력 다이얼로그 — 프로젝트 공통 폼테이블 */}
       <Dialog open={externalDialogOpen} onClose={() => setExternalDialogOpen(false)} maxWidth="sm" fullWidth>

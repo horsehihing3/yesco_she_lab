@@ -29,14 +29,7 @@ const ThemeSelector: React.FC = () => {
   return (
     <>
       <Tooltip title={t('theme.select', '테마 선택')}>
-        <IconButton
-          onClick={handleClick}
-          size="small"
-          sx={{
-            color: 'white',
-            '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
-          }}
-        >
+        <IconButton color="inherit" onClick={handleClick} size="small">
           <PaletteIcon />
         </IconButton>
       </Tooltip>

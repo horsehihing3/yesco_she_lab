@@ -77,17 +77,12 @@ const Header: React.FC = () => {
         {/* Emergency Exit Compass */}
         <Tooltip title={t('dashboard.emergencyExit')}>
           <IconButton
+            color="inherit"
             onClick={() => {
               const host = window.location.hostname
               window.open(`https://${host}:7502`, '_blank')
             }}
             size="small"
-            sx={{
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(255,255,255,0.1)',
-              },
-            }}
           >
             <ExploreIcon />
           </IconButton>

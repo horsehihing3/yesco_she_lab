@@ -1,5 +1,6 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState, useMemo } from 'react'
+import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, TextField, Button, Table, TableBody, TableCell,

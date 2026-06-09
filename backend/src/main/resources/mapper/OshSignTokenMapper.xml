@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.OshSignTokenMapper">
+
+    <resultMap id="OshSignTokenResultMap" type="com.smartehs.model.OshSignToken">
+        <result column="id"            property="id"/>
+        <result column="token"         property="token"/>
+        <result column="committee_id"  property="committeeId"/>
+        <result column="attendee_id"   property="attendeeId"/>
+        <result column="attendee_name" property="attendeeName"/>
+        <result column="attendee_mail" property="attendeeMail"/>
+        <result column="used"          property="used"/>
+        <result column="expires_at"    property="expiresAt"/>
+        <result column="created_at"    property="createdAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.smartehs.model.OshSignToken">
+        INSERT INTO tb_osh_sign_token
+            (token, committee_id, attendee_id, attendee_name, attendee_mail, used, expires_at)
+        VALUES
+            (#{token}, #{committeeId}, #{attendeeId}, #{attendeeName}, #{attendeeMail}, 0, #{expiresAt})
+    </insert>
+
+    <select id="findByToken" resultMap="OshSignTokenResultMap">
+        SELECT id, token, committee_id, attendee_id, attendee_name, attendee_mail,
+               used, expires_at, created_at
+        FROM tb_osh_sign_token
+        WHERE token = #{token}
+    </select>
+
+    <update id="markUsed">
+        UPDATE tb_osh_sign_token SET used = 1 WHERE token = #{token}
+    </update>
+
+</mapper>

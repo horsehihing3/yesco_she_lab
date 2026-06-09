@@ -214,11 +214,14 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
           root: {
             boxShadow: mode === 'light' ? '0 1px 3px rgba(0,0,0,0.12)' : 'none',
             backgroundColor: mode === 'light' ? colors.surface : colors.sidebarBrand,
-            // YESCO: 진한 네이비 그라데이션 + 하단 LS Red 강조선
+            backgroundImage: 'none',
+            // YESCO: 흰색 배경 + 하단 LS Red 강조선 (네이비 그라데이션 제거)
             ...(isYesco && {
-              backgroundImage: `linear-gradient(135deg, ${yescoNavyDeep} 0%, ${yescoNavy} 60%, #163267 100%)`,
+              backgroundColor: '#ffffff',
+              backgroundImage: 'none',
               borderBottom: `3px solid ${yescoRed}`,
-              boxShadow: '0 2px 12px -2px rgba(15,33,71,0.35)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+              color: '#0f172a',
             }),
           },
         },

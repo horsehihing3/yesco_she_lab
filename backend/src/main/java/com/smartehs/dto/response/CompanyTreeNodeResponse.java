@@ -22,6 +22,7 @@ public class CompanyTreeNodeResponse {
     private String department;
     private String position;
     private String company;
+    private String phone;
 
     private List<CompanyTreeNodeResponse> children;
 }

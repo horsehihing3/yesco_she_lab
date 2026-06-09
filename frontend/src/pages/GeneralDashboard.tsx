@@ -6,6 +6,8 @@ import {
   Box, Paper, Typography, Select, MenuItem, IconButton, Chip, Tooltip as MuiTooltip, Button,
 } from '@mui/material'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import CloseIcon from '@mui/icons-material/Close'
+import WbSunnyIcon from '@mui/icons-material/WbSunny'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import {
@@ -229,7 +231,7 @@ const useRadialCards = () => {
     { title: t('generalDashboard.accidentCount'), value: accidentCount, ratio: arc(accidentCount), color: '#EF4444', onTitleClick: () => navigate('/near-miss?incidentType=ACCIDENT') },
     { title: t('generalDashboard.nearMissCount'), value: nearMissCount, ratio: arc(nearMissCount), color: '#F59E0B', onTitleClick: () => navigate('/near-miss?incidentType=NEAR_MISS') },
     { title: t('generalDashboard.safetyWorkCount'), value: safetyWorkCount, ratio: arc(safetyWorkCount), color: '#10B981', onTitleClick: () => navigate('/safety-work') },
-    { title: t('generalDashboard.documentCount'), value: documentCount, ratio: arc(documentCount), color: '#3B82F6', onTitleClick: () => navigate('/ehs?tab=0') },
+    { title: t('generalDashboard.documentCount'), value: documentCount, ratio: arc(documentCount), color: '#3B82F6', onTitleClick: () => navigate('/ehs?menuKey=nav.ehsDocument') },
   ]
 }
 
@@ -908,8 +910,7 @@ const EhsPlanDashboard = () => {
                 <MuiTooltip title={plan.title} placement="top">
                   <Typography
                     variant="caption"
-                    onClick={() => navigate('/ehs?tab=1')}
-                    sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, cursor: 'pointer' }}
+                    sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}
                   >
                     {plan.title}
                   </Typography>
@@ -951,10 +952,11 @@ const EhsPlanDashboard = () => {
 const GeneralDashboard: React.FC = () => {
   const { t } = useTranslation()
   const radialCards = useRadialCards()
+  const [weatherVisible, setWeatherVisible] = useState(true)
 
   return (
     <Box sx={{ p: 0, position: 'relative' }}>
-      {/* 날씨/온도 위젯 — 지도형 대시보드와 동일하게 플로팅(우측 하단 고정) */}
+      {/* 날씨/온도 위젯 — 우측 하단 플로팅 + 토글 */}
       <Box
         sx={{
           position: 'fixed',
@@ -963,7 +965,49 @@ const GeneralDashboard: React.FC = () => {
           zIndex: 1200,
         }}
       >
-        <WeatherWidget isMobile={false} />
+        {weatherVisible ? (
+          <Box sx={{ position: 'relative' }}>
+            <IconButton
+              size="small"
+              onClick={() => setWeatherVisible(false)}
+              aria-label="hide weather widget"
+              sx={{
+                position: 'absolute',
+                top: -10,
+                right: -10,
+                zIndex: 1,
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
+                boxShadow: 1,
+                width: 24,
+                height: 24,
+                '&:hover': { bgcolor: 'action.hover' },
+              }}
+            >
+              <CloseIcon sx={{ fontSize: 14 }} />
+            </IconButton>
+            <WeatherWidget isMobile={false} />
+          </Box>
+        ) : (
+          <MuiTooltip title={t('generalDashboard.showWeather', '날씨 위젯 보기')} arrow>
+            <IconButton
+              onClick={() => setWeatherVisible(true)}
+              aria-label="show weather widget"
+              sx={{
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
+                boxShadow: 2,
+                width: 44,
+                height: 44,
+                '&:hover': { bgcolor: 'action.hover' },
+              }}
+            >
+              <WbSunnyIcon sx={{ color: 'warning.main' }} />
+            </IconButton>
+          </MuiTooltip>
+        )}
       </Box>
 
       {/* EHS 예산 개요 - 분기별 집행 현황 */}

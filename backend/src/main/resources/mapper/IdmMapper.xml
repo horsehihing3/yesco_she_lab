@@ -34,13 +34,14 @@
         <result column="UserRole" property="userRole"/>
         <result column="GroupName" property="groupName"/>
         <result column="titleName" property="titleName"/>
+        <result column="Mobile" property="mobile"/>
     </resultMap>
 
     <!-- 부서명(GroupName) + 직위명(titleName)을 포함한 사용자 조회용 공통 SELECT -->
     <sql id="userWithGroupCols">
         i.UIDNumber, i.CompanyCode, i.DeptCode, i.UserName,
         i.Email, i.UID, i.UserStatus, i.ObjectCategory, i.Password, i.UserRole,
-        g.GroupName,
+        i.Mobile, g.GroupName,
         (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = i.TitleCode AND h.Separator = 'TITLE') AS titleName
     </sql>
 
@@ -68,7 +69,7 @@
 
     <select id="findActiveEmployees" resultMap="IdmUserResultMap">
         SELECT UIDNumber, CompanyCode, DeptCode, UserName,
-               Email, UID, UserStatus, ObjectCategory, Password, UserRole,
+               Email, UID, UserStatus, ObjectCategory, Password, UserRole, Mobile,
                (SELECT TOP 1 h.Name FROM T_IDM_HRCODE h WHERE h.HRCode = i.TitleCode AND h.Separator = 'TITLE') AS titleName
         FROM T_IDM_USER i
         WHERE UserStatus = '10'

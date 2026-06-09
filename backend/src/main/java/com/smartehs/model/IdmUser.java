@@ -18,4 +18,5 @@ public class IdmUser {
     private String groupName;
     // T_IDM_HRCODE JOIN으로 조회되는 직위명 (TitleCode → Name)
     private String titleName;
+    private String mobile;
 }
