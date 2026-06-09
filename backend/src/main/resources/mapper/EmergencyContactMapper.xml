@@ -22,7 +22,7 @@
     <select id="findByDeletedFalse" resultMap="EmergencyContactResultMap">
         SELECT * FROM tb_emergency_contact
         WHERE deleted = 0
-        ORDER BY sort_order ASC
+        ORDER BY created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -37,7 +37,7 @@
     <select id="findByContactType" resultMap="EmergencyContactResultMap">
         SELECT * FROM tb_emergency_contact
         WHERE contact_type = #{contactType} AND deleted = 0
-        ORDER BY sort_order ASC
+        ORDER BY created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -56,7 +56,9 @@
             notes, deleted, created_at, modified_at
         ) VALUES (
             #{contactId}, #{organization}, #{contactName}, #{phoneNumber}, #{email},
-            #{contactType}, #{isEmergency}, #{sortOrder},
+            #{contactType},
+            <choose><when test="isEmergency != null">#{isEmergency}</when><otherwise>0</otherwise></choose>,
+            <choose><when test="sortOrder != null">#{sortOrder}</when><otherwise>0</otherwise></choose>,
             #{notes}, 0, GETDATE(), GETDATE()
         )
     </insert>
@@ -65,8 +67,10 @@
         UPDATE tb_emergency_contact SET
             organization = #{organization}, contact_name = #{contactName},
             phone_number = #{phoneNumber}, email = #{email},
-            contact_type = #{contactType}, is_emergency = #{isEmergency},
-            sort_order = #{sortOrder}, notes = #{notes},
+            contact_type = #{contactType},
+            is_emergency = <choose><when test="isEmergency != null">#{isEmergency}</when><otherwise>is_emergency</otherwise></choose>,
+            sort_order = <choose><when test="sortOrder != null">#{sortOrder}</when><otherwise>sort_order</otherwise></choose>,
+            notes = #{notes},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

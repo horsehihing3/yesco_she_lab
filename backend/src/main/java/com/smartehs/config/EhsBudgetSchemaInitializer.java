@@ -25,6 +25,43 @@ public class EhsBudgetSchemaInitializer implements CommandLineRunner {
         adjustBudgetPlanSchema();
         // tb_ehs_budget_expense : vendor / plan_id 컬럼 제거 (입력폼에서 빠짐)
         dropColumns("tb_ehs_budget_expense", new String[]{"vendor", "plan_id"});
+        // V93: department 컬럼 / V178: writer 컬럼 — Flyway 비활성화 환경에서 보장
+        ensureExpenseColumns();
+    }
+
+    /** V93·V178: tb_ehs_budget_expense 에 department·writer 컬럼이 없으면 추가 */
+    private void ensureExpenseColumns() {
+        try {
+            Integer tableExists = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM sys.tables WHERE name = 'tb_ehs_budget_expense'", Integer.class);
+            if (tableExists == null || tableExists == 0) return;
+
+            Integer hasDept = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('tb_ehs_budget_expense') AND name = 'department'",
+                Integer.class);
+            if (hasDept == null || hasDept == 0) {
+                jdbcTemplate.execute("ALTER TABLE tb_ehs_budget_expense ADD department NVARCHAR(100) NULL");
+                log.info("스키마 보강: tb_ehs_budget_expense.department 컬럼 추가");
+            }
+
+            Integer hasWriter = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('tb_ehs_budget_expense') AND name = 'writer'",
+                Integer.class);
+            if (hasWriter == null || hasWriter == 0) {
+                jdbcTemplate.execute("ALTER TABLE tb_ehs_budget_expense ADD writer NVARCHAR(100) NULL");
+                log.info("스키마 보강: tb_ehs_budget_expense.writer 컬럼 추가");
+            }
+
+            Integer hasPlanWriter = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('tb_ehs_budget_plan') AND name = 'writer'",
+                Integer.class);
+            if (hasPlanWriter == null || hasPlanWriter == 0) {
+                jdbcTemplate.execute("ALTER TABLE tb_ehs_budget_plan ADD writer NVARCHAR(100) NULL");
+                log.info("스키마 보강: tb_ehs_budget_plan.writer 컬럼 추가");
+            }
+        } catch (Exception e) {
+            log.error("tb_ehs_budget_expense 컬럼 보강 실패", e);
+        }
     }
 
     private void adjustBudgetPlanSchema() {

@@ -100,14 +100,21 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
   const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [findingOnly, setFindingOnly] = useState(false)
   const pageSize = 10
   const applySearch = () => { setSearchText(searchInput); setPage(0) }
 
-  const queryKey = statusFilter
-    ? ['auditExecStatus', statusFilter, page]
-    : ['auditExec', page]
+  const queryKey = findingOnly
+    ? ['auditExecFindings', variant]
+    : statusFilter
+      ? ['auditExecStatus', statusFilter, page]
+      : ['auditExec', page]
 
-  const queryFn = () => {
+  const queryFn = async () => {
+    if (findingOnly) {
+      try { await auditApi.recalcCounts() } catch { }
+      return auditApi.getAll(0, 1000)
+    }
     if (statusFilter) return auditApi.getByStatus(statusFilter, page, pageSize)
     return auditApi.getAll(page, pageSize)
   }
@@ -126,6 +133,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
       i.targetDept?.toLowerCase().includes(s)
     )
   }
+  if (findingOnly) items = items.filter((i) => (i.findingCount ?? 0) > 0)
 
   // 연결된 감사 계획 조회 → checklistTemplateId 가져오기
   const { data: linkedPlan } = useQuery({
@@ -341,7 +349,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
     }
     return <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>{log.detail}</Typography>
   }
-  const handleReset = () => { setSearchInput(''); setSearchText(''); setStatusFilter(''); setPage(0) }
+  const handleReset = () => { setSearchInput(''); setSearchText(''); setStatusFilter(''); setFindingOnly(false); setPage(0) }
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -922,6 +930,13 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             </Select>
           </FormControl>
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
+          <Chip
+            label="부적합"
+            onClick={() => { setFindingOnly(!findingOnly); setPage(0) }}
+            color={findingOnly ? 'error' : 'default'}
+            variant={findingOnly ? 'filled' : 'outlined'}
+            size="small"
+          />
         </Box>
         {/* 신규 등록 비활성 — 감사 실시는 계획 승인 시 자동 생성됨. 수동 등록 필요 시 false → canSee 조건으로 복구 */}
         {false && (
@@ -946,6 +961,14 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>{t('common.new')}</Button>
           )}
         </Box>
+        <Chip
+          label="부적합"
+          onClick={() => { setFindingOnly(!findingOnly); setPage(0) }}
+          color={findingOnly ? 'error' : 'default'}
+          variant={findingOnly ? 'filled' : 'outlined'}
+          size="small"
+          sx={{ alignSelf: 'flex-start' }}
+        />
       </Box>
 
       {isLoading ? (
@@ -1043,7 +1066,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
               )
             })}
           </Box>
-          {totalPages > 1 && (
+          {!findingOnly && totalPages > 1 && (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
               <Pagination count={totalPages} page={page + 1} onChange={(_, p) => setPage(p - 1)} color="primary" />
             </Box>

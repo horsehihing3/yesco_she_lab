@@ -303,18 +303,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 감사 부적합 ───────────────────────────────────────────────────────────
-  {
-    menuPath: 'EHS 경영 › 내부 감사 › 감사 부적합', menuKey: 'audit.tabs.findings',
-    statuses: [
-      { status: 'PLAN/PREPARING', statusLabel: '준비중', statusColor: 'default',
-        statusNote: '감사 실시 승인 후 자동 연결 — 별도 신규 등록 없음',
-        buttons: [{ button: '저장 (체크리스트)', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 저장 가능' }] },
-      { status: 'IN_PROGRESS', statusLabel: '진행중', statusColor: 'info',
-        buttons: [{ button: '저장 (체크리스트)', roles: ALL_ON, issue: '권한 체크 없음' }] },
-    ],
-  },
-
   // ── 교육현황 (관리자) ──────────────────────────────────────────────────────
   {
     menuPath: 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',
@@ -441,17 +429,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '저장 (감사 정보)', roles: ALL_ON },
           { button: '반려',             roles: ADMIN_COMP },
           { button: '완료 승인',        roles: ADMIN_COMP },
-        ] },
-    ],
-  },
-
-  // ── 부적합 사항 (법규 대응) ──────────────────────────────────────────────────
-  {
-    menuPath: 'EHS 경영 › 법규 대응 › 부적합 사항', menuKey: 'lc.tabs.findings',
-    statuses: [
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
-        buttons: [
-          { button: '저장', roles: ALL_ON },
         ] },
     ],
   },

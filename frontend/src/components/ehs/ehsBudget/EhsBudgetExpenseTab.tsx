@@ -115,7 +115,7 @@ const formatDateTime = (dateString?: string | null) => {
 const EhsBudgetExpenseTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { t } = useTranslation()
-  const { showWarning, showSuccess, showConfirm } = useAlert()
+  const { showWarning, showSuccess, showConfirm, showError } = useAlert()
   const { user } = useAuth()
   const { codeList: categoryCodes, getLabel: getCategoryLabel } = useCodeMap('EHS_BUDGET_CATEGORY')
   const currentWriter = user?.name || user?.username || ''
@@ -178,6 +178,10 @@ const EhsBudgetExpenseTab: React.FC = () => {
       await showSuccess(t('common.saved', '저장되었습니다'))
       handleBackToList()
     },
+    onError: (err: unknown) => {
+      const msg = (err as any)?.response?.data?.message
+      showError(msg || t('common.saveFailed', '저장에 실패했습니다'))
+    },
   })
 
   const updateMutation = useMutation({
@@ -188,6 +192,10 @@ const EhsBudgetExpenseTab: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['ehsBudgetExpenseDetail'] })
       await showSuccess(t('common.saved', '저장되었습니다'))
       handleBackToList()
+    },
+    onError: (err: unknown) => {
+      const msg = (err as any)?.response?.data?.message
+      showError(msg || t('common.saveFailed', '저장에 실패했습니다'))
     },
   })
 
@@ -263,10 +271,14 @@ const EhsBudgetExpenseTab: React.FC = () => {
     const confirmed = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!confirmed) return
 
+    const payload = {
+      ...formData,
+      expenseDate: formData.expenseDate || undefined,
+    }
     if (viewMode === 'create') {
-      createMutation.mutate(formData)
+      createMutation.mutate(payload)
     } else if (viewMode === 'edit' && selectedItem) {
-      updateMutation.mutate({ id: selectedItem.id, data: formData })
+      updateMutation.mutate({ id: selectedItem.id, data: payload })
     }
   }
 

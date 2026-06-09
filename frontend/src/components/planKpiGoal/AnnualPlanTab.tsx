@@ -97,7 +97,7 @@ const AnnualPlanTab: React.FC = () => {
     return dateString.substring(0, 10)
   }
   const todayIso = () => new Date().toISOString().substring(0, 10)
-  const { showWarning, showSuccess, showConfirm } = useAlert()
+  const { showWarning, showSuccess, showConfirm, showError } = useAlert()
   const { getLabel: getStatusLabel } = useCodeMap('PLAN_STATUS')
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -156,6 +156,10 @@ const AnnualPlanTab: React.FC = () => {
       await showSuccess(t('common.saved', '저장되었습니다'))
       handleBackToList()
     },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      showError(msg || t('common.saveFailed', '저장에 실패했습니다'))
+    },
   })
 
   const updateMutation = useMutation({
@@ -165,6 +169,10 @@ const AnnualPlanTab: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['ehsPlanDetail'] })
       await showSuccess(t('common.saved', '저장되었습니다'))
       handleBackToList()
+    },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      showError(msg || t('common.saveFailed', '저장에 실패했습니다'))
     },
   })
 

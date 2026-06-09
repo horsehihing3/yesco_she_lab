@@ -198,9 +198,10 @@ const EmrContactTab: React.FC = () => {
                 <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={headerCellSx}>{t('emr.contactId')}</TableCell>
+                      <TableCell sx={{ ...headerCellSx, width: 60 }} align="center">{t('common.no')}</TableCell>
                       <TableCell sx={headerCellSx}>{t('emr.organization')}</TableCell>
                       <TableCell sx={headerCellSx}>{t('emr.contactName')}</TableCell>
+                      <TableCell sx={headerCellSx}>{t('emr.phoneNumber')}</TableCell>
                       <TableCell sx={headerCellSx}>{t('emr.email')}</TableCell>
                       <TableCell sx={headerCellSx}>{t('emr.contactType')}</TableCell>
                       <TableCell sx={headerCellSx} align="center">{t('emr.isEmergency')}</TableCell>
@@ -209,9 +210,10 @@ const EmrContactTab: React.FC = () => {
                   <TableBody>
                     {items.map((item) => (
                       <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{item.contactId}</TableCell>
+                        <TableCell align="center">{item.id}</TableCell>
                         <TableCell><Typography fontWeight={600} variant="body2">{item.organization}</Typography></TableCell>
                         <TableCell>{item.contactName}</TableCell>
+                        <TableCell>{item.phoneNumber || ''}</TableCell>
                         <TableCell align="center">{item.email || ''}</TableCell>
                         <TableCell align="center">{item.contactType === 'INTERNAL' ? t('emr.internal') : t('emr.external')}</TableCell>
                         <TableCell align="center">
@@ -237,7 +239,7 @@ const EmrContactTab: React.FC = () => {
                   </Box>
                   <Typography variant="body2" fontWeight={600}>{item.contactName}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {item.email || ''} | {item.contactType === 'INTERNAL' ? t('emr.internal') : t('emr.external')}
+                    {item.phoneNumber || ''} | {item.email || ''} | {item.contactType === 'INTERNAL' ? t('emr.internal') : t('emr.external')}
                   </Typography>
                 </Paper>
               ))}

@@ -249,7 +249,15 @@ const EhsManagerTab: React.FC = () => {
             key={category}
             expanded={expanded === category}
             onChange={handleAccordionChange(category)}
-            sx={{ mb: 1 }}
+            disableGutters
+            elevation={0}
+            sx={{
+              mb: 1,
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: '4px !important',
+              '&:before': { display: 'none' },
+            }}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: 'grey.50', fontWeight: 'bold' }}>
               <Typography fontWeight="bold">{getCategoryTitle(category)}</Typography>

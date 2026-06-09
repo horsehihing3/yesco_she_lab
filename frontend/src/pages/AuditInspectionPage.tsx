@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../hooks/useMenuRule'
 import AuditPlanTab from '../components/ehs/AuditPlanTab'
 import AuditExecutionTab from '../components/ehs/AuditExecutionTab'
-import AuditFindingTab from '../components/ehs/AuditFindingTab'
 
 const AuditInspectionPage: React.FC = () => {
   const { t } = useTranslation()
@@ -16,7 +15,6 @@ const AuditInspectionPage: React.FC = () => {
   const tabs = useMemo(() => [
     { menuKey: 'audit.tabs.plan',       label: t('audit.tabs.plan'),       component: <AuditPlanTab /> },
     { menuKey: 'audit.tabs.execution',  label: t('audit.tabs.execution'),  component: <AuditExecutionTab /> },
-    { menuKey: 'audit.tabs.findings',   label: t('audit.tabs.findings'),   component: <AuditFindingTab /> },
   ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
 
   useEffect(() => {

@@ -80,7 +80,6 @@ const MENU_TREE: MenuNode[] = [
     { key: 'nav.auditInspection', label: '내부 감사', children: [
       { key: 'audit.tabs.plan',       label: '감사 계획' },
       { key: 'audit.tabs.execution',  label: '감사 실시' },
-      { key: 'audit.tabs.findings',   label: '부적합 사항' },
     ]},
     { key: 'nav.trainingMgmt', label: '교육·훈련', children: [
       { key: 'training.tab.dashboard',    label: '대시보드' },
@@ -101,7 +100,6 @@ const MENU_TREE: MenuNode[] = [
       { key: 'lc.tabs.law',       label: '법규검토시스템' },
       { key: 'lc.tabs.plan',      label: '법규 대응 계획' },
       { key: 'lc.tabs.execution', label: '법규 대응 실시' },
-      { key: 'lc.tabs.findings',  label: '부적합 사항' },
     ]},
     { key: 'nav.ehsBudget', label: 'EHS 예산', children: [
       { key: 'budget.tab.dashboard', label: '대시보드' },

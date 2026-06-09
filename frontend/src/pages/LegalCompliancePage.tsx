@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import LegalLawTab from '../components/legalCompliance/LegalLawTab'
 import AuditPlanTab from '../components/ehs/AuditPlanTab'
 import AuditExecutionTab from '../components/ehs/AuditExecutionTab'
-import AuditFindingTab from '../components/ehs/AuditFindingTab'
 
 const LegalCompliancePage: React.FC = () => {
   const { t } = useTranslation()
@@ -27,7 +26,6 @@ const LegalCompliancePage: React.FC = () => {
     { label: t('lc.tabs.law', '법규검토시스템'), component: <LegalLawTab /> },
     { label: t('lc.tabs.plan', '법규 대응 계획'),      component: <AuditPlanTab variant="legal-compliance" /> },
     { label: t('lc.tabs.execution', '법규 대응 실시'), component: <AuditExecutionTab variant="legal-compliance" /> },
-    { label: t('audit.tabs.findings', '부적합 사항'), component: <AuditFindingTab variant="legal-compliance" /> },
   ]
 
   return (

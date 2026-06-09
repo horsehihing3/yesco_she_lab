@@ -22,7 +22,6 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel,
   FormControlLabel,
   Checkbox,
 } from '@mui/material'
@@ -426,13 +425,12 @@ const QnaTab: React.FC = () => {
             sx={{ width: 300 }}
           />
           <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>{t('qna.category')}</InputLabel>
             <Select
               value={categoryFilter}
-              label={t('qna.category')}
+              displayEmpty
               onChange={(e) => { setCategoryFilter(e.target.value); setPage(0) }}
-             displayEmpty>
-              <MenuItem value="">{t('common.all')}</MenuItem>
+            >
+              <MenuItem value="">{t('qna.category')}</MenuItem>
               {categoryCodes.map((cat) => (
                 <MenuItem key={cat.code} value={cat.code}>{getCategoryLabel(cat.code)}</MenuItem>
               ))}
@@ -459,13 +457,12 @@ const QnaTab: React.FC = () => {
           fullWidth
         />
         <FormControl size="small" fullWidth>
-          <InputLabel>{t('qna.category')}</InputLabel>
           <Select
             value={categoryFilter}
-            label={t('qna.category')}
+            displayEmpty
             onChange={(e) => { setCategoryFilter(e.target.value); setPage(0) }}
-           displayEmpty>
-            <MenuItem value="">{t('common.all')}</MenuItem>
+          >
+            <MenuItem value="">{t('qna.category')}</MenuItem>
             {categoryCodes.map((cat) => (
               <MenuItem key={cat.code} value={cat.code}>{getCategoryLabel(cat.code)}</MenuItem>
             ))}

@@ -1,5 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
@@ -32,13 +32,15 @@ import {
   DialogActions,
   CircularProgress,
   Alert,
+  Chip,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
+import AttachFileIcon from '@mui/icons-material/AttachFile'
 import axiosInstance from '../../api/axiosInstance'
 import { EhsMessage, EhsMessageRequest } from '../../types/ehsMessage.types'
-import { ApiResponse, PageResponse } from '../../types/common.types'
+import { ApiResponse, PageResponse, FileMetadata } from '../../types/common.types'
 import RichTextEditor from '../common/RichTextEditor'
 import HtmlContent from '../common/HtmlContent'
 import LoadingOverlay from '../common/LoadingOverlay'
@@ -70,6 +72,11 @@ const fetchMessages = async (params: FetchParams): Promise<PageResponse<EhsMessa
   return response.data.data
 }
 
+const fetchFiles = async (entityType: string, entityId: string): Promise<FileMetadata[]> => {
+  const response = await axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/${entityType}/${entityId}`)
+  return response.data.data
+}
+
 const createMessage = async (data: EhsMessageRequest): Promise<EhsMessage> => {
   const response = await axiosInstance.post<ApiResponse<EhsMessage>>('/messages', data)
   return response.data.data
@@ -89,7 +96,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 const EhsMessageTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { t, i18n } = useTranslation()
-  const { showSuccess, showConfirm } = useAlert()
+  const { showSuccess, showConfirm, showWarning } = useAlert()
   const { user } = useAuth()
   const { codeList: categoryCodes, getLabel: getCategoryLabel } = useCodeMap('MESSAGE_CATEGORY')
   const { codeList: roleCodes, getLabel: getRoleLabel } = useCodeMap('MESSAGE_ROLE')
@@ -98,6 +105,8 @@ const EhsMessageTab: React.FC = () => {
   const roles = roleCodes.map(c => c.code)
   const targets = targetCodes.map(c => c.code)
   const [searchParams, setSearchParams] = useSearchParams()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [pendingFiles, setPendingFiles] = useState<File[]>([])
   const [searchText, setSearchText] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
@@ -137,24 +146,51 @@ const EhsMessageTab: React.FC = () => {
       }),
   })
 
+  const { data: messageFiles } = useQuery({
+    queryKey: ['ehsMessageFiles', viewMessage?.messageId],
+    queryFn: () => fetchFiles('EHS_MESSAGE', viewMessage!.messageId),
+    enabled: !!viewMessage?.messageId && viewMode === 'detail',
+  })
+
   const createMutation = useMutation({
     mutationFn: createMessage,
-    onSuccess: async () => {
+    onSuccess: async (createdMessage) => {
+      for (const file of pendingFiles) {
+        const fd = new FormData()
+        fd.append('file', file)
+        fd.append('entityType', 'EHS_MESSAGE')
+        fd.append('entityId', createdMessage.messageId)
+        await axiosInstance.post('/files/upload', fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+      }
       queryClient.invalidateQueries({ queryKey: ['ehsMessages'] })
       await showSuccess(t('common.saveSuccess'))
       setViewMode('list')
       reset()
+      setPendingFiles([])
     },
   })
 
   const updateMutation = useMutation({
     mutationFn: updateMessage,
-    onSuccess: async () => {
+    onSuccess: async (updatedMessage) => {
+      for (const file of pendingFiles) {
+        const fd = new FormData()
+        fd.append('file', file)
+        fd.append('entityType', 'EHS_MESSAGE')
+        fd.append('entityId', updatedMessage.messageId)
+        await axiosInstance.post('/files/upload', fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+      }
       queryClient.invalidateQueries({ queryKey: ['ehsMessages'] })
+      queryClient.invalidateQueries({ queryKey: ['ehsMessageFiles'] })
       await showSuccess(t('common.saveSuccess'))
       setViewMode('list')
       setViewMessage(null)
       reset()
+      setPendingFiles([])
     },
   })
 
@@ -204,6 +240,7 @@ const EhsMessageTab: React.FC = () => {
     setViewMode('list')
     setViewMessage(null)
     reset()
+    setPendingFiles([])
     setSearchParams({ tab: '3' })
   }
 
@@ -236,6 +273,7 @@ const EhsMessageTab: React.FC = () => {
       authorName: user?.name || '',
       detail: '',
     })
+    setPendingFiles([])
     setViewMode('create')
   }
 
@@ -249,6 +287,7 @@ const EhsMessageTab: React.FC = () => {
       authorName: viewMessage.authorName || '',
       detail: viewMessage.detail || '',
     })
+    setPendingFiles([])
     setViewMode('edit')
   }
 
@@ -260,6 +299,49 @@ const EhsMessageTab: React.FC = () => {
     if (confirmed) {
       deleteMutation.mutate(message.id)
     }
+  }
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    const MAX_FILE_SIZE = 100 * 1024 * 1024
+    if (files) {
+      const validFiles: File[] = []
+      const oversizedFiles: string[] = []
+      Array.from(files).forEach((file) => {
+        if (file.size > MAX_FILE_SIZE) {
+          oversizedFiles.push(`${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`)
+        } else {
+          validFiles.push(file)
+        }
+      })
+      if (oversizedFiles.length > 0) {
+        showWarning(`${t('common.fileSizeExceeded')}\n${oversizedFiles.join('\n')}`)
+      }
+      if (pendingFiles.length + validFiles.length <= 5) {
+        setPendingFiles((prev) => [...prev, ...validFiles])
+      } else {
+        showWarning(t('common.maxAttachments'))
+      }
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  const handleRemovePendingFile = (index: number) => {
+    setPendingFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleDownloadFile = async (fileId: number, filename: string) => {
+    const response = await axiosInstance.get(`/files/${fileId}`, { responseType: 'blob' })
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', filename)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
   }
 
   const onSubmit = async (data: EhsMessageRequest) => {
@@ -325,6 +407,7 @@ const EhsMessageTab: React.FC = () => {
       <Box sx={{ p: 2 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+            <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }} />
             {/* PC용 테이블 레이아웃 */}
             <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: 제목 */}
@@ -423,7 +506,7 @@ const EhsMessageTab: React.FC = () => {
               </Box>
 
               {/* Row 4: 본문 */}
-              <Box sx={{ display: 'flex' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.body')}
                 </Typography>
@@ -440,6 +523,27 @@ const EhsMessageTab: React.FC = () => {
                       />
                     )}
                   />
+                </Box>
+              </Box>
+
+              {/* Row 5: 파일첨부 */}
+              <Box sx={{ display: 'flex' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  {t('common.attachments')}
+                </Typography>
+                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                  {pendingFiles.length === 0 ? (
+                    <Typography color="text.secondary">{t('common.noFile')}</Typography>
+                  ) : (
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {pendingFiles.map((file, idx) => (
+                        <Chip key={idx} label={file.name} size="small" onDelete={() => handleRemovePendingFile(idx)} />
+                      ))}
+                    </Box>
+                  )}
+                  <Button variant="outlined" size="small" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()}>
+                    {t('common.attach')}
+                  </Button>
                 </Box>
               </Box>
             </Box>
@@ -516,6 +620,23 @@ const EhsMessageTab: React.FC = () => {
                     />
                   )}
                 />
+              </Box>
+              <Box>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.attachments')}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', px: 1.5, py: 0.5 }}>
+                  {pendingFiles.length === 0 ? (
+                    <Typography color="text.secondary">{t('common.noFile')}</Typography>
+                  ) : (
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {pendingFiles.map((file, idx) => (
+                        <Chip key={idx} label={file.name} size="small" onDelete={() => handleRemovePendingFile(idx)} />
+                      ))}
+                    </Box>
+                  )}
+                  <Button variant="outlined" size="small" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()}>
+                    {t('common.attach')}
+                  </Button>
+                </Box>
               </Box>
             </Box>
           </Paper>
@@ -557,10 +678,30 @@ const EhsMessageTab: React.FC = () => {
               <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.position')}</Typography>
               <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>{viewMessage.authorRole ? getRoleLabel(viewMessage.authorRole) : ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>{t('common.body')}</Typography>
               <Box sx={{ flex: 1, px: 2, py: 1.5, minHeight: 200, bgcolor: 'background.paper' }}>
                 <HtmlContent content={viewMessage.detail} fallback="" />
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex' }}>
+              <Typography sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('common.attachments')}</Typography>
+              <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }}>
+                {messageFiles && messageFiles.length > 0 ? (
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {messageFiles.map((file) => (
+                      <Chip
+                        key={file.id}
+                        label={file.originalFilename}
+                        size="small"
+                        onClick={() => handleDownloadFile(file.id, file.originalFilename)}
+                        sx={{ cursor: 'pointer' }}
+                      />
+                    ))}
+                  </Box>
+                ) : (
+                  <Typography color="text.secondary">{t('common.noFile')}</Typography>
+                )}
               </Box>
             </Box>
         </Box>
@@ -588,6 +729,26 @@ const EhsMessageTab: React.FC = () => {
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.body')}</Typography>
               <Box sx={{ px: 1.5, py: 0.5, minHeight: 100 }}>
                 <HtmlContent content={viewMessage.detail} fallback="" />
+              </Box>
+            </Box>
+            <Box>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.attachments')}</Typography>
+              <Box sx={{ px: 1.5, py: 0.5 }}>
+                {messageFiles && messageFiles.length > 0 ? (
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {messageFiles.map((file) => (
+                      <Chip
+                        key={file.id}
+                        label={file.originalFilename}
+                        size="small"
+                        onClick={() => handleDownloadFile(file.id, file.originalFilename)}
+                        sx={{ cursor: 'pointer' }}
+                      />
+                    ))}
+                  </Box>
+                ) : (
+                  <Typography variant="body2" color="text.secondary">{t('common.noFile')}</Typography>
+                )}
               </Box>
             </Box>
           </Box>
@@ -621,6 +782,7 @@ const EhsMessageTab: React.FC = () => {
       <Box sx={{ p: 2 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+            <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }} />
             {/* PC용 테이블 레이아웃 */}
             <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: 제목 */}
@@ -719,7 +881,7 @@ const EhsMessageTab: React.FC = () => {
               </Box>
 
               {/* Row 4: 본문 */}
-              <Box sx={{ display: 'flex' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
                   {t('common.body')}
                 </Typography>
@@ -736,6 +898,27 @@ const EhsMessageTab: React.FC = () => {
                       />
                     )}
                   />
+                </Box>
+              </Box>
+
+              {/* Row 5: 파일첨부 */}
+              <Box sx={{ display: 'flex' }}>
+                <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  {t('common.attachments')}
+                </Typography>
+                <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                  {pendingFiles.length === 0 ? (
+                    <Typography color="text.secondary">{t('common.noFile')}</Typography>
+                  ) : (
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {pendingFiles.map((file, idx) => (
+                        <Chip key={idx} label={file.name} size="small" onDelete={() => handleRemovePendingFile(idx)} />
+                      ))}
+                    </Box>
+                  )}
+                  <Button variant="outlined" size="small" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()}>
+                    {t('common.attach')}
+                  </Button>
                 </Box>
               </Box>
             </Box>
@@ -812,6 +995,23 @@ const EhsMessageTab: React.FC = () => {
                     />
                   )}
                 />
+              </Box>
+              <Box>
+                <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.attachments')}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', px: 1.5, py: 0.5 }}>
+                  {pendingFiles.length === 0 ? (
+                    <Typography color="text.secondary">{t('common.noFile')}</Typography>
+                  ) : (
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {pendingFiles.map((file, idx) => (
+                        <Chip key={idx} label={file.name} size="small" onDelete={() => handleRemovePendingFile(idx)} />
+                      ))}
+                    </Box>
+                  )}
+                  <Button variant="outlined" size="small" startIcon={<AttachFileIcon />} onClick={() => fileInputRef.current?.click()}>
+                    {t('common.attach')}
+                  </Button>
+                </Box>
               </Box>
             </Box>
           </Paper>
