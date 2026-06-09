@@ -181,13 +181,13 @@ const OdStatusTab: React.FC = () => {
           </FormRow>
           <FormRow>
             <FormLabel>판정</FormLabel>
-            <FormCell borderRight><TextField select fullWidth size="small" value={form.judge || ''} onChange={e => setForm({ ...form, judge: e.target.value })}><MenuItem value="">미판정</MenuItem>{JUDGES.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
+            <FormCell borderRight><TextField select fullWidth size="small" value={form.judge || ''} onChange={e => setForm({ ...form, judge: e.target.value })} SelectProps={{ displayEmpty: true }}><MenuItem value="">선택하세요</MenuItem>{JUDGES.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}</TextField></FormCell>
             <FormLabel>사후조치</FormLabel>
-            <FormCell><TextField select fullWidth size="small" value={form.afterAction || ''} onChange={e => setForm({ ...form, afterAction: e.target.value })}><MenuItem value="">선택하세요</MenuItem>{AFTER_ACTIONS.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
+            <FormCell><TextField select fullWidth size="small" value={form.afterAction || ''} onChange={e => setForm({ ...form, afterAction: e.target.value })} SelectProps={{ displayEmpty: true }}><MenuItem value="">선택하세요</MenuItem>{AFTER_ACTIONS.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
           </FormRow>
           <FormRow last>
             <FormLabel>이행 여부</FormLabel>
-            <FormCell><TextField select fullWidth size="small" value={form.actionDone || ''} onChange={e => setForm({ ...form, actionDone: e.target.value })}><MenuItem value="">선택하세요</MenuItem>{ACTION_DONE.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
+            <FormCell><TextField select fullWidth size="small" value={form.actionDone || ''} onChange={e => setForm({ ...form, actionDone: e.target.value })} SelectProps={{ displayEmpty: true }}><MenuItem value="">선택하세요</MenuItem>{ACTION_DONE.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}</TextField></FormCell>
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
@@ -233,11 +233,13 @@ const OdStatusTab: React.FC = () => {
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="성명/사번/부서/유해인자" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
-        <TextField select size="small" sx={{ minWidth: 130 }} value={judgeFilter} onChange={e => setJudgeFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 130 }} value={judgeFilter} onChange={e => setJudgeFilter(e.target.value)}
+          SelectProps={{ displayEmpty: true }}>
           <MenuItem value="">판정 전체</MenuItem>
           {JUDGES.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}
         </TextField>
-        <TextField select size="small" sx={{ minWidth: 130 }} value={divFilter} onChange={e => setDivFilter(e.target.value)}>
+        <TextField select size="small" sx={{ minWidth: 130 }} value={divFilter} onChange={e => setDivFilter(e.target.value)}
+          SelectProps={{ displayEmpty: true }}>
           <MenuItem value="">검진구분 전체</MenuItem>
           {DIVISIONS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
         </TextField>
@@ -255,7 +257,7 @@ const OdStatusTab: React.FC = () => {
               <TableHead><TableRow>
                 <TableCell align="center">성명</TableCell><TableCell align="center">사번</TableCell><TableCell>부서</TableCell>
                 <TableCell>직종</TableCell><TableCell>성별</TableCell><TableCell>구분</TableCell>
-                <TableCell>유해인자</TableCell><TableCell>발암성</TableCell><TableCell align="center">노출기간</TableCell>
+                <TableCell>유해인자</TableCell><TableCell align="center">발암성</TableCell><TableCell align="center">노출기간</TableCell>
                 <TableCell>검진기관</TableCell><TableCell align="center">검진일</TableCell>
                 <TableCell align="center">판정</TableCell><TableCell>사후조치</TableCell><TableCell align="center">이행</TableCell>
               </TableRow></TableHead>
@@ -269,7 +271,7 @@ const OdStatusTab: React.FC = () => {
                     <TableCell align="center">{w.gender}</TableCell>
                     <TableCell><Chip size="small" label={w.division} color={divColor(w.division)} /></TableCell>
                     <TableCell>{w.factor}</TableCell>
-                    <TableCell>{w.carcinogenicity && w.carcinogenicity !== '없음'
+                    <TableCell align="center">{w.carcinogenicity && w.carcinogenicity !== '없음'
                       ? <Chip size="small" label={w.carcinogenicity} color="error" />
                       : <Box component="span" sx={{ color: 'text.disabled' }}>없음</Box>}</TableCell>
                     <TableCell align="center">{w.exposurePeriod}</TableCell>

@@ -249,9 +249,14 @@ const EhsManagerTab: React.FC = () => {
             key={category}
             expanded={expanded === category}
             onChange={handleAccordionChange(category)}
-            sx={{ mb: 1 }}
+            sx={{
+              mb: 1, border: 1, borderColor: 'divider', borderRadius: 0, overflow: 'hidden',
+              '&:before': { display: 'none' },
+              '&:first-of-type': { borderRadius: 0 },
+              '&:last-of-type': { borderRadius: 0 },
+            }}
           >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: 'grey.50', fontWeight: 'bold' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: 'grey.50', fontWeight: 'bold', borderBottom: 1, borderColor: 'divider' }}>
               <Typography fontWeight="bold">{getCategoryTitle(category)}</Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ p: 0 }}>

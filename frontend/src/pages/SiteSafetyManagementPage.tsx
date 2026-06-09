@@ -386,7 +386,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         ) : (
           <>
             {/* ─── 데스크탑(md+) : 테이블 ─── */}
-            <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' }, overflow: 'hidden' }}>
               {isPartner ? (
                 <TableContainer>
                   <Table size="small">

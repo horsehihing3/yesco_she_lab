@@ -149,7 +149,7 @@ const WaterDashboardTab: React.FC = () => {
           <Paper
             key={card.label}
             variant="outlined"
-            sx={{ p: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', borderLeft: 4, borderColor: card.borderColor }}
+            sx={{ p: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', borderLeft: 4, borderColor: card.borderColor, borderLeftColor: card.borderColor}}
           >
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{card.label}</Typography>
             <Typography variant="h4" fontWeight="bold">{card.value}</Typography>

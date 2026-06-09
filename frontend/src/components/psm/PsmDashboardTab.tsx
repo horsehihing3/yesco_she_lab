@@ -20,7 +20,7 @@ const PsmDashboardTab: React.FC = () => {
   const totalData = data.totalEquip + data.totalChem + data.totalPower + data.totalVessel + data.totalPipe + data.totalPsv
 
   const Stat = ({ label, value, sub, color = 'primary.main' }: { label: string; value: number; sub?: string; color?: string }) => (
-    <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: color }}>
+    <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: color, ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>{label}</Typography>
       <Typography variant="h4" fontWeight="bold" color={color}>{value}</Typography>
       {sub && <Typography variant="caption" color="text.secondary">{sub}</Typography>}
@@ -38,7 +38,7 @@ const PsmDashboardTab: React.FC = () => {
         <Grid item xs={6} md={3}><Stat label={t('psm.expiring', '만료 임박/초과')} value={data.expiringCount}   sub="90일 이내"       color="error.main" /></Grid>
       </Grid>
 
-      <Paper sx={{ p: 2 }}>
+      <Paper sx={(theme: any) => ({ p: 2, ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
         <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <AssignmentIcon fontSize="small" />{t('psm.dataByCategory', '분류별 자료 건수')}
         </Typography>

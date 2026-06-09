@@ -19,7 +19,7 @@ import type { ChemicalReach } from '../../types/chemical.types'
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const metricCardSx = { p: 2, textAlign: 'center', borderRadius: 1, border: 1, borderColor: 'divider' }
+const metricCardSx = (theme: any) => ({ p: 2, textAlign: 'center', borderRadius: 1, border: 1, borderColor: theme.isYesco ? '#0F2147' : theme.palette.divider })
 const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
 const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }

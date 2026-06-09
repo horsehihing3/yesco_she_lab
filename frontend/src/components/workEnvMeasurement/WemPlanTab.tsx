@@ -273,7 +273,7 @@ const WemPlanTab: React.FC = () => {
             { label: t('wem.newProcessAlert', '신규공정 알림'), value: unmeasuredCount, color: '#ef4444' },
           ].map((card, idx) => (
             <Grid item xs={6} md={3} key={idx}>
-              <Paper sx={{ p: 2, borderLeft: 4, borderColor: card.color }}>
+              <Paper sx={{ p: 2, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color}}>
                 <Typography variant="caption" color="text.secondary">{card.label}</Typography>
                 <Typography variant="h5" fontWeight="bold">{card.value}</Typography>
               </Paper>

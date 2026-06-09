@@ -269,25 +269,25 @@ const RegulationCheckTab: React.FC = () => {
       {/* Metrics Cards */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.check.totalCheck')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="primary">{totalElements}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.check.completed')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="success.main"></Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.check.inProgress')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="warning.main"></Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.check.pending')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="error"></Typography>
           </Paper>

@@ -300,13 +300,13 @@ const EhsBudgetExpenseTab: React.FC = () => {
         {/* 상단 KPI — 계획 총액 / 사용 총액 (예산 수립 탭과 동일) */}
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 2, borderLeft: 4, borderColor: '#3b82f6' }}>
+            <Paper sx={(theme: any) => ({ p: 2, borderLeft: 4, borderColor: '#3b82f6', borderLeftColor: '#3b82f6', ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: '#3b82f6' }) })}>
               <Typography variant="caption" color="text.secondary">{t('budget.totalPlanned', '계획 총액')}</Typography>
               <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.5 }}>{formatNumber(totalPlanned)}</Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 2, borderLeft: 4, borderColor: '#22c55e' }}>
+            <Paper sx={(theme: any) => ({ p: 2, borderLeft: 4, borderColor: '#22c55e', borderLeftColor: '#22c55e', ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: '#22c55e' }) })}>
               <Typography variant="caption" color="text.secondary">{t('budget.totalUsed', '사용 총액')}</Typography>
               <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.5 }}>{formatNumber(totalUsed)}</Typography>
             </Paper>
@@ -323,7 +323,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
             const borderColor = CATEGORY_BORDER_COLORS[c.code] || '#a3a3a3'
             return (
               <Grid item xs={6} sm={4} md={3} lg={1.5} key={c.code}>
-                <Paper sx={{ p: 1.25, borderLeft: 4, borderColor }}>
+                <Paper sx={(theme: any) => ({ p: 1.25, borderLeft: 4, borderColor, borderLeftColor: borderColor, ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: borderColor }) })}>
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600 }}>
                     {getCategoryLabel(c.code) || c.code}
                   </Typography>

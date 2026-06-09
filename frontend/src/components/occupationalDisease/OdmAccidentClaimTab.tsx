@@ -6,6 +6,7 @@ import {
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
   FormControl, Checkbox,
 } from '@mui/material'
+import type { Theme } from '@mui/material/styles'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
@@ -48,14 +49,14 @@ const STATUS_COLORS: Record<string, 'default' | 'info' | 'warning' | 'success' |
 
 const labelSx = {
   width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string),
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valSxBorder = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const valSxBorder = { ...valSx, borderRight: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string) }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string) }
 
 const sectionHeaderSx = {
   bgcolor: 'primary.main', color: 'white', py: 1, px: 2, fontWeight: 'bold', mb: 0,
@@ -337,7 +338,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
   // ===== Helper: Read-only row =====
   const DetailRow = ({ items: rowItems, isLast }: { items: { label: string; value: React.ReactNode }[]; isLast?: boolean }) => (
-    <Box sx={isLast ? { display: 'flex', borderColor: 'divider' } : rowSx}>
+    <Box sx={isLast ? { display: 'flex', borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string) } : rowSx}>
       {rowItems.map((item, idx) => (
         <Box key={idx} sx={{ display: 'contents' }}>
           <Box sx={labelSx}>{item.label}</Box>
@@ -444,7 +445,7 @@ const OdmAccidentClaimTab: React.FC = () => {
             </Box>
 
             {/* Desktop Table View */}
-            <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto', display: { xs: 'none', md: 'block' } }}>
+            <TableContainer sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), borderRadius: 1, overflowX: 'auto', display: { xs: 'none', md: 'block' } }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -562,7 +563,7 @@ const OdmAccidentClaimTab: React.FC = () => {
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           {/* Section 1: 재해근로자 인적사항 */}
           <SectionHeader title="1. 재해근로자 인적사항" />
-          <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
             <DetailRow items={[
               { label: t('tab.근로자명', '근로자명'), value: d.workerName },
               { label: t('tab.주민등록번호', '주민등록번호'), value: d.workerSsn },
@@ -582,7 +583,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
           {/* Section 2: 사업장 사항 */}
           <SectionHeader title="2. 사업장 사항" />
-          <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
             <DetailRow items={[
               { label: t('tab.사업장명', '사업장명'), value: d.companyName },
               { label: t('tab.대표자', '대표자'), value: d.companyRepName },
@@ -602,7 +603,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
           {/* Section 3: 직업병 관련 */}
           <SectionHeader title="3. 직업병 관련" />
-          <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
             <DetailRow items={[
               { label: t('tab.직업병명', '직업병명'), value: d.diseaseName },
               { label: t('tab.질병코드', '질병코드'), value: d.diseaseCode },
@@ -615,7 +616,7 @@ const OdmAccidentClaimTab: React.FC = () => {
               { label: t('tab.유해인자노출기간', '유해인자 노출기간'), value: d.exposurePeriod },
               { label: t('tab.유해인자', '유해인자'), value: d.exposureFactor },
             ]} />
-            <Box sx={{ display: 'flex', borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string) }}>
               <Box sx={labelSx}>직업력</Box>
               <Box sx={valSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{d.workHistory || ''}</Typography>
@@ -625,7 +626,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
           {/* Section 4: 요양급여 신청 */}
           <SectionHeader title="4. 요양급여 신청" />
-          <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+          <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
             <DetailRow items={[
               { label: t('tab.의료기관명', '의료기관명'), value: d.hospitalName },
               { label: t('tab.진료과', '진료과'), value: d.hospitalDept },
@@ -645,7 +646,7 @@ const OdmAccidentClaimTab: React.FC = () => {
               { label: t('tab.신청일', '신청일'), value: d.applyDate },
               { label: t('tab.상태', '상태'), value: d.status ? <Chip label={getStatusLabel(d.status) || d.status} color={STATUS_COLORS[d.status] || 'default'} size="small" /> : undefined },
             ]} />
-            <Box sx={{ display: 'flex', borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string) }}>
               <Box sx={labelSx}>비고</Box>
               <Box sx={valSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{d.notes || ''}</Typography>
@@ -673,7 +674,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
         {/* Section 5: 첨부서류 목록 */}
         <SectionHeader title="5. 첨부서류 목록" />
-        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
           {docsLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress size={24} /></Box>
           ) : !docs || docs.length === 0 ? (
@@ -805,7 +806,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
   // ===== RENDER: Create / Edit =====
   const FormRow = ({ children, isLast }: { children: React.ReactNode; isLast?: boolean }) => (
-    <Box sx={isLast ? { display: 'flex', borderColor: 'divider' } : rowSx}>{children}</Box>
+    <Box sx={isLast ? { display: 'flex', borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string) } : rowSx}>{children}</Box>
   )
 
   const FormField = ({ label, children, isLast }: { label: string; children: React.ReactNode; isLast?: boolean }) => (
@@ -876,7 +877,7 @@ const OdmAccidentClaimTab: React.FC = () => {
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         {/* Section 1: 재해근로자 인적사항 */}
         <SectionHeader title="1. 재해근로자 인적사항" />
-        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
           <FormRow>
             <FormField label={t('odmAccidentClaimTab.label1', '근로자명')}>
               <TextField size="small" fullWidth value={formData.workerName || ''} onChange={(e) => setFormData({ ...formData, workerName: e.target.value })} />
@@ -910,7 +911,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
         {/* Section 2: 사업장 사항 */}
         <SectionHeader title="2. 사업장 사항" />
-        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
           <FormRow>
             <FormField label={t('odmAccidentClaimTab.label8', '사업장명')}>
               <TextField size="small" fullWidth value={formData.companyName || ''} onChange={(e) => setFormData({ ...formData, companyName: e.target.value })} />
@@ -944,7 +945,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
         {/* Section 3: 직업병 관련 */}
         <SectionHeader title="3. 직업병 관련" />
-        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
           <FormRow>
             <FormField label={t('odmAccidentClaimTab.label15', '직업병명')}>
               <TextField size="small" fullWidth value={formData.diseaseName || ''} onChange={(e) => setFormData({ ...formData, diseaseName: e.target.value })} />
@@ -978,7 +979,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
         {/* Section 4: 요양급여 신청 */}
         <SectionHeader title="4. 요양급여 신청" />
-        <Box sx={{ border: 1, borderColor: 'divider', overflow: 'hidden', mb: 3 }}>
+        <Box sx={{ border: 1, borderColor: (theme: Theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : (theme.palette.divider as string), overflow: 'hidden', mb: 3 }}>
           <FormRow>
             <FormField label={t('odmAccidentClaimTab.label22', '의료기관명')}>
               <TextField size="small" fullWidth value={formData.hospitalName || ''} onChange={(e) => setFormData({ ...formData, hospitalName: e.target.value })} />

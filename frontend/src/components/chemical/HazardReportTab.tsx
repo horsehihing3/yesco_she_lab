@@ -226,25 +226,25 @@ const HazardReportTab: React.FC = () => {
       {/* Metrics */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.hazardReport.totalHazardous')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="error.main">{chemicalCount}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.hazardReport.annualHandlingTotal')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="primary.main">{annualHandlingTotal}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.hazardReport.facilityCount')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="info.main">{facilityCount}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.hazardReport.managerCount')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="success.main">{managerCount}</Typography>
           </Paper>

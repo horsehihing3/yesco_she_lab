@@ -257,25 +257,25 @@ const RegulationTab: React.FC = () => {
       {/* Metrics Cards */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.reg.totalRegulation')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="primary">{totalElements}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.reg.applicableCount')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="info.main"></Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.reg.domesticReg')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="success.main"></Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="caption" color="text.secondary">{t('chem.reg.overseasReg')}</Typography>
             <Typography variant="h5" fontWeight="bold" color="secondary.main"></Typography>
           </Paper>

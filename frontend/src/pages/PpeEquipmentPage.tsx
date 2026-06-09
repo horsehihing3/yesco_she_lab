@@ -527,28 +527,28 @@ const PpeEquipmentPage: React.FC = () => {
       {/* KPI Cards */}
       {kpi && (
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3, flexShrink: 0 }}>
-          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'primary.main' }}>
+          <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'primary.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <InventoryIcon color="primary" fontSize="small" />
               <Typography variant="caption" color="text.secondary">{t('ppe.totalItems')}</Typography>
             </Box>
             <Typography variant="h4" fontWeight="bold" color="primary">{kpi.totalItems}</Typography>
           </Paper>
-          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'success.main' }}>
+          <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'success.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <VerifiedUserIcon color="success" fontSize="small" />
               <Typography variant="caption" color="text.secondary">{t('ppe.avgWearRate')}</Typography>
             </Box>
             <Typography variant="h4" fontWeight="bold" color="success.main">{Number(kpi.avgWearRate || 0).toFixed(1)}%</Typography>
           </Paper>
-          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'warning.main' }}>
+          <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'warning.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <WarningAmberIcon color="warning" fontSize="small" />
               <Typography variant="caption" color="text.secondary">{t('ppe.expirySoon')}</Typography>
             </Box>
             <Typography variant="h4" fontWeight="bold" color="warning.main">{kpi.expirySoonCount}</Typography>
           </Paper>
-          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'error.main' }}>
+          <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'error.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <ErrorOutlineIcon color="error" fontSize="small" />
               <Typography variant="caption" color="text.secondary">{t('ppe.expiredOrLow')}</Typography>
@@ -752,7 +752,7 @@ const PpeEquipmentPage: React.FC = () => {
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 2, mt: 2, flexShrink: 0 }}>
 
           {/* 교체·점검 알림 */}
-          <Paper>
+          <Paper sx={(theme: any) => ({ ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2, borderBottom: 1, borderColor: 'divider' }}>
               <NotificationsActiveIcon color="warning" fontSize="small" />
               <Typography variant="subtitle2" fontWeight="bold" sx={{ flex: 1 }}>{t('ppe.alertTitle')}</Typography>
@@ -776,7 +776,7 @@ const PpeEquipmentPage: React.FC = () => {
           </Paper>
 
           {/* 분류별 보호구 현황 */}
-          <Paper>
+          <Paper sx={(theme: any) => ({ ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2, borderBottom: 1, borderColor: 'divider' }}>
               <CategoryIcon color="info" fontSize="small" />
               <Typography variant="subtitle2" fontWeight="bold">{t('ppe.categoryStats')}</Typography>
@@ -818,7 +818,7 @@ const PpeEquipmentPage: React.FC = () => {
           </Paper>
 
           {/* 점검·교체 일정 */}
-          <Paper>
+          <Paper sx={(theme: any) => ({ ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 2, borderBottom: 1, borderColor: 'divider' }}>
               <EventNoteIcon color="success" fontSize="small" />
               <Typography variant="subtitle2" fontWeight="bold">{t('ppe.scheduleTitle')}</Typography>

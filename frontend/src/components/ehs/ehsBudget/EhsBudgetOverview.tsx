@@ -130,7 +130,7 @@ const EhsBudgetOverview: React.FC<EhsBudgetOverviewProps> = ({
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {kpiCards.map((card, idx) => (
           <Grid item xs={12} md={2.4} key={idx}>
-            <Paper sx={{ p: 2.5, borderLeft: 4, borderColor: card.color }}>
+            <Paper sx={(theme: any) => ({ p: 2.5, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color, ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: card.color }) })}>
               <Typography variant="body2" color="text.secondary">{card.label}</Typography>
               <Typography fontWeight="bold" sx={{ mt: 0.75, fontSize: { xs: '1.75rem', md: '2.25rem' }, lineHeight: 1.2 }}>
                 {card.value}
@@ -143,7 +143,7 @@ const EhsBudgetOverview: React.FC<EhsBudgetOverviewProps> = ({
       {showCategoryStats && (
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
+          <Paper sx={(theme: any) => ({ p: 2, ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
             <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1.5 }}>
               {t('budget.compareTitle', '분류별 집행 현황')}
             </Typography>

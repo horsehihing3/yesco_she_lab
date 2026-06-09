@@ -211,19 +211,19 @@ const UsageReportTab: React.FC = () => {
     <Box>
       {/* Metrics */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, gap: 1.5, mb: 2 }}>
-        <Paper sx={{ p: 2, textAlign: 'center' }}>
+        <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
           <Typography variant="caption" color="text.secondary">{t('chem.usageReport.annualTotal')}</Typography>
           <Typography variant="h5" fontWeight="bold" color="primary.main">{annualTotal.toLocaleString()}</Typography>
         </Paper>
-        <Paper sx={{ p: 2, textAlign: 'center' }}>
+        <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
           <Typography variant="caption" color="text.secondary">{t('chem.usageReport.monthlyUsage')}</Typography>
           <Typography variant="h5" fontWeight="bold" color="info.main">{monthlyTotal.toLocaleString()}</Typography>
         </Paper>
-        <Paper sx={{ p: 2, textAlign: 'center' }}>
+        <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
           <Typography variant="caption" color="text.secondary">{t('chem.usageReport.statusSubmitted')}</Typography>
           <Typography variant="h5" fontWeight="bold" color="success.main">{submittedCount}</Typography>
         </Paper>
-        <Paper sx={{ p: 2, textAlign: 'center' }}>
+        <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
           <Typography variant="caption" color="text.secondary">{t('chem.usageReport.nextDeadline')}</Typography>
           <Typography variant="h5" fontWeight="bold" color="warning.main" sx={{ fontSize: '1.1rem' }}>{nextDeadline}</Typography>
         </Paper>

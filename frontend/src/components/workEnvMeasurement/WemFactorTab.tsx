@@ -245,7 +245,7 @@ const WemFactorTab: React.FC = () => {
             { label: t('wem.typeDust'), value: dustCount, color: '#6b7280' },
           ].map((card, idx) => (
             <Grid item xs={6} md={3} key={idx}>
-              <Paper sx={{ p: 2, borderLeft: 4, borderColor: card.color }}>
+              <Paper sx={{ p: 2, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color}}>
                 <Typography variant="caption" color="text.secondary">{card.label}</Typography>
                 <Typography variant="h5" fontWeight="bold">{card.value}</Typography>
               </Paper>
