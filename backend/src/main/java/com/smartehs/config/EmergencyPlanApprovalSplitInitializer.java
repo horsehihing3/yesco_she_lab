@@ -48,7 +48,11 @@ public class EmergencyPlanApprovalSplitInitializer implements CommandLineRunner 
                 new String[]{"completion_approver_position", "NVARCHAR(50) NULL"},
                 new String[]{"completion_approver_name",     "NVARCHAR(100) NULL"},
                 new String[]{"completion_approved_at",       "DATETIME2 NULL"},
-                new String[]{"completion_approved_by",       "NVARCHAR(100) NULL"}
+                new String[]{"completion_approved_by",       "NVARCHAR(100) NULL"},
+                new String[]{"modified_by_user_id",         "BIGINT NULL"},
+                new String[]{"modified_by_name",            "NVARCHAR(100) NULL"},
+                new String[]{"modified_by_team",            "NVARCHAR(100) NULL"},
+                new String[]{"modified_by_position",        "NVARCHAR(50) NULL"}
             )) {
                 ensureColumn("tb_emergency_plan", col[0], col[1]);
             }
