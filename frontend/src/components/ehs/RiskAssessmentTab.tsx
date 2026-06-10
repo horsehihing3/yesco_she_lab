@@ -1,6 +1,7 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState, useEffect } from 'react'
 import { fmtPerson } from '../../utils/personFormat'
+import { isEhsManager } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
@@ -143,7 +144,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     setApproverPickTarget(null)
   }
 
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const { canSee } = useButtonRules()
   const MENU = '안전 관리 › 위험성 평가'
   const getItemRoles = (item: { authorName?: string|null; planApproverName?: string|null; completionApproverName?: string|null }): string[] => {

@@ -59,10 +59,10 @@ public class EhsAnnualPlanController {
         if (authentication != null) {
             IdmUser idmUser = idmMapper.findByUid(authentication.getName());
             if (idmUser != null) {
-                request.setWriterUserId(idmUser.getUidNumber());
-                request.setWriterName(idmUser.getUserName());
-                request.setWriterTeam(idmUser.getGroupName());
-                request.setWriterPosition(idmUser.getTitleName());
+                request.setCreatedByUserId(idmUser.getUidNumber());
+                request.setCreatedByName(idmUser.getUserName());
+                request.setCreatedByTeam(idmUser.getGroupName());
+                request.setCreatedByPosition(idmUser.getTitleName());
             }
         }
         EhsAnnualPlanResponse plan = ehsAnnualPlanService.create(request);

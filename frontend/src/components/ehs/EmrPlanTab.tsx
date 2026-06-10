@@ -52,10 +52,10 @@ const buildEmptyForm = (authUser: ReturnType<typeof useAuth>['user']): Emergency
   planType: '',
   planName: '',
   status: 'DRAFT',
-  writerUserId: authUser?.id ?? null,
-  writerTeam: authUser?.department || '',
-  writerPosition: authUser?.position || '',
-  writerName: authUser?.name || '',
+  createdByUserId: authUser?.id ?? null,
+  createdByTeam: authUser?.department || '',
+  createdByPosition: authUser?.position || '',
+  createdByName: authUser?.name || '',
   planApproverUserId: null, planApproverTeam: '', planApproverPosition: '', planApproverName: '',
   completionApproverUserId: null, completionApproverTeam: '', completionApproverPosition: '', completionApproverName: '',
 })
@@ -66,14 +66,14 @@ const EmrPlanTab: React.FC = () => {
   const { showSuccess, showError, showConfirm, showWarning } = useAlert()
   const { user: authUser } = useAuth()
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
-  const canEditDraft = (item: { writerUserId?: number | null }) => isAdmin || item.writerUserId === authUser?.id
+  const canEditDraft = (item: { createdByUserId?: number | null }) => isAdmin || item.createdByUserId === authUser?.id
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 비상 훈련 › 비상 계획'
-  const getRoles = (item: { writerUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+  const getRoles = (item: { createdByUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
     else if (authUser?.role) roles.push(authUser.role)
-    if (item.writerUserId === authUser?.id) roles.push('writer')
+    if (item.createdByUserId === authUser?.id) roles.push('writer')
     if ((item.planApproverUserId && authUser?.id && item.planApproverUserId === authUser.id) ||
         (item.planApproverName && authUser?.name && item.planApproverName === authUser.name)) roles.push('planApprover')
     if ((item.completionApproverUserId && authUser?.id && item.completionApproverUserId === authUser.id) ||
@@ -204,8 +204,8 @@ const EmrPlanTab: React.FC = () => {
       resourceIds: target.resourceIds, notes: target.notes,
       checklistTemplateId: target.checklistTemplateId,
       status: target.status,
-      writerUserId: target.writerUserId, writerTeam: target.writerTeam,
-      writerPosition: target.writerPosition, writerName: target.writerName,
+      createdByUserId: target.createdByUserId, createdByTeam: target.createdByTeam,
+      createdByPosition: target.createdByPosition, createdByName: target.createdByName,
       planApproverUserId: target.planApproverUserId, planApproverTeam: target.planApproverTeam,
       planApproverPosition: target.planApproverPosition, planApproverName: target.planApproverName,
       completionApproverUserId: target.completionApproverUserId, completionApproverTeam: target.completionApproverTeam,
@@ -464,7 +464,7 @@ const EmrPlanTab: React.FC = () => {
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{formatUserName(selectedItem.writerTeam, selectedItem.writerName, selectedItem.writerPosition) || ''}</Typography>
+                <Typography variant="body2">{formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || ''}</Typography>
               </Box>
               <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -478,7 +478,7 @@ const EmrPlanTab: React.FC = () => {
               <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                 <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
                 <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="body2">{selectedItem.modifiedByName || ''}</Typography>
+                  <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition) || ''}</Typography>
                 </Box>
                 <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
                 <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -536,11 +536,11 @@ const EmrPlanTab: React.FC = () => {
               [t('common.description'), selectedItem.description || ''],
               [t('emr.responseSteps'), selectedItem.responseSteps || ''],
               [t('common.notes'), selectedItem.notes || ''],
-              [t('common.creator', '작성자'), formatUserName(selectedItem.writerTeam, selectedItem.writerName, selectedItem.writerPosition) || ''],
+              [t('common.creator', '작성자'), formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || ''],
               [t('audit.createdAt', '작성일자'),
                 selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
               ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
-                [t('common.modifier', '수정자'), selectedItem.modifiedByName || ''],
+                [t('common.modifier', '수정자'), formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition) || ''],
                 [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
               ] as Array<[string, string]> : []),
               [t('emr.planApprover'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
@@ -695,7 +695,7 @@ const EmrPlanTab: React.FC = () => {
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body2">{formatUserName(form.writerTeam || authUser?.department, form.writerName || authUser?.name, form.writerPosition || authUser?.position) || ''}</Typography>
+              <Typography variant="body2">{formatUserName(form.createdByTeam || authUser?.department, form.createdByName || authUser?.name, form.createdByPosition || authUser?.position) || ''}</Typography>
             </Box>
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -711,7 +711,7 @@ const EmrPlanTab: React.FC = () => {
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{selectedItem.modifiedByName || ''}</Typography>
+                <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition) || ''}</Typography>
               </Box>
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
@@ -807,7 +807,7 @@ const EmrPlanTab: React.FC = () => {
           {/* 작성자 / 작성일자 */}
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.creator', '작성자')}</Typography>
-            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(form.writerTeam || authUser?.department, form.writerName || authUser?.name, form.writerPosition || authUser?.position) || ''}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(form.createdByTeam || authUser?.department, form.createdByName || authUser?.name, form.createdByPosition || authUser?.position) || ''}</Typography>
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.createdAt', '작성일자')}</Typography>
@@ -822,7 +822,7 @@ const EmrPlanTab: React.FC = () => {
             <>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifier', '수정자')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{selectedItem.modifiedByName || ''}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition) || ''}</Typography>
               </Box>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifiedAt', '수정일자')}</Typography>

@@ -22,10 +22,10 @@ public class EhsAnnualPlanResponse {
     private String priority;
     private String remarks;
 
-    private Long writerUserId;
-    private String writerTeam;
-    private String writerPosition;
-    private String writerName;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
 
     private Long modifiedByUserId;
     private String modifiedByName;
@@ -117,10 +117,10 @@ public class EhsAnnualPlanResponse {
                 .status(entity.getStatus())
                 .priority(entity.getPriority())
                 .remarks(entity.getRemarks())
-                .writerUserId(entity.getWriterUserId())
-                .writerTeam(entity.getWriterTeam())
-                .writerPosition(entity.getWriterPosition())
-                .writerName(entity.getWriterName())
+                .createdByUserId(entity.getCreatedByUserId())
+                .createdByName(entity.getCreatedByName())
+                .createdByTeam(entity.getCreatedByTeam())
+                .createdByPosition(entity.getCreatedByPosition())
                 .modifiedByUserId(entity.getModifiedByUserId())
                 .modifiedByName(entity.getModifiedByName())
                 .modifiedByTeam(entity.getModifiedByTeam())

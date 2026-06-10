@@ -32,6 +32,38 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - [ ] **tb_user 전환 범위 최종 확인** — T_IDM_USER 참조 7개 파일 전환 시 영향도 재검토
 - [ ] **백엔드 보안 이슈 파악** — API 권한 제어 추가 방안 설계 (`@PreAuthorize` 적용 범위)
 - [ ] **isAdmin 하드코딩 4개 화면 수정 계획** — RiskAssessmentTab 등
+- [ ] **isAdmin 패턴 통일 (43개 파일 분류 확정)** — 3-티어 기준으로 분류 완료. 아래 표 참조
+
+  **분류 기준 (공용 헬퍼 도입)**
+  - **T1 `isSystemAdmin()`** = `SYSTEM_ADMIN` 단독 — 사용자/역할/시스템 설정 화면
+  - **T2 `isEhsManager()`** = `SYSTEM_ADMIN | EHS_ADMIN` — EHS 업무 운영 화면 (기본값)
+  - **T3 `isTeamManager()`** — 팀 단위 승인/조회. **현재 0개** (소유권 분기는 `isOwner`가 별도 처리) → 예스코 확정 전까지 헬퍼 미생성
+
+  **전체 집계: T1 = 1 / T2 = 41 / 보류 = 1**
+
+  | 티어 | 개수 | 대상 |
+  |------|------|------|
+  | T1 (SYSTEM_ADMIN 단독 유지) | 1 | SystemManagePage |
+  | T2 (SYSTEM_ADMIN \| EHS_ADMIN 전환) | 41 | 위험평가·보건·측정·감사·교육 등 운영 화면 전반 |
+  | 보류 (3단계까지 현행 유지) | 1 | ApprovalManagePage |
+
+  **5개 경계 화면 확정 결과 (코드 확인 완료)**
+
+  | 파일 | 확정 | 근거 |
+  |------|------|------|
+  | EhsManagerTab | T2 | `role*` 필드는 직책·소속 라벨(명부), 권한 부여 아님 |
+  | PpeRequestTab | T2 | isAdmin은 지급/반납 운영용. 신청 소유권은 `isOwner`가 별도 처리 |
+  | OdmAccidentClaimTab | T2 | 이미 다중역할 패턴 → 헬퍼 치환만 |
+  | MyHealthCheckupPage | T2 | "My"지만 isAdmin은 관리자 뷰 분기 → 헬퍼 치환만 |
+  | **ApprovalManagePage** | **🔵 3단계 보류** | 결재 승인/반려 처리. EHS_ADMIN 확대 시 tb_approval 승인 권한 확대 → 예스코 결재 연동(3단계)과 맞물림. **그때까지 SYSTEM_ADMIN 단독 유지** |
+
+  **이번 주 조치 (현장 투입 전)**
+  - [ ] 공용 헬퍼 `isSystemAdmin()` / `isEhsManager()` 정의 (`utils/auth.ts`)
+  - [ ] **선행 확인**: 예스코 현장 사용자 실제 역할 매핑 (EHS_ADMIN 부여 여부) — 미부여 시 작업 무의미
+  - [ ] Day-1 핵심 화면 우선 T2 전환 — 하드코딩 4개(RiskAssessmentTab, RiskAssessmentOfficeWorkTab, SafetyWorkPage, OshCommitteeTab) + EhsManagerTab/PpeRequestTab
+  - [ ] 이미 T2 패턴인 화면(OdmAccidentClaimTab, MyHealthCheckupPage 등)은 헬퍼 치환만
+  - [ ] ApprovalManagePage는 **건드리지 않음** (3단계 보류)
+  - [ ] 나머지 화면 전면 스윕은 🟡 2단계로 이월
 
 ### 🟠 신규 기능 요청 (예스코)
 - [ ] **산업안전보건위원회 싸인 기능** — 커뮤니케이션 > 산업안전보건위원회 참석자 서명 기능 추가. 링크 전송 → 서명자 로그인 페이지 표시 → 로그인 시 해당 페이지 바로 이동
@@ -47,7 +79,7 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - [ ] **부서 관리 API/화면 개발** — tb_dept 신규 테이블 + CRUD (T_IDM_GROUP 대체)
 - [ ] **사용자 관리 화면 개발** — 시스템 관리 탭에 사용자 등록/수정/삭제/비밀번호초기화 추가
 - [ ] **백엔드 API 권한 제어 추가** — SecurityConfig + @PreAuthorize 적용
-- [ ] **isAdmin 하드코딩 수정** — 4개 화면 실제 권한 체크로 교체
+- [ ] **isAdmin 나머지 화면 전면 스윕** — 1단계 이월 화면(Day-1 우선 화면 제외 나머지 T2 대상)을 `isEhsManager()` 헬퍼로 일괄 전환. 분류표는 🔴 1단계 참조
 - [ ] **예스코 초기 데이터 입력** — 조직도·사용자 데이터 세팅
 
 ### 🔵 3단계 — 예스코 요구사항 확인 후
@@ -137,7 +169,7 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 | 🔴 높음 | 백엔드 API 권한 제어 없음 | SecurityConfig.java | @PreAuthorize 또는 SecurityConfig에 역할별 경로 제한 추가 |
 | 🔴 높음 | DB 비밀번호 하드코딩 | application.yml | 환경변수 ${DB_PASSWORD}로 전환 |
 | 🔴 높음 | JWT_SECRET 기본값 고정 | application.yml | 운영 환경변수 필수 설정 |
-| 🟡 중간 | isAdmin 하드코딩 (4개 화면) | RiskAssessmentTab 등 | 실제 role 체크 코드로 교체 |
+| 🟡 중간 | isAdmin 패턴 불일치 (43개 파일) | 화면 전반 | **분류 확정 완료** (🔴 1단계 참조 — T1=1/T2=41/보류=1). 1단계: Day-1 핵심 화면 + 헬퍼 도입 / 2단계: 나머지 전면 스윕 / ApprovalManagePage는 3단계 보류 |
 | 🟡 중간 | 인증(T_IDM_USER) ↔ 업무(tb_user) 테이블 불일치 | AuthService vs 각 Service | tb_user 단일화 전환 |
 | 🟡 중간 | 도면 이미지 로컬 미존재 | FileStorageService | 운영서버 uploads 폴더 동기화 필요 |
 | 🔵 낮음 | preferred_language 컬럼 미사용 | tb_user | User.java 모델에 추가 또는 제거 |

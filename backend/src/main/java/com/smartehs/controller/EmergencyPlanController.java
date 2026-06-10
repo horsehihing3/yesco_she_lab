@@ -55,10 +55,10 @@ public class EmergencyPlanController {
         if (authentication != null) {
             IdmUser idmUser = idmMapper.findByUid(authentication.getName());
             if (idmUser != null) {
-                emergencyPlan.setWriterUserId(idmUser.getUidNumber());
-                emergencyPlan.setWriterName(idmUser.getUserName());
-                emergencyPlan.setWriterTeam(idmUser.getGroupName());
-                emergencyPlan.setWriterPosition(idmUser.getTitleName());
+                emergencyPlan.setCreatedByUserId(idmUser.getUidNumber());
+                emergencyPlan.setCreatedByName(idmUser.getUserName());
+                emergencyPlan.setCreatedByTeam(idmUser.getGroupName());
+                emergencyPlan.setCreatedByPosition(idmUser.getTitleName());
                 emergencyPlan.setModifiedByUserId(idmUser.getUidNumber());
                 emergencyPlan.setModifiedByName(idmUser.getUserName());
                 emergencyPlan.setModifiedByTeam(idmUser.getGroupName());

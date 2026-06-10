@@ -158,7 +158,7 @@ const PlanReportTab: React.FC = () => {
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('pkg.writer', '작성')}</TableCell>
                 <TableCell colSpan={3}>
-                  {d.writerName || ''}
+                  {d.createdByName || ''}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -209,7 +209,7 @@ const PlanReportTab: React.FC = () => {
   const columns: ReportColumn<EhsPlan>[] = [
     { header: t('pkg.planYear', '연도'), key: 'planYear' as keyof EhsPlan, align: 'center', width: 80 },
     { header: t('pkg.planName', '계획명'), key: 'planName' as keyof EhsPlan },
-    { header: t('pkg.writer', '작성'), align: 'center', width: 120, render: (r) => (r as any).writerName || '' },
+    { header: t('pkg.writer', '작성'), align: 'center', width: 120, render: (r) => (r as any).createdByName || '' },
     { header: t('pkg.createdDate', '작성일자'), align: 'center', width: 110, render: (r) => formatDateOnly((r as any).createdAt) },
     { header: t('pkg.status', '상태'), align: 'center', width: 130, render: (r) => <Chip size="small" label={STATUS_LABEL_DEFAULTS[(r as any).status] || getStatusLabel((r as any).status) || (r as any).status} color={STATUS_COLORS[(r as any).status] || 'default'} /> },
   ]

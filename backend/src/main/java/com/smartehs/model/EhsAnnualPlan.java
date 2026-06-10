@@ -20,10 +20,10 @@ public class EhsAnnualPlan {
     private String priority;
     private String remarks;
 
-    private Long writerUserId;
-    private String writerTeam;
-    private String writerPosition;
-    private String writerName;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
 
     // 수정자 (마지막으로 수정한 사용자 — 수정 시 자동 갱신)
     private Long modifiedByUserId;

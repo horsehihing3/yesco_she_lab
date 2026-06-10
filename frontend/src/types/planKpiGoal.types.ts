@@ -30,10 +30,10 @@ export interface EhsPlan {
   status: string
   priority: string | null
   remarks: string | null
-  writerUserId: number | null
-  writerTeam: string | null
-  writerPosition: string | null
-  writerName: string | null
+  createdByUserId: number | null
+  createdByTeam: string | null
+  createdByPosition: string | null
+  createdByName: string | null
   modifiedByUserId: number | null
   modifiedByName: string | null
   modifiedByTeam: string | null
@@ -66,10 +66,10 @@ export interface EhsPlanRequest {
   status?: string
   priority?: string
   remarks?: string
-  writerUserId?: number | null
-  writerTeam?: string
-  writerPosition?: string
-  writerName?: string
+  createdByUserId?: number | null
+  createdByTeam?: string
+  createdByPosition?: string
+  createdByName?: string
   planApproverUserId?: number | null
   planApproverTeam?: string
   planApproverPosition?: string

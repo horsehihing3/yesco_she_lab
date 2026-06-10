@@ -14,10 +14,10 @@ export interface EmergencyPlan {
   notes?: string
   status?: string
 
-  writerUserId?: number | null
-  writerTeam?: string
-  writerPosition?: string
-  writerName?: string
+  createdByUserId?: number | null
+  createdByTeam?: string
+  createdByPosition?: string
+  createdByName?: string
 
   modifiedByUserId?: number | null
   modifiedByName?: string | null
@@ -55,10 +55,10 @@ export interface EmergencyPlanRequest {
   checklistTemplateId?: number
   notes?: string
   status?: string
-  writerUserId?: number | null
-  writerTeam?: string
-  writerPosition?: string
-  writerName?: string
+  createdByUserId?: number | null
+  createdByTeam?: string
+  createdByPosition?: string
+  createdByName?: string
   modifiedByUserId?: number | null
   modifiedByName?: string | null
   planApproverUserId?: number | null

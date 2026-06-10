@@ -22,10 +22,10 @@ public class EhsAnnualPlanRequest {
     private String priority;
     private String remarks;
 
-    private Long writerUserId;
-    private String writerTeam;
-    private String writerPosition;
-    private String writerName;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
 
     // 수정자 (컨트롤러에서 인증된 사용자로 자동 채움)
     private Long modifiedByUserId;

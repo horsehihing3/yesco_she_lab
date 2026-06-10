@@ -67,10 +67,10 @@ const KpiStatusTab: React.FC = () => {
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › KPI목표 › KPI 현황'
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
-  const getDetailRoles = (item: { writerUserId?: number|null; writerName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+  const getDetailRoles = (item: { createdByUserId?: number|null; createdByName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles = [...myRoles]
-    if ((item.writerUserId && authUser?.id && item.writerUserId === authUser.id) ||
-        (item.writerName && authUser?.name && item.writerName === authUser.name)) roles.push('writer')
+    if ((item.createdByUserId && authUser?.id && item.createdByUserId === authUser.id) ||
+        (item.createdByName && authUser?.name && item.createdByName === authUser.name)) roles.push('writer')
     if ((item.completionApproverUserId && authUser?.id && item.completionApproverUserId === authUser.id) ||
         (item.completionApproverName && authUser?.name && item.completionApproverName === authUser.name)) roles.push('completionApprover')
     return roles
@@ -163,10 +163,10 @@ const KpiStatusTab: React.FC = () => {
     status: d.status,
     priority: d.priority,
     remarks: d.remarks,
-    writerUserId: d.writerUserId,
-    writerTeam: d.writerTeam,
-    writerPosition: d.writerPosition,
-    writerName: d.writerName,
+    createdByUserId: d.createdByUserId,
+    createdByTeam: d.createdByTeam,
+    createdByPosition: d.createdByPosition,
+    createdByName: d.createdByName,
     planApproverUserId: d.planApproverUserId,
     planApproverTeam: d.planApproverTeam,
     planApproverPosition: d.planApproverPosition,
@@ -209,10 +209,10 @@ const KpiStatusTab: React.FC = () => {
   }
 
   // 삭제 권한: 작성자 또는 admin
-  const canDeletePlan = (d: { writerUserId?: number | null; writerName?: string | null }) => {
+  const canDeletePlan = (d: { createdByUserId?: number | null; createdByName?: string | null }) => {
     if (isAdmin) return true
-    if (d.writerUserId && authUser?.id && d.writerUserId === authUser.id) return true
-    if (d.writerName && authUser?.name && d.writerName === authUser.name) return true
+    if (d.createdByUserId && authUser?.id && d.createdByUserId === authUser.id) return true
+    if (d.createdByName && authUser?.name && d.createdByName === authUser.name) return true
     return false
   }
 
@@ -289,7 +289,7 @@ const KpiStatusTab: React.FC = () => {
                     <TableCell align="center">{FORM_NO}</TableCell>
                     <TableCell align="center">{p.planYear}</TableCell>
                     <TableCell><Typography variant="body2" fontWeight={600}>{p.planName}</Typography></TableCell>
-                    <TableCell align="center">{p.writerName || ''}</TableCell>
+                    <TableCell align="center">{p.createdByName || ''}</TableCell>
                     <TableCell align="center">{p.planApproverName || ''}</TableCell>
                     <TableCell align="center">{p.completionApproverName || ''}</TableCell>
                     <TableCell align="center">
@@ -356,7 +356,7 @@ const KpiStatusTab: React.FC = () => {
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.writerTeam, d.writerName, d.writerPosition)}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.createdByTeam, d.createdByName, d.createdByPosition)}</Typography></Box>
             <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
             <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
           </Box>

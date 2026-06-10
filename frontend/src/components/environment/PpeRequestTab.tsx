@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -109,7 +110,7 @@ const PpeRequestTab: React.FC = () => {
   const cancelMut = useMutation({ mutationFn: (id: number) => ppeRequestApi.cancel(id), onSuccess: () => { invalidateAll(); showSuccess(t('ppeReq.cancelled')); handleBackToList() }, onError: () => showError(t('common.error')) })
   const deleteMut = useMutation({ mutationFn: (id: number) => ppeRequestApi.delete(id), onSuccess: () => { invalidateAll(); showSuccess(t('common.deleted')); handleBackToList() }, onError: () => showError(t('common.error')) })
 
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ itemName: '', quantity: 1 }) }
   const handleRowClick = (item: PpeRequestItem) => { setSelectedItem(item); setViewMode('detail') }

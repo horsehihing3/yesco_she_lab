@@ -112,10 +112,10 @@ const AnnualPlanTab: React.FC = () => {
     planYear: yearVal,
     planName: '',
     description: '',
-    writerUserId: authUser?.id ?? null,
-    writerTeam: authUser?.department || '',
-    writerPosition: authUser?.position || '',
-    writerName: authUser?.name || '',
+    createdByUserId: authUser?.id ?? null,
+    createdByTeam: authUser?.department || '',
+    createdByPosition: authUser?.position || '',
+    createdByName: authUser?.name || '',
     planApproverUserId: null,
     planApproverTeam: '',
     planApproverPosition: '',
@@ -252,10 +252,10 @@ const AnnualPlanTab: React.FC = () => {
         description: detail.description || '',
         status: detail.status || '',
         remarks: detail.remarks || '',
-        writerUserId: detail.writerUserId,
-        writerTeam: detail.writerTeam || '',
-        writerPosition: detail.writerPosition || '',
-        writerName: detail.writerName || '',
+        createdByUserId: detail.createdByUserId,
+        createdByTeam: detail.createdByTeam || '',
+        createdByPosition: detail.createdByPosition || '',
+        createdByName: detail.createdByName || '',
         planApproverUserId: detail.planApproverUserId,
         planApproverTeam: detail.planApproverTeam || '',
         planApproverPosition: detail.planApproverPosition || '',
@@ -338,7 +338,7 @@ const AnnualPlanTab: React.FC = () => {
 
   // 권한 헬퍼: 계획 승인자 본인 또는 admin 만 계획 승인/반려 가능
   const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
-  const canEditDraft = (d: { writerUserId?: number | null }) => isAdmin || d.writerUserId === authUser?.id
+  const canEditDraft = (d: { createdByUserId?: number | null }) => isAdmin || d.createdByUserId === authUser?.id
   const canApprovePlan = (d: { planApproverUserId?: number | null; planApproverName?: string | null }) => {
     if (isAdmin) return true
     if (d.planApproverUserId && authUser?.id && d.planApproverUserId === authUser.id) return true
@@ -347,11 +347,11 @@ const AnnualPlanTab: React.FC = () => {
   }
   const { canSee } = useButtonRules()
   const MENU_ANNUAL = 'EHS 경영 › KPI목표 › 연간계획'
-  const getRoles = (d: { writerUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+  const getRoles = (d: { createdByUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
     else if (authUser?.role) roles.push(authUser.role)
-    if (d.writerUserId === authUser?.id) roles.push('writer')
+    if (d.createdByUserId === authUser?.id) roles.push('writer')
     if ((d.planApproverUserId && authUser?.id && d.planApproverUserId === authUser.id) ||
         (d.planApproverName && authUser?.name && d.planApproverName === authUser.name)) roles.push('planApprover')
     if ((d.completionApproverUserId && authUser?.id && d.completionApproverUserId === authUser.id) ||
@@ -455,7 +455,7 @@ const AnnualPlanTab: React.FC = () => {
                       <TableCell align="center">{FORM_NO}</TableCell>
                       <TableCell align="center">{item.planYear}</TableCell>
                       <TableCell>{item.planName}</TableCell>
-                      <TableCell align="center">{item.writerName || ''}</TableCell>
+                      <TableCell align="center">{item.createdByName || ''}</TableCell>
                       <TableCell align="center">{item.planApproverName || ''}</TableCell>
                       <TableCell align="center">{item.completionApproverName || ''}</TableCell>
                       <TableCell align="center">
@@ -478,7 +478,7 @@ const AnnualPlanTab: React.FC = () => {
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 90 }}>{t('pkg.writer', '작성자')}</Typography>
-                      <Typography variant="body2">{item.writerName || ''}</Typography>
+                      <Typography variant="body2">{item.createdByName || ''}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 90 }}>{t('pkg.planApprover', '계획 승인')}</Typography>
@@ -543,7 +543,7 @@ const AnnualPlanTab: React.FC = () => {
           </Box>
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.writerTeam, d.writerName, d.writerPosition)}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.createdByTeam, d.createdByName, d.createdByPosition)}</Typography></Box>
             <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
             <Box sx={valSx}><Typography variant="body2">{formatDateOnly(d.createdAt)}</Typography></Box>
           </Box>
@@ -585,14 +585,14 @@ const AnnualPlanTab: React.FC = () => {
               {t('pkg.planSubmit', '계획 결재 상신')}
             </Button>
           )}
-          {selectedItem && d.status === 'PENDING_APPROVAL' && !(authUser?.id && d.writerUserId === authUser.id) && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '반려', getRoles(d)) && (
+          {selectedItem && d.status === 'PENDING_APPROVAL' && !(authUser?.id && d.createdByUserId === authUser.id) && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '반려', getRoles(d)) && (
             <Button variant="contained" color="warning"
               onClick={() => setRejectDialogOpen(true)}
               sx={{ width: 'auto' }}>
               {t('pkg.reject', '반려')}
             </Button>
           )}
-          {selectedItem && d.status === 'PENDING_APPROVAL' && !(authUser?.id && d.writerUserId === authUser.id) && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '계획 승인', getRoles(d)) && (
+          {selectedItem && d.status === 'PENDING_APPROVAL' && !(authUser?.id && d.createdByUserId === authUser.id) && canSee(MENU_ANNUAL, 'PENDING_APPROVAL', '계획 승인', getRoles(d)) && (
             <Button variant="contained" color="success"
               onClick={async () => {
                 const ok = await showConfirm(t('pkg.confirmApprove', '승인 하시겠습니까?'))
@@ -670,7 +670,7 @@ const AnnualPlanTab: React.FC = () => {
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('pkg.writer', '작성자')}</Box>
           <Box sx={valBorderSx}>
-            <Typography variant="body2">{formatUserName(formData.writerTeam, formData.writerName, formData.writerPosition)}</Typography>
+            <Typography variant="body2">{formatUserName(formData.createdByTeam, formData.createdByName, formData.createdByPosition)}</Typography>
           </Box>
           <Box sx={labelSx}>{t('pkg.createdDate', '작성일자')}</Box>
           <Box sx={valSx}>

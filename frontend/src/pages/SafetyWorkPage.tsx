@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { isEhsManager } from '../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -163,7 +164,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   const [photoPreviewOpen, setPhotoPreviewOpen] = useState(false)
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState('')
   const { user } = useAuth()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const rowsPerPage = 10
 
   const { control, handleSubmit, reset, setValue } = useForm<SafetyWorkRequest>({

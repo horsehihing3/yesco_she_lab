@@ -74,14 +74,14 @@ public class EhsAnnualPlanService {
                 .status(request.getStatus() != null ? request.getStatus() : "DRAFT")
                 .priority(request.getPriority())
                 .remarks(request.getRemarks())
-                .writerUserId(request.getWriterUserId())
-                .writerTeam(request.getWriterTeam())
-                .writerPosition(request.getWriterPosition())
-                .writerName(request.getWriterName())
-                .modifiedByUserId(request.getWriterUserId())
-                .modifiedByName(request.getWriterName())
-                .modifiedByTeam(request.getWriterTeam())
-                .modifiedByPosition(request.getWriterPosition())
+                .createdByUserId(request.getCreatedByUserId())
+                .createdByName(request.getCreatedByName())
+                .createdByTeam(request.getCreatedByTeam())
+                .createdByPosition(request.getCreatedByPosition())
+                .modifiedByUserId(request.getCreatedByUserId())
+                .modifiedByName(request.getCreatedByName())
+                .modifiedByTeam(request.getCreatedByTeam())
+                .modifiedByPosition(request.getCreatedByPosition())
                 .planApproverUserId(request.getPlanApproverUserId())
                 .planApproverTeam(request.getPlanApproverTeam())
                 .planApproverPosition(request.getPlanApproverPosition())
@@ -111,10 +111,6 @@ public class EhsAnnualPlanService {
         plan.setStatus(request.getStatus());
         plan.setPriority(request.getPriority());
         plan.setRemarks(request.getRemarks());
-        plan.setWriterUserId(request.getWriterUserId());
-        plan.setWriterTeam(request.getWriterTeam());
-        plan.setWriterPosition(request.getWriterPosition());
-        plan.setWriterName(request.getWriterName());
         plan.setModifiedByUserId(request.getModifiedByUserId());
         plan.setModifiedByName(request.getModifiedByName());
         plan.setModifiedByTeam(request.getModifiedByTeam());
@@ -187,7 +183,7 @@ public class EhsAnnualPlanService {
                 throw new AccessDeniedException("삭제 권한이 없습니다.");
             }
             boolean isAdmin = u.getUserRole() != null && ADMIN_ROLES.contains(u.getUserRole());
-            boolean isWriter = plan.getWriterUserId() != null && plan.getWriterUserId().equals(u.getUidNumber());
+            boolean isWriter = plan.getCreatedByUserId() != null && plan.getCreatedByUserId().equals(u.getUidNumber());
             if (!isAdmin && !isWriter) {
                 throw new AccessDeniedException("작성자 또는 관리자만 삭제할 수 있습니다.");
             }
