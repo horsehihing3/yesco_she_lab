@@ -359,7 +359,7 @@ const AnnualPlanTab: React.FC = () => {
         (d.completionApproverName && authUser?.name && d.completionApproverName === authUser.name)) roles.push('completionApprover')
     return roles
   }
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
+  const myRoles: string[] = ['guest', ...(authUser?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (authUser?.role ? [authUser.role] : []))]
 
   const updateGoal = (idx: number, patch: Partial<EhsPlanGoal>) => {
     setFormData(f => {

@@ -156,7 +156,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     if (item.completionApproverName && user?.name && item.completionApproverName === user.name) roles.push('completionApprover')
     return roles
   }
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
 
   // Fetch sites from API
   const { data: sitesData } = useQuery({

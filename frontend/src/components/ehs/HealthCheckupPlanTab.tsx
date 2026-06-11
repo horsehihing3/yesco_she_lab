@@ -139,7 +139,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   const { canSee } = useButtonRules()
   const MENU = '보건 관리 › 건강 검진 관리 › 건강검진 계획'
   const isAdmin = isEhsManager(user)
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const currentWriter = user?.name || user?.username || ''
   const { codeList: typeCodes, getLabel: getTypeLabel } = useCodeMap('HEALTH_CHECKUP_TYPE')
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('HEALTH_CHECKUP_PLAN_STATUS')

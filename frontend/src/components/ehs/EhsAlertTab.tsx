@@ -120,7 +120,7 @@ const EhsAlertTab: React.FC = () => {
   const isAdmin = isEhsManager(user)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 알림'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const canNew  = canSee(MENU, 'LIST', 'New', myRoles)
   const getDetailRoles = (item: { authorName?: string } | null | undefined): string[] =>
     [...myRoles, ...(item?.authorName === user?.name ? ['writer'] : [])]

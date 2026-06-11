@@ -80,7 +80,7 @@ const OdmAccidentClaimTab: React.FC = () => {
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const isAdmin = isEhsManager(user)
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('CLAIM_STATUS')
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')

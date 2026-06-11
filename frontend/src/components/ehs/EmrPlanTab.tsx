@@ -81,7 +81,7 @@ const EmrPlanTab: React.FC = () => {
         (item.completionApproverName && authUser?.name && item.completionApproverName === authUser.name)) roles.push('completionApprover')
     return roles
   }
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
+  const myRoles: string[] = ['guest', ...(authUser?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (authUser?.role ? [authUser.role] : []))]
   const { codeList: planTypeCodes, getLabel: getPlanTypeLabel } = useCodeMap('EMERGENCY_PLAN_TYPE')
   const { getLabel: getStatusLabel } = useCodeMap('PLAN_STATUS')
 

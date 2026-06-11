@@ -47,7 +47,7 @@ const EmrResourceTab: React.FC = () => {
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const isAdmin = isEhsManager(user) || user?.role === 'TEAM_ADMIN'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const { codeList: resourceTypeCodes, getLabel: getResourceTypeLabel } = useCodeMap('RESOURCE_TYPE')
   const { codeList: resourceStatusCodes, getLabel: getResourceStatusLabel } = useCodeMap('RESOURCE_STATUS')
 

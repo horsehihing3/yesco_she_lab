@@ -67,7 +67,7 @@ const KpiStatusTab: React.FC = () => {
   const isAdmin = isEhsManager(authUser)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › KPI목표 › KPI 현황'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]
+  const myRoles: string[] = ['guest', ...(authUser?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (authUser?.role ? [authUser.role] : []))]
   const getDetailRoles = (item: { createdByUserId?: number|null; createdByName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles = [...myRoles]
     if ((item.createdByUserId && authUser?.id && item.createdByUserId === authUser.id) ||

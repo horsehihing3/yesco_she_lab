@@ -69,7 +69,7 @@ const EhsManagerTab: React.FC = () => {
   const isAdmin = isEhsManager(user)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 직책자 명단'
-  const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const canNew  = canSee(MENU, 'LIST',   'New',  myRoles)
   const canEdit = canSee(MENU, 'DETAIL', '수정', myRoles)
   const canDel  = canSee(MENU, 'DETAIL', '삭제', myRoles)

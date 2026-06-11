@@ -728,12 +728,11 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     menuPath: '협력 업체 관리 › EHS 협의체', menuKey: 'nav.partnerOshCommittee',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
-      { status: '입장중', statusLabel: '상세/편집', statusColor: 'default',
-        statusNote: 'PartnerVisitorTab이 canSee에 입장중 status 코드 사용',
+        buttons: [{ button: 'New', roles: WRITER_ADMIN, generalAdminRoles: ['EHS_ADMIN'] }] },
+      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['EHS_ADMIN'] },
+          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['EHS_ADMIN'] },
         ] },
     ],
   },
