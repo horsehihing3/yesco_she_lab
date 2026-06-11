@@ -35,7 +35,6 @@ export const GENERAL_ADMIN_ROLE_OPTIONS: { key: string; label: string }[] = [
 export interface ButtonRule {
   button: string
   roles: Record<Role, boolean>
-  generalAdminRoles?: string[]
   issue?: string
 }
 
@@ -442,8 +441,8 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
       { status: 'DETAIL', statusLabel: '상세 (상태 무관)', statusColor: 'default',
         statusNote: 'RiskAssessmentTab은 canSee를 DETAIL로 호출, 실제 상태 조건은 컴포넌트에서 별도 체크',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['RISK_ASSESS_ADMIN'] },
-          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['RISK_ASSESS_ADMIN'] },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
         ] },
       { status: 'draft', statusLabel: '작성중', statusColor: 'default',
         buttons: [
@@ -517,12 +516,12 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [
-          { button: '신규 등록', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+          { button: '신규 등록', roles: ALL_OFF },
         ] },
       { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
-          { button: '삭제', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+          { button: '수정', roles: ALL_OFF },
+          { button: '삭제', roles: ALL_OFF },
         ] },
     ],
   },
@@ -537,17 +536,17 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [
           { button: '수정',   roles: WRITER_ONLY },
           { button: '취소',   roles: WRITER_ONLY },
-          { button: '승인',   roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
-          { button: '반려',   roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+          { button: '승인',   roles: ALL_OFF },
+          { button: '반려',   roles: ALL_OFF },
           { button: '삭제',   roles: WRITER_ADMIN },
         ] },
       { status: 'APPROVED', statusLabel: '승인', statusColor: 'success',
         buttons: [
-          { button: '지급완료', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+          { button: '지급완료', roles: ALL_OFF },
         ] },
       { status: 'ISSUED', statusLabel: '지급완료', statusColor: 'success',
         buttons: [
-          { button: '반납', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+          { button: '반납', roles: ALL_OFF },
         ] },
     ],
   },
@@ -728,11 +727,11 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     menuPath: '협력 업체 관리 › EHS 협의체', menuKey: 'nav.partnerOshCommittee',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: 'New', roles: WRITER_ADMIN, generalAdminRoles: ['EHS_ADMIN'] }] },
+        buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['EHS_ADMIN'] },
-          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['EHS_ADMIN'] },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -761,15 +760,15 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'PLANNED', statusLabel: '계획', statusColor: 'default',
         buttons: [
-          { button: '수정',           roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
-          { button: '삭제',           roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
-          { button: '계획 결재 상신', roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+          { button: '수정',           roles: WRITER_ADMIN },
+          { button: '삭제',           roles: WRITER_ADMIN },
+          { button: '계획 결재 상신', roles: WRITER_ADMIN },
         ] },
       { status: 'REJECTED', statusLabel: '반려', statusColor: 'error',
         buttons: [
-          { button: '수정',           roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
-          { button: '삭제',           roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
-          { button: '계획 결재 상신', roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+          { button: '수정',           roles: WRITER_ADMIN },
+          { button: '삭제',           roles: WRITER_ADMIN },
+          { button: '계획 결재 상신', roles: WRITER_ADMIN },
         ] },
       { status: 'PENDING_APPROVAL', statusLabel: '승인대기', statusColor: 'warning',
         buttons: [
@@ -785,7 +784,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     statuses: [
       { status: 'PENDING_COMPLETION', statusLabel: '완료 대기', statusColor: 'warning',
         buttons: [
-          { button: '완료 승인', roles: ADMIN_COMP, generalAdminRoles: ['HEALTH_ADMIN'] },
+          { button: '완료 승인', roles: ADMIN_COMP },
         ] },
     ],
   },
@@ -795,10 +794,10 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     menuPath: '보건 관리 › 건강 검진 관리 › 사후관리', menuKey: 'healthCheckup.tabs.record',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: 'PDF 업로드', roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] }] },
+        buttons: [{ button: 'PDF 업로드', roles: WRITER_ADMIN }] },
       { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
         buttons: [
-          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+          { button: '삭제', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -826,9 +825,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
-          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
-          { button: '저장', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '저장', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -841,9 +840,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'DETAIL', statusLabel: '상세/편집 (상태 무관)', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
-          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
-          { button: '저장', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '저장', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -856,9 +855,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
-          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
-          { button: '저장', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '저장', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -871,9 +870,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
-          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
-          { button: '저장', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '수정', roles: WRITER_ADMIN },
+          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '저장', roles: WRITER_ADMIN },
         ] },
     ],
   },
