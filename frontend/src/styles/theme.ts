@@ -307,7 +307,8 @@ const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', var
       MuiTableCell: {
         styleOverrides: {
           root: {
-            borderRight: `1px solid ${colors.border}`,
+            borderRight: mode === 'dark' ? '1px solid rgba(255,255,255,0.25)' : `1px solid ${colors.border}`,
+            borderBottomColor: mode === 'dark' ? 'rgba(255,255,255,0.25)' : undefined,
             '&:last-child': {
               borderRight: 'none',
             },

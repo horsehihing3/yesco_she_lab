@@ -228,6 +228,8 @@
     "nearMiss": "Incident Management",
     "safetyWork": "Safety Work Management",
     "processActivityWork": "Process/Activity Work",
+    "safetyHazardInfo": "Safety & Health Hazard Info",
+    "safetyAccidentInfo": "Safety & Health Accident Info",
     "riskAssessment": "Risk Assessment",
     "oshCommittee": "EHS Council",
     "healthCheckup": "Health & Wellness",

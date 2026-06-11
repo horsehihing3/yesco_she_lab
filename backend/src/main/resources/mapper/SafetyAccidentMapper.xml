@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.SafetyAccidentMapper">
+
+    <resultMap id="FormResultMap" type="com.smartehs.model.SafetyAccidentForm">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="divisionName" column="division_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="evaluator" column="evaluator"/>
+        <result property="surveyDate" column="survey_date"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="createdByTeam" column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="modifiedByTeam" column="modified_by_team"/>
+        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllForms" resultMap="FormResultMap">
+        SELECT * FROM tb_safety_accident_form
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAllForms" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_accident_form
+    </select>
+
+    <select id="findFormById" resultMap="FormResultMap">
+        SELECT * FROM tb_safety_accident_form WHERE id = #{id}
+    </select>
+
+    <insert id="insertForm" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_accident_form
+            (title, description, division_name, department_name, evaluator, survey_date,
+             created_by_user_id, created_by_name, created_by_team, created_by_position,
+             modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
+             created_at, modified_at)
+        VALUES
+            (#{title}, #{description}, #{divisionName}, #{departmentName}, #{evaluator}, #{surveyDate},
+             #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
+             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
+             GETDATE(), GETDATE())
+    </insert>
+
+    <update id="updateForm">
+        UPDATE tb_safety_accident_form SET
+            title = #{title},
+            description = #{description},
+            division_name = #{divisionName},
+            department_name = #{departmentName},
+            evaluator = #{evaluator},
+            survey_date = #{surveyDate},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
+            modified_by_team = #{modifiedByTeam},
+            modified_by_position = #{modifiedByPosition},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteForm">
+        DELETE FROM tb_safety_accident_form WHERE id = #{id}
+    </delete>
+
+    <resultMap id="ItemResultMap" type="com.smartehs.model.SafetyAccidentItem">
+        <id property="id" column="id"/>
+        <result property="formId" column="form_id"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="accidentCase" column="accident_case"/>
+        <result property="accidentType" column="accident_type"/>
+        <result property="nearMiss" column="near_miss"/>
+        <result property="fatalAccident" column="fatal_accident"/>
+        <result property="leaveOver1month" column="leave_over_1month"/>
+        <result property="leaveUnder1month" column="leave_under_1month"/>
+        <result property="noLeave" column="no_leave"/>
+        <result property="frequency" column="frequency"/>
+        <result property="processActivity" column="process_activity"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findItemsByFormId" resultMap="ItemResultMap">
+        SELECT * FROM tb_safety_accident_item WHERE form_id = #{formId} ORDER BY sort_order, id
+    </select>
+
+    <insert id="insertItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_accident_item
+            (form_id, item_no, accident_case, accident_type, near_miss, fatal_accident,
+             leave_over_1month, leave_under_1month, no_leave, frequency, process_activity,
+             sort_order, created_at, modified_at)
+        VALUES
+            (#{formId}, #{itemNo}, #{accidentCase}, #{accidentType},
+             #{nearMiss,jdbcType=INTEGER}, #{fatalAccident,jdbcType=INTEGER},
+             #{leaveOver1month,jdbcType=INTEGER}, #{leaveUnder1month,jdbcType=INTEGER}, #{noLeave,jdbcType=INTEGER},
+             #{frequency}, #{processActivity}, #{sortOrder}, GETDATE(), GETDATE())
+    </insert>
+
+    <delete id="deleteItemsByFormId">
+        DELETE FROM tb_safety_accident_item WHERE form_id = #{formId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.SafetyHazardMapper">
+
+    <resultMap id="FormResultMap" type="com.smartehs.model.SafetyHazardForm">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="divisionName" column="division_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="evaluator" column="evaluator"/>
+        <result property="surveyDate" column="survey_date"/>
+        <result property="teamMembers" column="team_members"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="createdByTeam" column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="modifiedByTeam" column="modified_by_team"/>
+        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllForms" resultMap="FormResultMap">
+        SELECT * FROM tb_safety_hazard_form
+        ORDER BY created_at DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAllForms" resultType="int">
+        SELECT COUNT(*) FROM tb_safety_hazard_form
+    </select>
+
+    <select id="findFormById" resultMap="FormResultMap">
+        SELECT * FROM tb_safety_hazard_form WHERE id = #{id}
+    </select>
+
+    <insert id="insertForm" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_hazard_form
+            (title, description, division_name, department_name, evaluator, survey_date, team_members,
+             created_by_user_id, created_by_name, created_by_team, created_by_position,
+             modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
+             created_at, modified_at)
+        VALUES
+            (#{title}, #{description}, #{divisionName}, #{departmentName}, #{evaluator}, #{surveyDate}, #{teamMembers},
+             #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
+             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
+             GETDATE(), GETDATE())
+    </insert>
+
+    <update id="updateForm">
+        UPDATE tb_safety_hazard_form SET
+            title = #{title},
+            description = #{description},
+            division_name = #{divisionName},
+            department_name = #{departmentName},
+            evaluator = #{evaluator},
+            survey_date = #{surveyDate},
+            team_members = #{teamMembers},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
+            modified_by_team = #{modifiedByTeam},
+            modified_by_position = #{modifiedByPosition},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteForm">
+        DELETE FROM tb_safety_hazard_form WHERE id = #{id}
+    </delete>
+
+    <resultMap id="ItemResultMap" type="com.smartehs.model.SafetyHazardItem">
+        <id property="id" column="id"/>
+        <result property="formId" column="form_id"/>
+        <result property="processActivity" column="process_activity"/>
+        <result property="machineName" column="machine_name"/>
+        <result property="machineQty" column="machine_qty"/>
+        <result property="chemicalName" column="chemical_name"/>
+        <result property="chemicalQty" column="chemical_qty"/>
+        <result property="exposureTime" column="exposure_time"/>
+        <result property="workerComp1" column="worker_comp_1"/>
+        <result property="workerComp2" column="worker_comp_2"/>
+        <result property="workerComp3" column="worker_comp_3"/>
+        <result property="workerComp4" column="worker_comp_4"/>
+        <result property="workerComp5" column="worker_comp_5"/>
+        <result property="workerComp6" column="worker_comp_6"/>
+        <result property="shiftWork1" column="shift_work_1"/>
+        <result property="shiftWork2" column="shift_work_2"/>
+        <result property="shiftWork3" column="shift_work_3"/>
+        <result property="heavyLoad1" column="heavy_load_1"/>
+        <result property="heavyLoad2" column="heavy_load_2"/>
+        <result property="heavyLoad3" column="heavy_load_3"/>
+        <result property="permitWork" column="permit_work"/>
+        <result property="specialTraining" column="special_training"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findItemsByFormId" resultMap="ItemResultMap">
+        SELECT * FROM tb_safety_hazard_item WHERE form_id = #{formId} ORDER BY sort_order, id
+    </select>
+
+    <insert id="insertItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_safety_hazard_item
+            (form_id, process_activity, machine_name, machine_qty,
+             chemical_name, chemical_qty, exposure_time,
+             worker_comp_1, worker_comp_2, worker_comp_3, worker_comp_4, worker_comp_5, worker_comp_6,
+             shift_work_1, shift_work_2, shift_work_3,
+             heavy_load_1, heavy_load_2, heavy_load_3,
+             permit_work, special_training, sort_order, created_at, modified_at)
+        VALUES
+            (#{formId}, #{processActivity}, #{machineName}, #{machineQty,jdbcType=INTEGER},
+             #{chemicalName}, #{chemicalQty}, #{exposureTime},
+             #{workerComp1}, #{workerComp2}, #{workerComp3}, #{workerComp4}, #{workerComp5}, #{workerComp6},
+             #{shiftWork1}, #{shiftWork2}, #{shiftWork3},
+             #{heavyLoad1}, #{heavyLoad2}, #{heavyLoad3},
+             #{permitWork}, #{specialTraining}, #{sortOrder}, GETDATE(), GETDATE())
+    </insert>
+
+    <delete id="deleteItemsByFormId">
+        DELETE FROM tb_safety_hazard_item WHERE form_id = #{formId}
+    </delete>
+
+</mapper>

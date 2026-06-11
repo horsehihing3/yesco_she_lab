@@ -111,6 +111,8 @@ const MENU_TREE: MenuNode[] = [
     { key: 'nav.workplaceDrawingsView', label: '사업장 도면' },
   ]},
   { key: 'nav.safetyManage', label: '안전 관리', children: [
+    { key: 'nav.safetyHazardInfo', label: '안전보건상 위험정보' },
+    { key: 'nav.safetyAccidentInfo', label: '보건안전 재해발생 정보' },
     { key: 'nav.processActivityWork', label: '공정/활동별 작업내용' },
     { key: 'nav.riskAssessment', label: '위험성 평가', children: [
       { key: 'riskAssessment.tab.dashboard',   label: '대시보드' },

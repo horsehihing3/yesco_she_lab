@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useTransition } from 'react'
 import { formatUserName } from '../utils/userDisplay'
-import { useAuth } from '../context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -25,6 +24,7 @@ import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
 import DeptUserMultiSelectModal from '../components/common/DeptUserMultiSelectModal'
 import type { UserInfo, CompanyTreeNode } from '../components/common/UserSelectModal'
 import { useAlert } from '../contexts/AlertContext'
+import { useAuth } from '../context/AuthContext'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -35,27 +35,48 @@ const emptyProcess = (sort: number): ProcessActivityProcess => ({
   majorCategory: '', middleCategory: '', subCategory: '', sortOrder: sort,
   items: [emptyItem(1)],
 })
+const todayStr = () => new Date().toISOString().slice(0, 10)
 const emptyForm = (): ProcessActivityFormRequest => ({
   title: '', description: '', divisionName: '', departmentName: '',
-  evaluator: '', creationDate: '', teamMembers: '',
+  evaluator: '', creationDate: todayStr(), teamMembers: '',
   processes: [emptyProcess(1)],
 })
 
+const dividerColor = (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.35)' : theme.palette.divider
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: dividerColor,
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const,
 }
 const valSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
-const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const, bgcolor: 'grey.100' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: dividerColor }
+const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 const ProcessActivityWorkPage: React.FC = () => {
   const { t } = useTranslation()
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
+
+  // 대분류/중분류 그룹 식별 키 (값이 비어 있어도 명시적 그룹 구분 가능)
+  const keyCounter = useRef(0)
+  const nk = () => 'k' + (++keyCounter.current)
+  const assignKeys = (procs: ProcessActivityProcess[]): ProcessActivityProcess[] => {
+    let mk = nk(), dk = nk()
+    return procs.map((p, i) => {
+      if (i > 0) {
+        const prev = procs[i - 1]
+        const sameMajor = (p.majorCategory || '') !== '' && (p.majorCategory || '') === (prev.majorCategory || '')
+        const sameMiddle = (p.middleCategory || '') !== '' && (p.middleCategory || '') === (prev.middleCategory || '')
+        if (!sameMajor) { mk = nk(); dk = nk() }
+        else if (!sameMiddle) { dk = nk() }
+      }
+      return { ...p, _mk: mk, _dk: dk } as any
+    })
+  }
+  const stripKeys = (procs: ProcessActivityProcess[]): ProcessActivityProcess[] =>
+    procs.map(p => { const { _mk, _dk, ...rest } = p as any; return rest })
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -91,12 +112,12 @@ const ProcessActivityWorkPage: React.FC = () => {
         evaluator: detailData.evaluator || '',
         creationDate: detailData.creationDate || '',
         teamMembers: detailData.teamMembers || '',
-        processes: (detailData.processes && detailData.processes.length > 0)
+        processes: assignKeys((detailData.processes && detailData.processes.length > 0)
           ? detailData.processes.map(p => ({
               ...p,
               items: (p.items && p.items.length > 0) ? p.items : [emptyItem(1)],
             }))
-          : [emptyProcess(1)],
+          : [emptyProcess(1)]),
       })
     }
   }, [viewMode, detailData])
@@ -133,18 +154,30 @@ const ProcessActivityWorkPage: React.FC = () => {
     onError: () => showError(t('common.error', '오류가 발생했습니다')),
   })
   const isProcessing = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
+  const [isEditPending, startEditTransition] = useTransition()
 
   // ===== Handlers =====
-  const handleAdd = () => { setForm(emptyForm()); setSelectedId(null); setViewMode('create') }
+  const handleAdd = () => {
+    const f = emptyForm()
+    setForm({ ...f, processes: assignKeys(f.processes) })
+    setSelectedId(null)
+    setViewMode('create')
+  }
+  // 마운트 시 초기 form processes에 키 부여
+  useEffect(() => {
+    setForm(f => ({ ...f, processes: assignKeys(f.processes) }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const handleRowClick = (id: number) => { setSelectedId(id); setViewMode('detail') }
-  const handleEdit = () => setViewMode('edit')
+  const handleEdit = () => startEditTransition(() => setViewMode('edit'))
   const handleCancel = () => { setViewMode(selectedId ? 'detail' : 'list') }
   const handleSave = async () => {
     if (!form.title.trim()) { showError(t('common.required', '제목은 필수입니다')); return }
     const confirmed = await showConfirm(t('common.confirmSave', '저장하시겠습니까?'))
     if (!confirmed) return
-    if (viewMode === 'create') createMutation.mutate(form)
-    else if (selectedId) updateMutation.mutate({ id: selectedId, data: form })
+    const payload = { ...form, processes: stripKeys(form.processes) }
+    if (viewMode === 'create') createMutation.mutate(payload)
+    else if (selectedId) updateMutation.mutate({ id: selectedId, data: payload })
   }
   const handleDelete = async () => {
     if (!selectedId) return
@@ -157,13 +190,52 @@ const ProcessActivityWorkPage: React.FC = () => {
     ...f,
     processes: [...f.processes, {
       ...emptyProcess(f.processes.length + 1),
-      majorCategory: f.divisionName || '',
-      middleCategory: f.departmentName || '',
-    }],
+      majorCategory: '', middleCategory: '',
+      _mk: nk(), _dk: nk(),
+    } as any],
   }))
   const removeProcess = (idx: number) => setForm(f => ({
     ...f, processes: f.processes.filter((_, i) => i !== idx).map((p, i) => ({ ...p, sortOrder: i + 1 })),
   }))
+  // 대분류 그룹 끝 다음에 동일 대분류 키 공유 + 새 중분류 키로 process 삽입
+  const addMiddle = (pIdx: number) => setForm(f => {
+    const arr = [...f.processes] as any[]
+    const mk = arr[pIdx]._mk || nk()
+    const major = arr[pIdx].majorCategory || ''
+    let lastIdx = pIdx
+    for (let i = pIdx + 1; i < arr.length; i++) {
+      if (arr[i]._mk === mk) lastIdx = i
+      else break
+    }
+    arr.splice(lastIdx + 1, 0, { ...emptyProcess(0), majorCategory: major, middleCategory: '', _mk: mk, _dk: nk() } as any)
+    return { ...f, processes: arr.map((p, i) => ({ ...p, sortOrder: i + 1 })) }
+  })
+  // 동일 대분류 키를 가진 모든 process 제거
+  const removeMajor = (pIdx: number) => setForm(f => {
+    const mk = (f.processes[pIdx] as any)._mk
+    return { ...f, processes: f.processes.filter(p => (p as any)._mk !== mk).map((p, i) => ({ ...p, sortOrder: i + 1 })) }
+  })
+  // 중분류 그룹 끝 다음에 동일 대분류/중분류 키 공유 + 새 소분류로 process 삽입
+  const addSub = (pIdx: number) => setForm(f => {
+    const arr = [...f.processes] as any[]
+    const mk = arr[pIdx]._mk || nk()
+    const dk = arr[pIdx]._dk || nk()
+    const major = arr[pIdx].majorCategory || ''
+    const middle = arr[pIdx].middleCategory || ''
+    let lastIdx = pIdx
+    for (let i = pIdx + 1; i < arr.length; i++) {
+      if (arr[i]._mk === mk && arr[i]._dk === dk) lastIdx = i
+      else break
+    }
+    arr.splice(lastIdx + 1, 0, { ...emptyProcess(0), majorCategory: major, middleCategory: middle, subCategory: '', _mk: mk, _dk: dk } as any)
+    return { ...f, processes: arr.map((p, i) => ({ ...p, sortOrder: i + 1 })) }
+  })
+  // 동일 대분류+중분류 키를 가진 모든 process 제거
+  const removeMiddle = (pIdx: number) => setForm(f => {
+    const mk = (f.processes[pIdx] as any)._mk
+    const dk = (f.processes[pIdx] as any)._dk
+    return { ...f, processes: f.processes.filter(p => !((p as any)._mk === mk && (p as any)._dk === dk)).map((p, i) => ({ ...p, sortOrder: i + 1 })) }
+  })
   const updateProcess = (idx: number, field: keyof ProcessActivityProcess, value: string | number) => setForm(f => {
     const arr = [...f.processes]
     arr[idx] = { ...arr[idx], [field]: value }
@@ -350,7 +422,12 @@ const ProcessActivityWorkPage: React.FC = () => {
           <>
             {/* PC Table */}
             <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider' }}>
-              <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <Table size="small" sx={(theme: any) => {
+                const c = theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)'
+                  : theme.isYesco ? 'rgba(255,255,255,0.35)'
+                  : theme.palette.divider
+                return { '& .MuiTableCell-root': { borderRight: `1px solid ${c} !important` }, '& .MuiTableCell-root:last-child': { borderRight: 'none !important' } }
+              }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={hSx} align="center" width={60}>{t('common.no', 'No')}</TableCell>
@@ -406,14 +483,14 @@ const ProcessActivityWorkPage: React.FC = () => {
 
   return (
     <Box>
-      <LoadingOverlay open={isProcessing} />
+      <LoadingOverlay open={isProcessing || isEditPending} message={isEditPending ? '로딩 중...' : undefined} />
       <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
         {t('nav.processActivityWork', '공정/활동별 작업내용')}
       </Typography>
 
       {/* 상단 정보 - PC */}
       <Paper variant="outlined" sx={{ mb: 2, overflow: 'hidden', display: { xs: 'none', md: 'block' } }}>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: dividerColor }}>
           <Typography sx={labelSx}>{t('common.title', '제목')}</Typography>
           <Box sx={valSx}>
             {isEditing ? (
@@ -421,14 +498,11 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2">{displayData.title || ''}</Typography>}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: dividerColor }}>
           <Typography sx={labelSx}>{t('processActivity.division', '부문명')}</Typography>
           <Box sx={valBorderSx}>
             {isEditing ? (
-              <TextField size="small" fullWidth value={form.divisionName || ''} onChange={(e) => setForm(f => ({
-                ...f, divisionName: e.target.value,
-                processes: f.processes.map(p => ({ ...p, majorCategory: e.target.value })),
-              }))} />
+              <TextField size="small" fullWidth value={form.divisionName || ''} onChange={(e) => setForm(f => ({ ...f, divisionName: e.target.value }))} />
             ) : <Typography variant="body2">{displayData.divisionName || ''}</Typography>}
           </Box>
           <Typography sx={labelSx}>{t('processActivity.department', '부서(팀)명')}</Typography>
@@ -443,7 +517,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2">{displayData.departmentName || ''}</Typography>}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: dividerColor }}>
           <Typography sx={labelSx}>{t('processActivity.evaluator', '평가자')}</Typography>
           <Box sx={valBorderSx}>
             {isEditing ? (
@@ -467,7 +541,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{displayData.teamMembers || ''}</Typography>}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: dividerColor }}>
           <Typography sx={labelSx}>{t('common.description', '상세')}</Typography>
           <Box sx={valSx}>
             {isEditing ? (
@@ -487,9 +561,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           </Box>
           <Typography sx={labelSx}>{t('processActivity.creationDate', '작성일자')}</Typography>
           <Box sx={valSx}>
-            {isEditing ? (
-              <DatePickerField size="small" value={form.creationDate || null} onChange={(v) => setForm({ ...form, creationDate: v || '' })} />
-            ) : <Typography variant="body2">{displayData.creationDate || ((displayData as ProcessActivityForm).createdAt?.substring(0, 10) ?? '')}</Typography>}
+            <Typography variant="body2">{viewMode === 'create' ? todayStr() : (displayData.creationDate || ((displayData as ProcessActivityForm).createdAt?.substring(0, 10) ?? ''))}</Typography>
           </Box>
         </Box>
         {/* 수정자 | 수정일자 — edit 모드 또는 수정 이력 있을 때 */}
@@ -520,17 +592,12 @@ const ProcessActivityWorkPage: React.FC = () => {
         </Box>
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('processActivity.creationDate', '작성일자')}</Typography>
-          {isEditing ? (
-            <DatePickerField size="small" value={form.creationDate || null} onChange={(v) => setForm({ ...form, creationDate: v || '' })} />
-          ) : <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{displayData.creationDate || ''}</Typography>}
+          <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMode === 'create' ? todayStr() : (displayData.creationDate || ((displayData as ProcessActivityForm).createdAt?.substring(0, 10) ?? ''))}</Typography>
         </Box>
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('processActivity.division', '부문명')}</Typography>
           {isEditing ? (
-            <TextField size="small" fullWidth value={form.divisionName || ''} onChange={(e) => setForm(f => ({
-              ...f, divisionName: e.target.value,
-              processes: f.processes.map(p => ({ ...p, majorCategory: e.target.value })),
-            }))} />
+            <TextField size="small" fullWidth value={form.divisionName || ''} onChange={(e) => setForm(f => ({ ...f, divisionName: e.target.value }))} />
           ) : <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{displayData.divisionName || ''}</Typography>}
         </Box>
         <Box>
@@ -599,30 +666,40 @@ const ProcessActivityWorkPage: React.FC = () => {
                 </TableRow>
               ) : (() => {
                 const processItems = (p: ProcessActivityProcess) => (p.items && p.items.length > 0 ? p.items : [emptyItem(1)])
+                const getMk = (i: number) => (processList[i] as any)?._mk
+                const getDk = (i: number) => (processList[i] as any)?._dk
                 const getMajor = (i: number) => processList[i]?.majorCategory || ''
                 const getMiddle = (i: number) => processList[i]?.middleCategory || ''
-                // 편집 모드에서는 form 의 부문명/부서(팀)명으로 강제 매칭
-                const getMajorEff = (i: number) => isEditing ? (form.divisionName || '') : getMajor(i)
-                const getMiddleEff = (i: number) => isEditing ? (form.departmentName || '') : getMiddle(i)
-                const sameMajorAsPrevEff = (i: number) => i > 0 && getMajorEff(i) === getMajorEff(i - 1)
-                // 대분류 span: 연속 동일값 프로세스들의 items.length 합. 첫 프로세스에서만 렌더
+                // 키가 있으면 키 기반, 없으면 값 기반(비어있지 않은 동일 값) 폴백
+                const sameMajor = (a: number, b: number): boolean => {
+                  const ka = getMk(a), kb = getMk(b)
+                  if (ka && kb) return ka === kb
+                  const va = getMajor(a), vb = getMajor(b)
+                  return va !== '' && va === vb
+                }
+                const sameMiddle = (a: number, b: number): boolean => {
+                  const ka = getDk(a), kb = getDk(b)
+                  if (ka && kb) return ka === kb
+                  const va = getMiddle(a), vb = getMiddle(b)
+                  return va !== '' && va === vb
+                }
+                const sameMajorAsPrevEff = (i: number) => i > 0 && sameMajor(i, i - 1)
+                // 대분류 span
                 const computeMajorSpan = (i: number): { render: boolean; span: number } => {
                   if (sameMajorAsPrevEff(i)) return { render: false, span: 0 }
                   let span = processItems(processList[i]).length
                   for (let k = i + 1; k < processList.length; k++) {
-                    if (getMajorEff(k) !== getMajorEff(i)) break
+                    if (!sameMajor(k, i)) break
                     span += processItems(processList[k]).length
                   }
                   return { render: true, span }
                 }
-                // 중분류 span: 대분류 그룹 안에서만 연속 동일값 병합
+                // 중분류 span: 대분류 동일 + 중분류 동일
                 const computeMiddleSpan = (i: number): { render: boolean; span: number } => {
-                  const prevSameMiddle = i > 0 && getMiddleEff(i) === getMiddleEff(i - 1)
-                  if (prevSameMiddle && sameMajorAsPrevEff(i)) return { render: false, span: 0 }
+                  if (i > 0 && sameMajor(i, i - 1) && sameMiddle(i, i - 1)) return { render: false, span: 0 }
                   let span = processItems(processList[i]).length
                   for (let k = i + 1; k < processList.length; k++) {
-                    if (getMiddleEff(k) !== getMiddleEff(i)) break
-                    if (!sameMajorAsPrevEff(k)) break
+                    if (!sameMajor(k, i) || !sameMiddle(k, i)) break
                     span += processItems(processList[k]).length
                   }
                   return { render: true, span }
@@ -634,13 +711,29 @@ const ProcessActivityWorkPage: React.FC = () => {
                   return items.map((item, iIdx) => (
                   <TableRow key={`${pIdx}-${iIdx}`}>
                     {iIdx === 0 && majorSpan.render && (
-                      <TableCell rowSpan={majorSpan.span} align="center">
-                        {(isEditing ? form.divisionName : p.majorCategory) || ''}
+                      <TableCell rowSpan={majorSpan.span} align="center" sx={{ verticalAlign: 'top' }}>
+                        {isEditing ? (
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                            <TextField size="small" fullWidth value={p.majorCategory || ''} onChange={(e) => updateProcess(pIdx, 'majorCategory', e.target.value)} />
+                            <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
+                              <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => addMiddle(pIdx)} sx={{ fontSize: '0.7rem', minWidth: 'auto', px: 1, whiteSpace: 'nowrap' }}>중분류</Button>
+                              <IconButton size="small" color="error" onClick={() => removeMajor(pIdx)}><DeleteIcon fontSize="small" /></IconButton>
+                            </Box>
+                          </Box>
+                        ) : (p.majorCategory || '')}
                       </TableCell>
                     )}
                     {iIdx === 0 && middleSpan.render && (
-                      <TableCell rowSpan={middleSpan.span} align="center">
-                        {(isEditing ? form.departmentName : p.middleCategory) || ''}
+                      <TableCell rowSpan={middleSpan.span} align="center" sx={{ verticalAlign: 'top' }}>
+                        {isEditing ? (
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                            <TextField size="small" fullWidth value={p.middleCategory || ''} onChange={(e) => updateProcess(pIdx, 'middleCategory', e.target.value)} />
+                            <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
+                              <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => addSub(pIdx)} sx={{ fontSize: '0.7rem', minWidth: 'auto', px: 1, whiteSpace: 'nowrap' }}>소분류</Button>
+                              <IconButton size="small" color="error" onClick={() => removeMiddle(pIdx)}><DeleteIcon fontSize="small" /></IconButton>
+                            </Box>
+                          </Box>
+                        ) : (p.middleCategory || '')}
                       </TableCell>
                     )}
                     {iIdx === 0 && (
@@ -651,7 +744,7 @@ const ProcessActivityWorkPage: React.FC = () => {
                               <TextField size="small" fullWidth value={p.subCategory || ''} onChange={(e) => updateProcess(pIdx, 'subCategory', e.target.value)} />
                               <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
                                 <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => addItem(pIdx)} sx={{ fontSize: '0.7rem', minWidth: 'auto', px: 1, whiteSpace: 'nowrap' }}>
-                                  {t('processActivity.addItem', '추가')}
+                                  {t('processActivity.addItem', '작업내용')}
                                 </Button>
                                 <IconButton size="small" color="error" onClick={() => removeProcess(pIdx)}><DeleteIcon fontSize="small" /></IconButton>
                               </Box>
@@ -692,7 +785,7 @@ const ProcessActivityWorkPage: React.FC = () => {
         {isEditing && (
           <Box sx={{ p: 1.5 }}>
             <Button variant="outlined" size="small" startIcon={<AddIcon />} onClick={addProcess}>
-              {t('processActivity.addProcess', '공정/활동 추가')}
+              {t('processActivity.addRow', '행 추가')}
             </Button>
           </Box>
         )}

@@ -93,6 +93,8 @@ const menuItems: MenuItem[] = [
     textKey: 'nav.safetyManage',
     icon: <ShieldIcon />,
     children: [
+      { textKey: 'nav.safetyHazardInfo', icon: <AssessmentIcon />, path: '/safety-hazard-info' },
+      { textKey: 'nav.safetyAccidentInfo', icon: <AssessmentIcon />, path: '/safety-accident-info' },
       { textKey: 'nav.processActivityWork', icon: <AssessmentIcon />, path: '/process-activity-work' },
       { textKey: 'nav.riskAssessment', icon: <AssessmentIcon />, path: '/risk-assessment' },
       { textKey: 'nav.siteSafetyMgmt', icon: <AssignmentIcon />, path: '/site-safety-mgmt' },

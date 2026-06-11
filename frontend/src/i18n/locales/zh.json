@@ -228,6 +228,8 @@
     "nearMiss": "事故/险肇事故管理",
     "safetyWork": "安全作业管理",
     "processActivityWork": "工艺/活动作业内容",
+    "safetyHazardInfo": "安全卫生危险信息",
+    "safetyAccidentInfo": "安全卫生灾害发生信息",
     "riskAssessment": "风险评估",
     "oshCommittee": "EHS协议体",
     "healthCheckup": "保健/健康",

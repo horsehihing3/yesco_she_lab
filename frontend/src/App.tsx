@@ -12,6 +12,8 @@ import GeneralDashboard from './pages/GeneralDashboard'
 import EhsPage from './pages/EhsPage'
 import RiskAssessmentPage from './pages/RiskAssessmentPage'
 import ProcessActivityWorkPage from './pages/ProcessActivityWorkPage'
+import SafetyHazardInfoPage from './pages/SafetyHazardInfoPage'
+import SafetyAccidentInfoPage from './pages/SafetyAccidentInfoPage'
 import NearMissPage from './pages/NearMissPage'
 import SafetyWorkPage from './pages/SafetyWorkPage'
 import HealthCheckupPage from './pages/HealthCheckupPage'
@@ -140,6 +142,8 @@ function App() {
         <Route path="dashboard/general" element={<GeneralDashboard />} />
         <Route path="ehs" element={<Navigate to="/ehs/communication" replace />} />
         <Route path="ehs/communication" element={<EhsPage />} />
+        <Route path="safety-hazard-info" element={<SafetyHazardInfoPage />} />
+        <Route path="safety-accident-info" element={<SafetyAccidentInfoPage />} />
         <Route path="process-activity-work" element={<ProcessActivityWorkPage />} />
         <Route path="risk-assessment" element={<RiskAssessmentPage />} />
         <Route path="near-miss" element={<NearMissPage />} />
