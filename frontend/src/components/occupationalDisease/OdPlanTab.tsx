@@ -61,7 +61,7 @@ const MENU = '보건 관리 › 직업병 관리 › 검진계획'
 const OdPlanTab: React.FC = () => {
   const { t } = useTranslation()
   const qc = useQueryClient()
-  const { showConfirm } = useAlert()
+  const { showConfirm, showError } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const myRoles: string[] = ['guest', ...(isSystemAdmin(user) ? ['superAdmin'] : (user?.role ? [user.role] : []))]
@@ -123,7 +123,7 @@ const OdPlanTab: React.FC = () => {
           }
         }
         closeDialog()
-      } catch { /* createMut onError 처리 */ }
+      } catch { showError('저장에 실패했습니다.') }
     }
   }
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,10 +183,10 @@ const OdPlanTab: React.FC = () => {
                     <TableCell align="center"><Chip size="small" label={p.status} color={statusColor(p.status)} /></TableCell>
                     <TableCell sx={{ color: 'text.disabled' }}>{p.note || '-'}</TableCell>
                     <TableCell align="center" sx={{ width: 80, whiteSpace: 'nowrap', px: 0.5 }}>
-                      {canSee(MENU, 'DETAIL', '수정', getRoles(selected ?? {})) && (
+                      {canSee(MENU, 'DETAIL', '수정', getRoles(editing ?? {})) && (
                         <IconButton size="small" onClick={() => openEdit(p)}><EditIcon fontSize="inherit" /></IconButton>
                       )}
-                      {canSee(MENU, 'DETAIL', '삭제', getRoles(selected ?? {})) && (
+                      {canSee(MENU, 'DETAIL', '삭제', getRoles(editing ?? {})) && (
                         <IconButton size="small" onClick={async () => { if (await showConfirm(t('odPlanTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="inherit" /></IconButton>
                       )}
                     </TableCell>
@@ -221,10 +221,10 @@ const OdPlanTab: React.FC = () => {
                 담당: {p.mgr || '-'} · {p.hazardFactors || '-'}
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5, mt: 0.5 }}>
-                {canSee(MENU, 'DETAIL', '수정', getRoles(selected ?? {})) && (
+                {canSee(MENU, 'DETAIL', '수정', getRoles(editing ?? {})) && (
                   <IconButton size="small" onClick={() => openEdit(p)}><EditIcon fontSize="small" /></IconButton>
                 )}
-                {canSee(MENU, 'DETAIL', '삭제', getRoles(selected ?? {})) && (
+                {canSee(MENU, 'DETAIL', '삭제', getRoles(editing ?? {})) && (
                   <IconButton size="small" onClick={async () => { if (await showConfirm(t('odPlanTab.msg2', '삭제하시겠습니까?'))) deleteMut.mutate(p.id) }}><DeleteIcon fontSize="small" /></IconButton>
                 )}
               </Box>
@@ -346,8 +346,8 @@ const OdPlanTab: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={closeDialog}>취소</Button>
-          {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
-            <Button variant="contained" onClick={submit} disabled={!form.orgName}>저장</Button>
+          {canSee(MENU, 'DETAIL', '저장', getRoles(editing ?? {})) && (
+            <Button variant="contained" onClick={submit} disabled={!form.orgName || !form.half}>저장</Button>
           )}
         </DialogActions>
       </Dialog>

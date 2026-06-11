@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
@@ -154,7 +154,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
   // Dialog states
   const [guideDialogOpen, setGuideDialogOpen] = useState(false)
 
-  const isAdmin = isEhsManager(user)
+  const isAdmin = isSystemAdmin(user)
 
   // Fetch sites from API
   const { data: sitesData } = useQuery({

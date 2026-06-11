@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
@@ -66,7 +66,7 @@ const EhsManagerTab: React.FC = () => {
   const [selectedManager, setSelectedManager] = useState<EhsManager | null>(null)
   const [userPickerOpen, setUserPickerOpen] = useState(false)
   const { user } = useAuth()
-  const isAdmin = isEhsManager(user)
+  const isAdmin = isSystemAdmin(user)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 직책자 명단'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]

@@ -73,7 +73,8 @@ const EmrPlanTab: React.FC = () => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
     else if (authUser?.role) roles.push(authUser.role)
-    if (item.createdByUserId === authUser?.id) roles.push('writer')
+    if ((item.createdByUserId != null && item.createdByUserId === authUser?.id) ||
+        (!item.createdByUserId && item.createdByName && item.createdByName === authUser?.name)) roles.push('writer')
     if ((item.planApproverUserId && authUser?.id && item.planApproverUserId === authUser.id) ||
         (item.planApproverName && authUser?.name && item.planApproverName === authUser.name)) roles.push('planApprover')
     if ((item.completionApproverUserId && authUser?.id && item.completionApproverUserId === authUser.id) ||
@@ -566,7 +567,7 @@ const EmrPlanTab: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
           {/* DRAFT → 계획 결재 상신 */}
-          {isDraft && !getRoles(selectedItem).includes('planApprover') && !getRoles(selectedItem).includes('completionApprover') && canSee(MENU, 'DRAFT', '계획 결재 상신', getRoles(selectedItem)) && (
+          {isDraft && canSee(MENU, 'DRAFT', '계획 결재 상신', getRoles(selectedItem)) && (
             <Button variant="contained" color="info"
               onClick={async () => {
                 const ok = await showConfirm(t('emr.confirmSubmit', '계획 결재를 상신하시겠습니까?'))
@@ -595,10 +596,10 @@ const EmrPlanTab: React.FC = () => {
             </Button>
           )}
           {/* DRAFT 상태 — 수정/삭제 */}
-          {isDraft && !getRoles(selectedItem).includes('planApprover') && !getRoles(selectedItem).includes('completionApprover') && canSee(MENU, 'DRAFT', '수정', getRoles(selectedItem)) && (
+          {isDraft && canSee(MENU, 'DRAFT', '수정', getRoles(selectedItem)) && (
             <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
           )}
-          {isDraft && !getRoles(selectedItem).includes('planApprover') && !getRoles(selectedItem).includes('completionApprover') && canSee(MENU, 'DRAFT', '삭제', getRoles(selectedItem)) && (
+          {isDraft && canSee(MENU, 'DRAFT', '삭제', getRoles(selectedItem)) && (
             <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
           )}
         </Box>

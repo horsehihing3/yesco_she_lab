@@ -283,8 +283,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
   {
     menuPath: 'EHS 경영 › 내부 감사 › 감사 실시', menuKey: 'audit.tabs.execution',
     statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_OFF }] },
       { status: 'PREPARING', statusLabel: '준비중', statusColor: 'warning',
         buttons: [
           { button: '저장 (감사 정보)',   roles: AUDITOR_ADMIN },

@@ -713,7 +713,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             {t('common.list')}
           </Button>
           {/* 계획 결재 상신 — 작성중(PLAN) 상태에서 작성자/일반 사용자가 결재 요청 */}
-          {canSee(MENU, 'PLAN', '계획 결재 상신', getRoles(selectedItem)) && !getRoles(selectedItem).includes('planApprover') && !selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && (
+          {canSee(MENU, 'PLAN', '계획 결재 상신', getRoles(selectedItem)) && !selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && (
             <Button variant="contained" color="info"
               onClick={handleSubmit}
               sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
@@ -736,7 +736,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             </>
           )}
           {/* 수정 / 삭제 — 작성중(PLAN) 상태에서만, 계획 승인자 제외 */}
-          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && !getRoles(selectedItem).includes('planApprover') && (
+          {!selectedItem.approved && (selectedItem.status === 'PLAN' || !selectedItem.status) && (
             <>
               {canSee(MENU, 'PLAN', '수정', getRoles(selectedItem)) && (
                 <Button variant="contained" color="primary" onClick={() => handleOpenEdit()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>

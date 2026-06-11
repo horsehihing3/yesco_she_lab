@@ -576,14 +576,12 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           </Button>
           {selectedItem.status !== 'COMPLETED' && (
             <>
-              {!getRoles(selectedItem).includes('completionApprover') &&
-                selectedItem.status !== 'PENDING_CLOSE' && (
+              {selectedItem.status !== 'PENDING_CLOSE' && canSee(MENU, selectedItem.status, '수정', getRoles(selectedItem)) && (
                 <Button variant="contained" color="warning" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                   {t('common.edit', '수정')}
                 </Button>
               )}
-              {!getRoles(selectedItem).includes('completionApprover') &&
-                (!['PREPARING', 'IN_PROGRESS', 'PENDING_CLOSE'].includes(selectedItem.status) ||
+              {(!['PREPARING', 'IN_PROGRESS', 'PENDING_CLOSE'].includes(selectedItem.status) ||
                 canSee(MENU, selectedItem.status, '저장 (감사 정보)', getRoles(selectedItem))) && (
                 <Button variant="contained" color="primary" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                   {t('common.save')}
@@ -591,7 +589,6 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
               )}
               {/* 진행중 진입 — 진행 전 단계에서만 (작성자/일반 사용자도 노출) */}
               {selectedItem.status !== 'IN_PROGRESS' && selectedItem.status !== 'PENDING_CLOSE' &&
-                !getRoles(selectedItem).includes('completionApprover') &&
                 canSee(MENU, 'PREPARING', '진행중 (상태 전환)', getRoles(selectedItem)) && (
                 <Button variant="contained" color="info" onClick={() => handleStatusChange('IN_PROGRESS')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                   {t('audit.startProgress', '진행중')}
@@ -599,7 +596,6 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
               )}
               {/* 완료 결재 상신 — 진행 중 단계에서 결재 요청, 완료 승인자 제외 */}
               {selectedItem.status === 'IN_PROGRESS' &&
-                !getRoles(selectedItem).includes('completionApprover') &&
                 canSee(MENU, 'IN_PROGRESS', '완료 결재 상신', getRoles(selectedItem)) && (
                 <Button variant="contained" color="info" onClick={() => handleStatusChange('PENDING_CLOSE')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                   {t('audit.completionSubmit', '완료 결재 상신')}

@@ -1,5 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
@@ -116,7 +116,7 @@ const EhsMessageTab: React.FC = () => {
   const [selectedMessage, setSelectedMessage] = useState<EhsMessage | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [viewMessage, setViewMessage] = useState<EhsMessage | null>(null)
-  const isAdmin = isEhsManager(user)
+  const isAdmin = isSystemAdmin(user)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 메시지'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]

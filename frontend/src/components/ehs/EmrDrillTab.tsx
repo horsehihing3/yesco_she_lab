@@ -1,5 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useState, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -50,14 +50,14 @@ const EmrDrillTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user: authUser } = useAuth()
-  const isAdmin = isEhsManager(authUser)
+  const isAdmin = isSystemAdmin(authUser)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 비상 훈련 › 비상 훈련'
   const myRoles: string[] = ['guest', ...(authUser?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (authUser?.role ? [authUser.role] : []))]
-  const getDrillRoles = (plan: { writerUserId?: number|null; writerName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null } | null | undefined): string[] => {
+  const getDrillRoles = (plan: { createdByUserId?: number|null; createdByName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null } | null | undefined): string[] => {
     const roles = [...myRoles]
-    if (plan && ((plan.writerUserId && authUser?.id && plan.writerUserId === authUser.id) ||
-                 (plan.writerName && authUser?.name && plan.writerName === authUser.name))) roles.push('writer')
+    if (plan && ((plan.createdByUserId != null && authUser?.id != null && plan.createdByUserId === authUser.id) ||
+                 (!plan.createdByUserId && plan.createdByName && plan.createdByName === authUser?.name))) roles.push('writer')
     if (plan && ((plan.completionApproverUserId && authUser?.id && plan.completionApproverUserId === authUser.id) ||
                  (plan.completionApproverName && authUser?.name && plan.completionApproverName === authUser.name))) roles.push('completionApprover')
     return roles
@@ -536,7 +536,7 @@ const EmrDrillTab: React.FC = () => {
             <Typography sx={labelSx}>{t('emr.writer')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">
-                {formatUserName(linkedPlan?.writerTeam, linkedPlan?.writerName, linkedPlan?.writerPosition) || ''}
+                {formatUserName(linkedPlan?.createdByTeam, linkedPlan?.createdByName, linkedPlan?.createdByPosition) || ''}
               </Typography>
             </Box>
           </Box>

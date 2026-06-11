@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, TextField, Button, Table, TableBody, TableCell,
@@ -79,7 +79,7 @@ const OdmAccidentClaimTab: React.FC = () => {
   const { showWarning, showSuccess, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isEhsManager(user)
+  const isAdmin = isSystemAdmin(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('CLAIM_STATUS')
 

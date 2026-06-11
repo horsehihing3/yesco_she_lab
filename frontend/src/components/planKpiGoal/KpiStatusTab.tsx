@@ -1,5 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -64,7 +64,7 @@ const KpiStatusTab: React.FC = () => {
   const { getLabel: getStatusLabel } = useCodeMap('PLAN_STATUS')
   const { user: authUser } = useAuth()
 
-  const isAdmin = isEhsManager(authUser)
+  const isAdmin = isSystemAdmin(authUser)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › KPI목표 › KPI 현황'
   const myRoles: string[] = ['guest', ...(authUser?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (authUser?.role ? [authUser.role] : []))]

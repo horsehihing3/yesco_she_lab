@@ -1,5 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -137,7 +137,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const MENU = '보건 관리 › 건강 검진 관리 › 건강검진 계획'
-  const isAdmin = isEhsManager(user)
+  const isAdmin = isSystemAdmin(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const currentWriter = user?.name || user?.username || ''
   const { codeList: typeCodes, getLabel: getTypeLabel } = useCodeMap('HEALTH_CHECKUP_TYPE')
@@ -667,7 +667,8 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
               (d.planApproverName && user?.name && d.planApproverName === user.name)) itemRoles.push('planApprover')
           if ((d.completionApproverUserId && user?.id && d.completionApproverUserId === user.id) ||
               (d.completionApproverName && user?.name && d.completionApproverName === user.name)) itemRoles.push('completionApprover')
-          if (d.createdByName === user?.name) itemRoles.push('writer')
+          if ((d.createdByName && d.createdByName === user?.name) ||
+              (!d.createdByName && d.writer && d.writer === user?.name)) itemRoles.push('writer')
           return (
             <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2, flexWrap: 'wrap' }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.backToList', '목록')}</Button>

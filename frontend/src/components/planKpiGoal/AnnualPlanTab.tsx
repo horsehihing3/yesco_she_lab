@@ -352,7 +352,8 @@ const AnnualPlanTab: React.FC = () => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
     else if (authUser?.role) roles.push(authUser.role)
-    if (d.createdByUserId === authUser?.id) roles.push('writer')
+    if ((d.createdByUserId != null && d.createdByUserId === authUser?.id) ||
+        (!d.createdByUserId && d.createdByName && d.createdByName === authUser?.name)) roles.push('writer')
     if ((d.planApproverUserId && authUser?.id && d.planApproverUserId === authUser.id) ||
         (d.planApproverName && authUser?.name && d.planApproverName === authUser.name)) roles.push('planApprover')
     if ((d.completionApproverUserId && authUser?.id && d.completionApproverUserId === authUser.id) ||
