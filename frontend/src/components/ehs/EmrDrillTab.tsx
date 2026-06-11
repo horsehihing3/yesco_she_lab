@@ -240,16 +240,25 @@ const EmrDrillTab: React.FC = () => {
     return false
   }
 
-  // 완료 결재 상신: linkedPlan APPROVED → COMPLETION_PENDING (작성자/admin)
+  // 완료 결재 상신: 변경 사항 저장 후 linkedPlan APPROVED → COMPLETION_PENDING
   const handleCompletionSubmit = async () => {
     if (!selectedItem || !linkedPlan) return
     const ok = await showConfirm(t('emr.confirmCompletionSubmit', '완료 결재를 상신하시겠습니까?'))
     if (!ok) return
     try {
+      // 1) 체크리스트 저장
+      if (checklistRef.current) await checklistRef.current.save()
+      // 2) 드릴 데이터 갱신
+      const updated = await emergencyDrillApi.getById(selectedItem.id)
+      setSelectedItem(updated)
+      queryClient.invalidateQueries({ queryKey: ['emrDrills'] })
+      queryClient.invalidateQueries({ queryKey: ['emrDrillStatus'] })
+      // 3) 상신
       await emergencyPlanApi.transition(linkedPlan.id, 'completionSubmit')
       queryClient.invalidateQueries({ queryKey: ['emrLinkedPlan'] })
       queryClient.invalidateQueries({ queryKey: ['emrPlans'] })
-      showSuccess(t('common.saved'))
+      refetchLogs()
+      showSuccess(t('emr.completionSubmitted', '저장 및 완료 결재 상신이 완료되었습니다.'))
     } catch (e: any) {
       showError(e?.response?.data?.message || t('common.error'))
     }

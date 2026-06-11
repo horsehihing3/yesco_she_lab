@@ -240,6 +240,11 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
       } catch { showError(t('common.error')) }
       return
     }
+    if (newStatus === 'PENDING_CLOSE') {
+      const ok = await showConfirm(t('audit.confirmCompletionSubmit', '완료 결재를 상신하시겠습니까?'))
+      if (!ok) return
+      if (checklistRef.current) await checklistRef.current.save()
+    }
     try {
       await auditApi.update(selectedItem.id, {
         auditName: selectedItem.auditName, auditType: selectedItem.auditType,
@@ -261,7 +266,9 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
       setSelectedItem(updated)
       invalidate()
       refetchLogs()
-      showSuccess(t('common.saved'))
+      showSuccess(newStatus === 'PENDING_CLOSE'
+        ? t('audit.completionSubmitted', '저장 및 완료 결재 상신이 완료되었습니다.')
+        : t('common.saved'))
     } catch { showError(t('common.error')) }
   }
   const handleLogClick = async (log: AuditLogEntry) => {
