@@ -103,6 +103,11 @@ const WemImprovementTab: React.FC = () => {
   const { canSee } = useButtonRules()
   const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const getRoles = (item: { createdByUserId?: number | null }): string[] => {
+    const roles = [...myRoles]
+    if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
+    return roles
+  }
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('WEM_IMPROVE_STATUS')
   const { codeList: exceedLevelCodes, getLabel: getExceedLevelCodeLabel } = useCodeMap('WEM_EXCEED_LEVEL')
 
@@ -568,10 +573,10 @@ const WemImprovementTab: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.backToList')}</Button>
-          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+          {canSee(MENU, 'DETAIL', '수정', getRoles(detail ?? {})) && (
             <Button variant="contained" onClick={handleEditClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit')}</Button>
           )}
-          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+          {canSee(MENU, 'DETAIL', '삭제', getRoles(detail ?? {})) && (
             <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete')}</Button>
           )}
         </Box>
@@ -681,7 +686,7 @@ const WemImprovementTab: React.FC = () => {
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>
-        {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+        {canSee(MENU, 'DETAIL', '저장', getRoles(detail ?? {})) && (
         <Button variant="contained" onClick={handleSubmit} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.save', '저장')}
         </Button>
