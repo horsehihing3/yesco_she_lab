@@ -3,6 +3,10 @@ export type RegStatus = 'APPROVED' | 'REVIEW' | 'HOLD'
 export interface ContractorRegistration {
   id: number
   regNo: string
+  createdByUserId?: number | null
+  createdByName?: string | null
+  createdByTeam?: string | null
+  createdByPosition?: string | null
 
   // Step1
   bizNum: string

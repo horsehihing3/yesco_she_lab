@@ -47,6 +47,11 @@ const OdAftercareTab: React.FC = () => {
   const { canSee } = useButtonRules()
   const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const getRoles = (item: { createdByUserId?: number | null }): string[] => {
+    const roles = [...myRoles]
+    if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
+    return roles
+  }
   const { data: items = [], isLoading } = useQuery({ queryKey: ['odAftercare'], queryFn: aftercareApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })
   const { data: fits = [] } = useQuery({ queryKey: ['odFitness'], queryFn: fitnessApi.list })
@@ -130,10 +135,10 @@ const OdAftercareTab: React.FC = () => {
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
-          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+          {canSee(MENU, 'DETAIL', '수정', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleAftEditClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
           )}
-          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+          {canSee(MENU, 'DETAIL', '삭제', getRoles(selected ?? {})) && (
             <Button variant="contained" color="error" onClick={handleAftDeleteClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
           )}
         </Box>
@@ -183,7 +188,7 @@ const OdAftercareTab: React.FC = () => {
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
-          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+          {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleAftSave} disabled={!form.workerName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
           )}
         </Box>
@@ -205,10 +210,10 @@ const OdAftercareTab: React.FC = () => {
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
-          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+          {canSee(MENU, 'DETAIL', '수정', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleFitEditClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>수정</Button>
           )}
-          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+          {canSee(MENU, 'DETAIL', '삭제', getRoles(selected ?? {})) && (
             <Button variant="contained" color="error" onClick={handleFitDeleteClick} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>삭제</Button>
           )}
         </Box>
@@ -252,7 +257,7 @@ const OdAftercareTab: React.FC = () => {
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
-          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+          {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleFitSave} disabled={!fitForm.workerName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
           )}
         </Box>

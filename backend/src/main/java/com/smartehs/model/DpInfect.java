@@ -17,6 +17,10 @@ public class DpInfect {
     private LocalDate nextDueDate;
     private String notes;
     private Boolean deleted;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

@@ -39,6 +39,10 @@ public class HealthCheckupRecord {
     private Long pdfFileId;
     // 메타
     private String createdBy;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

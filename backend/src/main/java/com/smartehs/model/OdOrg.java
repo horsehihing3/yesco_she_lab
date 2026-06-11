@@ -19,6 +19,10 @@ public class OdOrg {
     private LocalDate contractEnd;
     private Integer targetCount;
     private Boolean deleted;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

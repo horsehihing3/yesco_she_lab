@@ -1,6 +1,10 @@
 // 법규 대응 — 4개 탭(법규검토/인허가/의무이행/개선등록) 도메인 타입
 
 export interface LegalLaw {
+  createdByUserId?: number | null
+  createdByName?: string | null
+  createdByTeam?: string | null
+  createdByPosition?: string | null
   id: number
   category: string                  // 안전/환경/보건/화학물질/소방/전기
   lawName: string

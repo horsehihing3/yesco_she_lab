@@ -70,9 +70,14 @@ const EhsManagerTab: React.FC = () => {
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 직책자 명단'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const getRoles = (item: { createdByUserId?: number | null }): string[] => {
+    const roles = [...myRoles]
+    if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
+    return roles
+  }
   const canNew  = canSee(MENU, 'LIST',   'New',  myRoles)
-  const canEdit = canSee(MENU, 'DETAIL', '수정', myRoles)
-  const canDel  = canSee(MENU, 'DETAIL', '삭제', myRoles)
+  const canEdit = canSee(MENU, 'DETAIL', '수정', getRoles(selectedManager ?? {}))
+  const canDel  = canSee(MENU, 'DETAIL', '삭제', getRoles(selectedManager ?? {}))
 
   const { control, handleSubmit, reset, setValue } = useForm<EhsManagerRequest>({
     defaultValues: {

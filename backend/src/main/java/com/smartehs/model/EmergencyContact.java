@@ -19,6 +19,10 @@ public class EmergencyContact {
     private Integer sortOrder;
     private String notes;
     private Boolean deleted;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

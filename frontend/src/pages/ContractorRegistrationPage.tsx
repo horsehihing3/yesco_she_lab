@@ -104,10 +104,15 @@ const ContractorRegistrationPage: React.FC = () => {
   const { canSee } = useButtonRules()
   const MENU = '협력 업체 관리 › 협력 업체 등록'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const getRoles = (item: { createdByUserId?: number | null }): string[] => {
+    const roles = [...myRoles]
+    if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
+    return roles
+  }
   const canNew  = canSee(MENU, 'LIST',   'New (신규 등록)', myRoles)
-  const canEdit = canSee(MENU, 'DETAIL', '수정', myRoles)
-  const canDel  = canSee(MENU, 'DETAIL', '삭제', myRoles)
-  const canSave = canSee(MENU, 'FORM',   '등록 완료 / 저장', myRoles)
+  const canEdit = canSee(MENU, 'DETAIL', '수정', getRoles(selected ?? {}))
+  const canDel  = canSee(MENU, 'DETAIL', '삭제', getRoles(selected ?? {}))
+  const canSave = canSee(MENU, 'FORM',   '등록 완료 / 저장', getRoles(selected ?? {}))
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selected, setSelected] = useState<ContractorRegistration | null>(null)

@@ -3,6 +3,7 @@ package com.smartehs.service;
 import com.smartehs.dto.request.EhsManagerRequest;
 import com.smartehs.dto.response.EhsManagerResponse;
 import com.smartehs.model.EhsManager;
+import com.smartehs.model.IdmUser;
 import com.smartehs.mapper.EhsManagerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,7 +55,7 @@ public class EhsManagerService {
     }
 
     @Transactional
-    public EhsManagerResponse create(EhsManagerRequest request) {
+    public EhsManagerResponse create(EhsManagerRequest request, IdmUser currentUser) {
         EhsManager manager = EhsManager.builder()
                 .roleCategory(request.getRoleCategory())
                 .roleDetail(request.getRoleDetail())
@@ -71,6 +72,12 @@ public class EhsManagerService {
                 .active(true)
                 .build();
 
+        if (currentUser != null) {
+            manager.setCreatedByUserId(currentUser.getUidNumber());
+            manager.setCreatedByName(currentUser.getUserName());
+            manager.setCreatedByTeam(currentUser.getGroupName());
+            manager.setCreatedByPosition(currentUser.getTitleName());
+        }
         ehsManagerMapper.insert(manager);
         return EhsManagerResponse.from(manager);
     }

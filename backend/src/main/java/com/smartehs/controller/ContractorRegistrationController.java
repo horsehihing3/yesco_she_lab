@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,7 @@ import java.util.Map;
 public class ContractorRegistrationController {
 
     private final ContractorRegistrationService service;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "협력 업체 등록 목록 조회 (검색 + 상태 필터)")
@@ -44,6 +47,15 @@ public class ContractorRegistrationController {
             @RequestBody ContractorRegistration reg,
             Authentication authentication) {
         if (authentication != null) reg.setModifiedBy(authentication.getName());
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                reg.setCreatedByUserId(u.getUidNumber());
+                reg.setCreatedByName(u.getUserName());
+                reg.setCreatedByTeam(u.getGroupName());
+                reg.setCreatedByPosition(u.getTitleName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(service.create(reg)));
     }
 

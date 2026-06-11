@@ -18,8 +18,12 @@
         <result property="amendSummary" column="amend_summary"/>
         <result property="urgent" column="urgent"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_at"/>
+        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
         <result property="modifiedAt" column="modified_at"/>
+        <result property="createdByUserId"   column="created_by_user_id"/>
+        <result property="createdByName"     column="created_by_name"/>
+        <result property="createdByTeam"     column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findAll" resultMap="LegalLawResultMap">
@@ -60,7 +64,7 @@
             #{reviewStatus}, #{applyYn}, #{followUpAction},
             #{amendSummary},
             <choose><when test="urgent != null">#{urgent}</when><otherwise>0</otherwise></choose>,
-            0, GETDATE(), GETDATE()
+            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE()
         )
     </insert>
 

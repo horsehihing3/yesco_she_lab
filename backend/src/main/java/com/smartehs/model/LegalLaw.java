@@ -25,6 +25,10 @@ public class LegalLaw {
     private String amendSummary;
     private Boolean urgent;
     private Boolean deleted;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

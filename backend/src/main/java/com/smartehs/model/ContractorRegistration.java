@@ -68,6 +68,10 @@ public class ContractorRegistration {
     private String workZone;
 
     private Boolean deleted;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private String modifiedBy;

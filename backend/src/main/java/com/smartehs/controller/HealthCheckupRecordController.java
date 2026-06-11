@@ -2,6 +2,8 @@ package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.mapper.HealthCheckupRecordMapper;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.model.FileMetadata;
 import com.smartehs.model.HealthCheckupRecord;
 import com.smartehs.service.FileStorageService;
@@ -22,6 +24,7 @@ import java.util.List;
 public class HealthCheckupRecordController {
 
     private final HealthCheckupRecordMapper mapper;
+    private final IdmMapper idmMapper;
     private final HealthCheckupPdfParser parser;
     private final FileStorageService fileStorageService;
 
@@ -44,6 +47,15 @@ public class HealthCheckupRecordController {
     public ResponseEntity<ApiResponse<HealthCheckupRecord>> create(
             @RequestBody HealthCheckupRecord record, Authentication authentication) {
         record.setCreatedBy(authentication != null ? authentication.getName() : "system");
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                record.setCreatedByUserId(u.getUidNumber());
+                record.setCreatedByName(u.getUserName());
+                record.setCreatedByTeam(u.getGroupName());
+                record.setCreatedByPosition(u.getTitleName());
+            }
+        }
         mapper.insert(record);
         return ResponseEntity.ok(ApiResponse.success(mapper.findById(record.getId())));
     }

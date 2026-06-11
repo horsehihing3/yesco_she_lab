@@ -2,7 +2,10 @@ package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.model.EmergencyContact;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.EmergencyContactService;
+import org.springframework.security.core.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class EmergencyContactController {
 
     private final EmergencyContactService emergencyContactService;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "비상 연락처 전체 목록 조회")
@@ -43,7 +47,16 @@ public class EmergencyContactController {
 
     @PostMapping
     @Operation(summary = "비상 연락처 등록")
-    public ResponseEntity<ApiResponse<EmergencyContact>> create(@RequestBody EmergencyContact emergencyContact) {
+    public ResponseEntity<ApiResponse<EmergencyContact>> create(@RequestBody EmergencyContact emergencyContact, Authentication authentication) {
+        if (authentication != null) {
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                emergencyContact.setCreatedByUserId(u.getUidNumber());
+                emergencyContact.setCreatedByName(u.getUserName());
+                emergencyContact.setCreatedByTeam(u.getGroupName());
+                emergencyContact.setCreatedByPosition(u.getTitleName());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(emergencyContactService.create(emergencyContact)));
     }
 

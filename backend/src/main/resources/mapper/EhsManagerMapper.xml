@@ -18,7 +18,11 @@
         <result property="roleCaTeam" column="role_ca_team"/>
         <result property="isAdmin" column="is_admin"/>
         <result property="active" column="active"/>
-        <result property="createdAt" column="created_at"/>
+        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
+        <result property="createdByUserId"   column="created_by_user_id"/>
+        <result property="createdByName"     column="created_by_name"/>
+        <result property="createdByTeam"     column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findAll" resultMap="EhsManagerResultMap">
@@ -78,7 +82,7 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_ehs_manager (role_category, role_detail, role_place, role_idx, user_name, user_mail, user_dept, user_company, role_ca_hd, role_ca_field, role_ca_team, is_admin, active, created_at)
-        VALUES (#{roleCategory}, #{roleDetail}, #{rolePlace}, #{roleIdx}, #{userName}, #{userMail}, #{userDept}, #{userCompany}, #{roleCaHd}, #{roleCaField}, #{roleCaTeam}, #{isAdmin}, #{active}, GETDATE())
+        VALUES (#{roleCategory}, #{roleDetail}, #{rolePlace}, #{roleIdx}, #{userName}, #{userMail}, #{userDept}, #{userCompany}, #{roleCaHd}, #{roleCaField}, #{roleCaTeam}, #{isAdmin}, #{active}, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE())
     </insert>
 
     <update id="update">

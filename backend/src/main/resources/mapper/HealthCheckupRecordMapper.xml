@@ -29,8 +29,12 @@
         <result property="remark" column="remark"/>
         <result property="pdfFileId" column="pdf_file_id"/>
         <result property="createdBy" column="created_by"/>
-        <result property="createdAt" column="created_at"/>
+        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
         <result property="modifiedAt" column="modified_at"/>
+        <result property="createdByUserId"   column="created_by_user_id"/>
+        <result property="createdByName"     column="created_by_name"/>
+        <result property="createdByTeam"     column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findAll" resultMap="HealthCheckupRecordResultMap">
@@ -59,7 +63,7 @@
              #{bst}, #{dmMed}, #{dmGrade},
              #{tc}, #{tg}, #{ldl}, #{hdl}, #{lipidMed}, #{lipidGrade},
              #{followUp}, #{workFitness}, #{remark}, #{pdfFileId}, #{createdBy},
-             GETDATE(), GETDATE())
+             #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE())
     </insert>
 
     <update id="update">

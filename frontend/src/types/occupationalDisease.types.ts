@@ -1,6 +1,10 @@
 // 직업병 관리 — 7개 도메인
 
 export interface OdPlan {
+  createdByUserId?: number | null
+  createdByName?: string | null
+  createdByTeam?: string | null
+  createdByPosition?: string | null
   id: number
   half: string                       // 상반기/하반기/수시
   orgName: string

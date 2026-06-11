@@ -103,10 +103,15 @@ const EmrContactTab: React.FC = () => {
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › 비상 연락망'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
+  const getRoles = (item: { createdByUserId?: number | null }): string[] => {
+    const roles = [...myRoles]
+    if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
+    return roles
+  }
   const canNew  = canSee(MENU, 'LIST',   'New',  myRoles)
-  const canEdit = canSee(MENU, 'DETAIL', '수정', myRoles)
-  const canDel  = canSee(MENU, 'DETAIL', '삭제', myRoles)
-  const canSave = canSee(MENU, 'DETAIL', '저장', myRoles)
+  const canEdit = canSee(MENU, 'DETAIL', '수정', getRoles(selectedItem ?? {}))
+  const canDel  = canSee(MENU, 'DETAIL', '삭제', getRoles(selectedItem ?? {}))
+  const canSave = canSee(MENU, 'DETAIL', '저장', getRoles(selectedItem ?? {}))
 
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ ...emptyForm }) }
   const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm }); setViewMode('create') }

@@ -15,8 +15,12 @@
         <result property="sortOrder" column="sort_order"/>
         <result property="notes" column="notes"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_at"/>
+        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
         <result property="modifiedAt" column="modified_at"/>
+        <result property="createdByUserId"   column="created_by_user_id"/>
+        <result property="createdByName"     column="created_by_name"/>
+        <result property="createdByTeam"     column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findByDeletedFalse" resultMap="EmergencyContactResultMap">
@@ -59,7 +63,7 @@
             #{contactType},
             <choose><when test="isEmergency != null">#{isEmergency}</when><otherwise>0</otherwise></choose>,
             <choose><when test="sortOrder != null">#{sortOrder}</when><otherwise>0</otherwise></choose>,
-            #{notes}, 0, GETDATE(), GETDATE()
+            #{notes}, 0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE()
         )
     </insert>
 

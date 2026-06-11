@@ -13,8 +13,12 @@
         <result property="urgent" column="urgent"/>
         <result property="dueDate" column="due_date"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_at"/>
+        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
         <result property="modifiedAt" column="modified_at"/>
+        <result property="createdByUserId"   column="created_by_user_id"/>
+        <result property="createdByName"     column="created_by_name"/>
+        <result property="createdByTeam"     column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
     <select id="findAll" resultMap="rm">
         SELECT * FROM tb_od_aftercare WHERE deleted = 0
@@ -30,7 +34,7 @@
             #{workerName}, #{dept}, #{factor}, #{judge}, #{disease}, #{actionsText},
             #{status},
             <choose><when test="urgent != null">#{urgent}</when><otherwise>0</otherwise></choose>,
-            #{dueDate,jdbcType=DATE}, 0, GETDATE(), GETDATE())
+            #{dueDate,jdbcType=DATE}, 0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE())
     </insert>
     <update id="update">
         UPDATE tb_od_aftercare SET worker_name = #{workerName}, dept = #{dept},

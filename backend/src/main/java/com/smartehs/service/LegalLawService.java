@@ -3,6 +3,7 @@ package com.smartehs.service;
 import com.smartehs.dto.request.LegalLawRequest;
 import com.smartehs.dto.response.LegalLawResponse;
 import com.smartehs.exception.ResourceNotFoundException;
+import com.smartehs.model.IdmUser;
 import com.smartehs.mapper.LegalLawMapper;
 import com.smartehs.model.LegalLaw;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class LegalLawService {
     }
 
     @Transactional
-    public LegalLawResponse create(LegalLawRequest req) {
+    public LegalLawResponse create(LegalLawRequest req, IdmUser currentUser) {
         LegalLaw e = LegalLaw.builder()
                 .category(req.getCategory())
                 .lawName(req.getLawName())
@@ -66,6 +67,12 @@ public class LegalLawService {
                 .amendSummary(req.getAmendSummary())
                 .urgent(req.getUrgent() != null ? req.getUrgent() : false)
                 .build();
+        if (currentUser != null) {
+            e.setCreatedByUserId(currentUser.getUidNumber());
+            e.setCreatedByName(currentUser.getUserName());
+            e.setCreatedByTeam(currentUser.getGroupName());
+            e.setCreatedByPosition(currentUser.getTitleName());
+        }
         mapper.insert(e);
         return findById(e.getId());
     }

@@ -28,6 +28,11 @@ const HealthCheckupRecordTab: React.FC = () => {
   const { canSee } = useButtonRules()
   const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const getRoles = (item: { createdByUserId?: number | null }): string[] => {
+    const roles = [...myRoles]
+    if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
+    return roles
+  }
 
   const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')
@@ -230,7 +235,7 @@ const HealthCheckupRecordTab: React.FC = () => {
                     )}
                   </TableCell>
                   <TableCell align="center" sx={cellSx}>
-                    {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+                    {canSee(MENU, 'DETAIL', '삭제', getRoles(r)) && (
                       <IconButton size="small" color="error" onClick={() => handleDelete(r)}>
                         <DeleteIcon fontSize="small" />
                       </IconButton>

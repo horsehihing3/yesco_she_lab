@@ -70,6 +70,11 @@ const LegalLawTab: React.FC = () => {
   const { canSee } = useButtonRules()
   const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const getRoles = (item: { createdByUserId?: number | null }): string[] => {
+    const roles = [...myRoles]
+    if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
+    return roles
+  }
   const { data: laws = [], isLoading } = useQuery({ queryKey: ['legalLaws'], queryFn: lawApi.list })
   const { data: stats } = useQuery({ queryKey: ['legalLawsStats'], queryFn: lawApi.stats })
 
@@ -324,12 +329,12 @@ const LegalLawTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
             목록
           </Button>
-          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+          {canSee(MENU, 'DETAIL', '수정', getRoles(selected ?? {})) && (
             <Button variant="contained" color="primary" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
               수정
             </Button>
           )}
-          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+          {canSee(MENU, 'DETAIL', '삭제', getRoles(selected ?? {})) && (
             <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
               삭제
             </Button>

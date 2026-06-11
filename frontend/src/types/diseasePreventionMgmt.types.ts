@@ -20,6 +20,10 @@ export interface DpMsd {
 }
 
 export interface DpCvd {
+  createdByUserId?: number | null
+  createdByName?: string | null
+  createdByTeam?: string | null
+  createdByPosition?: string | null
   id: number
   workerName: string
   department?: string

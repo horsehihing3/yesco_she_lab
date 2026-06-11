@@ -3,7 +3,10 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.LegalLawRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.LegalLawResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.LegalLawService;
+import org.springframework.security.core.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,6 +24,7 @@ import java.util.Map;
 public class LegalLawController {
 
     private final LegalLawService service;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "법령 목록")
@@ -42,8 +46,9 @@ public class LegalLawController {
 
     @PostMapping
     @Operation(summary = "법령 등록")
-    public ResponseEntity<ApiResponse<LegalLawResponse>> create(@Valid @RequestBody LegalLawRequest req) {
-        return ResponseEntity.ok(ApiResponse.success(service.create(req)));
+    public ResponseEntity<ApiResponse<LegalLawResponse>> create(@Valid @RequestBody LegalLawRequest req, Authentication authentication) {
+        IdmUser u = authentication != null ? idmMapper.findByUid(authentication.getName()) : null;
+        return ResponseEntity.ok(ApiResponse.success(service.create(req, u)));
     }
 
     @PutMapping("/{id}")

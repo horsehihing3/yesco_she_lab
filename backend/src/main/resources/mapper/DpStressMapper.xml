@@ -20,8 +20,12 @@
         <result property="counselingNotes" column="counseling_notes"/>
         <result property="notes" column="notes"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_at"/>
+        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
         <result property="modifiedAt" column="modified_at"/>
+        <result property="createdByUserId"   column="created_by_user_id"/>
+        <result property="createdByName"     column="created_by_name"/>
+        <result property="createdByTeam"     column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findAll" resultMap="R">SELECT * FROM tb_dp_stress WHERE deleted = 0 ORDER BY total_score DESC, id DESC</select>
@@ -42,7 +46,7 @@
             #{assessmentDate,jdbcType=DATE},
             <choose><when test="hasCounseling != null">#{hasCounseling}</when><otherwise>0</otherwise></choose>,
             #{counselingNotes,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
-            0, GETDATE(), GETDATE())
+            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE())
     </insert>
 
     <update id="update">

@@ -23,5 +23,9 @@ public class EhsManager {
     private String roleCaTeam;
     private Boolean isAdmin;
     private Boolean active;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private LocalDateTime createdAt;
 }

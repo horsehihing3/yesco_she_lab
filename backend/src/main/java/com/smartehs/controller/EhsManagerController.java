@@ -3,7 +3,10 @@ package com.smartehs.controller;
 import com.smartehs.dto.request.EhsManagerRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.EhsManagerResponse;
+import com.smartehs.mapper.IdmMapper;
+import com.smartehs.model.IdmUser;
 import com.smartehs.service.EhsManagerService;
+import org.springframework.security.core.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,6 +27,7 @@ import java.util.List;
 public class EhsManagerController {
 
     private final EhsManagerService ehsManagerService;
+    private final IdmMapper idmMapper;
 
     @GetMapping
     @Operation(summary = "List EHS managers", description = "Get all EHS managers with pagination")
@@ -57,8 +61,9 @@ public class EhsManagerController {
     @PostMapping
     @Operation(summary = "Create EHS manager", description = "Create a new EHS manager")
     public ResponseEntity<ApiResponse<EhsManagerResponse>> create(
-            @Valid @RequestBody EhsManagerRequest request) {
-        EhsManagerResponse manager = ehsManagerService.create(request);
+            @Valid @RequestBody EhsManagerRequest request, Authentication authentication) {
+        IdmUser u = authentication != null ? idmMapper.findByUid(authentication.getName()) : null;
+        EhsManagerResponse manager = ehsManagerService.create(request, u);
         return ResponseEntity.ok(ApiResponse.success("EHS manager created successfully", manager));
     }
 

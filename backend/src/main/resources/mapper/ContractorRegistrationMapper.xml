@@ -52,9 +52,13 @@
         <result property="contractAmount"    column="contract_amount"/>
         <result property="workZone"          column="work_zone"/>
         <result property="deleted"           column="deleted"/>
-        <result property="createdAt"         column="created_at"/>
+        <result property="createdAt"         column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
         <result property="modifiedAt"        column="modified_at"/>
         <result property="modifiedBy"        column="modified_by"/>
+        <result property="createdByUserId"   column="created_by_user_id"/>
+        <result property="createdByName"     column="created_by_name"/>
+        <result property="createdByTeam"     column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <sql id="allColumns">
@@ -146,7 +150,7 @@
             #{healthMgrName}, #{healthMgrPosition}, #{healthMgrCert}, #{healthMgrTel}, #{healthMgrEmail},
             #{internalDept}, #{internalName}, #{internalTel}, #{memo},
             #{contractStart,jdbcType=DATE}, #{contractEnd,jdbcType=DATE}, #{contractType}, #{contractAmount}, #{workZone},
-            0, GETDATE(), GETDATE(), #{modifiedBy}
+            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE(), #{modifiedBy}
         )
     </insert>
 
