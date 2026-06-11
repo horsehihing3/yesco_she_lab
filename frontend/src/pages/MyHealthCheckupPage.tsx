@@ -119,6 +119,11 @@ const MyHealthCheckupPage: React.FC = () => {
   const { canSee } = useButtonRules()
   const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const getRoles = (item: { authorName?: string | null }): string[] => {
+    const roles = [...myRoles]
+    if (item.authorName && user?.name && item.authorName === user.name) roles.push('writer')
+    return roles
+  }
   const queryClient = useQueryClient()
   const { showAlert, showConfirm, showSuccess } = useAlert()
   const { getLocalizedName, codeList: checkupStatusCodes } = useCodeMap('CHECKUP_STATUS')
@@ -506,12 +511,12 @@ const MyHealthCheckupPage: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {t('common.list')}
           </Button>
-          {canSee(MENU, 'DETAIL', '수정', myRoles) && (
+          {canSee(MENU, 'DETAIL', '수정', getRoles(selectedItem ?? {})) && (
             <Button variant="contained" onClick={handleEdit} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
               {t('common.edit')}
             </Button>
           )}
-          {canSee(MENU, 'DETAIL', '삭제', myRoles) && (
+          {canSee(MENU, 'DETAIL', '삭제', getRoles(selectedItem ?? {})) && (
             <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
               {t('common.delete')}
             </Button>
@@ -902,7 +907,7 @@ const MyHealthCheckupPage: React.FC = () => {
           <Button variant="outlined" onClick={() => setViewMode('list')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {t('common.cancel')}
           </Button>
-          {canSee(MENU, 'DETAIL', '저장', myRoles) && (
+          {canSee(MENU, 'DETAIL', '저장', getRoles(selectedItem ?? {})) && (
             <Button type="submit" variant="contained" disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
               {createMutation.isPending || updateMutation.isPending ? <CircularProgress size={20} /> : t('common.save')}
             </Button>
