@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { formatUserName } from '../../utils/userDisplay'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -116,7 +117,7 @@ const EhsAlertTab: React.FC = () => {
   })
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
 
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 알림'
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]

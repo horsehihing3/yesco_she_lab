@@ -23,6 +23,7 @@ public class PpeEquipment {
     private String certification;
     private Integer stockQuantity;
     private Integer minStock;
+    private Integer maxStock;
     private BigDecimal wearRate;
     private LocalDate expiryDate;
     private String inspectCycle;
@@ -32,6 +33,7 @@ public class PpeEquipment {
     private String department;
     private String status;
     private String notes;
+    private Boolean isConsumable;
     private Boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { Role } from '../../data/buttonManageData'
@@ -337,7 +338,7 @@ const AnnualPlanTab: React.FC = () => {
   }
 
   // 권한 헬퍼: 계획 승인자 본인 또는 admin 만 계획 승인/반려 가능
-  const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(authUser)
   const canEditDraft = (d: { createdByUserId?: number | null }) => isAdmin || d.createdByUserId === authUser?.id
   const canApprovePlan = (d: { planApproverUserId?: number | null; planApproverName?: string | null }) => {
     if (isAdmin) return true

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
@@ -63,7 +64,7 @@ const OdPlanTab: React.FC = () => {
   const { showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { data: items = [], isLoading } = useQuery({ queryKey: ['odPlans'], queryFn: planApi.list })
   const { data: stats } = useQuery({ queryKey: ['odStats'], queryFn: odStatsApi.get })

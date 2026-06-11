@@ -1,4 +1,5 @@
 ﻿import { formatUserName } from '../utils/userDisplay'
+import { isEhsManager } from '../utils/auth'
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { fmtPerson } from '../utils/personFormat'
 import { useButtonRules } from '../hooks/useButtonRules'
@@ -93,7 +94,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   const isExternalMode = mode === 'external'
   const { canSee } = useButtonRules()
   const MENU = isExternalMode ? '협력 업체 관리 › 협력 업체 작업 허가' : '안전 관리 › 작업 허가 › 허가 신청'
-  const isAdminUser = user?.role === 'SYSTEM_ADMIN'
+  const isAdminUser = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(isAdminUser ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const getItemRoles = (item: { planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const normalizeName = (s?: string | null) => (s || '').trim()
@@ -1429,7 +1430,7 @@ const PostWorkInspectionContent: React.FC = () => {
             (!!selectedItem.completionApproverUserId && selectedItem.completionApproverUserId === user.id) ||
             (!!selectedItem.completionApproverName && normalizeName(selectedItem.completionApproverName) === normalizeName(user.name))
           )
-          const isAdminRole = user?.role === 'SYSTEM_ADMIN'
+          const isAdminRole = isEhsManager(user)
           const noCompletionApproverAssigned = !selectedItem.completionApproverUserId && !normalizeName(selectedItem.completionApproverName)
           const canApproveCompletion = isAdminRole || isCompletionApprover || noCompletionApproverAssigned
           return (

@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react'
-import { isEhsManager } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -15,6 +14,7 @@ import { useAuth } from '../../context/AuthContext'
 import { ppeRequestApi, ppeEquipmentApi } from '../../api/ppeEquipmentApi'
 import { PpeRequestItem, PpeRequestCreate } from '../../types/ppeEquipment.types'
 import useCodeMap from '../../hooks/useCodeMap'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import axiosInstance from '../../api/axiosInstance'
 import { ApiResponse } from '../../types/common.types'
 
@@ -56,6 +56,8 @@ const PpeRequestTab: React.FC = () => {
   const [page, setPage] = useState(0)
   const [statusFilter, setStatusFilter] = useState('')
   const [form, setForm] = useState<PpeRequestCreate>({ itemName: '', quantity: 1 })
+  const [rejectMode, setRejectMode] = useState(false)
+  const [rejectReason, setRejectReason] = useState('')
 
   const { data: equipmentData } = useQuery({
     queryKey: ['ppeEquipmentAll'],
@@ -105,14 +107,32 @@ const PpeRequestTab: React.FC = () => {
 
   const invalidateAll = () => queryClient.invalidateQueries({ queryKey: ['ppeRequest'] })
   const createMut = useMutation({ mutationFn: (r: PpeRequestCreate) => ppeRequestApi.create(r), onSuccess: () => { invalidateAll(); showSuccess(t('common.saved')); handleBackToList() }, onError: () => showError(t('common.error')) })
+  const approveMut = useMutation({ mutationFn: ({ id, name, dept }: { id: number; name: string; dept: string }) => ppeRequestApi.approve(id, name, dept), onSuccess: () => { invalidateAll(); showSuccess(t('ppeReq.approved', '승인되었습니다.')); handleBackToList() }, onError: () => showError(t('common.error')) })
+  const rejectMut = useMutation({ mutationFn: ({ id, name, dept, reason }: { id: number; name: string; dept: string; reason?: string }) => ppeRequestApi.reject(id, name, dept, reason), onSuccess: () => { invalidateAll(); showSuccess(t('ppeReq.rejected', '반려되었습니다.')); handleBackToList() }, onError: () => showError(t('common.error')) })
   const issueMut = useMutation({ mutationFn: (id: number) => ppeRequestApi.issue(id), onSuccess: () => { invalidateAll(); showSuccess(t('ppeReq.issued')); handleBackToList() }, onError: () => showError(t('common.error')) })
   const returnMut = useMutation({ mutationFn: (id: number) => ppeRequestApi.returnItem(id), onSuccess: () => { invalidateAll(); showSuccess(t('ppeReq.returned', '반납 처리되었습니다.')); handleBackToList() }, onError: () => showError(t('common.error')) })
   const cancelMut = useMutation({ mutationFn: (id: number) => ppeRequestApi.cancel(id), onSuccess: () => { invalidateAll(); showSuccess(t('ppeReq.cancelled')); handleBackToList() }, onError: () => showError(t('common.error')) })
   const deleteMut = useMutation({ mutationFn: (id: number) => ppeRequestApi.delete(id), onSuccess: () => { invalidateAll(); showSuccess(t('common.deleted')); handleBackToList() }, onError: () => showError(t('common.error')) })
 
-  const isAdmin = isEhsManager(user)
+  const { canSee } = useButtonRules()
+  const MENU_REQ = '안전 관리 › 보호구 장비 › 지급 신청'
+  const getRoles = useMemo(() => (item?: { requesterId?: string | null }): string[] => {
+    const roles: string[] = ['guest']
+    if (user?.role === 'SYSTEM_ADMIN') roles.push('superAdmin')
+    else if (user?.role) roles.push(user.role)
+    if (item?.requesterId && user?.username && item.requesterId === user.username) roles.push('writer')
+    return roles
+  }, [user])
 
-  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ itemName: '', quantity: 1 }) }
+  const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ itemName: '', quantity: 1 }); setRejectMode(false); setRejectReason('') }
+  const handleApprove = async (item: PpeRequestItem) => {
+    const ok = await showConfirm(t('ppeReq.confirmApprove', '승인하시겠습니까?'))
+    if (ok) approveMut.mutate({ id: item.id, name: user?.name || '', dept: user?.department || '' })
+  }
+  const handleReject = (item: PpeRequestItem) => {
+    if (!rejectReason.trim()) return
+    rejectMut.mutate({ id: item.id, name: user?.name || '', dept: user?.department || '', reason: rejectReason })
+  }
   const handleRowClick = (item: PpeRequestItem) => { setSelectedItem(item); setViewMode('detail') }
   const handleOpenCreate = () => { setSelectedItem(null); setForm({ itemName: '', quantity: 1, requesterName: user?.name, requesterDept: user?.department, requesterId: user?.username }); setViewMode('create') }
   const handleOpenEdit = (item: PpeRequestItem) => { setSelectedItem(item); setForm({ equipmentId: item.equipmentId, itemName: item.itemName, itemCategory: item.itemCategory, itemModel: item.itemModel, quantity: item.quantity, reason: item.reason, requesterName: item.requesterName, requesterDept: item.requesterDept, requesterId: item.requesterId, notes: item.notes }); setViewMode('create') }
@@ -151,14 +171,13 @@ const PpeRequestTab: React.FC = () => {
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
-    const isOwner = user?.username === selectedItem.requesterId
     return (
       <Box>
         {/* PC 2열 */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.requestId')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requestId}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.status')}</Typography><Box sx={valSx}><Chip label={getStatusLabel(selectedItem.status)} color={STATUS_COLORS[selectedItem.status] || 'default'} size="small" /></Box></Box>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.itemName')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.itemName}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.category')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{getCategoryLabel(selectedItem.itemCategory || '')}</Typography></Box></Box>
-          <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.model')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.itemModel || ''}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.quantity')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.quantity}</Typography></Box></Box>
+          <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.model')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.itemModel || ''}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.quantity')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.quantity}{selectedItem.isConsumable && <Chip label={t('ppe.consumable', '소모품')} color="warning" size="small" sx={{ ml: 1, fontSize: '0.65rem', height: 18 }} />}</Typography></Box></Box>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.requester')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatPerson(selectedItem.requesterName, selectedItem.requesterDept, selectedItem.requesterId)}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.requestDate')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requestDate?.replace('T', ' ').substring(0, 16)}</Typography></Box></Box>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.approver')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatPerson(selectedItem.approverName, selectedItem.approverDept)}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.approvedAt')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.approvedAt?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box></Box>
           {selectedItem.issuedAt && <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.issuedAt')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.issuedAt?.replace('T', ' ').substring(0, 16)}</Typography></Box></Box>}
@@ -189,32 +208,45 @@ const PpeRequestTab: React.FC = () => {
           ))}
         </Box>
 
-        {/* 승인/반려는 승인 관리 메뉴에서 처리 */}
-        {selectedItem.status === 'REQUESTED' && (
-          <Alert severity="info" sx={{ mb: 2 }}>{t('ppeReq.approvalNotice')}</Alert>
+        {/* 반려 사유 입력 */}
+        {rejectMode && (
+          <Box sx={{ mb: 2 }}>
+            <TextField
+              fullWidth size="small" multiline rows={2}
+              label={t('ppeReq.rejectionReason')}
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+            />
+          </Box>
         )}
 
-        <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
-          {/* 신청자 본인만: 취소 (신청 상태일 때만) */}
-          {isOwner && selectedItem.status === 'REQUESTED' && (
+        <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' }, flexWrap: 'wrap' }}>
+          {canSee(MENU_REQ, 'REQUESTED', '취소', getRoles(selectedItem)) && selectedItem.status === 'REQUESTED' && (
             <Button variant="outlined" color="warning" onClick={() => cancelMut.mutate(selectedItem.id)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('ppeReq.cancel')}</Button>
           )}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
-          {/* 관리자만: 지급완료 (승인된 건만) — 목록 버튼 우측에 위치 */}
-          {isAdmin && selectedItem.status === 'APPROVED' && (
+          {canSee(MENU_REQ, 'APPROVED', '지급완료', getRoles(selectedItem)) && selectedItem.status === 'APPROVED' && (
             <Button variant="contained" color="success" onClick={() => handleIssue(selectedItem.id)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('ppeReq.issueComplete')}</Button>
           )}
-          {/* 관리자: 반납 처리 (지급 완료 건만) */}
-          {isAdmin && selectedItem.status === 'ISSUED' && (
+          {canSee(MENU_REQ, 'ISSUED', '반납', getRoles(selectedItem)) && selectedItem.status === 'ISSUED' && !selectedItem.isConsumable && (
             <Button variant="contained" color="warning" onClick={() => handleReturn(selectedItem.id)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('ppeReq.return', '반납')}</Button>
           )}
-          {/* 신청자 본인만: 수정 (신청 상태일 때만) */}
-          {isOwner && selectedItem.status === 'REQUESTED' && (
+          {canSee(MENU_REQ, 'REQUESTED', '수정', getRoles(selectedItem)) && selectedItem.status === 'REQUESTED' && !rejectMode && (
             <Button variant="contained" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.edit')}</Button>
           )}
-          {/* 관리자 또는 신청자: 삭제 */}
-          {(isAdmin || isOwner) && (
+          {canSee(MENU_REQ, 'REQUESTED', '삭제', getRoles(selectedItem)) && selectedItem.status === 'REQUESTED' && !rejectMode && (
             <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.delete')}</Button>
+          )}
+          {canSee(MENU_REQ, 'REQUESTED', '반려', getRoles(selectedItem)) && selectedItem.status === 'REQUESTED' && (
+            rejectMode
+              ? <>
+                  <Button variant="outlined" onClick={() => { setRejectMode(false); setRejectReason('') }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
+                  <Button variant="contained" color="error" onClick={() => handleReject(selectedItem)} disabled={!rejectReason.trim()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('approval.confirmReject', '반려 확인')}</Button>
+                </>
+              : <Button variant="contained" color="error" onClick={() => { setRejectMode(true); setRejectReason('') }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('approval.reject', '반려')}</Button>
+          )}
+          {canSee(MENU_REQ, 'REQUESTED', '승인', getRoles(selectedItem)) && selectedItem.status === 'REQUESTED' && !rejectMode && (
+            <Button variant="contained" color="success" onClick={() => handleApprove(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('approval.approve', '승인')}</Button>
           )}
         </Box>
 
@@ -272,7 +304,9 @@ const PpeRequestTab: React.FC = () => {
           </FormControl>
           <IconButton onClick={() => { setStatusFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
         </Box>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+        {canSee(MENU_REQ, 'LIST', '신청 등록', getRoles()) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+        )}
       </Box>
       {/* 검색 - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mb: 2 }}>
@@ -282,7 +316,9 @@ const PpeRequestTab: React.FC = () => {
             {statusCodes.map(c => <MenuItem key={c.code} value={c.code}>{getStatusLabel(c.code)}</MenuItem>)}
           </Select>
         </FormControl>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+        {canSee(MENU_REQ, 'LIST', '신청 등록', getRoles()) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate} sx={{ flex: 1 }}>New</Button>
+        )}
       </Box>
 
       {isLoading ? <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>

@@ -25,6 +25,7 @@ public class PpeEquipmentRequest {
     @NotNull
     private Integer stockQuantity;
     private Integer minStock;
+    private Integer maxStock;
     private BigDecimal wearRate;
     private LocalDate expiryDate;
     private String inspectCycle;
@@ -34,4 +35,5 @@ public class PpeEquipmentRequest {
     private String department;
     private String status;
     private String notes;
+    private Boolean isConsumable;
 }

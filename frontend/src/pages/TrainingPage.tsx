@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import { isEhsManager } from '../utils/auth'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
@@ -14,7 +15,7 @@ const TrainingPage: React.FC = () => {
   const { t } = useTranslation()
   const { user } = useAuth()
   const { isMenuHidden } = useMenuRule()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const [activeTab, setActiveTab] = useState(0)
 
   const tabs = useMemo(() => [

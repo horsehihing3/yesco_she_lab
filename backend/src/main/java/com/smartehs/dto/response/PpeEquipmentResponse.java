@@ -27,7 +27,9 @@ public class PpeEquipmentResponse {
     private String certification;
     private Integer stockQuantity;
     private Integer minStock;
+    private Integer maxStock;
     private BigDecimal wearRate;
+    private Boolean isConsumable;
     private LocalDate expiryDate;
     private String inspectCycle;
     private LocalDate lastInspectDate;
@@ -53,7 +55,9 @@ public class PpeEquipmentResponse {
                 .certification(entity.getCertification())
                 .stockQuantity(entity.getStockQuantity())
                 .minStock(entity.getMinStock())
+                .maxStock(entity.getMaxStock())
                 .wearRate(entity.getWearRate())
+                .isConsumable(entity.getIsConsumable())
                 .expiryDate(entity.getExpiryDate())
                 .inspectCycle(entity.getInspectCycle())
                 .lastInspectDate(entity.getLastInspectDate())

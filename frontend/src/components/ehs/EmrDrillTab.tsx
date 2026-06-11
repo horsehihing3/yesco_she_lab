@@ -1,4 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
+import { isEhsManager } from '../../utils/auth'
 import { useState, useRef } from 'react'
 import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -50,7 +51,7 @@ const EmrDrillTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user: authUser } = useAuth()
-  const isAdmin = authUser?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(authUser)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 비상 훈련 › 비상 훈련'
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [authUser?.role ?? ''].filter(Boolean))]

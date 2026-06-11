@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
@@ -67,7 +68,7 @@ const LegalLawTab: React.FC = () => {
   const { showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const { data: laws = [], isLoading } = useQuery({ queryKey: ['legalLaws'], queryFn: lawApi.list })
   const { data: stats } = useQuery({ queryKey: ['legalLawsStats'], queryFn: lawApi.stats })

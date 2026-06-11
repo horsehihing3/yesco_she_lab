@@ -107,7 +107,9 @@ public class PpeEquipmentService {
                 .certification(request.getCertification())
                 .stockQuantity(request.getStockQuantity() != null ? request.getStockQuantity() : 0)
                 .minStock(request.getMinStock() != null ? request.getMinStock() : 0)
+                .maxStock(request.getMaxStock() != null ? request.getMaxStock() : 0)
                 .wearRate(request.getWearRate())
+                .isConsumable(Boolean.TRUE.equals(request.getIsConsumable()))
                 .expiryDate(request.getExpiryDate())
                 .inspectCycle(request.getInspectCycle())
                 .lastInspectDate(request.getLastInspectDate())
@@ -142,7 +144,9 @@ public class PpeEquipmentService {
         equipment.setCertification(request.getCertification());
         equipment.setStockQuantity(request.getStockQuantity());
         equipment.setMinStock(request.getMinStock());
+        equipment.setMaxStock(request.getMaxStock() != null ? request.getMaxStock() : 0);
         equipment.setWearRate(request.getWearRate());
+        equipment.setIsConsumable(Boolean.TRUE.equals(request.getIsConsumable()));
         equipment.setExpiryDate(request.getExpiryDate());
         equipment.setInspectCycle(request.getInspectCycle());
         equipment.setLastInspectDate(request.getLastInspectDate());

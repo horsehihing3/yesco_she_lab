@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -41,7 +42,7 @@ const DpStressTab: React.FC = () => {
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
 
   const { data: list = [], isLoading } = useQuery({ queryKey: ['dpStress'], queryFn: dpStressApi.list })

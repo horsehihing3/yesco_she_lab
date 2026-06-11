@@ -505,6 +505,47 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
+  // ── 안전 관리 › 보호구 장비 ───────────────────────────────────────────────────
+  {
+    menuPath: '안전 관리 › 보호구 장비 › 재고', menuKey: 'nav.ppeEquipment',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [
+          { button: '신규 등록', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+        ] },
+      { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
+        buttons: [
+          { button: '수정', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+          { button: '삭제', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+        ] },
+    ],
+  },
+  {
+    menuPath: '안전 관리 › 보호구 장비 › 지급 신청', menuKey: 'nav.ppeEquipment',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [
+          { button: '신청 등록', roles: ALL_ON },
+        ] },
+      { status: 'REQUESTED', statusLabel: '신청', statusColor: 'info',
+        buttons: [
+          { button: '수정',   roles: WRITER_ONLY },
+          { button: '취소',   roles: WRITER_ONLY },
+          { button: '승인',   roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+          { button: '반려',   roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+          { button: '삭제',   roles: WRITER_ADMIN },
+        ] },
+      { status: 'APPROVED', statusLabel: '승인', statusColor: 'success',
+        buttons: [
+          { button: '지급완료', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+        ] },
+      { status: 'ISSUED', statusLabel: '지급완료', statusColor: 'success',
+        buttons: [
+          { button: '반납', roles: ALL_OFF, generalAdminRoles: ['PPE_ADMIN'] },
+        ] },
+    ],
+  },
+
   // ── 협력 업체 관리 › 협력 업체 안전 관리 › 관리 탭 ──────────────────────────
   {
     menuPath: '협력 업체 관리 › 협력 업체 안전 관리 › 관리', menuKey: 'partner-safety.tab.manage',

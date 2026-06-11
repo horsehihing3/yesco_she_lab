@@ -1,4 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
+import { isEhsManager } from '../../utils/auth'
 import { useState, useMemo } from 'react'
 import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -137,7 +138,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const MENU = '보건 관리 › 건강 검진 관리 › 건강검진 계획'
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const currentWriter = user?.name || user?.username || ''
   const { codeList: typeCodes, getLabel: getTypeLabel } = useCodeMap('HEALTH_CHECKUP_TYPE')

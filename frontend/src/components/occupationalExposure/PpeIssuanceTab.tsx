@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { useAuth } from '../../context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
@@ -110,7 +111,7 @@ const PpeIssuanceTab: React.FC = () => {
   const rowsPerPage = 10
 
   const { user } = useAuth()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
 
   // Form
   const { control, handleSubmit, reset, watch, setValue } = useForm<PpeIssuanceRequest>({

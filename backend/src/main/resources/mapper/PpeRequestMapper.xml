@@ -24,13 +24,17 @@
         <result property="returnedAt" column="returned_at"/>
         <result property="rejectionReason" column="rejection_reason"/>
         <result property="notes" column="notes"/>
+        <result property="isConsumable" column="equipment_is_consumable"/>
         <result property="deleted" column="deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
 
     <select id="findByDeletedFalse" resultMap="PpeRequestResultMap">
-        SELECT * FROM tb_ppe_request WHERE deleted = 0 ORDER BY created_at DESC
+        SELECT r.*, e.is_consumable AS equipment_is_consumable
+        FROM tb_ppe_request r
+        LEFT JOIN tb_ppe_equipment e ON e.id = r.equipment_id AND e.deleted = 0
+        WHERE r.deleted = 0 ORDER BY r.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -39,11 +43,17 @@
     </select>
 
     <select id="findByIdAndDeletedFalse" resultMap="PpeRequestResultMap">
-        SELECT * FROM tb_ppe_request WHERE id = #{id} AND deleted = 0
+        SELECT r.*, e.is_consumable AS equipment_is_consumable
+        FROM tb_ppe_request r
+        LEFT JOIN tb_ppe_equipment e ON e.id = r.equipment_id AND e.deleted = 0
+        WHERE r.id = #{id} AND r.deleted = 0
     </select>
 
     <select id="findByStatusAndDeletedFalse" resultMap="PpeRequestResultMap">
-        SELECT * FROM tb_ppe_request WHERE status = #{status} AND deleted = 0 ORDER BY created_at DESC
+        SELECT r.*, e.is_consumable AS equipment_is_consumable
+        FROM tb_ppe_request r
+        LEFT JOIN tb_ppe_equipment e ON e.id = r.equipment_id AND e.deleted = 0
+        WHERE r.status = #{status} AND r.deleted = 0 ORDER BY r.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -52,7 +62,10 @@
     </select>
 
     <select id="findByRequesterIdAndDeletedFalse" resultMap="PpeRequestResultMap">
-        SELECT * FROM tb_ppe_request WHERE requester_id = #{requesterId} AND deleted = 0 ORDER BY created_at DESC
+        SELECT r.*, e.is_consumable AS equipment_is_consumable
+        FROM tb_ppe_request r
+        LEFT JOIN tb_ppe_equipment e ON e.id = r.equipment_id AND e.deleted = 0
+        WHERE r.requester_id = #{requesterId} AND r.deleted = 0 ORDER BY r.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 

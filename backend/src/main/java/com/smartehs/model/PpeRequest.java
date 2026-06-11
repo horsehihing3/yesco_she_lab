@@ -26,6 +26,7 @@ public class PpeRequest {
     private LocalDateTime returnedAt;
     private String rejectionReason;
     private String notes;
+    private Boolean isConsumable;
     private Boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useMenuRule } from '../hooks/useMenuRule'
+import { useButtonRules } from '../hooks/useButtonRules'
 import { todayStr } from '../utils/dateDefaults'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem,
-  FormControl, Chip, LinearProgress, Pagination, CircularProgress, Alert,
+  FormControl, FormControlLabel, Radio, RadioGroup, Chip, LinearProgress, Pagination, CircularProgress, Alert,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import Divider from '@mui/material/Divider'
@@ -55,9 +56,18 @@ const PpeEquipmentPage: React.FC = () => {
   const { t } = useTranslation()
   const { user } = useAuth()
   const { isMenuHidden } = useMenuRule()
+  const { canSee } = useButtonRules()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
-  const canCreate = user?.role === 'SYSTEM_ADMIN' || user?.role === 'PPE_ADMIN'
+  const MENU_STOCK = '안전 관리 › 보호구 장비 › 재고'
+  const stockRoles = useMemo(() => {
+    const roles: string[] = ['guest']
+    if (user?.role === 'SYSTEM_ADMIN') roles.push('superAdmin')
+    else if (user?.role) roles.push(user.role)
+    return roles
+  }, [user])
+  const canCreate = canSee(MENU_STOCK, 'LIST', '신규 등록', stockRoles)
+  const canEditDelete = canSee(MENU_STOCK, 'DETAIL', '수정', stockRoles)
   const { codeList: categoryCodes, getLabel: getCategoryLabel } = useCodeMap('PPE_CATEGORY')
   const { codeList: inspectCycleCodes, getLabel: getInspectCycleLabel } = useCodeMap('INSPECT_CYCLE')
 
@@ -165,8 +175,8 @@ const PpeEquipmentPage: React.FC = () => {
       name: item.name, nameEn: item.nameEn, nameZh: item.nameZh,
       category: item.category, categoryEn: item.categoryEn, categoryZh: item.categoryZh,
       model: item.model, certification: item.certification,
-      stockQuantity: item.stockQuantity, minStock: item.minStock,
-      wearRate: item.wearRate, expiryDate: item.expiryDate,
+      stockQuantity: item.stockQuantity, minStock: item.minStock, maxStock: item.maxStock,
+      isConsumable: item.isConsumable, expiryDate: item.expiryDate,
       inspectCycle: item.inspectCycle, lastInspectDate: item.lastInspectDate,
       nextInspectDate: item.nextInspectDate, storageLocation: item.storageLocation,
       department: item.department, status: item.status, notes: item.notes,
@@ -189,10 +199,15 @@ const PpeEquipmentPage: React.FC = () => {
     if (confirmed) deleteMutation.mutate(item.id)
   }
 
-  const getWearRateColor = (rate?: number) => {
-    if (!rate) return 'inherit'
-    if (rate >= 90) return 'success'
-    if (rate >= 80) return 'warning'
+  const calcStockRate = (item: { stockQuantity: number; maxStock?: number; isConsumable?: boolean }): number | null => {
+    if (item.isConsumable || !item.maxStock || item.maxStock === 0) return null
+    return Math.min(100, Math.round((item.stockQuantity / item.maxStock) * 100))
+  }
+
+  const getStockRateColor = (rate: number | null) => {
+    if (rate === null) return 'inherit'
+    if (rate >= 50) return 'success'
+    if (rate >= 20) return 'warning'
     return 'error'
   }
 
@@ -214,11 +229,12 @@ const PpeEquipmentPage: React.FC = () => {
 
   // 분류별 현황
   const categoryStats = useMemo(() => {
-    const map: Record<string, { count: number; totalWear: number; wearCount: number }> = {}
+    const map: Record<string, { count: number; totalRate: number; rateCount: number }> = {}
     allItems.forEach((i) => {
-      if (!map[i.category]) map[i.category] = { count: 0, totalWear: 0, wearCount: 0 }
+      if (!map[i.category]) map[i.category] = { count: 0, totalRate: 0, rateCount: 0 }
       map[i.category].count += i.stockQuantity
-      if (i.wearRate) { map[i.category].totalWear += i.wearRate; map[i.category].wearCount++ }
+      const rate = calcStockRate(i)
+      if (rate !== null) { map[i.category].totalRate += rate; map[i.category].rateCount++ }
     })
     const total = Object.values(map).reduce((s, v) => s + v.count, 0) || 1
     return Object.entries(map).map(([code, v]) => ({
@@ -226,7 +242,7 @@ const PpeEquipmentPage: React.FC = () => {
       label: getCategoryLabel(code),
       count: v.count,
       pct: Math.round((v.count / total) * 100),
-      avgWear: v.wearCount ? Math.round(v.totalWear / v.wearCount) : 0,
+      avgWear: v.rateCount ? Math.round(v.totalRate / v.rateCount) : 0,
     }))
   }, [allItems, getCategoryLabel])
 
@@ -274,18 +290,33 @@ const PpeEquipmentPage: React.FC = () => {
             <Box sx={valSx}><Typography variant="body2">{selectedItem.minStock ?? ''}</Typography></Box>
           </Box>
           <Box sx={rowSx}>
-            <Typography sx={labelSx}>{t('ppe.wearRate')}</Typography>
+            <Typography sx={labelSx}>{'재고율'}</Typography>
             <Box sx={valBorderSx}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-                <LinearProgress
-                  variant="determinate"
-                  value={selectedItem.wearRate || 0}
-                  color={getWearRateColor(selectedItem.wearRate) as 'success' | 'warning' | 'error' | 'inherit'}
-                  sx={{ flex: 1, height: 8, borderRadius: 4, maxWidth: 200 }}
-                />
-                <Typography variant="body2" fontFamily="monospace">{selectedItem.wearRate || 0}%</Typography>
-              </Box>
+              {(() => {
+                const rate = calcStockRate(selectedItem)
+                return rate === null ? (
+                  <Typography variant="body2" color="text.disabled">-</Typography>
+                ) : (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                    <LinearProgress variant="determinate" value={rate}
+                      color={getStockRateColor(rate) as 'success' | 'warning' | 'error' | 'inherit'}
+                      sx={{ flex: 1, height: 8, borderRadius: 4, maxWidth: 200 }}
+                    />
+                    <Typography variant="body2" fontFamily="monospace">{rate}%</Typography>
+                  </Box>
+                )
+              })()}
             </Box>
+            <Typography sx={labelSx}>{t('ppe.isConsumable', '소모품')}</Typography>
+            <Box sx={valSx}>
+              <Chip
+                label={selectedItem.isConsumable ? t('ppe.consumable', '소모품 (반납 없음)') : t('ppe.notConsumable', '일반 (반납 있음)')}
+                color={selectedItem.isConsumable ? 'warning' : 'default'}
+                size="small"
+              />
+            </Box>
+          </Box>
+          <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('ppe.expiryDate')}</Typography>
             <Box sx={valSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.expiryDate || ''}</Typography></Box>
           </Box>
@@ -333,17 +364,22 @@ const PpeEquipmentPage: React.FC = () => {
             </Box>
           ))}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{t('ppe.wearRate')}</Typography>
+            <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{'재고율'}</Typography>
             <Box sx={valSx}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <LinearProgress
-                  variant="determinate"
-                  value={selectedItem.wearRate || 0}
-                  color={getWearRateColor(selectedItem.wearRate) as 'success' | 'warning' | 'error' | 'inherit'}
-                  sx={{ flex: 1, height: 8, borderRadius: 4, maxWidth: 120 }}
-                />
-                <Typography variant="body2" fontFamily="monospace">{selectedItem.wearRate || 0}%</Typography>
-              </Box>
+              {(() => {
+                const rate = calcStockRate(selectedItem)
+                return rate === null ? (
+                  <Typography variant="body2" color="text.disabled">-</Typography>
+                ) : (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <LinearProgress variant="determinate" value={rate}
+                      color={getStockRateColor(rate) as 'success' | 'warning' | 'error' | 'inherit'}
+                      sx={{ flex: 1, height: 8, borderRadius: 4, maxWidth: 120 }}
+                    />
+                    <Typography variant="body2" fontFamily="monospace">{rate}%</Typography>
+                  </Box>
+                )
+              })()}
             </Box>
           </Box>
           <Box sx={{ display: 'flex' }}>
@@ -355,7 +391,7 @@ const PpeEquipmentPage: React.FC = () => {
         {/* Buttons */}
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', sm: 'flex-end' } }}>
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.list')}</Button>
-          {canCreate && (
+          {canEditDelete && (
             <>
               <Button variant="contained" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.edit')}</Button>
               <Button variant="contained" color="error" onClick={() => handleDelete(selectedItem)} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.delete')}</Button>
@@ -412,6 +448,23 @@ const PpeEquipmentPage: React.FC = () => {
             <Typography sx={labelSx}>{t('ppe.minStock')}</Typography>
             <Box sx={valSx}>
               <NumberField fullWidth size="small" min={0} step={1} value={form.minStock || 0} onChange={(v) => setForm({ ...form, minStock: v ?? 0 })} />
+            </Box>
+          </Box>
+          {/* Row 3-1: 총 재고량 + 소모품 여부 */}
+          <Box sx={rowSx}>
+            <Typography sx={labelSx}>{'총 재고량'}</Typography>
+            <Box sx={{ ...valBorderSx, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <NumberField fullWidth size="small" min={0} step={1}
+                value={form.maxStock || 0}
+                onChange={(v) => setForm({ ...form, maxStock: v ?? 0 })}
+              />
+            </Box>
+            <Typography sx={labelSx}>{t('ppe.isConsumable', '소모품')}</Typography>
+            <Box sx={valSx}>
+              <RadioGroup row value={form.isConsumable ? 'Y' : 'N'} onChange={e => setForm({ ...form, isConsumable: e.target.value === 'Y' })}>
+                <FormControlLabel value="Y" control={<Radio size="small" />} label={<Typography variant="body2">Y (반납 없음)</Typography>} />
+                <FormControlLabel value="N" control={<Radio size="small" />} label={<Typography variant="body2">N (반납 있음)</Typography>} />
+              </RadioGroup>
             </Box>
           </Box>
           {/* Row 4: 유효기간 + 점검 주기 */}
@@ -478,6 +531,17 @@ const PpeEquipmentPage: React.FC = () => {
           <TextField fullWidth size="small" label={t('ppe.certification')} value={form.certification || ''} onChange={(e) => setForm({ ...form, certification: e.target.value })} />
           <NumberField fullWidth size="small" label={t('ppe.stock')} min={0} step={1} value={form.stockQuantity} onChange={(v) => setForm({ ...form, stockQuantity: Math.max(1, v ?? 0) })} />
           <NumberField fullWidth size="small" label={t('ppe.minStock')} min={0} step={1} value={form.minStock || 0} onChange={(v) => setForm({ ...form, minStock: v ?? 0 })} />
+          <NumberField fullWidth size="small" label={'총 재고량'} min={0} step={1}
+            value={form.maxStock || 0}
+            onChange={(v) => setForm({ ...form, maxStock: v ?? 0 })}
+          />
+          <Box>
+            <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 'bold' }}>{t('ppe.isConsumable', '소모품')}</Typography>
+            <RadioGroup row value={form.isConsumable ? 'Y' : 'N'} onChange={e => setForm({ ...form, isConsumable: e.target.value === 'Y' })}>
+              <FormControlLabel value="Y" control={<Radio size="small" />} label={<Typography variant="body2">Y (반납 없음)</Typography>} />
+              <FormControlLabel value="N" control={<Radio size="small" />} label={<Typography variant="body2">N (반납 있음)</Typography>} />
+            </RadioGroup>
+          </Box>
           <DatePickerField label={t('ppe.expiryDate')} value={form.expiryDate || null} onChange={(v) => setForm({ ...form, expiryDate: v })} size="small" />
           <TextField fullWidth size="small" label={t('ppe.storageLocation')} value={form.storageLocation || ''} onChange={(e) => setForm({ ...form, storageLocation: e.target.value })} />
           <TextField fullWidth size="small" label={t('ppe.department')} value={form.department || ''} onChange={(e) => setForm({ ...form, department: e.target.value })} />
@@ -537,7 +601,7 @@ const PpeEquipmentPage: React.FC = () => {
           <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'success.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <VerifiedUserIcon color="success" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{t('ppe.avgWearRate')}</Typography>
+              <Typography variant="caption" color="text.secondary">{'평균 재고율'}</Typography>
             </Box>
             <Typography variant="h4" fontWeight="bold" color="success.main">{Number(kpi.avgWearRate || 0).toFixed(1)}%</Typography>
           </Paper>
@@ -644,7 +708,7 @@ const PpeEquipmentPage: React.FC = () => {
                     <TableCell sx={headerCellSx}>{t('ppe.category')}</TableCell>
                     <TableCell sx={headerCellSx}>{t('ppe.model')}</TableCell>
                     <TableCell sx={headerCellSx} align="center">{t('ppe.stock')}</TableCell>
-                    <TableCell sx={headerCellSx} align="center">{t('ppe.wearRate')}</TableCell>
+                    <TableCell sx={headerCellSx} align="center">{'재고율'}</TableCell>
                     <TableCell sx={headerCellSx}>{t('ppe.expiryDate')}</TableCell>
                     <TableCell sx={headerCellSx} align="center">{t('ppe.status')}</TableCell>
                   </TableRow>
@@ -661,15 +725,20 @@ const PpeEquipmentPage: React.FC = () => {
                           {item.stockQuantity}
                         </TableCell>
                         <TableCell align="center">
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
-                            <LinearProgress
-                              variant="determinate"
-                              value={item.wearRate || 0}
-                              color={getWearRateColor(item.wearRate) as 'success' | 'warning' | 'error' | 'inherit'}
-                              sx={{ width: 60, height: 6, borderRadius: 3 }}
-                            />
-                            <Typography variant="caption" fontFamily="monospace">{item.wearRate || 0}%</Typography>
-                          </Box>
+                          {(() => {
+                            const rate = calcStockRate(item)
+                            return rate === null ? (
+                              <Typography variant="caption" color="text.disabled">-</Typography>
+                            ) : (
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
+                                <LinearProgress variant="determinate" value={rate}
+                                  color={getStockRateColor(rate) as 'success' | 'warning' | 'error' | 'inherit'}
+                                  sx={{ width: 60, height: 6, borderRadius: 3 }}
+                                />
+                                <Typography variant="caption" fontFamily="monospace">{rate}%</Typography>
+                              </Box>
+                            )
+                          })()}
                         </TableCell>
                         <TableCell align="center" sx={{
                           fontFamily: 'monospace', fontSize: '0.8rem',
@@ -715,16 +784,25 @@ const PpeEquipmentPage: React.FC = () => {
                           {item.stockQuantity}
                         </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                        <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 70 }}>{t('ppe.wearRate')}</Typography>
-                        <LinearProgress
-                          variant="determinate"
-                          value={item.wearRate || 0}
-                          color={getWearRateColor(item.wearRate) as 'success' | 'warning' | 'error' | 'inherit'}
-                          sx={{ flex: 1, height: 6, borderRadius: 3 }}
-                        />
-                        <Typography variant="caption" fontFamily="monospace">{item.wearRate || 0}%</Typography>
-                      </Box>
+                      {(() => {
+                        const rate = calcStockRate(item)
+                        return (
+                          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                            <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 70 }}>{'재고율'}</Typography>
+                            {rate === null ? (
+                              <Typography variant="caption" color="text.disabled">-</Typography>
+                            ) : (
+                              <>
+                                <LinearProgress variant="determinate" value={rate}
+                                  color={getStockRateColor(rate) as 'success' | 'warning' | 'error' | 'inherit'}
+                                  sx={{ flex: 1, height: 6, borderRadius: 3 }}
+                                />
+                                <Typography variant="caption" fontFamily="monospace">{rate}%</Typography>
+                              </>
+                            )}
+                          </Box>
+                        )
+                      })()}
                       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                         <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 70 }}>{t('ppe.expiryDate')}</Typography>
                         <Typography variant="body2" fontFamily="monospace" sx={{
@@ -797,17 +875,17 @@ const PpeEquipmentPage: React.FC = () => {
               {categoryStats.length > 0 && (
                 <>
                   <Divider sx={{ my: 1 }} />
-                  <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>{t('ppe.wearRateByCategory')}</Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5 }}>{'분류별 평균 재고율'}</Typography>
                   {categoryStats.map((cat) => (
                     <Box key={`wr-${cat.code}`} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Typography variant="body2" color="text.secondary" sx={{ width: 90, flexShrink: 0 }}>{cat.label}</Typography>
                       <LinearProgress
                         variant="determinate"
                         value={cat.avgWear}
-                        color={cat.avgWear >= 90 ? 'success' : cat.avgWear >= 80 ? 'warning' : 'error'}
+                        color={cat.avgWear >= 50 ? 'success' : cat.avgWear >= 20 ? 'warning' : 'error'}
                         sx={{ flex: 1, height: 5, borderRadius: 3 }}
                       />
-                      <Typography variant="body2" fontFamily="monospace" sx={{ width: 36, textAlign: 'right', color: cat.avgWear >= 90 ? 'success.main' : cat.avgWear >= 80 ? 'warning.main' : 'error.main' }}>
+                      <Typography variant="body2" fontFamily="monospace" sx={{ width: 36, textAlign: 'right', color: cat.avgWear >= 50 ? 'success.main' : cat.avgWear >= 20 ? 'warning.main' : 'error.main' }}>
                         {cat.avgWear}%
                       </Typography>
                     </Box>

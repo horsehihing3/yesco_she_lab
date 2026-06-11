@@ -4,8 +4,10 @@ import com.smartehs.dto.request.PpeRequestDto;
 import com.smartehs.dto.response.PpeRequestResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.ApprovalMapper;
+import com.smartehs.mapper.PpeEquipmentMapper;
 import com.smartehs.mapper.PpeRequestMapper;
 import com.smartehs.model.Approval;
+import com.smartehs.model.PpeEquipment;
 import com.smartehs.model.PpeRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class PpeRequestService {
     private final PpeRequestMapper mapper;
     private final ApprovalMapper approvalMapper;
+    private final PpeEquipmentMapper equipmentMapper;
 
     @Transactional(readOnly = true)
     public Page<PpeRequestResponse> findAll(Pageable pageable) {
@@ -107,8 +110,20 @@ public class PpeRequestService {
     public PpeRequestResponse issue(Long id) {
         PpeRequest r = mapper.findByIdAndDeletedFalse(id);
         if (r == null) throw new ResourceNotFoundException("PpeRequest", "id", id);
+
+        if (r.getEquipmentId() != null && r.getQuantity() != null) {
+            PpeEquipment eq = equipmentMapper.findByIdAndDeletedFalse(r.getEquipmentId());
+            if (eq != null) {
+                if (eq.getStockQuantity() < r.getQuantity()) {
+                    throw new IllegalStateException(
+                        "재고가 부족합니다. 현재 재고: " + eq.getStockQuantity() + ", 신청 수량: " + r.getQuantity());
+                }
+                equipmentMapper.adjustStock(r.getEquipmentId(), -r.getQuantity());
+            }
+        }
+
         mapper.updateIssued(id);
-        log.info("Issued PPE request: {}", r.getRequestId());
+        log.info("Issued PPE request: {}, stock deducted: {}", r.getRequestId(), r.getQuantity());
         return findById(id);
     }
 
@@ -119,8 +134,19 @@ public class PpeRequestService {
         if (!"ISSUED".equals(r.getStatus())) {
             throw new IllegalStateException("지급 완료된 건만 반납할 수 있습니다.");
         }
+        if (Boolean.TRUE.equals(r.getIsConsumable())) {
+            throw new IllegalStateException("소모품은 반납 처리할 수 없습니다.");
+        }
+
+        if (r.getEquipmentId() != null && r.getQuantity() != null) {
+            PpeEquipment eq = equipmentMapper.findByIdAndDeletedFalse(r.getEquipmentId());
+            if (eq != null) {
+                equipmentMapper.adjustStock(r.getEquipmentId(), r.getQuantity());
+            }
+        }
+
         mapper.updateReturned(id);
-        log.info("Returned PPE request: {}", r.getRequestId());
+        log.info("Returned PPE request: {}, stock restored: {}", r.getRequestId(), r.getQuantity());
         return findById(id);
     }
 

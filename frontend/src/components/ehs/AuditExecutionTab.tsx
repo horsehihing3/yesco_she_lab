@@ -1,4 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
+import { isEhsManager } from '../../utils/auth'
 import { useState, useRef } from 'react'
 import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -61,7 +62,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
   const { codeList: auditTypeCodes, getLabel: getAuditTypeLabel } = useCodeMap('AUDIT_TYPE')
   const { user: authUser } = useAuth()
 
-  const isAdmin = authUser?.role === 'SYSTEM_ADMIN' || authUser?.role === 'EHS_ADMIN' || authUser?.role === 'AUDIT_ADMIN'
+  const isAdmin = isEhsManager(authUser) || authUser?.role === 'AUDIT_ADMIN'
   const { canSee } = useButtonRules()
   const MENU = variant === 'legal-compliance'
     ? 'EHS 경영 › 법규 대응 › 법규 대응 실시'

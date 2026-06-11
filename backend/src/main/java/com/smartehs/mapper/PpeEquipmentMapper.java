@@ -37,6 +37,8 @@ public interface PpeEquipmentMapper {
 
     Map<String, Object> getAverageWearRate();
 
+    void adjustStock(@Param("id") Long id, @Param("delta") int delta);
+
     void insert(PpeEquipment equipment);
 
     void update(PpeEquipment equipment);

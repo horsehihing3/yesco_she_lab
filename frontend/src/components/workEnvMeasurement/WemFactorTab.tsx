@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, TextField, Button, Table, TableBody, TableCell,
@@ -83,7 +84,7 @@ const WemFactorTab: React.FC = () => {
   const { showWarning, showSuccess, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'EHS_ADMIN'
+  const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
   const { codeList: hazardTypeCodes, getLabel: getHazardTypeLabel } = useCodeMap('WEM_HAZARD_TYPE')
 

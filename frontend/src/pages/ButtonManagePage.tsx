@@ -28,9 +28,11 @@ import { useAlert } from '../contexts/AlertContext'
 // 슈퍼관리자는 UI에서 숨김
 const VISIBLE_ROLES = ROLES.filter(r => r.key !== 'superAdmin')
 
-// ── 기존 상태 빌더 함수 (변경 없음) ─────────────────────────────────────────
+// 버튼별 일반관리자 활성화 키
+const btnGaKey = (menuPath: string, status: string, button: string) =>
+  `${menuPath}|${status}|${button}`
 
-const gaKey = (menuPath: string) => menuPath
+// ── 상태 빌더 함수 ────────────────────────────────────────────────────────────
 
 function buildStateFromDb(dbRules: ButtonRuleItem[]): Record<string, boolean> {
   const state = buildInitialState()
@@ -51,13 +53,24 @@ function buildStateFromDb(dbRules: ButtonRuleItem[]): Record<string, boolean> {
   return state
 }
 
-function buildGaStateFromDb(dbRules: ButtonRuleItem[]): Record<string, string[]> {
+/** 메뉴별 일반관리자 역할: menuPath → roleKey[] */
+function buildGaRolesFromDb(dbRules: ButtonRuleItem[]): Record<string, string[]> {
   const state: Record<string, string[]> = {}
   dbRules.forEach(r => {
     if (!ABSTRACT_ROLE_KEYS.has(r.roleKey) && r.visible) {
-      const key = gaKey(r.menuPath)
-      if (!state[key]) state[key] = []
-      if (!state[key].includes(r.roleKey)) state[key].push(r.roleKey)
+      if (!state[r.menuPath]) state[r.menuPath] = []
+      if (!state[r.menuPath].includes(r.roleKey)) state[r.menuPath].push(r.roleKey)
+    }
+  })
+  return state
+}
+
+/** 버튼별 일반관리자 접근 허용: btnGaKey → boolean */
+function buildGaEnabledFromDb(dbRules: ButtonRuleItem[]): Record<string, boolean> {
+  const state: Record<string, boolean> = {}
+  dbRules.forEach(r => {
+    if (!ABSTRACT_ROLE_KEYS.has(r.roleKey) && r.visible) {
+      state[btnGaKey(r.menuPath, r.statusCode, r.buttonName)] = true
     }
   })
   return state
@@ -79,15 +92,23 @@ function buildAbstractRulesToSave(cellState: Record<string, boolean>): ButtonRul
   return rules
 }
 
-function buildGaRulesToSave(gaState: Record<string, string[]>): ButtonRuleItem[] {
+/** 메뉴별 역할 × 버튼별 활성화 조합으로 DB 저장용 규칙 생성 */
+function buildGaRulesToSave(
+  gaRoles: Record<string, string[]>,
+  gaEnabled: Record<string, boolean>,
+): ButtonRuleItem[] {
   const rules: ButtonRuleItem[] = []
   DEFAULT_MENU_DATA.forEach(menu => {
-    const selected = gaState[gaKey(menu.menuPath)] ?? []
+    const roles = gaRoles[menu.menuPath] ?? []
+    if (roles.length === 0) return
     menu.statuses.forEach(sg => {
       sg.buttons.forEach(btn => {
-        selected.forEach(roleKey => {
-          rules.push({ menuPath: menu.menuPath, statusCode: sg.status, buttonName: btn.button, roleKey, visible: true })
-        })
+        const key = btnGaKey(menu.menuPath, sg.status, btn.button)
+        if (gaEnabled[key]) {
+          roles.forEach(roleKey => {
+            rules.push({ menuPath: menu.menuPath, statusCode: sg.status, buttonName: btn.button, roleKey, visible: true })
+          })
+        }
       })
     })
   })
@@ -135,7 +156,6 @@ interface TreeItemProps {
 }
 
 const TreeItem: React.FC<TreeItemProps> = ({ node, depth, selectedId, expandedIds, onSelect, onToggle }) => {
-  const { t } = useTranslation()
   const isLeaf = node.children.length === 0
   const isExpanded = expandedIds.has(node.id)
   const isSelected = selectedId === node.id
@@ -194,7 +214,7 @@ const TreeItem: React.FC<TreeItemProps> = ({ node, depth, selectedId, expandedId
   )
 }
 
-// ── GA 다이얼로그 타입 ────────────────────────────────────────────────────────
+// ── GA 다이얼로그 타입 (메뉴 단위) ───────────────────────────────────────────
 interface GaDialog { menuPath: string }
 
 // ── 메인 컴포넌트 ─────────────────────────────────────────────────────────────
@@ -203,9 +223,11 @@ const ButtonManagePage: React.FC = () => {
   const { showSuccess, showError } = useAlert()
   const queryClient = useQueryClient()
   const [cellState, setCellState] = useState<Record<string, boolean>>(buildInitialState)
-  const [gaState, setGaState] = useState<Record<string, string[]>>({})
+  /** 메뉴별 일반관리자 역할 목록 */
+  const [gaRoles, setGaRoles] = useState<Record<string, string[]>>({})
+  /** 버튼별 일반관리자 접근 허용 여부 */
+  const [gaEnabled, setGaEnabled] = useState<Record<string, boolean>>({})
   const [gaDialog, setGaDialog] = useState<GaDialog | null>(null)
-  const [checkedMenus, setCheckedMenus] = useState<Set<string>>(new Set())
 
   // ── 트리 상태 ──────────────────────────────────────────────────────────────
   const [selectedTreeId, setSelectedTreeId] = useState<string | null>(null)
@@ -223,20 +245,7 @@ const ButtonManagePage: React.FC = () => {
     setExpandedIds(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next })
 
   const toggleCell = (key: string) => setCellState(prev => ({ ...prev, [key]: !prev[key] }))
-  const toggleMenuCheck = (menuPath: string) =>
-    setCheckedMenus(prev => { const next = new Set(prev); next.has(menuPath) ? next.delete(menuPath) : next.add(menuPath); return next })
-
-  const handleGaConfirm = () => {
-    if (gaDialog && checkedMenus.size > 0) {
-      const selection = gaState[gaKey(gaDialog.menuPath)] ?? []
-      setGaState(prev => {
-        const next = { ...prev }
-        checkedMenus.forEach(mp => { next[gaKey(mp)] = [...selection] })
-        return next
-      })
-    }
-    setGaDialog(null)
-  }
+  const toggleGaEnabled = (key: string) => setGaEnabled(prev => ({ ...prev, [key]: !prev[key] }))
 
   // ── 데이터 로드 ────────────────────────────────────────────────────────────
   const { data: dbRules, isLoading } = useQuery({ queryKey: ['buttonRules'], queryFn: fetchButtonRules })
@@ -266,35 +275,38 @@ const ButtonManagePage: React.FC = () => {
   useEffect(() => {
     if (dbRules !== undefined) {
       setCellState(buildStateFromDb(dbRules))
-      setGaState(buildGaStateFromDb(dbRules))
+      setGaRoles(buildGaRolesFromDb(dbRules))
+      setGaEnabled(buildGaEnabledFromDb(dbRules))
     }
   }, [dbRules])
 
   const resetAll = () => {
     if (dbRules) {
       setCellState(buildStateFromDb(dbRules))
-      setGaState(buildGaStateFromDb(dbRules))
+      setGaRoles(buildGaRolesFromDb(dbRules))
+      setGaEnabled(buildGaEnabledFromDb(dbRules))
     } else {
       setCellState(buildInitialState())
-      setGaState({})
+      setGaRoles({})
+      setGaEnabled({})
     }
   }
 
   const saveMutation = useMutation({
     mutationFn: () => saveButtonRules([
       ...buildAbstractRulesToSave(cellState),
-      ...buildGaRulesToSave(gaState),
+      ...buildGaRulesToSave(gaRoles, gaEnabled),
     ]),
     onSuccess: () => {
       showSuccess(t('buttonManagePage.msg1', '저장되었습니다.'))
-      setCheckedMenus(new Set())
       queryClient.invalidateQueries({ queryKey: ['buttonRules'] })
     },
     onError: () => showError(t('buttonManagePage.msg2', '저장 중 오류가 발생했습니다.')),
   })
 
-  const savedState = useMemo(() => buildStateFromDb(dbRules ?? []), [dbRules])
-  const savedGaState = useMemo(() => buildGaStateFromDb(dbRules ?? []), [dbRules])
+  const savedState    = useMemo(() => buildStateFromDb(dbRules ?? []), [dbRules])
+  const savedGaRoles  = useMemo(() => buildGaRolesFromDb(dbRules ?? []), [dbRules])
+  const savedGaEnabled = useMemo(() => buildGaEnabledFromDb(dbRules ?? []), [dbRules])
 
   const issueCount = visibleMenuData.flatMap(m => m.statuses.flatMap(s => s.buttons)).filter(b => b.issue).length
 
@@ -302,12 +314,23 @@ const ButtonManagePage: React.FC = () => {
     const abstractChanged = Object.keys(cellState).filter(k =>
       !k.endsWith('_superAdmin') && cellState[k] !== savedState[k]
     ).length
-    const gaChanged = visibleMenuData.filter(menu => {
-      const cur  = JSON.stringify([...(gaState[gaKey(menu.menuPath)] ?? [])].sort())
-      const base = JSON.stringify([...(savedGaState[gaKey(menu.menuPath)] ?? [])].sort())
+
+    const gaRolesChanged = DEFAULT_MENU_DATA.filter(menu => {
+      const cur  = JSON.stringify([...(gaRoles[menu.menuPath] ?? [])].sort())
+      const base = JSON.stringify([...(savedGaRoles[menu.menuPath] ?? [])].sort())
       return cur !== base
     }).length
-    return abstractChanged + gaChanged
+
+    const gaEnabledChanged = DEFAULT_MENU_DATA.reduce((count, menu) =>
+      count + menu.statuses.reduce((c, sg) =>
+        c + sg.buttons.filter(btn => {
+          const key = btnGaKey(menu.menuPath, sg.status, btn.button)
+          return (gaEnabled[key] ?? false) !== (savedGaEnabled[key] ?? false)
+        }).length
+      , 0)
+    , 0)
+
+    return abstractChanged + gaRolesChanged + gaEnabledChanged
   })()
 
   // 단일 메뉴 선택 시 메뉴 컬럼 숨김
@@ -320,7 +343,7 @@ const ButtonManagePage: React.FC = () => {
       <Box sx={{ px: 2, py: 0.75, display: 'flex', gap: 1.5, alignItems: 'center',
         bgcolor: 'primary.main', color: 'white', flexShrink: 0 }}>
         <Typography variant="caption" sx={{ opacity: 0.8 }}>
-          슈퍼관리자는 항상 모든 권한 &nbsp;|&nbsp; 일반관리자 = 메뉴별 지정 &nbsp;|&nbsp; 셀 클릭으로 수정 후 저장
+          슈퍼관리자는 항상 모든 권한 &nbsp;|&nbsp; 일반관리자 역할 = 메뉴별 지정 &nbsp;|&nbsp; ☑ 체크된 버튼만 일반관리자 접근 허용
         </Typography>
         <Box sx={{ flex: 1 }} />
         {issueCount > 0 && (
@@ -427,10 +450,14 @@ const ButtonManagePage: React.FC = () => {
                         <TableCell align="center" sx={{ minWidth: 65 }}>{r.label}</TableCell>
                       </Tooltip>
                     ))}
-                    <Tooltip title="☐ 체크 후 지정 버튼 클릭 → 체크된 모든 메뉴에 일괄 적용" arrow>
-                      <TableCell align="center" sx={{ minWidth: 110 }}>일반관리자</TableCell>
+                    <Tooltip title="체크 시 해당 버튼을 일반관리자에게 허용" arrow>
+                      <TableCell align="center" sx={{ minWidth: 72, borderLeft: '2px solid', borderColor: 'primary.100' }}>
+                        일반관리자
+                      </TableCell>
                     </Tooltip>
-                    <TableCell sx={{ minWidth: 180 }}>일반관리자 권한</TableCell>
+                    <TableCell sx={{ minWidth: 190, borderLeft: '1px solid', borderColor: 'grey.200' }}>
+                      일반관리자 역할
+                    </TableCell>
                     <TableCell sx={{ minWidth: 180 }}>비고 / 이슈</TableCell>
                   </TableRow>
                 </TableHead>
@@ -438,8 +465,9 @@ const ButtonManagePage: React.FC = () => {
                   {filteredWithIndex.map(({ menu, mi }) => {
                     const totalRows = menu.statuses.reduce((acc, sg) => acc + Math.max(sg.buttons.length, 1), 0)
                     let menuPrinted = false
-                    const gaSelected = gaState[gaKey(menu.menuPath)] ?? []
-                    const gaChanged  = gaSelected.length > 0
+                    const menuRolesSelected = gaRoles[menu.menuPath] ?? []
+                    const menuRolesChanged  = JSON.stringify([...menuRolesSelected].sort()) !==
+                      JSON.stringify([...(savedGaRoles[menu.menuPath] ?? [])].sort())
 
                     return menu.statuses.map((sg, si) => {
                       const noButtons  = sg.buttons.length === 0
@@ -466,27 +494,20 @@ const ButtonManagePage: React.FC = () => {
                             <TableCell sx={{ verticalAlign: 'middle', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>
                               <Chip label={sg.statusLabel} color={sg.statusColor} size="small" sx={{ fontSize: '0.65rem', height: 20 }} />
                             </TableCell>
-                            <TableCell colSpan={VISIBLE_ROLES.length + 1}
-                              sx={{ color: 'text.disabled', fontSize: '0.75rem', fontStyle: 'italic' }}>
+                            {/* 버튼 없음: 버튼+역할 컬럼 + 일반관리자 체크박스 컬럼 합산 */}
+                            <TableCell colSpan={VISIBLE_ROLES.length + 2}
+                              sx={{ color: 'text.disabled', fontSize: '0.75rem', fontStyle: 'italic',
+                                borderLeft: '2px solid', borderColor: 'primary.100' }}>
                               버튼 없음{sg.statusNote ? ` — ${sg.statusNote}` : ''}
                             </TableCell>
                             {showMenu && (
-                              <TableCell rowSpan={totalRows} align="center"
-                                sx={{ verticalAlign: 'middle', borderLeft: 1, borderColor: 'grey.200', px: 0.5 }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 0.5 }}>
-                                  <Tooltip title="체크 후 일반관리자 지정 시 일괄 적용" arrow>
-                                    <Checkbox size="small" checked={checkedMenus.has(menu.menuPath)}
-                                      onChange={() => toggleMenuCheck(menu.menuPath)} sx={{ p: 0.25 }} />
-                                  </Tooltip>
-                                  <GaCell selected={gaSelected} changed={gaChanged}
-                                    onClick={() => setGaDialog({ menuPath: menu.menuPath })} />
-                                </Box>
-                              </TableCell>
-                            )}
-                            {showMenu && (
                               <TableCell rowSpan={totalRows}
                                 sx={{ verticalAlign: 'top', pt: 1, borderLeft: 1, borderColor: 'grey.200', px: 1 }}>
-                                <GaRolesCell selected={gaSelected} />
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                  <GaCell selected={menuRolesSelected} changed={menuRolesChanged}
+                                    onClick={() => setGaDialog({ menuPath: menu.menuPath })} />
+                                  <GaRolesCell selected={menuRolesSelected} />
+                                </Box>
                               </TableCell>
                             )}
                             <TableCell />
@@ -501,6 +522,10 @@ const ButtonManagePage: React.FC = () => {
 
                         const rowBg    = btn.issue ? 'warning.lighter' : 'inherit'
                         const rowHover = btn.issue ? 'warning.light'   : 'action.hover'
+
+                        const bKey      = btnGaKey(menu.menuPath, sg.status, btn.button)
+                        const gaOn      = gaEnabled[bKey] ?? false
+                        const gaOnSaved = savedGaEnabled[bKey] ?? false
 
                         return (
                           <TableRow key={`${mi}-${si}-${bi}`}
@@ -562,23 +587,38 @@ const ButtonManagePage: React.FC = () => {
                               )
                             })}
 
-                            {showMenu && (
-                              <TableCell rowSpan={totalRows} align="center"
-                                sx={{ verticalAlign: 'middle', borderLeft: 1, borderColor: 'grey.200', px: 0.5 }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 0.5 }}>
-                                  <Tooltip title="체크 후 일반관리자 지정 시 일괄 적용" arrow>
-                                    <Checkbox size="small" checked={checkedMenus.has(menu.menuPath)}
-                                      onChange={() => toggleMenuCheck(menu.menuPath)} sx={{ p: 0.25 }} />
-                                  </Tooltip>
-                                  <GaCell selected={gaSelected} changed={gaChanged}
-                                    onClick={() => setGaDialog({ menuPath: menu.menuPath })} />
-                                </Box>
-                              </TableCell>
-                            )}
+                            {/* 버튼별 일반관리자 접근 체크박스 */}
+                            <TableCell align="center"
+                              sx={{
+                                px: 0.5, py: 0.4,
+                                borderLeft: '2px solid', borderColor: 'primary.100',
+                                bgcolor: gaOn ? 'info.50' : 'inherit',
+                              }}>
+                              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+                                <Tooltip title={gaOn ? '일반관리자 접근 허용' : '일반관리자 접근 불가'} arrow>
+                                  <Checkbox
+                                    size="small"
+                                    checked={gaOn}
+                                    onChange={() => toggleGaEnabled(bKey)}
+                                    sx={{ p: 0.25, color: 'info.main', '&.Mui-checked': { color: 'info.main' } }}
+                                  />
+                                </Tooltip>
+                                {gaOn !== gaOnSaved && (
+                                  <Box sx={{ position: 'absolute', top: -2, right: -2, width: 6, height: 6,
+                                    borderRadius: '50%', bgcolor: 'secondary.main' }} />
+                                )}
+                              </Box>
+                            </TableCell>
+
+                            {/* 메뉴 단위 일반관리자 역할 지정 (첫 번째 행에만 rowSpan) */}
                             {showMenu && (
                               <TableCell rowSpan={totalRows}
                                 sx={{ verticalAlign: 'top', pt: 1, borderLeft: 1, borderColor: 'grey.200', px: 1 }}>
-                                <GaRolesCell selected={gaSelected} />
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                  <GaCell selected={menuRolesSelected} changed={menuRolesChanged}
+                                    onClick={() => setGaDialog({ menuPath: menu.menuPath })} />
+                                  <GaRolesCell selected={menuRolesSelected} />
+                                </Box>
                               </TableCell>
                             )}
 
@@ -602,34 +642,29 @@ const ButtonManagePage: React.FC = () => {
         </Box>
       </Box>
 
-      {/* ── 일반관리자 지정 다이얼로그 ────────────────────────────────────── */}
+      {/* ── 일반관리자 역할 지정 다이얼로그 (메뉴 단위) ─────────────────────── */}
       <Dialog open={!!gaDialog} onClose={() => setGaDialog(null)} maxWidth="xs" fullWidth>
-        <DialogTitle sx={{ pb: 1, fontSize: '0.95rem' }}>{t('buttonManagePage.dialogTitle1', '일반관리자 권한 지정')}</DialogTitle>
+        <DialogTitle sx={{ pb: 1, fontSize: '0.95rem' }}>{t('buttonManagePage.dialogTitle1', '일반관리자 역할 지정')}</DialogTitle>
         <DialogContent sx={{ pt: 0 }}>
           {gaDialog && (
             <>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                <b>{gaDialog.menuPath.split(' › ').pop()}</b> 메뉴의 모든 버튼에 적용
+                <b>{gaDialog.menuPath.split(' › ').pop()}</b> 메뉴의 일반관리자 역할을 선택하세요.
+                <br />체크박스로 표시된 버튼에만 접근 권한이 부여됩니다.
               </Typography>
-              {checkedMenus.size > 0 && (
-                <Typography variant="caption"
-                  sx={{ display: 'block', mb: 1, color: 'primary.main', fontWeight: 'bold' }}>
-                  ✓ 체크된 {checkedMenus.size}개 메뉴에 동일하게 일괄 적용됩니다
-                </Typography>
-              )}
               <FormGroup sx={{ gap: 0 }}>
                 {GENERAL_ADMIN_ROLE_OPTIONS.map(opt => {
-                  const checked = (gaState[gaKey(gaDialog.menuPath)] ?? []).includes(opt.key)
+                  const checked = (gaRoles[gaDialog.menuPath] ?? []).includes(opt.key)
                   return (
                     <FormControlLabel key={opt.key}
                       control={
                         <Checkbox size="small" checked={checked} sx={{ py: 0.3 }}
                           onChange={e => {
-                            setGaState(prev => {
-                              const cur = prev[gaKey(gaDialog.menuPath)] ?? []
+                            setGaRoles(prev => {
+                              const cur = prev[gaDialog.menuPath] ?? []
                               return {
                                 ...prev,
-                                [gaKey(gaDialog.menuPath)]: e.target.checked
+                                [gaDialog.menuPath]: e.target.checked
                                   ? [...cur, opt.key]
                                   : cur.filter(k => k !== opt.key),
                               }
@@ -646,11 +681,13 @@ const ButtonManagePage: React.FC = () => {
         </DialogContent>
         <DialogActions sx={{ px: 2, pb: 1.5 }}>
           <Button size="small" color="inherit"
-            onClick={() => { if (gaDialog) setGaState(prev => ({ ...prev, [gaKey(gaDialog.menuPath)]: [] })) }}>
+            onClick={() => {
+              if (gaDialog) setGaRoles(prev => ({ ...prev, [gaDialog.menuPath]: [] }))
+            }}>
             전체 해제
           </Button>
           <Box sx={{ flex: 1 }} />
-          <Button size="small" variant="contained" onClick={handleGaConfirm}>확인</Button>
+          <Button size="small" variant="contained" onClick={() => setGaDialog(null)}>확인</Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -658,7 +695,7 @@ const ButtonManagePage: React.FC = () => {
 }
 
 function GaRolesCell({ selected }: { selected: string[] }) {
-  if (selected.length === 0) return <Typography variant="caption" color="text.disabled">-</Typography>
+  if (selected.length === 0) return <Typography variant="caption" color="text.disabled">역할 미지정</Typography>
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.25 }}>
       {selected.map(key => {
@@ -676,7 +713,7 @@ function GaCell({ selected, changed, onClick }: { selected: string[]; changed: b
   return (
     <Chip
       icon={<EditIcon sx={{ fontSize: '0.7rem !important' }} />}
-      label={selected.length > 0 ? `${selected.length}개` : '지정'}
+      label={selected.length > 0 ? `${selected.length}개 역할` : '역할 지정'}
       size="small"
       onClick={onClick}
       sx={{

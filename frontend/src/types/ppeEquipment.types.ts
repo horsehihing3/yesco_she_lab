@@ -13,7 +13,9 @@ export interface PpeEquipment {
   certification?: string
   stockQuantity: number
   minStock: number
+  maxStock?: number
   wearRate?: number
+  isConsumable?: boolean
   expiryDate?: string
   inspectCycle?: string
   lastInspectDate?: string
@@ -37,7 +39,9 @@ export interface PpeEquipmentRequest {
   certification?: string
   stockQuantity: number
   minStock?: number
+  maxStock?: number
   wearRate?: number
+  isConsumable?: boolean
   expiryDate?: string
   inspectCycle?: string
   lastInspectDate?: string
@@ -96,6 +100,7 @@ export interface PpeRequestItem {
   returnedAt?: string
   rejectionReason?: string
   notes?: string
+  isConsumable?: boolean
   createdAt: string
   modifiedAt: string
 }

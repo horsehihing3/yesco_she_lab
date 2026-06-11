@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
+import { isEhsManager } from '../../utils/auth'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import ListSearchBar from '../common/ListSearchBar'
@@ -25,7 +26,7 @@ const HealthCheckupRecordTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = user?.role === 'SYSTEM_ADMIN'
+  const isAdmin = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(isAdmin ? ['superAdmin'] : []), ...(user?.role ? [user.role] : [])]
 
   const [keywordInput, setKeywordInput] = useState('')

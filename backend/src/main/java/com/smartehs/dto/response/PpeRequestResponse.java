@@ -27,6 +27,7 @@ public class PpeRequestResponse {
     private LocalDateTime returnedAt;
     private String rejectionReason;
     private String notes;
+    private Boolean isConsumable;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -41,7 +42,8 @@ public class PpeRequestResponse {
                 .approverName(e.getApproverName()).approverDept(e.getApproverDept())
                 .approverId(e.getApproverId()).approvedAt(e.getApprovedAt())
                 .issuedAt(e.getIssuedAt()).returnedAt(e.getReturnedAt()).rejectionReason(e.getRejectionReason())
-                .notes(e.getNotes()).createdAt(e.getCreatedAt()).modifiedAt(e.getModifiedAt())
+                .notes(e.getNotes()).isConsumable(e.getIsConsumable())
+                .createdAt(e.getCreatedAt()).modifiedAt(e.getModifiedAt())
                 .build();
     }
 }
