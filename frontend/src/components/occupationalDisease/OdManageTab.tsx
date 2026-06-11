@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -33,8 +33,7 @@ const OdManageTab: React.FC = () => {
   const { showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isEhsManager(user)
-  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const myRoles: string[] = ['guest', ...(isSystemAdmin(user) ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const getRoles = (item: { createdByUserId?: number | null }): string[] => {
     const roles = [...myRoles]
     if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
@@ -150,7 +149,7 @@ const OdManageTab: React.FC = () => {
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="space-between" alignItems="center">
         <Typography variant="subtitle1" fontWeight={700}>{t('odManageTab.section2', '검진기관 관리')}</Typography>
-        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+        {canSee(MENU, 'LIST', 'New', myRoles) && (
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
         )}
       </Stack>

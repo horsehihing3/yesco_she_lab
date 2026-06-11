@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -45,8 +45,7 @@ const OdAftercareTab: React.FC = () => {
   const { showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isEhsManager(user)
-  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const myRoles: string[] = ['guest', ...(isSystemAdmin(user) ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const getRoles = (item: { createdByUserId?: number | null }): string[] => {
     const roles = [...myRoles]
     if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
@@ -283,7 +282,7 @@ const OdAftercareTab: React.FC = () => {
       )}
 
       <Stack direction="row" sx={{ mb: 2 }} justifyContent="flex-end">
-        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+        {canSee(MENU, 'LIST', 'New (사후관리 조치)', myRoles) && (
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAftAddClick}>New</Button>
         )}
       </Stack>
@@ -325,7 +324,7 @@ const OdAftercareTab: React.FC = () => {
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 2, mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>{t('odAftercareTab.section3', '업무적합성 평가 현황')}</Typography>
-        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+        {canSee(MENU, 'LIST', 'New (업무적합성 평가)', myRoles) && (
           <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={handleFitAddClick}>New</Button>
         )}
       </Stack>

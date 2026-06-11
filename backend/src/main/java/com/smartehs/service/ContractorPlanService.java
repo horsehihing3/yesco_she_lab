@@ -159,7 +159,7 @@ public class ContractorPlanService {
         return transition(id, action, username, null);
     }
 
-    private static final java.util.Set<String> ADMIN_ROLES = java.util.Set.of("SYSTEM_ADMIN", "EHS_ADMIN", "AUDIT_ADMIN");
+    private static final java.util.Set<String> ADMIN_ROLES = java.util.Set.of("SYSTEM_ADMIN");
 
     private void ensureCanApprove(ContractorPlan plan, String username, String stage) {
         if (username == null || username.isEmpty() || "system".equals(username)) return;

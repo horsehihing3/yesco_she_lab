@@ -1,5 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -65,7 +65,7 @@ const EmrPlanTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm, showWarning } = useAlert()
   const { user: authUser } = useAuth()
-  const isAdmin = isEhsManager(authUser)
+  const isAdmin = isSystemAdmin(authUser)
   const canEditDraft = (item: { createdByUserId?: number | null }) => isAdmin || item.createdByUserId === authUser?.id
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 비상 훈련 › 비상 계획'

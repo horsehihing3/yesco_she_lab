@@ -31,7 +31,7 @@ public class LegalCompliancePlanService {
     private final ChecklistSnapshotService checklistSnapshotService;
     private final IdmMapper idmMapper;
 
-    private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN", "EHS_ADMIN", "AUDIT_ADMIN");
+    private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN");
     // ChecklistSnapshotService 의 OWNER_AUDIT 와 충돌 방지를 위해 별도 owner 식별자 사용
     private static final String OWNER_LC = "LEGAL_COMPLIANCE";
 

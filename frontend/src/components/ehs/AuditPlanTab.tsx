@@ -1,5 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useState } from 'react'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import ListSearchBar from '../common/ListSearchBar'
@@ -137,7 +137,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { codeList: auditTypeCodes, getLabel: getAuditTypeLabel } = useCodeMap('AUDIT_TYPE')
-  const isAdmin = isEhsManager(user) || user?.role === 'AUDIT_ADMIN'
+  const isAdmin = isSystemAdmin(user)
   const { canSee } = useButtonRules()
   const MENU = variant === 'legal-compliance'
     ? 'EHS 경영 › 법규 대응 › 법규 대응 계획'

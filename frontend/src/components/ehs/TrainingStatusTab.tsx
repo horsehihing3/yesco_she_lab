@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Typography, Paper, Grid, TextField, Select, MenuItem, FormControl,
@@ -44,7 +44,7 @@ const TrainingStatusTab: React.FC = () => {
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)'
-  const isAdmin = isEhsManager(user) || user?.role === 'TRAINING_ADMIN'
+  const isAdmin = isSystemAdmin(user)
   const getRoles = (): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')

@@ -30,7 +30,7 @@ public class AuditPlanService {
     private final ChecklistSnapshotService checklistSnapshotService;
     private final IdmMapper idmMapper;
 
-    private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN", "EHS_ADMIN", "AUDIT_ADMIN");
+    private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN");
 
     @Transactional(readOnly = true)
     public Page<AuditPlan> findAll(Pageable pageable) {

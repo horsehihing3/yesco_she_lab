@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { isEhsManager } from '../../utils/auth'
+import { isSystemAdmin } from '../../utils/auth'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
@@ -64,8 +64,7 @@ const OdPlanTab: React.FC = () => {
   const { showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isEhsManager(user)
-  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const myRoles: string[] = ['guest', ...(isSystemAdmin(user) ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const getRoles = (item: { createdByUserId?: number | null }): string[] => {
     const roles = [...myRoles]
     if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')

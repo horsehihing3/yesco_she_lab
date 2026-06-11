@@ -33,7 +33,7 @@ public class LegalComplianceExecService {
     private final LegalComplianceLogMapper logMapper;
     private final IdmMapper idmMapper;
 
-    private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN", "EHS_ADMIN", "AUDIT_ADMIN");
+    private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN");
 
     @Transactional(readOnly = true)
     public Page<LegalComplianceExec> findAll(Pageable pageable) {
