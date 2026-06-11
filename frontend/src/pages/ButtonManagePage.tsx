@@ -595,14 +595,12 @@ const ButtonManagePage: React.FC = () => {
                                 bgcolor: gaOn ? 'info.50' : 'inherit',
                               }}>
                               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
-                                <Tooltip title={gaOn ? '일반관리자 접근 허용' : '일반관리자 접근 불가'} arrow>
-                                  <Checkbox
-                                    size="small"
-                                    checked={gaOn}
-                                    onChange={() => toggleGaEnabled(bKey)}
-                                    sx={{ p: 0.25, color: 'info.main', '&.Mui-checked': { color: 'info.main' } }}
-                                  />
-                                </Tooltip>
+                                <Checkbox
+                                  size="small"
+                                  checked={gaOn}
+                                  onChange={() => toggleGaEnabled(bKey)}
+                                  sx={{ p: 0.25, color: 'info.main', '&.Mui-checked': { color: 'info.main' } }}
+                                />
                                 {gaOn !== gaOnSaved && (
                                   <Box sx={{ position: 'absolute', top: -2, right: -2, width: 6, height: 6,
                                     borderRadius: '50%', bgcolor: 'secondary.main' }} />
