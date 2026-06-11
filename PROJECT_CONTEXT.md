@@ -8,6 +8,19 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
+### ✅ 완료 — canSee generalAdminRoles 전면 수정 (2026-06-11 세션 6)
+- [x] `useButtonRules.ts` — `generalAdminRoles` 체크 누락 수정 (TEAM_ADMIN 등 concrete role이 canSee에서 항상 false 반환되던 버그)
+- [x] `buttonManageData.ts` — WEM 4탭 status code 수정 (`PLANNED/IN_PROGRESS/...` → `DETAIL`) + generalAdminRoles 추가
+- [x] 위험성 평가 `DETAIL` status entry 추가 (generalAdminRoles: RISK_ASSESS_ADMIN)
+- [x] EHS 협의체 status code `DETAIL` → `입장중` 수정 (PartnerVisitorTab 실제 canSee 호출값과 일치)
+- [x] 건강검진 관리 3탭(건강검진 계획/검진 관리/사후관리) buttonManageData 신규 추가
+
+### ✅ 완료 — isAdmin T2 전환 전면 스윕 (2026-06-11 세션 6, commit 949e141)
+- [x] `utils/auth.ts` — `isSystemAdmin()` / `isEhsManager()` 헬퍼 정의 (main 3bdb82c에서 도입)
+- [x] 37개 화면 `isEhsManager()` 헬퍼 전환 완료 — Dp* 7 · ehs 12 · Wem 4 · Od 6 · 기타 + Pages
+- [x] 도메인 역할 보존 — AuditPlan/Execution(+AUDIT_ADMIN), TrainingStatus(+TRAINING_ADMIN), EmrResource(+TEAM_ADMIN)
+- [x] ApprovalManagePage SYSTEM_ADMIN 단독 유지 (3단계 보류 확정)
+
 ### 🟢 진행 중 — main 변경내역 확인 (2026-06-05 세션 4에서 시작)
 - [x] **#1 협력업체 안전 실행** — 추가 완료, 버그 2건 수정 완료 (아래 세부 참조)
 - [ ] **#2 OSH 위원회 서명** — 미확인. 경로: EHS경영 → 산업안전보건위원회, 참석자 인라인 서명 기능
@@ -79,7 +92,7 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - [ ] **부서 관리 API/화면 개발** — tb_dept 신규 테이블 + CRUD (T_IDM_GROUP 대체)
 - [ ] **사용자 관리 화면 개발** — 시스템 관리 탭에 사용자 등록/수정/삭제/비밀번호초기화 추가
 - [ ] **백엔드 API 권한 제어 추가** — SecurityConfig + @PreAuthorize 적용
-- [ ] **isAdmin 나머지 화면 전면 스윕** — 1단계 이월 화면(Day-1 우선 화면 제외 나머지 T2 대상)을 `isEhsManager()` 헬퍼로 일괄 전환. 분류표는 🔴 1단계 참조
+- [x] **isAdmin 나머지 화면 전면 스윕** — 37개 화면 완료 (2026-06-11, commit 949e141)
 - [ ] **예스코 초기 데이터 입력** — 조직도·사용자 데이터 세팅
 
 ### 🔵 3단계 — 예스코 요구사항 확인 후

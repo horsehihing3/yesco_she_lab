@@ -439,6 +439,12 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세 (상태 무관)', statusColor: 'default',
+        statusNote: 'RiskAssessmentTab은 canSee를 DETAIL로 호출, 실제 상태 조건은 컴포넌트에서 별도 체크',
+        buttons: [
+          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['RISK_ASSESS_ADMIN'] },
+          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['RISK_ASSESS_ADMIN'] },
+        ] },
       { status: 'draft', statusLabel: '작성중', statusColor: 'default',
         buttons: [
           { button: '계획 결재 상신', roles: ALL_ON, issue: 'isAdmin = true 하드코딩' },
@@ -723,7 +729,8 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
-      { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
+      { status: '입장중', statusLabel: '상세/편집', statusColor: 'default',
+        statusNote: 'PartnerVisitorTab이 canSee에 입장중 status 코드 사용',
         buttons: [
           { button: '수정', roles: WRITER_ADMIN },
           { button: '삭제', roles: WRITER_ADMIN },
@@ -744,6 +751,56 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         ] },
       { status: 'FORM', statusLabel: '등록/수정 폼', statusColor: 'default',
         buttons: [{ button: '등록 완료 / 저장', roles: WRITER_ADMIN }] },
+    ],
+  },
+
+  // ── 건강검진 - 건강검진 계획 ───────────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 건강 검진 관리 › 건강검진 계획', menuKey: 'healthCheckup.tabs.plan',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'PLANNED', statusLabel: '계획', statusColor: 'default',
+        buttons: [
+          { button: '수정',           roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+          { button: '삭제',           roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+          { button: '계획 결재 상신', roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+        ] },
+      { status: 'REJECTED', statusLabel: '반려', statusColor: 'error',
+        buttons: [
+          { button: '수정',           roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+          { button: '삭제',           roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+          { button: '계획 결재 상신', roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+        ] },
+      { status: 'PENDING_APPROVAL', statusLabel: '승인대기', statusColor: 'warning',
+        buttons: [
+          { button: '반려',           roles: ADMIN_PLAN },
+          { button: '계획 결재 승인', roles: ADMIN_PLAN },
+        ] },
+    ],
+  },
+
+  // ── 건강검진 - 검진 관리 ───────────────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 건강 검진 관리 › 검진 관리', menuKey: 'healthCheckup.tabs.admin',
+    statuses: [
+      { status: 'PENDING_COMPLETION', statusLabel: '완료 대기', statusColor: 'warning',
+        buttons: [
+          { button: '완료 승인', roles: ADMIN_COMP, generalAdminRoles: ['HEALTH_ADMIN'] },
+        ] },
+    ],
+  },
+
+  // ── 건강검진 - 사후관리 ───────────────────────────────────────────────────────────
+  {
+    menuPath: '보건 관리 › 건강 검진 관리 › 사후관리', menuKey: 'healthCheckup.tabs.record',
+    statuses: [
+      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
+        buttons: [{ button: 'PDF 업로드', roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] }] },
+      { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
+        buttons: [
+          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['HEALTH_ADMIN', 'TEAM_ADMIN'] },
+        ] },
     ],
   },
 
@@ -770,8 +827,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '저장', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
         ] },
     ],
   },
@@ -781,18 +839,12 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     menuPath: '보건 관리 › 작업환경 측정 › 측정 계획', menuKey: 'wem.planTab',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON, issue: '권한 체크 없음' }] },
-      { status: 'PLANNED/IN_PROGRESS/OVERDUE/UNMEASURED', statusLabel: '측정 전 (진행/지연/미측정 포함)', statusColor: 'default',
-        statusNote: '해당 상태 모두 동일 버튼 노출 (상태 조건 없음)',
+        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+      { status: 'DETAIL', statusLabel: '상세/편집 (상태 무관)', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
-        ] },
-      { status: 'COMPLETED', statusLabel: '측정 완료', statusColor: 'success',
-        statusNote: '완료 상태에서도 수정/삭제 조건 없음',
-        buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '저장', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
         ] },
     ],
   },
@@ -805,8 +857,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '저장', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
         ] },
     ],
   },
@@ -819,8 +872,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_ON }] },
       { status: 'DETAIL', statusLabel: '상세/편집', statusColor: 'default',
         buttons: [
-          { button: '수정', roles: WRITER_ADMIN },
-          { button: '삭제', roles: WRITER_ADMIN },
+          { button: '수정', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '삭제', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
+          { button: '저장', roles: WRITER_ADMIN, generalAdminRoles: ['TEAM_ADMIN', 'WORK_ENV_ADMIN'] },
         ] },
     ],
   },

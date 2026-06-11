@@ -34,6 +34,7 @@ export function useButtonRules() {
         const menu = DEFAULT_MENU_DATA.find(m => m.menuPath === menuPath)
         const sg = menu?.statuses.find(s => s.status === statusCode)
         const btn = sg?.buttons.find(b => b.button === buttonName)
+        if (btn?.generalAdminRoles?.includes(roleKey)) return true
         return btn?.roles[roleKey as keyof typeof btn.roles] ?? false
       })
     },
