@@ -29,8 +29,12 @@ public class WemImprovementResponse {
     private String remarks;
     private Long createdByUserId;
     private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private Long modifiedByUserId;
     private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -54,8 +58,12 @@ public class WemImprovementResponse {
                 .remarks(entity.getRemarks())
                 .createdByUserId(entity.getCreatedByUserId())
                 .createdByName(entity.getCreatedByName())
+                .createdByTeam(entity.getCreatedByTeam())
+                .createdByPosition(entity.getCreatedByPosition())
                 .modifiedByUserId(entity.getModifiedByUserId())
                 .modifiedByName(entity.getModifiedByName())
+                .modifiedByTeam(entity.getModifiedByTeam())
+                .modifiedByPosition(entity.getModifiedByPosition())
                 .createdAt(entity.getCreatedAt())
                 .modifiedAt(entity.getModifiedAt())
                 .build();

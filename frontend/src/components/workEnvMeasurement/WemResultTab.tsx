@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { isEhsManager } from '../../utils/auth'
+import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, TextField, Button, Table, TableBody, TableCell,
@@ -518,7 +519,7 @@ const WemResultTab: React.FC = () => {
           {/* 작성자 | 작성일자 */}
           <Box sx={d.modifiedAt && d.modifiedAt !== d.createdAt ? rowSx : lastRowSx}>
             <Box sx={labelSx}>{t('common.creator', '작성자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{d.createdByName || ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{fmtPerson(d.createdByName, d.createdByTeam, d.createdByPosition)}</Typography></Box>
             <Box sx={labelSx}>{t('audit.createdAt', '작성일자')}</Box>
             <Box sx={valSx}><Typography variant="body2">{formatDate(d.createdAt)}</Typography></Box>
           </Box>
@@ -526,7 +527,7 @@ const WemResultTab: React.FC = () => {
           {d.modifiedAt && d.modifiedAt !== d.createdAt && (
             <Box sx={lastRowSx}>
               <Box sx={labelSx}>{t('common.modifier', '수정자')}</Box>
-              <Box sx={valBorderSx}><Typography variant="body2">{d.modifiedByName || ''}</Typography></Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{fmtPerson(d.modifiedByName, d.modifiedByTeam, d.modifiedByPosition)}</Typography></Box>
               <Box sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Box>
               <Box sx={valSx}><Typography variant="body2">{formatDate(d.modifiedAt)}</Typography></Box>
             </Box>
@@ -548,10 +549,10 @@ const WemResultTab: React.FC = () => {
             [t('wem.agency'), d.measurementAgency],
             [t('common.date', '날짜'), d.measurementDate],
             [t('common.remarks', '비고'), d.remarks],
-            [t('common.creator', '작성자'), d.createdByName || ''],
+            [t('common.creator', '작성자'), fmtPerson(d.createdByName, d.createdByTeam, d.createdByPosition)],
             [t('audit.createdAt', '작성일자'), formatDate(d.createdAt)],
             ...(d.modifiedAt && d.modifiedAt !== d.createdAt ? [
-              [t('common.modifier', '수정자'), d.modifiedByName || ''],
+              [t('common.modifier', '수정자'), fmtPerson(d.modifiedByName, d.modifiedByTeam, d.modifiedByPosition)],
               [t('common.modifiedAt', '수정일자'), formatDate(d.modifiedAt)],
             ] : []),
           ].filter(([, v]) => v).map(([label, value], i) => (

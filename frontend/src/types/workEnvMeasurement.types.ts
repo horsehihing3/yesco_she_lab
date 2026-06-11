@@ -4,8 +4,8 @@ export interface WemPlan {
   lastMeasurementDate: string | null; nextMeasurementDate: string | null
   status: string; measurementAgency: string | null; agencyCode: string | null
   contractPeriod: string | null; remarks: string | null
-  createdByUserId?: number | null; createdByName?: string | null
-  modifiedByUserId?: number | null; modifiedByName?: string | null
+  createdByUserId?: number | null; createdByName?: string | null; createdByTeam?: string | null; createdByPosition?: string | null
+  modifiedByUserId?: number | null; modifiedByName?: string | null; modifiedByTeam?: string | null; modifiedByPosition?: string | null
   createdAt: string; modifiedAt: string
 }
 export interface WemPlanRequest {
@@ -18,8 +18,8 @@ export interface WemFactor {
   factorType: string | null; twa: string | null; stel: string | null; ceilingValue: string | null
   unit: string | null; msdsLinked: boolean; isPermitted: boolean; usedProcess: string | null
   remarks: string | null
-  createdByUserId?: number | null; createdByName?: string | null
-  modifiedByUserId?: number | null; modifiedByName?: string | null
+  createdByUserId?: number | null; createdByName?: string | null; createdByTeam?: string | null; createdByPosition?: string | null
+  modifiedByUserId?: number | null; modifiedByName?: string | null; modifiedByTeam?: string | null; modifiedByPosition?: string | null
   createdAt: string; modifiedAt: string
 }
 export interface WemFactorRequest {
@@ -33,8 +33,8 @@ export interface WemResult {
   exposureStandard: string | null; exceedRate: number | null; judgment: string | null
   hasReport: boolean; measurementDate: string | null; measurementAgency: string | null
   remarks: string | null
-  createdByUserId?: number | null; createdByName?: string | null
-  modifiedByUserId?: number | null; modifiedByName?: string | null
+  createdByUserId?: number | null; createdByName?: string | null; createdByTeam?: string | null; createdByPosition?: string | null
+  modifiedByUserId?: number | null; modifiedByName?: string | null; modifiedByTeam?: string | null; modifiedByPosition?: string | null
   createdAt: string; modifiedAt: string
 }
 export interface WemResultRequest {
@@ -48,8 +48,8 @@ export interface WemImprovement {
   department: string | null; measurementDate: string | null; measurementAgency: string | null
   deadline: string | null; remainingDays: number | null; improvementPlan: string | null
   status: string; completionDate: string | null; remarks: string | null
-  createdByUserId?: number | null; createdByName?: string | null
-  modifiedByUserId?: number | null; modifiedByName?: string | null
+  createdByUserId?: number | null; createdByName?: string | null; createdByTeam?: string | null; createdByPosition?: string | null
+  modifiedByUserId?: number | null; modifiedByName?: string | null; modifiedByTeam?: string | null; modifiedByPosition?: string | null
   createdAt: string; modifiedAt: string
 }
 export interface WemImprovementRequest {
