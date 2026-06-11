@@ -113,6 +113,7 @@ public class PermitToWorkService {
                 .workersCount(request.getWorkersCount() != null ? request.getWorkersCount() : 0)
                 .notes(request.getNotes())
                 .checklistTemplateId(request.getChecklistTemplateId())
+                .inspectorName(request.getInspectorName())
                 .planApproverUserId(request.getPlanApproverUserId())
                 .planApproverTeam(request.getPlanApproverTeam())
                 .planApproverPosition(request.getPlanApproverPosition())
@@ -180,6 +181,7 @@ public class PermitToWorkService {
         permit.setWorkersCount(request.getWorkersCount());
         permit.setRejectionReason(request.getRejectionReason());
         permit.setNotes(request.getNotes());
+        permit.setInspectorName(request.getInspectorName());
         permit.setPlanApproverUserId(request.getPlanApproverUserId());
         permit.setPlanApproverTeam(request.getPlanApproverTeam());
         permit.setPlanApproverPosition(request.getPlanApproverPosition());

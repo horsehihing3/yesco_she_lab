@@ -49,6 +49,10 @@ export interface SiteSafetyPlan {
   completedChecklist: number
   findingCount: number
   modifiedBy?: string
+  modifiedByName?: string | null
+  modifiedByTeam?: string | null
+  modifiedByPosition?: string | null
+  modifiedByUserId?: number | null
   createdAt: string
   modifiedAt: string
 }

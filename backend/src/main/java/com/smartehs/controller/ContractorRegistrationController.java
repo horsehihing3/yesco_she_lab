@@ -65,7 +65,16 @@ public class ContractorRegistrationController {
             @PathVariable Long id,
             @RequestBody ContractorRegistration reg,
             Authentication authentication) {
-        if (authentication != null) reg.setModifiedBy(authentication.getName());
+        if (authentication != null) {
+            reg.setModifiedBy(authentication.getName());
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                reg.setModifiedByName(u.getUserName());
+                reg.setModifiedByTeam(u.getGroupName());
+                reg.setModifiedByPosition(u.getTitleName());
+                reg.setModifiedByUserId(u.getUidNumber());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(service.update(id, reg)));
     }
 

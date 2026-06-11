@@ -53,11 +53,12 @@ function buildStateFromDb(dbRules: ButtonRuleItem[]): Record<string, boolean> {
   return state
 }
 
-/** 메뉴별 일반관리자 역할: menuPath → roleKey[] */
+/** 메뉴별 일반관리자 역할: menuPath → roleKey[]
+ *  visible 여부와 무관하게 역할 연결을 복원 (버튼 미체크여도 역할은 유지) */
 function buildGaRolesFromDb(dbRules: ButtonRuleItem[]): Record<string, string[]> {
   const state: Record<string, string[]> = {}
   dbRules.forEach(r => {
-    if (!ABSTRACT_ROLE_KEYS.has(r.roleKey) && r.visible) {
+    if (!ABSTRACT_ROLE_KEYS.has(r.roleKey)) {
       if (!state[r.menuPath]) state[r.menuPath] = []
       if (!state[r.menuPath].includes(r.roleKey)) state[r.menuPath].push(r.roleKey)
     }
@@ -92,7 +93,9 @@ function buildAbstractRulesToSave(cellState: Record<string, boolean>): ButtonRul
   return rules
 }
 
-/** 메뉴별 역할 × 버튼별 활성화 조합으로 DB 저장용 규칙 생성 */
+/** 메뉴별 역할 × 버튼별 활성화 조합으로 DB 저장용 규칙 생성
+ *  역할이 지정된 메뉴는 버튼 체크 여부와 무관하게 항상 저장 (visible=gaEnabled 값)
+ *  → 역할 지정 후 버튼 미체크 상태에서도 저장 시 역할이 유지됨 */
 function buildGaRulesToSave(
   gaRoles: Record<string, string[]>,
   gaEnabled: Record<string, boolean>,
@@ -104,11 +107,9 @@ function buildGaRulesToSave(
     menu.statuses.forEach(sg => {
       sg.buttons.forEach(btn => {
         const key = btnGaKey(menu.menuPath, sg.status, btn.button)
-        if (gaEnabled[key]) {
-          roles.forEach(roleKey => {
-            rules.push({ menuPath: menu.menuPath, statusCode: sg.status, buttonName: btn.button, roleKey, visible: true })
-          })
-        }
+        roles.forEach(roleKey => {
+          rules.push({ menuPath: menu.menuPath, statusCode: sg.status, buttonName: btn.button, roleKey, visible: gaEnabled[key] ?? false })
+        })
       })
     })
   })

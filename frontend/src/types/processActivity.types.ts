@@ -29,8 +29,12 @@ export interface ProcessActivityForm {
   teamMembers?: string
   createdByUserId?: number | null
   createdByName?: string | null
+  createdByTeam?: string | null
+  createdByPosition?: string | null
   modifiedByUserId?: number | null
   modifiedByName?: string | null
+  modifiedByTeam?: string | null
+  modifiedByPosition?: string | null
   createdAt?: string
   modifiedAt?: string
   processes?: ProcessActivityProcess[]

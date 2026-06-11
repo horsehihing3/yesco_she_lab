@@ -46,7 +46,11 @@
         <result property="totalChecklist" column="total_checklist"/>
         <result property="completedChecklist" column="completed_checklist"/>
         <result property="findingCount" column="finding_count"/>
-        <result property="modifiedBy" column="modified_by"/>
+        <result property="modifiedBy"         column="modified_by"/>
+        <result property="modifiedByName"     column="modified_by_name"/>
+        <result property="modifiedByTeam"     column="modified_by_team"/>
+        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="modifiedByUserId"   column="modified_by_user_id"/>
         <result property="deleted" column="deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
@@ -132,7 +136,9 @@
             completion_approver_name     = #{completionApproverName},
             repeat_type = #{repeatType}, repeat_interval = #{repeatInterval}, repeat_days = #{repeatDays},
             status = COALESCE(#{status}, status, 'DRAFT'),
-            modified_by = #{modifiedBy}, modified_at = GETDATE()
+            modified_by = #{modifiedBy}, modified_at = GETDATE(),
+            modified_by_name = #{modifiedByName}, modified_by_team = #{modifiedByTeam},
+            modified_by_position = #{modifiedByPosition}, modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT}
         WHERE id = #{id}
     </update>
 

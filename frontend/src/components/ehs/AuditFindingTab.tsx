@@ -1,6 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState, useRef } from 'react'
-import { fmtPerson } from '../../utils/personFormat'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import ListSearchBar from '../common/ListSearchBar'
@@ -131,7 +130,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
           <Box sx={rowSx}>
             <Typography sx={labelSx}>{t('audit.createdByName', '작성자')}</Typography>
             <Box sx={valBorderSx}>
-              <Typography variant="body2">{selectedItem.createdByName || ''}</Typography>
+              <Typography variant="body2">{formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)}</Typography>
             </Box>
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={valSx}>
@@ -144,7 +143,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
             <Box sx={rowSx}>
               <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
               <Box sx={valBorderSx}>
-                <Typography variant="body2">{(selectedItem as any).modifiedByName || ''}</Typography>
+                <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)}</Typography>
               </Box>
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
               <Box sx={valSx}>
@@ -202,11 +201,11 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
             [t('common.endDate', '종료일'), selectedItem.auditEndDate || linkedPlan?.planEndDate],
             [t('audit.purpose', '목적'), linkedPlan?.purpose],
             [t('common.notes', '비고'), selectedItem.notes || linkedPlan?.notes],
-            [t('audit.createdByName', '작성자'), selectedItem.createdByName || ''],
+            [t('audit.createdByName', '작성자'), formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)],
             [t('audit.createdAt', '작성일자'),
               selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
             ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
-              [t('common.modifier', '수정자'), (selectedItem as any).modifiedByName || ''],
+              [t('common.modifier', '수정자'), formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
               [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
             ] : []),
             [t('audit.planApprover', '계획 승인자'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],

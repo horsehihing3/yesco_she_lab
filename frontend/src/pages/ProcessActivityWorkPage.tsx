@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { formatUserName } from '../utils/userDisplay'
+import { useAuth } from '../context/AuthContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -51,6 +53,7 @@ const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const, bgcolor: 'grey.
 
 const ProcessActivityWorkPage: React.FC = () => {
   const { t } = useTranslation()
+  const { user } = useAuth()
   const queryClient = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
 
@@ -473,10 +476,14 @@ const ProcessActivityWorkPage: React.FC = () => {
           </Box>
         </Box>
         {/* 작성자 | 작성일자 */}
-        <Box sx={{ display: 'flex', borderBottom: ((displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt) ? 1 : 0, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', borderBottom: (viewMode === 'edit' || ((displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt)) ? 1 : 0, borderColor: 'divider' }}>
           <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
           <Box sx={valBorderSx}>
-            <Typography variant="body2">{(displayData as ProcessActivityForm).createdByName || ''}</Typography>
+            <Typography variant="body2">{formatUserName(
+              (displayData as ProcessActivityForm).createdByTeam || user?.department,
+              (displayData as ProcessActivityForm).createdByName || user?.name,
+              (displayData as ProcessActivityForm).createdByPosition || user?.position,
+            )}</Typography>
           </Box>
           <Typography sx={labelSx}>{t('processActivity.creationDate', '작성일자')}</Typography>
           <Box sx={valSx}>
@@ -485,12 +492,15 @@ const ProcessActivityWorkPage: React.FC = () => {
             ) : <Typography variant="body2">{displayData.creationDate || ((displayData as ProcessActivityForm).createdAt?.substring(0, 10) ?? '')}</Typography>}
           </Box>
         </Box>
-        {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
-        {(displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt && (
+        {/* 수정자 | 수정일자 — edit 모드 또는 수정 이력 있을 때 */}
+        {(viewMode === 'edit' || ((displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt)) && (
           <Box sx={{ display: 'flex' }}>
             <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
             <Box sx={valBorderSx}>
-              <Typography variant="body2">{(displayData as ProcessActivityForm).modifiedByName || ''}</Typography>
+              <Typography variant="body2">{viewMode === 'edit'
+                ? formatUserName(user?.department, user?.name, user?.position)
+                : formatUserName((displayData as ProcessActivityForm).modifiedByTeam, (displayData as ProcessActivityForm).modifiedByName, (displayData as ProcessActivityForm).modifiedByPosition)
+              }</Typography>
             </Box>
             <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
             <Box sx={valSx}>

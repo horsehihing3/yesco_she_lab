@@ -31,6 +31,10 @@ export interface PermitToWork {
   completedChecklist: number
   findingCount: number
   modifiedBy?: string
+  createdByUserId?: number | null
+  createdByName?: string | null
+  createdByTeam?: string | null
+  createdByPosition?: string | null
   notes?: string
   // 계획 / 완료 결재 분리
   planApproverUserId?: number | null

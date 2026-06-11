@@ -67,7 +67,20 @@ public class ContractorPlanController {
 
     @PutMapping("/{id}")
     @Operation(summary = "협력사 계획 수정")
-    public ResponseEntity<ApiResponse<ContractorPlan>> update(@PathVariable Long id, @RequestBody ContractorPlan plan) {
+    public ResponseEntity<ApiResponse<ContractorPlan>> update(
+            @PathVariable Long id,
+            @RequestBody ContractorPlan plan,
+            Authentication authentication) {
+        if (authentication != null) {
+            plan.setModifiedBy(authentication.getName());
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                plan.setModifiedByName(u.getUserName());
+                plan.setModifiedByTeam(u.getGroupName());
+                plan.setModifiedByPosition(u.getTitleName());
+                plan.setModifiedByUserId(u.getUidNumber());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(contractorPlanService.update(id, plan)));
     }
 

@@ -61,7 +61,20 @@ public class SiteSafetyPlanController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<SiteSafetyPlan>> update(@PathVariable Long id, @RequestBody SiteSafetyPlan plan) {
+    public ResponseEntity<ApiResponse<SiteSafetyPlan>> update(
+            @PathVariable Long id,
+            @RequestBody SiteSafetyPlan plan,
+            Authentication authentication) {
+        if (authentication != null) {
+            plan.setModifiedBy(authentication.getName());
+            IdmUser u = idmMapper.findByUid(authentication.getName());
+            if (u != null) {
+                plan.setModifiedByName(u.getUserName());
+                plan.setModifiedByTeam(u.getGroupName());
+                plan.setModifiedByPosition(u.getTitleName());
+                plan.setModifiedByUserId(u.getUidNumber());
+            }
+        }
         return ResponseEntity.ok(ApiResponse.success(svc.update(id, plan)));
     }
 

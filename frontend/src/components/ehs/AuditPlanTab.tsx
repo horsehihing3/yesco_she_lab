@@ -1,7 +1,6 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
 import { isEhsManager } from '../../utils/auth'
 import { useState } from 'react'
-import { fmtPerson } from '../../utils/personFormat'
 import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
 import ListSearchBar from '../common/ListSearchBar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'

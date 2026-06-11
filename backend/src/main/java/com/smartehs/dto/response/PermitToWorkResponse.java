@@ -41,6 +41,10 @@ public class PermitToWorkResponse {
     private Integer completedChecklist;
     private Integer findingCount;
     private String modifiedBy;
+    private Long createdByUserId;
+    private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private Long planApproverUserId;
     private String planApproverTeam;
     private String planApproverPosition;
@@ -74,6 +78,10 @@ public class PermitToWorkResponse {
                 .inspectorName(e.getInspectorName()).isExternal(e.getIsExternal())
                 .totalChecklist(e.getTotalChecklist()).completedChecklist(e.getCompletedChecklist())
                 .findingCount(e.getFindingCount()).modifiedBy(e.getModifiedBy())
+                .createdByUserId(e.getCreatedByUserId())
+                .createdByName(e.getCreatedByName())
+                .createdByTeam(e.getCreatedByTeam())
+                .createdByPosition(e.getCreatedByPosition())
                 .planApproverUserId(e.getPlanApproverUserId())
                 .planApproverTeam(e.getPlanApproverTeam())
                 .planApproverPosition(e.getPlanApproverPosition())

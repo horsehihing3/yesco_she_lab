@@ -1,6 +1,5 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
 import { useState, useEffect } from 'react'
-import { fmtPerson } from '../../utils/personFormat'
 import { isEhsManager } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -921,7 +920,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {/* 작성자 | 작성일자 */}
                       <TableRow>
                         <TableCell sx={lblCellSx}>{t('common.creator', '작성자')}</TableCell>
-                        <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{assessmentDetail.authorName || ''}</TableCell>
+                        <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{formatUserName(assessmentDetail.authorTeam, assessmentDetail.authorName, assessmentDetail.authorPosition)}</TableCell>
                         <TableCell sx={lblCellSx}>{t('audit.createdAt', '작성일자')}</TableCell>
                         <TableCell sx={{ fontFamily: 'monospace' }}>{fmtDt(assessmentDetail.createdAt)}</TableCell>
                       </TableRow>
@@ -988,7 +987,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Box>
                   <Box>
                     <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('common.creator', '작성자')}</Typography>
-                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{assessmentDetail.authorName || ''}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(assessmentDetail.authorTeam, assessmentDetail.authorName, assessmentDetail.authorPosition)}</Typography>
                   </Box>
                   <Box>
                     <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('audit.createdAt', '작성일자')}</Typography>
@@ -1235,7 +1234,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                 <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                   <Typography sx={lbl}>{t('common.creator', '작성자')}</Typography>
                   <Box sx={valBr}>
-                    <Typography variant="body2">{formData.authorName || user?.name || user?.username || ''}</Typography>
+                    <Typography variant="body2">{formatUserName(formData.authorTeam || user?.department, formData.authorName || user?.name || user?.username, formData.authorPosition || user?.position)}</Typography>
                   </Box>
                   <Typography sx={lbl}>{t('audit.createdAt', '작성일자')}</Typography>
                   <Box sx={val}>
@@ -1362,7 +1361,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                 {/* 작성자 */}
                 <Box>
                   <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('common.creator', '작성자')}</Typography>
-                  <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formData.authorName || user?.name || user?.username || ''}</Typography>
+                  <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatUserName(formData.authorTeam || user?.department, formData.authorName || user?.name || user?.username, formData.authorPosition || user?.position)}</Typography>
                 </Box>
                 {/* 작성일자 */}
                 <Box>

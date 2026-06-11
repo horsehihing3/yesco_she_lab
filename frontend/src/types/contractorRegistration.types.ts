@@ -65,6 +65,10 @@ export interface ContractorRegistration {
   createdAt?: string
   modifiedAt?: string
   modifiedBy?: string | null
+  modifiedByName?: string | null
+  modifiedByTeam?: string | null
+  modifiedByPosition?: string | null
+  modifiedByUserId?: number | null
 }
 
 export type ContractorRegistrationRequest = Partial<Omit<ContractorRegistration, 'id' | 'regNo' | 'createdAt' | 'modifiedAt' | 'deleted'>>

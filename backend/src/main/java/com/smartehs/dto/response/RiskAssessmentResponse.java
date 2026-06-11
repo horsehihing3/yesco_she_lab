@@ -24,6 +24,8 @@ public class RiskAssessmentResponse {
     private String titleZh;
     private String site;
     private String authorName;
+    private String authorTeam;
+    private String authorPosition;
     private String authorDept;
     private String authorMail;
     private String approverName;
@@ -71,6 +73,8 @@ public class RiskAssessmentResponse {
                 .titleZh(entity.getTitleZh())
                 .site(entity.getSite())
                 .authorName(entity.getAuthorName())
+                .authorTeam(entity.getAuthorTeam())
+                .authorPosition(entity.getAuthorPosition())
                 .authorDept(entity.getAuthorDept())
                 .authorMail(entity.getAuthorMail())
                 .approverName(entity.getApproverName())
@@ -112,6 +116,8 @@ public class RiskAssessmentResponse {
                 .title(MultiLanguageUtil.getLocalizedText(entity.getTitle(), entity.getTitleEn(), entity.getTitleZh()))
                 .site(entity.getSite())
                 .authorName(entity.getAuthorName())
+                .authorTeam(entity.getAuthorTeam())
+                .authorPosition(entity.getAuthorPosition())
                 .authorDept(entity.getAuthorDept())
                 .authorMail(entity.getAuthorMail())
                 .approverName(entity.getApproverName())

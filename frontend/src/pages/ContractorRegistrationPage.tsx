@@ -109,13 +109,14 @@ const ContractorRegistrationPage: React.FC = () => {
     if (item.createdByUserId != null && user?.id != null && item.createdByUserId === user.id) roles.push('writer')
     return roles
   }
+
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [selected, setSelected] = useState<ContractorRegistration | null>(null)
+
   const canNew  = canSee(MENU, 'LIST',   'New (신규 등록)', myRoles)
   const canEdit = canSee(MENU, 'DETAIL', '수정', getRoles(selected ?? {}))
   const canDel  = canSee(MENU, 'DETAIL', '삭제', getRoles(selected ?? {}))
   const canSave = canSee(MENU, 'FORM',   '등록 완료 / 저장', getRoles(selected ?? {}))
-
-  const [viewMode, setViewMode] = useState<ViewMode>('list')
-  const [selected, setSelected] = useState<ContractorRegistration | null>(null)
   const [page, setPage] = useState(0)
   const [keywordInput, setKeywordInput] = useState('')
   const [keyword, setKeyword] = useState('')

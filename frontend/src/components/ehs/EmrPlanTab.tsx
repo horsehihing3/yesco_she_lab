@@ -1,7 +1,6 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
 import { isEhsManager } from '../../utils/auth'
 import { useState } from 'react'
-import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { Role } from '../../data/buttonManageData'

@@ -64,7 +64,7 @@ frontend/src/
 ## 절대 규칙
 
 - **T_IDM_USER 직접 INSERT/DELETE 금지** — 현재 UserRole UPDATE만 허용, 예스코 전환 후 tb_user 사용
-- **DB 스키마 변경 시 Flyway 마이그레이션 파일 추가** — `V192__` 부터 시작 (현재 V191까지 존재)
+- **DB 스키마 변경 시 Flyway 마이그레이션 파일 추가** — 현재 V220까지 존재, 다음 신규는 `V221__`
 - **기존 API 응답 구조 무단 변경 금지** — 프론트 9개 파일이 `/api/users/company-tree` 응답 구조 의존
 - **application.yml DB 비밀번호 환경변수 전환 필요** — 현재 하드코딩 상태 (납품 전 필수)
 - **백엔드 수정 후 서버 재시작 필수**
@@ -111,17 +111,22 @@ u.getTitleName()  → createdByPosition (T_IDM_HRCODE.Name where Separator='TITL
 
 ### 5. 프론트엔드 표시
 ```ts
-// frontend/src/utils/personFormat.ts
-fmtPerson(name, team, position)  // → "팀명 / 성명 직위"
+// frontend/src/utils/userDisplay.ts
+formatUserName(team, name, position)  // → "팀명 / 성명 직위"
 ```
-- 모든 폼 상세/등록/수정 화면에서 작성자·수정자·승인자 표시 시 `fmtPerson` 사용
+- 모든 폼 상세/등록/수정 화면에서 작성자·수정자·승인자 표시 시 `formatUserName` 사용
+- **`fmtPerson(personFormat.ts)` 신규 사용 금지** — 기존 `workEnvMeasurement/Wem*.tsx` 제외
+- Form 초기화(create 모드): `createdBy*` 4개 필드를 `user?.department/name/position` 폴백으로 표시
+- 수정자 행(edit 모드): `formatUserName(user?.department, user?.name, user?.position)` 표시
+- 수정자 행(detail 모드): `formatUserName(item.modifiedByTeam, item.modifiedByName, item.modifiedByPosition)` 표시
+- 기준 샘플: `AuditPlanTab.tsx`
 
 ### 6. 작업 체크리스트 (신규 테이블 추가 시)
 - [ ] Flyway `V{n}__` migration — ALTER TABLE ADD 4개 컬럼 (IF COL_LENGTH 조건부)
 - [ ] Java Model — 4개 필드 추가
 - [ ] Mapper XML — resultMap / INSERT / UPDATE 수정, SELECT에서 liveJoin 제거
 - [ ] Controller 또는 Service — IdmUser에서 team/position 설정
-- [ ] 프론트 폼 — fmtPerson 적용 확인
+- [ ] 프론트 폼 — `formatUserName` 적용 확인 (detail/edit 모드 구분)
 
 ---
 

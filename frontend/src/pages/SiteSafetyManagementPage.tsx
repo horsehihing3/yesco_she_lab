@@ -576,7 +576,11 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             <FormRow>
               <FormLabel>수정자</FormLabel>
               <FormCell borderRight>
-                <Typography variant="body2">{user?.name || user?.username || '-'}</Typography>
+                <Typography variant="body2">{
+                  isReadonly
+                    ? formatUserName(selected?.modifiedByTeam, selected?.modifiedByName, selected?.modifiedByPosition)
+                    : formatUserName(user?.department, user?.name, user?.position)
+                }</Typography>
               </FormCell>
               <FormLabel>수정일자</FormLabel>
               <FormCell>

@@ -75,4 +75,8 @@ public class ContractorRegistration {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private String modifiedBy;
+    private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
+    private Long modifiedByUserId;
 }

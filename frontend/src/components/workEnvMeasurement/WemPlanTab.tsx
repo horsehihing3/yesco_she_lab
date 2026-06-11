@@ -604,10 +604,26 @@ const WemPlanTab: React.FC = () => {
           <Box sx={labelSx}>{formFields[9].label}</Box>
           <Box sx={valSx}>{formFields[9].node}</Box>
         </Box>
-        <Box sx={lastRowSx}>
+        <Box sx={rowSx}>
           <Box sx={labelSx}>{formFields[10].label}</Box>
           <Box sx={valSx}>{formFields[10].node}</Box>
         </Box>
+        {/* 작성자 | 작성일자 */}
+        <Box sx={viewMode === 'edit' ? rowSx : lastRowSx}>
+          <Box sx={labelSx}>{t('common.creator', '작성자')}</Box>
+          <Box sx={valBorderSx}><Typography variant="body2">{fmtPerson(detail?.createdByName || user?.name, detail?.createdByTeam || user?.department, detail?.createdByPosition || user?.position)}</Typography></Box>
+          <Box sx={labelSx}>{t('audit.createdAt', '작성일자')}</Box>
+          <Box sx={valSx}><Typography variant="body2">{viewMode === 'edit' ? detail?.createdAt?.substring(0, 10) : todayStr()}</Typography></Box>
+        </Box>
+        {/* 수정자 | 수정일자 — 수정 모드만 */}
+        {viewMode === 'edit' && (
+          <Box sx={lastRowSx}>
+            <Box sx={labelSx}>{t('common.modifier', '수정자')}</Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{fmtPerson(user?.name, user?.department, user?.position)}</Typography></Box>
+            <Box sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Box>
+            <Box sx={valSx}><Typography variant="body2">{todayStr()}</Typography></Box>
+          </Box>
+        )}
       </Box>
       {/* Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
@@ -617,6 +633,16 @@ const WemPlanTab: React.FC = () => {
             {f.node}
           </Box>
         ))}
+        <Box>
+          <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.creator', '작성자')}</Typography>
+          <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{fmtPerson(detail?.createdByName || user?.name, detail?.createdByTeam || user?.department, detail?.createdByPosition || user?.position)}</Typography>
+        </Box>
+        {viewMode === 'edit' && (
+          <Box>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifier', '수정자')}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{fmtPerson(user?.name, user?.department, user?.position)}</Typography>
+          </Box>
+        )}
       </Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>

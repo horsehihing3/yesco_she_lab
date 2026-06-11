@@ -1,7 +1,6 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
 import { isEhsManager } from '../../utils/auth'
 import { useState, useMemo } from 'react'
-import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, TextField, Button, Table, TableBody, TableCell,
@@ -614,7 +613,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           {/* 작성자 | 작성일자 */}
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('common.creator', '작성자')}</Box>
-            <Box sx={valBorderSx}><Typography variant="body2">{d.writer || d.createdByName || ''}</Typography></Box>
+            <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.createdByDept, d.createdByName || d.writer, '')}</Typography></Box>
             <Box sx={labelSx}>{t('audit.createdAt', '작성일자')}</Box>
             <Box sx={valSx}><Typography variant="body2">{formatDate(d.createdAt)}</Typography></Box>
           </Box>
@@ -622,7 +621,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           {d.modifiedAt && d.modifiedAt !== d.createdAt && (
             <Box sx={rowSx}>
               <Box sx={labelSx}>{t('common.modifier', '수정자')}</Box>
-              <Box sx={valBorderSx}><Typography variant="body2">{d.modifiedByName || ''}</Typography></Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{formatUserName('', d.modifiedByName, '')}</Typography></Box>
               <Box sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Box>
               <Box sx={valSx}><Typography variant="body2">{formatDate(d.modifiedAt)}</Typography></Box>
             </Box>
@@ -798,7 +797,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
         <Box sx={rowSx}>
           <Box sx={labelSx}>{t('common.creator', '작성자')}</Box>
           <Box sx={valBorderSx}>
-            <Typography variant="body2">{formData.writer || ''}</Typography>
+            <Typography variant="body2">{formatUserName(user?.department, formData.writer || user?.name, '')}</Typography>
           </Box>
           <Box sx={labelSx}>{t('audit.createdAt', '작성일자')}</Box>
           <Box sx={valSx}>

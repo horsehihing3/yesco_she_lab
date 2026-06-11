@@ -37,6 +37,8 @@ export interface RiskAssessment {
   title: string
   site: string
   authorName: string
+  authorTeam?: string | null
+  authorPosition?: string | null
   authorDept: string
   authorMail: string
   approverName?: string
@@ -135,6 +137,8 @@ export interface RiskAssessmentRequest {
   title: string
   site: string
   authorName?: string
+  authorTeam?: string
+  authorPosition?: string
   authorDept?: string
   authorMail?: string
   approverName?: string

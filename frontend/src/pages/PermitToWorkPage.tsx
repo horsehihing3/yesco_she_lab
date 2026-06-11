@@ -1,9 +1,7 @@
 ﻿import { formatUserName } from '../utils/userDisplay'
 import { isEhsManager } from '../utils/auth'
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { fmtPerson } from '../utils/personFormat'
 import { useButtonRules } from '../hooks/useButtonRules'
-import { Role } from '../data/buttonManageData'
 import { fmtPhone } from '../utils/phoneFormat'
 import { contractorRegistrationApi } from '../api/contractorRegistrationApi'
 import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -94,11 +92,14 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   const isExternalMode = mode === 'external'
   const { canSee } = useButtonRules()
   const MENU = isExternalMode ? '협력 업체 관리 › 협력 업체 작업 허가' : '안전 관리 › 작업 허가 › 허가 신청'
-  const isAdminUser = isEhsManager(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
-  const getItemRoles = (item: { planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+  const getItemRoles = (item: { planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null; createdByUserId?: number|null; requesterId?: string|null }): string[] => {
     const normalizeName = (s?: string | null) => (s || '').trim()
     const roles: string[] = [...myRoles]
+    // writer: createdByUserId 또는 requesterId(UID)로 실제 작성자 여부 판별
+    const isWriter = (item.createdByUserId != null && user?.id != null && item.createdByUserId === user?.id)
+      || (item.requesterId != null && normalizeName(item.requesterId) === normalizeName(myId))
+    if (isWriter && !roles.includes('writer')) roles.push('writer')
     if (mode === 'all') { if (!roles.includes('planApprover')) roles.push('planApprover', 'completionApprover') }
     else {
       if ((item.planApproverUserId && item.planApproverUserId === user?.id) || (item.planApproverName && normalizeName(item.planApproverName) === normalizeName(user?.name))) roles.push('planApprover')
@@ -353,12 +354,11 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     if (users.length > 0) {
       const u = users[0]
       if (userPickTarget === 'planApprover') {
-        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name }))
+        setForm(f => ({ ...f, planApproverUserId: u.id, planApproverTeam: u.department || '', planApproverName: u.name, planApproverPosition: u.position || '' }))
       } else if (userPickTarget === 'completionApprover') {
-        setForm(f => ({ ...f, completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name }))
+        setForm(f => ({ ...f, completionApproverUserId: u.id, completionApproverTeam: u.department || '', completionApproverName: u.name, completionApproverPosition: u.position || '' }))
       } else {
-        // 기본은 inspector (이전 동작 유지)
-        setForm(f => ({ ...f, inspectorName: u.name }))
+        setForm(f => ({ ...f, inspectorName: formatUserName(u.department, u.name, u.position) }))
       }
     }
     setShowUserModal(false)
@@ -553,7 +553,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.type')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{getPermitTypeLabel(selectedItem.permitType)}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.riskLevel')}</Typography><Box sx={dValSx}><Chip label={getRiskLabel(selectedItem.riskLevel)} color={RISK_COLORS[selectedItem.riskLevel] || 'default'} size="small" /></Box></Box>
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.title')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.title}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.workersCount')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workersCount || 0}명</Typography></Box></Box>
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.workLocation')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workLocation || ''}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.workPeriod')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workStartDate?.replace('T', ' ').substring(0, 16) || ''} ~ {selectedItem.workEndDate?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box></Box>
-            <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.requester')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requesterName || ''} ({selectedItem.requesterDept || ''})</Typography></Box><Typography sx={dLabelSx}>{t('ptw.approver')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.approverName || ''} ({selectedItem.approverDept || ''})</Typography></Box></Box>
+            <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('common.creator', '작성자')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatUserName(selectedItem.createdByTeam || selectedItem.requesterDept, selectedItem.createdByName || selectedItem.requesterName, selectedItem.createdByPosition || '')}</Typography></Box></Box>
             {/* 계획 / 완료 결재자 표시 */}
             <Box sx={dRowSx}>
               <Typography sx={dLabelSx}>{t('common.planApprover', '계획 승인자')}</Typography>
@@ -612,8 +612,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               [t('ptw.title'), selectedItem.title],
               [t('ptw.workLocation'), selectedItem.workLocation],
               [t('ptw.workPeriod'), `${selectedItem.workStartDate?.replace('T', ' ').substring(0, 16) || ''} ~ ${selectedItem.workEndDate?.replace('T', ' ').substring(0, 16) || ''}`],
-              [t('ptw.requester'), `${selectedItem.requesterName || ''} (${selectedItem.requesterDept || ''})`],
-              [t('ptw.approver'), `${selectedItem.approverName || ''} (${selectedItem.approverDept || ''})`],
+              [t('common.creator', '작성자'), formatUserName(selectedItem.createdByTeam || selectedItem.requesterDept, selectedItem.createdByName || selectedItem.requesterName, selectedItem.createdByPosition || '')],
               [t('ptw.workersCount'), `${selectedItem.workersCount || 0}명`],
               [t('ptw.requiredPpe'), selectedItem.requiredPpe],
               [t('ptw.emergencyContact'), selectedItem.emergencyContact],
@@ -809,7 +808,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
             <Box sx={valSxBorder}>
               <Typography variant="body2">
-                {(selectedItem?.requesterName) || user?.name || user?.username || ''}
+                {formatUserName(selectedItem?.createdByTeam || user?.department, selectedItem?.createdByName || user?.name, selectedItem?.createdByPosition || user?.position)}
               </Typography>
             </Box>
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
@@ -865,14 +864,14 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             <Box sx={{ ...valSxBorder, display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField size="small" fullWidth InputProps={{ readOnly: true }}
                 placeholder={t('common.selectFromOrg', '조직도에서 선택')}
-                value={form.planApproverName || ''} />
+                value={formatUserName(form.planApproverTeam, form.planApproverName, form.planApproverPosition)} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => { setUserPickTarget('planApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
             <Typography sx={labelSx}>{t('common.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valSx, display: 'flex', gap: 0.5, alignItems: 'center' }}>
               <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
                 placeholder={t('common.selectFromOrg', '조직도에서 선택')}
-                value={form.completionApproverName || ''} />
+                value={formatUserName(form.completionApproverTeam, form.completionApproverName, form.completionApproverPosition)} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => { setUserPickTarget('completionApprover'); setShowUserModal(true) }}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
@@ -1133,6 +1132,34 @@ const PostWorkInspectionContent: React.FC = () => {
   const { getLabel: getPermitTypeLabel } = useCodeMap('PERMIT_TYPE')
   const { getLabel: getStatusLabel } = useCodeMap('PERMIT_STATUS')
   const { getLabel: getRiskLabel } = useCodeMap('RISK_LEVEL')
+  const { canSee } = useButtonRules()
+  const MENU = '안전 관리 › 작업 허가 › 작업 완료 후 점검'
+  const myId = user?.username || user?.email || ''
+  const isAdminUser = isEhsManager(user)
+  const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
+  const getItemRoles = (item: PermitToWork): string[] => {
+    const roles: string[] = [...myRoles]
+    const normalizeName = (s?: string | null) => (s || '').trim()
+    if ((item.createdByUserId != null && user?.id != null && item.createdByUserId === user?.id)
+      || (item.requesterId != null && normalizeName(item.requesterId) === normalizeName(myId))) {
+      if (!roles.includes('writer')) roles.push('writer')
+    }
+    // 점검자 → auditor 역할 (plain name 또는 "팀 / 성명 직위" 포맷 모두 처리)
+    if (item.inspectorName && user?.name) {
+      const ins = normalizeName(item.inspectorName)
+      const uname = normalizeName(user.name)
+      if (ins === uname || ins.includes(uname)) {
+        if (!roles.includes('auditor')) roles.push('auditor')
+      }
+    }
+    const noCA = !item.completionApproverUserId && !normalizeName(item.completionApproverName)
+    if ((noCA && isAdminUser)
+      || (item.completionApproverUserId && item.completionApproverUserId === user?.id)
+      || (item.completionApproverName && normalizeName(item.completionApproverName) === normalizeName(user?.name))) {
+      if (!roles.includes('completionApprover')) roles.push('completionApprover')
+    }
+    return roles
+  }
 
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list')
   const [selectedItem, setSelectedItem] = useState<PermitToWork | null>(null)
@@ -1425,40 +1452,33 @@ const PostWorkInspectionContent: React.FC = () => {
         {/* Buttons — 완료 결재 흐름 */}
         {(() => {
           const status = selectedItem.status
-          const normalizeName = (s?: string | null) => (s || '').trim()
-          const isCompletionApprover = !!user && (
-            (!!selectedItem.completionApproverUserId && selectedItem.completionApproverUserId === user.id) ||
-            (!!selectedItem.completionApproverName && normalizeName(selectedItem.completionApproverName) === normalizeName(user.name))
-          )
-          const isAdminRole = isEhsManager(user)
-          const noCompletionApproverAssigned = !selectedItem.completionApproverUserId && !normalizeName(selectedItem.completionApproverName)
-          const canApproveCompletion = isAdminRole || isCompletionApprover || noCompletionApproverAssigned
+          const itemRoles = getItemRoles(selectedItem)
           return (
             <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' }, flexWrap: 'wrap' }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list')}</Button>
 
               {/* APPROVED → 체크리스트 저장 / 완료 결재 상신 */}
-              {status === 'APPROVED' && (
-                <>
-                  <Button variant="contained" onClick={handleSaveChecklist} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
-                  <Button variant="contained" color="info" onClick={handleCompletionSubmit} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
-                    {t('permit.completionSubmit', '완료 결재 상신')}
-                  </Button>
-                </>
+              {status === 'APPROVED' && canSee(MENU, 'APPROVED', '저장', itemRoles) && (
+                <Button variant="contained" onClick={handleSaveChecklist} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
+              )}
+              {status === 'APPROVED' && canSee(MENU, 'APPROVED', '완료 결재 상신', itemRoles) && (
+                <Button variant="contained" color="info" onClick={handleCompletionSubmit} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                  {t('permit.completionSubmit', '완료 결재 상신')}
+                </Button>
               )}
 
               {/* COMPLETION_PENDING → 완료 결재 반려 / 완료 결재 승인 */}
-              {status === 'COMPLETION_PENDING' && canApproveCompletion && (
-                <>
-                  <Button variant="contained" color="warning" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={() => setRejectDialogOpen(true)}>
-                    {t('permit.completionReject', '완료 결재 반려')}
-                  </Button>
-                  <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
-                    onClick={handleCompletionApprove}>
-                    {t('permit.completionApprove', '완료 결재 승인')}
-                  </Button>
-                </>
+              {status === 'COMPLETION_PENDING' && canSee(MENU, 'COMPLETION_PENDING', '완료 결재 반려', itemRoles) && (
+                <Button variant="contained" color="warning" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={() => setRejectDialogOpen(true)}>
+                  {t('permit.completionReject', '완료 결재 반려')}
+                </Button>
+              )}
+              {status === 'COMPLETION_PENDING' && canSee(MENU, 'COMPLETION_PENDING', '완료 결재 승인', itemRoles) && (
+                <Button variant="contained" color="success" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}
+                  onClick={handleCompletionApprove}>
+                  {t('permit.completionApprove', '완료 결재 승인')}
+                </Button>
               )}
             </Box>
           )
@@ -1483,13 +1503,6 @@ const PostWorkInspectionContent: React.FC = () => {
 }
 
 // =============================================
-// Tab 4: 관리자 (Admin) - reuses original PermitToWorkContent with mode="all"
-// =============================================
-const AdminContent: React.FC = () => {
-  return <PermitApplicationContent mode="all" />
-}
-
-// =============================================
 // Main Page with 4 Tabs
 // =============================================
 const PermitToWorkPage: React.FC = () => {
@@ -1508,14 +1521,12 @@ const PermitToWorkPage: React.FC = () => {
         <Tab label={t('common.dashboard', '대시보드')} />
         <Tab label={t('permit.myApplication', '작업 허가 신청')} />
         <Tab label={t('permit.postWorkInspection', '작업 완료 후 점검')} />
-        <Tab label={t('permit.admin', '관리자')} />
         <Tab label={t('common.report', '레포트')} />
       </Tabs>
       {activeTab === 0 && <PermitDashboardTab />}
       {activeTab === 1 && <PermitApplicationContent mode="my" />}
       {activeTab === 2 && <PostWorkInspectionContent />}
-      {activeTab === 3 && <AdminContent />}
-      {activeTab === 4 && <PermitReportTab />}
+      {activeTab === 3 && <PermitReportTab />}
     </Box>
   )
 }

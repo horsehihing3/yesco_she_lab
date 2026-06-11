@@ -56,19 +56,20 @@ export interface MenuEntry {
 export const ROLES: { key: Role; label: string; desc: string }[] = [
   { key: 'guest',              label: '일반 사용자', desc: '로그인 사용자 (작성자·승인자·관리자 제외)' },
   { key: 'writer',             label: '작성자',      desc: '해당 레코드를 직접 작성한 사용자' },
-  { key: 'auditor',            label: '감사원',      desc: '해당 감사 실시에 지정된 감사원 본인' },
+  { key: 'auditor',            label: '감사원/점검자', desc: '감사 탭: 지정된 감사원 본인 / 점검 탭: 지정된 점검자 본인' },
   { key: 'superAdmin',         label: '슈퍼관리자',   desc: 'SYSTEM_ADMIN (Super Admin) 역할' },
   { key: 'planApprover',       label: '계획 승인자', desc: '레코드에 지정된 계획 승인자 본인' },
   { key: 'completionApprover', label: '완료 승인자', desc: '레코드에 지정된 완료 승인자 본인' },
 ]
 
 // ─── 헬퍼 ────────────────────────────────────────────────────────────────────
-export const ALL_ON:       Record<Role, boolean> = { guest: true,  writer: true,  auditor: false, superAdmin: true,  planApprover: true,  completionApprover: true  }
-export const ALL_OFF:      Record<Role, boolean> = { guest: false, writer: false, auditor: false, superAdmin: false, planApprover: false, completionApprover: false }
-export const WRITER_ADMIN: Record<Role, boolean> = { guest: false, writer: true,  auditor: false, superAdmin: true,  planApprover: false, completionApprover: false }
-export const ADMIN_PLAN:   Record<Role, boolean> = { guest: false, writer: false, auditor: false, superAdmin: true,  planApprover: true,  completionApprover: false }
-export const ADMIN_COMP:   Record<Role, boolean> = { guest: false, writer: false, auditor: false, superAdmin: true,  planApprover: false, completionApprover: true  }
-export const WRITER_ONLY:  Record<Role, boolean> = { guest: false, writer: true,  auditor: false, superAdmin: false, planApprover: false, completionApprover: false }
+export const ALL_ON:        Record<Role, boolean> = { guest: true,  writer: true,  auditor: false, superAdmin: true,  planApprover: true,  completionApprover: true  }
+export const ALL_OFF:       Record<Role, boolean> = { guest: false, writer: false, auditor: false, superAdmin: false, planApprover: false, completionApprover: false }
+export const WRITER_ADMIN:  Record<Role, boolean> = { guest: false, writer: true,  auditor: false, superAdmin: true,  planApprover: false, completionApprover: false }
+export const ADMIN_PLAN:    Record<Role, boolean> = { guest: false, writer: false, auditor: false, superAdmin: true,  planApprover: true,  completionApprover: false }
+export const ADMIN_COMP:    Record<Role, boolean> = { guest: false, writer: false, auditor: false, superAdmin: true,  planApprover: false, completionApprover: true  }
+export const WRITER_ONLY:   Record<Role, boolean> = { guest: false, writer: true,  auditor: false, superAdmin: false, planApprover: false, completionApprover: false }
+export const AUDITOR_ADMIN: Record<Role, boolean> = { guest: false, writer: false, auditor: true,  superAdmin: true,  planApprover: false, completionApprover: false }
 
 // ─── 셀 키 ───────────────────────────────────────────────────────────────────
 export const cellKey = (mi: number, si: number, bi: number, role: Role) =>
@@ -286,17 +287,17 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [{ button: '신규 등록', roles: ALL_OFF }] },
       { status: 'PREPARING', statusLabel: '준비중', statusColor: 'warning',
         buttons: [
-          { button: '저장 (감사 정보)',   roles: ALL_ON },
-          { button: '진행중 (상태 전환)', roles: ALL_ON },
+          { button: '저장 (감사 정보)',   roles: AUDITOR_ADMIN },
+          { button: '진행중 (상태 전환)', roles: AUDITOR_ADMIN },
         ] },
       { status: 'IN_PROGRESS', statusLabel: '진행중', statusColor: 'info',
         buttons: [
-          { button: '저장 (감사 정보)', roles: ALL_ON },
-          { button: '완료 결재 상신',   roles: ALL_ON, issue: '권한 체크 없음 — 누구든 완료 결재 상신 가능' },
+          { button: '저장 (감사 정보)', roles: AUDITOR_ADMIN },
+          { button: '완료 결재 상신',   roles: AUDITOR_ADMIN },
         ] },
       { status: 'PENDING_CLOSE', statusLabel: '종료확인대기', statusColor: 'warning',
         buttons: [
-          { button: '저장 (감사 정보)', roles: ALL_ON },
+          { button: '저장 (감사 정보)', roles: AUDITOR_ADMIN },
           { button: '반려',             roles: ADMIN_COMP },
           { button: '완료 승인',        roles: ADMIN_COMP },
         ] },
@@ -508,6 +509,27 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '완료 결재 반려', roles: ADMIN_COMP },
           { button: '완료 결재 승인', roles: ADMIN_COMP },
         ] },
+    ],
+  },
+
+  // ── 작업허가 › 작업 완료 후 점검 ────────────────────────────────────────────
+  {
+    menuPath: '안전 관리 › 작업 허가 › 작업 완료 후 점검', menuKey: 'nav.permitToWork',
+    statuses: [
+      { status: 'APPROVED', statusLabel: '점검 진행 중', statusColor: 'info',
+        statusNote: '계획 결재 승인 후 체크리스트 점검 단계',
+        buttons: [
+          { button: '저장',           roles: AUDITOR_ADMIN },
+          { button: '완료 결재 상신', roles: AUDITOR_ADMIN },
+        ] },
+      { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        statusNote: '완료승인자 미지정 시 isAdminRole 사용자에게도 completionApprover 역할 부여',
+        buttons: [
+          { button: '완료 결재 반려', roles: ADMIN_COMP },
+          { button: '완료 결재 승인', roles: ADMIN_COMP },
+        ] },
+      { status: 'DONE', statusLabel: '완료', statusColor: 'success',
+        buttons: [] },
     ],
   },
 

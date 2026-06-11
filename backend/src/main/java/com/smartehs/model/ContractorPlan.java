@@ -62,6 +62,10 @@ public class ContractorPlan {
     private String createdByTeam;
     private String createdByPosition;
     private String modifiedBy;
+    private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
+    private Long modifiedByUserId;
     private Boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

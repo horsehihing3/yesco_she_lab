@@ -83,6 +83,9 @@ public class PermitToWorkController {
                 request.setCreatedByTeam(u.getGroupName());
                 request.setCreatedByPosition(u.getTitleName());
             }
+            if (request.getRequesterId() == null || request.getRequesterId().isEmpty()) {
+                request.setRequesterId(authentication.getName());
+            }
         }
         return ResponseEntity.ok(ApiResponse.success(service.create(request)));
     }

@@ -1,6 +1,5 @@
 ﻿import { formatUserName } from '../utils/userDisplay'
 import React, { useState, useEffect, useRef } from 'react'
-import { fmtPerson } from '../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -592,7 +591,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
             <Box sx={dRowSx}>
               <Typography sx={dLabelSx}>수정자</Typography>
-              <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.modifiedBy || ''}</Typography></Box>
+              <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)}</Typography></Box>
               <Typography sx={dLabelSx}>수정일자</Typography>
               <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography></Box>
             </Box>
@@ -623,7 +622,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             ['작성자', selectedItem.modifiedBy || ''],
             ['작성일자', selectedItem.createdAt?.replace('T', ' ').substring(0, 16) || ''],
             ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
-              ['수정자', selectedItem.modifiedBy || ''],
+              ['수정자', formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
               ['수정일자', selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
             ] : []),
             ['계획 승인자', formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
@@ -969,7 +968,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>수정자</Typography>
               <Box sx={valSxBorder}>
-                <Typography variant="body2">{user?.name || ''}</Typography>
+                <Typography variant="body2">{formatUserName(user?.department, user?.name, user?.position)}</Typography>
               </Box>
               <Typography sx={labelSx}>수정일자</Typography>
               <Box sx={valSx}>
@@ -1199,7 +1198,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Box sx={{ flex: 1 }}>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>수정자</Typography>
-                <Typography variant="body2" sx={{ px: 1.5 }}>{user?.name || ''}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5 }}>{formatUserName(user?.department, user?.name, user?.position)}</Typography>
               </Box>
               <Box sx={{ flex: 1 }}>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>수정일자</Typography>
