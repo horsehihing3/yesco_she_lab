@@ -174,6 +174,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [
           { button: '수정', roles: WRITER_ADMIN },
           { button: '삭제', roles: WRITER_ADMIN },
+          { button: '참석자 서명 알림', roles: WRITER_ADMIN },
         ] },
     ],
   },
@@ -732,6 +733,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         buttons: [
           { button: '수정', roles: WRITER_ADMIN },
           { button: '삭제', roles: WRITER_ADMIN },
+          { button: '참석자 서명 알림', roles: WRITER_ADMIN },
         ] },
     ],
   },

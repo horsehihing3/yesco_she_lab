@@ -169,9 +169,10 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const myRoles = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
-  const canNew  = canSee(menuPath, 'LIST',   'New', myRoles)
-  const canEdit = canSee(menuPath, 'DETAIL', '수정', myRoles)
-  const canDel  = canSee(menuPath, 'DETAIL', '삭제', myRoles)
+  const canNew    = canSee(menuPath, 'LIST',   'New', myRoles)
+  const canEdit   = canSee(menuPath, 'DETAIL', '수정', myRoles)
+  const canDel    = canSee(menuPath, 'DETAIL', '삭제', myRoles)
+  const canNotify = canSee(menuPath, 'DETAIL', '참석자 서명 알림', myRoles)
   // DEBUG: 권한 확인용 — 문제 해결 후 제거
   if (import.meta.env.DEV) console.log('[OshCommitteeTab]', { menuPath, userRole: user?.role, myRoles, canNew })
 
@@ -777,9 +778,9 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 3 }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ width: 'auto' }}>{t('common.backToList')}</Button>
-              {canEdit && (
+              {canNotify && (
                 <Button variant="contained" color="info" onClick={handleSendSignLinks} disabled={sendingLinks} sx={{ width: 'auto' }}>
-                  {sendingLinks ? '발송 중...' : '발송'}
+                  {sendingLinks ? '발송 중...' : '참석자 서명 알림'}
                 </Button>
               )}
               {canEdit && (
@@ -890,9 +891,9 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', gap: 1, mt: 3, flexWrap: 'wrap' }}>
               <Button variant="outlined" onClick={handleBackToList} sx={{ flex: 1 }}>{t('common.backToList')}</Button>
-              {canEdit && (
+              {canNotify && (
                 <Button variant="contained" color="info" onClick={handleSendSignLinks} disabled={sendingLinks} sx={{ flex: 1 }}>
-                  {sendingLinks ? '발송 중...' : '발송'}
+                  {sendingLinks ? '발송 중...' : '참석자 서명 알림'}
                 </Button>
               )}
               {canEdit && (
