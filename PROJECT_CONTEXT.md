@@ -8,6 +8,15 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
+### ✅ 완료 — writer 역할 전면 적용 (2026-06-11 세션 7, commit c854497)
+- [x] EmrContactTab, ContractorRegistrationPage getRoles 추가 (마지막 2개 파일)
+- [x] ContractorRegistration 프론트 타입에 createdByUserId 추가
+- [x] V219: 17개 테이블 created_by_user_id/name/team/position 컬럼 추가 (DB 적용 완료)
+- [x] 7개 컨트롤러/서비스 create 시 createdBy 4필드 자동 세팅
+  - DiseasePreventionMgmtController (Dp 7종), OccupationalDiseaseController (Od 5종)
+  - EmergencyContactController, ContractorRegistrationController
+  - HealthCheckupRecordController, LegalLawService+Controller, EhsManagerService+Controller
+
 ### ✅ 완료 — canSee generalAdminRoles 전면 수정 (2026-06-11 세션 6)
 - [x] `useButtonRules.ts` — `generalAdminRoles` 체크 누락 수정 (TEAM_ADMIN 등 concrete role이 canSee에서 항상 false 반환되던 버그)
 - [x] `buttonManageData.ts` — WEM 4탭 status code 수정 (`PLANNED/IN_PROGRESS/...` → `DETAIL`) + generalAdminRoles 추가
