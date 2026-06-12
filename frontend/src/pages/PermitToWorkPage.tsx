@@ -100,11 +100,9 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     const isWriter = (item.createdByUserId != null && user?.id != null && item.createdByUserId === user?.id)
       || (item.requesterId != null && normalizeName(item.requesterId) === normalizeName(myId))
     if (isWriter && !roles.includes('writer')) roles.push('writer')
-    if (mode === 'all') { if (!roles.includes('planApprover')) roles.push('planApprover', 'completionApprover') }
-    else {
-      if ((item.planApproverUserId && item.planApproverUserId === user?.id) || (item.planApproverName && normalizeName(item.planApproverName) === normalizeName(user?.name))) roles.push('planApprover')
-      if ((item.completionApproverUserId && item.completionApproverUserId === user?.id) || (item.completionApproverName && normalizeName(item.completionApproverName) === normalizeName(user?.name))) roles.push('completionApprover')
-    }
+    // 계획/완료 승인자: 레코드 지정 승인자 본인 매칭 (전체 탭 포함 동일 — 누구나 승인 우회 제거)
+    if ((item.planApproverUserId && item.planApproverUserId === user?.id) || (item.planApproverName && normalizeName(item.planApproverName) === normalizeName(user?.name))) roles.push('planApprover')
+    if ((item.completionApproverUserId && item.completionApproverUserId === user?.id) || (item.completionApproverName && normalizeName(item.completionApproverName) === normalizeName(user?.name))) roles.push('completionApprover')
     return roles
   }
 

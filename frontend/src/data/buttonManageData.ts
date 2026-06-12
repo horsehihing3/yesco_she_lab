@@ -494,10 +494,10 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '삭제', roles: WRITER_ADMIN },
         ] },
       { status: 'PENDING_APPROVAL/REQUESTED', statusLabel: '계획 결재 대기', statusColor: 'warning',
-        statusNote: '전체 탭(mode=all)에서는 모든 사용자가 승인 가능 (⚠️ 화면 isAdminTab 우회 — 코드 보완 필요)',
+        statusNote: '지정된 계획승인자 본인 + 슈퍼만 승인/반려 (전체 탭 우회 제거됨)',
         buttons: [
-          { button: '계획 결재 반려', roles: ADMIN_PLAN, issue: '화면(전체 탭) isAdminTab 우회 — canSee 미반영 가능' },
-          { button: '계획 결재 승인', roles: ADMIN_PLAN, issue: '화면(전체 탭) isAdminTab 우회 — canSee 미반영 가능' },
+          { button: '계획 결재 반려', roles: ADMIN_PLAN },
+          { button: '계획 결재 승인', roles: ADMIN_PLAN },
         ] },
       { status: 'APPROVED', statusLabel: '승인완료', statusColor: 'info',
         statusNote: '완료 결재 흐름은 "작업 완료 후 점검" 탭에서 처리 (점검자 기준)',
