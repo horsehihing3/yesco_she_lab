@@ -167,7 +167,7 @@ const CarbonDashboardTab: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {statCards.map((card, idx) => (
           <Grid item xs={6} md={4} key={idx}>
-            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color}}>
+            <Paper variant="outlined" sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>{card.label}</Typography>
               <Typography variant="h5" fontWeight="bold">{card.value}</Typography>
             </Paper>
@@ -253,14 +253,17 @@ const CarbonDashboardTab: React.FC = () => {
         {kpiCards.map((card) => (
           <Paper
             key={card.label}
-            sx={{
-              p: 3,
-              borderRadius: 2,
+            sx={(theme: any) => ({
+              p: 2.5,
+              pl: 3,
               display: 'flex',
               flexDirection: 'column',
-              borderLeft: 4, borderColor: card.borderColor, borderLeftColor: card.borderColor,
+              position: 'relative',
+              overflow: 'hidden',
               bgcolor: cardBgColor,
-            }}
+              ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }),
+              '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' },
+            })}
           >
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
               {card.label}

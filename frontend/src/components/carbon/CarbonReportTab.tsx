@@ -103,11 +103,15 @@ const CarbonReportTab: React.FC = () => {
         {statCards.map((card, idx) => (
           <Grid item xs={6} md={3} key={idx}>
             <Paper
-              sx={{
-                p: 3,
+              sx={(theme: any) => ({
+                p: 2.5,
+                pl: 3,
+                position: 'relative',
+                overflow: 'hidden',
                 bgcolor: paperBg,
-                borderLeft: 4, borderColor: card.color, borderLeftColor: card.color,
-              }}
+                ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }),
+                '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' },
+              })}
             >
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                 {card.label}

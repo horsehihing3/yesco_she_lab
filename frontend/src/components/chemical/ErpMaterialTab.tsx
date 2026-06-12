@@ -14,6 +14,7 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { erpMaterialApi } from '../../api/chemicalApi'
 import type { ErpMaterial } from '../../types/chemical.types'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -260,28 +261,16 @@ const ErpMaterialTab: React.FC = () => {
       {/* Metrics Cards */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.erp.totalMaterial')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="primary">{totalElements}</Typography>
-          </Paper>
+          <StatCard color="blue" value={totalElements} label={t('chem.erp.totalMaterial')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.erp.normalStock')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="success.main"></Typography>
-          </Paper>
+          <StatCard color="green" value={''} label={t('chem.erp.normalStock')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.erp.lowStock')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="warning.main"></Typography>
-          </Paper>
+          <StatCard color="yellow" value={''} label={t('chem.erp.lowStock')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.erp.expiringSoon')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="error"></Typography>
-          </Paper>
+          <StatCard color="red" value={''} label={t('chem.erp.expiringSoon')} />
         </Grid>
       </Grid>
 

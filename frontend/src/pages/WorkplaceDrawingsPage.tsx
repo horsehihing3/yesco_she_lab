@@ -876,8 +876,13 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
 
   // 트리 확장 상태 — 기본은 모든 사업장 펼침
   const [expandedSites, setExpandedSites] = useState<string[]>([])
+  // site.id 가 누락된 데이터에 대해서도 trees node id 가 충돌하지 않도록 index 폴백
+  const siteNodeIdOf = (site: WorkplaceSite | null, idx: number): string => {
+    if (!site) return 's-_none_'
+    return site.id != null ? `s-${site.id}` : `s-_missing_${idx}`
+  }
   useEffect(() => {
-    setExpandedSites(groupedBySite.map(g => g.site ? `s-${g.site.id}` : 's-_none_'))
+    setExpandedSites(groupedBySite.map((g, idx) => siteNodeIdOf(g.site, idx)))
   }, [groupedBySite])
 
   // 사업장 삭제 mutation
@@ -920,8 +925,8 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
         }
       }}
     >
-      {groupedBySite.map(({ site, drawings }) => {
-        const siteNodeId = site ? `s-${site.id}` : 's-_none_'
+      {groupedBySite.map(({ site, drawings }, idx) => {
+        const siteNodeId = siteNodeIdOf(site, idx)
         const siteLabel = site
           ? `[${site.buildingNumber}] ${site.siteName}`
           : '(사업장 미지정)'

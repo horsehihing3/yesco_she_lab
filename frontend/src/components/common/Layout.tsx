@@ -71,10 +71,10 @@ const Layout: React.FC = () => {
           >
             <MenuIcon />
           </IconButton>
-          {/* Logo */}
+          {/* Logo - 다크·예스코 → 흰색 로고 / 라이트 → 컬러 로고 */}
           <Box onClick={() => navigate('/')} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }}>
             <Box component="img"
-              src={isDarkMode ? '/assets/logo_yesco.png' : '/assets/logo_yesco_on.png'}
+              src={(isDarkMode || isYescoMode) ? '/assets/logo_yesco.png' : '/assets/logo_yesco_on.png'}
               alt="YESCO SHE" />
           </Box>
           <Box sx={{ flexGrow: 1 }} />

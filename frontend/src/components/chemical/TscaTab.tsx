@@ -13,11 +13,11 @@ import { useAlert } from '../../contexts/AlertContext'
 import useCodeMap from '../../hooks/useCodeMap'
 import { chemicalTscaApi } from '../../api/chemicalApi'
 import type { ChemicalTsca } from '../../types/chemical.types'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const metricCardSx = (theme: any) => ({ p: 2, textAlign: 'center', borderRadius: 1, border: 1, borderColor: theme.isYesco ? '#0F2147' : theme.palette.divider })
 const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
 const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
@@ -244,28 +244,16 @@ const TscaTab: React.FC = () => {
       {/* Metrics Cards */}
       <Grid container spacing={2} mb={3}>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.tsca.totalSubject', 'TSCA 해당 물질')}</Typography>
-            <Typography variant="h5" fontWeight="bold">{totalElements}</Typography>
-          </Paper>
+          <StatCard color="blue" value={totalElements} label={t('chem.tsca.totalSubject', 'TSCA 해당 물질')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.tsca.listed', 'Inventory 등재')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="success.main">{listedCount}</Typography>
-          </Paper>
+          <StatCard color="green" value={listedCount} label={t('chem.tsca.listed', 'Inventory 등재')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.tsca.unlisted', '미등재(신고필요)')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="error.main">{unlistedCount}</Typography>
-          </Paper>
+          <StatCard color="red" value={unlistedCount} label={t('chem.tsca.unlisted', '미등재(신고필요)')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.tsca.pmnRequired', '우선심사물질')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="warning.main">{pmnCount}</Typography>
-          </Paper>
+          <StatCard color="yellow" value={pmnCount} label={t('chem.tsca.pmnRequired', '우선심사물질')} />
         </Grid>
       </Grid>
 

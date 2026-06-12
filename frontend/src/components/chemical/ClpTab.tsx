@@ -15,11 +15,11 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { chemicalClpApi } from '../../api/chemicalApi'
 import type { ChemicalClp } from '../../types/chemical.types'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const metricCardSx = (theme: any) => ({ p: 2, textAlign: 'center', borderRadius: 1, border: 1, borderColor: theme.isYesco ? '#0F2147' : theme.palette.divider })
 const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
 const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
@@ -237,28 +237,16 @@ const ClpTab: React.FC = () => {
       {/* Metrics Cards */}
       <Grid container spacing={2} mb={3}>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.clp.totalSubstances', 'CLP 해당 물질')}</Typography>
-            <Typography variant="h5" fontWeight="bold">{totalElements}</Typography>
-          </Paper>
+          <StatCard color="blue" value={totalElements} label={t('chem.clp.totalSubstances', 'CLP 해당 물질')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.clp.classified', '분류 완료')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="success.main">{classifiedCount}</Typography>
-          </Paper>
+          <StatCard color="green" value={classifiedCount} label={t('chem.clp.classified', '분류 완료')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.clp.danger', '위험(Danger)')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="error.main">{dangerCount}</Typography>
-          </Paper>
+          <StatCard color="red" value={dangerCount} label={t('chem.clp.danger', '위험(Danger)')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.clp.warning', '경고(Warning)')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="warning.main">{warningCount}</Typography>
-          </Paper>
+          <StatCard color="yellow" value={warningCount} label={t('chem.clp.warning', '경고(Warning)')} />
         </Grid>
       </Grid>
 

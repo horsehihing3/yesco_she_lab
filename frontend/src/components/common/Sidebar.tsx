@@ -445,9 +445,9 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
             }),
           }}
         >
-          {/* 모드별 YESCO 로고: 다크 → logo_yesco.png(밝은 글자) / 라이트·예스코 → logo_yesco_on.png */}
+          {/* 모드별 YESCO 로고: 다크·예스코 → logo_yesco.png(흰색 로고) / 라이트 → logo_yesco_on.png */}
           <Box component="img"
-            src={isDarkMode ? '/assets/logo_yesco.png' : '/assets/logo_yesco_on.png'}
+            src={(isDarkMode || isYescoMode) ? '/assets/logo_yesco.png' : '/assets/logo_yesco_on.png'}
             alt="YESCO SHE" />
         </Box>
       )}

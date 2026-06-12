@@ -15,6 +15,7 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { chemicalVendorApi } from '../../api/chemicalApi'
 import type { ChemicalVendor } from '../../types/chemical.types'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -262,28 +263,16 @@ const VendorListTab: React.FC = () => {
       {/* Metrics Cards */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.vendor.totalVendor')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="primary">{totalElements}</Typography>
-          </Paper>
+          <StatCard color="blue" value={totalElements} label={t('chem.vendor.totalVendor')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.vendor.gradeA')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="success.main"></Typography>
-          </Paper>
+          <StatCard color="green" value={''} label={t('chem.vendor.gradeA')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.vendor.gradeB')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="warning.main"></Typography>
-          </Paper>
+          <StatCard color="yellow" value={''} label={t('chem.vendor.gradeB')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.vendor.msdsMissing')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="error"></Typography>
-          </Paper>
+          <StatCard color="red" value={''} label={t('chem.vendor.msdsMissing')} />
         </Grid>
       </Grid>
 

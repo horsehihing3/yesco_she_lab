@@ -35,6 +35,7 @@ import { Tabs, Tab, IconButton } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import PpeRequestTab from '../components/environment/PpeRequestTab'
+import StatCard from '../components/legalCompliance/StatCard'
 import ListSearchBar from '../components/common/ListSearchBar'
 import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
 
@@ -591,34 +592,10 @@ const PpeEquipmentPage: React.FC = () => {
       {/* KPI Cards */}
       {kpi && (
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3, flexShrink: 0 }}>
-          <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'primary.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <InventoryIcon color="primary" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{t('ppe.totalItems')}</Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold" color="primary">{kpi.totalItems}</Typography>
-          </Paper>
-          <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'success.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <VerifiedUserIcon color="success" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{'평균 재고율'}</Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold" color="success.main">{Number(kpi.avgWearRate || 0).toFixed(1)}%</Typography>
-          </Paper>
-          <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'warning.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <WarningAmberIcon color="warning" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{t('ppe.expirySoon')}</Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold" color="warning.main">{kpi.expirySoonCount}</Typography>
-          </Paper>
-          <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: 'error.main', ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <ErrorOutlineIcon color="error" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{t('ppe.expiredOrLow')}</Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold" color="error.main">{kpi.expiredCount + kpi.lowStockCount}</Typography>
-          </Paper>
+          <StatCard value={kpi.totalItems} label={t('ppe.totalItems')} />
+          <StatCard value={`${Number(kpi.avgWearRate || 0).toFixed(1)}%`} label={'평균 재고율'} />
+          <StatCard value={kpi.expirySoonCount} label={t('ppe.expirySoon')} />
+          <StatCard value={kpi.expiredCount + kpi.lowStockCount} label={t('ppe.expiredOrLow')} />
         </Box>
       )}
 

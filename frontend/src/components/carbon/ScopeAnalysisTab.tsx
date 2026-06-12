@@ -81,11 +81,15 @@ const ScopeAnalysisTab: React.FC = () => {
         {scopeSummary.scopes.map((card) => (
           <Grid item xs={6} md={4} key={card.scope}>
             <Paper
-              sx={{
-                p: 3,
+              sx={(theme: any) => ({
+                p: 2.5,
+                pl: 3,
+                position: 'relative',
+                overflow: 'hidden',
                 bgcolor: paperBg,
-                borderLeft: 4, borderColor: SCOPE_COLORS[card.scope], borderLeftColor: SCOPE_COLORS[card.scope],
-              }}
+                ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }),
+                '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' },
+              })}
             >
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                 {card.label}

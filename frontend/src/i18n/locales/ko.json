@@ -396,7 +396,7 @@
     "select": "테마 선택",
     "lightMode": "라이트 모드",
     "darkMode": "다크 모드",
-    "yescoMode": "예스코 모드"
+    "yescoMode": "레드 모드"
   },
   "ehsAlert": {
     "title": "EHS 알림",

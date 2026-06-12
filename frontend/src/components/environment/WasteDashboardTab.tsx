@@ -227,7 +227,7 @@ const WasteDashboardTab: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {reportStatCards.map((card, idx) => (
           <Grid item xs={6} md={3} key={idx}>
-            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color}}>
+            <Paper variant="outlined" sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>{card.label}</Typography>
               <Typography variant="h5" fontWeight="bold">{card.value}</Typography>
             </Paper>
@@ -282,7 +282,7 @@ const WasteDashboardTab: React.FC = () => {
           <Paper
             key={card.label}
             variant="outlined"
-            sx={{ p: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', borderLeft: 4, borderColor: card.borderColor, borderLeftColor: card.borderColor}}
+            sx={(theme: any) => ({ p: 2.5, pl: 3, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}
           >
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{card.label}</Typography>
             <Typography variant="h4" fontWeight="bold">{card.value}</Typography>

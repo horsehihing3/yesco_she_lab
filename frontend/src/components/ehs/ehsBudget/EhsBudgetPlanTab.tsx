@@ -277,7 +277,7 @@ const EhsBudgetPlanTab: React.FC = () => {
         <Grid container spacing={2} sx={{ mb: 2 }}>
           {kpiCards.map((card, idx) => (
             <Grid item xs={12} md={4} key={idx}>
-              <Paper sx={(theme: any) => ({ p: 2, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color, ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: card.color }) })}>
+              <Paper sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
                 <Typography variant="caption" color="text.secondary">{card.label}</Typography>
                 <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.5 }}>{card.value}</Typography>
               </Paper>

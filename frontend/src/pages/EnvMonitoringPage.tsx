@@ -20,6 +20,7 @@ import { useAlert } from '../contexts/AlertContext'
 import { envMonitoringApi } from '../api/envMonitoringApi'
 import { EnvMonitoring, EnvMonitoringRequest } from '../types/envMonitoring.types'
 import useCodeMap from '../hooks/useCodeMap'
+import StatCard from '../components/legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -564,34 +565,10 @@ const EnvMonitoringPage: React.FC = () => {
       {/* KPI Cards */}
       {kpi && (
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3, flexShrink: 0 }}>
-          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'success.main' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <CheckCircleOutlineIcon color="success" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{getStatusLabel('NORMAL')}</Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold" color="success.main">{kpi.NORMAL}</Typography>
-          </Paper>
-          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'info.main' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <WarningAmberIcon color="info" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{getStatusLabel('CAUTION')}</Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold" color="info.main">{kpi.CAUTION}</Typography>
-          </Paper>
-          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'warning.main' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <ReportProblemIcon color="warning" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{getStatusLabel('WARNING')}</Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold" color="warning.main">{kpi.WARNING}</Typography>
-          </Paper>
-          <Paper sx={{ p: 2, borderTop: '3px solid', borderColor: 'error.main' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <ErrorOutlineIcon color="error" fontSize="small" />
-              <Typography variant="caption" color="text.secondary">{getStatusLabel('DANGER')}</Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold" color="error.main">{kpi.DANGER}</Typography>
-          </Paper>
+          <StatCard value={kpi.NORMAL} label={getStatusLabel('NORMAL')} />
+          <StatCard value={kpi.CAUTION} label={getStatusLabel('CAUTION')} />
+          <StatCard value={kpi.WARNING} label={getStatusLabel('WARNING')} />
+          <StatCard value={kpi.DANGER} label={getStatusLabel('DANGER')} />
         </Box>
       )}
 

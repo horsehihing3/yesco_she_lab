@@ -15,6 +15,7 @@ import { chemicalIncomingApi, chemicalUsageApi } from '../../api/chemicalApi'
 import { ChemicalIncoming, ChemicalUsage } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -236,22 +237,10 @@ const IncomingUsageTab: React.FC = () => {
             <Box>
               {/* Metrics */}
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, gap: 1.5, mb: 2 }}>
-                <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-                  <Typography variant="caption" color="text.secondary">{t('chem.incoming.totalIncoming')}</Typography>
-                  <Typography variant="h5" fontWeight="bold" color="primary.main">{incomingCount}</Typography>
-                </Paper>
-                <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-                  <Typography variant="caption" color="text.secondary">{t('chem.incoming.totalVolume')}</Typography>
-                  <Typography variant="h5" fontWeight="bold" color="info.main">{incomingQty.toLocaleString()}</Typography>
-                </Paper>
-                <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-                  <Typography variant="caption" color="text.secondary">{t('chem.incoming.msdsUnconfirmed')}</Typography>
-                  <Typography variant="h5" fontWeight="bold" color="error.main">{msdsUnconfirmed}</Typography>
-                </Paper>
-                <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-                  <Typography variant="caption" color="text.secondary">{t('chem.incoming.waitingProcess')}</Typography>
-                  <Typography variant="h5" fontWeight="bold" color="warning.main">{pendingCount}</Typography>
-                </Paper>
+                <StatCard color="blue" value={incomingCount} label={t('chem.incoming.totalIncoming')} />
+                <StatCard color="blue" value={incomingQty.toLocaleString()} label={t('chem.incoming.totalVolume')} />
+                <StatCard color="red" value={msdsUnconfirmed} label={t('chem.incoming.msdsUnconfirmed')} />
+                <StatCard color="yellow" value={pendingCount} label={t('chem.incoming.waitingProcess')} />
               </Box>
 
               {/* Search - PC */}
@@ -431,22 +420,10 @@ const IncomingUsageTab: React.FC = () => {
             <Box>
               {/* Metrics */}
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, gap: 1.5, mb: 2 }}>
-                <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-                  <Typography variant="caption" color="text.secondary">{t('chem.usage2.totalUsage')}</Typography>
-                  <Typography variant="h5" fontWeight="bold" color="primary.main">{usageCount}</Typography>
-                </Paper>
-                <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-                  <Typography variant="caption" color="text.secondary">{t('chem.usage2.totalVolume')}</Typography>
-                  <Typography variant="h5" fontWeight="bold" color="info.main">{usageQty.toLocaleString()}</Typography>
-                </Paper>
-                <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-                  <Typography variant="caption" color="text.secondary">{t('chem.usage2.deptCount')}</Typography>
-                  <Typography variant="h5" fontWeight="bold" color="success.main">{deptCount}</Typography>
-                </Paper>
-                <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-                  <Typography variant="caption" color="text.secondary">{t('chem.usage2.lowStockAlert')}</Typography>
-                  <Typography variant="h5" fontWeight="bold" color="error.main">{lowStockCount}</Typography>
-                </Paper>
+                <StatCard color="blue" value={usageCount} label={t('chem.usage2.totalUsage')} />
+                <StatCard color="blue" value={usageQty.toLocaleString()} label={t('chem.usage2.totalVolume')} />
+                <StatCard color="green" value={deptCount} label={t('chem.usage2.deptCount')} />
+                <StatCard color="red" value={lowStockCount} label={t('chem.usage2.lowStockAlert')} />
               </Box>
 
               {/* Search - PC */}

@@ -12,6 +12,7 @@ import { useAlert } from '../../contexts/AlertContext'
 import NumberField from '../common/NumberField'
 import { chemicalWarehouseApi } from '../../api/chemicalApi'
 import { ChemicalWarehouse } from '../../types/chemical.types'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -271,28 +272,16 @@ const WarehouseTab: React.FC = () => {
       {/* Metrics */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.warehouse.totalWarehouse')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="primary.main">{warehouseCount}</Typography>
-          </Paper>
+          <StatCard color="blue" value={warehouseCount} label={t('chem.warehouse.totalWarehouse')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.warehouse.storedItems')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="info.main">{totalItems}</Typography>
-          </Paper>
+          <StatCard color="blue" value={totalItems} label={t('chem.warehouse.storedItems')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.warehouse.hazardWarehouse')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="error.main">{hazardousCount}</Typography>
-          </Paper>
+          <StatCard color="red" value={hazardousCount} label={t('chem.warehouse.hazardWarehouse')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.erp.expiringSoon')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="warning.main">{expiringCount}</Typography>
-          </Paper>
+          <StatCard color="yellow" value={expiringCount} label={t('chem.erp.expiringSoon')} />
         </Grid>
       </Grid>
 

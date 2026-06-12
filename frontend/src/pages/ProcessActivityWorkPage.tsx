@@ -423,10 +423,14 @@ const ProcessActivityWorkPage: React.FC = () => {
             {/* PC Table */}
             <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider' }}>
               <Table size="small" sx={(theme: any) => {
-                const c = theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)'
-                  : theme.isYesco ? 'rgba(255,255,255,0.35)'
-                  : theme.palette.divider
-                return { '& .MuiTableCell-root': { borderRight: `1px solid ${c} !important` }, '& .MuiTableCell-root:last-child': { borderRight: 'none !important' } }
+                const isDark = theme.palette.mode === 'dark'
+                const headColor = isDark ? 'rgba(255,255,255,0.25)' : theme.isYesco ? 'rgba(255,255,255,0.35)' : theme.palette.divider
+                const bodyColor = isDark ? 'rgba(255,255,255,0.25)' : theme.palette.divider
+                return {
+                  '& .MuiTableHead-root .MuiTableCell-root': { borderRight: `1px solid ${headColor} !important` },
+                  '& .MuiTableBody-root .MuiTableCell-root': { borderRight: `1px solid ${bodyColor} !important` },
+                  '& .MuiTableCell-root:last-child': { borderRight: 'none !important' },
+                }
               }}>
                 <TableHead>
                   <TableRow>
