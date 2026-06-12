@@ -42,6 +42,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../components/common/DatePickerField'
 import axiosInstance from '../api/axiosInstance'
+import { safetyWorkApi } from '../api/safetyWorkApi'
 import { SafetyWork, SafetyWorkRequest } from '../types/safetyWork.types'
 import useCodeMap from '../hooks/useCodeMap'
 import { User } from '../types/user.types'
@@ -50,61 +51,9 @@ import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
-interface FetchParams {
-  page: number
-  size: number
-  title?: string
-  location?: string
-  status?: string
-}
-
-const fetchSafetyWorks = async (params: FetchParams): Promise<PageResponse<SafetyWork>> => {
-  const { page, size, title, location, status } = params
-  let url = '/safety-works'
-  const queryParams = new URLSearchParams()
-  queryParams.append('page', String(page))
-  queryParams.append('size', String(size))
-
-  if (title) {
-    url = '/safety-works/search'
-    queryParams.append('title', title)
-  } else if (status) {
-    url = `/safety-works/status/${status}`
-  } else if (location) {
-    url = `/safety-works/location/${encodeURIComponent(location)}`
-  }
-
-  const response = await axiosInstance.get<ApiResponse<PageResponse<SafetyWork>>>(`${url}?${queryParams.toString()}`)
-  return response.data.data
-}
-
-const fetchSafetyWorkDetail = async (id: number): Promise<SafetyWork> => {
-  const response = await axiosInstance.get<ApiResponse<SafetyWork>>(`/safety-works/${id}`)
-  return response.data.data
-}
-
 const fetchFiles = async (entityType: string, entityId: string): Promise<FileMetadata[]> => {
   const response = await axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/${entityType}/${entityId}`)
   return response.data.data
-}
-
-const createSafetyWork = async (data: SafetyWorkRequest): Promise<SafetyWork> => {
-  const response = await axiosInstance.post<ApiResponse<SafetyWork>>('/safety-works', data)
-  return response.data.data
-}
-
-const updateSafetyWork = async ({ id, data }: { id: number; data: SafetyWorkRequest }): Promise<SafetyWork> => {
-  const response = await axiosInstance.put<ApiResponse<SafetyWork>>(`/safety-works/${id}`, data)
-  return response.data.data
-}
-
-const updateSafetyWorkStatus = async ({ id, status }: { id: number; status: string }): Promise<SafetyWork> => {
-  const response = await axiosInstance.patch<ApiResponse<SafetyWork>>(`/safety-works/${id}/status?status=${status}`)
-  return response.data.data
-}
-
-const deleteSafetyWork = async (id: number): Promise<void> => {
-  await axiosInstance.delete(`/safety-works/${id}`)
 }
 
 const fetchUsers = async (): Promise<User[]> => {
@@ -188,7 +137,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['safetyWorks', page, searchQuery, locationFilter, statusFilter],
     queryFn: () =>
-      fetchSafetyWorks({
+      safetyWorkApi.search({
         page,
         size: rowsPerPage,
         title: searchQuery || undefined,
@@ -200,7 +149,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
 
   const { data: workDetail, isLoading: detailLoading } = useQuery({
     queryKey: ['safetyWorkDetail', selectedWork?.id],
-    queryFn: () => fetchSafetyWorkDetail(selectedWork!.id),
+    queryFn: () => safetyWorkApi.getById(selectedWork!.id),
     enabled: !!selectedWork?.id && viewMode === 'detail',
   })
 
@@ -259,7 +208,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   }
 
   const createMutation = useMutation({
-    mutationFn: createSafetyWork,
+    mutationFn: safetyWorkApi.create,
     onSuccess: async (createdWork) => {
       await uploadFilesForWork(createdWork.safetyWorkId)
       queryClient.invalidateQueries({ queryKey: ['safetyWorks'] })
@@ -269,7 +218,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   })
 
   const updateMutation = useMutation({
-    mutationFn: updateSafetyWork,
+    mutationFn: (v: { id: number; data: SafetyWorkRequest }) => safetyWorkApi.update(v.id, v.data),
     onSuccess: async (updatedWork) => {
       await uploadFilesForWork(updatedWork.safetyWorkId)
       queryClient.invalidateQueries({ queryKey: ['safetyWorks'] })
@@ -280,7 +229,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   })
 
   const statusMutation = useMutation({
-    mutationFn: updateSafetyWorkStatus,
+    mutationFn: (v: { id: number; status: string }) => safetyWorkApi.updateStatus(v.id, v.status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['safetyWorks'] })
       queryClient.invalidateQueries({ queryKey: ['safetyWorkDetail'] })
@@ -290,7 +239,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: deleteSafetyWork,
+    mutationFn: safetyWorkApi.delete,
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['safetyWorks'] })
       await showSuccess(t('common.deleteSuccess'))

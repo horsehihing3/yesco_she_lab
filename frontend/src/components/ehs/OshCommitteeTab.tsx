@@ -43,6 +43,7 @@ import SignaturePad from '../common/SignaturePad'
 import SignatureImage from '../common/SignatureImage'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import axiosInstance from '../../api/axiosInstance'
+import { oshCommitteeApi } from '../../api/oshCommitteeApi'
 import { workplaceApi } from '../../api/workplaceApi'
 import { OSHCommittee, OSHCommitteeRequest } from '../../types/oshCommittee.types'
 import { ApiResponse, PageResponse, FileMetadata } from '../../types/common.types'
@@ -52,52 +53,9 @@ import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
-interface FetchParams {
-  page: number
-  size: number
-  year?: number
-  quarter?: string
-}
-
-const fetchCommittees = async (params: FetchParams): Promise<PageResponse<OSHCommittee>> => {
-  const { page, size, year, quarter } = params
-  let url = '/osh-committees'
-  const queryParams = new URLSearchParams()
-  queryParams.append('page', String(page))
-  queryParams.append('size', String(size))
-
-  if (year && quarter && quarter !== '전체') {
-    url = `/osh-committees/year/${year}/quarter/${quarter.replace('분기', '')}`
-  } else if (year) {
-    url = `/osh-committees/year/${year}`
-  }
-
-  const response = await axiosInstance.get<ApiResponse<PageResponse<OSHCommittee>>>(`${url}?${queryParams.toString()}`)
-  return response.data.data
-}
-
-const fetchCommitteeDetail = async (id: number): Promise<OSHCommittee> => {
-  const response = await axiosInstance.get<ApiResponse<OSHCommittee>>(`/osh-committees/${id}`)
-  return response.data.data
-}
-
 const fetchFiles = async (entityType: string, entityId: string): Promise<FileMetadata[]> => {
   const response = await axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/${entityType}/${entityId}`)
   return response.data.data
-}
-
-const createCommittee = async (data: OSHCommitteeRequest): Promise<OSHCommittee> => {
-  const response = await axiosInstance.post<ApiResponse<OSHCommittee>>('/osh-committees', data)
-  return response.data.data
-}
-
-const updateCommittee = async ({ id, data }: { id: number; data: OSHCommitteeRequest }): Promise<OSHCommittee> => {
-  const response = await axiosInstance.put<ApiResponse<OSHCommittee>>(`/osh-committees/${id}`, data)
-  return response.data.data
-}
-
-const deleteCommittee = async (id: number): Promise<void> => {
-  await axiosInstance.delete(`/osh-committees/${id}`)
 }
 
 const currentYear = new Date().getFullYear()
@@ -196,7 +154,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
   const { data, isLoading, error } = useQuery({
     queryKey: ['oshCommittees', page, yearFilter, quarterFilter],
     queryFn: () =>
-      fetchCommittees({
+      oshCommitteeApi.search({
         page,
         size: rowsPerPage,
         year: yearFilter || undefined,
@@ -207,7 +165,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
   const { data: committeeDetail, isLoading: detailLoading } = useQuery({
     queryKey: ['oshCommitteeDetail', selectedCommittee?.id],
-    queryFn: () => fetchCommitteeDetail(selectedCommittee!.id),
+    queryFn: () => oshCommitteeApi.getById(selectedCommittee!.id),
     enabled: !!selectedCommittee?.id && (viewMode === 'detail' || viewMode === 'edit'),
   })
 
@@ -219,7 +177,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
   // Mutations
   const createMutation = useMutation({
-    mutationFn: createCommittee,
+    mutationFn: oshCommitteeApi.create,
     onSuccess: async (createdCommittee) => {
       const files = pendingFilesRef.current
       const attendees = pendingAttendeesRef.current
@@ -233,7 +191,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         })
       }
       if (attendees.length > 0) {
-        await axiosInstance.post(`/osh-committees/${createdCommittee.id}/attendees/bulk`, attendees)
+        await oshCommitteeApi.addAttendeesBulk(createdCommittee.id, attendees)
       }
       queryClient.invalidateQueries({ queryKey: ['oshCommittees'] })
       await showSuccess(t('common.saveSuccess'))
@@ -242,7 +200,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
   })
 
   const updateMutation = useMutation({
-    mutationFn: updateCommittee,
+    mutationFn: (v: { id: number; data: OSHCommitteeRequest }) => oshCommitteeApi.update(v.id, v.data),
     onSuccess: async (updatedCommittee) => {
       const files = pendingFilesRef.current
       const attendees = pendingAttendeesRef.current
@@ -259,11 +217,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
       // 삭제 표시된 기존 참석자 일괄 DELETE
       for (const attendeeId of removed) {
         try {
-          await axiosInstance.delete(`/osh-committees/${updatedCommittee.id}/attendees/${attendeeId}`)
+          await oshCommitteeApi.deleteAttendee(updatedCommittee.id, attendeeId)
         } catch { /* 이미 삭제됐을 수도 있음 — 무시 */ }
       }
       if (attendees.length > 0) {
-        await axiosInstance.post(`/osh-committees/${updatedCommittee.id}/attendees/bulk`, attendees)
+        await oshCommitteeApi.addAttendeesBulk(updatedCommittee.id, attendees)
       }
       // 기존 참석자 서명 업데이트 — removed 에 포함된 것은 제외
       const sigUpdates = existingSignaturesRef.current
@@ -271,7 +229,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         const attendeeId = Number(attendeeIdStr)
         if (removed.includes(attendeeId)) continue
         try {
-          await axiosInstance.patch(`/osh-committees/${updatedCommittee.id}/attendees/${attendeeId}/signature`, { signatureImage })
+          await oshCommitteeApi.updateAttendeeSignature(updatedCommittee.id, attendeeId, signatureImage as string)
         } catch { /* skip */ }
       }
       queryClient.invalidateQueries({ queryKey: ['oshCommittees'] })
@@ -282,7 +240,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
   })
 
   const deleteMutation = useMutation({
-    mutationFn: deleteCommittee,
+    mutationFn: oshCommitteeApi.delete,
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['oshCommittees'] })
       await showSuccess(t('common.deleteSuccess'))
@@ -397,10 +355,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
     if (!signingAttendeeId || !selectedCommittee) return
     setSignSaving(true)
     try {
-      await axiosInstance.patch(
-        `/osh-committees/${selectedCommittee.id}/attendees/${signingAttendeeId}/signature`,
-        { signatureImage: tempSignature }
-      )
+      await oshCommitteeApi.updateAttendeeSignature(selectedCommittee.id, signingAttendeeId, tempSignature)
       queryClient.invalidateQueries({ queryKey: ['oshCommitteeDetail'] })
       setSignDialogOpen(false)
       await showSuccess('서명이 저장됐습니다.')
@@ -420,9 +375,9 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
     if (!confirmed) return
     setSendingLinks(true)
     try {
-      const res = await axiosInstance.post(`/osh-committees/${selectedCommittee.id}/send-sign-links`)
+      const message = await oshCommitteeApi.sendSignLinks(selectedCommittee.id)
       setLinksSent(true)
-      await showSuccess(res.data.message || '서명 링크를 발송했습니다.')
+      await showSuccess(message)
     } catch {
       showError('서명 링크 발송에 실패했습니다.')
     } finally {
