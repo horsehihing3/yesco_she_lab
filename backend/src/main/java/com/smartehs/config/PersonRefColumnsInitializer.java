@@ -33,7 +33,9 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
 
     private static final List<Object[]> TABLES = List.<Object[]>of(
         // 4역할 (작성/수정/계획승인/완료승인)
-        new Object[]{"tb_ehs_annual_plan", ALL4}, new Object[]{"tb_audit", ALL4},
+        new Object[]{"tb_ehs_annual_plan", ALL4},
+        // tb_audit: modified_by 는 레거시 username 문자열 컬럼(nvarchar 100)이라 JSON 역할에서 제외 — 수정자는 flat 유지
+        new Object[]{"tb_audit", new String[]{"created_by", "plan_approver", "completion_approver"}},
         new Object[]{"tb_audit_plan", ALL4}, new Object[]{"tb_contractor_plan", ALL4},
         new Object[]{"tb_emergency_plan", ALL4}, new Object[]{"tb_psm_moc", ALL4},
         // 특수 조합
