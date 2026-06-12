@@ -82,5 +82,25 @@ test('버튼관리 규칙 검증 (교정된 메뉴)', async ({ browser }) => {
     expect(v('COMPLETION_PENDING', '완료 결재 승인', 'guest')).toBe(false)
   })
 
+  // ── 내부 감사 (감사 계획 / 감사 실시) ── 일반관리자=EHS_ADMIN ────────────────
+  await test.step('내부감사', async () => {
+    const plan = buttonRuleLookup(rules, 'EHS 경영 › 내부 감사 › 감사 계획')
+    // New = 일반관리자+슈퍼
+    expect(plan('LIST', '신규 등록', 'EHS_ADMIN')).toBe(true)
+    expect(plan('LIST', '신규 등록', 'superAdmin')).toBe(true)
+    expect(plan('LIST', '신규 등록', 'writer')).toBe(false)
+    expect(plan('LIST', '신규 등록', 'TEAM_ADMIN')).toBe(false)
+    expect(plan('LIST', '신규 등록', 'guest')).toBe(false)
+    // 저장·상신 = 작성자, 반려·계획승인 = 계획승인자
+    expect(plan('PLAN', '계획 결재 상신', 'writer')).toBe(true)
+    expect(plan('PENDING_APPROVAL', '계획 승인', 'planApprover')).toBe(true)
+    expect(plan('PENDING_APPROVAL', '계획 승인', 'guest')).toBe(false)
+    // 감사 실시: 진행중 저장 = 감사원(auditor), 완료승인 = 완료승인자
+    const exec = buttonRuleLookup(rules, 'EHS 경영 › 내부 감사 › 감사 실시')
+    expect(exec('IN_PROGRESS', '저장 (감사 정보)', 'auditor')).toBe(true)
+    expect(exec('IN_PROGRESS', '저장 (감사 정보)', 'guest')).toBe(false)
+    expect(exec('PENDING_CLOSE', '완료 승인', 'completionApprover')).toBe(true)
+  })
+
   await context.close()
 })

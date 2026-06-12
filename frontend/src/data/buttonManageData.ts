@@ -259,12 +259,12 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 감사 계획 ─────────────────────────────────────────────────────────────
+  // ── 감사 계획 ── 일반관리자 = EHS_ADMIN (AUDIT_ADMIN 계정 없음) ────────────
   {
     menuPath: 'EHS 경영 › 내부 감사 › 감사 계획', menuKey: 'audit.tabs.plan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+        buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
       { status: 'PLAN', statusLabel: '작성중', statusColor: 'default',
         statusNote: '반려 시 PENDING_APPROVAL → PLAN 복귀 (별도 REJECTED 상태 없음)',
         buttons: [
