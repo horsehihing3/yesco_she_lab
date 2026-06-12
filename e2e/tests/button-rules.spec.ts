@@ -159,7 +159,8 @@ test('버튼관리 규칙 검증 (교정된 메뉴)', async ({ browser }) => {
   // ── 보호구 지급 신청 ── 일반관리자 = PPE_ADMIN (없으면 EHS_ADMIN) ──────────
   await test.step('보호구 지급 신청', async () => {
     const v = buttonRuleLookup(rules, '안전 관리 › 보호구 장비 › 지급 신청')
-    // WRITER_ONLY: 수정/취소 → writer=true, superAdmin=false!
+    // 수정/취소 = 작성자(신청자) 본인 (Sonnet 설계: 자기 신청건은 writer-only, super 제외)
+    // NOTE: 사용자 모델 "슈퍼 항상 ON"과 1건 상충 — super 포함 원하면 seeder wo→wa
     expect(v('REQUESTED', '수정',     'writer'),     '수정/writer').toBe(true)
     expect(v('REQUESTED', '수정',     'superAdmin'), '수정/superAdmin').toBe(false)
     expect(v('REQUESTED', '취소',     'writer'),     '취소/writer').toBe(true)
