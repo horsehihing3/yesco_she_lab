@@ -41,25 +41,21 @@ import CloseIcon from '@mui/icons-material/Close'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../components/common/DatePickerField'
-import axiosInstance from '../api/axiosInstance'
 import { safetyWorkApi } from '../api/safetyWorkApi'
+import { fileApi } from '../api/fileApi'
+import { userApi } from '../api/userApi'
 import { SafetyWork, SafetyWorkRequest } from '../types/safetyWork.types'
 import useCodeMap from '../hooks/useCodeMap'
 import { User } from '../types/user.types'
-import { ApiResponse, PageResponse, FileMetadata } from '../types/common.types'
+import { PageResponse, FileMetadata } from '../types/common.types'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
-const fetchFiles = async (entityType: string, entityId: string): Promise<FileMetadata[]> => {
-  const response = await axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/${entityType}/${entityId}`)
-  return response.data.data
-}
+const fetchFiles = (entityType: string, entityId: string): Promise<FileMetadata[]> =>
+  fileApi.listByEntity(entityType, entityId)
 
-const fetchUsers = async (): Promise<User[]> => {
-  const response = await axiosInstance.get<ApiResponse<User[]>>('/users')
-  return response.data.data
-}
+const fetchUsers = (): Promise<User[]> => userApi.getAll()
 
 const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   const { t, i18n } = useTranslation()
@@ -171,39 +167,13 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   })
 
   const uploadFilesForWork = async (safetyWorkId: string) => {
-    // Upload plan file
-    if (planFile) {
-      const formData = new FormData()
-      formData.append('file', planFile)
-      formData.append('entityType', 'SAFETY_WORK')
-      formData.append('entityId', safetyWorkId)
-      await axiosInstance.post('/files/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-    }
-    // Upload risk file
-    if (riskFile) {
-      const formData = new FormData()
-      formData.append('file', riskFile)
-      formData.append('entityType', 'SAFETY_WORK')
-      formData.append('entityId', safetyWorkId)
-      await axiosInstance.post('/files/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-    }
-    // Upload site photos
+    if (planFile) await fileApi.upload('SAFETY_WORK', safetyWorkId, planFile)
+    if (riskFile) await fileApi.upload('SAFETY_WORK', safetyWorkId, riskFile)
     for (const photo of pendingPhotos) {
-      const formData = new FormData()
-      formData.append('file', photo)
-      formData.append('entityType', 'SAFETY_WORK_PHOTO')
-      formData.append('entityId', safetyWorkId)
-      await axiosInstance.post('/files/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      await fileApi.upload('SAFETY_WORK_PHOTO', safetyWorkId, photo)
     }
-    // Delete removed photos
     for (const photoId of deletedPhotoIds) {
-      await axiosInstance.delete(`/files/${photoId}`)
+      await fileApi.remove(photoId)
     }
   }
 
@@ -462,8 +432,8 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
   }
 
   const handleDownloadFile = async (fileId: number, filename: string) => {
-    const response = await axiosInstance.get(`/files/${fileId}`, { responseType: 'blob' })
-    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const blob = await fileApi.downloadBlob(fileId)
+    const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     link.setAttribute('download', filename)
@@ -943,15 +913,15 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
                     key={photo.id}
                     sx={{ width: 100, height: 100, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'divider', cursor: 'pointer' }}
                     onClick={async () => {
-                      const res = await axiosInstance.get(`/files/${photo.id}`, { responseType: 'blob' })
-                      const url = URL.createObjectURL(new Blob([res.data]))
+                      const blob = await fileApi.downloadBlob(photo.id)
+                      const url = URL.createObjectURL(blob)
                       setPhotoPreviewUrl(url)
                       setPhotoPreviewOpen(true)
                     }}
                   >
                     <Box
                       component="img"
-                      src={`${axiosInstance.defaults.baseURL}/files/${photo.id}`}
+                      src={fileApi.fileUrl(photo.id)}
                       alt={photo.originalFilename}
                       sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
@@ -1297,15 +1267,15 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
                 key={photo.id}
                 sx={{ position: 'relative', width: 100, height: 100, borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'divider', cursor: 'pointer' }}
                 onClick={async () => {
-                  const res = await axiosInstance.get(`/files/${photo.id}`, { responseType: 'blob' })
-                  const url = URL.createObjectURL(new Blob([res.data]))
+                  const blob = await fileApi.downloadBlob(photo.id)
+                  const url = URL.createObjectURL(blob)
                   setPhotoPreviewUrl(url)
                   setPhotoPreviewOpen(true)
                 }}
               >
                 <Box
                   component="img"
-                  src={`${axiosInstance.defaults.baseURL}/files/${photo.id}`}
+                  src={fileApi.fileUrl(photo.id)}
                   alt={photo.originalFilename}
                   sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />

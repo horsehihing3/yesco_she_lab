@@ -42,21 +42,19 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import SignaturePad from '../common/SignaturePad'
 import SignatureImage from '../common/SignatureImage'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
-import axiosInstance from '../../api/axiosInstance'
 import { oshCommitteeApi } from '../../api/oshCommitteeApi'
+import { fileApi } from '../../api/fileApi'
 import { workplaceApi } from '../../api/workplaceApi'
 import { OSHCommittee, OSHCommitteeRequest } from '../../types/oshCommittee.types'
-import { ApiResponse, PageResponse, FileMetadata } from '../../types/common.types'
+import { PageResponse, FileMetadata } from '../../types/common.types'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import LoadingOverlay from '../common/LoadingOverlay'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
-const fetchFiles = async (entityType: string, entityId: string): Promise<FileMetadata[]> => {
-  const response = await axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/${entityType}/${entityId}`)
-  return response.data.data
-}
+const fetchFiles = (entityType: string, entityId: string): Promise<FileMetadata[]> =>
+  fileApi.listByEntity(entityType, entityId)
 
 const currentYear = new Date().getFullYear()
 const years = Array.from({ length: 5 }, (_, i) => currentYear - i)
@@ -182,13 +180,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
       const files = pendingFilesRef.current
       const attendees = pendingAttendeesRef.current
       for (const file of files) {
-        const fd = new FormData()
-        fd.append('file', file)
-        fd.append('entityType', 'OSH_COMMITTEE')
-        fd.append('entityId', createdCommittee.oshId)
-        await axiosInstance.post('/files/upload', fd, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
+        await fileApi.upload('OSH_COMMITTEE', createdCommittee.oshId, file)
       }
       if (attendees.length > 0) {
         await oshCommitteeApi.addAttendeesBulk(createdCommittee.id, attendees)
@@ -206,13 +198,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
       const attendees = pendingAttendeesRef.current
       const removed = removedAttendeeIdsRef.current
       for (const file of files) {
-        const fd = new FormData()
-        fd.append('file', file)
-        fd.append('entityType', 'OSH_COMMITTEE')
-        fd.append('entityId', updatedCommittee.oshId)
-        await axiosInstance.post('/files/upload', fd, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        })
+        await fileApi.upload('OSH_COMMITTEE', updatedCommittee.oshId, file)
       }
       // 삭제 표시된 기존 참석자 일괄 DELETE
       for (const attendeeId of removed) {
@@ -400,8 +386,8 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
   }
 
   const handleDownloadFile = async (fileId: number, filename: string) => {
-    const response = await axiosInstance.get(`/files/${fileId}`, { responseType: 'blob' })
-    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const blob = await fileApi.downloadBlob(fileId)
+    const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     link.setAttribute('download', filename)
