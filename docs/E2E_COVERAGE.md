@@ -20,7 +20,8 @@
 |------|------|------|----------|------|
 | - | KPI목표 연간계획 | EhsAnnualPlan | annual-plan-approval | ✅ |
 | - | KPI목표 연간계획 | EhsAnnualPlan | annual-plan-reject | ✅ |
-| 1 | 비상훈련 | Emergency | (예정) | ☐ |
+| 1 | 비상훈련 | Emergency | emergency-plan (계획 결재+반려) | ✅ |
+| 1 | 비상훈련 | Emergency | 완료/훈련(드릴) 흐름 | ☐ (EmrDrillTab, 후속) |
 | 2 | 작업허가 | PermitToWork | (예정) | ☐ |
 | 3 | 내부감사 | Audit | (예정) | ☐ |
 | 4 | 위험성평가 | RiskAssessment | (예정) | ☐ |

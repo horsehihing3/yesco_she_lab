@@ -47,9 +47,26 @@ export async function loginAs(browser: Browser, role: RoleKey): Promise<{ contex
 /** 연간계획 탭(/plan-kpi-goal?tab=1) 또는 KPI현황 탭(?tab=2)으로 이동 */
 export async function gotoTab(page: Page, tab: 'annualPlan' | 'kpiStatus') {
   const idx = tab === 'annualPlan' ? 1 : 2
-  await page.goto(`/plan-kpi-goal?tab=${idx}`)
-  // 리스트 모드 공통 요소(연도 Select)가 뜰 때까지 대기
+  await gotoList(page, `/plan-kpi-goal?tab=${idx}`)
+}
+
+/** 임의 목록 화면으로 이동 후 리스트 공통 요소(Select)가 뜰 때까지 대기 */
+export async function gotoList(page: Page, path: string) {
+  await page.goto(path)
   await expect(page.locator('.MuiSelect-select').first()).toBeVisible({ timeout: 15_000 })
+}
+
+/**
+ * 라벨 옆 MUI Select 에서 옵션 선택.
+ * 대부분 폼은 index 0 이 placeholder('선택하세요'/'미연결')라 기본 index=1(첫 실제 옵션).
+ */
+export async function selectByLabel(page: Page, label: string, optionIndex = 1) {
+  // 폼 라벨은 <p>(Typography) — 사이드바 메뉴 등 동일 텍스트와 충돌 방지 위해 p 로 한정
+  const trigger = page.locator('p', { hasText: label }).first()
+    .locator('xpath=following-sibling::div[1]//*[contains(@class,"MuiSelect-select")]')
+    .first()
+  await trigger.click()
+  await page.getByRole('option').nth(optionIndex).click()
 }
 
 /**
@@ -65,9 +82,15 @@ export async function acceptDialog(page: Page, messageSubstr: string) {
  * 계획/완료 승인자를 조직도 모달에서 이름 검색으로 지정한다.
  * 폼 내 PersonSearch 버튼 순서: [0]=계획승인자, [1]=완료승인자.
  */
-export async function pickApprover(page: Page, which: 'plan' | 'completion', name: string) {
-  const idx = which === 'plan' ? 0 : 1
-  await page.locator('button:has([data-testid="PersonSearchIcon"])').nth(idx).click()
+export async function pickApprover(
+  page: Page,
+  which: 'plan' | 'completion',
+  name: string,
+  indices: { plan: number; completion: number } = { plan: 0, completion: 1 },
+) {
+  const idx = which === 'plan' ? indices.plan : indices.completion
+  // 보이는(PC) 폼의 PersonSearch 버튼만 대상 (모바일 폼 중복 버튼은 display:none)
+  await page.locator('button:has([data-testid="PersonSearchIcon"]):visible').nth(idx).click()
 
   const dlg = page.getByRole('dialog')
   await dlg.getByPlaceholder('이름으로 검색 (조직 전체)').fill(name)
