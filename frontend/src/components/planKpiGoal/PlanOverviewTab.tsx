@@ -4,16 +4,13 @@ import {
   Box, Paper, Typography, Grid,
   Select, MenuItem, FormControl, CircularProgress, Alert,
 } from '@mui/material'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'
-import PlayCircleIcon from '@mui/icons-material/PlayCircle'
-import ErrorIcon from '@mui/icons-material/Error'
 import { useTranslation } from 'react-i18next'
 import axiosInstance from '../../api/axiosInstance'
 import { EhsPlan, KpiQuarterStatus } from '../../types/planKpiGoal.types'
 import { ApiResponse } from '../../types/common.types'
 import { KPI_STATUS_COLOR, KPI_STATUS_LABEL } from './GoalsTable'
 import SafetyGoalProgressTable from './SafetyGoalProgressTable'
+import StatCard from '../legalCompliance/StatCard'
 
 const currentYear = new Date().getFullYear()
 
@@ -68,10 +65,10 @@ const PlanOverviewTab: React.FC = () => {
   }
 
   const kpiCards = [
-    { label: t('pkg.implementationRate'), value: `${implementationRate}%`, icon: <CheckCircleIcon />, color: '#22c55e' },
-    { label: t('pkg.kpiAchievement'), value: `${kpiAchievementRate}%`, icon: <TrendingUpIcon />, color: '#3b82f6' },
-    { label: t('pkg.inProgressTasks'), value: String(inProgressCount), icon: <PlayCircleIcon />, color: '#f59e0b' },
-    { label: t('pkg.delayedTasks'), value: String(delayedCount), icon: <ErrorIcon />, color: '#ef4444' },
+    { label: t('pkg.implementationRate'), value: `${implementationRate}%` },
+    { label: t('pkg.kpiAchievement'), value: `${kpiAchievementRate}%` },
+    { label: t('pkg.inProgressTasks'), value: String(inProgressCount) },
+    { label: t('pkg.delayedTasks'), value: String(delayedCount) },
   ]
 
   const kpiStatusItems: Array<{ key: KpiQuarterStatus; label: string }> = [
@@ -99,15 +96,7 @@ const PlanOverviewTab: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {kpiCards.map((card, idx) => (
           <Grid item xs={6} md={3} key={idx}>
-            <Paper sx={(theme: any) => ({ p: 2, display: 'flex', alignItems: 'center', gap: 2, ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-              <Box sx={{ color: card.color, display: 'flex', alignItems: 'center' }}>
-                {card.icon}
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary">{card.label}</Typography>
-                <Typography variant="h5" fontWeight="bold">{card.value}</Typography>
-              </Box>
-            </Paper>
+            <StatCard value={card.value} label={card.label} />
           </Grid>
         ))}
       </Grid>

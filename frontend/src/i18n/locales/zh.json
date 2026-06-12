@@ -438,7 +438,7 @@
     "select": "选择主题",
     "lightMode": "浅色模式",
     "darkMode": "深色模式",
-    "yescoMode": "YESCO 模式"
+    "yescoMode": "红色模式"
   },
   "ehsAlert": {
     "title": "EHS公告",

@@ -4,57 +4,47 @@ interface StatCardProps {
   value: number | string
   label: string
   sub?: string
+  // color prop은 호환성을 위해 유지 (좌측 액센트는 모드별 nav-on 색상 사용)
   color?: 'blue' | 'green' | 'yellow' | 'red' | 'purple'
 }
 
-const colorMap = {
-  blue: '#3b82f6',
-  green: '#22c55e',
-  yellow: '#f59e0b',
-  red: '#ef4444',
-  purple: '#a855f7',
-}
+const NAV_ON_DEFAULT = '#2563eb'   // 라이트/다크 사이드바 active 색상
+const NAV_ON_YESCO = '#E60012'     // 예스코 사이드바 active 색상 (LS Red)
 
-const StatCard: React.FC<StatCardProps> = ({ value, label, sub, color = 'blue' }) => {
-  const c = colorMap[color]
-  return (
-    <Paper
-      variant="outlined"
-      sx={{
-        p: 2,
-        borderRadius: 2,
-        position: 'relative',
-        overflow: 'hidden',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0, left: 0, right: 0, height: 2,
-          background: c,
-        },
-      }}
-    >
-      <Typography
-        sx={{
-          fontSize: 28,
-          fontWeight: 900,
-          fontFamily: 'JetBrains Mono, monospace',
-          color: c,
-          lineHeight: 1,
-        }}
-      >
-        {value}
-      </Typography>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.75, fontWeight: 500 }}>
-        {label}
-      </Typography>
-      {sub && (
-        <Box sx={{ mt: 0.5, fontSize: 11, color: c }}>{sub}</Box>
-      )}
-    </Paper>
-  )
-}
+const StatCard: React.FC<StatCardProps> = ({ value, label, sub }) => (
+  <Paper
+    variant="outlined"
+    sx={(theme: any) => ({
+      p: 2.5,
+      pl: 3,
+      position: 'relative',
+      overflow: 'hidden',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      ...(theme.isYesco && {
+        border: 1,
+        borderColor: '#0F2147',
+      }),
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        width: 4,
+        backgroundColor: theme.isYesco ? NAV_ON_YESCO : NAV_ON_DEFAULT,
+        borderTopLeftRadius: 'inherit',
+        borderBottomLeftRadius: 'inherit',
+      },
+    })}
+  >
+    <Typography variant="caption" color="text.secondary">{label}</Typography>
+    <Typography variant="h4" fontWeight="bold" sx={{ mt: 0.5 }}>{value}</Typography>
+    {sub && (
+      <Box sx={{ mt: 0.5, fontSize: 11, color: 'text.secondary' }}>{sub}</Box>
+    )}
+  </Paper>
+)
 
 export default StatCard

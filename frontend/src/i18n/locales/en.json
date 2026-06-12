@@ -438,7 +438,7 @@
     "select": "Select Theme",
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
-    "yescoMode": "YESCO Mode"
+    "yescoMode": "Red Mode"
   },
   "ehsAlert": {
     "title": "EHS Alerts",

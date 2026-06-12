@@ -3,7 +3,6 @@ import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip } from 
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import BusinessIcon from '@mui/icons-material/Business'
-import PaletteIcon from '@mui/icons-material/Palette'
 import CheckIcon from '@mui/icons-material/Check'
 import { useTranslation } from 'react-i18next'
 import { useThemeMode, type ThemeMode } from '../../context/ThemeContext'
@@ -21,16 +20,22 @@ const ThemeSelector: React.FC = () => {
   }
 
   const themes: { code: ThemeMode; label: string; icon: React.ReactNode }[] = [
-    { code: 'yesco', label: t('theme.yescoMode', '예스코 모드'),  icon: <BusinessIcon  fontSize="small" /> },
+    { code: 'yesco', label: t('theme.yescoMode', '레드 모드'),  icon: <BusinessIcon  fontSize="small" /> },
     { code: 'dark',  label: t('theme.darkMode',  '다크 모드'),    icon: <DarkModeIcon  fontSize="small" /> },
     { code: 'light', label: t('theme.lightMode', '라이트 모드'), icon: <LightModeIcon fontSize="small" /> },
   ]
+
+  // 현재 모드에 따라 트리거 아이콘 동적 표시 — 언어 아이콘(지구본)과 명확히 구분
+  const TriggerIcon =
+    mode === 'dark'  ? DarkModeIcon  :
+    mode === 'light' ? LightModeIcon :
+    BusinessIcon
 
   return (
     <>
       <Tooltip title={t('theme.select', '테마 선택')}>
         <IconButton color="inherit" onClick={handleClick} size="small">
-          <PaletteIcon />
+          <TriggerIcon />
         </IconButton>
       </Tooltip>
       <Menu

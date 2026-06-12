@@ -102,7 +102,7 @@ const HealthCheckupReportTab: React.FC<Props> = ({ allowedTypes, title }) => {
           { label: t('healthCheckupReport.overallRate', '전체 수검률'), value: `${totals.overallRate}%`, color: '#f59e0b' },
         ].map((c, i) => (
           <Grid item xs={6} md={3} key={i}>
-            <Paper sx={{ p: 2, borderLeft: 4, borderColor: c.color, borderLeftColor: c.color}}>
+            <Paper sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
               <Typography variant="caption" color="text.secondary">{c.label}</Typography>
               <Typography variant="h5" fontWeight="bold">{c.value}</Typography>
             </Paper>

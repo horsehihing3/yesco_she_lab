@@ -519,7 +519,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
                 const borderColor = PREVENTION_BORDER_COLORS[item.preventionStatus || ''] || '#9e9e9e'
                 const pColor = getProgressColor(item.preventionRate)
                 return (
-                  <Paper key={idx} variant="outlined" sx={{ p: 1.5, position: 'relative', borderLeft: 3, borderColor }}>
+                  <Paper key={idx} variant="outlined" sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 3, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                       <Typography variant="body2" fontWeight="bold">{item.factorName}</Typography>
                       {item.preventionStatus && (

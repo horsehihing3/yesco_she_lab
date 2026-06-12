@@ -15,6 +15,7 @@ import { ChemicalUsageReport } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -211,22 +212,10 @@ const UsageReportTab: React.FC = () => {
     <Box>
       {/* Metrics */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, gap: 1.5, mb: 2 }}>
-        <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-          <Typography variant="caption" color="text.secondary">{t('chem.usageReport.annualTotal')}</Typography>
-          <Typography variant="h5" fontWeight="bold" color="primary.main">{annualTotal.toLocaleString()}</Typography>
-        </Paper>
-        <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-          <Typography variant="caption" color="text.secondary">{t('chem.usageReport.monthlyUsage')}</Typography>
-          <Typography variant="h5" fontWeight="bold" color="info.main">{monthlyTotal.toLocaleString()}</Typography>
-        </Paper>
-        <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-          <Typography variant="caption" color="text.secondary">{t('chem.usageReport.statusSubmitted')}</Typography>
-          <Typography variant="h5" fontWeight="bold" color="success.main">{submittedCount}</Typography>
-        </Paper>
-        <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-          <Typography variant="caption" color="text.secondary">{t('chem.usageReport.nextDeadline')}</Typography>
-          <Typography variant="h5" fontWeight="bold" color="warning.main" sx={{ fontSize: '1.1rem' }}>{nextDeadline}</Typography>
-        </Paper>
+        <StatCard color="blue" value={annualTotal.toLocaleString()} label={t('chem.usageReport.annualTotal')} />
+        <StatCard color="blue" value={monthlyTotal.toLocaleString()} label={t('chem.usageReport.monthlyUsage')} />
+        <StatCard color="green" value={submittedCount} label={t('chem.usageReport.statusSubmitted')} />
+        <StatCard color="yellow" value={nextDeadline} label={t('chem.usageReport.nextDeadline')} />
       </Box>
 
       {/* Search - PC */}

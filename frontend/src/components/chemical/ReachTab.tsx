@@ -15,11 +15,11 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { chemicalReachApi } from '../../api/chemicalApi'
 import type { ChemicalReach } from '../../types/chemical.types'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const metricCardSx = (theme: any) => ({ p: 2, textAlign: 'center', borderRadius: 1, border: 1, borderColor: theme.isYesco ? '#0F2147' : theme.palette.divider })
 const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
 const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
@@ -245,28 +245,16 @@ const ReachTab: React.FC = () => {
       {/* Metrics Cards */}
       <Grid container spacing={2} mb={3}>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.reach.totalSubject', 'REACH 대상')}</Typography>
-            <Typography variant="h5" fontWeight="bold">{totalElements}</Typography>
-          </Paper>
+          <StatCard color="blue" value={totalElements} label={t('chem.reach.totalSubject', 'REACH 대상')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.reach.svhcCount', 'SVHC 목록 해당')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="error.main">{svhcCount}</Typography>
-          </Paper>
+          <StatCard color="red" value={svhcCount} label={t('chem.reach.svhcCount', 'SVHC 목록 해당')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.reach.registered', '등록 완료')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="success.main">{registeredCount}</Typography>
-          </Paper>
+          <StatCard color="green" value={registeredCount} label={t('chem.reach.registered', '등록 완료')} />
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper sx={metricCardSx}>
-            <Typography variant="body2" color="text.secondary">{t('chem.reach.authNeeded', '허가 신청 필요')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="warning.main">{authNeededCount}</Typography>
-          </Paper>
+          <StatCard color="yellow" value={authNeededCount} label={t('chem.reach.authNeeded', '허가 신청 필요')} />
         </Grid>
       </Grid>
 

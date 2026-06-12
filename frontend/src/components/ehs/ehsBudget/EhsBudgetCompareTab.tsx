@@ -125,7 +125,7 @@ const EhsBudgetCompareTab: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {kpiCards.map((card, idx) => (
           <Grid item xs={12} md={2.4} key={idx}>
-            <Paper sx={(theme: any) => ({ p: 2.5, borderLeft: 4, borderColor: card.color, borderLeftColor: card.color, ...(theme.isYesco && { borderTop: 1, borderRight: 1, borderBottom: 1, borderColor: '#0F2147', borderLeftColor: card.color }) })}>
+            <Paper sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
               <Typography variant="body2" color="text.secondary">{card.label}</Typography>
               <Typography fontWeight="bold" sx={{ mt: 0.75, fontSize: { xs: '1.75rem', md: '2.25rem' }, lineHeight: 1.2 }}>
                 {card.value}

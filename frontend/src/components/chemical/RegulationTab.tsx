@@ -15,6 +15,7 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { chemicalRegulationApi } from '../../api/chemicalApi'
 import type { ChemicalRegulation } from '../../types/chemical.types'
+import StatCard from '../legalCompliance/StatCard'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -257,28 +258,16 @@ const RegulationTab: React.FC = () => {
       {/* Metrics Cards */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.reg.totalRegulation')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="primary">{totalElements}</Typography>
-          </Paper>
+          <StatCard color="blue" value={totalElements} label={t('chem.reg.totalRegulation')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.reg.applicableCount')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="info.main"></Typography>
-          </Paper>
+          <StatCard color="blue" value={''} label={t('chem.reg.applicableCount')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.reg.domesticReg')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="success.main"></Typography>
-          </Paper>
+          <StatCard color="green" value={''} label={t('chem.reg.domesticReg')} />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Paper sx={(theme: any) => ({ p: 2, textAlign: 'center', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-            <Typography variant="caption" color="text.secondary">{t('chem.reg.overseasReg')}</Typography>
-            <Typography variant="h5" fontWeight="bold" color="secondary.main"></Typography>
-          </Paper>
+          <StatCard color="purple" value={''} label={t('chem.reg.overseasReg')} />
         </Grid>
       </Grid>
 

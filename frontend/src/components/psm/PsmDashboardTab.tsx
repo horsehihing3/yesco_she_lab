@@ -8,6 +8,7 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import ScienceIcon from '@mui/icons-material/Science'
 import EngineeringIcon from '@mui/icons-material/Engineering'
 import { psmApi } from '../../api/psmApi'
+import StatCard from '../legalCompliance/StatCard'
 
 const PsmDashboardTab: React.FC = () => {
   const { t } = useTranslation()
@@ -19,23 +20,16 @@ const PsmDashboardTab: React.FC = () => {
 
   const totalData = data.totalEquip + data.totalChem + data.totalPower + data.totalVessel + data.totalPipe + data.totalPsv
 
-  const Stat = ({ label, value, sub, color = 'primary.main' }: { label: string; value: number; sub?: string; color?: string }) => (
-    <Paper sx={(theme: any) => ({ p: 2, borderTop: '3px solid', borderColor: color, ...(theme.isYesco && { borderLeft: 1, borderRight: 1, borderBottom: 1, borderLeftColor: '#0F2147', borderRightColor: '#0F2147', borderBottomColor: '#0F2147' }) })}>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>{label}</Typography>
-      <Typography variant="h4" fontWeight="bold" color={color}>{value}</Typography>
-      {sub && <Typography variant="caption" color="text.secondary">{sub}</Typography>}
-    </Paper>
-  )
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Typography variant="subtitle1" fontWeight="bold">{t('psm.dashboardTitle', 'PSM 대시보드')}</Typography>
 
       <Grid container spacing={1.5}>
-        <Grid item xs={6} md={3}><Stat label={t('psm.totalData', '공정안전자료')}    value={totalData}            sub="6분류 합계"     color="primary.main" /></Grid>
-        <Grid item xs={6} md={3}><Stat label={t('psm.totalMoc', 'MOC 진행 중')}      value={data.mocInProgress}   sub={`전체 ${data.totalMoc}건`} color="warning.main" /></Grid>
-        <Grid item xs={6} md={3}><Stat label={t('psm.totalHazop', 'HAZOP 검토')}     value={data.totalHazop}      sub="등록 건수"        color="info.main" /></Grid>
-        <Grid item xs={6} md={3}><Stat label={t('psm.expiring', '만료 임박/초과')} value={data.expiringCount}   sub="90일 이내"       color="error.main" /></Grid>
+        <Grid item xs={6} md={3}><StatCard label={t('psm.totalData', '공정안전자료')}    value={totalData}            sub="6분류 합계" /></Grid>
+        <Grid item xs={6} md={3}><StatCard label={t('psm.totalMoc', 'MOC 진행 중')}      value={data.mocInProgress}   sub={`전체 ${data.totalMoc}건`} /></Grid>
+        <Grid item xs={6} md={3}><StatCard label={t('psm.totalHazop', 'HAZOP 검토')}     value={data.totalHazop}      sub="등록 건수" /></Grid>
+        <Grid item xs={6} md={3}><StatCard label={t('psm.expiring', '만료 임박/초과')} value={data.expiringCount}   sub="90일 이내" /></Grid>
       </Grid>
 
       <Paper sx={(theme: any) => ({ p: 2, ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
