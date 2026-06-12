@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { isEhsManager } from '../utils/auth'
+import { isEhsManager, isSystemAdmin } from '../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -1033,7 +1033,7 @@ const SafetyWorkPage: React.FC<{ titleKey?: string }> = ({ titleKey }) => {
             <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
               {t('common.list')}
             </Button>
-            {(isAdmin || selectedWork?.authorName === user?.name) && selectedWork && (
+            {(isSystemAdmin(user) || selectedWork?.authorName === user?.name) && selectedWork && (
               <>
                 <Button
                   variant="contained"

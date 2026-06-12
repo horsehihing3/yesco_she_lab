@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { isSystemAdmin } from '../../utils/auth'
 import { useAuth } from '../../context/AuthContext'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -112,6 +113,15 @@ const PpeIssuanceTab: React.FC = () => {
 
   const { user } = useAuth()
   const isAdmin = isSystemAdmin(user)
+  const { canSee } = useButtonRules()
+  const MENU = '안전 관리 › 보호구 장비 › 지급 신청'
+  const getItemRoles = (item: { authorName?: string } | null): string[] => {
+    const roles: string[] = ['guest']
+    if (isAdmin) roles.push('superAdmin')
+    else if (user?.role) roles.push(user.role)
+    if (item?.authorName && user?.name && item.authorName === user.name) roles.push('writer')
+    return roles
+  }
 
   // Form
   const { control, handleSubmit, reset, watch, setValue } = useForm<PpeIssuanceRequest>({
@@ -635,10 +645,10 @@ const PpeIssuanceTab: React.FC = () => {
                   {t('occupationalExposure.ppeIssuance.signReceipt')}
                 </Button>
               )}
-              {(isAdmin || issuanceDetail?.authorName === user?.name) && (
+              {canSee(MENU, 'REQUESTED', '수정', getItemRoles(issuanceDetail)) && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ width: 'auto' }}>{t('common.edit')}</Button>
               )}
-              {(isAdmin || issuanceDetail?.authorName === user?.name) && (
+              {canSee(MENU, 'REQUESTED', '삭제', getItemRoles(issuanceDetail)) && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ width: 'auto' }}>{t('common.delete')}</Button>
               )}
             </Box>
@@ -735,10 +745,10 @@ const PpeIssuanceTab: React.FC = () => {
                   {t('occupationalExposure.ppeIssuance.signReceipt')}
                 </Button>
               )}
-              {(isAdmin || issuanceDetail?.authorName === user?.name) && (
+              {canSee(MENU, 'REQUESTED', '수정', getItemRoles(issuanceDetail)) && (
                 <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1 }}>{t('common.edit')}</Button>
               )}
-              {(isAdmin || issuanceDetail?.authorName === user?.name) && (
+              {canSee(MENU, 'REQUESTED', '삭제', getItemRoles(issuanceDetail)) && (
                 <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1 }}>{t('common.delete')}</Button>
               )}
             </Box>

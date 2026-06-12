@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { isSystemAdmin } from '../../utils/auth'
+import { useButtonRules } from '../../hooks/useButtonRules'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
@@ -155,6 +156,17 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
   const [guideDialogOpen, setGuideDialogOpen] = useState(false)
 
   const isAdmin = isSystemAdmin(user)
+  const { canSee } = useButtonRules()
+  const MENU = '안전 관리 › 위험성 평가'
+  const getItemRoles = (item: { authorName?: string | null; planApproverName?: string | null; completionApproverName?: string | null } | null): string[] => {
+    const roles: string[] = ['guest']
+    if (isAdmin) roles.push('superAdmin')
+    else if (user?.role) roles.push(user.role)
+    if (item?.authorName && user?.name && item.authorName === user.name) roles.push('writer')
+    if (item?.planApproverName && user?.name && item.planApproverName === user.name) roles.push('planApprover')
+    if (item?.completionApproverName && user?.name && item.completionApproverName === user.name) roles.push('completionApprover')
+    return roles
+  }
 
   // Fetch sites from API
   const { data: sitesData } = useQuery({
@@ -832,10 +844,10 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           {/* Action Buttons - PC */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mt: 3, justifyContent: 'flex-end' }}>
             <Button variant="outlined" onClick={handleBackToList}>{t('common.list')}</Button>
-            {(isAdmin || assessmentDetail?.authorName === user?.name) && (
+            {canSee(MENU, 'DETAIL', '수정', getItemRoles(assessmentDetail ?? null)) && (
               <Button variant="contained" onClick={handleEditClick}>{t('common.edit')}</Button>
             )}
-            {(isAdmin || assessmentDetail?.authorName === user?.name) && (
+            {canSee(MENU, 'DETAIL', '삭제', getItemRoles(assessmentDetail ?? null)) && (
               <Button variant="contained" color="error" onClick={handleDeleteClick}>{t('common.delete')}</Button>
             )}
           </Box>
