@@ -638,24 +638,23 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   }
 
   const getStatusChip = (status: string) => {
-    const statusLower = status.toLowerCase()
-
     // 관리(관리자) 모드: 이미 계획 결재 승인된 항목이 모이는 곳이라
-    // KPI 현황과 동일하게 'approved' = '작성중' (default), 'completion_submitted'
-    // = '완료 결재 대기' (warning), 'completed' = '완료' (success) 로 표기.
+    // KPI 현황과 동일하게 'APPROVED' = '작성중' (default), 'COMPLETION_SUBMITTED'
+    // = '완료 결재 대기' (warning), 'COMPLETED' = '완료' (success) 로 표기.
     if (isManagementMode) {
-      if (statusLower === 'approved') {
+      if (status === 'APPROVED') {
         return <Chip label={t('common.draft', '작성중')} size="small" color="default" />
       }
-      if (statusLower === 'completion_submitted') {
+      if (status === 'COMPLETION_SUBMITTED') {
         return <Chip label={t('riskAssessment.status.completion_submitted', '완료 결재 대기')} size="small" color="warning" />
       }
-      if (statusLower === 'completed') {
+      if (status === 'COMPLETED') {
         return <Chip label={t('common.done', '완료')} size="small" color="success" />
       }
     }
 
-    // 1) i18n 키 조회 (IN_PROGRESS → in_progress)
+    const statusLower = status.toLowerCase()
+    // 1) i18n 키 조회 (DRAFT → draft 키로 매핑)
     const i18nKey = `riskAssessment.status.${statusLower}`
     const i18nLabel = t(i18nKey)
 
@@ -703,11 +702,11 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   }
 
   const allAssessments = data?.content || []
-  const planStatuses = new Set(['', 'draft', 'submitted', 'rejected'])
-  const managementStatuses = new Set(['approved', 'completion_submitted', 'completed'])
+  const planStatuses = new Set(['', 'DRAFT', 'SUBMITTED', 'REJECTED'])
+  const managementStatuses = new Set(['APPROVED', 'COMPLETION_SUBMITTED', 'COMPLETED'])
   const userDept = (user?.department || '').trim()
   const filtered = allAssessments.filter(a => {
-    const s = (a.status || '').toLowerCase()
+    const s = a.status || ''
     if (isPlanMode) {
       if (!planStatuses.has(s)) return false
     } else {
@@ -863,7 +862,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       ) : assessmentDetail ? (
         <>
           {/* 반려 사유 배너 (반려 상태일 때 상단 강조) */}
-          {assessmentDetail.status === 'rejected' && assessmentDetail.rejectReason && (
+          {assessmentDetail.status === 'REJECTED' && assessmentDetail.rejectReason && (
             <Box sx={{ mb: 2, p: 2, bgcolor: 'error.lighter', border: 1, borderColor: 'error.light', borderRadius: 1 }}>
               <Typography variant="body2" color="error.main" fontWeight="bold" sx={{ mb: 0.5 }}>
                 {t('common.rejectReasonTitle', '반려 사유')}
@@ -1089,7 +1088,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
 
             // 계획 모드: draft/rejected → 결재 상신, submitted → 승인/반려
             if (isPlanMode) {
-              if ((status === 'draft' || status === 'rejected') &&
+              if ((status === 'DRAFT' || status === 'REJECTED') &&
                   canSee(MENU, status, '계획 결재 상신', itemRoles)) {
                 buttons.push(
                   <Button key="planSubmit" variant="contained" color="info" onClick={handleSubmitForApproval}>
@@ -1097,15 +1096,15 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Button>
                 )
               }
-              if (status === 'submitted') {
-                if (canSee(MENU, 'submitted', '반려', itemRoles)) {
+              if (status === 'SUBMITTED') {
+                if (canSee(MENU, 'SUBMITTED', '반려', itemRoles)) {
                   buttons.push(
                     <Button key="reject" variant="contained" color="warning" onClick={handleReject}>
                       {t('common.reject', '반려')}
                     </Button>
                   )
                 }
-                if (canSee(MENU, 'submitted', '계획 결재 승인', itemRoles)) {
+                if (canSee(MENU, 'SUBMITTED', '계획 결재 승인', itemRoles)) {
                   buttons.push(
                     <Button key="planApprove" variant="contained" color="success" onClick={handleApprove}>
                       {t('riskAssessment.planApprove', '계획 결재 승인')}
@@ -1115,17 +1114,17 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               }
             }
 
-            // 관리 모드: approved → 완료 결재 상신, completion_submitted → 완료 결재 승인/반려
+            // 관리 모드: APPROVED → 완료 결재 상신, COMPLETION_SUBMITTED → 완료 결재 승인/반려
             if (isManagementMode) {
-              if (status === 'approved') {
-                if (canSee(MENU, 'approved', '저장 (실시 내용)', itemRoles)) {
+              if (status === 'APPROVED') {
+                if (canSee(MENU, 'APPROVED', '저장 (실시 내용)', itemRoles)) {
                   buttons.push(
                     <Button key="saveDetails" variant="contained" onClick={handleSaveDetails}>
                       {t('common.save', '저장')}
                     </Button>
                   )
                 }
-                if (canSee(MENU, 'approved', '완료 결재 상신', itemRoles)) {
+                if (canSee(MENU, 'APPROVED', '완료 결재 상신', itemRoles)) {
                   buttons.push(
                     <Button key="completionSubmit" variant="contained" color="info" onClick={handleSubmitForCompletion}>
                       {t('riskAssessment.completionSubmit', '완료 결재 상신')}
@@ -1133,15 +1132,15 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   )
                 }
               }
-              if (status === 'completion_submitted') {
-                if (canSee(MENU, 'completion_submitted', '반려 (완료)', itemRoles)) {
+              if (status === 'COMPLETION_SUBMITTED') {
+                if (canSee(MENU, 'COMPLETION_SUBMITTED', '반려 (완료)', itemRoles)) {
                   buttons.push(
                     <Button key="completionReject" variant="contained" color="warning" onClick={handleCompletionReject}>
                       {t('common.reject', '반려')}
                     </Button>
                   )
                 }
-                if (canSee(MENU, 'completion_submitted', '완료 결재 승인', itemRoles)) {
+                if (canSee(MENU, 'COMPLETION_SUBMITTED', '완료 결재 승인', itemRoles)) {
                   buttons.push(
                     <Button key="completionApprove" variant="contained" color="success" onClick={handleComplete}>
                       {t('riskAssessment.completionApprove', '완료 결재 승인')}
@@ -1157,11 +1156,11 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                 <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mt: 3, justifyContent: 'flex-end' }}>
                   <Button variant="outlined" onClick={handleBackToList}>{t('common.list')}</Button>
                   {buttons}
-                  {canSee(MENU, 'DETAIL', '수정', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'draft' || status === 'rejected') && (
+                  {canSee(MENU, 'DETAIL', '수정', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'DRAFT' || status === 'REJECTED') && (
                     <Button variant="contained" onClick={handleEditClick}>{t('common.edit')}</Button>
                   )}
                   {/* 삭제는 결재 상신 전(draft/rejected)에만 노출 */}
-                  {canSee(MENU, 'DETAIL', '삭제', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'draft' || status === 'rejected') && (
+                  {canSee(MENU, 'DETAIL', '삭제', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'DRAFT' || status === 'REJECTED') && (
                     <Button variant="contained" color="error" onClick={handleDeleteClick}>{t('common.delete')}</Button>
                   )}
                 </Box>
@@ -1171,11 +1170,11 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   {buttons.map((btn, i) => (
                     <Box key={i} sx={{ flex: 1, minWidth: 0, '& > button': { width: '100%' } }}>{btn}</Box>
                   ))}
-                  {canSee(MENU, 'DETAIL', '수정', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'draft' || status === 'rejected') && (
+                  {canSee(MENU, 'DETAIL', '수정', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'DRAFT' || status === 'REJECTED') && (
                     <Button variant="contained" onClick={handleEditClick} sx={{ flex: 1, minWidth: 0 }}>{t('common.edit')}</Button>
                   )}
                   {/* 삭제는 결재 상신 전(draft/rejected)에만 노출 */}
-                  {canSee(MENU, 'DETAIL', '삭제', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'draft' || status === 'rejected') && (
+                  {canSee(MENU, 'DETAIL', '삭제', getItemRoles(selectedAssessment)) && isPlanMode && (status === 'DRAFT' || status === 'REJECTED') && (
                     <Button variant="contained" color="error" onClick={handleDeleteClick} sx={{ flex: 1, minWidth: 0 }}>{t('common.delete')}</Button>
                   )}
                 </Box>

@@ -417,7 +417,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'draft', statusLabel: '작성중', statusColor: 'default',
+        status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
         buttons: [
           { button: '계획 결재 상신', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
           { button: '수정',           roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
@@ -425,14 +425,14 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'submitted', statusLabel: '승인대기', statusColor: 'warning',
+        status: 'SUBMITTED', statusLabel: '승인대기', statusColor: 'warning',
         buttons: [
           { button: '반려',        roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true → canApprovePlan 항상 true' },
           { button: '계획 결재 승인', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true → canApprovePlan 항상 true' },
         ],
       },
       {
-        status: 'rejected', statusLabel: '반려', statusColor: 'error',
+        status: 'REJECTED', statusLabel: '반려', statusColor: 'error',
         statusNote: 'draft 상태와 동일한 버튼 노출',
         buttons: [
           { button: '계획 결재 상신', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
@@ -441,7 +441,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'approved', statusLabel: '작성중', statusColor: 'default',
+        status: 'APPROVED', statusLabel: '작성중', statusColor: 'default',
         statusNote: '관리 모드에서는 approved 상태를 "작성중"으로 표시 (완료 결재 흐름)',
         buttons: [
           { button: '저장 (실시 내용)',  roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true 하드코딩' },
@@ -449,7 +449,7 @@ const DEFAULT_MENU_DATA: MenuEntry[] = [
         ],
       },
       {
-        status: 'completion_submitted', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        status: 'COMPLETION_SUBMITTED', statusLabel: '완료 결재 대기', statusColor: 'warning',
         buttons: [
           { button: '반려 (완료)',     roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true → canApproveCompletion 항상 true' },
           { button: '완료 결재 승인', roles: { guest: true, writer: true, admin: true, planApprover: true, completionApprover: true }, issue: 'isAdmin = true → canApproveCompletion 항상 true' },

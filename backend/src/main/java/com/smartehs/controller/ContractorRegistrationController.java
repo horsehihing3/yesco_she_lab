@@ -46,7 +46,6 @@ public class ContractorRegistrationController {
     public ResponseEntity<ApiResponse<ContractorRegistration>> create(
             @RequestBody ContractorRegistration reg,
             Authentication authentication) {
-        if (authentication != null) reg.setModifiedBy(authentication.getName());
         if (authentication != null) {
             IdmUser u = idmMapper.findByUid(authentication.getName());
             if (u != null) {
@@ -66,7 +65,6 @@ public class ContractorRegistrationController {
             @RequestBody ContractorRegistration reg,
             Authentication authentication) {
         if (authentication != null) {
-            reg.setModifiedBy(authentication.getName());
             IdmUser u = idmMapper.findByUid(authentication.getName());
             if (u != null) {
                 reg.setModifiedByName(u.getUserName());

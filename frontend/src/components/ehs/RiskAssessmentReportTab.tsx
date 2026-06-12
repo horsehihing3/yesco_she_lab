@@ -20,11 +20,11 @@ const monthsAgoIso = (months: number) => {
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  draft: '작성중',
-  submitted: '제출',
-  approved: '승인',
-  completion_submitted: '완료 상신',
-  rejected: '반려',
+  DRAFT: '작성중',
+  SUBMITTED: '제출',
+  APPROVED: '승인',
+  COMPLETION_SUBMITTED: '완료 상신',
+  REJECTED: '반려',
   completed: '완료',
 }
 
@@ -46,7 +46,7 @@ const RiskAssessmentReportTab: React.FC = () => {
     const pickDate = (i: any) =>
       (i.completionApprovedAt || i.completedDate || i.modifiedAt || i.createdAt || '').substring(0, 10)
     return list
-      .filter((i: RiskAssessment) => i.status === 'completed')
+      .filter((i: RiskAssessment) => i.status === 'COMPLETED')
       .filter((i: RiskAssessment) => {
         const d = pickDate(i)
         if (!d) return false
@@ -118,9 +118,9 @@ const RiskAssessmentReportTab: React.FC = () => {
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.status', '상태')}</TableCell>
               <TableCell>
                 <Chip label={STATUS_LABEL[item.status] || item.status} size="small" color={
-                  item.status === 'approved' ? 'success'
-                  : item.status === 'completion_submitted' ? 'info'
-                  : item.status === 'completed' ? 'primary'
+                  item.status === 'APPROVED' ? 'success'
+                  : item.status === 'COMPLETION_SUBMITTED' ? 'info'
+                  : item.status === 'COMPLETED' ? 'primary'
                   : 'default'
                 } />
               </TableCell>

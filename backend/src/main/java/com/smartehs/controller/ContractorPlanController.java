@@ -72,7 +72,6 @@ public class ContractorPlanController {
             @RequestBody ContractorPlan plan,
             Authentication authentication) {
         if (authentication != null) {
-            plan.setModifiedBy(authentication.getName());
             IdmUser u = idmMapper.findByUid(authentication.getName());
             if (u != null) {
                 plan.setModifiedByName(u.getUserName());

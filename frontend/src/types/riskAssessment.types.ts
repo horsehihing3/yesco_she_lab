@@ -56,7 +56,7 @@ export interface RiskAssessment {
   completionApproverName?: string
   completionApprovedAt?: string
   completionApprovedBy?: string
-  status: 'draft' | 'submitted' | 'approved' | 'completion_submitted' | 'rejected' | 'completed'
+  status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'COMPLETION_SUBMITTED' | 'REJECTED' | 'COMPLETED'
   riskRegisterCount: number
   detailCount?: number     // 체크리스트 항목 수 (tb_risk_assessment_detail row count)
   officeCount: number      // 사무업무 평가건수
@@ -235,11 +235,11 @@ export const RISK_4M_OPTIONS = [
 
 // 상태 옵션
 export const STATUS_OPTIONS = [
-  { value: 'draft', label: '작성중', color: 'default' },
-  { value: 'submitted', label: '제출', color: 'info' },
-  { value: 'approved', label: '승인', color: 'success' },
-  { value: 'rejected', label: '반려', color: 'error' },
-  { value: 'completed', label: '완료', color: 'success' },
+  { value: 'DRAFT', label: '작성중', color: 'default' },
+  { value: 'SUBMITTED', label: '제출', color: 'info' },
+  { value: 'APPROVED', label: '승인', color: 'success' },
+  { value: 'REJECTED', label: '반려', color: 'error' },
+  { value: 'COMPLETED', label: '완료', color: 'success' },
 ]
 
 // 위험성 평가서 (Form Template)

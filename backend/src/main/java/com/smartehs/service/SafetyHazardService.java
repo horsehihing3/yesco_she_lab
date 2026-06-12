@@ -68,15 +68,20 @@ public class SafetyHazardService {
     }
 
     private SafetyHazardForm toEntity(SafetyHazardFormRequest r, Long id) {
-        return SafetyHazardForm.builder()
+        SafetyHazardForm entity = SafetyHazardForm.builder()
                 .id(id).title(r.getTitle()).description(r.getDescription())
                 .divisionName(r.getDivisionName()).departmentName(r.getDepartmentName())
                 .evaluator(r.getEvaluator()).surveyDate(r.getSurveyDate()).teamMembers(r.getTeamMembers())
-                .createdByUserId(r.getCreatedByUserId()).createdByName(r.getCreatedByName())
-                .createdByTeam(r.getCreatedByTeam()).createdByPosition(r.getCreatedByPosition())
-                .modifiedByUserId(r.getModifiedByUserId()).modifiedByName(r.getModifiedByName())
-                .modifiedByTeam(r.getModifiedByTeam()).modifiedByPosition(r.getModifiedByPosition())
                 .build();
+        entity.setCreatedByUserId(r.getCreatedByUserId());
+        entity.setCreatedByName(r.getCreatedByName());
+        entity.setCreatedByTeam(r.getCreatedByTeam());
+        entity.setCreatedByPosition(r.getCreatedByPosition());
+        entity.setModifiedByUserId(r.getModifiedByUserId());
+        entity.setModifiedByName(r.getModifiedByName());
+        entity.setModifiedByTeam(r.getModifiedByTeam());
+        entity.setModifiedByPosition(r.getModifiedByPosition());
+        return entity;
     }
 
     private void saveItems(Long formId, List<SafetyHazardFormRequest.ItemRequest> items) {

@@ -94,7 +94,7 @@ public class ProcessActivityService {
     // ===== helpers =====
 
     private ProcessActivityForm toEntity(ProcessActivityFormRequest r, Long id) {
-        return ProcessActivityForm.builder()
+        ProcessActivityForm entity = ProcessActivityForm.builder()
                 .id(id)
                 .title(r.getTitle())
                 .description(r.getDescription())
@@ -103,15 +103,16 @@ public class ProcessActivityService {
                 .evaluator(r.getEvaluator())
                 .creationDate(r.getCreationDate())
                 .teamMembers(r.getTeamMembers())
-                .createdByUserId(r.getCreatedByUserId())
-                .createdByName(r.getCreatedByName())
-                .createdByTeam(r.getCreatedByTeam())
-                .createdByPosition(r.getCreatedByPosition())
-                .modifiedByUserId(r.getModifiedByUserId())
-                .modifiedByName(r.getModifiedByName())
-                .modifiedByTeam(r.getModifiedByTeam())
-                .modifiedByPosition(r.getModifiedByPosition())
                 .build();
+        entity.setCreatedByUserId(r.getCreatedByUserId());
+        entity.setCreatedByName(r.getCreatedByName());
+        entity.setCreatedByTeam(r.getCreatedByTeam());
+        entity.setCreatedByPosition(r.getCreatedByPosition());
+        entity.setModifiedByUserId(r.getModifiedByUserId());
+        entity.setModifiedByName(r.getModifiedByName());
+        entity.setModifiedByTeam(r.getModifiedByTeam());
+        entity.setModifiedByPosition(r.getModifiedByPosition());
+        return entity;
     }
 
     private void saveProcessesAndItems(Long formId, List<ProcessActivityFormRequest.ProcessRequest> processes) {

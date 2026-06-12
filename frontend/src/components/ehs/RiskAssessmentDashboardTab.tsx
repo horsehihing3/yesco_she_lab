@@ -12,12 +12,12 @@ import { useThemeMode } from '../../context/ThemeContext'
 import { ChartCard, ShadcnTooltip, STATUS_COLOR_HEX, CHART_COLORS } from '../common/DashboardChartHelpers'
 
 const STATUS_DEFAULTS: Record<string, string> = {
-  draft: '작성중',
-  submitted: '승인대기',
-  approved: '계획 승인',
-  completion_submitted: '완료 결재 대기',
-  rejected: '반려',
-  completed: '완료',
+  DRAFT: '작성중',
+  SUBMITTED: '승인대기',
+  APPROVED: '계획 승인',
+  COMPLETION_SUBMITTED: '완료 결재 대기',
+  REJECTED: '반려',
+  COMPLETED: '완료',
 }
 
 const KpiCard: React.FC<{ label: string; value: number | string; color?: string }> = ({ label, value, color = CHART_COLORS.blue }) => (
@@ -43,17 +43,17 @@ const RiskAssessmentDashboardTab: React.FC = () => {
 
   const kpi = useMemo(() => {
     const total = list.length
-    const draft = list.filter(i => i.status === 'draft').length
-    const inApproval = list.filter(i => i.status === 'submitted' || i.status === 'completion_submitted').length
-    const completed = list.filter(i => i.status === 'completed').length
-    const rejected = list.filter(i => i.status === 'rejected').length
+    const draft = list.filter(i => i.status === 'DRAFT').length
+    const inApproval = list.filter(i => i.status === 'SUBMITTED' || i.status === 'COMPLETION_SUBMITTED').length
+    const completed = list.filter(i => i.status === 'COMPLETED').length
+    const rejected = list.filter(i => i.status === 'REJECTED').length
     return { total, draft, inApproval, completed, rejected }
   }, [list])
 
   const statusData = useMemo(() => {
     const map: Record<string, number> = {}
     list.forEach(i => {
-      const key = (i.status || '').toLowerCase()
+      const key = i.status || ''
       map[key] = (map[key] || 0) + 1
     })
     return Object.entries(map).map(([status, value]) => ({

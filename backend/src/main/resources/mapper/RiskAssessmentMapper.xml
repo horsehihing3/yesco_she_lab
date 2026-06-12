@@ -179,7 +179,7 @@
         SET status = #{status},
             reject_reason = #{rejectReason},
             allow_resubmit = #{allowResubmit},
-            completed_date = CASE WHEN #{status} = 'completed' THEN GETDATE() ELSE completed_date END,
+            completed_date = CASE WHEN #{status} = 'COMPLETED' THEN GETDATE() ELSE completed_date END,
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>
@@ -191,8 +191,8 @@
             plan_approved_by      = CASE WHEN #{stage} = 'PLAN'       AND #{approved} = 1 THEN #{approvedBy} ELSE plan_approved_by END,
             completion_approved_at = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN GETDATE() ELSE completion_approved_at END,
             completion_approved_by = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN #{approvedBy} ELSE completion_approved_by END,
-            completed_date        = CASE WHEN #{status} = 'completed' THEN GETDATE() ELSE completed_date END,
-            reject_reason         = CASE WHEN #{status} = 'rejected' THEN #{rejectReason} ELSE reject_reason END,
+            completed_date        = CASE WHEN #{status} = 'COMPLETED' THEN GETDATE() ELSE completed_date END,
+            reject_reason         = CASE WHEN #{status} = 'REJECTED' THEN #{rejectReason} ELSE reject_reason END,
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

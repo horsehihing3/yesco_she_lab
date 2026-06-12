@@ -326,7 +326,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
         department: '',
         inspector: user?.name || '',
         site: '',
-        status: 'draft',
+        status: 'DRAFT',
         results,
       }
 

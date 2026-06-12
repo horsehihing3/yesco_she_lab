@@ -21,8 +21,8 @@ export const STATUS_COLOR_HEX: Record<string, string> = {
   // 작성중 / pending / draft → 보라
   draft: '#8B5CF6', DRAFT: '#8B5CF6',
   // 결재중 → 노랑
-  submitted: '#F59E0B', PENDING: '#F59E0B', PENDING_APPROVAL: '#F59E0B',
-  REQUESTED: '#F59E0B', completion_submitted: '#F59E0B', COMPLETION_PENDING: '#F59E0B',
+  submitted: '#F59E0B', SUBMITTED: '#F59E0B', PENDING: '#F59E0B', PENDING_APPROVAL: '#F59E0B',
+  REQUESTED: '#F59E0B', completion_submitted: '#F59E0B', COMPLETION_SUBMITTED: '#F59E0B', COMPLETION_PENDING: '#F59E0B',
   // 승인 → 파랑
   approved: '#3B82F6', APPROVED: '#3B82F6', IN_PROGRESS: '#3B82F6',
   // 완료 → 초록
