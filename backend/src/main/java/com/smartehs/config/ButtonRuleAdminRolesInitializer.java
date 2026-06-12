@@ -159,11 +159,9 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         u(rows, M1, "DETAIL",    "수정",      R);
         u(rows, M1, "DETAIL",    "삭제",      R);
         String M2 = "안전 관리 › 보호구 장비 › 지급 신청";
-        u(rows, M2, "REQUESTED", "수정",     R);
-        u(rows, M2, "REQUESTED", "취소",     R);
+        // 수정/취소/삭제 = 작성자만 (일반관리자 grant 없음) — 사용자 스펙
         u(rows, M2, "REQUESTED", "승인",     R);
         u(rows, M2, "REQUESTED", "반려",     R);
-        u(rows, M2, "REQUESTED", "삭제",     R);
         u(rows, M2, "APPROVED",  "지급완료", R);
         u(rows, M2, "ISSUED",    "반납",     R);
         return flush(rows);
@@ -459,8 +457,8 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         ao(rows, "안전 관리 › 보호구 장비 › 재고", "LIST", "신규 등록");
         ao(rows, "안전 관리 › 보호구 장비 › 재고", "DETAIL", "수정", "삭제");
         String PPE2 = "안전 관리 › 보호구 장비 › 지급 신청";
-        wo(rows, PPE2, "REQUESTED", "수정", "취소");
-        wa(rows, PPE2, "REQUESTED", "삭제");
+        // 수정/취소/삭제 = 작성자(신청자 본인)+슈퍼 (신청 등록=일반사용자는 DEFAULT_MENU_DATA)
+        wa(rows, PPE2, "REQUESTED", "수정", "취소", "삭제");
         ao(rows, PPE2, "REQUESTED", "승인", "반려");
         ao(rows, PPE2, "APPROVED", "지급완료");
         ao(rows, PPE2, "ISSUED", "반납");

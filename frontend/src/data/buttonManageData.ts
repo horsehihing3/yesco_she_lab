@@ -555,12 +555,14 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [
-          { button: '신청 등록', roles: ALL_ON },
+          // 신청 = 일반사용자(셀프서비스)
+          { button: '신청 등록', roles: { guest: true, writer: false, auditor: false, superAdmin: true, planApprover: false, completionApprover: false } },
         ] },
       { status: 'REQUESTED', statusLabel: '신청', statusColor: 'info',
         buttons: [
-          { button: '수정',   roles: WRITER_ONLY },
-          { button: '취소',   roles: WRITER_ONLY },
+          // 수정/취소/삭제 = 작성자(신청자)+슈퍼 / 승인·반려 = 일반관리자+슈퍼
+          { button: '수정',   roles: WRITER_ADMIN },
+          { button: '취소',   roles: WRITER_ADMIN },
           { button: '승인',   roles: ADMIN_ONLY },
           { button: '반려',   roles: ADMIN_ONLY },
           { button: '삭제',   roles: WRITER_ADMIN },

@@ -156,21 +156,26 @@ test('버튼관리 규칙 검증 (교정된 메뉴)', async ({ browser }) => {
     expect(v('DETAIL', '삭제', 'writer'), 'DETAIL삭제/writer').toBe(true)
   })
 
-  // ── 보호구 지급 신청 ── 일반관리자 = PPE_ADMIN (없으면 EHS_ADMIN) ──────────
+  // ── 보호구 지급 신청 ── 신청=일반사용자 / 수정·취소·삭제=작성자 / 승인·반려·지급완료·반납=일반관리자(EHS_ADMIN) ──
   await test.step('보호구 지급 신청', async () => {
     const v = buttonRuleLookup(rules, '안전 관리 › 보호구 장비 › 지급 신청')
-    // 수정/취소 = 작성자(신청자) 본인 (Sonnet 설계: 자기 신청건은 writer-only, super 제외)
-    // NOTE: 사용자 모델 "슈퍼 항상 ON"과 1건 상충 — super 포함 원하면 seeder wo→wa
-    expect(v('REQUESTED', '수정',     'writer'),     '수정/writer').toBe(true)
-    expect(v('REQUESTED', '수정',     'superAdmin'), '수정/superAdmin').toBe(false)
-    expect(v('REQUESTED', '취소',     'writer'),     '취소/writer').toBe(true)
-    // WRITER_ADMIN: 삭제 → writer=true, superAdmin=true
-    expect(v('REQUESTED', '삭제',     'writer'),     '삭제/writer').toBe(true)
-    expect(v('REQUESTED', '삭제',     'superAdmin'), '삭제/superAdmin').toBe(true)
-    // ADMIN_ONLY: 승인/반려 → superAdmin=true, writer=false
-    expect(v('REQUESTED', '승인',     'superAdmin'), '승인/superAdmin').toBe(true)
-    expect(v('REQUESTED', '승인',     'writer'),     '승인/writer').toBe(false)
-    expect(v('REQUESTED', '반려',     'superAdmin'), '반려/superAdmin').toBe(true)
+    // 신청 등록 = 일반사용자(셀프서비스)+슈퍼
+    expect(v('LIST', '신청 등록', 'guest'), '신청/guest').toBe(true)
+    expect(v('LIST', '신청 등록', 'superAdmin'), '신청/superAdmin').toBe(true)
+    // 수정/취소/삭제 = 작성자(신청자 본인)+슈퍼
+    for (const btn of ['수정', '취소', '삭제']) {
+      expect(v('REQUESTED', btn, 'writer'), `${btn}/writer`).toBe(true)
+      expect(v('REQUESTED', btn, 'superAdmin'), `${btn}/superAdmin`).toBe(true)
+      expect(v('REQUESTED', btn, 'EHS_ADMIN'), `${btn}/일반관리자`).toBe(false)
+      expect(v('REQUESTED', btn, 'guest'), `${btn}/guest`).toBe(false)
+    }
+    // 승인/반려/지급완료/반납 = 일반관리자(EHS_ADMIN)+슈퍼, 작성자 불가
+    for (const [st, btn] of [['REQUESTED', '승인'], ['REQUESTED', '반려'], ['APPROVED', '지급완료'], ['ISSUED', '반납']] as const) {
+      expect(v(st, btn, 'EHS_ADMIN'), `${btn}/일반관리자`).toBe(true)
+      expect(v(st, btn, 'superAdmin'), `${btn}/superAdmin`).toBe(true)
+      expect(v(st, btn, 'writer'), `${btn}/writer`).toBe(false)
+      expect(v(st, btn, 'guest'), `${btn}/guest`).toBe(false)
+    }
   })
 
   // ── 건강검진 계획 ── 일반관리자 = HEALTH_ADMIN (없으면 EHS_ADMIN) ──────────
