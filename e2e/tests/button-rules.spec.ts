@@ -57,5 +57,30 @@ test('버튼관리 규칙 검증 (교정된 메뉴)', async ({ browser }) => {
     }
   })
 
+  // ── 작업 허가 › 허가 신청 ── 일반관리자=EHS_ADMIN ──────────────────────────
+  await test.step('작업허가 허가신청', async () => {
+    const v = buttonRuleLookup(rules, '안전 관리 › 작업 허가 › 허가 신청')
+    // New = 일반관리자+슈퍼 (writer/TEAM_ADMIN/guest 불가)
+    expect(v('LIST', '신규 등록', 'EHS_ADMIN')).toBe(true)
+    expect(v('LIST', '신규 등록', 'superAdmin')).toBe(true)
+    expect(v('LIST', '신규 등록', 'writer')).toBe(false)
+    expect(v('LIST', '신규 등록', 'TEAM_ADMIN')).toBe(false)
+    expect(v('LIST', '신규 등록', 'guest')).toBe(false)
+    // 계획상신/수정/삭제 = 작성자
+    expect(v('DRAFT/REJECTED', '계획 결재 상신', 'writer')).toBe(true)
+    expect(v('DRAFT/REJECTED', '계획 결재 상신', 'guest')).toBe(false)
+    // 계획반려/승인 = 계획승인자
+    expect(v('PENDING_APPROVAL/REQUESTED', '계획 결재 승인', 'planApprover')).toBe(true)
+    expect(v('PENDING_APPROVAL/REQUESTED', '계획 결재 승인', 'guest')).toBe(false)
+    expect(v('PENDING_APPROVAL/REQUESTED', '계획 결재 승인', 'writer')).toBe(false)
+    // 점검 저장/완료상신 = 점검자(auditor)
+    expect(v('APPROVED', '저장 (체크리스트)', 'auditor')).toBe(true)
+    expect(v('APPROVED', '저장 (체크리스트)', 'writer')).toBe(false)
+    expect(v('APPROVED', '완료 결재 상신', 'auditor')).toBe(true)
+    // 완료반려/승인 = 완료승인자
+    expect(v('COMPLETION_PENDING', '완료 결재 승인', 'completionApprover')).toBe(true)
+    expect(v('COMPLETION_PENDING', '완료 결재 승인', 'guest')).toBe(false)
+  })
+
   await context.close()
 })

@@ -480,30 +480,30 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 작업허가 › 허가 신청 ──────────────────────────────────────────────────
+  // ── 작업허가 › 허가 신청 ── 일반관리자 = EHS_ADMIN (PERMIT_ADMIN 계정 없음) ──
   {
     menuPath: '안전 관리 › 작업 허가 › 허가 신청', menuKey: 'nav.permitToWork',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+        buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
       { status: 'DRAFT/REJECTED', statusLabel: '작성중 / 반려', statusColor: 'default',
         statusNote: 'DRAFT(신규) 또는 REJECTED(계획 반려 후) 상태 — 동일 버튼 노출',
         buttons: [
-          { button: '계획 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 내 허가 탭에서는 사실상 작성자만 보임' },
+          { button: '계획 결재 상신', roles: WRITER_ADMIN },
           { button: '수정', roles: WRITER_ADMIN },
           { button: '삭제', roles: WRITER_ADMIN },
         ] },
       { status: 'PENDING_APPROVAL/REQUESTED', statusLabel: '계획 결재 대기', statusColor: 'warning',
-        statusNote: '전체 탭(mode=all)에서는 모든 사용자가 승인 가능 (⚠️ isAdminTab 체크)',
+        statusNote: '전체 탭(mode=all)에서는 모든 사용자가 승인 가능 (⚠️ 화면 isAdminTab 우회 — 코드 보완 필요)',
         buttons: [
-          { button: '계획 결재 반려', roles: ADMIN_PLAN, issue: '전체 탭에서는 모든 사용자 승인 가능' },
-          { button: '계획 결재 승인', roles: ADMIN_PLAN, issue: '전체 탭에서는 모든 사용자 승인 가능' },
+          { button: '계획 결재 반려', roles: ADMIN_PLAN, issue: '화면(전체 탭) isAdminTab 우회 — canSee 미반영 가능' },
+          { button: '계획 결재 승인', roles: ADMIN_PLAN, issue: '화면(전체 탭) isAdminTab 우회 — canSee 미반영 가능' },
         ] },
       { status: 'APPROVED', statusLabel: '승인완료', statusColor: 'info',
-        statusNote: '완료 결재 흐름은 "작업 완료 후 점검" 탭에서 처리',
+        statusNote: '완료 결재 흐름은 "작업 완료 후 점검" 탭에서 처리 (점검자 기준)',
         buttons: [
-          { button: '저장 (체크리스트)', roles: ALL_ON, issue: '권한 체크 없음' },
-          { button: '완료 결재 상신',    roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '저장 (체크리스트)', roles: AUDITOR_ADMIN },
+          { button: '완료 결재 상신',    roles: AUDITOR_ADMIN },
         ] },
       { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
         statusNote: '완료승인자 미지정 시 모든 관리자 역할 사용자 승인 가능',
