@@ -45,10 +45,12 @@ const TrainingStatusTab: React.FC = () => {
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)'
   const isAdmin = isSystemAdmin(user)
-  const getRoles = (): string[] => {
+  const getRoles = (record?: { applicantName?: string | null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
     else if (user?.role) roles.push(user.role)
+    // 작성자(신청자 본인) — userId 미보유 메뉴라 이름으로 매칭
+    if (record?.applicantName && user?.name && record.applicantName === user.name) roles.push('writer')
     return roles
   }
   const { getLabel: getStatusLabel, codeList: statusCodes } = useCodeMap('TRAINING_APPLICATION_STATUS')
@@ -203,18 +205,18 @@ const TrainingStatusTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
           {detail.status === 'PENDING' && (
             <>
-              {canSee(MENU, 'PENDING', '반려', getRoles()) && (
+              {canSee(MENU, 'PENDING', '반려', getRoles(detail)) && (
                 <Button color="warning" variant="contained" onClick={() => setRejectDialog({ open: true, reason: '' })} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('training.reject', '반려')}</Button>
               )}
-              {canSee(MENU, 'PENDING', '승인', getRoles()) && (
+              {canSee(MENU, 'PENDING', '승인', getRoles(detail)) && (
                 <Button color="success" variant="contained" onClick={() => handleApprove(detail)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('training.approve', '승인')}</Button>
               )}
             </>
           )}
-          {detail.status === 'APPROVED' && canSee(MENU, 'APPROVED', '수료', getRoles()) && (
+          {detail.status === 'APPROVED' && canSee(MENU, 'APPROVED', '수료', getRoles(detail)) && (
             <Button color="success" variant="contained" onClick={() => handleComplete(detail)}>{t('training.complete', '수료')}</Button>
           )}
-          {(detail.status === 'PENDING' || detail.status === 'APPROVED') && canSee(MENU, detail.status, '신청 취소', getRoles()) && (
+          {(detail.status === 'PENDING' || detail.status === 'APPROVED') && canSee(MENU, detail.status, '신청 취소', getRoles(detail)) && (
             <Button color="error" variant="contained" onClick={() => handleCancel(detail)}>{t('training.cancelApplication', '신청 취소')}</Button>
           )}
         </Box>

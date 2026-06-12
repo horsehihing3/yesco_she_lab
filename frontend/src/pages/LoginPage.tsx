@@ -129,7 +129,7 @@ const LoginPage: React.FC = () => {
               DEV 빠른 로그인
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, justifyContent: 'center' }}>
-              {['jiwan.nam', 'yeseo.moon', 'jungho.yoo', 'horsehihing3', 'yujeong.jung', 'gs5655', 'yuhyun.ha', 'com4in'].map((id) => (
+              {['jiwan.nam', 'yeseo.moon', 'jungho.yoo', 'horsehihing3', 'yujeong.jung', 'gs5655', 'yuhyun.ha', 'com4in', 'jihyun.nam'].map((id) => (
                 <Button
                   key={id}
                   size="small"

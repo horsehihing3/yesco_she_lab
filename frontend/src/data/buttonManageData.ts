@@ -70,6 +70,8 @@ export const ADMIN_PLAN:    Record<Role, boolean> = { guest: false, writer: fals
 export const ADMIN_COMP:    Record<Role, boolean> = { guest: false, writer: false, auditor: false, superAdmin: true,  planApprover: false, completionApprover: true  }
 export const WRITER_ONLY:   Record<Role, boolean> = { guest: false, writer: true,  auditor: false, superAdmin: false, planApprover: false, completionApprover: false }
 export const AUDITOR_ADMIN: Record<Role, boolean> = { guest: false, writer: false, auditor: true,  superAdmin: true,  planApprover: false, completionApprover: false }
+// 일반관리자 전용(추상역할은 슈퍼관리자만; 실제 일반관리자 부여는 메뉴별 지정역할로 DB에서 처리)
+export const ADMIN_ONLY:    Record<Role, boolean> = { guest: false, writer: false, auditor: false, superAdmin: true,  planApprover: false, completionApprover: false }
 
 // ─── 셀 키 ───────────────────────────────────────────────────────────────────
 export const cellKey = (mi: number, si: number, bi: number, role: Role) =>
@@ -302,20 +304,21 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 교육현황 (관리자) ──────────────────────────────────────────────────────
+  // ── 교육현황 (관리자) ── 일반관리자 = TRAINING_ADMIN (DB 지정) ───────────────
+  // 반려·승인·수료 = 일반관리자(+슈퍼) / 신청취소 = 작성자(신청자, 본인)(+슈퍼)
   {
     menuPath: 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',
     statuses: [
       { status: 'PENDING', statusLabel: '대기', statusColor: 'warning',
         buttons: [
-          { button: '반려',      roles: ALL_ON, issue: '권한 체크 없음 — 누구든 반려 가능' },
-          { button: '승인',      roles: ALL_ON, issue: '권한 체크 없음 — 누구든 승인 가능' },
-          { button: '신청 취소', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '반려',      roles: ADMIN_ONLY },
+          { button: '승인',      roles: ADMIN_ONLY },
+          { button: '신청 취소', roles: WRITER_ADMIN },
         ] },
       { status: 'APPROVED', statusLabel: '확정', statusColor: 'primary',
         buttons: [
-          { button: '수료',      roles: ALL_ON, issue: '권한 체크 없음 — 누구든 수료 처리 가능' },
-          { button: '신청 취소', roles: ALL_ON, issue: '권한 체크 없음' },
+          { button: '수료',      roles: ADMIN_ONLY },
+          { button: '신청 취소', roles: WRITER_ADMIN },
         ] },
     ],
   },
