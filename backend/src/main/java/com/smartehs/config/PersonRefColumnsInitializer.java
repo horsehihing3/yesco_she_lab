@@ -27,9 +27,35 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
     private final JdbcTemplate jdbcTemplate;
 
     /** {테이블, 역할 컬럼(=flat prefix) 목록} */
+    private static final String[] ALL4 = {"created_by", "modified_by", "plan_approver", "completion_approver"};
+    private static final String[] CM   = {"created_by", "modified_by"};
+    private static final String[] C    = {"created_by"};
+
     private static final List<Object[]> TABLES = List.<Object[]>of(
-        new Object[]{"tb_ehs_annual_plan", new String[]{"created_by", "modified_by", "plan_approver", "completion_approver"}}
-        // Phase 2: 여기에 테이블 추가
+        // 4역할 (작성/수정/계획승인/완료승인)
+        new Object[]{"tb_ehs_annual_plan", ALL4}, new Object[]{"tb_audit", ALL4},
+        new Object[]{"tb_audit_plan", ALL4}, new Object[]{"tb_contractor_plan", ALL4},
+        new Object[]{"tb_emergency_plan", ALL4}, new Object[]{"tb_psm_moc", ALL4},
+        // 특수 조합
+        new Object[]{"tb_permit_to_work", new String[]{"created_by", "plan_approver", "completion_approver"}},
+        new Object[]{"tb_risk_assessment", new String[]{"plan_approver", "completion_approver"}},
+        new Object[]{"tb_site_safety_plan", new String[]{"created_by", "modified_by", "completion_approver"}},
+        // 작성+수정
+        new Object[]{"tb_contractor_registration", CM}, new Object[]{"tb_health_checkup_plan", CM},
+        new Object[]{"tb_legal_compliance_exec", CM}, new Object[]{"tb_legal_compliance_plan", CM},
+        new Object[]{"tb_process_activity_form", CM}, new Object[]{"tb_psm_data", CM},
+        new Object[]{"tb_psm_hazop", CM}, new Object[]{"tb_psm_incident", CM},
+        new Object[]{"tb_psm_ptw", CM}, new Object[]{"tb_psm_wo", CM},
+        new Object[]{"tb_safety_accident_form", CM}, new Object[]{"tb_safety_hazard_form", CM},
+        new Object[]{"tb_wem_factor", CM}, new Object[]{"tb_wem_improvement", CM},
+        new Object[]{"tb_wem_plan", CM}, new Object[]{"tb_wem_result", CM},
+        // 작성자만
+        new Object[]{"tb_dp_cvd", C}, new Object[]{"tb_dp_hearing", C}, new Object[]{"tb_dp_infect", C},
+        new Object[]{"tb_dp_msd", C}, new Object[]{"tb_dp_respi", C}, new Object[]{"tb_dp_stress", C},
+        new Object[]{"tb_dp_thermal", C}, new Object[]{"tb_ehs_manager", C}, new Object[]{"tb_emergency_contact", C},
+        new Object[]{"tb_health_checkup_record", C}, new Object[]{"tb_legal_law", C},
+        new Object[]{"tb_od_aftercare", C}, new Object[]{"tb_od_exposure", C}, new Object[]{"tb_od_org", C},
+        new Object[]{"tb_od_plan", C}, new Object[]{"tb_od_worker", C}
     );
 
     @Override
