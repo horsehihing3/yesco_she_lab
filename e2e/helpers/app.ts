@@ -113,6 +113,23 @@ export async function openRowByName(page: Page, planName: string) {
   await page.getByRole('row', { name: new RegExp(planName) }).first().click()
 }
 
+export interface ButtonRule { menuPath: string; statusCode: string; buttonName: string; roleKey: string; visible: boolean }
+
+/** 버튼관리 규칙을 API(/button-rules)에서 직접 조회 — 화면 데이터 없이 권한 설정 검증용 */
+export async function fetchButtonRules(page: Page): Promise<ButtonRule[]> {
+  const token = await page.evaluate(() => localStorage.getItem('accessToken'))
+  const apiBase = process.env.E2E_API_URL || 'http://localhost:7501'
+  const res = await page.request.get(`${apiBase}/api/button-rules`, { headers: { Authorization: `Bearer ${token}` } })
+  const body = await res.json()
+  return (body.data ?? []) as ButtonRule[]
+}
+
+/** (menuPath, status, button, role) → visible 조회 헬퍼 팩토리 */
+export function buttonRuleLookup(rules: ButtonRule[], menuPath: string) {
+  return (status: string, button: string, role: string): boolean =>
+    rules.find(r => r.menuPath === menuPath && r.statusCode === status && r.buttonName === button && r.roleKey === role)?.visible ?? false
+}
+
 /** '반려' 버튼 → 사유 입력 다이얼로그(RejectReasonDialog) → '반려 처리' */
 export async function rejectWithReason(page: Page, reason: string) {
   await page.getByRole('button', { name: '반려', exact: true }).click()
