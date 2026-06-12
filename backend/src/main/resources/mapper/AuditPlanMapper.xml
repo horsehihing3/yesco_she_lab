@@ -21,26 +21,14 @@
         <result property="approved" column="approved"/>
         <result property="approvedBy" column="approved_by"/>
         <result property="approvedAt" column="approved_at"/>
-        <result property="planApproverUserId" column="plan_approver_user_id"/>
-        <result property="planApproverTeam"     column="plan_approver_team"/>
-        <result property="planApproverPosition" column="plan_approver_position"/>
-        <result property="planApproverName"     column="plan_approver_name"/>
+        <result property="planApprover"       column="plan_approver"       typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="planApprovedAt" column="plan_approved_at"/>
         <result property="planApprovedBy" column="plan_approved_by"/>
-        <result property="completionApproverUserId" column="completion_approver_user_id"/>
-        <result property="completionApproverTeam"     column="completion_approver_team"/>
-        <result property="completionApproverPosition" column="completion_approver_position"/>
-        <result property="completionApproverName"     column="completion_approver_name"/>
+        <result property="completionApprover" column="completion_approver" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="completionApprovedAt" column="completion_approved_at"/>
         <result property="completionApprovedBy" column="completion_approved_by"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByPosition" column="created_by_position"/>
-        <result property="modifiedByUserId"   column="modified_by_user_id"/>
-        <result property="modifiedByName"     column="modified_by_name"/>
-        <result property="modifiedByTeam"     column="modified_by_team"/>
-        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="createdBy"          column="created_by"          typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy"         column="modified_by"         typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="rejectReason"    column="reject_reason"/>
         <result property="deleted" column="deleted"/>
         <result property="createdAt" column="created_at"/>
@@ -99,17 +87,16 @@
             plan_id, audit_name, audit_type, target_dept,
             auditor_name, auditor_dept, person_in_charge, plan_start_date, plan_end_date,
             purpose, status, notes, checklist_template_id,
-            created_by_user_id, created_by_name, created_by_team, created_by_position,
-            plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
-            completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+            created_by, modified_by, plan_approver, completion_approver,
             deleted, created_at, modified_at
         ) VALUES (
             #{planId}, #{auditName}, #{auditType}, #{targetDept},
             #{auditorName}, #{auditorDept}, #{personInCharge}, #{planStartDate,jdbcType=DATE}, #{planEndDate,jdbcType=DATE},
             #{purpose}, #{status}, #{notes}, #{checklistTemplateId},
-            #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
-            #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
-            #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{planApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{completionApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             0, GETDATE(), GETDATE()
         )
     </insert>
@@ -122,18 +109,9 @@
             plan_start_date = #{planStartDate,jdbcType=DATE}, plan_end_date = #{planEndDate,jdbcType=DATE},
             purpose = #{purpose}, status = COALESCE(#{status}, status, 'PLAN'), notes = #{notes},
             checklist_template_id = #{checklistTemplateId},
-            plan_approver_user_id  = #{planApproverUserId,jdbcType=BIGINT},
-            plan_approver_team     = #{planApproverTeam},
-            plan_approver_position = #{planApproverPosition},
-            plan_approver_name     = #{planApproverName},
-            completion_approver_user_id  = #{completionApproverUserId,jdbcType=BIGINT},
-            completion_approver_team     = #{completionApproverTeam},
-            completion_approver_position = #{completionApproverPosition},
-            completion_approver_name     = #{completionApproverName},
-            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
-            modified_by_name    = #{modifiedByName},
-            modified_by_team    = #{modifiedByTeam},
-            modified_by_position = #{modifiedByPosition},
+            plan_approver       = #{planApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            completion_approver = #{completionApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_by         = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

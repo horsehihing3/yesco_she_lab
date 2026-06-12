@@ -68,65 +68,59 @@ frontend/src/
 - **기존 API 응답 구조 무단 변경 금지** — 프론트 9개 파일이 `/api/users/company-tree` 응답 구조 의존
 - **application.yml DB 비밀번호 환경변수 전환 필요** — 현재 하드코딩 상태 (납품 전 필수)
 - **백엔드 수정 후 서버 재시작 필수**
-- **작성자·수정자·계획승인자·완료승인자는 4개 필드 모두 DB에 저장** — 상세 패턴은 아래 **사람 필드 표준 패턴** 섹션 참조. 신규 테이블도 동일 패턴 적용.
+- **작성자·수정자·계획승인자·완료승인자는 역할당 JSON 1컬럼(PersonRef)으로 저장** — 상세는 아래 **사람 필드 표준 패턴** 섹션 참조. 신규 테이블도 동일 패턴 적용.
 
-## 사람 필드 표준 패턴
+## 사람 필드 표준 패턴 (PersonRef · JSON 1컬럼)
 
-> 작성자·수정자·계획승인자·완료승인자 관련 작업 시 아래 순서를 그대로 따른다.
+> 역할당 4개 flat 컬럼 → **JSON 1컬럼(PersonRef 값객체)** 으로 통합 저장.
+> **DB만 JSON, wire(프론트 송수신)는 flat 유지** → 프론트·Service·Controller 코드 무변경.
+> 기반: `PersonRef.java` / `PersonRefTypeHandler.java` / `PersonRefColumnsInitializer.java`.
+> **레퍼런스 구현: `AuditPlan.java` + `AuditPlanMapper.xml` (raw 모델 반환형)**, `EhsAnnualPlan*`(Response DTO형).
 
-### 1. DB 컬럼 (Flyway migration 필수)
-| 역할 | 컬럼 4개 세트 |
-|------|--------------|
-| 작성자 | `created_by_user_id BIGINT`, `created_by_name NVARCHAR(100)`, `created_by_team NVARCHAR(100)`, `created_by_position NVARCHAR(50)` |
-| 수정자 | `modified_by_user_id`, `modified_by_name`, `modified_by_team`, `modified_by_position` (동일 타입) |
-| 계획승인자 | `plan_approver_user_id`, `plan_approver_name`, `plan_approver_team`, `plan_approver_position` |
-| 완료승인자 | `completion_approver_user_id`, `completion_approver_name`, `completion_approver_team`, `completion_approver_position` |
+### 1. DB 컬럼 — `PersonRefColumnsInitializer.TABLES` 에 등록
+- **Flyway 비활성** → migration 작성 금지. 초기화기 `TABLES` 배열에 `{테이블, 역할[]}` 추가만 하면
+  앱 기동 시 JSON 컬럼(`created_by` 등 NVARCHAR(MAX)) 조건부 추가 + 기존 flat 16컬럼에서 1회 backfill.
+- 역할 컬럼명 = `created_by` / `modified_by` / `plan_approver` / `completion_approver`.
 
-### 2. Java Model
+### 2. Java Model — PersonRef + flat 브릿지 접근자
 ```java
-private Long createdByUserId;
-private String createdByName;
-private String createdByTeam;
-private String createdByPosition;
-// 수정자·승인자도 동일 4개 세트
+@JsonIgnore private PersonRef createdBy;   // 수정자·계획/완료승인자도 동일
+private static PersonRef ensure(PersonRef p){ return p != null ? p : new PersonRef(); }
+@JsonProperty("createdByUserId")   public Long   getCreatedByUserId(){ return PersonRef.userId(createdBy); }
+@JsonProperty("createdByName")     public String getCreatedByName(){ return PersonRef.name(createdBy); }
+@JsonProperty("createdByTeam")     public String getCreatedByTeam(){ return PersonRef.team(createdBy); }
+@JsonProperty("createdByPosition") public String getCreatedByPosition(){ return PersonRef.position(createdBy); }
+public void setCreatedByUserId(Long v){ (createdBy = ensure(createdBy)).setUserId(v); }
+public void setCreatedByName(String v){ (createdBy = ensure(createdBy)).setName(v); }
+public void setCreatedByTeam(String v){ (createdBy = ensure(createdBy)).setTeam(v); }
+public void setCreatedByPosition(String v){ (createdBy = ensure(createdBy)).setPosition(v); }
 ```
+- `@JsonIgnore` 로 PersonRef 중첩 직렬화 차단, 브릿지 접근자가 flat 으로 송수신.
+- 승인 타임스탬프(`planApprovedAt/By`, `completionApprovedAt/By`)는 기존 컬럼 그대로 유지.
 
-### 3. MyBatis Mapper XML
-- **resultMap**: `created_by_team → createdByTeam`, `created_by_position → createdByPosition` 매핑 추가
-- **INSERT**: 컬럼/VALUES에 `created_by_team`, `created_by_position` 추가
-- **UPDATE SET**: `modified_by_team = #{modifiedByTeam}`, `modified_by_position = #{modifiedByPosition}` 추가
-- **SELECT**: `SELECT t.*` 만 사용 — `liveUserJoins` / `liveDisplayCols` 절대 금지
-
-### 4. Controller / Service — IdmUser 매핑
-```java
-// IdmUser 메서드 → 필드 매핑
-u.getUidNumber()  → createdByUserId   (Long)
-u.getUserName()   → createdByName
-u.getGroupName()  → createdByTeam     (T_IDM_GROUP.GroupName)
-u.getTitleName()  → createdByPosition (T_IDM_HRCODE.Name where Separator='TITLE')
+### 3. MyBatis Mapper XML — typeHandler
+```xml
+<result property="createdBy" column="created_by"
+        typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+<!-- INSERT/UPDATE: #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler} -->
 ```
-- **CREATE**: createdBy 4개 + modifiedBy 4개 모두 현재 로그인 사용자로 설정
-- **UPDATE**: modifiedBy 4개만 현재 로그인 사용자로 갱신
-- 승인자는 프론트에서 선택한 값을 그대로 저장 (컨트롤러에서 덮어쓰지 않음)
+- resultMap·INSERT·UPDATE 모두 역할 JSON 컬럼 1개로 교체. **SELECT 는 `SELECT t.*` 만**.
 
-### 5. 프론트엔드 표시
-```ts
-// frontend/src/utils/userDisplay.ts
-formatUserName(team, name, position)  // → "팀명 / 성명 직위"
-```
-- 모든 폼 상세/등록/수정 화면에서 작성자·수정자·승인자 표시 시 `formatUserName` 사용
-- **`fmtPerson(personFormat.ts)` 신규 사용 금지** — 기존 `workEnvMeasurement/Wem*.tsx` 제외
-- Form 초기화(create 모드): `createdBy*` 4개 필드를 `user?.department/name/position` 폴백으로 표시
-- 수정자 행(edit 모드): `formatUserName(user?.department, user?.name, user?.position)` 표시
-- 수정자 행(detail 모드): `formatUserName(item.modifiedByTeam, item.modifiedByName, item.modifiedByPosition)` 표시
-- 기준 샘플: `AuditPlanTab.tsx`
+### 4. Controller / Service — **무변경**
+- 컨트롤러의 `setCreatedByUserId/Name/Team/Position`, 서비스의 `getPlanApproverName()` 등
+  flat 호출이 브릿지 접근자로 그대로 동작. IdmUser 매핑·CREATE/UPDATE 규칙 동일:
+  `getUidNumber()→UserId`, `getUserName()→Name`, `getGroupName()→Team`, `getTitleName()→Position`.
+- CREATE=createdBy+modifiedBy 둘 다 로그인 사용자, UPDATE=modifiedBy만 갱신, 승인자는 프론트 값 보존.
 
-### 6. 작업 체크리스트 (신규 테이블 추가 시)
-- [ ] Flyway `V{n}__` migration — ALTER TABLE ADD 4개 컬럼 (IF COL_LENGTH 조건부)
-- [ ] Java Model — 4개 필드 추가
-- [ ] Mapper XML — resultMap / INSERT / UPDATE 수정, SELECT에서 liveJoin 제거
-- [ ] Controller 또는 Service — IdmUser에서 team/position 설정
-- [ ] 프론트 폼 — `formatUserName` 적용 확인 (detail/edit 모드 구분)
+### 5. 프론트엔드 — **무변경** (wire flat 유지)
+- 기존 `formatUserName(team, name, position)` 표시 로직 그대로. `createdByName` 등 flat 필드 송수신 동일.
+- 기준 샘플: `AuditPlanTab.tsx`.
+
+### 6. 작업 체크리스트 (테이블 1개 전환 시 — 2파일만)
+- [ ] `PersonRefColumnsInitializer.TABLES` 에 테이블·역할 등록 (이미 41개 등록됨 — 확인만)
+- [ ] Model — flat 16필드 제거 → `@JsonIgnore PersonRef` + 브릿지 접근자
+- [ ] Mapper XML — resultMap / INSERT / UPDATE 를 JSON 컬럼 + typeHandler 로 교체
+- [ ] (Service/Controller/프론트 무변경) 빌드 후 GET/POST 로 flat 왕복·중첩 부재 확인
 
 ---
 
