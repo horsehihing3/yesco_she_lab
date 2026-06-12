@@ -25,12 +25,9 @@
         <result property="nextCheckup" column="next_checkup"/>
         <result property="notes" column="notes"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt"  column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findAll" resultMap="R">SELECT * FROM tb_dp_cvd WHERE deleted = 0 ORDER BY assessment_date DESC, id DESC</select>
@@ -42,7 +39,7 @@
         INSERT INTO tb_dp_cvd (worker_name, department, age, gender, bmi, bp_sys, bp_dia,
             fasting_glucose, ldl, hdl, smoking, drinking, exercise, night_shift, overtime,
             risk_level, assessment_date, assessor, management_plan, next_checkup, notes,
-            deleted, created_at, modified_at) VALUES (
+            deleted, created_by, created_at, modified_at) VALUES (
             #{workerName}, #{department,jdbcType=NVARCHAR}, #{age,jdbcType=INTEGER}, #{gender,jdbcType=NVARCHAR},
             #{bmi,jdbcType=DECIMAL}, #{bpSys,jdbcType=INTEGER}, #{bpDia,jdbcType=INTEGER},
             #{fastingGlucose,jdbcType=INTEGER}, #{ldl,jdbcType=INTEGER}, #{hdl,jdbcType=INTEGER},
@@ -50,7 +47,7 @@
             #{nightShift,jdbcType=NVARCHAR}, #{overtime,jdbcType=NVARCHAR},
             #{riskLevel}, #{assessmentDate,jdbcType=DATE}, #{assessor,jdbcType=NVARCHAR},
             #{managementPlan,jdbcType=NVARCHAR}, #{nextCheckup,jdbcType=DATE}, #{notes,jdbcType=NVARCHAR},
-            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE())
+            0, #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler}, GETDATE(), GETDATE())
     </insert>
 
     <update id="update">

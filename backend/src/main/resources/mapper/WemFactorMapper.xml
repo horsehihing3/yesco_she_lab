@@ -3,7 +3,7 @@
 
 <mapper namespace="com.smartehs.mapper.WemFactorMapper">
 
-    <resultMap id="WemFactorResultMap" type="com.smartehs.model.WemFactor">
+    <resultMap id="R" type="com.smartehs.model.WemFactor">
         <id property="id" column="id"/>
         <result property="factorName" column="factor_name"/>
         <result property="factorNameEn" column="factor_name_en"/>
@@ -17,19 +17,13 @@
         <result property="isPermitted" column="is_permitted"/>
         <result property="usedProcess" column="used_process"/>
         <result property="remarks" column="remarks"/>
-        <result property="createdByUserId" column="created_by_user_id"/>
-        <result property="createdByName" column="created_by_name"/>
-        <result property="createdByTeam" column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
-        <result property="modifiedByUserId" column="modified_by_user_id"/>
-        <result property="modifiedByName" column="modified_by_name"/>
-        <result property="modifiedByTeam" column="modified_by_team"/>
-        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
 
-    <select id="findAllWithPaging" resultMap="WemFactorResultMap">
+    <select id="findAllWithPaging" resultMap="R">
         SELECT * FROM tb_wem_factor
         ORDER BY created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
@@ -39,7 +33,7 @@
         SELECT COUNT(*) FROM tb_wem_factor
     </select>
 
-    <select id="findByFactorType" resultMap="WemFactorResultMap">
+    <select id="findByFactorType" resultMap="R">
         SELECT * FROM tb_wem_factor
         WHERE factor_type = #{factorType}
         ORDER BY created_at DESC
@@ -50,7 +44,7 @@
         SELECT COUNT(*) FROM tb_wem_factor WHERE factor_type = #{factorType}
     </select>
 
-    <select id="searchByName" resultMap="WemFactorResultMap">
+    <select id="searchByName" resultMap="R">
         SELECT * FROM tb_wem_factor
         WHERE factor_name LIKE '%' + #{keyword} + '%' OR factor_name_en LIKE '%' + #{keyword} + '%'
         ORDER BY created_at DESC
@@ -62,39 +56,29 @@
         WHERE factor_name LIKE '%' + #{keyword} + '%' OR factor_name_en LIKE '%' + #{keyword} + '%'
     </select>
 
-    <select id="findById" resultMap="WemFactorResultMap">
+    <select id="findById" resultMap="R">
         SELECT * FROM tb_wem_factor WHERE id = #{id}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tb_wem_factor (factor_name, factor_name_en, cas_number, factor_type, twa, stel, ceiling_value, unit, msds_linked, is_permitted, used_process, remarks,
-            created_by_user_id, created_by_name, created_by_team, created_by_position,
-            modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
-            created_at, modified_at)
-        VALUES (#{factorName}, #{factorNameEn}, #{casNumber}, #{factorType}, #{twa}, #{stel}, #{ceilingValue}, #{unit}, #{msdsLinked}, #{isPermitted}, #{usedProcess}, #{remarks},
-            #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
-            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
+        INSERT INTO tb_wem_factor (factor_name, factor_name_en, cas_number, factor_type, twa, stel, ceiling_value, unit,
+            msds_linked, is_permitted, used_process, remarks,
+            created_by, modified_by, created_at, modified_at)
+        VALUES (#{factorName}, #{factorNameEn}, #{casNumber}, #{factorType}, #{twa}, #{stel}, #{ceilingValue}, #{unit},
+            #{msdsLinked}, #{isPermitted}, #{usedProcess}, #{remarks},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             GETDATE(), GETDATE())
     </insert>
 
     <update id="update">
-        UPDATE tb_wem_factor
-        SET factor_name = #{factorName},
-            factor_name_en = #{factorNameEn},
-            cas_number = #{casNumber},
-            factor_type = #{factorType},
-            twa = #{twa},
-            stel = #{stel},
-            ceiling_value = #{ceilingValue},
-            unit = #{unit},
-            msds_linked = #{msdsLinked},
-            is_permitted = #{isPermitted},
-            used_process = #{usedProcess},
-            remarks = #{remarks},
-            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
-            modified_by_name = #{modifiedByName},
-            modified_by_team = #{modifiedByTeam},
-            modified_by_position = #{modifiedByPosition},
+        UPDATE tb_wem_factor SET
+            factor_name = #{factorName}, factor_name_en = #{factorNameEn},
+            cas_number = #{casNumber}, factor_type = #{factorType},
+            twa = #{twa}, stel = #{stel}, ceiling_value = #{ceilingValue}, unit = #{unit},
+            msds_linked = #{msdsLinked}, is_permitted = #{isPermitted},
+            used_process = #{usedProcess}, remarks = #{remarks},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

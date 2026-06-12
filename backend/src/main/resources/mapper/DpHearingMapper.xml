@@ -19,12 +19,9 @@
         <result property="status" column="status"/>
         <result property="notes" column="notes"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt"  column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findAll" resultMap="R">SELECT * FROM tb_dp_hearing WHERE deleted = 0 ORDER BY noise_level DESC, id DESC</select>
@@ -36,14 +33,15 @@
         INSERT INTO tb_dp_hearing (worker_name, department, noise_level, exposure_hours,
             right_4k, right_6k, left_4k, left_6k, sts_result, ppe_type, ppe_nrr,
             exam_date, exam_type, status, notes,
-            deleted, created_at, modified_at) VALUES (
+            deleted, created_by, created_at, modified_at) VALUES (
             #{workerName}, #{department,jdbcType=NVARCHAR},
             #{noiseLevel,jdbcType=INTEGER}, #{exposureHours,jdbcType=INTEGER},
             #{right4k,jdbcType=INTEGER}, #{right6k,jdbcType=INTEGER},
             #{left4k,jdbcType=INTEGER}, #{left6k,jdbcType=INTEGER},
             #{stsResult,jdbcType=NVARCHAR}, #{ppeType,jdbcType=NVARCHAR}, #{ppeNrr,jdbcType=INTEGER},
             #{examDate,jdbcType=DATE}, #{examType,jdbcType=NVARCHAR}, #{status,jdbcType=NVARCHAR},
-            #{notes,jdbcType=NVARCHAR}, 0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE())
+            #{notes,jdbcType=NVARCHAR},
+            0, #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler}, GETDATE(), GETDATE())
     </insert>
 
     <update id="update">

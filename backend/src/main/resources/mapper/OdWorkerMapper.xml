@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.smartehs.mapper.OdWorkerMapper">
-    <resultMap id="rm" type="com.smartehs.model.OdWorker">
+    <resultMap id="R" type="com.smartehs.model.OdWorker">
         <id property="id" column="id"/>
         <result property="employeeNo" column="employee_no"/>
         <result property="name" column="name"/>
@@ -19,28 +19,29 @@
         <result property="afterAction" column="after_action"/>
         <result property="actionDone" column="action_done"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt"  column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
-    <select id="findAll" resultMap="rm">SELECT * FROM tb_od_worker WHERE deleted = 0 ORDER BY id ASC</select>
-    <select id="findById" resultMap="rm">SELECT * FROM tb_od_worker WHERE id = #{id} AND deleted = 0</select>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_od_worker WHERE deleted = 0 ORDER BY id ASC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_od_worker WHERE id = #{id} AND deleted = 0</select>
     <select id="countAll" resultType="int">SELECT COUNT(*) FROM tb_od_worker WHERE deleted = 0</select>
     <select id="countByJudge" resultType="int">SELECT COUNT(*) FROM tb_od_worker WHERE deleted = 0 AND judge = #{judge}</select>
     <select id="countByDivision" resultType="int">SELECT COUNT(*) FROM tb_od_worker WHERE deleted = 0 AND division = #{division}</select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_od_worker (employee_no, name, dept, job, gender, birth_date, division,
             factor, carcinogenicity, exposure_period, exam_org, exam_date, judge, after_action, action_done,
-            deleted, created_at, modified_at) VALUES (
+            deleted, created_by, created_at, modified_at) VALUES (
             #{employeeNo}, #{name}, #{dept}, #{job}, #{gender}, #{birthDate,jdbcType=DATE},
             <choose><when test="division != null">#{division}</when><otherwise>'정기'</otherwise></choose>,
             #{factor}, #{carcinogenicity}, #{exposurePeriod}, #{examOrg},
             #{examDate,jdbcType=DATE}, #{judge}, #{afterAction}, #{actionDone},
-            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE())
+            0, #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            GETDATE(), GETDATE())
     </insert>
+
     <update id="update">
         UPDATE tb_od_worker SET employee_no = #{employeeNo}, name = #{name}, dept = #{dept},
             job = #{job}, gender = #{gender}, birth_date = #{birthDate,jdbcType=DATE},
@@ -50,5 +51,6 @@
             after_action = #{afterAction}, action_done = #{actionDone},
             modified_at = GETDATE() WHERE id = #{id}
     </update>
+
     <update id="softDelete">UPDATE tb_od_worker SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
 </mapper>

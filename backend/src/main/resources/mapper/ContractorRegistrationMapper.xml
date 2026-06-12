@@ -3,85 +3,65 @@
 
 <mapper namespace="com.smartehs.mapper.ContractorRegistrationMapper">
 
-    <resultMap id="ContractorRegistrationResultMap" type="com.smartehs.model.ContractorRegistration">
-        <id     property="id"                column="id"/>
-        <result property="regNo"             column="reg_no"/>
-        <result property="bizNum"            column="biz_num"/>
-        <result property="corpNum"           column="corp_num"/>
-        <result property="companyName"       column="company_name"/>
-        <result property="ceoName"           column="ceo_name"/>
-        <result property="bizType"           column="biz_type"/>
-        <result property="bizCategory"       column="biz_category"/>
-        <result property="zipCode"           column="zip_code"/>
-        <result property="addr1"             column="addr1"/>
-        <result property="addr2"             column="addr2"/>
-        <result property="tel"               column="tel"/>
-        <result property="fax"               column="fax"/>
-        <result property="email"             column="email"/>
-        <result property="homepage"          column="homepage"/>
-        <result property="empSize"           column="emp_size"/>
-        <result property="oshApply"          column="osh_apply"/>
-        <result property="safetyMgrStatus"   column="safety_mgr_status"/>
-        <result property="healthMgrStatus"   column="health_mgr_status"/>
-        <result property="accRate"           column="acc_rate"/>
-        <result property="certifications"    column="certifications"/>
-        <result property="riskEval"          column="risk_eval"/>
-        <result property="riskEvalDate"      column="risk_eval_date"/>
-        <result property="hazardFactors"     column="hazard_factors"/>
-        <result property="safetyRating"      column="safety_rating"/>
-        <result property="envRating"         column="env_rating"/>
-        <result property="regStatus"         column="reg_status"/>
-        <result property="safetyMgrName"     column="safety_mgr_name"/>
-        <result property="safetyMgrPosition" column="safety_mgr_position"/>
-        <result property="safetyMgrDept"     column="safety_mgr_dept"/>
-        <result property="safetyMgrTel"      column="safety_mgr_tel"/>
+    <resultMap id="R" type="com.smartehs.model.ContractorRegistration">
+        <id     property="id"                 column="id"/>
+        <result property="regNo"              column="reg_no"/>
+        <result property="bizNum"             column="biz_num"/>
+        <result property="corpNum"            column="corp_num"/>
+        <result property="companyName"        column="company_name"/>
+        <result property="ceoName"            column="ceo_name"/>
+        <result property="bizType"            column="biz_type"/>
+        <result property="bizCategory"        column="biz_category"/>
+        <result property="zipCode"            column="zip_code"/>
+        <result property="addr1"              column="addr1"/>
+        <result property="addr2"              column="addr2"/>
+        <result property="tel"                column="tel"/>
+        <result property="fax"                column="fax"/>
+        <result property="email"              column="email"/>
+        <result property="homepage"           column="homepage"/>
+        <result property="empSize"            column="emp_size"/>
+        <result property="oshApply"           column="osh_apply"/>
+        <result property="safetyMgrStatus"    column="safety_mgr_status"/>
+        <result property="healthMgrStatus"    column="health_mgr_status"/>
+        <result property="accRate"            column="acc_rate"/>
+        <result property="certifications"     column="certifications"/>
+        <result property="riskEval"           column="risk_eval"/>
+        <result property="riskEvalDate"       column="risk_eval_date"/>
+        <result property="hazardFactors"      column="hazard_factors"/>
+        <result property="safetyRating"       column="safety_rating"/>
+        <result property="envRating"          column="env_rating"/>
+        <result property="regStatus"          column="reg_status"/>
+        <result property="safetyMgrName"      column="safety_mgr_name"/>
+        <result property="safetyMgrPosition"  column="safety_mgr_position"/>
+        <result property="safetyMgrDept"      column="safety_mgr_dept"/>
+        <result property="safetyMgrTel"       column="safety_mgr_tel"/>
         <result property="safetyMgrOfficeTel" column="safety_mgr_office_tel"/>
-        <result property="safetyMgrEmail"    column="safety_mgr_email"/>
-        <result property="healthMgrName"     column="health_mgr_name"/>
-        <result property="healthMgrPosition" column="health_mgr_position"/>
-        <result property="healthMgrCert"     column="health_mgr_cert"/>
-        <result property="healthMgrTel"      column="health_mgr_tel"/>
-        <result property="healthMgrEmail"    column="health_mgr_email"/>
-        <result property="internalDept"      column="internal_dept"/>
-        <result property="internalName"      column="internal_name"/>
-        <result property="internalTel"       column="internal_tel"/>
-        <result property="memo"              column="memo"/>
-        <result property="contractStart"     column="contract_start"/>
-        <result property="contractEnd"       column="contract_end"/>
-        <result property="contractType"      column="contract_type"/>
-        <result property="contractAmount"    column="contract_amount"/>
-        <result property="workZone"          column="work_zone"/>
-        <result property="deleted"           column="deleted"/>
-        <result property="createdAt"         column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
-        <result property="modifiedAt"           column="modified_at"/>
-        <result property="modifiedBy"           column="modified_by"/>
-        <result property="modifiedByName"       column="modified_by_name"/>
-        <result property="modifiedByTeam"       column="modified_by_team"/>
-        <result property="modifiedByPosition"   column="modified_by_position"/>
-        <result property="modifiedByUserId"     column="modified_by_user_id"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
+        <result property="safetyMgrEmail"     column="safety_mgr_email"/>
+        <result property="healthMgrName"      column="health_mgr_name"/>
+        <result property="healthMgrPosition"  column="health_mgr_position"/>
+        <result property="healthMgrCert"      column="health_mgr_cert"/>
+        <result property="healthMgrTel"       column="health_mgr_tel"/>
+        <result property="healthMgrEmail"     column="health_mgr_email"/>
+        <result property="internalDept"       column="internal_dept"/>
+        <result property="internalName"       column="internal_name"/>
+        <result property="internalTel"        column="internal_tel"/>
+        <result property="memo"               column="memo"/>
+        <result property="contractStart"      column="contract_start"/>
+        <result property="contractEnd"        column="contract_end"/>
+        <result property="contractType"       column="contract_type"/>
+        <result property="contractAmount"     column="contract_amount"/>
+        <result property="workZone"           column="work_zone"/>
+        <result property="deleted"            column="deleted"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt"  column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
     </resultMap>
 
-    <sql id="allColumns">
-        id, reg_no, biz_num, corp_num, company_name, ceo_name, biz_type, biz_category,
-        zip_code, addr1, addr2, tel, fax, email, homepage, emp_size,
-        osh_apply, safety_mgr_status, health_mgr_status, acc_rate, certifications,
-        risk_eval, risk_eval_date, hazard_factors, safety_rating, env_rating, reg_status,
-        safety_mgr_name, safety_mgr_position, safety_mgr_dept, safety_mgr_tel, safety_mgr_office_tel, safety_mgr_email,
-        health_mgr_name, health_mgr_position, health_mgr_cert, health_mgr_tel, health_mgr_email,
-        internal_dept, internal_name, internal_tel, memo,
-        contract_start, contract_end, contract_type, contract_amount, work_zone,
-        deleted, created_at, modified_at, modified_by
-    </sql>
-
-    <select id="findByDeletedFalse" resultMap="ContractorRegistrationResultMap">
-        SELECT <include refid="allColumns"/>
-        FROM tb_contractor_registration
-        WHERE deleted = 0
-        ORDER BY created_at DESC
+    <select id="findByDeletedFalse" resultMap="R">
+        SELECT t.* FROM tb_contractor_registration t
+        WHERE t.deleted = 0
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -89,20 +69,19 @@
         SELECT COUNT(*) FROM tb_contractor_registration WHERE deleted = 0
     </select>
 
-    <select id="search" resultMap="ContractorRegistrationResultMap">
-        SELECT <include refid="allColumns"/>
-        FROM tb_contractor_registration
-        WHERE deleted = 0
+    <select id="search" resultMap="R">
+        SELECT t.* FROM tb_contractor_registration t
+        WHERE t.deleted = 0
         <if test="keyword != null and keyword != ''">
-            AND (company_name LIKE '%' + #{keyword} + '%'
-                 OR biz_num LIKE '%' + #{keyword} + '%'
-                 OR reg_no LIKE '%' + #{keyword} + '%'
-                 OR ceo_name LIKE '%' + #{keyword} + '%')
+            AND (t.company_name LIKE '%' + #{keyword} + '%'
+                 OR t.biz_num LIKE '%' + #{keyword} + '%'
+                 OR t.reg_no LIKE '%' + #{keyword} + '%'
+                 OR t.ceo_name LIKE '%' + #{keyword} + '%')
         </if>
         <if test="regStatus != null and regStatus != ''">
-            AND reg_status = #{regStatus}
+            AND t.reg_status = #{regStatus}
         </if>
-        ORDER BY created_at DESC
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -120,14 +99,12 @@
         </if>
     </select>
 
-    <select id="findById" resultMap="ContractorRegistrationResultMap">
-        SELECT <include refid="allColumns"/>
-        FROM tb_contractor_registration WHERE id = #{id} AND deleted = 0
+    <select id="findById" resultMap="R">
+        SELECT t.* FROM tb_contractor_registration t WHERE t.id = #{id} AND t.deleted = 0
     </select>
 
-    <select id="findByRegNo" resultMap="ContractorRegistrationResultMap">
-        SELECT <include refid="allColumns"/>
-        FROM tb_contractor_registration WHERE reg_no = #{regNo} AND deleted = 0
+    <select id="findByRegNo" resultMap="R">
+        SELECT t.* FROM tb_contractor_registration t WHERE t.reg_no = #{regNo} AND t.deleted = 0
     </select>
 
     <select id="countByRegNoStartingWith" resultType="int">
@@ -144,7 +121,7 @@
             health_mgr_name, health_mgr_position, health_mgr_cert, health_mgr_tel, health_mgr_email,
             internal_dept, internal_name, internal_tel, memo,
             contract_start, contract_end, contract_type, contract_amount, work_zone,
-            deleted, created_at, modified_at, modified_by
+            deleted, created_by, modified_by, created_at, modified_at
         ) VALUES (
             #{regNo}, #{bizNum}, #{corpNum}, #{companyName}, #{ceoName}, #{bizType}, #{bizCategory},
             #{zipCode}, #{addr1}, #{addr2}, #{tel}, #{fax}, #{email}, #{homepage}, #{empSize},
@@ -154,7 +131,10 @@
             #{healthMgrName}, #{healthMgrPosition}, #{healthMgrCert}, #{healthMgrTel}, #{healthMgrEmail},
             #{internalDept}, #{internalName}, #{internalTel}, #{memo},
             #{contractStart,jdbcType=DATE}, #{contractEnd,jdbcType=DATE}, #{contractType}, #{contractAmount}, #{workZone},
-            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE(), #{modifiedBy}
+            0,
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            GETDATE(), GETDATE()
         )
     </insert>
 
@@ -175,9 +155,8 @@
             internal_dept = #{internalDept}, internal_name = #{internalName}, internal_tel = #{internalTel}, memo = #{memo},
             contract_start = #{contractStart,jdbcType=DATE}, contract_end = #{contractEnd,jdbcType=DATE},
             contract_type = #{contractType}, contract_amount = #{contractAmount}, work_zone = #{workZone},
-            modified_at = GETDATE(), modified_by = #{modifiedBy},
-            modified_by_name = #{modifiedByName}, modified_by_team = #{modifiedByTeam},
-            modified_by_position = #{modifiedByPosition}, modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT}
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_at = GETDATE()
         WHERE id = #{id} AND deleted = 0
     </update>
 

@@ -12,14 +12,8 @@
         <result property="teamLeader" column="team_leader"/>
         <result property="secretary" column="secretary"/>
         <result property="status" column="status"/>
-        <result property="createdByUserId" column="created_by_user_id"/>
-        <result property="createdByName" column="created_by_name"/>
-        <result property="createdByTeam" column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
-        <result property="modifiedByUserId" column="modified_by_user_id"/>
-        <result property="modifiedByName" column="modified_by_name"/>
-        <result property="modifiedByTeam" column="modified_by_team"/>
-        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="deleted" column="deleted"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
@@ -42,18 +36,10 @@
         <result property="createdAt" column="created_at"/>
     </resultMap>
 
-    <sql id="cols">
-        id, hazop_no, node_name, pid_drawing_no, review_date, design_intent,
-        team_leader, secretary, status,
-        created_by_user_id, created_by_name, created_by_team, created_by_position,
-        modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
-        deleted, created_at, modified_at
-    </sql>
-
     <select id="findAll" resultMap="R">
-        SELECT <include refid="cols"/> FROM tb_psm_hazop
-        WHERE deleted = 0
-        ORDER BY created_at DESC
+        SELECT t.* FROM tb_psm_hazop t
+        WHERE t.deleted = 0
+        ORDER BY t.created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
     </select>
 
@@ -62,7 +48,7 @@
     </select>
 
     <select id="findById" resultMap="R">
-        SELECT <include refid="cols"/> FROM tb_psm_hazop WHERE id = #{id} AND deleted = 0
+        SELECT t.* FROM tb_psm_hazop t WHERE t.id = #{id} AND t.deleted = 0
     </select>
 
     <select id="countByHazopNoStartingWith" resultType="int">
@@ -73,14 +59,13 @@
         INSERT INTO tb_psm_hazop
             (hazop_no, node_name, pid_drawing_no, review_date, design_intent,
              team_leader, secretary, status,
-             created_by_user_id, created_by_name, created_by_team, created_by_position,
-             modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
+             created_by, modified_by,
              deleted, created_at, modified_at)
         VALUES
             (#{hazopNo}, #{nodeName}, #{pidDrawingNo}, #{reviewDate,jdbcType=DATE}, #{designIntent},
              #{teamLeader}, #{secretary}, COALESCE(#{status}, 'IN_PROGRESS'),
-             #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
-             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
+             #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+             #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
              0, GETDATE(), GETDATE())
     </insert>
 
@@ -89,10 +74,7 @@
             node_name = #{nodeName}, pid_drawing_no = #{pidDrawingNo},
             review_date = #{reviewDate,jdbcType=DATE}, design_intent = #{designIntent},
             team_leader = #{teamLeader}, secretary = #{secretary}, status = #{status},
-            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
-            modified_by_name = #{modifiedByName},
-            modified_by_team = #{modifiedByTeam},
-            modified_by_position = #{modifiedByPosition},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

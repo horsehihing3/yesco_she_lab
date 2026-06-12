@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.smartehs.mapper.OdOrgMapper">
-    <resultMap id="rm" type="com.smartehs.model.OdOrg">
+    <resultMap id="R" type="com.smartehs.model.OdOrg">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="doctor" column="doctor"/>
@@ -11,22 +11,23 @@
         <result property="contractEnd" column="contract_end"/>
         <result property="targetCount" column="target_count"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt"  column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
-    <select id="findAll" resultMap="rm">SELECT * FROM tb_od_org WHERE deleted = 0 ORDER BY id ASC</select>
-    <select id="findById" resultMap="rm">SELECT * FROM tb_od_org WHERE id = #{id} AND deleted = 0</select>
+
+    <select id="findAll" resultMap="R">SELECT * FROM tb_od_org WHERE deleted = 0 ORDER BY id ASC</select>
+    <select id="findById" resultMap="R">SELECT * FROM tb_od_org WHERE id = #{id} AND deleted = 0</select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_od_org (name, doctor, org_type, factors, cost_per_person,
-            contract_end, target_count, deleted, created_at, modified_at) VALUES (
+            contract_end, target_count, deleted, created_by, created_at, modified_at) VALUES (
             #{name}, #{doctor}, #{orgType}, #{factors}, #{costPerPerson},
             #{contractEnd,jdbcType=DATE}, #{targetCount},
-            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE())
+            0, #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            GETDATE(), GETDATE())
     </insert>
+
     <update id="update">
         UPDATE tb_od_org SET name = #{name}, doctor = #{doctor}, org_type = #{orgType},
             factors = #{factors}, cost_per_person = #{costPerPerson},
@@ -34,5 +35,6 @@
             target_count = #{targetCount},
             modified_at = GETDATE() WHERE id = #{id}
     </update>
+
     <update id="softDelete">UPDATE tb_od_org SET deleted = 1, modified_at = GETDATE() WHERE id = #{id}</update>
 </mapper>

@@ -13,12 +13,9 @@
         <result property="nextDueDate" column="next_due_date"/>
         <result property="notes" column="notes"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt"  column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findAll" resultMap="R">
@@ -31,18 +28,19 @@
     <select id="countDueSoon" resultType="int">
         SELECT COUNT(*) FROM tb_dp_infect
         WHERE deleted = 0 AND next_due_date IS NOT NULL
-        AND next_due_date &gt;= CAST(#{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE() AS DATE)
+        AND next_due_date &gt;= CAST(GETDATE() AS DATE)
         AND next_due_date &lt;= DATEADD(day, #{days}, CAST(GETDATE() AS DATE))
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_dp_infect (worker_name, department, program_type, disease_type,
             impl_date, result, status, next_due_date, notes,
-            deleted, created_at, modified_at) VALUES (
+            deleted, created_by, created_at, modified_at) VALUES (
             #{workerName}, #{department,jdbcType=NVARCHAR}, #{programType},
             #{diseaseType,jdbcType=NVARCHAR}, #{implDate,jdbcType=DATE},
             #{result,jdbcType=NVARCHAR}, #{status,jdbcType=NVARCHAR}, #{nextDueDate,jdbcType=DATE},
-            #{notes,jdbcType=NVARCHAR}, 0, GETDATE(), GETDATE())
+            #{notes,jdbcType=NVARCHAR},
+            0, #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler}, GETDATE(), GETDATE())
     </insert>
 
     <update id="update">

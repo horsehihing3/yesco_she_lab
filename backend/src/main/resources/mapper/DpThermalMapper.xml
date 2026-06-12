@@ -17,12 +17,9 @@
         <result property="preventionAction" column="prevention_action"/>
         <result property="notes" column="notes"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt"  column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
     </resultMap>
 
     <select id="findAll" resultMap="R">SELECT * FROM tb_dp_thermal WHERE deleted = 0 ORDER BY occur_date DESC, id DESC</select>
@@ -34,14 +31,14 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_dp_thermal (thermal_type, occur_date, location, worker_name, department,
             weather_condition, perceived_temp, symptoms, severity, treatment, outcome,
-            prevention_action, notes, deleted, created_at, modified_at) VALUES (
+            prevention_action, notes, deleted, created_by, created_at, modified_at) VALUES (
             #{thermalType}, #{occurDate,jdbcType=DATE}, #{location,jdbcType=NVARCHAR},
             #{workerName,jdbcType=NVARCHAR}, #{department,jdbcType=NVARCHAR},
             #{weatherCondition,jdbcType=NVARCHAR}, #{perceivedTemp,jdbcType=DECIMAL},
             #{symptoms,jdbcType=NVARCHAR}, #{severity,jdbcType=NVARCHAR},
             #{treatment,jdbcType=NVARCHAR}, #{outcome,jdbcType=NVARCHAR},
             #{preventionAction,jdbcType=NVARCHAR}, #{notes,jdbcType=NVARCHAR},
-            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE())
+            0, #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler}, GETDATE(), GETDATE())
     </insert>
 
     <update id="update">

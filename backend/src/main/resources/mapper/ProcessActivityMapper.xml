@@ -13,14 +13,8 @@
         <result property="evaluator" column="evaluator"/>
         <result property="creationDate" column="creation_date"/>
         <result property="teamMembers" column="team_members"/>
-        <result property="createdByUserId" column="created_by_user_id"/>
-        <result property="createdByName" column="created_by_name"/>
-        <result property="createdByTeam" column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
-        <result property="modifiedByUserId" column="modified_by_user_id"/>
-        <result property="modifiedByName" column="modified_by_name"/>
-        <result property="modifiedByTeam" column="modified_by_team"/>
-        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
@@ -42,29 +36,20 @@
     <insert id="insertForm" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_process_activity_form
             (title, description, division_name, department_name, evaluator, creation_date, team_members,
-             created_by_user_id, created_by_name, created_by_team, created_by_position,
-             modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
-             created_at, modified_at)
+             created_by, modified_by, created_at, modified_at)
         VALUES
             (#{title}, #{description}, #{divisionName}, #{departmentName}, #{evaluator}, #{creationDate}, #{teamMembers},
-             #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
-             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
+             #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+             #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
              GETDATE(), GETDATE())
     </insert>
 
     <update id="updateForm">
         UPDATE tb_process_activity_form SET
-            title = #{title},
-            description = #{description},
-            division_name = #{divisionName},
-            department_name = #{departmentName},
-            evaluator = #{evaluator},
-            creation_date = #{creationDate},
-            team_members = #{teamMembers},
-            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
-            modified_by_name = #{modifiedByName},
-            modified_by_team = #{modifiedByTeam},
-            modified_by_position = #{modifiedByPosition},
+            title = #{title}, description = #{description},
+            division_name = #{divisionName}, department_name = #{departmentName},
+            evaluator = #{evaluator}, creation_date = #{creationDate}, team_members = #{teamMembers},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>

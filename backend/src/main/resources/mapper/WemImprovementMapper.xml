@@ -3,7 +3,7 @@
 
 <mapper namespace="com.smartehs.mapper.WemImprovementMapper">
 
-    <resultMap id="WemImprovementResultMap" type="com.smartehs.model.WemImprovement">
+    <resultMap id="R" type="com.smartehs.model.WemImprovement">
         <id property="id" column="id"/>
         <result property="processName" column="process_name"/>
         <result property="factorName" column="factor_name"/>
@@ -20,19 +20,13 @@
         <result property="status" column="status"/>
         <result property="completionDate" column="completion_date"/>
         <result property="remarks" column="remarks"/>
-        <result property="createdByUserId" column="created_by_user_id"/>
-        <result property="createdByName" column="created_by_name"/>
-        <result property="createdByTeam" column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
-        <result property="modifiedByUserId" column="modified_by_user_id"/>
-        <result property="modifiedByName" column="modified_by_name"/>
-        <result property="modifiedByTeam" column="modified_by_team"/>
-        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
 
-    <select id="findAllWithPaging" resultMap="WemImprovementResultMap">
+    <select id="findAllWithPaging" resultMap="R">
         SELECT * FROM tb_wem_improvement
         ORDER BY created_at DESC
         OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
@@ -42,7 +36,7 @@
         SELECT COUNT(*) FROM tb_wem_improvement
     </select>
 
-    <select id="findByStatus" resultMap="WemImprovementResultMap">
+    <select id="findByStatus" resultMap="R">
         SELECT * FROM tb_wem_improvement
         WHERE status = #{status}
         ORDER BY created_at DESC
@@ -53,7 +47,7 @@
         SELECT COUNT(*) FROM tb_wem_improvement WHERE status = #{status}
     </select>
 
-    <select id="findByExceedLevel" resultMap="WemImprovementResultMap">
+    <select id="findByExceedLevel" resultMap="R">
         SELECT * FROM tb_wem_improvement
         WHERE exceed_level = #{exceedLevel}
         ORDER BY created_at DESC
@@ -64,42 +58,33 @@
         SELECT COUNT(*) FROM tb_wem_improvement WHERE exceed_level = #{exceedLevel}
     </select>
 
-    <select id="findById" resultMap="WemImprovementResultMap">
+    <select id="findById" resultMap="R">
         SELECT * FROM tb_wem_improvement WHERE id = #{id}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tb_wem_improvement (process_name, factor_name, measured_value, exposure_standard, exceed_rate, exceed_level, department, measurement_date, measurement_agency, deadline, remaining_days, improvement_plan, status, completion_date, remarks,
-            created_by_user_id, created_by_name, created_by_team, created_by_position,
-            modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
-            created_at, modified_at)
-        VALUES (#{processName}, #{factorName}, #{measuredValue}, #{exposureStandard}, #{exceedRate}, #{exceedLevel}, #{department}, #{measurementDate}, #{measurementAgency}, #{deadline}, #{remainingDays}, #{improvementPlan}, #{status}, #{completionDate}, #{remarks},
-            #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
-            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
+        INSERT INTO tb_wem_improvement (process_name, factor_name, measured_value, exposure_standard,
+            exceed_rate, exceed_level, department, measurement_date, measurement_agency,
+            deadline, remaining_days, improvement_plan, status, completion_date, remarks,
+            created_by, modified_by, created_at, modified_at)
+        VALUES (#{processName}, #{factorName}, #{measuredValue}, #{exposureStandard},
+            #{exceedRate}, #{exceedLevel}, #{department}, #{measurementDate}, #{measurementAgency},
+            #{deadline}, #{remainingDays}, #{improvementPlan}, #{status}, #{completionDate}, #{remarks},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             GETDATE(), GETDATE())
     </insert>
 
     <update id="update">
-        UPDATE tb_wem_improvement
-        SET process_name = #{processName},
-            factor_name = #{factorName},
-            measured_value = #{measuredValue},
-            exposure_standard = #{exposureStandard},
-            exceed_rate = #{exceedRate},
-            exceed_level = #{exceedLevel},
-            department = #{department},
-            measurement_date = #{measurementDate},
-            measurement_agency = #{measurementAgency},
-            deadline = #{deadline},
-            remaining_days = #{remainingDays},
-            improvement_plan = #{improvementPlan},
-            status = #{status},
-            completion_date = #{completionDate},
-            remarks = #{remarks},
-            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
-            modified_by_name = #{modifiedByName},
-            modified_by_team = #{modifiedByTeam},
-            modified_by_position = #{modifiedByPosition},
+        UPDATE tb_wem_improvement SET
+            process_name = #{processName}, factor_name = #{factorName},
+            measured_value = #{measuredValue}, exposure_standard = #{exposureStandard},
+            exceed_rate = #{exceedRate}, exceed_level = #{exceedLevel},
+            department = #{department}, measurement_date = #{measurementDate},
+            measurement_agency = #{measurementAgency}, deadline = #{deadline},
+            remaining_days = #{remainingDays}, improvement_plan = #{improvementPlan},
+            status = #{status}, completion_date = #{completionDate}, remarks = #{remarks},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>
