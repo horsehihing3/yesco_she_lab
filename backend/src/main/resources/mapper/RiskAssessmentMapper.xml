@@ -24,16 +24,10 @@
         <result property="authorMail"    column="author_mail"/>
         <result property="approverName" column="approver_name"/>
         <result property="approverMail" column="approver_mail"/>
-        <result property="planApproverUserId" column="plan_approver_user_id"/>
-        <result property="planApproverTeam"     column="plan_approver_team"/>
-        <result property="planApproverPosition" column="plan_approver_position"/>
-        <result property="planApproverName"     column="plan_approver_name"/>
+        <result property="planApprover"       column="plan_approver"       typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="planApprovedAt" column="plan_approved_at"/>
         <result property="planApprovedBy" column="plan_approved_by"/>
-        <result property="completionApproverUserId" column="completion_approver_user_id"/>
-        <result property="completionApproverTeam"     column="completion_approver_team"/>
-        <result property="completionApproverPosition" column="completion_approver_position"/>
-        <result property="completionApproverName"     column="completion_approver_name"/>
+        <result property="completionApprover" column="completion_approver" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="completionApprovedAt" column="completion_approved_at"/>
         <result property="completionApprovedBy" column="completion_approved_by"/>
         <result property="status" column="status"/>
@@ -137,8 +131,7 @@
             form_id, form_title, risk_id, title, title_en, title_zh, site,
             author_user_id, author_name, author_team, author_position, author_dept, author_mail,
             approver_name, approver_mail,
-            plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
-            completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+            plan_approver, completion_approver,
             status, risk_register_count, office_count,
             field_count, allow_resubmit,
             office_checklist_id, sanup_checklist_id, jungdae_checklist_id,
@@ -147,8 +140,8 @@
             #{formId,jdbcType=BIGINT}, #{formTitle}, #{riskId}, #{title}, #{titleEn}, #{titleZh}, #{site},
             #{authorUserId,jdbcType=BIGINT}, #{authorName}, #{authorTeam}, #{authorPosition}, #{authorDept}, #{authorMail},
             #{approverName}, #{approverMail},
-            #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
-            #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+            #{planApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{completionApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             #{status}, #{riskRegisterCount}, #{officeCount},
             #{fieldCount}, #{allowResubmit},
             #{officeChecklistId,jdbcType=BIGINT}, #{sanupChecklistId,jdbcType=BIGINT}, #{jungdaeChecklistId,jdbcType=BIGINT},
@@ -172,14 +165,8 @@
             author_mail = #{authorMail},
             approver_name = #{approverName},
             approver_mail = #{approverMail},
-            plan_approver_user_id = #{planApproverUserId,jdbcType=BIGINT},
-            plan_approver_team = #{planApproverTeam},
-            plan_approver_position = #{planApproverPosition},
-            plan_approver_name = #{planApproverName},
-            completion_approver_user_id = #{completionApproverUserId,jdbcType=BIGINT},
-            completion_approver_team = #{completionApproverTeam},
-            completion_approver_position = #{completionApproverPosition},
-            completion_approver_name = #{completionApproverName},
+            plan_approver       = #{planApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            completion_approver = #{completionApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
             office_checklist_id = #{officeChecklistId,jdbcType=BIGINT},
             sanup_checklist_id = #{sanupChecklistId,jdbcType=BIGINT},
             jungdae_checklist_id = #{jungdaeChecklistId,jdbcType=BIGINT},

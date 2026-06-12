@@ -16,6 +16,7 @@ import com.smartehs.mapper.RiskAssessmentFormMapper;
 import com.smartehs.mapper.RiskAssessmentMapper;
 import com.smartehs.mapper.RiskRegisterMapper;
 import com.smartehs.model.RiskActivityProcess;
+import com.smartehs.model.PersonRef;
 import com.smartehs.model.RiskAssessment;
 import com.smartehs.model.RiskAssessmentDetail;
 import com.smartehs.model.RiskAssessmentForm;
@@ -163,14 +164,8 @@ public class RiskAssessmentService {
                 .authorMail(request.getAuthorMail())
                 .approverName(request.getApproverName())
                 .approverMail(request.getApproverMail())
-                .planApproverUserId(request.getPlanApproverUserId())
-                .planApproverTeam(request.getPlanApproverTeam())
-                .planApproverPosition(request.getPlanApproverPosition())
-                .planApproverName(request.getPlanApproverName())
-                .completionApproverUserId(request.getCompletionApproverUserId())
-                .completionApproverTeam(request.getCompletionApproverTeam())
-                .completionApproverPosition(request.getCompletionApproverPosition())
-                .completionApproverName(request.getCompletionApproverName())
+                .planApprover(PersonRef.of(request.getPlanApproverUserId(), request.getPlanApproverName(), request.getPlanApproverTeam(), request.getPlanApproverPosition()))
+                .completionApprover(PersonRef.of(request.getCompletionApproverUserId(), request.getCompletionApproverName(), request.getCompletionApproverTeam(), request.getCompletionApproverPosition()))
                 .status("draft")
                 .riskRegisterCount(0)
                 .officeCount(0)

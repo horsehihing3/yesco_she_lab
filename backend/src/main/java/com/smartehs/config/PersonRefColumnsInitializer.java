@@ -45,8 +45,12 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
         // plan_approver 는 기존에 user_id 컬럼만 있고 team/name 컬럼이 없어 INSERT가 깨져 있었음 → JSON으로 통합(컬럼 신규생성).
         new Object[]{"tb_site_safety_plan", new String[]{"created_by", "plan_approver", "completion_approver"}},
         // 작성+수정
-        new Object[]{"tb_contractor_registration", CM}, new Object[]{"tb_health_checkup_plan", CM},
-        new Object[]{"tb_legal_compliance_exec", CM}, new Object[]{"tb_legal_compliance_plan", CM},
+        new Object[]{"tb_contractor_registration", CM},
+        // tb_health_checkup_plan: created_by 는 레거시 문자열(nvarchar200) 컬럼이라 제외(작성자 flat). 수정자/승인자는 JSON.
+        new Object[]{"tb_health_checkup_plan", new String[]{"modified_by", "plan_approver", "completion_approver"}},
+        // tb_legal_compliance_exec: modified_by 는 레거시 username 문자열이라 제외(수정자 flat). 작성/승인자는 JSON.
+        new Object[]{"tb_legal_compliance_exec", new String[]{"created_by", "plan_approver", "completion_approver"}},
+        new Object[]{"tb_legal_compliance_plan", ALL4},
         new Object[]{"tb_process_activity_form", CM}, new Object[]{"tb_psm_data", CM},
         new Object[]{"tb_psm_hazop", CM}, new Object[]{"tb_psm_incident", CM},
         new Object[]{"tb_psm_ptw", CM}, new Object[]{"tb_psm_wo", CM},
@@ -57,7 +61,8 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
         new Object[]{"tb_dp_cvd", C}, new Object[]{"tb_dp_hearing", C}, new Object[]{"tb_dp_infect", C},
         new Object[]{"tb_dp_msd", C}, new Object[]{"tb_dp_respi", C}, new Object[]{"tb_dp_stress", C},
         new Object[]{"tb_dp_thermal", C}, new Object[]{"tb_ehs_manager", C}, new Object[]{"tb_emergency_contact", C},
-        new Object[]{"tb_health_checkup_record", C}, new Object[]{"tb_legal_law", C},
+        // tb_health_checkup_record: created_by 가 레거시 문자열 컬럼이고 유일 역할이라 JSON 전환 제외(전체 flat 유지)
+        new Object[]{"tb_legal_law", C},
         new Object[]{"tb_od_aftercare", C}, new Object[]{"tb_od_exposure", C}, new Object[]{"tb_od_org", C},
         new Object[]{"tb_od_plan", C}, new Object[]{"tb_od_worker", C}
     );

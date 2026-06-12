@@ -7,6 +7,7 @@ import com.smartehs.mapper.ApprovalMapper;
 import com.smartehs.mapper.PermitToWorkMapper;
 import com.smartehs.model.Approval;
 import com.smartehs.model.PermitToWork;
+import com.smartehs.model.PersonRef;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -114,18 +115,9 @@ public class PermitToWorkService {
                 .notes(request.getNotes())
                 .checklistTemplateId(request.getChecklistTemplateId())
                 .inspectorName(request.getInspectorName())
-                .planApproverUserId(request.getPlanApproverUserId())
-                .planApproverTeam(request.getPlanApproverTeam())
-                .planApproverPosition(request.getPlanApproverPosition())
-                .planApproverName(request.getPlanApproverName())
-                .completionApproverUserId(request.getCompletionApproverUserId())
-                .completionApproverTeam(request.getCompletionApproverTeam())
-                .completionApproverPosition(request.getCompletionApproverPosition())
-                .completionApproverName(request.getCompletionApproverName())
-                .createdByUserId(request.getCreatedByUserId())
-                .createdByName(request.getCreatedByName())
-                .createdByTeam(request.getCreatedByTeam())
-                .createdByPosition(request.getCreatedByPosition())
+                .planApprover(PersonRef.of(request.getPlanApproverUserId(), request.getPlanApproverName(), request.getPlanApproverTeam(), request.getPlanApproverPosition()))
+                .completionApprover(PersonRef.of(request.getCompletionApproverUserId(), request.getCompletionApproverName(), request.getCompletionApproverTeam(), request.getCompletionApproverPosition()))
+                .createdBy(PersonRef.of(request.getCreatedByUserId(), request.getCreatedByName(), request.getCreatedByTeam(), request.getCreatedByPosition()))
                 .deleted(false)
                 .build();
         mapper.insert(permit);

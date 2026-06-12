@@ -18,12 +18,9 @@
         <result property="amendSummary" column="amend_summary"/>
         <result property="urgent" column="urgent"/>
         <result property="deleted" column="deleted"/>
-        <result property="createdAt" column="created_by_user_id, created_by_name, created_by_team, created_by_position, created_at"/>
+        <result property="createdAt" column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
+        <result property="createdBy" column="created_by" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
     </resultMap>
 
     <select id="findAll" resultMap="LegalLawResultMap">
@@ -56,7 +53,7 @@
         INSERT INTO tb_legal_law (
             category, law_name, clause, amend_type, promulgate_date, enforce_date,
             reviewer, review_due_date, review_status, apply_yn, follow_up_action,
-            amend_summary, urgent, deleted, created_at, modified_at
+            amend_summary, urgent, deleted, created_by, created_at, modified_at
         ) VALUES (
             #{category}, #{lawName}, #{clause}, #{amendType},
             #{promulgateDate,jdbcType=DATE}, #{enforceDate,jdbcType=DATE},
@@ -64,7 +61,7 @@
             #{reviewStatus}, #{applyYn}, #{followUpAction},
             #{amendSummary},
             <choose><when test="urgent != null">#{urgent}</when><otherwise>0</otherwise></choose>,
-            0, #{createdByUserId}, #{createdByName}, #{createdByTeam}, #{createdByPosition}, GETDATE(), GETDATE()
+            0, #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler}, GETDATE(), GETDATE()
         )
     </insert>
 

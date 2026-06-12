@@ -1,5 +1,7 @@
 package com.smartehs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,19 +27,13 @@ public class RiskAssessment {
     private String approverName;
     private String approverMail;
 
-    // 계획 승인자 (계획 결재 상신 → 승인) — 계획 탭에서 처리
-    private Long planApproverUserId;
-    private String planApproverTeam;
-    private String planApproverPosition;
-    private String planApproverName;
+    // 계획 승인자 — JSON(PersonRef)
+    @JsonIgnore private PersonRef planApprover;
     private java.time.LocalDateTime planApprovedAt;
     private String planApprovedBy;
 
-    // 완료 승인자 (완료 결재 상신 → 승인) — 관리 탭에서 처리
-    private Long completionApproverUserId;
-    private String completionApproverTeam;
-    private String completionApproverPosition;
-    private String completionApproverName;
+    // 완료 승인자 — JSON(PersonRef)
+    @JsonIgnore private PersonRef completionApprover;
     private java.time.LocalDateTime completionApprovedAt;
     private String completionApprovedBy;
 
@@ -58,4 +54,25 @@ public class RiskAssessment {
     private Long jungdaeChecklistId;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+
+    // ── flat 브릿지 접근자 (planApprover / completionApprover) ──
+    private static PersonRef ensure(PersonRef p) { return p != null ? p : new PersonRef(); }
+
+    @JsonProperty("planApproverUserId")   public Long   getPlanApproverUserId()   { return PersonRef.userId(planApprover); }
+    @JsonProperty("planApproverName")     public String getPlanApproverName()     { return PersonRef.name(planApprover); }
+    @JsonProperty("planApproverTeam")     public String getPlanApproverTeam()     { return PersonRef.team(planApprover); }
+    @JsonProperty("planApproverPosition") public String getPlanApproverPosition() { return PersonRef.position(planApprover); }
+    public void setPlanApproverUserId(Long v)     { (planApprover = ensure(planApprover)).setUserId(v); }
+    public void setPlanApproverName(String v)     { (planApprover = ensure(planApprover)).setName(v); }
+    public void setPlanApproverTeam(String v)     { (planApprover = ensure(planApprover)).setTeam(v); }
+    public void setPlanApproverPosition(String v) { (planApprover = ensure(planApprover)).setPosition(v); }
+
+    @JsonProperty("completionApproverUserId")   public Long   getCompletionApproverUserId()   { return PersonRef.userId(completionApprover); }
+    @JsonProperty("completionApproverName")     public String getCompletionApproverName()     { return PersonRef.name(completionApprover); }
+    @JsonProperty("completionApproverTeam")     public String getCompletionApproverTeam()     { return PersonRef.team(completionApprover); }
+    @JsonProperty("completionApproverPosition") public String getCompletionApproverPosition() { return PersonRef.position(completionApprover); }
+    public void setCompletionApproverUserId(Long v)     { (completionApprover = ensure(completionApprover)).setUserId(v); }
+    public void setCompletionApproverName(String v)     { (completionApprover = ensure(completionApprover)).setName(v); }
+    public void setCompletionApproverTeam(String v)     { (completionApprover = ensure(completionApprover)).setTeam(v); }
+    public void setCompletionApproverPosition(String v) { (completionApprover = ensure(completionApprover)).setPosition(v); }
 }

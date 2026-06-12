@@ -5,6 +5,7 @@ import com.smartehs.dto.response.HealthCheckupPlanResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.HealthCheckupPlanMapper;
 import com.smartehs.model.HealthCheckupPlan;
+import com.smartehs.model.PersonRef;
 import com.smartehs.model.IdmUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,14 +67,8 @@ public class HealthCheckupPlanService {
                 .createdByDept(currentUser != null ? (currentUser.getGroupName() != null ? currentUser.getGroupName() : currentUser.getDeptCode()) : null)
                 .createdByTeam(currentUser != null ? currentUser.getGroupName() : null)
                 .createdByPosition(currentUser != null ? currentUser.getTitleName() : null)
-                .planApproverUserId(req.getPlanApproverUserId())
-                .planApproverTeam(req.getPlanApproverTeam())
-                .planApproverPosition(req.getPlanApproverPosition())
-                .planApproverName(req.getPlanApproverName())
-                .completionApproverUserId(req.getCompletionApproverUserId())
-                .completionApproverTeam(req.getCompletionApproverTeam())
-                .completionApproverPosition(req.getCompletionApproverPosition())
-                .completionApproverName(req.getCompletionApproverName())
+                .planApprover(PersonRef.of(req.getPlanApproverUserId(), req.getPlanApproverName(), req.getPlanApproverTeam(), req.getPlanApproverPosition()))
+                .completionApprover(PersonRef.of(req.getCompletionApproverUserId(), req.getCompletionApproverName(), req.getCompletionApproverTeam(), req.getCompletionApproverPosition()))
                 .writer(writer)
                 .build();
 
