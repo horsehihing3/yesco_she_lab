@@ -121,5 +121,16 @@ test('버튼관리 규칙 검증 (교정된 메뉴)', async ({ browser }) => {
     expect(stat('COMPLETION_PENDING', '완료 승인', 'guest')).toBe(false)
   })
 
+  // ── 비상 훈련(드릴) ── 저장/완료상신=작성자, 반려/완료승인=완료승인자 ─────────
+  await test.step('비상 훈련(드릴)', async () => {
+    const v = buttonRuleLookup(rules, 'EHS 경영 › 비상 훈련 › 비상 훈련')
+    expect(v('SCHEDULED', '저장', 'writer')).toBe(true)
+    expect(v('SCHEDULED', '저장', 'guest')).toBe(false)
+    expect(v('SCHEDULED', '완료 결재 상신', 'writer')).toBe(true)
+    expect(v('SCHEDULED', '완료 결재 상신', 'guest')).toBe(false)
+    expect(v('SCHEDULED', '완료 승인', 'completionApprover')).toBe(true)
+    expect(v('SCHEDULED', '완료 승인', 'guest')).toBe(false)
+  })
+
   await context.close()
 })

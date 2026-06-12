@@ -352,8 +352,8 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
       { status: 'SCHEDULED', statusLabel: '예정', statusColor: 'info',
         statusNote: '비상계획 승인 후 자동 생성 — 신규 등록 없음 / linkedPlan 상태에 따라 버튼 표시',
         buttons: [
-          { button: '저장',           roles: ALL_ON, issue: '권한 체크 없음 — 누구든 저장 가능' },
-          { button: '완료 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — linkedPlan=APPROVED 시 노출' },
+          { button: '저장',           roles: WRITER_ADMIN },
+          { button: '완료 결재 상신', roles: WRITER_ADMIN },
           { button: '반려 (완료)',    roles: ADMIN_COMP },
           { button: '완료 승인',      roles: ADMIN_COMP },
         ] },
