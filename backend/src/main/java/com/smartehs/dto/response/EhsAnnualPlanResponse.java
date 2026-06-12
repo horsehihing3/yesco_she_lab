@@ -2,6 +2,7 @@ package com.smartehs.dto.response;
 
 import com.smartehs.model.EhsAnnualPlan;
 import com.smartehs.model.EhsAnnualPlanGoal;
+import com.smartehs.model.PersonRef;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -117,24 +118,24 @@ public class EhsAnnualPlanResponse {
                 .status(entity.getStatus())
                 .priority(entity.getPriority())
                 .remarks(entity.getRemarks())
-                .createdByUserId(entity.getCreatedByUserId())
-                .createdByName(entity.getCreatedByName())
-                .createdByTeam(entity.getCreatedByTeam())
-                .createdByPosition(entity.getCreatedByPosition())
-                .modifiedByUserId(entity.getModifiedByUserId())
-                .modifiedByName(entity.getModifiedByName())
-                .modifiedByTeam(entity.getModifiedByTeam())
-                .modifiedByPosition(entity.getModifiedByPosition())
-                .planApproverUserId(entity.getPlanApproverUserId())
-                .planApproverTeam(entity.getPlanApproverTeam())
-                .planApproverPosition(entity.getPlanApproverPosition())
-                .planApproverName(entity.getPlanApproverName())
+                .createdByUserId(PersonRef.userId(entity.getCreatedBy()))
+                .createdByName(PersonRef.name(entity.getCreatedBy()))
+                .createdByTeam(PersonRef.team(entity.getCreatedBy()))
+                .createdByPosition(PersonRef.position(entity.getCreatedBy()))
+                .modifiedByUserId(PersonRef.userId(entity.getModifiedBy()))
+                .modifiedByName(PersonRef.name(entity.getModifiedBy()))
+                .modifiedByTeam(PersonRef.team(entity.getModifiedBy()))
+                .modifiedByPosition(PersonRef.position(entity.getModifiedBy()))
+                .planApproverUserId(PersonRef.userId(entity.getPlanApprover()))
+                .planApproverTeam(PersonRef.team(entity.getPlanApprover()))
+                .planApproverPosition(PersonRef.position(entity.getPlanApprover()))
+                .planApproverName(PersonRef.name(entity.getPlanApprover()))
                 .planApprovedAt(entity.getPlanApprovedAt())
                 .planApprovedBy(entity.getPlanApprovedBy())
-                .completionApproverUserId(entity.getCompletionApproverUserId())
-                .completionApproverTeam(entity.getCompletionApproverTeam())
-                .completionApproverPosition(entity.getCompletionApproverPosition())
-                .completionApproverName(entity.getCompletionApproverName())
+                .completionApproverUserId(PersonRef.userId(entity.getCompletionApprover()))
+                .completionApproverTeam(PersonRef.team(entity.getCompletionApprover()))
+                .completionApproverPosition(PersonRef.position(entity.getCompletionApprover()))
+                .completionApproverName(PersonRef.name(entity.getCompletionApprover()))
                 .completionApprovedAt(entity.getCompletionApprovedAt())
                 .completionApprovedBy(entity.getCompletionApprovedBy())
                 .isApproved(entity.getIsApproved())

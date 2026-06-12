@@ -9,6 +9,7 @@ import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.EhsAnnualPlan;
 import com.smartehs.model.EhsAnnualPlanGoal;
 import com.smartehs.model.IdmUser;
+import com.smartehs.model.PersonRef;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -74,22 +75,10 @@ public class EhsAnnualPlanService {
                 .status(request.getStatus() != null ? request.getStatus() : "DRAFT")
                 .priority(request.getPriority())
                 .remarks(request.getRemarks())
-                .createdByUserId(request.getCreatedByUserId())
-                .createdByName(request.getCreatedByName())
-                .createdByTeam(request.getCreatedByTeam())
-                .createdByPosition(request.getCreatedByPosition())
-                .modifiedByUserId(request.getCreatedByUserId())
-                .modifiedByName(request.getCreatedByName())
-                .modifiedByTeam(request.getCreatedByTeam())
-                .modifiedByPosition(request.getCreatedByPosition())
-                .planApproverUserId(request.getPlanApproverUserId())
-                .planApproverTeam(request.getPlanApproverTeam())
-                .planApproverPosition(request.getPlanApproverPosition())
-                .planApproverName(request.getPlanApproverName())
-                .completionApproverUserId(request.getCompletionApproverUserId())
-                .completionApproverTeam(request.getCompletionApproverTeam())
-                .completionApproverPosition(request.getCompletionApproverPosition())
-                .completionApproverName(request.getCompletionApproverName())
+                .createdBy(PersonRef.of(request.getCreatedByUserId(), request.getCreatedByName(), request.getCreatedByTeam(), request.getCreatedByPosition()))
+                .modifiedBy(PersonRef.of(request.getCreatedByUserId(), request.getCreatedByName(), request.getCreatedByTeam(), request.getCreatedByPosition()))
+                .planApprover(PersonRef.of(request.getPlanApproverUserId(), request.getPlanApproverName(), request.getPlanApproverTeam(), request.getPlanApproverPosition()))
+                .completionApprover(PersonRef.of(request.getCompletionApproverUserId(), request.getCompletionApproverName(), request.getCompletionApproverTeam(), request.getCompletionApproverPosition()))
                 .build();
 
         ehsAnnualPlanMapper.insert(plan);
@@ -111,18 +100,9 @@ public class EhsAnnualPlanService {
         plan.setStatus(request.getStatus());
         plan.setPriority(request.getPriority());
         plan.setRemarks(request.getRemarks());
-        plan.setModifiedByUserId(request.getModifiedByUserId());
-        plan.setModifiedByName(request.getModifiedByName());
-        plan.setModifiedByTeam(request.getModifiedByTeam());
-        plan.setModifiedByPosition(request.getModifiedByPosition());
-        plan.setPlanApproverUserId(request.getPlanApproverUserId());
-        plan.setPlanApproverTeam(request.getPlanApproverTeam());
-        plan.setPlanApproverPosition(request.getPlanApproverPosition());
-        plan.setPlanApproverName(request.getPlanApproverName());
-        plan.setCompletionApproverUserId(request.getCompletionApproverUserId());
-        plan.setCompletionApproverTeam(request.getCompletionApproverTeam());
-        plan.setCompletionApproverPosition(request.getCompletionApproverPosition());
-        plan.setCompletionApproverName(request.getCompletionApproverName());
+        plan.setModifiedBy(PersonRef.of(request.getModifiedByUserId(), request.getModifiedByName(), request.getModifiedByTeam(), request.getModifiedByPosition()));
+        plan.setPlanApprover(PersonRef.of(request.getPlanApproverUserId(), request.getPlanApproverName(), request.getPlanApproverTeam(), request.getPlanApproverPosition()));
+        plan.setCompletionApprover(PersonRef.of(request.getCompletionApproverUserId(), request.getCompletionApproverName(), request.getCompletionApproverTeam(), request.getCompletionApproverPosition()));
 
         ehsAnnualPlanMapper.update(plan);
         saveGoals(id, request.getGoals());
@@ -183,7 +163,8 @@ public class EhsAnnualPlanService {
                 throw new AccessDeniedException("삭제 권한이 없습니다.");
             }
             boolean isAdmin = u.getUserRole() != null && ADMIN_ROLES.contains(u.getUserRole());
-            boolean isWriter = plan.getCreatedByUserId() != null && plan.getCreatedByUserId().equals(u.getUidNumber());
+            Long creatorId = plan.getCreatedBy() != null ? plan.getCreatedBy().getUserId() : null;
+            boolean isWriter = creatorId != null && creatorId.equals(u.getUidNumber());
             if (!isAdmin && !isWriter) {
                 throw new AccessDeniedException("작성자 또는 관리자만 삭제할 수 있습니다.");
             }
@@ -279,8 +260,9 @@ public class EhsAnnualPlanService {
         // admin role bypass
         if (u.getUserRole() != null && ADMIN_ROLES.contains(u.getUserRole())) return;
 
-        String required = "PLAN".equals(stage) ? plan.getPlanApproverName() : plan.getCompletionApproverName();
-        Long requiredId = "PLAN".equals(stage) ? plan.getPlanApproverUserId() : plan.getCompletionApproverUserId();
+        PersonRef approver = "PLAN".equals(stage) ? plan.getPlanApprover() : plan.getCompletionApprover();
+        String required = approver != null ? approver.getName() : null;
+        Long requiredId = approver != null ? approver.getUserId() : null;
         if (requiredId != null && requiredId.equals(u.getUidNumber())) return;
         if (required != null && required.equalsIgnoreCase(u.getUserName())) return;
         throw new AccessDeniedException(

@@ -20,30 +20,13 @@ public class EhsAnnualPlan {
     private String priority;
     private String remarks;
 
-    private Long createdByUserId;
-    private String createdByName;
-    private String createdByTeam;
-    private String createdByPosition;
-
-    // 수정자 (마지막으로 수정한 사용자 — 수정 시 자동 갱신)
-    private Long modifiedByUserId;
-    private String modifiedByName;
-    private String modifiedByTeam;
-    private String modifiedByPosition;
-
-    // 계획 승인자 (연간 계획 메뉴에서 PENDING_APPROVAL → APPROVED)
-    private Long planApproverUserId;
-    private String planApproverTeam;
-    private String planApproverPosition;
-    private String planApproverName;
+    // 사람 필드 — JSON 1컬럼(PersonRefTypeHandler). 화면 표시는 팀 / 성명 직위.
+    private PersonRef createdBy;          // created_by
+    private PersonRef modifiedBy;         // modified_by
+    private PersonRef planApprover;       // plan_approver
     private LocalDateTime planApprovedAt;
     private String planApprovedBy;
-
-    // 완료 승인자 (KPI현황 메뉴에서 APPROVED → DONE)
-    private Long completionApproverUserId;
-    private String completionApproverTeam;
-    private String completionApproverPosition;
-    private String completionApproverName;
+    private PersonRef completionApprover; // completion_approver
     private LocalDateTime completionApprovedAt;
     private String completionApprovedBy;
 

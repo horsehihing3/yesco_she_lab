@@ -45,6 +45,7 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.smartehs.model
+  type-handlers-package: com.smartehs.config.typehandler
   configuration:
     map-underscore-to-camel-case: true
     default-fetch-size: 100

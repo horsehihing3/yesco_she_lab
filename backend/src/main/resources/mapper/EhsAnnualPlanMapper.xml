@@ -11,24 +11,12 @@
         <result property="status"          column="status"/>
         <result property="priority"        column="priority"/>
         <result property="remarks"         column="remarks"/>
-        <result property="createdByUserId"   column="created_by_user_id"/>
-        <result property="createdByName"     column="created_by_name"/>
-        <result property="createdByTeam"     column="created_by_team"/>
-        <result property="createdByPosition" column="created_by_position"/>
-        <result property="modifiedByUserId"   column="modified_by_user_id"/>
-        <result property="modifiedByName"     column="modified_by_name"/>
-        <result property="modifiedByTeam"     column="modified_by_team"/>
-        <result property="modifiedByPosition" column="modified_by_position"/>
-        <result property="planApproverUserId"        column="plan_approver_user_id"/>
-        <result property="planApproverTeam"          column="plan_approver_team"/>
-        <result property="planApproverPosition"      column="plan_approver_position"/>
-        <result property="planApproverName"          column="plan_approver_name"/>
+        <result property="createdBy"          column="created_by"          typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy"         column="modified_by"         typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="planApprover"       column="plan_approver"       typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="planApprovedAt"            column="plan_approved_at"/>
         <result property="planApprovedBy"            column="plan_approved_by"/>
-        <result property="completionApproverUserId"  column="completion_approver_user_id"/>
-        <result property="completionApproverTeam"    column="completion_approver_team"/>
-        <result property="completionApproverPosition" column="completion_approver_position"/>
-        <result property="completionApproverName"    column="completion_approver_name"/>
+        <result property="completionApprover" column="completion_approver" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="completionApprovedAt"      column="completion_approved_at"/>
         <result property="completionApprovedBy"      column="completion_approved_by"/>
         <result property="isApproved"      column="is_approved"/>
@@ -74,17 +62,14 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_ehs_annual_plan
             (plan_year, plan_name, description, status, priority, remarks,
-             created_by_user_id, created_by_name, created_by_team, created_by_position,
-             modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
-             plan_approver_user_id, plan_approver_team, plan_approver_position, plan_approver_name,
-             completion_approver_user_id, completion_approver_team, completion_approver_position, completion_approver_name,
+             created_by, modified_by, plan_approver, completion_approver,
              created_at, modified_at)
         VALUES
             (#{planYear}, #{planName}, #{description}, #{status}, #{priority}, #{remarks},
-             #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
-             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
-             #{planApproverUserId,jdbcType=BIGINT}, #{planApproverTeam}, #{planApproverPosition}, #{planApproverName},
-             #{completionApproverUserId,jdbcType=BIGINT}, #{completionApproverTeam}, #{completionApproverPosition}, #{completionApproverName},
+             #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+             #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+             #{planApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+             #{completionApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
              GETDATE(), GETDATE())
     </insert>
 
@@ -96,18 +81,9 @@
                status            = #{status},
                priority          = #{priority},
                remarks           = #{remarks},
-               plan_approver_user_id  = #{planApproverUserId,jdbcType=BIGINT},
-               plan_approver_team     = #{planApproverTeam},
-               plan_approver_position = #{planApproverPosition},
-               plan_approver_name     = #{planApproverName},
-               completion_approver_user_id  = #{completionApproverUserId,jdbcType=BIGINT},
-               completion_approver_team     = #{completionApproverTeam},
-               completion_approver_position = #{completionApproverPosition},
-               completion_approver_name     = #{completionApproverName},
-               modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
-               modified_by_name    = #{modifiedByName},
-               modified_by_team    = #{modifiedByTeam},
-               modified_by_position = #{modifiedByPosition},
+               plan_approver       = #{planApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+               completion_approver = #{completionApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+               modified_by         = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
                modified_at       = GETDATE()
          WHERE id = #{id}
     </update>
