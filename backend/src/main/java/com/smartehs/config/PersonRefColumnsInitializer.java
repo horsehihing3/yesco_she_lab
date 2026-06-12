@@ -41,7 +41,9 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
         // 특수 조합
         new Object[]{"tb_permit_to_work", new String[]{"created_by", "plan_approver", "completion_approver"}},
         new Object[]{"tb_risk_assessment", new String[]{"plan_approver", "completion_approver"}},
-        new Object[]{"tb_site_safety_plan", new String[]{"created_by", "modified_by", "completion_approver"}},
+        // tb_site_safety_plan: modified_by 는 레거시 username 문자열 컬럼이라 제외(수정자 flat).
+        // plan_approver 는 기존에 user_id 컬럼만 있고 team/name 컬럼이 없어 INSERT가 깨져 있었음 → JSON으로 통합(컬럼 신규생성).
+        new Object[]{"tb_site_safety_plan", new String[]{"created_by", "plan_approver", "completion_approver"}},
         // 작성+수정
         new Object[]{"tb_contractor_registration", CM}, new Object[]{"tb_health_checkup_plan", CM},
         new Object[]{"tb_legal_compliance_exec", CM}, new Object[]{"tb_legal_compliance_plan", CM},
