@@ -6,6 +6,19 @@ import * as path from 'path'
 const SHOT_DIR = path.join('test-results', 'shots')
 let shotSeq = 0
 
+/**
+ * 노트북별 테스트 데이터 접두어. 공유 DB 충돌 방지용.
+ *  - 개발 노트북: (기본) DEV  → 'TEST_DEV_...'
+ *  - 테스트 노트북: set E2E_TAG=QA → 'TEST_QA_...'
+ * 정리 시: DELETE ... WHERE plan_name LIKE 'TEST\_<TAG>\_%' ESCAPE '\'
+ */
+export const E2E_TAG = process.env.E2E_TAG || 'DEV'
+
+/** 고유 테스트 식별명 생성: TEST_<TAG>_<label>_<timestamp> */
+export function testName(label: string): string {
+  return `TEST_${E2E_TAG}_${label}_${Date.now()}`
+}
+
 /** 단계별 스크린샷 저장 (리포트 첨부용) */
 export async function shot(page: Page, name: string) {
   fs.mkdirSync(SHOT_DIR, { recursive: true })

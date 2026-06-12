@@ -1,7 +1,7 @@
 import { test, expect, BrowserContext } from '@playwright/test'
 import { ACCOUNTS } from '../fixtures/accounts'
 import {
-  loginAs, gotoTab, acceptDialog, pickApprover, fillRowField, openRowByName, shot,
+  loginAs, gotoTab, acceptDialog, pickApprover, fillRowField, openRowByName, shot, testName,
 } from '../helpers/app'
 
 /**
@@ -15,7 +15,7 @@ import {
  * DB 상태머신을 순서대로 검증하므로 단일 테스트 / 직렬 실행.
  */
 test('연간계획 결재 라이프사이클 (등록→계획승인→완료승인)', async ({ browser }) => {
-  const planName = `TEST_${Date.now()}`
+  const planName = testName('APPR')
   const contexts: BrowserContext[] = []
 
   // ───────────────────────────── 1. 작성자: 등록 ─────────────────────────────

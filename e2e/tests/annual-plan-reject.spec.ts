@@ -2,7 +2,7 @@ import { test, expect, BrowserContext } from '@playwright/test'
 import { ACCOUNTS } from '../fixtures/accounts'
 import {
   loginAs, gotoTab, acceptDialog, pickApprover, fillRowField, openRowByName,
-  rejectWithReason, shot,
+  rejectWithReason, shot, testName,
 } from '../helpers/app'
 
 /**
@@ -19,7 +19,7 @@ import {
  *   9 완료승인자    완료 승인                                → DONE
  */
 test('반려 회복 흐름 (계획반려→재상신→승인→완료반려→재상신→완료)', async ({ browser }) => {
-  const planName = `TEST_REJ_${Date.now()}`
+  const planName = testName('REJ')
   const planRejectReason = '일정이 부적절합니다. 다음 분기로 조정 후 재상신 바랍니다.'
   const compRejectReason = '실적 수치 근거가 미흡합니다. 보완 후 재상신 바랍니다.'
   const contexts: BrowserContext[] = []
