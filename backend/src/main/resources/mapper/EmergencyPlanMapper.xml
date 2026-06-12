@@ -146,7 +146,8 @@
             plan_approved_by = CASE WHEN #{stage} = 'PLAN' AND #{approved} = 1 THEN #{approvedBy} ELSE plan_approved_by END,
             completion_approved_at = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN GETDATE() ELSE completion_approved_at END,
             completion_approved_by = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN #{approvedBy} ELSE completion_approved_by END,
-            reject_reason = CASE WHEN #{rejectReason} IS NOT NULL THEN #{rejectReason} ELSE reject_reason END,
+            <!-- 반려 시 사유 저장, 재상신·승인 등 다음 전이에서 제거 -->
+            reject_reason = #{rejectReason},
             modified_at = GETDATE()
         WHERE id = #{id}
     </update>
