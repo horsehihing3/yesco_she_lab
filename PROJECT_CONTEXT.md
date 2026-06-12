@@ -8,6 +8,30 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
+### 🟡 내일 이어서 — 표준화 5순위: 폼 필드 순서 통일 (2026-06-13 세션 9에서 분석 완료, 미착수)
+- **기준 문서**: `docs/FORM_LAYOUT_CONVENTION.md` (레퍼런스: `AuditPlanTab.tsx`)
+- **표준 행 순서**: 제목/유형 → 부서/상태(상태는 상세만) → 도메인필드 → 시작/종료일 → 목적 → 비고 → 작성자/생성일 → 수정자/수정일(이력 있을때만) → 계획/완료승인자 → 체크리스트
+- **분석 결과**:
+  - FormTable 사용 폼 **53개** (`frontend/src` 내, FormTable.tsx 제외)
+  - 각 폼이 PC상세 / PC등록·수정 / 모바일 **3벌 블록**을 손으로 짠 구조 → 폼당 3곳 일관 이동 필요
+  - **기능 안전**: 행 순서만 변경, 필드 바인딩(Controller/name/value) 불변 → 저장·조회 영향 없음 (순수 presentational)
+  - **리스크**: JSX 블록 경계 오절단 시 깨짐 → 도메인 단위로 끊어 빌드 검증하며 진행할 것
+  - **미측정**: 53개 중 실제 규칙 위반 폼 수는 아직 안 셈 → 착수 시 도메인별로 진단 먼저
+- **권장 진행법**: 한 도메인(예: 방사선 7탭)부터 수정+빌드검증 → 패턴 확인 후 다음 도메인 확장
+- **도메인 묶음**: 방사선 7 · 화재안전 5 · 직업병 5 · 법규대응 4 · 법규시설 3 · PSM 6 · 인허가수명주기 7 · 질병예방 7 · 협력업체 4 · 기타
+- ⏸️ 사용자 요청으로 보류 — 내일 진행 방식(전체/도메인별/특정화면) 결정 후 착수
+
+### ✅ 완료 — 표준화 4순위: API 모듈화 + 죽은코드 제거 (2026-06-13 세션 9)
+- [x] Phase 1: SafetyWork/OshCommittee 인라인 API → `safetyWorkApi.ts`/`oshCommitteeApi.ts` 추출
+- [x] Phase 2: `fileApi.ts` 신규(upload/listByEntity/remove/downloadBlob/fileUrl) — OshCommitteeTab axiosInstance 직접참조 제거 (commit 49dd4ee)
+- [x] 미사용 `SafetyWorkPage` 체인 삭제 — 라우팅 미연결 죽은코드, 실 작업허가는 PermitToWorkPage. safetyWorkApi/safetyWork.types/userApi 동반 삭제 (commit 38d848a)
+- [x] 영향도 확인: PermitToWorkPage(별도 permitToWorkApi)·대시보드 `/safety-works` 카운트·백엔드 무영향
+
+### ✅ 완료 — 표준화 3순위: RiskAssessment status 대문자 통일 (2026-06-12 세션 8)
+- [x] 프론트 RiskAssessmentTab status Set 대문자화 + 필터 `.toLowerCase()` 제거 (`s = a.status || ''`)
+- [x] 백엔드 `RiskAssessmentStatusUppercaseInitializer`(@Order 200) — 기존 DB 행 소문자→대문자 (Flyway 비활성이라 CommandLineRunner 사용, 21건 전환)
+- [x] RiskAssessmentMapper.xml status 비교값 대문자화
+
 ### ✅ 완료 — writer 역할 전면 적용 (2026-06-11 세션 7, commit c854497)
 - [x] EmrContactTab, ContractorRegistrationPage getRoles 추가 (마지막 2개 파일)
 - [x] ContractorRegistration 프론트 타입에 createdByUserId 추가

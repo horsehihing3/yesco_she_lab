@@ -1,1 +1,5 @@
 .vscode/
+
+# 로컬 실행 로그 (커밋 금지)
+*-run.log
+*-run-err.log
