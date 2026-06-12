@@ -146,13 +146,13 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   const isAdmin = isSystemAdmin(user)
   const { canSee } = useButtonRules()
   const MENU = '안전 관리 › 위험성 평가'
-  const getItemRoles = (item: { authorName?: string|null; planApproverName?: string|null; completionApproverName?: string|null }): string[] => {
+  const getItemRoles = (item: { authorName?: string|null; planApproverName?: string|null; completionApproverName?: string|null } | null): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
     else if (user?.role) roles.push(user.role)
-    if (item.authorName && user?.name && item.authorName === user.name) roles.push('writer')
-    if (item.planApproverName && user?.name && item.planApproverName === user.name) roles.push('planApprover')
-    if (item.completionApproverName && user?.name && item.completionApproverName === user.name) roles.push('completionApprover')
+    if (item?.authorName && user?.name && item.authorName === user.name) roles.push('writer')
+    if (item?.planApproverName && user?.name && item.planApproverName === user.name) roles.push('planApprover')
+    if (item?.completionApproverName && user?.name && item.completionApproverName === user.name) roles.push('completionApprover')
     return roles
   }
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
@@ -1083,55 +1083,71 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
 
           {(() => {
             const status = (assessmentDetail?.status || '').toLowerCase()
-            const isPlanApprover = !!user && !!assessmentDetail?.planApproverName && user.name === assessmentDetail.planApproverName
-            const isCompletionApprover = !!user && !!assessmentDetail?.completionApproverName && user.name === assessmentDetail.completionApproverName
-            const canApprovePlan = isAdmin || isPlanApprover
-            const canApproveCompletion = isAdmin || isCompletionApprover
+            const itemRoles = getItemRoles(selectedAssessment)
 
             const buttons: React.ReactNode[] = []
 
             // 계획 모드: draft/rejected → 결재 상신, submitted → 승인/반려
             if (isPlanMode) {
-              if (status === 'draft' || status === 'rejected') {
+              if ((status === 'draft' || status === 'rejected') &&
+                  canSee(MENU, status, '계획 결재 상신', itemRoles)) {
                 buttons.push(
                   <Button key="planSubmit" variant="contained" color="info" onClick={handleSubmitForApproval}>
                     {t('riskAssessment.planSubmit', '계획 결재 상신')}
                   </Button>
                 )
               }
-              if (status === 'submitted' && canApprovePlan) {
-                buttons.push(
-                  <Button key="reject" variant="contained" color="warning" onClick={handleReject}>
-                    {t('common.reject', '반려')}
-                  </Button>,
-                  <Button key="planApprove" variant="contained" color="success" onClick={handleApprove}>
-                    {t('riskAssessment.planApprove', '계획 결재 승인')}
-                  </Button>
-                )
+              if (status === 'submitted') {
+                if (canSee(MENU, 'submitted', '반려', itemRoles)) {
+                  buttons.push(
+                    <Button key="reject" variant="contained" color="warning" onClick={handleReject}>
+                      {t('common.reject', '반려')}
+                    </Button>
+                  )
+                }
+                if (canSee(MENU, 'submitted', '계획 결재 승인', itemRoles)) {
+                  buttons.push(
+                    <Button key="planApprove" variant="contained" color="success" onClick={handleApprove}>
+                      {t('riskAssessment.planApprove', '계획 결재 승인')}
+                    </Button>
+                  )
+                }
               }
             }
 
             // 관리 모드: approved → 완료 결재 상신, completion_submitted → 완료 결재 승인/반려
             if (isManagementMode) {
               if (status === 'approved') {
-                buttons.push(
-                  <Button key="saveDetails" variant="contained" onClick={handleSaveDetails}>
-                    {t('common.save', '저장')}
-                  </Button>,
-                  <Button key="completionSubmit" variant="contained" color="info" onClick={handleSubmitForCompletion}>
-                    {t('riskAssessment.completionSubmit', '완료 결재 상신')}
-                  </Button>
-                )
+                if (canSee(MENU, 'approved', '저장 (실시 내용)', itemRoles)) {
+                  buttons.push(
+                    <Button key="saveDetails" variant="contained" onClick={handleSaveDetails}>
+                      {t('common.save', '저장')}
+                    </Button>
+                  )
+                }
+                if (canSee(MENU, 'approved', '완료 결재 상신', itemRoles)) {
+                  buttons.push(
+                    <Button key="completionSubmit" variant="contained" color="info" onClick={handleSubmitForCompletion}>
+                      {t('riskAssessment.completionSubmit', '완료 결재 상신')}
+                    </Button>
+                  )
+                }
               }
-              if (status === 'completion_submitted' && canApproveCompletion) {
-                buttons.push(
-                  <Button key="completionReject" variant="contained" color="warning" onClick={handleCompletionReject}>
-                    {t('common.reject', '반려')}
-                  </Button>,
-                  <Button key="completionApprove" variant="contained" color="success" onClick={handleComplete}>
-                    {t('riskAssessment.completionApprove', '완료 결재 승인')}
-                  </Button>
-                )
+              if (status === 'completion_submitted') {
+                if (canSee(MENU, 'completion_submitted', '반려 (완료)', itemRoles)) {
+                  buttons.push(
+                    <Button key="completionReject" variant="contained" color="warning" onClick={handleCompletionReject}>
+                      {t('common.reject', '반려')}
+                    </Button>
+                  )
+                }
+                if (canSee(MENU, 'completion_submitted', '완료 결재 승인', itemRoles)) {
+                  buttons.push(
+                    <Button key="completionApprove" variant="contained" color="success" onClick={handleComplete}>
+                      {t('riskAssessment.completionApprove', '완료 결재 승인')}
+                    </Button>
+                  )
+                }
               }
             }
 
