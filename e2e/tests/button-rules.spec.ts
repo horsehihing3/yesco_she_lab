@@ -102,5 +102,24 @@ test('버튼관리 규칙 검증 (교정된 메뉴)', async ({ browser }) => {
     expect(exec('PENDING_CLOSE', '완료 승인', 'completionApprover')).toBe(true)
   })
 
+  // ── KPI목표 (연간계획 / KPI 현황) ── 일반관리자=EHS_ADMIN ──────────────────
+  await test.step('KPI목표', async () => {
+    const plan = buttonRuleLookup(rules, 'EHS 경영 › KPI목표 › 연간계획')
+    expect(plan('LIST', '신규 등록', 'EHS_ADMIN')).toBe(true)
+    expect(plan('LIST', '신규 등록', 'superAdmin')).toBe(true)
+    expect(plan('LIST', '신규 등록', 'writer')).toBe(false)
+    expect(plan('LIST', '신규 등록', 'TEAM_ADMIN')).toBe(false)
+    expect(plan('LIST', '신규 등록', 'guest')).toBe(false)
+    expect(plan('DRAFT', '계획 결재 상신', 'writer')).toBe(true)
+    expect(plan('PENDING_APPROVAL', '계획 승인', 'planApprover')).toBe(true)
+    expect(plan('PENDING_APPROVAL', '계획 승인', 'guest')).toBe(false)
+    const stat = buttonRuleLookup(rules, 'EHS 경영 › KPI목표 › KPI 현황')
+    // KPI 값 저장·완료상신 = 작성자
+    expect(stat('APPROVED', '저장 (KPI 값)', 'writer')).toBe(true)
+    expect(stat('APPROVED', '저장 (KPI 값)', 'guest')).toBe(false)
+    expect(stat('COMPLETION_PENDING', '완료 승인', 'completionApprover')).toBe(true)
+    expect(stat('COMPLETION_PENDING', '완료 승인', 'guest')).toBe(false)
+  })
+
   await context.close()
 })

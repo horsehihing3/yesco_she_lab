@@ -221,12 +221,12 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 연간계획 ──────────────────────────────────────────────────────────────
+  // ── 연간계획 ── 일반관리자 = EHS_ADMIN ─────────────────────────────────────
   {
     menuPath: 'EHS 경영 › KPI목표 › 연간계획', menuKey: 'pkg.annualPlan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+        buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
       { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
         buttons: [
           { button: '계획 결재 상신', roles: WRITER_ADMIN },
@@ -248,8 +248,8 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
       { status: 'APPROVED', statusLabel: '작성중 (KPI 입력)', statusColor: 'default',
         statusNote: 'KPI현황 탭: 연간계획 APPROVED 상태를 "작성중"으로 표시',
         buttons: [
-          { button: '저장 (KPI 값)',  roles: ALL_ON, issue: '권한 체크 없음 — 누구든 KPI 값 저장 가능' },
-          { button: '완료 결재 상신', roles: ALL_ON, issue: '권한 체크 없음 — 누구든 완료 결재 상신 가능' },
+          { button: '저장 (KPI 값)',  roles: WRITER_ADMIN },
+          { button: '완료 결재 상신', roles: WRITER_ADMIN },
         ] },
       { status: 'COMPLETION_PENDING', statusLabel: '완료 결재 대기', statusColor: 'warning',
         buttons: [
