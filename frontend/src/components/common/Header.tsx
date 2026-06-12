@@ -131,14 +131,13 @@ const Header: React.FC = () => {
           </MenuItem>
 
           {/* DEV ONLY — 빠른 계정 전환 (납품 전 삭제) */}
+          {(window.location.hostname === 'localhost' || user?.username === 'com4in_dev') && (
+          <>
           <Divider />
           <Box sx={{ px: 2, pt: 0.5, pb: 0.25 }}>
             <Typography variant="caption" color="text.disabled">DEV 계정 전환</Typography>
           </Box>
           <Divider />
-          <Box sx={{ px: 2, pt: 0.5, pb: 0.25 }}>
-            <Typography variant="caption" color="text.disabled">DEV 계정 전환</Typography>
-          </Box>
           {DEV_ACCOUNTS.map(({ id, name, label }) => (
             <MenuItem
               key={id}
@@ -159,6 +158,8 @@ const Header: React.FC = () => {
               </Typography>
             </MenuItem>
           ))}
+          </>
+          )}
         </Menu>
       </Box>
 

@@ -123,6 +123,7 @@ const LoginPage: React.FC = () => {
           </form>
 
           {/* DEV ONLY — 테스트 계정 빠른 로그인 (납품 전 삭제) */}
+          {window.location.hostname === 'localhost' && (
           <Box sx={{ mt: 3, pt: 2, borderTop: '1px dashed', borderColor: 'divider' }}>
             <Typography variant="caption" color="text.disabled" display="block" sx={{ mb: 1, textAlign: 'center' }}>
               DEV 빠른 로그인
@@ -154,6 +155,7 @@ const LoginPage: React.FC = () => {
               ))}
             </Box>
           </Box>
+          )}
           {/* /DEV ONLY */}
         </CardContent>
       </Card>
