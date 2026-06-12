@@ -33,11 +33,11 @@ test('버튼관리 규칙 검증 (교정된 메뉴)', async ({ browser }) => {
     }
   })
 
-  // ── 비상 계획 ── 일반관리자=EMERGENCY_ADMIN ─────────────────────────────────
+  // ── 비상 계획 ── 일반관리자=EHS_ADMIN ─────────────────────────────────
   await test.step('비상 계획', async () => {
     const v = buttonRuleLookup(rules, 'EHS 경영 › 비상 훈련 › 비상 계획')
     // New = 일반관리자+슈퍼 (writer/guest 불가)
-    expect(v('LIST', '신규 등록', 'EMERGENCY_ADMIN'), 'New/일반관리자').toBe(true)
+    expect(v('LIST', '신규 등록', 'EHS_ADMIN'), 'New/일반관리자').toBe(true)
     expect(v('LIST', '신규 등록', 'superAdmin'), 'New/superAdmin').toBe(true)
     expect(v('LIST', '신규 등록', 'writer'), 'New/writer').toBe(false)
     expect(v('LIST', '신규 등록', 'guest'), 'New/guest').toBe(false)
@@ -46,7 +46,7 @@ test('버튼관리 규칙 검증 (교정된 메뉴)', async ({ browser }) => {
       expect(v('DRAFT', btn, 'writer'), `${btn}/writer`).toBe(true)
       expect(v('DRAFT', btn, 'superAdmin'), `${btn}/superAdmin`).toBe(true)
       expect(v('DRAFT', btn, 'guest'), `${btn}/guest`).toBe(false)
-      expect(v('DRAFT', btn, 'EMERGENCY_ADMIN'), `${btn}/일반관리자`).toBe(false)
+      expect(v('DRAFT', btn, 'EHS_ADMIN'), `${btn}/일반관리자`).toBe(false)
     }
     // 반려·계획승인 = 계획승인자+슈퍼
     for (const btn of ['반려', '계획 승인']) {

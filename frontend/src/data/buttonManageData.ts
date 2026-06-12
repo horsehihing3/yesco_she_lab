@@ -323,7 +323,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 비상 계획 ── 일반관리자 = EMERGENCY_ADMIN (DB 지정) ────────────────────
+  // ── 비상 계획 ── 일반관리자 = EHS_ADMIN (EMERGENCY_ADMIN 계정 없어 회사EHS담당자로) ──
   // New=일반관리자+슈퍼 / 상신·수정·삭제=작성자+슈퍼 / 반려·계획승인=계획승인자+슈퍼
   {
     menuPath: 'EHS 경영 › 비상 훈련 › 비상 계획', menuKey: 'emr.tabs.plans',
