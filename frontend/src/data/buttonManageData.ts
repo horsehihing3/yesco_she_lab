@@ -323,12 +323,13 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 비상 계획 ─────────────────────────────────────────────────────────────
+  // ── 비상 계획 ── 일반관리자 = EMERGENCY_ADMIN (DB 지정) ────────────────────
+  // New=일반관리자+슈퍼 / 상신·수정·삭제=작성자+슈퍼 / 반려·계획승인=계획승인자+슈퍼
   {
     menuPath: 'EHS 경영 › 비상 훈련 › 비상 계획', menuKey: 'emr.tabs.plans',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ALL_ON }] },
+        buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
       { status: 'DRAFT', statusLabel: '작성중', statusColor: 'default',
         statusNote: '반려 시 PENDING_APPROVAL → DRAFT 복귀',
         buttons: [

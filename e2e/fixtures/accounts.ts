@@ -17,6 +17,8 @@ export const ACCOUNTS = {
   writer:             { username: 'yeseo.moon',   name: '문예서' },
   planApprover:       { username: 'jiwan.nam',    name: '남지완' },
   completionApprover: { username: 'horsehihing3', name: '정경석' },
+  // 슈퍼관리자 — 도메인 관리자 계정이 없는 메뉴의 등록자(New)로 사용
+  superAdmin:         { username: 'com4in',       name: '관리자2' },
 } as const
 
 export type RoleKey = keyof typeof ACCOUNTS
