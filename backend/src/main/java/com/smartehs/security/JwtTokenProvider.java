@@ -28,8 +28,18 @@ public class JwtTokenProvider {
 
     private SecretKey key;
 
+    /** application.yml 의 jwt.secret 기본값(취약). 운영에선 JWT_SECRET 환경변수로 교체해야 한다. */
+    private static final String INSECURE_DEFAULT_SECRET =
+            "your-256-bit-secret-key-for-jwt-token-generation-minimum-32-characters";
+
     @PostConstruct
     public void init() {
+        if (INSECURE_DEFAULT_SECRET.equals(jwtSecret)) {
+            log.warn("================================================================");
+            log.warn("[보안] JWT_SECRET 미설정 — 공개된 기본(취약) 시크릿 사용 중입니다.");
+            log.warn("       운영/Yesco 배포 전 반드시 JWT_SECRET 환경변수를 설정하세요.");
+            log.warn("================================================================");
+        }
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
