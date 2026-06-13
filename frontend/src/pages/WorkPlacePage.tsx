@@ -29,16 +29,8 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useForm } from 'react-hook-form'
 import { useAlert } from '../contexts/AlertContext'
-import axiosInstance from '../api/axiosInstance'
-import { ApiResponse, PageResponse } from '../types/common.types'
+import { workplaceApi } from '../api/workplaceApi'
 import { WorkPlace, WorkPlaceRequest } from '../types/workPlace.types'
-
-const fetchWorkPlaces = async (page: number, size: number): Promise<PageResponse<WorkPlace>> => {
-  const response = await axiosInstance.get<ApiResponse<PageResponse<WorkPlace>>>('/workplaces', {
-    params: { page, size, sort: 'place,asc' },
-  })
-  return response.data.data
-}
 
 const WorkPlacePage: React.FC = () => {
   const { t } = useTranslation()
@@ -52,13 +44,13 @@ const WorkPlacePage: React.FC = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['workplaces', page, rowsPerPage],
-    queryFn: () => fetchWorkPlaces(page, rowsPerPage),
+    queryFn: () => workplaceApi.listPaged(page, rowsPerPage),
   })
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<WorkPlaceRequest>()
 
   const createMutation = useMutation({
-    mutationFn: (data: WorkPlaceRequest) => axiosInstance.post('/workplaces', data),
+    mutationFn: (data: WorkPlaceRequest) => workplaceApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workplaces'] })
       handleCloseDialog()
@@ -67,8 +59,7 @@ const WorkPlacePage: React.FC = () => {
   })
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: WorkPlaceRequest }) =>
-      axiosInstance.put(`/workplaces/${id}`, data),
+    mutationFn: ({ id, data }: { id: number; data: WorkPlaceRequest }) => workplaceApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workplaces'] })
       handleCloseDialog()
@@ -77,7 +68,7 @@ const WorkPlacePage: React.FC = () => {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => axiosInstance.delete(`/workplaces/${id}`),
+    mutationFn: (id: number) => workplaceApi.remove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workplaces'] })
     },

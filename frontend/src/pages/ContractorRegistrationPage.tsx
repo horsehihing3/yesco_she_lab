@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { fmtPhone } from '../utils/phoneFormat'
 import ReadTextField from '../components/common/ReadTextField'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axiosInstance from '../api/axiosInstance'
+import { fileApi } from '../api/fileApi'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, MenuItem, Chip, Stack, IconButton,
@@ -162,19 +162,10 @@ const ContractorRegistrationPage: React.FC = () => {
       .filter(k => slots[k] != null)
       .map(k => ({ file: slots[k]!, docType: docTypeLabel[k] }))
     for (const { file, docType } of namedEntries) {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('entityType', 'CONTRACTOR_REGISTRATION')
-      fd.append('entityId', String(regId))
-      fd.append('docType', docType)
-      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await fileApi.upload('CONTRACTOR_REGISTRATION', String(regId), file, { docType })
     }
     for (const file of extras) {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('entityType', 'CONTRACTOR_REGISTRATION')
-      fd.append('entityId', String(regId))
-      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await fileApi.upload('CONTRACTOR_REGISTRATION', String(regId), file)
     }
   }
 

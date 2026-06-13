@@ -35,15 +35,9 @@ import FolderIcon from '@mui/icons-material/Folder'
 import BusinessIcon from '@mui/icons-material/Business'
 import { ApprovalLineItem } from '../types/approval.types'
 import { fetchApprovalLines, saveAllApprovalLines } from '../api/approvalApi'
-import axiosInstance from '../api/axiosInstance'
-import { ApiResponse } from '../types/common.types'
+import { userApi } from '../api/userApi'
 import { CompanyTreeNode } from '../components/common/UserSelectModal'
 import useCodeMap from '../hooks/useCodeMap'
-
-const fetchCompanyTree = async (): Promise<CompanyTreeNode[]> => {
-  const response = await axiosInstance.get<ApiResponse<CompanyTreeNode[]>>('/users/company-tree')
-  return response.data.data
-}
 
 const collectAllNodeIds = (nodes: CompanyTreeNode[]): string[] => {
   const ids: string[] = []
@@ -117,7 +111,7 @@ const ApprovalLinePage: React.FC = () => {
   // ----- Company Tree Query -----
   const { data: companyTree, isLoading: isLoadingTree } = useQuery({
     queryKey: ['companyTree'],
-    queryFn: fetchCompanyTree,
+    queryFn: userApi.getCompanyTree,
   })
 
   useEffect(() => {

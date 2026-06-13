@@ -61,10 +61,11 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import { useForm, Controller } from 'react-hook-form'
 import DatePickerField from '../components/common/DatePickerField'
 import { useAlert } from '../contexts/AlertContext'
-import axiosInstance from '../api/axiosInstance'
+import { nearMissApi } from '../api/nearMissApi'
+import { fileApi } from '../api/fileApi'
 import { floorDrawingApi } from '../api/floorDrawingApi'
 import { FloorDrawing } from '../types/floorDrawing.types'
-import { ApiResponse, PageResponse } from '../types/common.types'
+import { PageResponse } from '../types/common.types'
 import { NearMiss, NearMissRequest, NearMissActionRequest, NearMissStatus } from '../types/nearMiss.types'
 import useCodeMap from '../hooks/useCodeMap'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
@@ -72,13 +73,6 @@ import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
 import { FileMetadata } from '../types/file.types'
 import AccidentReportTab from '../components/ehs/AccidentReportTab'
 import NearMissDashboardTab from '../components/ehs/NearMissDashboardTab'
-
-const fetchNearMisses = async (page: number, size: number, incidentType: string): Promise<PageResponse<NearMiss>> => {
-  const response = await axiosInstance.get<ApiResponse<PageResponse<NearMiss>>>(`/near-miss/type/${incidentType}`, {
-    params: { page, size, sort: 'createdAt,desc' },
-  })
-  return response.data.data
-}
 
 const statusColors: Record<NearMissStatus, 'default' | 'warning' | 'info' | 'success' | 'error'> = {
   PENDING: 'warning',
@@ -223,17 +217,14 @@ const NearMissPage: React.FC = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['nearMisses', page - 1, rowsPerPage, activeTab],
-    queryFn: () => fetchNearMisses(page - 1, rowsPerPage, activeTab),
+    queryFn: () => nearMissApi.listByType(activeTab, page - 1, rowsPerPage),
     enabled: activeTab !== 'REPORT' && activeTab !== 'DASHBOARD',
   })
 
   const { register, handleSubmit, reset, control, setValue } = useForm<NearMissRequest>()
 
   const createMutation = useMutation({
-    mutationFn: async (data: NearMissRequest) => {
-      const res = await axiosInstance.post<ApiResponse<NearMiss>>('/near-miss', data)
-      return res.data.data
-    },
+    mutationFn: (data: NearMissRequest) => nearMissApi.create(data),
     onSuccess: async (created) => {
       await uploadImages(created.nearMissId)
       queryClient.invalidateQueries({ queryKey: ['nearMisses'] })
@@ -243,10 +234,7 @@ const NearMissPage: React.FC = () => {
   })
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: NearMissRequest }) => {
-      const res = await axiosInstance.put<ApiResponse<NearMiss>>(`/near-miss/${id}`, data)
-      return res.data.data
-    },
+    mutationFn: ({ id, data }: { id: number; data: NearMissRequest }) => nearMissApi.update(id, data),
     onSuccess: async (updated) => {
       await uploadImages(updated.nearMissId)
       queryClient.invalidateQueries({ queryKey: ['nearMisses'] })
@@ -256,7 +244,7 @@ const NearMissPage: React.FC = () => {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => axiosInstance.delete(`/near-miss/${id}`),
+    mutationFn: (id: number) => nearMissApi.remove(id),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['nearMisses'] })
       await showSuccess(t('common.deleteSuccess'))
@@ -415,8 +403,7 @@ const NearMissPage: React.FC = () => {
   const handleRowClick = async (nearMiss: NearMiss) => {
     let detail = nearMiss
     try {
-      const res = await axiosInstance.get<ApiResponse<NearMiss>>(`/near-miss/${nearMiss.id}`)
-      detail = res.data.data
+      detail = await nearMissApi.getById(nearMiss.id)
       setViewNearMiss(detail)
     } catch {
       setViewNearMiss(nearMiss)
@@ -558,63 +545,36 @@ const NearMissPage: React.FC = () => {
   }
 
   const uploadImages = async (nearMissId: string) => {
-    // 삭제 큐에 들어간 기존 파일 개별 삭제
     for (const fid of deletedBeforeFileIds) {
-      try { await axiosInstance.delete(`/files/${fid}`) } catch { /* ignore */ }
+      try { await fileApi.remove(fid) } catch { /* ignore */ }
     }
     for (const fid of deletedAfterFileIds) {
-      try { await axiosInstance.delete(`/files/${fid}`) } catch { /* ignore */ }
+      try { await fileApi.remove(fid) } catch { /* ignore */ }
     }
-    // 신규 이미지 다중 업로드
     for (const file of newBeforeFiles) {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('entityType', 'NEAR_MISS_BEFORE')
-      fd.append('entityId', nearMissId)
-      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await fileApi.upload('NEAR_MISS_BEFORE', nearMissId, file)
     }
     for (const file of newAfterFiles) {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('entityType', 'NEAR_MISS_AFTER')
-      fd.append('entityId', nearMissId)
-      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await fileApi.upload('NEAR_MISS_AFTER', nearMissId, file)
     }
-    // 삭제된 개요 첨부파일 서버에서 삭제
     for (const fileId of deletedOverviewFileIds) {
-      try {
-        await axiosInstance.delete(`/files/${fileId}`)
-      } catch {
-        // ignore
-      }
+      try { await fileApi.remove(fileId) } catch { /* ignore */ }
     }
-    // 새 개요 첨부파일 업로드
     for (const file of overviewFiles) {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('entityType', 'NEAR_MISS_OVERVIEW')
-      fd.append('entityId', nearMissId)
-      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await fileApi.upload('NEAR_MISS_OVERVIEW', nearMissId, file)
     }
   }
 
   const loadExistingImages = async (nearMissId: string) => {
     try {
-      const [beforeRes, afterRes, overviewRes] = await Promise.all([
-        axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/NEAR_MISS_BEFORE/${nearMissId}`),
-        axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/NEAR_MISS_AFTER/${nearMissId}`),
-        axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/NEAR_MISS_OVERVIEW/${nearMissId}`),
+      const [beforeFiles, afterFiles, overviewFilesList] = await Promise.all([
+        fileApi.listByEntity('NEAR_MISS_BEFORE', nearMissId),
+        fileApi.listByEntity('NEAR_MISS_AFTER', nearMissId),
+        fileApi.listByEntity('NEAR_MISS_OVERVIEW', nearMissId),
       ])
-      const beforeFiles = beforeRes.data.data
-      const afterFiles = afterRes.data.data
-      const overviewFilesList = overviewRes.data.data
-      setExistingBeforeFiles(beforeFiles || [])
-      setExistingAfterFiles(afterFiles || [])
-      if (overviewFilesList && overviewFilesList.length > 0) {
-        setExistingOverviewFiles(overviewFilesList)
-      } else {
-        setExistingOverviewFiles([])
-      }
+      setExistingBeforeFiles(beforeFiles)
+      setExistingAfterFiles(afterFiles)
+      setExistingOverviewFiles(overviewFilesList)
     } catch {
       // ignore
     }

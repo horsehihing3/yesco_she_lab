@@ -5,11 +5,12 @@ import { FileMetadata } from '../types/common.types'
 const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 export const fileApi = {
-  upload: async (entityType: string, entityId: string, file: File): Promise<FileMetadata> => {
+  upload: async (entityType: string, entityId: string, file: File, extra?: Record<string, string>): Promise<FileMetadata> => {
     const form = new FormData()
     form.append('file', file)
     form.append('entityType', entityType)
     form.append('entityId', entityId)
+    if (extra) Object.entries(extra).forEach(([k, v]) => form.append(k, v))
     const res = await axiosInstance.post<ApiResponse<FileMetadata>>('/files/upload', form, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })

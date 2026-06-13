@@ -35,10 +35,8 @@ import MessageIcon from '@mui/icons-material/Message'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import axiosInstance from '../api/axiosInstance'
-import { User } from '../types/user.types'
-import { ApiResponse, PageResponse } from '../types/common.types'
-import { DashboardStatistics } from '../types/dashboard.types'
+import { userApi } from '../api/userApi'
+import { dashboardApi } from '../api/dashboardApi'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -129,17 +127,6 @@ const DonutChart: React.FC<DonutChartProps> = ({ data, size = 150, title, unit =
   )
 }
 
-const fetchUsers = async (page: number, size: number): Promise<PageResponse<User>> => {
-  const response = await axiosInstance.get<ApiResponse<PageResponse<User>>>('/users/paged', {
-    params: { page, size, sort: 'name,asc' },
-  })
-  return response.data.data
-}
-
-const fetchStatistics = async (): Promise<DashboardStatistics> => {
-  const response = await axiosInstance.get<ApiResponse<DashboardStatistics>>('/dashboard/statistics')
-  return response.data.data
-}
 
 // 연도/분기 옵션 (동적)
 const currentYear = new Date().getFullYear()
@@ -164,13 +151,13 @@ const AdminPage: React.FC = () => {
     error: usersError,
   } = useQuery({
     queryKey: ['adminUsers', page],
-    queryFn: () => fetchUsers(page, rowsPerPage),
+    queryFn: () => userApi.listPaged(page, rowsPerPage),
     enabled: tabValue === 0,
   })
 
   const { data: statistics } = useQuery({
     queryKey: ['adminStatistics'],
-    queryFn: fetchStatistics,
+    queryFn: dashboardApi.getStatistics,
   })
 
   // 차트 데이터 생성

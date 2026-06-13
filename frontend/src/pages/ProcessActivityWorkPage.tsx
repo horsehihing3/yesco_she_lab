@@ -13,8 +13,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { processActivityApi } from '../api/processActivityApi'
-import axiosInstance from '../api/axiosInstance'
-import { ApiResponse } from '../types/common.types'
+import { userApi } from '../api/userApi'
 import * as XLSX from 'xlsx'
 import {
   ProcessActivityForm, ProcessActivityProcess, ProcessActivityItem, ProcessActivityFormRequest,
@@ -871,8 +870,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           }))
           // 2) 동일 트리(/users/company-tree) 에서 선택 부서명과 일치하는 GROUP 노드 하위 USER 를 수집
           try {
-            const res = await axiosInstance.get<ApiResponse<CompanyTreeNode[]>>('/users/company-tree')
-            const tree = res.data?.data || []
+            const tree = await userApi.getCompanyTree()
             const names: string[] = []
             const walk = (node: CompanyTreeNode, underMatchedGroup: boolean) => {
               const match = underMatchedGroup || (node.type === 'GROUP' && node.label === dept)

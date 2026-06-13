@@ -41,8 +41,8 @@ import ImageIcon from '@mui/icons-material/Image'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import NumberField from '../components/common/NumberField'
 import { useAlert } from '../contexts/AlertContext'
-import axiosInstance from '../api/axiosInstance'
-import { ApiResponse, FileMetadata } from '../types/common.types'
+import { fileApi } from '../api/fileApi'
+import { FileMetadata } from '../types/common.types'
 import {
   fetchCodeGroups,
   createCodeGroup,
@@ -294,8 +294,8 @@ const CodeManagePage: React.FC = () => {
   }
 
   const handleDownloadFile = async (fileId: number, filename: string) => {
-    const response = await axiosInstance.get(`/files/${fileId}`, { responseType: 'blob' })
-    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const blob = await fileApi.downloadBlob(fileId)
+    const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     link.setAttribute('download', filename)
@@ -307,31 +307,23 @@ const CodeManagePage: React.FC = () => {
 
   const uploadFilesForDetail = async (detailId: number) => {
     for (const fileId of deletedFileIds) {
-      try { await axiosInstance.delete(`/files/${fileId}`) } catch { /* ignore */ }
+      try { await fileApi.remove(fileId) } catch { /* ignore */ }
     }
     for (const file of pendingImages) {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('entityType', 'CODE_DETAIL_IMAGE')
-      formData.append('entityId', String(detailId))
-      await axiosInstance.post('/files/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await fileApi.upload('CODE_DETAIL_IMAGE', String(detailId), file)
     }
     for (const file of pendingFiles) {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('entityType', 'CODE_DETAIL_FILE')
-      formData.append('entityId', String(detailId))
-      await axiosInstance.post('/files/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await fileApi.upload('CODE_DETAIL_FILE', String(detailId), file)
     }
   }
 
   const loadExistingFiles = async (detailId: number) => {
     try {
-      const [imgRes, fileRes] = await Promise.all([
-        axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/CODE_DETAIL_IMAGE/${detailId}`),
-        axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/CODE_DETAIL_FILE/${detailId}`),
+      const [imgFiles, fileFiles] = await Promise.all([
+        fileApi.listByEntity('CODE_DETAIL_IMAGE', String(detailId)),
+        fileApi.listByEntity('CODE_DETAIL_FILE', String(detailId)),
       ])
-      setExistingFiles([...(imgRes.data.data || []), ...(fileRes.data.data || [])])
+      setExistingFiles([...imgFiles, ...fileFiles])
     } catch {
       setExistingFiles([])
     }

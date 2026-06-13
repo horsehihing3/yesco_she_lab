@@ -16,8 +16,7 @@ import {
   BarChart, Bar, YAxis, Legend,
 } from 'recharts'
 import { useThemeMode } from '../context/ThemeContext'
-import axiosInstance from '../api/axiosInstance'
-import { ApiResponse, PageResponse } from '../types/common.types'
+import { dashboardApi } from '../api/dashboardApi'
 import { EhsMessageResponse, EhsAlertResponse } from '../types/dashboard.types'
 import { useCodeMap } from '../hooks/useCodeMap'
 import {
@@ -194,14 +193,7 @@ const ChartCard: React.FC<{
 
 // Radial Chart - Text (shadcn 원본 동일 - PieChart 기반)
 // 4개 카드의 숫자는 실제 DB count 로 연결 (totalElements 기반)
-const fetchTotalElements = async (url: string): Promise<number> => {
-  try {
-    const res = await axiosInstance.get<ApiResponse<PageResponse<unknown>>>(url, { params: { page: 0, size: 1 } })
-    return res.data.data?.totalElements ?? 0
-  } catch {
-    return 0
-  }
-}
+const fetchTotalElements = (url: string): Promise<number> => dashboardApi.getTotalElements(url)
 
 const useRadialCards = () => {
   const { t } = useTranslation()
@@ -617,11 +609,7 @@ const EhsMessage = () => {
   }
 
   useEffect(() => {
-    axiosInstance.get<ApiResponse<PageResponse<EhsMessageResponse>>>('/messages', {
-      params: { page: 0, size: 6, sort: 'createdAt,desc' },
-    }).then(res => {
-      setMessages(res.data.data.content)
-    }).catch(() => {})
+    dashboardApi.getPagedMessages(0, 6).then(setMessages).catch(() => {})
   }, [i18n.language])
 
   return (
@@ -683,11 +671,7 @@ const EhsAlert = () => {
   const [alerts, setAlerts] = useState<EhsAlertResponse[]>([])
 
   useEffect(() => {
-    axiosInstance.get<ApiResponse<PageResponse<EhsAlertResponse>>>('/alerts', {
-      params: { page: 0, size: 6, sort: 'createdAt,desc' },
-    }).then(res => {
-      setAlerts(res.data.data.content)
-    }).catch(() => {})
+    dashboardApi.getPagedAlerts(0, 6).then(setAlerts).catch(() => {})
   }, [i18n.language])
 
   return (
@@ -758,11 +742,7 @@ const EhsPlanDashboard = () => {
   useEffect(() => {
     const startDateStr = format(calendarStart, 'yyyy-MM-dd')
     const endDateStr = format(calendarEnd, 'yyyy-MM-dd')
-    axiosInstance.get<ApiResponse<EhsPlanType[]>>('/plans/date-range', {
-      params: { startDate: startDateStr, endDate: endDateStr },
-    }).then(res => {
-      setPlans(res.data.data)
-    }).catch(() => {})
+    dashboardApi.getPlansByDateRange(startDateStr, endDateStr).then(setPlans).catch(() => {})
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMonth, i18n.language])
 

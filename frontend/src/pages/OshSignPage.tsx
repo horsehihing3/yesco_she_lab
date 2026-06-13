@@ -8,41 +8,29 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import axios from 'axios'
 import SignaturePad from '../components/common/SignaturePad'
-
-const API_BASE = import.meta.env.VITE_API_URL || '/api'
-
-interface SignInfo {
-  attendeeId: number
-  attendeeName: string
-  committeeId: number
-  oshYear: number
-  oshQuarter: number
-  oshDate: string
-  mainAgenda: string
-  alreadySigned: boolean
-  signatureImage?: string
-}
+import { oshSignApi, OshSignInfo } from '../api/oshSignApi'
+import { useAlert } from '../contexts/AlertContext'
 
 type PageState = 'loading' | 'ready' | 'error' | 'done'
 
 const OshSignPage: React.FC = () => {
   const { token } = useParams<{ token: string }>()
+  const { showError } = useAlert()
   const [pageState, setPageState] = useState<PageState>('loading')
   const [errorMsg, setErrorMsg] = useState('')
-  const [info, setInfo] = useState<SignInfo | null>(null)
+  const [info, setInfo] = useState<OshSignInfo | null>(null)
   const [signature, setSignature] = useState('')
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (!token) { setErrorMsg('잘못된 링크입니다.'); setPageState('error'); return }
-    axios.get(`${API_BASE}/osh-sign/${token}`)
-      .then(res => {
-        setInfo(res.data.data)
+    oshSignApi.getInfo(token)
+      .then(data => {
+        setInfo(data)
         setPageState('ready')
       })
-      .catch(err => {
+      .catch((err: any) => {
         const msg = err.response?.data?.message || '유효하지 않은 링크입니다.'
         setErrorMsg(msg)
         setPageState('error')
@@ -50,14 +38,14 @@ const OshSignPage: React.FC = () => {
   }, [token])
 
   const handleSubmit = async () => {
-    if (!signature) { alert('서명을 먼저 해주세요.'); return }
+    if (!signature) { showError('서명을 먼저 해주세요.'); return }
     setSaving(true)
     try {
-      await axios.post(`${API_BASE}/osh-sign/${token}/signature`, { signatureImage: signature })
+      await oshSignApi.submitSignature(token!, signature)
       setPageState('done')
     } catch (err: any) {
       const msg = err.response?.data?.message || '서명 저장에 실패했습니다.'
-      alert(msg)
+      showError(msg)
     } finally {
       setSaving(false)
     }

@@ -36,8 +36,7 @@ import FormBodyDiagram, { DetailRowWithRegion, allBodyParts, emptyDetailRow, get
 import DatePickerField from '../components/common/DatePickerField'
 import HospitalSearchModal from '../components/common/HospitalSearchModal'
 import AiReportModal from '../components/common/AiReportModal'
-import axiosInstance from '../api/axiosInstance'
-import { ApiResponse } from '../types/common.types'
+import { myHealthCheckupApi } from '../api/myHealthCheckupApi'
 import {
   HealthCheckup,
   HealthCheckupRequest,
@@ -54,28 +53,6 @@ const checkupTypeMap: Record<string, string> = {
 }
 const checkupTypeToKorean: Record<string, string> = {
   GENERAL: '일반', SPECIAL: '특수', HIRING: '채용시',
-}
-
-// ===== API =====
-const fetchMyCheckups = async (email: string): Promise<HealthCheckup[]> => {
-  const response = await axiosInstance.get<ApiResponse<HealthCheckup[]>>('/health-checkup/my', {
-    params: { email },
-  })
-  return response.data.data
-}
-
-const createCheckup = async (data: HealthCheckupRequest): Promise<HealthCheckup> => {
-  const response = await axiosInstance.post<ApiResponse<HealthCheckup>>('/health-checkup', data)
-  return response.data.data
-}
-
-const updateCheckup = async (id: number, data: HealthCheckupRequest): Promise<HealthCheckup> => {
-  const response = await axiosInstance.put<ApiResponse<HealthCheckup>>(`/health-checkup/${id}`, data)
-  return response.data.data
-}
-
-const deleteCheckup = async (id: number): Promise<void> => {
-  await axiosInstance.delete(`/health-checkup/${id}`)
 }
 
 // ===== Helper =====
@@ -159,7 +136,7 @@ const MyHealthCheckupPage: React.FC = () => {
   const myIdentifier = user?.email || user?.username || ''
   const { data: checkups, isLoading } = useQuery({
     queryKey: ['myHealthCheckups', myIdentifier],
-    queryFn: () => fetchMyCheckups(myIdentifier),
+    queryFn: () => myHealthCheckupApi.list(myIdentifier),
     enabled: !!myIdentifier,
   })
 
@@ -172,7 +149,7 @@ const MyHealthCheckupPage: React.FC = () => {
 
   // ===== Mutations =====
   const createMutation = useMutation({
-    mutationFn: createCheckup,
+    mutationFn: myHealthCheckupApi.create,
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['myHealthCheckups'] })
       await showSuccess(t('common.saveSuccess'))
@@ -182,7 +159,7 @@ const MyHealthCheckupPage: React.FC = () => {
   })
 
   const updateMutation = useMutation({
-    mutationFn: (data: HealthCheckupRequest) => updateCheckup(selectedItem!.id, data),
+    mutationFn: (data: HealthCheckupRequest) => myHealthCheckupApi.update(selectedItem!.id, data),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['myHealthCheckups'] })
       await showSuccess(t('common.saveSuccess'))
@@ -192,7 +169,7 @@ const MyHealthCheckupPage: React.FC = () => {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: deleteCheckup,
+    mutationFn: myHealthCheckupApi.remove,
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['myHealthCheckups'] })
       setSelectedItem(null)

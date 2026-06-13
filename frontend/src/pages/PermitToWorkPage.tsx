@@ -35,17 +35,8 @@ import PermitDashboardTab from '../components/ehs/PermitDashboardTab'
 import ListSearchBar from '../components/common/ListSearchBar'
 import RejectReasonDialog from '../components/common/RejectReasonDialog'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
-import axiosInstance from '../api/axiosInstance'
-import { ApiResponse } from '../types/common.types'
-
-interface FileMetadata {
-  id: number
-  fileName: string
-  fileSize: number
-  contentType: string
-  entityType: string
-  entityId: string
-}
+import { fileApi } from '../api/fileApi'
+import { FileMetadata } from '../types/common.types'
 import { PermitToWork, PermitToWorkRequest } from '../types/permitToWork.types'
 import { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import useCodeMap from '../hooks/useCodeMap'
@@ -152,21 +143,16 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
 
   const loadExistingFiles = async (permitId: string) => {
     try {
-      const res = await axiosInstance.get<ApiResponse<FileMetadata[]>>(`/files/by-entity/PERMIT_TO_WORK/${permitId}`)
-      setExistingFiles(res.data.data || [])
+      setExistingFiles(await fileApi.listByEntity('PERMIT_TO_WORK', permitId))
     } catch { setExistingFiles([]) }
   }
 
   const uploadFiles = async (permitId: string) => {
     for (const fileId of deletedFileIds) {
-      try { await axiosInstance.delete(`/files/${fileId}`) } catch { /* ignore */ }
+      try { await fileApi.remove(fileId) } catch { /* ignore */ }
     }
     for (const file of attachFiles) {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('entityType', 'PERMIT_TO_WORK')
-      fd.append('entityId', permitId)
-      await axiosInstance.post('/files/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await fileApi.upload('PERMIT_TO_WORK', permitId, file)
     }
   }
 
@@ -592,7 +578,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
                 <Box sx={{ ...dValSx, flexDirection: 'column', gap: 0.5 }}>
                   {existingFiles.map(f => (
                     <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body2">{f.fileName}</Typography>
+                      <Typography variant="body2">{f.originalFilename}</Typography>
                       <IconButton size="small" href={`/api/files/${f.id}`} target="_blank"><DownloadIcon fontSize="small" /></IconButton>
                     </Box>
                   ))}
@@ -884,7 +870,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               </Button>
               {existingFiles.filter(f => !deletedFileIds.includes(f.id)).map(f => (
                 <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2">{f.fileName}</Typography>
+                  <Typography variant="body2">{f.originalFilename}</Typography>
                   <IconButton size="small" onClick={() => setDeletedFileIds(prev => [...prev, f.id])} color="error"><DeleteIcon fontSize="small" /></IconButton>
                 </Box>
               ))}
@@ -1058,7 +1044,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Button>
             {existingFiles.filter(f => !deletedFileIds.includes(f.id)).map(f => (
               <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                <Typography variant="body2">{f.fileName}</Typography>
+                <Typography variant="body2">{f.originalFilename}</Typography>
                 <IconButton size="small" onClick={() => setDeletedFileIds(prev => [...prev, f.id])} color="error"><DeleteIcon fontSize="small" /></IconButton>
               </Box>
             ))}

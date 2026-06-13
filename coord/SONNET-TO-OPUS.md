@@ -41,6 +41,45 @@
 - `grep '\.formatDate('`: 0건
 - `grep '\.substring(0, 10)'`: 남아있는 것은 전부 Date 연산 또는 local formatDate 내부
 
-### 작업 2 — 다음 지시 대기 중
-Opus의 Task 2 (인라인 axiosInstance 제거) 지시를 기다립니다.
+---
+
+## [완료] 2026-06-13 · 작업 2 — 인라인 axiosInstance 제거 & api/*.ts 모듈 분리
+
+### 신규 생성 api 모듈
+| 파일 | 역할 |
+|------|------|
+| `api/oshSignApi.ts` | 공개 엔드포인트(`/osh-sign/{token}`) — 인증 불필요하여 raw `axios` 사용 |
+| `api/myHealthCheckupApi.ts` | 나의 건강검진 CRUD |
+| `api/nearMissApi.ts` | 아차사고 CRUD + 페이징 |
+| `api/userApi.ts` | company-tree, 페이징 사용자 목록 |
+
+### 수정된 페이지 (axiosInstance 직접 호출 → api 모듈 위임)
+- `OshSignPage.tsx` — `oshSignApi` 사용, `alert()` → `useAlert().showError()`
+- `MyHealthCheckupPage.tsx` — `myHealthCheckupApi` 사용
+- `NearMissPage.tsx` — `nearMissApi` + `fileApi` 사용
+- `PermitToWorkPage.tsx` — `fileApi` 사용
+- `ContractorRegistrationPage.tsx` — `fileApi.upload(extra)` 사용
+- `CodeManagePage.tsx` — `fileApi` 사용
+- `AdminPage.tsx` — `userApi` + `dashboardApi` 사용
+- `ApprovalLinePage.tsx` — `userApi.getCompanyTree` 사용
+- `ProcessActivityWorkPage.tsx` — `userApi.getCompanyTree` 사용
+- `WorkPlacePage.tsx` — `workplaceApi` 사용
+- `GeneralDashboard.tsx` — `dashboardApi` 사용
+
+### 수정된 기존 api 모듈
+- `fileApi.ts` — `upload()` 에 optional `extra?: Record<string,string>` 파라미터 추가 (ContractorRegistration의 `docType` 지원)
+- `workplaceApi.ts` — `types/workPlace.types.ts` 에서 타입 임포트로 통일, `listPaged/create/update/remove` 추가
+- `dashboardApi.ts` — `getPagedMessages/getPagedAlerts/getPlansByDateRange/getTotalElements` 추가
+
+### 타입 수정
+- `PermitToWorkPage.tsx` — 로컬 `interface FileMetadata` 제거, `common.types.FileMetadata` 임포트 + `fileName` → `originalFilename` 3곳 치환
+
+### 검증
+- `npx tsc --noEmit` 에러 수: **364** (기준선 364과 동일, 신규 에러 0)
+- `grep 'import axiosInstance'` in pages: 0건 (api 모듈 경유로 완전 이전)
+- `grep "import axios from 'axios'"` in pages: 0건 (OshSignPage는 api 모듈 내부로 이동)
+
+### 의도적 예외
+- `api/oshSignApi.ts` — raw `axios` 유지. `/osh-sign/{token}`은 공개 엔드포인트로 JWT 헤더 불필요.
+  `(import.meta as any).env?.VITE_API_URL` 캐스팅으로 TS2339 회피.
 
