@@ -8,13 +8,11 @@ import {
   Avatar,
   Divider,
   Tooltip,
-  Button,
   CircularProgress,
 } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ExploreIcon from '@mui/icons-material/Explore'
-import TableViewIcon from '@mui/icons-material/TableView'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../context/AuthContext'

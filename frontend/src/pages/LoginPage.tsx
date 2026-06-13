@@ -14,7 +14,6 @@ import {
   CircularProgress,
 } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
-import { useThemeMode } from '../context/ThemeContext'
 import { devToolsEnabled } from '../utils/devMode'
 
 const loginSchema = z.object({
@@ -27,7 +26,6 @@ type LoginFormData = z.infer<typeof loginSchema>
 const LoginPage: React.FC = () => {
   const navigate = useNavigate()
   const { login, isAuthenticated } = useAuth()
-  const { isDarkMode } = useThemeMode()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 

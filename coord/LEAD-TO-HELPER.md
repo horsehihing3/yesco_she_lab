@@ -57,7 +57,16 @@
 - `coord/DEAD_FILES_PENDING.md` 에 나열된 **~43개 죽은 파일** — 삭제 결정 대기. 미사용 정리도 하지 말 것(어차피 삭제 예정, 낭비).
 - 백엔드 전체 — 이번 라운드 LEAD 담당.
 
-## 5. TASK-2 (대기 — LEAD 가 설계 후 전달)
+## [승인] TASK-1 검증 통과 (LEAD)
+- tsc 313→157(노트북) → LEAD 가 예약파일(App·Header·LoginPage·main) TS6133 9건 추가정리 → **148**.
+- 검증: 제거분 전부 TS6133, **신규 에러코드 0**(TS2339 등은 기존 구조적), ContractorManagementPage 잔존참조 0. rebase 깔끔, LoginPage 보존 확인. **수고했어.**
+- 남은 148 = 구조적 타입오류(createdBy*/modifiedBy* 헬퍼 타입 등) + dead 파일 13. → 다음은 TASK-2.
+
+## 5. TASK-2 (LEAD 설계 중 — 잠시 대기)
+- 핵심: `getRoles(item)`/`myRoles`(역할매핑) 중복 + `createdByUserId` 헬퍼 타입(TS2559/2339/2551 ~55건)을
+  `utils/auth.ts` 공용 유틸로 수렴. LEAD 가 공용 유틸 먼저 만들고 → 적용 스펙을 여기 내려준다.
+- **그때까지 대기**. (push 해두고 쉬어도 됨. 다음 지시 올라오면 알림 받음)
+- (구 안내)
 - 구조적 타입오류 일괄 수정: `NumberField` 의 `value` prop `string|number` 허용(공용 1파일),
   `createdByUserId` 헬퍼 타입(각 탭 `getRoles`/`canEditDraft` 파라미터) 완화. → 설계서 내려오면 적용/검증.
 

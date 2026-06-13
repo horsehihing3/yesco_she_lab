@@ -20,7 +20,6 @@ import OccupationalExposurePage from './pages/OccupationalExposurePage'
 import WorkplaceDrawingsPage from './pages/WorkplaceDrawingsPage'
 import WorkplaceDrawingsViewPage from './pages/WorkplaceDrawingsViewPage'
 import AdminPage from './pages/AdminPage'
-import SystemManagePage from './pages/SystemManagePage'
 import ApprovalPage from './pages/ApprovalPage'
 import ChecklistPage from './pages/ChecklistPage'
 import WasteManagePage from './pages/WasteManagePage'
@@ -44,13 +43,10 @@ const PageWithTitle: React.FC<{ titleKey: string; children: React.ReactNode }> =
   )
 }
 import EmergencyResponsePage from './pages/EmergencyResponsePage'
-import ComingSoonPage from './pages/ComingSoonPage'
 import PermitToWorkPage from './pages/PermitToWorkPage'
 import ContractorManagementPage from './pages/ContractorManagementPage'
 import SiteSafetyManagementPage from './pages/SiteSafetyManagementPage'
 import AuditInspectionPage from './pages/AuditInspectionPage'
-import ErgonomicsPage from './pages/ErgonomicsPage'
-import KpiDashboardPage from './pages/KpiDashboardPage'
 import PpeEquipmentPage from './pages/PpeEquipmentPage'
 import EnvMonitoringPage from './pages/EnvMonitoringPage'
 import ChemicalMasterPage from './pages/ChemicalMasterPage'
@@ -98,17 +94,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
-  }
-
-  return <>{children}</>
-}
-
-// Role-based Route Guard
-const RoleRoute: React.FC<{ children: React.ReactNode; requiredRole: string }> = ({ children, requiredRole }) => {
-  const { user } = useAuth()
-
-  if (user?.role !== requiredRole) {
-    return <Navigate to="/" replace />
   }
 
   return <>{children}</>
