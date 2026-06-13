@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
 import { useThemeMode } from '../context/ThemeContext'
+import { devToolsEnabled } from '../utils/devMode'
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -122,8 +123,8 @@ const LoginPage: React.FC = () => {
             </Button>
           </form>
 
-          {/* DEV ONLY — 테스트 계정 빠른 로그인 (납품 전 삭제) */}
-          {window.location.hostname === 'localhost' && (
+          {/* DEV ONLY — 테스트 계정 빠른 로그인 (VITE_DEV_TOOLS=off 또는 비-localhost 시 숨김) */}
+          {devToolsEnabled() && window.location.hostname === 'localhost' && (
           <Box sx={{ mt: 3, pt: 2, borderTop: '1px dashed', borderColor: 'divider' }}>
             <Typography variant="caption" color="text.disabled" display="block" sx={{ mb: 1, textAlign: 'center' }}>
               DEV 빠른 로그인

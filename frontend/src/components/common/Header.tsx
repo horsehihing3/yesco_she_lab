@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../context/AuthContext'
 import { isSystemAdmin } from '../../utils/auth'
-import { DEV_SESSION_KEY } from '../../utils/devMode'
+import { DEV_SESSION_KEY, devToolsEnabled } from '../../utils/devMode'
 import LanguageSelector from './LanguageSelector'
 import ThemeSelector from './ThemeSelector'
 
@@ -60,9 +60,10 @@ const Header: React.FC = () => {
   //  - 운영: 슈퍼관리자(SYSTEM_ADMIN)이거나 슈퍼관리자가 시작한 전환 세션(imp_active)일 때만 (서버도 동일 검증).
   //  - localhost: 개발 편의상 모두 노출(비-관리자는 impersonate 거부 시 공통 비번 로그인으로 폴백).
   const showDevSwitch =
-    window.location.hostname === 'localhost' ||
-    isSystemAdmin(user) ||
-    sessionStorage.getItem(IMP_ACTIVE_KEY) === '1'
+    devToolsEnabled() &&
+    (window.location.hostname === 'localhost' ||
+      isSystemAdmin(user) ||
+      sessionStorage.getItem(IMP_ACTIVE_KEY) === '1')
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)

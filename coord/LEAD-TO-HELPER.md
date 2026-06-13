@@ -53,7 +53,7 @@
 ## 4. DO NOT TOUCH (LEAD 전용 / 삭제 예정)
 - `frontend/src/App.tsx` — LEAD 가 죽은 import 정리 예정.
 - `frontend/src/components/common/NumberField.tsx`, `components/common/Header.tsx`,
-  `utils/devMode.ts`, `utils/auth.ts` — LEAD 구조수정 예정.
+  `utils/devMode.ts`, `utils/auth.ts`, `pages/LoginPage.tsx` — LEAD 구조수정 예정.
 - `coord/DEAD_FILES_PENDING.md` 에 나열된 **~43개 죽은 파일** — 삭제 결정 대기. 미사용 정리도 하지 말 것(어차피 삭제 예정, 낭비).
 - 백엔드 전체 — 이번 라운드 LEAD 담당.
 
