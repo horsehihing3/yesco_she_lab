@@ -66,6 +66,8 @@ frontend/src/
 - **T_IDM_USER 직접 INSERT/DELETE 금지** — 현재 UserRole UPDATE만 허용, 예스코 전환 후 tb_user 사용
 - **DB 스키마 변경 시 Flyway 마이그레이션 파일 추가** — 현재 V220까지 존재, 다음 신규는 `V221__`
 - **기존 API 응답 구조 무단 변경 금지** — 프론트 9개 파일이 `/api/users/company-tree` 응답 구조 의존
+- **컨트롤러는 Response DTO 반환을 표준으로 한다** — raw 엔티티(model) 반환은 **신규 금지**. 기존 raw 반환은 *손댈 때 같이 전환*(convert-on-touch), 민감도메인(건강검진·사고·산재·직업병·방사선건강·협력업체 개인정보)부터 우선 전환. DTO는 wire 필드를 raw와 **동일하게** 유지(프론트 무변경). PersonRef 브릿지 접근자가 DTO 필드 소스. 레퍼런스: `EhsAnnualPlan*`. ※ raw↔DTO는 *모델↔계약* 분리 문제로 PersonRef(*DB↔wire*)와 무관·공존.
+- **예외는 표준 예외로 던진다** — not-found→`ResourceNotFoundException`(404), 검증/중복 실패→`BadRequestException`(400). `throw new RuntimeException`은 인프라/IO 실패(cause 래핑)에만 허용. 일반 RuntimeException은 `GlobalExceptionHandler` catch-all이 500+고정메시지로 뭉개 사용자에게 메시지가 안 닿음.
 - **application.yml DB 비밀번호 환경변수 전환 필요** — 현재 하드코딩 상태 (납품 전 필수)
 - **백엔드 수정 후 서버 재시작 필수**
 - **작성자·수정자·계획승인자·완료승인자는 역할당 JSON 1컬럼(PersonRef)으로 저장** — 상세는 아래 **사람 필드 표준 패턴** 섹션 참조. 신규 테이블도 동일 패턴 적용.
@@ -75,7 +77,7 @@ frontend/src/
 > 역할당 4개 flat 컬럼 → **JSON 1컬럼(PersonRef 값객체)** 으로 통합 저장.
 > **DB만 JSON, wire(프론트 송수신)는 flat 유지** → 프론트·Service·Controller 코드 무변경.
 > 기반: `PersonRef.java` / `PersonRefTypeHandler.java` / `PersonRefColumnsInitializer.java`.
-> **레퍼런스 구현: `AuditPlan.java` + `AuditPlanMapper.xml` (raw 모델 반환형)**, `EhsAnnualPlan*`(Response DTO형).
+> **레퍼런스 구현: `EhsAnnualPlan*` (Response DTO형 — 컨트롤러 반환 표준).** `AuditPlan.java` + `AuditPlanMapper.xml` 은 PersonRef 매핑(raw 모델) 레퍼런스로만 참조 — 반환형은 DTO가 표준(위 절대 규칙 참조).
 
 ### 1. DB 컬럼 — `PersonRefColumnsInitializer.TABLES` 에 등록
 - **Flyway 비활성** → migration 작성 금지. 초기화기 `TABLES` 배열에 `{테이블, 역할[]}` 추가만 하면
