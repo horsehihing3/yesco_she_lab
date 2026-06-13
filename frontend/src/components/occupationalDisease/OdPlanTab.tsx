@@ -346,7 +346,7 @@ const OdPlanTab: React.FC = () => {
                       {files.map(f => (
                         <Box key={f.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 0.5, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                           <AttachFileIcon fontSize="small" />
-                          <Typography variant="body2" sx={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.fileName}</Typography>
+                          <Typography variant="body2" sx={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.originalFilename}</Typography>
                           <IconButton size="small" color="error" onClick={() => deleteFileMut.mutate(f.id)}>
                             <DeleteIcon fontSize="small" />
                           </IconButton>
