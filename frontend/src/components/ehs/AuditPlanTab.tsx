@@ -17,6 +17,7 @@ import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import DepartmentSelectModal from '../common/DepartmentSelectModal'
 import DatePickerField from '../common/DatePickerField'
+import DevTestFillButton from '../common/DevTestFillButton'
 import RejectReasonDialog from '../common/RejectReasonDialog'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
@@ -290,6 +291,17 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
     if (!form.checklistTemplateId) return t('audit.checklist', '체크리스트')
     return null
   }
+  // DEV ONLY — 비어있는 항목을 감사 계획 더미데이터로 채움 (입력값 보존; 부서·감사원은 모달 선택이라 제외)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    auditName: prev.auditName || '2026년 상반기 정기 내부감사',
+    auditType: prev.auditType || 'INTERNAL',
+    planStartDate: prev.planStartDate || new Date().toISOString().slice(0, 10),
+    planEndDate: prev.planEndDate || new Date().toISOString().slice(0, 10),
+    purpose: prev.purpose || '안전보건경영시스템 운영 적합성 및 법규 준수 여부 점검',
+    notes: prev.notes || '정기 감사 계획 (테스트 데이터)',
+  }))
+
   const handleSave = () => {
     const missing = validateRequired()
     if (missing) {
@@ -1011,6 +1023,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
         <ChecklistPreview templateId={form.checklistTemplateId} />
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           {canSee(MENU, 'PLAN', '저장', getRoles(viewMode === 'edit' ? (selectedItem ?? form) : form)) && (
             <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
