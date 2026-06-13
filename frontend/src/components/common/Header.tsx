@@ -43,7 +43,7 @@ const DEV_ACCOUNTS = [
 
 const Header: React.FC = () => {
   const { t } = useTranslation()
-  const { user, impersonate, logout } = useAuth()
+  const { user, login, impersonate, logout } = useAuth()
   const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [switchingTo, setSwitchingTo] = useState<string | null>(null)
@@ -56,10 +56,13 @@ const Header: React.FC = () => {
     }
   }, [user?.username])
 
-  // 계정 전환 메뉴는 '실제 전환 가능자'에게만 노출 — 슈퍼관리자(SYSTEM_ADMIN)이거나,
-  // 슈퍼관리자가 시작한 전환 세션일 때. (서버도 동일하게 SYSTEM_ADMIN/ imp 를 검증)
-  // → 비-관리자에게는 메뉴가 보이지 않아 클릭 후 403 나는 혼선이 없다.
-  const showDevSwitch = isSystemAdmin(user) || sessionStorage.getItem(IMP_ACTIVE_KEY) === '1'
+  // 계정 전환 메뉴 노출:
+  //  - 운영: 슈퍼관리자(SYSTEM_ADMIN)이거나 슈퍼관리자가 시작한 전환 세션(imp_active)일 때만 (서버도 동일 검증).
+  //  - localhost: 개발 편의상 모두 노출(비-관리자는 impersonate 거부 시 공통 비번 로그인으로 폴백).
+  const showDevSwitch =
+    window.location.hostname === 'localhost' ||
+    isSystemAdmin(user) ||
+    sessionStorage.getItem(IMP_ACTIVE_KEY) === '1'
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -86,8 +89,18 @@ const Header: React.FC = () => {
       sessionStorage.setItem(IMP_ACTIVE_KEY, '1')  // 전환 세션 유지 → 비-관리자로 전환해도 메뉴/복귀 가능
       queryClient.clear()  // 이전 사용자 캐시 전체 삭제
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : '전환 실패'
-      setLoginError(`${id}: ${msg}`)
+      // localhost 개발 편의: 현재 계정이 슈퍼관리자가 아니면 impersonate 가 거부(403)되므로
+      // 공통 비번 로그인으로 폴백(테스트 계정은 com4in!! 공유). 운영에서는 폴백 없이 에러 노출.
+      if (window.location.hostname === 'localhost') {
+        try {
+          await login({ username: id, password: 'com4in!!' })
+          queryClient.clear()
+        } catch (err2: unknown) {
+          setLoginError(`${id}: ${err2 instanceof Error ? err2.message : '전환 실패'}`)
+        }
+      } else {
+        setLoginError(`${id}: ${err instanceof Error ? err.message : '전환 실패'}`)
+      }
     } finally {
       setSwitchingTo(null)
     }
