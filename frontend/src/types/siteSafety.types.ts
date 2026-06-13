@@ -38,6 +38,11 @@ export interface SiteSafetyPlan {
   completionApprovedAt?: string
   completionApprovedBy?: string
 
+  inspectorTeam?: string | null
+  inspectorName?: string | null
+  inspectorPosition?: string | null
+  inspectorSignedAt?: string | null
+  inspectorSignature?: string | null
   repeatType?: string
   repeatInterval?: number
   repeatDays?: string
@@ -86,6 +91,7 @@ export interface SiteSafetyPlanRequest {
   completionApproverTeam?: string
   completionApproverPosition?: string
   completionApproverName?: string
+  modifiedBy?: string
   repeatType?: string
   repeatInterval?: number
   repeatDays?: string

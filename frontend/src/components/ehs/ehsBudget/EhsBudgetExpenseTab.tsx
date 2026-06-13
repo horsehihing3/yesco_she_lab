@@ -144,12 +144,12 @@ const EhsBudgetExpenseTab: React.FC = () => {
   // 등록/수정 폼에서 선택한 분류의 예산/사용 금액 요약용
   const { data: formYearPlans = [] } = useQuery({
     queryKey: ['ehsBudgetPlans-byYear', formData.budgetYear],
-    queryFn: () => fetchPlansByYear(formData.budgetYear),
+    queryFn: () => fetchPlansByYear(formData.budgetYear ?? currentYear),
     enabled: viewMode === 'create' || viewMode === 'edit',
   })
   const { data: formYearExpenses = [] } = useQuery({
     queryKey: ['ehsBudgetExpenses-byYear', formData.budgetYear],
-    queryFn: () => fetchExpensesByYear(formData.budgetYear),
+    queryFn: () => fetchExpensesByYear(formData.budgetYear ?? currentYear),
     enabled: viewMode === 'create' || viewMode === 'edit',
   })
 

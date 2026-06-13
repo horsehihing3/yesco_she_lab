@@ -1,6 +1,7 @@
 // 질병예방 관리 — 7 프로그램 타입
 
 export interface DpMsd {
+  createdByUserId?: number | null
   id: number
   workerName: string
   department?: string
@@ -49,6 +50,7 @@ export interface DpCvd {
 }
 
 export interface DpStress {
+  createdByUserId?: number | null
   id: number
   workerName: string
   department?: string
@@ -69,6 +71,7 @@ export interface DpStress {
 }
 
 export interface DpRespi {
+  createdByUserId?: number | null
   id: number
   workerName: string
   department?: string
@@ -89,6 +92,7 @@ export interface DpRespi {
 }
 
 export interface DpHearing {
+  createdByUserId?: number | null
   id: number
   workerName: string
   department?: string
@@ -108,6 +112,7 @@ export interface DpHearing {
 }
 
 export interface DpThermal {
+  createdByUserId?: number | null
   id: number
   thermalType: string        // 온열/한랭/예방조치
   occurDate: string
@@ -125,6 +130,7 @@ export interface DpThermal {
 }
 
 export interface DpInfect {
+  createdByUserId?: number | null
   id: number
   workerName: string
   department?: string

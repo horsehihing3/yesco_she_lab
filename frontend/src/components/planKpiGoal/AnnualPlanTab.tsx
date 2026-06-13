@@ -342,7 +342,7 @@ const AnnualPlanTab: React.FC = () => {
   const isAdmin = isSystemAdmin(authUser)
   const { canSee } = useButtonRules()
   const MENU_ANNUAL = 'EHS 경영 › KPI목표 › 연간계획'
-  const getRoles = (d: { createdByUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
+  const getRoles = (d: { createdByUserId?: number|null; createdByName?: string|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
     else if (authUser?.role) roles.push(authUser.role)

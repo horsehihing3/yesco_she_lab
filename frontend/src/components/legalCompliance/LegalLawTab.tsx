@@ -344,12 +344,12 @@ const LegalLawTab: React.FC = () => {
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
             목록
           </Button>
-          {canSee(MENU, 'DETAIL', '수정', getRoles(selected ?? {})) && (
+          {canSee(MENU, 'DETAIL', '수정', getRoles(selectedItem ?? {})) && (
             <Button variant="contained" color="primary" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
               수정
             </Button>
           )}
-          {canSee(MENU, 'DETAIL', '삭제', getRoles(selected ?? {})) && (
+          {canSee(MENU, 'DETAIL', '삭제', getRoles(selectedItem ?? {})) && (
             <Button variant="contained" color="error" onClick={handleDelete} sx={{ flex: { xs: '1 1 calc(33% - 6px)', md: 'none' } }}>
               삭제
             </Button>

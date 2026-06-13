@@ -21,6 +21,8 @@ export interface EmergencyPlan {
 
   modifiedByUserId?: number | null
   modifiedByName?: string | null
+  modifiedByTeam?: string | null
+  modifiedByPosition?: string | null
 
   planApproverUserId?: number | null
   planApproverTeam?: string
@@ -138,6 +140,7 @@ export interface EmergencyResourceRequest {
 }
 
 export interface EmergencyContact {
+  createdByUserId?: number | null
   id: number
   contactId: string
   organization: string

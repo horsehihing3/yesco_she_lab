@@ -556,7 +556,7 @@ const EhsPlanTab: React.FC = () => {
                       {plan.title}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0, fontSize: '0.65rem' }}>
-                      {getCategoryLabel(plan.planCategory)}
+                      {getCategoryLabel(plan.planCategory ?? '')}
                     </Typography>
                   </Box>
                 ))

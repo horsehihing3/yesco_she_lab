@@ -1,4 +1,5 @@
 export interface EhsManager {
+  createdByUserId?: number | null
   id: number
   roleCategory: string
   roleDetail?: string

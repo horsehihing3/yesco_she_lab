@@ -2,6 +2,7 @@ import axiosInstance from './axiosInstance'
 import { ApiResponse } from '../types/common.types'
 
 export interface HealthCheckupRecord {
+  createdByUserId?: number | null
   id: number
   examDate: string | null
   examPeriod: string | null

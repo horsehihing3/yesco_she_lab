@@ -92,5 +92,7 @@ export interface NearMissRequest {
   responseStatus?: string
   isDrill?: boolean
   severity?: string
+  occHour?: string
+  occMinute?: string
   actions?: NearMissActionRequest[]
 }

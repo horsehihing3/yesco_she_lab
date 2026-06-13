@@ -22,7 +22,6 @@ import {
   CircularProgress,
   Alert,
   Chip,
-  useTheme,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
@@ -36,7 +35,6 @@ import DevTestFillButton from '../components/common/DevTestFillButton'
 const WorkPlacePage: React.FC = () => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const theme = useTheme()
   const { showConfirm, showSuccess } = useAlert()
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)

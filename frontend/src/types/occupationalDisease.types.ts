@@ -21,6 +21,7 @@ export interface OdPlan {
 }
 
 export interface OdWorker {
+  createdByUserId?: number | null
   id: number
   employeeNo: string
   name: string
@@ -41,6 +42,7 @@ export interface OdWorker {
 }
 
 export interface OdOrg {
+  createdByUserId?: number | null
   id: number
   name: string
   doctor?: string
@@ -53,6 +55,7 @@ export interface OdOrg {
 }
 
 export interface OdExposure {
+  createdByUserId?: number | null
   id: number
   factorName: string
   factorClass?: string               // 화학적/물리적/생물학적
@@ -68,6 +71,7 @@ export interface OdExposure {
 }
 
 export interface OdAftercare {
+  createdByUserId?: number | null
   id: number
   workerName: string
   dept?: string
@@ -81,6 +85,7 @@ export interface OdAftercare {
 }
 
 export interface OdFitness {
+  createdByUserId?: number | null
   id: number
   workerName: string
   dept?: string

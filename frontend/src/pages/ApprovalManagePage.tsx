@@ -38,8 +38,10 @@ const parseContent = (content?: string) => {
 }
 
 // 유형별 상세 필드 정의
+type FieldDef = { key: string; label: string; onlyIf?: string; isStatusChip?: boolean; isChip?: boolean }
+
 const getTypeFields = (type: string, t: (key: string) => string) => {
-  const common = [
+  const common: FieldDef[] = [
     { key: 'approvalId', label: t('approval.approvalId') },
     { key: 'type', label: t('approval.type'), isChip: true },
     { key: 'status', label: t('approval.status'), isStatusChip: true },
@@ -49,7 +51,7 @@ const getTypeFields = (type: string, t: (key: string) => string) => {
     { key: 'requestDate', label: t('approval.requestDate') },
   ]
 
-  const typeSpecific: Record<string, { key: string; label: string }[]> = {
+  const typeSpecific: Record<string, { key: string; label: string; onlyIf?: string; isStatusChip?: boolean; isChip?: boolean }[]> = {
     PPE_REQUEST: [
       { key: 'refId', label: t('approval.refId') },
       { key: 'description', label: t('approval.ppeDetail') },
@@ -68,7 +70,7 @@ const getTypeFields = (type: string, t: (key: string) => string) => {
     { key: 'content', label: t('approval.content') },
   ]
 
-  const approval = [
+  const approval: FieldDef[] = [
     { key: 'approverName', label: t('approval.approver') },
     { key: 'approvalDate', label: t('approval.approvalDate') },
     { key: 'rejectReason', label: t('approval.rejectReason'), onlyIf: 'REJECTED' },

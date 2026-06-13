@@ -13,7 +13,8 @@ import useCodeMap from '../../hooks/useCodeMap'
 import SafetyChecklistTab from './SafetyChecklistTab'
 
 // 레포트 표시·필터를 위해 drill 에 plan 의 모든 필드를 합쳐 둔 enriched 타입
-type EnrichedDrill = EmergencyDrill & Partial<EmergencyPlan> & {
+// EmergencyDrill.planId(number FK) vs EmergencyPlan.planId(string) 충돌 → drill 쪽 제외
+type EnrichedDrill = Omit<EmergencyDrill, 'planId'> & Partial<EmergencyPlan> & {
   planIdString?: string
 }
 
@@ -54,6 +55,7 @@ const EmrReportTab: React.FC = () => {
       const merged: EnrichedDrill = {
         ...(plan as object), // plan 의 모든 필드 (planName/planType/responsibleDept/trainingStart·EndDate/계획·완료 승인자 등)
         ...d,                  // drill 본인 필드가 우선 (id, drillId, drillName, status 등)
+        planId: plan?.planId,              // drill.planId(number FK) 를 plan.planId(string) 로 덮어씀
         planIdString: plan?.planId,        // 문자열 plan_id (EP-2026-001)
         planName: plan?.planName || d.drillName,
         planType: plan?.planType || d.drillType,

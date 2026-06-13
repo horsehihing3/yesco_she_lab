@@ -6,4 +6,6 @@ export interface User {
   department: string
   company: string
   role: string
+  position?: string
+  active?: boolean
 }
