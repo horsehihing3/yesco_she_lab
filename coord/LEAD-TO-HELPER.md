@@ -77,13 +77,13 @@
 | 파일 | 인터페이스 | 추가 필드 | 해소 |
 |---|---|---|---|
 | `types/diseasePreventionMgmt.types.ts` | DpHearing, DpInfect, DpMsd, DpRespi, DpStress, DpThermal | `createdByUserId?: number \| null` | 18 |
-| `types/occupationalDisease.types.ts` | OdExposure, OdOrg, OdWorker | `createdByUserId?: number \| null` | 9 |
+| `types/occupationalDisease.types.ts` | OdExposure, OdOrg, OdWorker, OdAftercare, OdFitness | `createdByUserId?: number \| null` | 15 |
 | `types/healthCheckup.types.ts` | HealthCheckupRecord | `createdByUserId?: number \| null` | 1 |
 | `types/ehsManager.types.ts` | EhsManager | `createdByUserId?: number \| null` | 2 |
 | `types/emergencyExtended.types.ts` | EmergencyContact | `createdByUserId?: number \| null` | 3 |
 | `types/emergencyExtended.types.ts` | EmergencyPlan | `modifiedByTeam?: string \| null` + `modifiedByPosition?: string \| null` | 4 |
 
-**합계 ~37건 해소** (95 → ~58 목표).
+**합계 ~43건 해소** (95 → ~52 목표). ※ OdAftercare/OdFitness 6건은 LEAD가 `selected`→`selectedAft/Fit` 크래시버그 수정하며 드러난 타입갭(같은 패턴).
 
 **철칙**:
 1. 위 표의 **필드만** 추가. 인터페이스에 해당 필드가 **이미 있으면 건너뛰기**(중복 추가 금지). 추가 전 인터페이스 본문을 읽어 확인.
