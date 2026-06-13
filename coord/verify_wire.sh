@@ -31,6 +31,13 @@ ENDPOINTS=(
   "/radiation/healths"
   "/contractor-registrations"
   "/contractor-plans"
+  "/radiation/sources"
+  "/radiation/zones"
+  "/radiation/measurements"
+  "/radiation/drills"
+  "/radiation/accidents"
+  "/partner/evals"
+  "/partner/visitors"
 )
 
 norm() { python -c "import sys,json; o=json.load(sys.stdin); print(json.dumps(o.get('data'),sort_keys=True,ensure_ascii=False,indent=2))"; }

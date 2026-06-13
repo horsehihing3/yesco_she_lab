@@ -19,7 +19,8 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - CLAUDE.md "Swagger 어노테이션 필수" 규칙 미준수 컨트롤러 16개 발견 → 15개에 클래스 `@Tag(name, description)` + import 추가. 순수 추가·wire/behavior 무영향, compileJava EXIT0.
 - 대상: EvalSheet·FireSafety·FloorDrawing·HealthCheckupRecord·IncidentResponse·Partner·PermitLifecycle·ProcessActivity·Radiation·RiskAssessment·RiskAssessmentForm·SafetyAccident·SafetyHazard·SiteSafetyPlan·Translation. **120/121 커버**.
 - 남은 1개 `DiseasePreventionMgmtController`는 Sonnet 작업3(DTO) 충돌회피로 제외 → 작업3 때 함께 추가하도록 지시.
-- **[ ] 후순위(convert-on-touch)**: 비개인 Rad(Source/Zone/Measurement/Drill/Accident)·Partner(Eval/Visitor). 전체 raw 53컨트롤러 중 비민감은 손댈 때 전환.
+- **[x] 비개인 raw→DTO 완료** (7 DTO, wire byte-identical): Rad(Source/Zone/Measurement/Drill/Accident) + Partner(Eval/Visitor). RadiationController·PartnerController 전환, compileJava EXIT0, 재기동 후 wire 동일 검증.
+  - → RadiationController·PartnerController·AccidentClaim·EmergencyContact·Contractor류 raw 반환 **전부 DTO화 완료**. 잔여 raw는 Sonnet 작업3(Dp·Od) + 그 외 도메인 convert-on-touch.
 
 ### ✅ 완료 — 작성자/승인자 표시 팀·성명·직위 풀포맷 통일 (2026-06-13 세션 10)
 - **배경**: 일부 화면이 작성자/승인자를 성명만(또는 잘못된 필드 modifiedBy)으로 표시 — created_by는 JSON 변환됐으나 화면이 createdBy를 안 읽거나 DTO가 team/position을 누락
