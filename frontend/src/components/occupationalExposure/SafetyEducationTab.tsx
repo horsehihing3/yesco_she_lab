@@ -167,13 +167,6 @@ const removeAttendee = async (educationId: number, attendeeId: number): Promise<
   await axiosInstance.delete(`/safety-education/${educationId}/attendees/${attendeeId}`)
 }
 
-const addAttendeeBulk = async (educationId: number, attendees: SafetyEducationAttendeeRequest[]): Promise<SafetyEducationAttendee[]> => {
-  const response = await axiosInstance.post<ApiResponse<SafetyEducationAttendee[]>>(
-    `/safety-education/${educationId}/attendees/bulk`,
-    attendees
-  )
-  return response.data.data
-}
 
 // ===== Empty Attendee Row =====
 const emptyAttendeeRow = (): SafetyEducationAttendeeRequest => ({

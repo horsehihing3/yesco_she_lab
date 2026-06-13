@@ -36,12 +36,9 @@ import axiosInstance from '../../api/axiosInstance'
 import { ApiResponse, PageResponse } from '../../types/common.types'
 import {
   WorkplaceMeasurement,
-  WorkplaceMeasurementDetail,
   WorkplaceMeasurementRequest,
   WorkplaceMeasurementDetailRequest,
   MeasurementStatus,
-  MeasurementHalf,
-  FactorType,
   MeasurementResultStatus,
   OverallMeasurementResult,
 } from '../../types/occupationalExposure.types'
@@ -198,7 +195,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
   const [detailRows, setDetailRows] = useState<WorkplaceMeasurementDetailRequest[]>([])
 
   // Code management label maps
-  const { codeMap: halfLabels, codeList: halfCodes, getLocalizedName } = useCodeMap('MEASUREMENT_HALF')
+  const { codeMap: halfLabels, getLocalizedName } = useCodeMap('MEASUREMENT_HALF')
   const { codeMap: statusLabels, codeList: statusCodes } = useCodeMap('MEASUREMENT_STATUS')
   const { codeMap: resultLabels } = useCodeMap('OVERALL_MEASUREMENT_RESULT')
   const { codeMap: factorTypeLabels, codeList: factorTypeCodes } = useCodeMap('FACTOR_TYPE')
