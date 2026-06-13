@@ -10,6 +10,7 @@ import { siteSafetyPlanApi } from '../../api/siteSafetyApi'
 import { SiteSafetyPlan } from '../../types/siteSafety.types'
 import SafetyChecklistTab from '../ehs/SafetyChecklistTab'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import { formatUserName } from '../../utils/userDisplay'
 import { useAlert } from '../../contexts/AlertContext'
 
 const buildExecuteUrl = (planId: number) =>
@@ -99,18 +100,6 @@ const PartnerSafetyExecuteTab: React.FC = () => {
         {/* 계획 기본 정보 */}
         <FormTable>
           <FormRow>
-            <FormLabel>작성일</FormLabel>
-            <FormCell borderRight>
-              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-                {selectedPlan.createdAt?.substring(0, 10) || '-'}
-              </Typography>
-            </FormCell>
-            <FormLabel>작성자</FormLabel>
-            <FormCell>
-              <Typography variant="body2">{selectedPlan.modifiedBy || '-'}</Typography>
-            </FormCell>
-          </FormRow>
-          <FormRow>
             <FormLabel>작업 기간</FormLabel>
             <FormCell borderRight>
               <Typography variant="body2">
@@ -124,12 +113,26 @@ const PartnerSafetyExecuteTab: React.FC = () => {
           </FormRow>
           <FormRow>
             <FormLabel>위험 등급</FormLabel>
-            <FormCell borderRight>
+            <FormCell>
               <Typography variant="body2">{selectedPlan.riskLevel || '-'}</Typography>
             </FormCell>
+          </FormRow>
+          <FormRow>
+            <FormLabel>작성일</FormLabel>
+            <FormCell borderRight>
+              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                {selectedPlan.createdAt?.substring(0, 10) || '-'}
+              </Typography>
+            </FormCell>
+            <FormLabel>작성자</FormLabel>
+            <FormCell>
+              <Typography variant="body2">{formatUserName(selectedPlan.createdByTeam, selectedPlan.createdByName, selectedPlan.createdByPosition) || selectedPlan.modifiedBy || '-'}</Typography>
+            </FormCell>
+          </FormRow>
+          <FormRow last>
             <FormLabel>계획 승인자</FormLabel>
             <FormCell>
-              <Typography variant="body2">{selectedPlan.planApproverName || '-'}</Typography>
+              <Typography variant="body2">{formatUserName(selectedPlan.planApproverTeam, selectedPlan.planApproverName, selectedPlan.planApproverPosition) || '-'}</Typography>
             </FormCell>
           </FormRow>
         </FormTable>

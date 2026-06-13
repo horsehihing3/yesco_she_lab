@@ -27,8 +27,12 @@ public class SafetyHazardFormResponse {
     private String teamMembers;
     private Long createdByUserId;
     private String createdByName;
+    private String createdByTeam;
+    private String createdByPosition;
     private Long modifiedByUserId;
     private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<ItemResponse> items;
@@ -84,7 +88,9 @@ public class SafetyHazardFormResponse {
                 .divisionName(f.getDivisionName()).departmentName(f.getDepartmentName())
                 .evaluator(f.getEvaluator()).surveyDate(f.getSurveyDate()).teamMembers(f.getTeamMembers())
                 .createdByUserId(f.getCreatedByUserId()).createdByName(f.getCreatedByName())
+                .createdByTeam(f.getCreatedByTeam()).createdByPosition(f.getCreatedByPosition())
                 .modifiedByUserId(f.getModifiedByUserId()).modifiedByName(f.getModifiedByName())
+                .modifiedByTeam(f.getModifiedByTeam()).modifiedByPosition(f.getModifiedByPosition())
                 .createdAt(f.getCreatedAt()).modifiedAt(f.getModifiedAt())
                 .build();
     }

@@ -29,6 +29,8 @@ public class HealthCheckupPlanResponse {
     private String createdByDept;
     private Long modifiedByUserId;
     private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -69,6 +71,8 @@ public class HealthCheckupPlanResponse {
                 .createdByDept(e.getCreatedByDept())
                 .modifiedByUserId(e.getModifiedByUserId())
                 .modifiedByName(e.getModifiedByName())
+                .modifiedByTeam(e.getModifiedByTeam())
+                .modifiedByPosition(e.getModifiedByPosition())
                 .createdAt(e.getCreatedAt())
                 .modifiedAt(e.getModifiedAt())
                 .planApproverUserId(e.getPlanApproverUserId())

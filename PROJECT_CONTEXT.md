@@ -8,18 +8,31 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
-### 🟡 내일 이어서 — 표준화 5순위: 폼 필드 순서 통일 (2026-06-13 세션 9에서 분석 완료, 미착수)
+### ✅ 완료 — 작성자/승인자 표시 팀·성명·직위 풀포맷 통일 (2026-06-13 세션 10)
+- **배경**: 일부 화면이 작성자/승인자를 성명만(또는 잘못된 필드 modifiedBy)으로 표시 — created_by는 JSON 변환됐으나 화면이 createdBy를 안 읽거나 DTO가 team/position을 누락
+- **프론트 수정**: SiteSafetyManagementPage(관리/실행)·PartnerSafetyExecuteTab·ContractorManagementPage·SafetyAccidentInfoPage·SafetyHazardInfoPage·HealthCheckupPlanTab → `formatUserName(팀,성명,직위)` 통일. 타입 5종에 createdBy/modifiedBy Team·Position 필드 추가
+- **백엔드 수정**: SafetyAccidentFormResponse·SafetyHazardFormResponse·HealthCheckupPlanResponse DTO가 name/userId만 내보내 team/position 누락 → 필드+매핑 추가 (재시작·wire 검증 완료)
+- **전수 감사**: WEM·Audit·Emr·AnnualPlan 등은 이미 풀포맷 정상. PsmMoc(승인자 자유텍스트=데이터없음)·RiskAssessment(authorTeam null)는 표시버그 아님(데이터 부재). 목록 컬럼 이름만은 관례 유지
+- **참고**: 기존 구데이터는 team/position 비어 일부만 표시, 신규 등록/수정건은 풀표시 ([[personref-refactor-progress]])
+
+### ✅ 완료 — 표준화 5순위: 폼 필드 순서 통일 (2026-06-13 세션 10, 진단 완료 + 실위반 수정)
 - **기준 문서**: `docs/FORM_LAYOUT_CONVENTION.md` (레퍼런스: `AuditPlanTab.tsx`)
-- **표준 행 순서**: 제목/유형 → 부서/상태(상태는 상세만) → 도메인필드 → 시작/종료일 → 목적 → 비고 → 작성자/생성일 → 수정자/수정일(이력 있을때만) → 계획/완료승인자 → 체크리스트
-- **분석 결과**:
-  - FormTable 사용 폼 **53개** (`frontend/src` 내, FormTable.tsx 제외)
-  - 각 폼이 PC상세 / PC등록·수정 / 모바일 **3벌 블록**을 손으로 짠 구조 → 폼당 3곳 일관 이동 필요
-  - **기능 안전**: 행 순서만 변경, 필드 바인딩(Controller/name/value) 불변 → 저장·조회 영향 없음 (순수 presentational)
-  - **리스크**: JSX 블록 경계 오절단 시 깨짐 → 도메인 단위로 끊어 빌드 검증하며 진행할 것
-  - **미측정**: 53개 중 실제 규칙 위반 폼 수는 아직 안 셈 → 착수 시 도메인별로 진단 먼저
-- **권장 진행법**: 한 도메인(예: 방사선 7탭)부터 수정+빌드검증 → 패턴 확인 후 다음 도메인 확장
-- **도메인 묶음**: 방사선 7 · 화재안전 5 · 직업병 5 · 법규대응 4 · 법규시설 3 · PSM 6 · 인허가수명주기 7 · 질병예방 7 · 협력업체 4 · 기타
-- ⏸️ 사용자 요청으로 보류 — 내일 진행 방식(전체/도메인별/특정화면) 결정 후 착수
+- **진단 결과 — 대량 재배치 불필요로 판명**: 세션 9 분석의 "53개 × 3곳 손코딩" 전제는 현실과 달랐음. FormTable 추상화(`FormTable/FormRow/FormLabel/FormCell`) 덕에 폼들이 **단일 블록 + 이미 합리적 순서**로 정리돼 있었음.
+- **전수 분류 (53개)**:
+  - 순수 도메인 CRUD (목적·승인자·작성자 행 자체가 없음) **~31개**: Rad* 7, Fire* 5, Facility 3, Permit 6, Psm 4, Osh/PartnerEval/WorkplaceSite/Incident 등 → 규칙 핵심행 N/A, 이미 부합
+  - createdBy만 보유 (작성자 행 미렌더, payload 전용) **~14개**: Dp* 7, Od* 5, LegalLaw, ContractorReg → 부합
+  - plan형 (승인자/체크리스트 보유) **~8개**: 대부분 부합
+- **실제 규칙 위반 = 1건만**: `PartnerSafetyExecuteTab` 상세패널 — 작성일/작성자가 도메인필드 위 → 도메인→작성일/작성자→계획승인자 순으로 재배치 완료. tsc 신규에러 0.
+- **결론**: 대량 reorder는 순수 churn + JSX 파손 위험뿐이라 미실시. 향후 신규 폼만 컨벤션 준수하면 됨.
+
+### ✅ 완료 — PersonRef 3순위: 구 flat 컬럼 297개 DROP + 잠재버그 복구 (2026-06-13 세션 10)
+- [x] **DROP 전 안전검증(sqlcmd 직접)**: 전환 81쌍 = flat 서브컬럼 297개. 매퍼 6개 flat참조는 전부 레거시유지 컬럼(drop-set과 분리), config 외 Java 참조 0 → DROP해도 매퍼/코드 무영향 확인
+- [x] **숨은 버그 발견·복구(27행)**: 불규칙 스키마 승인자 5쌍에서 JSON NULL인데 flat에 값 있던 27행(리팩터 때 부분스키마 backfill 누락으로 승인자 화면누락) → `backfill_gaps.sql` 충실복구. API로 복구확인(site_safety 14·psm_moc 4·legal_plan 8·legal_exec 1)
+- [x] **백업**: 영향 40테이블 → `bak20260613_*` (행수 일치). 안정화 후 정리 가능
+- [x] **초기화기 17개 정리**: flat 재생성하던 16개 @Component 비활성 + PsmTablesInitializer는 team/position 호출만 비활성(테이블생성 유지)
+- [x] **DROP 297컬럼 + 재시작 검증**: compileJava EXIT0, 기동 ERROR0·flat재생성0, 영향 13개 list GET 전부 200, 재시작 후 flat 잔존 0
+- [x] 레거시 유지(DROP 안 함): audit/site_safety/contractor_reg.modified_by, health_checkup_plan.created_by, legal_exec.modified_by, health_checkup_record 전체
+- [x] **PersonRef 리팩터 1~3순위 전부 완료**
 
 ### ✅ 완료 — 표준화 4순위: API 모듈화 + 죽은코드 제거 (2026-06-13 세션 9)
 - [x] Phase 1: SafetyWork/OshCommittee 인라인 API → `safetyWorkApi.ts`/`oshCommitteeApi.ts` 추출

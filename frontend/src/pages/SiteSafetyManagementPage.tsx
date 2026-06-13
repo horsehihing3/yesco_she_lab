@@ -403,7 +403,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                       {filteredItems.map(item => (
                         <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
                           <TableCell>{item.title || '-'}</TableCell>
-                          <TableCell align="center">{item.modifiedBy || '-'}</TableCell>
+                          <TableCell align="center">{item.createdByName || item.modifiedBy || '-'}</TableCell>
                           <TableCell align="center">{item.createdAt ? item.createdAt.slice(0, 10) : '-'}</TableCell>
                           <TableCell align="center">
                             <Chip size="small" label={STATUS_LABEL[item.status] || item.status} color={STATUS_COLORS[item.status] || 'default'} />
@@ -477,7 +477,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
                   {/* 3행: 부가정보 */}
                   {isPartner ? (
                     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', fontSize: '0.75rem', color: 'text.secondary', flexWrap: 'wrap' }}>
-                      {item.modifiedBy && <Typography sx={{ fontSize: 'inherit' }}>작성자 · {item.modifiedBy}</Typography>}
+                      {(item.createdByName || item.modifiedBy) && <Typography sx={{ fontSize: 'inherit' }}>작성자 · {item.createdByName || item.modifiedBy}</Typography>}
                       {item.createdAt && <Typography sx={{ fontSize: 'inherit' }}>· {item.createdAt.slice(0, 10)}</Typography>}
                     </Box>
                   ) : (
@@ -522,7 +522,10 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
   // ====== PARTNER 전용 간소화 폼 ======
   if (isPartner) {
-    const writer = (selected?.modifiedBy) || user?.name || user?.username || '-'
+    // 작성자 = createdBy(팀/성명 직위). 기존 항목은 created_by JSON, 신규 작성 중엔 현재 로그인 사용자.
+    const writer = selected
+      ? (formatUserName(selected.createdByTeam, selected.createdByName, selected.createdByPosition) || selected.modifiedBy || '-')
+      : (formatUserName(user?.department, user?.name, user?.position) || user?.name || '-')
     const createdDate = selected?.createdAt
       ? selected.createdAt.replace('T', ' ').slice(0, 16)
       : new Date().toISOString().replace('T', ' ').slice(0, 16)

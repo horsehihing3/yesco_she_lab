@@ -34,7 +34,11 @@ export interface SafetyHazardForm {
   surveyDate?: string
   teamMembers?: string
   createdByName?: string
+  createdByTeam?: string
+  createdByPosition?: string
   modifiedByName?: string
+  modifiedByTeam?: string
+  modifiedByPosition?: string
   createdAt?: string
   modifiedAt?: string
   items?: SafetyHazardItem[]

@@ -23,7 +23,11 @@ export interface SafetyAccidentForm {
   evaluator?: string
   surveyDate?: string
   createdByName?: string
+  createdByTeam?: string
+  createdByPosition?: string
   modifiedByName?: string
+  modifiedByTeam?: string
+  modifiedByPosition?: string
   createdAt?: string
   modifiedAt?: string
   items?: SafetyAccidentItem[]

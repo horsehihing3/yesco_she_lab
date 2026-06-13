@@ -43,6 +43,10 @@ export interface ContractorPlan {
   modifiedByTeam?: string | null
   modifiedByPosition?: string | null
   modifiedByUserId?: number | null
+  createdByName?: string | null
+  createdByTeam?: string | null
+  createdByPosition?: string | null
+  createdByUserId?: number | null
   createdAt: string
   modifiedAt: string
 }

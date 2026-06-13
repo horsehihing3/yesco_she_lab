@@ -583,7 +583,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           {/* 작성자 / 작성일자 — 계획 승인자 위 */}
           <Box sx={dRowSx}>
             <Typography sx={dLabelSx}>작성자</Typography>
-            <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.modifiedBy || ''}</Typography></Box>
+            <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)}</Typography></Box>
             <Typography sx={dLabelSx}>작성일자</Typography>
             <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.createdAt?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box>
           </Box>
@@ -619,7 +619,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             ['비상연락처', selectedItem.emergencyContact],
             ['비고', selectedItem.notes],
             ['일정 반복', !selectedItem.repeatType || selectedItem.repeatType === 'NONE' ? '반복 안 함' : selectedItem.repeatType === 'WEEKDAYS' ? (selectedItem.repeatDays || '').split(',').map((d: string) => ({MON:'월',TUE:'화',WED:'수',THU:'목',FRI:'금',SAT:'토',SUN:'일'}[d] || d)).join(', ') : `${selectedItem.repeatInterval || 1} ${selectedItem.repeatType === 'DAILY' ? '일' : selectedItem.repeatType === 'WEEKLY' ? '주' : '개월'}마다`],
-            ['작성자', selectedItem.modifiedBy || ''],
+            ['작성자', formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)],
             ['작성일자', selectedItem.createdAt?.replace('T', ' ').substring(0, 16) || ''],
             ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
               ['수정자', formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
@@ -954,7 +954,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>작성자</Typography>
             <Box sx={valSxBorder}>
-              <Typography variant="body2">{selectedItem ? (selectedItem.modifiedBy || user?.name || '') : (user?.name || '')}</Typography>
+              <Typography variant="body2">{selectedItem ? (formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || user?.name || '') : (formatUserName(user?.department, user?.name, user?.position) || user?.name || '')}</Typography>
             </Box>
             <Typography sx={labelSx}>작성일자</Typography>
             <Box sx={valSx}>
@@ -1184,7 +1184,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Box sx={{ flex: 1 }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작성자</Typography>
-              <Typography variant="body2" sx={{ px: 1.5 }}>{selectedItem ? (selectedItem.modifiedBy || user?.name || '') : (user?.name || '')}</Typography>
+              <Typography variant="body2" sx={{ px: 1.5 }}>{selectedItem ? (formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || user?.name || '') : (formatUserName(user?.department, user?.name, user?.position) || user?.name || '')}</Typography>
             </Box>
             <Box sx={{ flex: 1 }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작성일자</Typography>

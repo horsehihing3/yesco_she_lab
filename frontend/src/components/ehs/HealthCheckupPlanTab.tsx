@@ -621,7 +621,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           {d.modifiedAt && d.modifiedAt !== d.createdAt && (
             <Box sx={rowSx}>
               <Box sx={labelSx}>{t('common.modifier', '수정자')}</Box>
-              <Box sx={valBorderSx}><Typography variant="body2">{formatUserName('', d.modifiedByName, '')}</Typography></Box>
+              <Box sx={valBorderSx}><Typography variant="body2">{formatUserName(d.modifiedByTeam, d.modifiedByName, d.modifiedByPosition)}</Typography></Box>
               <Box sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Box>
               <Box sx={valSx}><Typography variant="body2">{formatDate(d.modifiedAt)}</Typography></Box>
             </Box>
@@ -812,7 +812,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           <Box sx={rowSx}>
             <Box sx={labelSx}>{t('common.modifier', '수정자')}</Box>
             <Box sx={valBorderSx}>
-              <Typography variant="body2">{selectedItem.modifiedByName || ''}</Typography>
+              <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)}</Typography>
             </Box>
             <Box sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Box>
             <Box sx={valSx}>

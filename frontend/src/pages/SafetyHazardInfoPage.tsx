@@ -5,6 +5,7 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox,
 } from '@mui/material'
 import ListSearchBar from '../components/common/ListSearchBar'
+import { formatUserName } from '../utils/userDisplay'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
@@ -435,7 +436,7 @@ const SafetyHazardInfoPage: React.FC = () => {
         <Box sx={{ display: 'flex' }}>
           <Typography sx={labelSx}>작성자</Typography>
           <Box sx={valBorderSx}>
-            <Typography variant="body2">{viewMode === 'create' ? (user?.name || user?.username || '') : (detailData?.createdByName || '')}</Typography>
+            <Typography variant="body2">{viewMode === 'create' ? (formatUserName(user?.department, user?.name, user?.position) || user?.name || user?.username || '') : (formatUserName(detailData?.createdByTeam, detailData?.createdByName, detailData?.createdByPosition) || '')}</Typography>
           </Box>
           <Typography sx={labelSx}>작성일자</Typography>
           <Box sx={valSx}>
@@ -505,7 +506,7 @@ const SafetyHazardInfoPage: React.FC = () => {
         </Box>
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작성자</Typography>
-          <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMode === 'create' ? (user?.name || user?.username || '') : (detailData?.createdByName || '')}</Typography>
+          <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMode === 'create' ? (formatUserName(user?.department, user?.name, user?.position) || user?.name || user?.username || '') : (formatUserName(detailData?.createdByTeam, detailData?.createdByName, detailData?.createdByPosition) || '')}</Typography>
         </Box>
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작성일자</Typography>

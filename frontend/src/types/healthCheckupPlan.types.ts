@@ -17,6 +17,8 @@ export interface HealthCheckupPlan {
   createdByDept: string | null
   modifiedByUserId?: number | null
   modifiedByName?: string | null
+  modifiedByTeam?: string | null
+  modifiedByPosition?: string | null
   createdAt: string
   modifiedAt: string
 
