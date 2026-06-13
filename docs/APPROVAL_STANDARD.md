@@ -130,7 +130,7 @@ ApprovalGateway
 - [ ] **잔존 — 추가 게이팅 필요**:
   - PermitToWork · PpeRequest (중앙 tb_approval 메커니즘 — approve/reject·updateStatus 무검증). 중앙 `ApprovalController.update()` 자체도 무검증.
   - RiskAssessment `updateStatus(PATCH /{id}/status)` 미게이팅(프론트 승인엔 미사용이나 status 직접변경 가능).
-- [ ] **🐛 RiskAssessment status 소문자 버그 확정**: `transition()`이 `submitted/approved/...` **소문자** 기록하는데 프론트·DB데이터·타도메인은 **대문자**(`APPROVED`). 세션8 마이그레이션이 transition 경로엔 미적용 → approve 시 status 깨짐. status 표준화 때 대문자로 수정 필요.
+- [x] **🐛 RiskAssessment status 소문자 버그 수정 완료**: `transition()`(5개 status)·create 기본값(`DRAFT`)·`updateStatus`/transition 내 비교(`COMPLETED`/`REJECTED`)를 **대문자로 통일**(매퍼는 이미 대문자 계약). 런타임 검증: DRAFT 레코드 submit→`SUBMITTED` 확인 후 복원. 이제 프론트·DB·매퍼·서비스 전부 대문자 일치.
 
 ### 예스코 모델 확인 후
 - [ ] §4.4 UI 노출 규칙 확정 + 중앙/자체 정리

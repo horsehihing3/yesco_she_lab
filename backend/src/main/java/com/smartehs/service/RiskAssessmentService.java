@@ -174,7 +174,7 @@ public class RiskAssessmentService {
                 .approverMail(request.getApproverMail())
                 .planApprover(PersonRef.of(request.getPlanApproverUserId(), request.getPlanApproverName(), request.getPlanApproverTeam(), request.getPlanApproverPosition()))
                 .completionApprover(PersonRef.of(request.getCompletionApproverUserId(), request.getCompletionApproverName(), request.getCompletionApproverTeam(), request.getCompletionApproverPosition()))
-                .status("draft")
+                .status("DRAFT")
                 .riskRegisterCount(0)
                 .officeCount(0)
                 .fieldCount(0)
@@ -258,7 +258,7 @@ public class RiskAssessmentService {
         assessment.setStatus(status);
         assessment.setRejectReason(rejectReason);
         assessment.setAllowResubmit(allowResubmit);
-        if ("completed".equals(status)) {
+        if ("COMPLETED".equals(status)) {
             assessment.setCompletedDate(LocalDateTime.now());
         }
 
@@ -295,11 +295,11 @@ public class RiskAssessmentService {
         boolean approved;
         String stage;
         switch (action) {
-            case "submit":           nextStatus = "submitted";              approved = false; stage = "";           break;
-            case "approve":          nextStatus = "approved";               approved = true;  stage = "PLAN";        break;
-            case "reject":           nextStatus = "rejected";               approved = false; stage = "";           break;
-            case "completionSubmit": nextStatus = "completion_submitted";   approved = false; stage = "";           break;
-            case "complete":         nextStatus = "completed";              approved = true;  stage = "COMPLETION";  break;
+            case "submit":           nextStatus = "SUBMITTED";              approved = false; stage = "";           break;
+            case "approve":          nextStatus = "APPROVED";               approved = true;  stage = "PLAN";        break;
+            case "reject":           nextStatus = "REJECTED";               approved = false; stage = "";           break;
+            case "completionSubmit": nextStatus = "COMPLETION_SUBMITTED";   approved = false; stage = "";           break;
+            case "complete":         nextStatus = "COMPLETED";              approved = true;  stage = "COMPLETION";  break;
             default: throw new IllegalArgumentException("Unknown action: " + action);
         }
 
@@ -307,10 +307,10 @@ public class RiskAssessmentService {
         riskAssessmentMapper.transition(id, nextStatus, approved, username, stage, rejectReason);
 
         assessment.setStatus(nextStatus);
-        if ("completed".equals(nextStatus)) {
+        if ("COMPLETED".equals(nextStatus)) {
             assessment.setCompletedDate(LocalDateTime.now());
         }
-        if ("rejected".equals(nextStatus)) {
+        if ("REJECTED".equals(nextStatus)) {
             assessment.setRejectReason(rejectReason);
         }
 
