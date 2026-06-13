@@ -26,6 +26,7 @@ Yesco 변경이 닿는 지점을 좁힌다.
 - [x] **DB 접속 외부화**: `MSSQL_URL/USERNAME/PASSWORD` (현재값 기본). `application.yml`.
 - [x] **CORS 오리진 외부화**: `app.cors.allowed-origins` / `APP_CORS_ALLOWED_ORIGINS`. SecurityConfig 하드코딩 제거.
 - [x] **JWT 시크릿**: `${JWT_SECRET:...}` 외부화 + 기본(취약)값 사용 시 **기동 경고** 추가.
+- [x] **로깅레벨 외부화**: `LOG_LEVEL_SQL/APP/SECURITY/ROOT` (현재값 기본). 운영선 `LOG_LEVEL_SQL=WARN` 으로 SQL TRACE 끔(성능·민감정보).
 - [ ] **로컬 개발 프로필 + 시드데이터**: 현재 원격 공유 DB(211.171…) 의존 → Yesco 가면 끊김. 로컬 DB(Docker MSSQL) + 초기화 시드로 "원격 없이 개발/테스트" 가능하게. (B/씨앗)
 
 ## 3순위 — 표준화 마무리

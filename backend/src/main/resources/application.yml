@@ -74,12 +74,13 @@ microsoft:
 # Logging
 logging:
   level:
-    root: INFO
-    com.smartehs: DEBUG
-    com.smartehs.mapper: TRACE         # MyBatis SQL + parameters + result rows
-    jdbc.sqltiming: DEBUG
-    org.springframework.jdbc.core: DEBUG
-    org.springframework.security: DEBUG
+    # 운영/Yesco: LOG_LEVEL_SQL=WARN 등으로 낮출 것. TRACE 는 SQL·파라미터·결과를 전부 찍어 무겁고 민감정보 누출 위험.
+    root: ${LOG_LEVEL_ROOT:INFO}
+    com.smartehs: ${LOG_LEVEL_APP:DEBUG}
+    com.smartehs.mapper: ${LOG_LEVEL_SQL:TRACE}         # MyBatis SQL + parameters + result rows
+    jdbc.sqltiming: ${LOG_LEVEL_SQL:DEBUG}
+    org.springframework.jdbc.core: ${LOG_LEVEL_SQL:DEBUG}
+    org.springframework.security: ${LOG_LEVEL_SECURITY:DEBUG}
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
