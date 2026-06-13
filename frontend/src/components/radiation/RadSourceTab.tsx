@@ -17,6 +17,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const TYPES = ['방사선 발생장치', '방사성 동위원소']
@@ -47,6 +48,24 @@ const RadSourceTab: React.FC = () => {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<RadSource | null>(null)
   const [form, setForm] = useState<Partial<RadSource>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 방사선원 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    mgmtNo: prev.mgmtNo || 'IR-2024-002',
+    name: prev.name || '감마선 조사기 (Co-60)',
+    sourceType: prev.sourceType || '방사성 동위원소',
+    status: prev.status || '유효',
+    isotope: prev.isotope || 'Co-60',
+    activity: prev.activity || '3.7 TBq (100 Ci)',
+    maker: prev.maker || 'QSA Global',
+    location: prev.location || '비파괴검사실 차폐고',
+    permitNo: prev.permitNo || '원안위 허가 제2024-053호',
+    ownerName: prev.ownerName || '이선원',
+    permitDate: prev.permitDate || todayStr(),
+    expireDate: prev.expireDate || todayStr(),
+    note: prev.note || '정기 누설 검사 양호 · 차폐 상태 정상',
+  }))
 
   const createMut = useMutation({
     mutationFn: radSourceApi.create,
@@ -194,6 +213,7 @@ const RadSourceTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.mgmtNo || !form.name}>저장</Button>
         </DialogActions>

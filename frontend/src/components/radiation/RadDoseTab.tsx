@@ -16,6 +16,7 @@ import type { RadDose } from '../../types/radiation.types'
 import StatCard from '../legalCompliance/StatCard'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const DOSIMETER_TYPES = ['TLD', 'OSL', '전자식']
@@ -49,6 +50,21 @@ const RadDoseTab: React.FC = () => {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<RadDose | null>(null)
   const [form, setForm] = useState<Partial<RadDose>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 개인 피폭선량 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '김방사',
+    dept: prev.dept || '비파괴검사팀',
+    measureMonth: prev.measureMonth || new Date().toISOString().slice(0, 7),
+    dosimeterType: prev.dosimeterType || 'TLD',
+    effectiveDose: prev.effectiveDose ?? 0.85,
+    handDose: prev.handDose ?? 1.20,
+    lensDose: prev.lensDose ?? 0.45,
+    confirmNo: prev.confirmNo || 'KINS-2024-0517',
+    measureOrg: prev.measureOrg || '한국원자력안전기술원(KINS)',
+    note: prev.note || '연간 한도 대비 정상 범위',
+  }))
 
   const createMut = useMutation({
     mutationFn: radDoseApi.create,
@@ -184,6 +200,7 @@ const RadDoseTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.workerName || !form.measureMonth}>저장</Button>
         </DialogActions>

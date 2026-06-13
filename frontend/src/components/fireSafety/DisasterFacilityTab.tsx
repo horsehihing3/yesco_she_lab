@@ -18,6 +18,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const FAC_TYPES = ['방유제', '집수조', '가스누설감지기', '긴급차단밸브', '제독·세척설비', '배수구차단판', '중화설비', '방충·방서시설']
@@ -84,6 +85,40 @@ const DisasterFacilityTab: React.FC = () => {
     mutationFn: disasterInspApi.remove,
     onSuccess: () => qc.invalidateQueries({ queryKey: ['disasterInspections'] }),
   })
+
+  // DEV ONLY — 비어있는 항목을 방제시설 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillFac = () => setForm(prev => ({
+    ...prev,
+    mgmtNo: prev.mgmtNo || 'DF-2026-008',
+    facType: prev.facType || '방유제',
+    name: prev.name || '제1저장탱크 방유제',
+    location: prev.location || '옥외 저장탱크 야적장 A구역',
+    capacity: prev.capacity || '110% (50㎥)',
+    material: prev.material || '철근콘크리트 (내산 코팅)',
+    chemical: prev.chemical || '황산 (98%)',
+    installDate: prev.installDate || todayStr(),
+    checkCycle: prev.checkCycle || '분기',
+    lastCheck: prev.lastCheck || todayStr(),
+    nextCheck: prev.nextCheck || todayStr(),
+    status: prev.status || '정상',
+    mgrName: prev.mgrName || '김방제',
+    lawBasis: prev.lawBasis || '화관법 §24',
+    interlock: prev.interlock || '누액감지센서·긴급차단밸브 연동',
+    note: prev.note || '분기 점검 결과 균열·누액 없음 (테스트 데이터)',
+  }))
+  const fillInspRec = () => setIForm(prev => ({
+    ...prev,
+    inspDate: prev.inspDate || todayStr(),
+    checker: prev.checker || '이방제',
+    facilityName: prev.facilityName || '제1저장탱크 방유제',
+    facType: prev.facType || '방유제',
+    location: prev.location || '옥외 저장탱크 야적장 A구역',
+    content: prev.content || '방유제 균열·누액 여부, 배수밸브 잠금 상태, 집수조 잔류액 점검',
+    anomaly: prev.anomaly || '이상없음',
+    doneStatus: prev.doneStatus || '완료',
+    actionTaken: prev.actionTaken || '집수조 잔류 우수 배출 및 배수밸브 잠금 확인',
+    nextCheck: prev.nextCheck || todayStr(),
+  }))
 
   const filtered = useMemo(() => items.filter(v => {
     if (typeFilter && v.facType !== typeFilter) return false
@@ -278,6 +313,7 @@ const DisasterFacilityTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillFac} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => editing ? update.mutate({ id: editing.id, e: form }) : create.mutate(form)} disabled={!form.mgmtNo || !form.name}>저장</Button>
         </DialogActions>
@@ -327,6 +363,7 @@ const DisasterFacilityTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!iEditing && <DevTestFillButton onFill={fillInspRec} />}
           <Button variant="outlined" onClick={() => setIOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => iEditing ? iUpdate.mutate({ id: iEditing.id, e: iForm }) : iCreate.mutate(iForm)} disabled={!iForm.inspDate}>저장</Button>
         </DialogActions>

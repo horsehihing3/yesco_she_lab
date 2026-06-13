@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -62,6 +63,32 @@ const OdAftercareTab: React.FC = () => {
   const [fitForm, setFitForm] = useState<Partial<OdFitness>>(emptyFit)
 
   const handleBackToList = () => { setViewMode('list'); setSelectedAft(null); setSelectedFit(null); setForm(emptyAft); setFitForm(emptyFit) }
+
+  // DEV ONLY — 비어있는 항목을 사후관리 조치 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '박영호',
+    dept: prev.dept || '도금팀',
+    judge: prev.judge || 'D1',
+    factor: prev.factor || '소음',
+    disease: prev.disease || '소음성 난청 (직업병 소견)',
+    actionsText: prev.actionsText || '업무전환 실시(5/10)\n청력보호구 지급\n3개월 후 추적검사 예정',
+    status: prev.status || '진행중',
+    dueDate: prev.dueDate || todayStr(),
+  }))
+
+  // DEV ONLY — 비어있는 항목을 업무적합성 평가 더미데이터로 채움 (입력값은 보존)
+  const fillFitTestData = () => setFitForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '박영호',
+    dept: prev.dept || '도금팀',
+    disease: prev.disease || '소음성 난청',
+    evalOrg: prev.evalOrg || '한국산업보건협회',
+    evalDate: prev.evalDate || todayStr(),
+    evalResult: prev.evalResult || '조건부 적합',
+    doneStatus: prev.doneStatus || '이행중',
+    recommendation: prev.recommendation || '소음 노출 공정 배제 및 청력보호구 상시 착용 (테스트 데이터)',
+  }))
 
   const createMut = useMutation({ mutationFn: (e: Partial<OdAftercare>) => aftercareApi.create(e),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['odAftercare'] }); qc.invalidateQueries({ queryKey: ['odStats'] }); handleBackToList() } })
@@ -186,6 +213,7 @@ const OdAftercareTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'aftercare-create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleAftSave} disabled={!form.workerName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
@@ -255,6 +283,7 @@ const OdAftercareTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'fitness-create' && <DevTestFillButton onFill={fillFitTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleFitSave} disabled={!fitForm.workerName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

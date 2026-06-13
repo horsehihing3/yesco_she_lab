@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import LoadingOverlay from '../common/LoadingOverlay'
 import { psmApi } from '../../api/psmApi'
+import DevTestFillButton from '../common/DevTestFillButton'
 import type { PsmPtw, PsmPtwCheck, PermitType, PtwStatus } from '../../types/psm.types'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -123,6 +124,16 @@ const PsmPtwTab: React.FC = () => {
   }
 
   const setV = (patch: Partial<PsmPtw>) => setForm(f => ({ ...f, ...patch }))
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workName: prev.workName || '반응기 R-101 내부 점검',
+    workLocation: prev.workLocation || '제1공장 반응공정동 2층',
+    startAt: prev.startAt || '2026-06-13T09:00',
+    endAt: prev.endAt || '2026-06-13T17:00',
+    supervisorName: prev.supervisorName || '김작업',
+    supervisorDept: prev.supervisorDept || '생산1팀',
+    workDescription: prev.workDescription || '반응기 R-101 맨홀 개방 후 내부 부식 상태 점검 및 촉매 교체 작업',
+  }))
   const isEdit = viewMode === 'edit' || viewMode === 'create'
   const v = (isEdit ? form : detail || {}) as Partial<PsmPtw>
   const checks = useMemo<PsmPtwCheck[]>(() => parseChecks(v.safetyChecksJson), [v.safetyChecksJson])
@@ -391,6 +402,7 @@ const PsmPtwTab: React.FC = () => {
       {/* 하단 버튼 */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEdit ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         ) : (

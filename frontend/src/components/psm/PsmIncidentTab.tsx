@@ -14,6 +14,7 @@ import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import { psmApi } from '../../api/psmApi'
+import DevTestFillButton from '../common/DevTestFillButton'
 import type { PsmIncident, PsmIncidentAction, IncidentSeverity, IncidentType, IncidentStatus } from '../../types/psm.types'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -95,6 +96,34 @@ const PsmIncidentTab: React.FC = () => {
   }
 
   const setV = (patch: Partial<PsmIncident>) => setForm(f => ({ ...f, ...patch }))
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    occurAt: prev.occurAt || '2026-06-12T14:30',
+    location: prev.location || '제2공장 정제공정동 1층',
+    relatedEquipment: prev.relatedEquipment || '열교환기 E-204',
+    relatedMaterial: prev.relatedMaterial || '톨루엔',
+    firstFinder: prev.firstFinder || '이순찰',
+    reporter: prev.reporter || '박보고',
+    investigator: prev.investigator || '최조사',
+    reportedAt: prev.reportedAt || '2026-06-12T15:00',
+    narrative: prev.narrative || '정기 순찰 중 열교환기 E-204 플랜지 연결부에서 톨루엔이 미량 누출되는 것을 발견하여 즉시 밸브를 차단함',
+    why1: prev.why1 || '플랜지 가스켓 노후화로 인한 밀봉 불량',
+    why5: prev.why5 || '가스켓 교체 주기 관리 절차 미흡',
+    managementCause: prev.managementCause || '예방정비 점검 주기 미준수',
+    deaths: prev.deaths ?? 0,
+    seriousInjuries: prev.seriousInjuries ?? 0,
+    minorInjuries: prev.minorInjuries ?? 1,
+    injuryType: prev.injuryType || '기타',
+    damagedEquipment: prev.damagedEquipment || '열교환기 E-204 플랜지 가스켓',
+    propertyLoss: prev.propertyLoss ?? 500,
+    productionLoss: prev.productionLoss ?? 1200,
+    downtimeHours: prev.downtimeHours ?? 4,
+    envImpact: prev.envImpact || '없음',
+    technicalAction: prev.technicalAction || '플랜지 가스켓을 내화학성 재질로 교체하고 토크 관리 시행',
+    managerialAction: prev.managerialAction || '동종 가스켓 교체 주기를 예방정비 절차서에 반영',
+    similarCheckPlan: prev.similarCheckPlan || '정제공정동 내 동일 사양 열교환기 전수 점검',
+    psmImprovement: prev.psmImprovement || '공정안전자료 내 가스켓 사양 정보 갱신',
+  }))
   const isEdit = viewMode === 'edit' || viewMode === 'create'
   const v = (isEdit ? form : detail || {}) as Partial<PsmIncident>
 
@@ -465,6 +494,7 @@ const PsmIncidentTab: React.FC = () => {
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" onClick={handleBackToList}>{t('common.list', '목록')}</Button>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           {step < 3 && <Button variant="contained" onClick={() => setStep(s => s + 1)}>다음 →</Button>}
           {step === 3 && (
             isEdit ? (

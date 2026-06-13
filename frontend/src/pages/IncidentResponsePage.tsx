@@ -15,6 +15,7 @@ import { incidentResponseApi } from '../api/incidentResponseApi'
 import type { IncidentResponse } from '../types/incidentResponse.types'
 import StatCard from '../components/legalCompliance/StatCard'
 import { FormTable, FormRow, FormLabel, FormCell } from '../components/common/FormTable'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 import { useAlert } from '../contexts/AlertContext'
 
 const TYPE_OPTIONS: Array<[string, string]> = [
@@ -151,6 +152,20 @@ const IncidentResponsePage: React.FC = () => {
     })
     setViewMode('form')
   }
+
+  // DEV ONLY — 비어있는 항목을 비상대응 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    title: prev.title || '공정동 화재 발생에 따른 비상 대응',
+    incidentType: prev.incidentType || 'FIRE',
+    status: prev.status || 'ISSUED',
+    location: prev.location || '공정동 2층 배관실',
+    severity: prev.severity || 'SEVERE',
+    reporter: prev.reporter || '안전관리팀 정차장',
+    description: prev.description || '배관 용접작업 중 불티가 인근 가연물에 착화되어 화재 발생, 초기 대응 진행 (테스트 데이터)',
+    actionTaken: prev.actionTaken || '작업 즉시 중지, 인근 작업자 대피, 소화기 초기 진압 후 119 신고 완료',
+    casualtyInfo: prev.casualtyInfo || '경상 1명 (연기 흡입)',
+  }))
 
   const handleSave = async () => {
     if (!form.title || !form.location || !form.reportedAt) {
@@ -313,6 +328,7 @@ const IncidentResponsePage: React.FC = () => {
         </FormTable>
 
         <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           {editing && (
             <Button color="error" variant="outlined" onClick={handleDelete}
               sx={{ flex: { xs: 1, md: 'none' } }}>삭제</Button>

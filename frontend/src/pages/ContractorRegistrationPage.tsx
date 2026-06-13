@@ -24,6 +24,7 @@ import DatePickerField from '../components/common/DatePickerField'
 import { todayStr } from '../utils/dateDefaults'
 import NumberField from '../components/common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../components/common/FormTable'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import { useButtonRules } from '../hooks/useButtonRules'
@@ -286,6 +287,60 @@ const ContractorRegistrationPage: React.FC = () => {
   const goPrev = () => setStep(s => Math.max(0, s - 1))
   const jumpTo = (s: number) => { if (s <= step) setStep(s) }
 
+  // DEV ONLY — 위저드 전 단계의 비어있는 입력 항목을 협력업체 등록 도메인 더미데이터로 채움 (입력값은 보존)
+  // 첨부 서류·동의 체크는 폼 state 가 아니므로 채워지지 않음 → Step3 에서 수동 확인 필요
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    // Step 0 — 기본정보
+    bizNum: prev.bizNum || '123-45-67890',
+    corpNum: prev.corpNum || '110111-1234567',
+    companyName: prev.companyName || '㈜한빛안전기술',
+    ceoName: prev.ceoName || '홍길동',
+    bizType: prev.bizType || '건설업',
+    bizCategory: prev.bizCategory || '도급',
+    zipCode: prev.zipCode || '07332',
+    addr1: prev.addr1 || '서울특별시 영등포구 여의대로 100',
+    addr2: prev.addr2 || '3층 301호',
+    tel: prev.tel || '02-1234-5678',
+    fax: prev.fax || '02-1234-5679',
+    email: prev.email || 'info@hanbit.co.kr',
+    homepage: prev.homepage || 'https://www.hanbit.co.kr',
+    empSize: prev.empSize || '50~299인',
+    // Step 1 — 안전보건
+    oshApply: prev.oshApply || '해당',
+    accRate: prev.accRate ?? 0.12,
+    safetyMgrStatus: prev.safetyMgrStatus || '선임',
+    healthMgrStatus: prev.healthMgrStatus || '위탁',
+    certifications: prev.certifications || 'ISO45001,KOSHA-MS',
+    riskEval: prev.riskEval || '실시',
+    riskEvalDate: prev.riskEvalDate || todayStr(),
+    hazardFactors: prev.hazardFactors || '고소작업,중량물 취급,전기',
+    safetyRating: prev.safetyRating || 4,
+    envRating: prev.envRating || 3,
+    // Step 2 — 담당자
+    safetyMgrName: prev.safetyMgrName || '김안전',
+    safetyMgrPosition: prev.safetyMgrPosition || '안전관리자',
+    safetyMgrDept: prev.safetyMgrDept || '안전팀',
+    safetyMgrTel: prev.safetyMgrTel || '010-1111-2222',
+    safetyMgrOfficeTel: prev.safetyMgrOfficeTel || '02-1234-5670',
+    safetyMgrEmail: prev.safetyMgrEmail || 'safety@hanbit.co.kr',
+    healthMgrName: prev.healthMgrName || '이보건',
+    healthMgrPosition: prev.healthMgrPosition || '보건관리자',
+    healthMgrCert: prev.healthMgrCert || '산업위생관리사',
+    healthMgrTel: prev.healthMgrTel || '010-3333-4444',
+    healthMgrEmail: prev.healthMgrEmail || 'health@hanbit.co.kr',
+    internalDept: prev.internalDept || '안전보건팀',
+    internalName: prev.internalName || '이담당',
+    internalTel: prev.internalTel || '010-5555-6666',
+    memo: prev.memo || '신규 협력업체 등록 건 (테스트 데이터)',
+    // Step 3 — 계약 정보
+    contractStart: prev.contractStart || todayStr(),
+    contractEnd: prev.contractEnd || todayStr(),
+    contractType: prev.contractType || '도급',
+    contractAmount: prev.contractAmount ?? 50000000,
+    workZone: prev.workZone || '제1공장, 외부 현장',
+  }))
+
   const handleSubmit = () => {
     if (viewMode === 'edit' && selected) {
       updateMut.mutate({ id: selected.id, req: form })
@@ -546,6 +601,7 @@ const ContractorRegistrationPage: React.FC = () => {
           ) : (
             <Button variant="outlined" onClick={backToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: 'none' } }}>목록</Button>
           )}
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           {/* 위저드 이전/다음 — 상세에서도 단계 이동 가능 */}
           {step > 0 && (
             <Button variant="outlined" onClick={goPrev} sx={{ flex: { xs: '1 1 calc(50% - 4px)', sm: 'none' } }}>이전</Button>

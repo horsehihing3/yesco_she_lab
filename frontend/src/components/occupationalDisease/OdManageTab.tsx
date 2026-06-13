@@ -15,6 +15,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -46,6 +47,18 @@ const OdManageTab: React.FC = () => {
   const [form, setForm] = useState<Partial<OdOrg>>(emptyForm)
 
   const handleBackToList = () => { setViewMode('list'); setSelected(null); setForm(emptyForm) }
+
+  // DEV ONLY — 비어있는 항목을 검진기관 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    name: prev.name || '한국산업보건협회',
+    doctor: prev.doctor || '이의사',
+    orgType: prev.orgType || '특수검진 전문기관',
+    factors: prev.factors || '소음, 분진, 유기용제',
+    costPerPerson: prev.costPerPerson ?? 85000,
+    contractEnd: prev.contractEnd || todayStr(),
+    targetCount: prev.targetCount ?? 120,
+  }))
 
   const createMut = useMutation({ mutationFn: (e: Partial<OdOrg>) => odOrgApi.create(e),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['odOrgs'] }); handleBackToList() } })
@@ -128,6 +141,7 @@ const OdManageTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={!form.name} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

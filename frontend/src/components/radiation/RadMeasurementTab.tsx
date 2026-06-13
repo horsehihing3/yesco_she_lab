@@ -18,6 +18,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const MEASURE_TYPES = ['공간선량률', '표면오염', '공기중 방사성 물질']
@@ -51,6 +52,21 @@ const RadMeasurementTab: React.FC = () => {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<RadMeasurement | null>(null)
   const [form, setForm] = useState<Partial<RadMeasurement>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 방사선 측정 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    measureDate: prev.measureDate || todayStr(),
+    measureType: prev.measureType || '공간선량률',
+    zoneName: prev.zoneName || '제1방사선관리구역',
+    pointName: prev.pointName || '차폐고 출입문 1m',
+    measureValue: prev.measureValue ?? 2.35,
+    unit: prev.unit || 'μSv/h',
+    standardValue: prev.standardValue || '10 μSv/h',
+    evaluation: prev.evaluation || '정상',
+    device: prev.device || '서베이미터 (Ludlum Model 9)',
+    measurer: prev.measurer || '박측정',
+  }))
 
   const createMut = useMutation({
     mutationFn: radMeasurementApi.create,
@@ -184,6 +200,7 @@ const RadMeasurementTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.measureDate}>저장</Button>
         </DialogActions>

@@ -17,6 +17,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -57,6 +58,27 @@ const DpRespiTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterExp, setFilterExp] = useState('all')
   const [form, setForm] = useState<Partial<DpRespi>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 호흡기·피부 노출 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '최영길',
+    department: prev.department || '도장1팀',
+    exposureType: prev.exposureType || '유기용제',
+    exposureSubstance: prev.exposureSubstance || '톨루엔, 크실렌',
+    exposureLevel: prev.exposureLevel || '15ppm (TWA)',
+    ppeType: prev.ppeType || '방독마스크(유기가스용 정화통)',
+    fitTestDate: prev.fitTestDate || todayStr(),
+    fitTestResult: prev.fitTestResult || '적합',
+    pftFvc: prev.pftFvc ?? 4.2,
+    pftFev1: prev.pftFev1 ?? 3.5,
+    skinCondition: prev.skinCondition || '양손 등쪽 경미한 건조·홍반',
+    patchTestResult: prev.patchTestResult || '음성',
+    status: prev.status || '요관찰',
+    examDate: prev.examDate || todayStr(),
+    examiner: prev.examiner || '한국산업보건연구원',
+    notes: prev.notes || '테스트 데이터',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -196,6 +218,7 @@ const DpRespiTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

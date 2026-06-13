@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const ACC_TYPES = ['누출', '분실', '오염', '피폭초과', '기타']
@@ -50,6 +51,30 @@ const RadAccidentTab: React.FC = () => {
   const [drillOpen, setDrillOpen] = useState(false)
   const [drillEditing, setDrillEditing] = useState<RadDrill | null>(null)
   const [drillForm, setDrillForm] = useState<Partial<RadDrill>>(emptyDrill)
+
+  // DEV ONLY — 비어있는 항목을 방사선 사고 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillAccTestData = () => setAccForm(prev => ({
+    ...prev,
+    accidentDate: prev.accidentDate || new Date().toISOString().slice(0, 10),
+    accidentType: prev.accidentType || '누출',
+    location: prev.location || '비파괴검사실 차폐고 주변',
+    status: prev.status || '조사중',
+    cause: prev.cause || '조사기 콜리메이터 결합부 차폐 불량으로 인한 누출 의심',
+    response: prev.response || '구역 출입 통제 · 선원 회수 및 차폐 보강 · 종사자 긴급 선량 측정 실시',
+    note: prev.note || '원안위 24시간 이내 보고 대상',
+  }))
+
+  // DEV ONLY — 비어있는 항목을 비상훈련 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillDrillTestData = () => setDrillForm(prev => ({
+    ...prev,
+    drillDate: prev.drillDate || new Date().toISOString().slice(0, 10),
+    drillType: prev.drillType || '방사선 누출 비상훈련',
+    participants: prev.participants ?? 12,
+    ownerName: prev.ownerName || '최안전',
+    scenario: prev.scenario || '감마선 조사기 누출 가정 · 구역 통제 및 선원 회수 절차 숙달',
+    result: prev.result || '양호',
+    improvement: prev.improvement || '비상 연락망 갱신 · 개인선량계 즉시 확인 절차 보완 필요',
+  }))
 
   const accCreate = useMutation({
     mutationFn: radAccidentApi.create,
@@ -231,6 +256,7 @@ const RadAccidentTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!accEditing && <DevTestFillButton onFill={fillAccTestData} />}
           <Button variant="outlined" onClick={() => setAccOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submitAcc} disabled={!accForm.accidentDate}>저장</Button>
         </DialogActions>
@@ -268,6 +294,7 @@ const RadAccidentTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!drillEditing && <DevTestFillButton onFill={fillDrillTestData} />}
           <Button variant="outlined" onClick={() => setDrillOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submitDrill} disabled={!drillForm.drillDate}>저장</Button>
         </DialogActions>

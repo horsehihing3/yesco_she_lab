@@ -16,6 +16,8 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
+import { todayStr } from '../../utils/dateDefaults'
 import { useAlert } from '../../contexts/AlertContext'
 
 const ORG_TYPES = ['소방서', '경찰서', '구급대', '화학방재', '전기·가스 긴급', '수리업체', '내부담당']
@@ -70,6 +72,32 @@ const FireEmergencyTab: React.FC = () => {
     mutationFn: fireDrillApi.remove,
     onSuccess: () => qc.invalidateQueries({ queryKey: ['fireDrills'] }),
   })
+
+  // DEV ONLY — 비어있는 항목을 비상대응 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillContact = () => setCForm(prev => ({
+    ...prev,
+    orgType: prev.orgType || '소방서',
+    orgName: prev.orgName || '○○소방서 현장대응단',
+    mainTel: prev.mainTel || '02-123-4567',
+    emergencyTel: prev.emergencyTel || '119',
+    mgrName: prev.mgrName || '박대응',
+    mgrMobile: prev.mgrMobile || '010-1234-5678',
+    contractPeriod: prev.contractPeriod || '2026-01-01 ~ 2026-12-31',
+    coverage: prev.coverage || '화재 진압·구조·구급 및 화학사고 초동 대응',
+    note: prev.note || '24시간 비상 출동 대응 (테스트 데이터)',
+  }))
+  const fillDrill = () => setDForm(prev => ({
+    ...prev,
+    drillDate: prev.drillDate || todayStr(),
+    drillType: prev.drillType || '소방훈련 (전체 대피)',
+    scenario: prev.scenario || '본관 2층 전기실 화재 발생 가정, 전 직원 옥외 집결지 대피',
+    participants: prev.participants ?? 85,
+    evacTime: prev.evacTime || '3분 20초',
+    mgrName: prev.mgrName || '김소방',
+    fireDeptObs: prev.fireDeptObs || '있음 (소방서 요청)',
+    result: prev.result || '양호',
+    improvement: prev.improvement || '비상구 유도등 추가 설치 및 대피 동선 안내 강화 필요',
+  }))
 
   const drillsYear = useMemo(() => drills.filter(d => d.drillDate?.startsWith(String(new Date().getFullYear()))), [drills])
 
@@ -213,6 +241,7 @@ const FireEmergencyTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!cEditing && <DevTestFillButton onFill={fillContact} />}
           <Button variant="outlined" onClick={() => setCOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => cEditing ? cUpdate.mutate({ id: cEditing.id, e: cForm }) : cCreate.mutate(cForm)} disabled={!cForm.orgName}>저장</Button>
         </DialogActions>
@@ -259,6 +288,7 @@ const FireEmergencyTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!dEditing && <DevTestFillButton onFill={fillDrill} />}
           <Button variant="outlined" onClick={() => setDOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => dEditing ? dUpdate.mutate({ id: dEditing.id, e: dForm }) : dCreate.mutate(dForm)} disabled={!dForm.drillDate}>저장</Button>
         </DialogActions>

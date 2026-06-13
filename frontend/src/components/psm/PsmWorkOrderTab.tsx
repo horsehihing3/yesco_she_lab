@@ -12,6 +12,7 @@ import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import { psmApi } from '../../api/psmApi'
+import DevTestFillButton from '../common/DevTestFillButton'
 import type { PsmWo, PsmWoOperation, PsmWoMaterial, WoStatus } from '../../types/psm.types'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -102,6 +103,24 @@ const PsmWorkOrderTab: React.FC = () => {
   }
 
   const setV = (patch: Partial<PsmWo>) => setForm(f => ({ ...f, ...patch }))
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    woType: prev.woType || 'PM01',
+    priority: prev.priority || '2',
+    equipmentNo: prev.equipmentNo || 'EQ-P-301',
+    equipmentName: prev.equipmentName || '이송펌프 P-301',
+    functionalLocation: prev.functionalLocation || 'PL1-RX-P301',
+    workCenter: prev.workCenter || '기계정비반',
+    planStartDate: prev.planStartDate || '2026-06-15',
+    planEndDate: prev.planEndDate || '2026-06-16',
+    managerName: prev.managerName || '정정비',
+    plantCode: prev.plantCode || 'PL1',
+    description: prev.description || '이송펌프 P-301 메커니컬 실 교체 및 베어링 점검',
+    laborCost: prev.laborCost ?? 300000,
+    materialCost: prev.materialCost ?? 450000,
+    outsourcingCost: prev.outsourcingCost ?? 0,
+    otherCost: prev.otherCost ?? 50000,
+  }))
 
   const operations = useMemo<PsmWoOperation[]>(() => parseJson(form.operationsJson), [form.operationsJson])
   const materials  = useMemo<PsmWoMaterial[]>(() => parseJson(form.materialsJson), [form.materialsJson])
@@ -390,6 +409,7 @@ const PsmWorkOrderTab: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEdit ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         ) : (

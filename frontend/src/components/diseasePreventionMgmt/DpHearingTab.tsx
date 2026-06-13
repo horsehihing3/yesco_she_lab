@@ -17,6 +17,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -56,6 +57,26 @@ const DpHearingTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [form, setForm] = useState<Partial<DpHearing>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 청력보존 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '박정호',
+    department: prev.department || '압축기실 정비반',
+    noiseLevel: prev.noiseLevel ?? 92,
+    exposureHours: prev.exposureHours ?? 8,
+    right4k: prev.right4k ?? 35,
+    right6k: prev.right6k ?? 40,
+    left4k: prev.left4k ?? 30,
+    left6k: prev.left6k ?? 45,
+    stsResult: prev.stsResult || '발생 (좌측 평균 12dB 악화)',
+    ppeType: prev.ppeType || '귀마개(폼형) + 귀덮개',
+    ppeNrr: prev.ppeNrr ?? 25,
+    examDate: prev.examDate || todayStr(),
+    examType: prev.examType || '정기',
+    status: prev.status || 'STS발생',
+    notes: prev.notes || '테스트 데이터',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -185,6 +206,7 @@ const DpHearingTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

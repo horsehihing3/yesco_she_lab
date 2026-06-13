@@ -20,6 +20,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import DatePickerField from '../common/DatePickerField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import ListSearchBar from '../common/ListSearchBar'
 
 const CATEGORIES = ['안전', '환경', '보건', '화학물질', '소방', '전기']
@@ -152,6 +153,22 @@ const LegalLawTab: React.FC = () => {
     if (await showConfirm(t('legalLawTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(selectedItem.id)
   }
   const handleReset = () => { setSearchInput(''); setSearch(''); setCatFilter(''); setStatusFilter('') }
+
+  // DEV ONLY — 비어있는 항목을 법규검토 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    category: prev.category || '안전',
+    lawName: prev.lawName || '산업안전보건법',
+    clause: prev.clause || '제36조(위험성평가의 실시)',
+    amendType: prev.amendType || '일부개정',
+    promulgateDate: prev.promulgateDate || todayStr(),
+    enforceDate: prev.enforceDate || todayStr(),
+    reviewDueDate: prev.reviewDueDate || todayStr(),
+    reviewStatus: prev.reviewStatus || '검토중',
+    applyYn: prev.applyYn || '적용',
+    followUpAction: prev.followUpAction || '위험성평가 절차서 개정 및 사내 공지 (테스트 데이터)',
+    amendSummary: prev.amendSummary || '위험성평가 실시 주체 및 절차 명확화, 근로자 참여 의무 강화',
+  }))
 
   // ──────────────────── LIST VIEW ────────────────────
   if (viewMode === 'list') {
@@ -429,6 +446,7 @@ const LegalLawTab: React.FC = () => {
       </FormTable>
 
       <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={viewMode === 'edit' && selectedItem ? () => { setViewMode('detail') } : handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
           취소
         </Button>

@@ -18,6 +18,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -128,6 +129,26 @@ const FacilityEquipmentTab: React.FC = () => {
     }
     setOwnerPickerOpen(false)
   }
+
+  // DEV ONLY — 비어있는 항목을 법정설비 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    mgmtNo: prev.mgmtNo || 'PV-2025-001',
+    name: prev.name || '제1공장 공기저장탱크',
+    category: prev.category || '압력용기',
+    spec: prev.spec || '5m³, 15kgf/cm²',
+    location: prev.location || '생산동1',
+    maker: prev.maker || '대성기계',
+    makerNo: prev.makerNo || 'DS-PV-20231105',
+    installDate: prev.installDate || todayStr(),
+    baseLaw: prev.baseLaw || '산업안전보건법 제93조',
+    inspectType: prev.inspectType || '안전검사',
+    inspectPeriod: prev.inspectPeriod || '2년',
+    lastInspectDate: prev.lastInspectDate || todayStr(),
+    nextInspectDate: prev.nextInspectDate || todayStr(),
+    status: prev.status || '정상',
+    note: prev.note || '안전밸브 정상 작동, 외관 양호 (테스트 데이터)',
+  }))
 
   return (
     <Box>
@@ -335,6 +356,7 @@ const FacilityEquipmentTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.name || !form.mgmtNo || createMut.isPending || updateMut.isPending}>
             저장

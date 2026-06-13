@@ -12,6 +12,7 @@ import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import { psmApi } from '../../api/psmApi'
+import DevTestFillButton from '../common/DevTestFillButton'
 import type { PsmCategory, PsmData } from '../../types/psm.types'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -198,6 +199,41 @@ const PsmDataTab: React.FC = () => {
   const isEditMode = viewMode === 'edit' || viewMode === 'create'
   const view = isEditMode ? form : (detail || {})
   const setV = (patch: Partial<PsmData>) => setForm(f => ({ ...f, ...patch }))
+  const fillTestData = () => setForm(prev => {
+    const next: Partial<PsmData> = {
+      ...prev,
+      inspectionCycle: prev.inspectionCycle || '1년',
+      managerName: prev.managerName || '담당자',
+      lastInspectionDate: prev.lastInspectionDate || '2026-01-15',
+      nextInspectionDate: prev.nextInspectionDate || '2027-01-15',
+      notes: prev.notes || '정기 점검 결과 이상 없음',
+    }
+    if (category === 'CHEM') {
+      next.code = prev.code || 'CHEM-001'
+      next.nameKo = prev.nameKo || '톨루엔'
+      next.typeLabel = prev.typeLabel || '인화성 액체'
+      next.casNumber = prev.casNumber || '108-88-3'
+      next.ghsClass = prev.ghsClass || '인화성 액체 구분2'
+      next.regulatedQtyKg = prev.regulatedQtyKg ?? 10000
+      next.holdingQtyKg = prev.holdingQtyKg ?? 3500
+      next.psmTarget = prev.psmTarget ?? true
+    } else {
+      next.code = prev.code || 'EQ-V-201'
+      next.nameKo = prev.nameKo || '저장탱크 T-201'
+      next.typeLabel = prev.typeLabel || '입형 원통형'
+      next.location = prev.location || '제1공장 저장구역'
+      next.manufacturer = prev.manufacturer || '대한중공업'
+      next.designPressure = prev.designPressure || '15 barg'
+      next.designTemperature = prev.designTemperature || '250°C'
+      next.material = prev.material || 'SUS316'
+      next.installDate = prev.installDate || '2020-03-01'
+      if (category === 'PSV') {
+        next.setPressure = prev.setPressure || '12 barg'
+        next.protectedEquip = prev.protectedEquip || '저장탱크 T-201'
+      }
+    }
+    return next
+  })
   const showChemFields = category === 'CHEM'
   const showPsvFields = category === 'PSV'
 
@@ -385,6 +421,7 @@ const PsmDataTab: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEditMode ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         ) : (

@@ -49,6 +49,7 @@ import { OSHCommittee, OSHCommitteeRequest } from '../../types/oshCommittee.type
 import { PageResponse, FileMetadata } from '../../types/common.types'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -293,6 +294,14 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
     setPendingAttendees([])
     setViewMode('create')
   }
+
+  // DEV ONLY — 비어있는 항목을 산업안전보건위원회 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    oshLocationDetail: prev.oshLocationDetail || '본관 3층 대회의실',
+    mainAgenda: prev.mainAgenda || '1. 작업장 위험성평가 결과 공유\n2. 안전보건 개선조치 이행현황 점검\n3. 협력업체 안전관리 강화방안',
+    comment: prev.comment || '분기 정기 회의 (테스트 데이터)',
+  }))
 
   const handleEditClick = () => {
     if (!committeeDetail) return
@@ -1138,6 +1147,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
       {/* Form Actions */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 3, mb: 4 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={viewMode === 'edit' ? () => setViewMode('detail') : handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel')}
         </Button>

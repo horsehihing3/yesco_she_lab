@@ -11,6 +11,7 @@ import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import DatePickerField from '../common/DatePickerField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import { psmApi } from '../../api/psmApi'
+import DevTestFillButton from '../common/DevTestFillButton'
 import type { PsmHazop, PsmHazopItem } from '../../types/psm.types'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -83,6 +84,15 @@ const PsmHazopTab: React.FC = () => {
   }
 
   const setV = (patch: Partial<PsmHazop>) => setForm(f => ({ ...f, ...patch }))
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    nodeName: prev.nodeName || '반응기 R-101 공급라인',
+    pidDrawingNo: prev.pidDrawingNo || 'PID-RX-101-02',
+    designIntent: prev.designIntent || '원료를 정량으로 반응기에 일정 유량 공급',
+    reviewDate: prev.reviewDate || '2026-06-11',
+    teamLeader: prev.teamLeader || '오리더',
+    secretary: prev.secretary || '서서기',
+  }))
   const addItem = () => setForm(f => {
     const items = [...(f.items || [])]
     items.push(emptyItem(items.length + 1))
@@ -284,6 +294,7 @@ const PsmHazopTab: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEdit ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         ) : (

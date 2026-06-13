@@ -16,6 +16,8 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
+import { todayStr } from '../../utils/dateDefaults'
 import { useAlert } from '../../contexts/AlertContext'
 
 const INSP_TYPES = ['작동기능점검', '종합정밀점검', '자체점검', '화재안전조사']
@@ -95,6 +97,49 @@ const FireInspectionTab: React.FC = () => {
     mutationFn: firePlanApi.remove,
     onSuccess: () => qc.invalidateQueries({ queryKey: ['firePlans'] }),
   })
+
+  // DEV ONLY — 비어있는 항목을 소방 점검 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillIssue = () => setSForm(prev => ({
+    ...prev,
+    issueNo: prev.issueNo || 'F-2026-014',
+    facility: prev.facility || '옥내소화전 (지하 1층)',
+    issueType: prev.issueType || '조건부합격',
+    foundDate: prev.foundDate || todayStr(),
+    dueDate: prev.dueDate || todayStr(),
+    issueContent: prev.issueContent || '옥내소화전 방수압력 기준치 미달 (0.13MPa)',
+    actionContent: prev.actionContent || '가압송수장치 점검 및 압력 조정 후 재측정 예정',
+    progressPct: prev.progressPct ?? 30,
+    status: prev.status || '진행중',
+    ownerName: prev.ownerName || '김소방',
+  }))
+  const fillInsp = () => setIForm(prev => ({
+    ...prev,
+    inspNo: prev.inspNo || 'INSP-2026-007',
+    inspType: prev.inspType || '종합정밀점검',
+    inspName: prev.inspName || '2026년 상반기 종합정밀점검',
+    org: prev.org || '한국소방안전원',
+    inspector: prev.inspector || '이점검',
+    applyDate: prev.applyDate || todayStr(),
+    inspDate: prev.inspDate || todayStr(),
+    result: prev.result || '합격',
+    cost: prev.cost ?? 2200000,
+    submitStatus: prev.submitStatus || '제출 완료',
+    submitDate: prev.submitDate || todayStr(),
+    summary: prev.summary || '소화설비·경보설비·피난설비 전반 정상 작동 확인',
+    issue: prev.issue || '일부 유도등 점등 불량 (3개소)',
+    plan: prev.plan || '불량 유도등 교체 후 재점검 실시',
+  }))
+  const fillPlan = () => setPForm(prev => ({
+    ...prev,
+    planType: prev.planType || '작동기능점검',
+    lawBasis: prev.lawBasis || '화재예방법 §22',
+    cycle: prev.cycle || '연1회',
+    planDate: prev.planDate || todayStr(),
+    org: prev.org || '자체 점검 (소방안전관리자)',
+    target: prev.target || '본관 전 층 소화설비·경보설비·피난설비',
+    cost: prev.cost || '₩1,500,000',
+    status: prev.status || '계획',
+  }))
 
   const issuesOpen = useMemo(() => issues.filter(i => i.status === '진행중'), [issues])
 
@@ -303,6 +348,7 @@ const FireInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!sEditing && <DevTestFillButton onFill={fillIssue} />}
           <Button variant="outlined" onClick={() => setSOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => sEditing ? sUpdate.mutate({ id: sEditing.id, e: sForm }) : sCreate.mutate(sForm)}>저장</Button>
         </DialogActions>
@@ -365,6 +411,7 @@ const FireInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!iEditing && <DevTestFillButton onFill={fillInsp} />}
           <Button variant="outlined" onClick={() => setIOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => iEditing ? iUpdate.mutate({ id: iEditing.id, e: iForm }) : iCreate.mutate(iForm)}>저장</Button>
         </DialogActions>
@@ -405,6 +452,7 @@ const FireInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!pEditing && <DevTestFillButton onFill={fillPlan} />}
           <Button variant="outlined" onClick={() => setPOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => pEditing ? pUpdate.mutate({ id: pEditing.id, e: pForm }) : pCreate.mutate(pForm)} disabled={!pForm.planType}>저장</Button>
         </DialogActions>

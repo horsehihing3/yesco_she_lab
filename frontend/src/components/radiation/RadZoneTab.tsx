@@ -16,6 +16,7 @@ import type { RadZone } from '../../types/radiation.types'
 import StatCard from '../legalCompliance/StatCard'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const ZONE_TYPES = ['방사선관리구역', '방사선작업구역', '감시구역']
@@ -45,6 +46,20 @@ const RadZoneTab: React.FC = () => {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<RadZone | null>(null)
   const [form, setForm] = useState<Partial<RadZone>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 방사선 구역 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    name: prev.name || '제1방사선관리구역',
+    zoneType: prev.zoneType || '방사선관리구역',
+    location: prev.location || '본관 지하 1층 비파괴검사실',
+    areaM2: prev.areaM2 ?? 48.5,
+    measureCycle: prev.measureCycle || '월 1회',
+    ownerName: prev.ownerName || '홍길동',
+    relatedSource: prev.relatedSource || 'XR-001, IR-002',
+    standardValue: prev.standardValue || '1 mSv/주 초과',
+    accessRule: prev.accessRule || '방사선작업종사자 외 출입 통제 · 개인선량계 패용 필수',
+  }))
 
   const createMut = useMutation({
     mutationFn: radZoneApi.create,
@@ -173,6 +188,7 @@ const RadZoneTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.name}>저장</Button>
         </DialogActions>

@@ -18,14 +18,11 @@ import TableViewIcon from '@mui/icons-material/TableView'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../context/AuthContext'
+import { DEV_SESSION_KEY, isDevToolsVisible } from '../../utils/devMode'
 import LanguageSelector from './LanguageSelector'
 import ThemeSelector from './ThemeSelector'
 
 // DEV ONLY — 납품 전 삭제
-// com4in_dev 로 로그인한 세션임을 기억하는 키. 비-localhost(운영/사내IP)에서 다른 계정으로
-// 전환해도 user.username 이 바뀌어 조건이 깨지므로, 세션 단위로 dev 권한을 유지한다.
-const DEV_SESSION_KEY = 'com4in_dev_session'
-
 const DEV_ACCOUNTS = [
   { id: 'jiwan.nam',     name: '남지완',   label: '글로벌경영관리팀 팀장' },
   { id: 'yeseo.moon',    name: '문예서',   label: '글로벌경영관리팀 팀원' },
@@ -54,10 +51,7 @@ const Header: React.FC = () => {
   }, [user?.username])
 
   // DEV ONLY — localhost 이거나 com4in_dev 로 시작한 세션이면 계정전환 노출
-  const showDevSwitch =
-    window.location.hostname === 'localhost' ||
-    user?.username === 'com4in_dev' ||
-    sessionStorage.getItem(DEV_SESSION_KEY) === '1'
+  const showDevSwitch = isDevToolsVisible() || user?.username === 'com4in_dev'
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)

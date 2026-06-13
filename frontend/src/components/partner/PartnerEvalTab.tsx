@@ -19,6 +19,7 @@ import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -134,6 +135,22 @@ const PartnerEvalTab: React.FC = () => {
   // ====== Handlers ======
   const handleRowClick = (e: PartnerEval) => { setSelectedId(e.id); setMode('view') }
   const handleNewClick = () => { setForm({ ...emptyForm, evalDate: todayStr(), nextEvalDate: todayStr() }); setMode('create') }
+
+  // DEV ONLY — 비어있는 항목을 협력업체 평가 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    companyName: prev.companyName || '한빛건설(주)',
+    industry: prev.industry || '건설·설비',
+    partnerMgr: prev.partnerMgr || '박협력',
+    contact: prev.contact || '010-2345-6789',
+    scoreSafety: prev.scoreSafety || 36,
+    scoreHealth: prev.scoreHealth || 27,
+    scoreEnv: prev.scoreEnv || 18,
+    scoreMgmt: prev.scoreMgmt || 9,
+    accidentCount: prev.accidentCount ?? 0,
+    status: prev.status || '완료',
+    opinion: prev.opinion || '전반적으로 안전관리 우수, 정기 점검 체계 양호 (테스트 데이터)',
+  }))
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setMode('edit') } }
   const handleBackToList = () => { setSelectedId(null); setMode('list') }
   const handleSubmit = () => {
@@ -375,6 +392,7 @@ const PartnerEvalTab: React.FC = () => {
           {mode === 'edit' && (
             <Button variant="contained" onClick={handleSubmit} disabled={!form.companyName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
           )}
+          {mode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           {mode === 'create' && (
             <Button variant="contained" onClick={handleSubmit} disabled={!form.companyName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
           )}

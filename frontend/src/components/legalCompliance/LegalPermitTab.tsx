@@ -16,6 +16,7 @@ import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const PERMIT_TYPES = ['허가', '신고', '등록', '검사', '점검']
@@ -98,6 +99,22 @@ const LegalPermitTab: React.FC = () => {
     if (editing) updateMut.mutate({ id: editing.id, req: form })
     else createMut.mutate(form)
   }
+
+  // DEV ONLY — 비어있는 항목을 인허가 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    permitType: prev.permitType || '허가',
+    category: prev.category || '환경',
+    permitName: prev.permitName || '대기배출시설 설치허가',
+    baseLaw: prev.baseLaw || '대기환경보전법 제23조',
+    agency: prev.agency || '한강유역환경청',
+    permitNo: prev.permitNo || '대기-2025-0137',
+    issueDate: prev.issueDate || todayStr(),
+    expireDate: prev.expireDate || todayStr(),
+    renewalPeriod: prev.renewalPeriod || '3년',
+    conditions: prev.conditions || '방지시설 정상가동 및 자가측정 결과 분기별 보고 (테스트 데이터)',
+    icon: prev.icon || '🏭',
+  }))
 
   return (
     <Box>
@@ -267,6 +284,7 @@ const LegalPermitTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.permitName || createMut.isPending || updateMut.isPending}>
             저장

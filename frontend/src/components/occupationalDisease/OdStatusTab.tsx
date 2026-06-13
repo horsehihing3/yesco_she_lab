@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -70,6 +71,26 @@ const OdStatusTab: React.FC = () => {
   const handleResetSearch = () => { setSearchInput(''); setSearch(''); setJudgeFilter(''); setDivFilter('') }
 
   const handleBackToList = () => { setViewMode('list'); setSelected(null); setForm(emptyForm) }
+
+  // DEV ONLY — 비어있는 항목을 검진현황(대상자) 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    employeeNo: prev.employeeNo || 'EMP-20451',
+    name: prev.name || '김철수',
+    dept: prev.dept || '생산1팀',
+    job: prev.job || '비사무직',
+    gender: prev.gender || '남',
+    birthDate: prev.birthDate || '1985-04-12',
+    division: prev.division || '정기',
+    factor: prev.factor || '소음',
+    carcinogenicity: prev.carcinogenicity || '없음',
+    exposurePeriod: prev.exposurePeriod || '5년 3개월',
+    examOrg: prev.examOrg || '한국산업보건협회',
+    examDate: prev.examDate || todayStr(),
+    judge: prev.judge || 'C1',
+    afterAction: prev.afterAction || '추적관찰',
+    actionDone: prev.actionDone || '진행중',
+  }))
 
   const createMut = useMutation({ mutationFn: (e: Partial<OdWorker>) => workerApi.create(e),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['odWorkers'] }); qc.invalidateQueries({ queryKey: ['odStats'] }); handleBackToList() } })
@@ -196,6 +217,7 @@ const OdStatusTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={!form.name || !form.employeeNo} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{viewMode === 'edit' ? '수정' : '추가'}</Button>

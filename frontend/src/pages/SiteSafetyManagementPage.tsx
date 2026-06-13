@@ -26,6 +26,7 @@ import NumberField from '../components/common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../components/common/FormTable'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 import DeptUserMultiSelectModal from '../components/common/DeptUserMultiSelectModal'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import { useMenuRule } from '../hooks/useMenuRule'
@@ -267,6 +268,28 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
     }
     setViewMode('edit')
   }
+
+  // DEV ONLY — 비어있는 항목을 현장안전 계획 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => isPartner
+    ? {
+        ...prev,
+        title: prev.title || '협력업체 정기 안전 점검',
+        notes: prev.notes || '월간 정기 안전 점검 실시 (테스트 데이터)',
+      }
+    : {
+        ...prev,
+        title: prev.title || '배관 유지보수 작업 안전 계획',
+        workType: prev.workType || '유지보수',
+        riskLevel: prev.riskLevel || 'MEDIUM',
+        workLocation: prev.workLocation || '공정동 2층 배관실',
+        workersCount: prev.workersCount || 4,
+        workDescription: prev.workDescription || '노후 배관 교체 및 밸브 점검 작업 (테스트 데이터)',
+        safetyMeasures: prev.safetyMeasures || '작업 전 가스 농도 측정, 화기작업 허가서 발급, 감시자 배치',
+        requiredPpe: prev.requiredPpe || '안전모·안전화·보호장갑·방독마스크',
+        hazardFactors: prev.hazardFactors || '가스 누출, 추락, 화재·폭발',
+        emergencyContact: prev.emergencyContact || '010-1234-5678',
+        notes: prev.notes || '작업 종료 후 현장 정리 및 누출 재점검 (테스트 데이터)',
+      })
 
   const handleSave = () => {
     if (isPartner) {
@@ -725,6 +748,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
             <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
           )}
 
+          {isCreating && <DevTestFillButton onFill={fillTestData} />}
           {!isReadonly && (
             <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
               저장
@@ -1095,6 +1119,7 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>목록</Button>
 
         {/* 작성/수정 모드 */}
+        {isCreating && <DevTestFillButton onFill={fillTestData} />}
         {!isReadonly && (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             저장

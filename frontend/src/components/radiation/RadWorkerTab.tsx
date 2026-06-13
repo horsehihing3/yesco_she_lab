@@ -17,6 +17,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const WORKER_TYPES = ['방사선작업종사자', '수시출입자']
@@ -47,6 +48,23 @@ const RadWorkerTab: React.FC = () => {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<RadWorker | null>(null)
   const [form, setForm] = useState<Partial<RadWorker>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 방사선작업종사자 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    employeeNo: prev.employeeNo || 'EMP-2024-017',
+    name: prev.name || '김방사',
+    dept: prev.dept || '비파괴검사팀',
+    job: prev.job || '방사선투과검사원',
+    workerType: prev.workerType || '방사선작업종사자',
+    status: prev.status || '정상',
+    nrscNo: prev.nrscNo || 'NRSC-2024-1234',
+    dosimeterType: prev.dosimeterType || 'TLD',
+    dosimeterNo: prev.dosimeterNo || 'TLD-0517',
+    registerDate: prev.registerDate || todayStr(),
+    lastEduDate: prev.lastEduDate || todayStr(),
+    nextEduDate: prev.nextEduDate || todayStr(),
+  }))
 
   const createMut = useMutation({
     mutationFn: radWorkerApi.create,
@@ -188,6 +206,7 @@ const RadWorkerTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.employeeNo || !form.name}>저장</Button>
         </DialogActions>

@@ -17,6 +17,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -59,6 +60,32 @@ const DpCvdTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterRisk, setFilterRisk] = useState('all')
   const [form, setForm] = useState<Partial<DpCvd>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 뇌심혈관 평가 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '오성훈',
+    department: prev.department || '교대근무 운전팀',
+    age: prev.age ?? 52,
+    gender: prev.gender || '남',
+    bmi: prev.bmi ?? 27.8,
+    bpSys: prev.bpSys ?? 148,
+    bpDia: prev.bpDia ?? 95,
+    fastingGlucose: prev.fastingGlucose ?? 118,
+    ldl: prev.ldl ?? 152,
+    hdl: prev.hdl ?? 38,
+    smoking: prev.smoking || '현재흡연',
+    drinking: prev.drinking || '주 3회 이상',
+    exercise: prev.exercise || '주 1회 미만',
+    nightShift: prev.nightShift || '주 3회 이상',
+    overtime: prev.overtime || '월 50시간 이상',
+    riskLevel: prev.riskLevel || '고위험',
+    assessmentDate: prev.assessmentDate || todayStr(),
+    assessor: prev.assessor || '산업보건의 박OO',
+    nextCheckup: prev.nextCheckup || todayStr(),
+    managementPlan: prev.managementPlan || '혈압·지질 약물치료 의뢰, 금연·절주 상담, 야간작업 빈도 조정 권고 (테스트 데이터)',
+    notes: prev.notes || '테스트 데이터',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -232,6 +259,7 @@ const DpCvdTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

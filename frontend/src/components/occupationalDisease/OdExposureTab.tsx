@@ -14,6 +14,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -54,6 +55,22 @@ const OdExposureTab: React.FC = () => {
   const [form, setForm] = useState<Partial<OdExposure>>(emptyForm)
 
   const handleBackToList = () => { setViewMode('list'); setSelected(null); setForm(emptyForm) }
+
+  // DEV ONLY — 비어있는 항목을 노출평가 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    factorClass: prev.factorClass || '화학적',
+    factorName: prev.factorName || '톨루엔',
+    dept: prev.dept || '도장팀',
+    processName: prev.processName || '도장 공정',
+    measuredValue: prev.measuredValue || '120 ppm',
+    twaStandard: prev.twaStandard || '100 ppm',
+    exposureRatio: prev.exposureRatio ?? 120,
+    measureDate: prev.measureDate || todayStr(),
+    workerCount: prev.workerCount ?? 8,
+    status: prev.status || 'danger',
+    action: prev.action || '국소배기장치 성능 개선 및 보호구 교체 (테스트 데이터)',
+  }))
 
   const createMut = useMutation({ mutationFn: (e: Partial<OdExposure>) => exposureApi.create(e),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['odExposures'] }); qc.invalidateQueries({ queryKey: ['odStats'] }); handleBackToList() } })
@@ -147,6 +164,7 @@ const OdExposureTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={!form.factorName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

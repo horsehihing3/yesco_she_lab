@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const CHANGE_TYPES = ['설비증설', '공정변경', '물질변경', '인원변경', '위치변경']
@@ -46,6 +47,21 @@ const PermitChangeTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('all')
   const [form, setForm] = useState<Partial<PermitChange>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 인허가 변경관리(MOC) 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    changeType: prev.changeType || '설비증설',
+    title: prev.title || '제2공장 대기방지시설 증설',
+    description: prev.description || '생산량 증대에 따른 대기방지시설 1기 증설 및 배출허가 변경 신청',
+    requestDate: prev.requestDate || todayStr(),
+    plannedDate: prev.plannedDate || todayStr(),
+    initiator: prev.initiator || '정유정',
+    impactAssessment: prev.impactAssessment || '영향있음',
+    status: prev.status || '검토중',
+    affectedPermits: prev.affectedPermits || '대기배출시설 설치허가(2024-대기-00123)',
+    notes: prev.notes || '안전영향평가 결과 반영 예정 (테스트 데이터)',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -192,6 +208,7 @@ const PermitChangeTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
         </Box>

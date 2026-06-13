@@ -10,6 +10,7 @@ import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import DatePickerField from '../common/DatePickerField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import { psmApi } from '../../api/psmApi'
+import DevTestFillButton from '../common/DevTestFillButton'
 import type { PsmMoc, MocStatus } from '../../types/psm.types'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -154,6 +155,20 @@ const PsmMocTab: React.FC = () => {
   const isEdit = viewMode === 'edit' || viewMode === 'create'
   const v = isEdit ? form : (detail || {})
   const setV = (patch: Partial<PsmMoc>) => setForm(f => ({ ...f, ...patch }))
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    title: prev.title || '반응공정 운전온도 상향 변경',
+    requesterName: prev.requesterName || '한요청',
+    requesterDept: prev.requesterDept || '공정기술팀',
+    requestDate: prev.requestDate || '2026-06-10',
+    targetDate: prev.targetDate || '2026-07-31',
+    reason: prev.reason || '생산성 향상을 위해 반응기 R-101 운전온도를 180도에서 200도로 상향 조정',
+    scope: prev.scope || '반응기 R-101 및 관련 온도 제어 설비, 운전 절차서',
+    riskMethod: prev.riskMethod || 'HAZOP',
+    riskResult: prev.riskResult || 'CONDITIONAL',
+    riskReviewDate: prev.riskReviewDate || '2026-06-12',
+    riskOpinion: prev.riskOpinion || '온도 상한 경보 설정값 조정 및 PSV 용량 재검토를 조건으로 승인',
+  }))
 
   return (
     <Box>
@@ -307,6 +322,7 @@ const PsmMocTab: React.FC = () => {
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEdit ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         ) : (

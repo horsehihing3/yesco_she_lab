@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const REPORT_TYPES = ['결과보고', '연간보고', '분기보고', '월간보고', '재해보고', '수시보고']
@@ -47,6 +48,21 @@ const PermitReportingTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [form, setForm] = useState<Partial<PermitReporting>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 인허가 보고 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    reportName: prev.reportName || '대기오염물질 자가측정 결과보고서',
+    reportType: prev.reportType || '결과보고',
+    frequency: prev.frequency || '연',
+    regulatoryBody: prev.regulatoryBody || '한강유역환경청',
+    legalBasis: prev.legalBasis || '대기환경보전법 제39조',
+    lastSubmission: prev.lastSubmission || todayStr(),
+    nextDeadline: prev.nextDeadline || todayStr(),
+    assignee: prev.assignee || '정유정',
+    status: prev.status || '준비중',
+    notes: prev.notes || '정기 제출 건 (테스트 데이터)',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -181,6 +197,7 @@ const PermitReportingTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
         </Box>

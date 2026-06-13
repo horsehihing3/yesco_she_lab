@@ -24,6 +24,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr, formatDateTime } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const PURPOSES = ['설비 점검·수리', '공사·시공', '납품·배송', '회의·협의', '감사·점검', '기타']
@@ -117,6 +118,23 @@ const PartnerVisitorTab: React.FC = () => {
   // ====== Handlers ======
   const handleRowClick = (v: PartnerVisitor) => { setSelectedId(v.id); setMode('view') }
   const handleNewClick = () => { setForm({ ...emptyForm, visitDt: todayStr() }); setMode('create') }
+
+  // DEV ONLY — 비어있는 항목을 방문자 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    visitorName: prev.visitorName || '김방문',
+    companyName: prev.companyName || '대한설비(주)',
+    position: prev.position || '대리',
+    contact: prev.contact || '010-1234-5678',
+    purpose: prev.purpose || '설비 점검·수리',
+    area: prev.area || '생산동 1F',
+    checkInTime: prev.checkInTime || '09:30',
+    checkOutTime: prev.checkOutTime || '11:00',
+    education: prev.education || '완료',
+    ppe: prev.ppe || '안전모·안전화·조끼',
+    status: prev.status || '입장중',
+    note: prev.note || '정기 설비 점검 방문 (테스트 데이터)',
+  }))
   const handleEditClick = () => { if (selected) { setForm({ ...selected }); setMode('edit') } }
   const handleBackToList = () => { setSelectedId(null); setMode('list') }
   const handleCancelEdit = () => { setMode('view') }
@@ -273,6 +291,7 @@ const PartnerVisitorTab: React.FC = () => {
 
         {!isReadonly && (
           <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
+            {mode === 'create' && <DevTestFillButton onFill={fillTestData} />}
             <Button variant="contained" onClick={handleSubmit} disabled={!form.visitorName}>저장</Button>
           </Stack>
         )}

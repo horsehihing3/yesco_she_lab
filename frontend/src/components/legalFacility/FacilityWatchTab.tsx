@@ -17,6 +17,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -80,6 +81,21 @@ const FacilityWatchTab: React.FC = () => {
   const openCreate = () => { setEditing(null); setForm({ ...emptyWatchForm, lastCheckDate: todayStr(), nextCheckDate: todayStr() }); setOpen(true) }
   const openEdit = (w: FacilityWatch) => { setEditing(w); setForm(w); setOpen(true) }
   const submit = () => { if (editing) updateWatchMut.mutate({ id: editing.id, e: form }); else createWatchMut.mutate(form) }
+  // DEV ONLY — 비어있는 항목을 관심시설 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    name: prev.name || '제1공장 염산 저장탱크',
+    facilityType: prev.facilityType || '화학물질 저장·취급',
+    riskGrade: prev.riskGrade || 'A',
+    location: prev.location || '화학창고 B-2구역',
+    cycle: prev.cycle || '주 1회',
+    riskPct: prev.riskPct ?? 75,
+    lastCheckDate: prev.lastCheckDate || todayStr(),
+    nextCheckDate: prev.nextCheckDate || todayStr(),
+    anomaly: prev.anomaly || '저장탱크 하부 연결배관 미세 누유 흔적 확인',
+    action: prev.action || '누유 부위 가스킷 교체 및 방류턱 점검 (테스트 데이터)',
+    reason: prev.reason || '유해화학물질 다량 취급 설비로 중점 모니터링 대상 지정',
+  }))
   const onOwnerPicked = (users: UserInfo[]) => {
     if (users[0]) {
       const u = users[0]
@@ -259,6 +275,7 @@ const FacilityWatchTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.name || !form.riskGrade}>저장</Button>
         </DialogActions>

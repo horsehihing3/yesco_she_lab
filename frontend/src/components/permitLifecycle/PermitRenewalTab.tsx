@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const STAGES = ['검토', '서류준비', '신청완료', '심사중', '승인', '완료']
@@ -46,6 +47,21 @@ const PermitRenewalTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterStage, setFilterStage] = useState('all')
   const [form, setForm] = useState<Partial<PermitRenewal>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 인허가 갱신 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    permitName: prev.permitName || '대기배출시설 설치허가 갱신',
+    category: prev.category || '환경',
+    stage: prev.stage || '서류준비',
+    currentExpiry: prev.currentExpiry || todayStr(),
+    targetDate: prev.targetDate || todayStr(),
+    startDate: prev.startDate || todayStr(),
+    assignee: prev.assignee || '정유정',
+    nextAction: prev.nextAction || '갱신 신청서 및 첨부서류 제출',
+    dueDate: prev.dueDate || todayStr(),
+    notes: prev.notes || '만료 전 갱신 진행 건 (테스트 데이터)',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -193,6 +209,7 @@ const PermitRenewalTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
         </Box>

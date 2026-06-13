@@ -17,6 +17,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -57,6 +58,26 @@ const DpMsdTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterRisk, setFilterRisk] = useState('all')
   const [form, setForm] = useState<Partial<DpMsd>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 근골격계 평가 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '정민재',
+    department: prev.department || '포장2팀',
+    jobTitle: prev.jobTitle || '포장 작업자',
+    taskName: prev.taskName || '완제품 박스 적재',
+    taskCategory: prev.taskCategory || '중량물 들기',
+    rebaScore: prev.rebaScore ?? 9,
+    owasScore: prev.owasScore ?? 3,
+    riskLevel: prev.riskLevel || '높음',
+    status: prev.status || '요개선',
+    affectedBodyParts: prev.affectedBodyParts || '허리,어깨,손목',
+    symptoms: prev.symptoms || '통증,뻐근함,저림',
+    assessmentDate: prev.assessmentDate || todayStr(),
+    assessor: prev.assessor || '산업보건의 김OO',
+    actionTaken: prev.actionTaken || '리프트 보조기구 도입, 작업대 높이 조정, 스트레칭 교육 (테스트 데이터)',
+    notes: prev.notes || '테스트 데이터',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -194,6 +215,7 @@ const DpMsdTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

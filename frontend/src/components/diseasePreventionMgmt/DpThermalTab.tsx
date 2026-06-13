@@ -17,6 +17,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -58,6 +59,24 @@ const DpThermalTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('all')
   const [form, setForm] = useState<Partial<DpThermal>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 온열·한랭 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    thermalType: prev.thermalType || '온열',
+    occurDate: prev.occurDate || todayStr(),
+    location: prev.location || '옥외 배관작업장 A동',
+    workerName: prev.workerName || '김현수',
+    department: prev.department || '설비운영팀',
+    weatherCondition: prev.weatherCondition || '폭염주의보 (33℃)',
+    perceivedTemp: prev.perceivedTemp ?? 35.4,
+    symptoms: prev.symptoms || '어지러움, 다량 발한, 근육경련',
+    severity: prev.severity || '중등도',
+    treatment: prev.treatment || '서늘한 곳 이동, 수분·전해질 보충, 휴식',
+    outcome: prev.outcome || '당일 회복, 익일 정상 출근',
+    preventionAction: prev.preventionAction || '폭염 시간대(14~17시) 옥외작업 중지, 그늘막·음수대 설치 (테스트 데이터)',
+    notes: prev.notes || '테스트 데이터',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -180,6 +199,7 @@ const DpThermalTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

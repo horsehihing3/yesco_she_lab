@@ -18,6 +18,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { todayStr, daysFromTodayStr } from '../../utils/dateDefaults'
 import { useAlert } from '../../contexts/AlertContext'
 
@@ -80,6 +81,26 @@ const FireComplianceTab: React.FC = () => {
     mutationFn: fireReportApi.remove,
     onSuccess: () => qc.invalidateQueries({ queryKey: ['fireReports'] }),
   })
+
+  // DEV ONLY — 비어있는 항목을 법령 준수 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillComp = () => setCForm(prev => ({
+    ...prev,
+    title: prev.title || '소방시설 자체점검 이행',
+    lawBasis: prev.lawBasis || '화재예방법 §22, 소방시설법 §22',
+    rate: prev.rate ?? 92,
+    items: prev.items || '작동기능점검 연1회|2026-04 완료|1;종합정밀점검 연1회|2026-10 예정|0;소방안전관리자 선임|선임 완료|1',
+  }))
+  const fillReport = () => setRForm(prev => ({
+    ...prev,
+    reportType: prev.reportType || '소방시설 자체점검 결과 보고',
+    lawBasis: prev.lawBasis || '소방시설법 §23',
+    deadlineText: prev.deadlineText || '점검 종료일로부터 15일 이내',
+    targetOrg: prev.targetOrg || '관할 소방서',
+    lastSubmit: prev.lastSubmit || todayStr(),
+    nextSubmit: prev.nextSubmit || daysFromTodayStr(365),
+    status: prev.status || '계획',
+    note: prev.note || '연간 정기 제출 건 (테스트 데이터)',
+  }))
 
   const overallRate = useMemo(() => {
     if (comps.length === 0) return 0
@@ -233,6 +254,7 @@ const FireComplianceTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!cEditing && <DevTestFillButton onFill={fillComp} />}
           <Button variant="outlined" onClick={() => setCOpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => cEditing ? cUpdate.mutate({ id: cEditing.id, e: cForm }) : cCreate.mutate(cForm)} disabled={!cForm.title}>저장</Button>
         </DialogActions>
@@ -275,6 +297,7 @@ const FireComplianceTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!rEditing && <DevTestFillButton onFill={fillReport} />}
           <Button variant="outlined" onClick={() => setROpen(false)}>취소</Button>
           <Button variant="contained" onClick={() => rEditing ? rUpdate.mutate({ id: rEditing.id, e: rForm }) : rCreate.mutate(rForm)} disabled={!rForm.reportType}>저장</Button>
         </DialogActions>

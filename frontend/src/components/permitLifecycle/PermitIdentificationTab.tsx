@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const STATUSES = ['식별완료', '검토중', '미식별', '미대상']
@@ -41,6 +42,20 @@ const PermitIdentificationTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [form, setForm] = useState<Partial<PermitIdentification>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 인허가 식별 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    equipmentName: prev.equipmentName || '제1공장 보일러 #2',
+    equipmentType: prev.equipmentType || '대기배출시설',
+    location: prev.location || '경기도 안산시 단원구',
+    installDate: prev.installDate || todayStr(),
+    applicableCategories: prev.applicableCategories || '환경,화학',
+    applicablePermits: prev.applicablePermits || '대기배출시설 설치허가,유해화학물질 취급시설',
+    status: prev.status || '검토중',
+    assessmentDate: prev.assessmentDate || todayStr(),
+    notes: prev.notes || '인허가 대상 여부 검토 중 (테스트 데이터)',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -192,6 +207,7 @@ const PermitIdentificationTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
         </Box>

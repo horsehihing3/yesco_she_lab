@@ -24,6 +24,7 @@ import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { useAlert } from '../../contexts/AlertContext'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 const INSPECT_TYPES = ['안전검사', '정기검사', '완성검사', '설치검사', '자체검사', '종합점검']
 const RESULTS = ['합격', '조건부합격', '불합격', '예정']
@@ -64,6 +65,23 @@ const FacilityInspectionTab: React.FC = () => {
   const openCreate = () => { setEditing(null); setForm({ ...emptyForm, applyDate: todayStr(), inspectDate: todayStr(), validUntil: todayStr() }); setOpen(true) }
   const openEdit = (e: FacilityInspection) => { setEditing(e); setForm(e); setOpen(true) }
   const submit = () => { if (editing) updateMut.mutate({ id: editing.id, e: form }); else createMut.mutate(form) }
+
+  // DEV ONLY — 비어있는 항목을 시설검사 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    equipmentName: prev.equipmentName || '제2공장 공기압축기',
+    category: prev.category || '압력용기',
+    inspectType: prev.inspectType || '정기검사',
+    inspectOrg: prev.inspectOrg || '한국산업안전보건공단',
+    inspectNo: prev.inspectNo || 'INS-2025-0421',
+    applyDate: prev.applyDate || todayStr(),
+    inspectDate: prev.inspectDate || todayStr(),
+    result: prev.result || '합격',
+    validUntil: prev.validUntil || todayStr(),
+    cost: prev.cost ?? 350000,
+    note: prev.note || '안전밸브 및 압력계 정상, 외관 부식 없음 (테스트 데이터)',
+    fix: prev.fix || '없음',
+  }))
 
   return (
     <Box>
@@ -186,6 +204,7 @@ const FacilityInspectionTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={createMut.isPending || updateMut.isPending}>저장</Button>
         </DialogActions>

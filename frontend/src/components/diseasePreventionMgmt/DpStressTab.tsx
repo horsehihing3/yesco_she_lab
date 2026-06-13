@@ -17,6 +17,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -59,6 +60,27 @@ const DpStressTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterRisk, setFilterRisk] = useState('all')
   const [form, setForm] = useState<Partial<DpStress>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 직무스트레스(KOSS-26) 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '이수민',
+    department: prev.department || '생산관리팀',
+    physicalEnv: prev.physicalEnv ?? 12,
+    jobDemand: prev.jobDemand ?? 18,
+    autonomy: prev.autonomy ?? 14,
+    relationship: prev.relationship ?? 10,
+    jobInsecurity: prev.jobInsecurity ?? 16,
+    systemFairness: prev.systemFairness ?? 15,
+    reward: prev.reward ?? 13,
+    workCulture: prev.workCulture ?? 11,
+    totalScore: prev.totalScore ?? 68,
+    riskLevel: prev.riskLevel || '고위험',
+    assessmentDate: prev.assessmentDate || todayStr(),
+    hasCounseling: prev.hasCounseling ?? true,
+    counselingNotes: prev.counselingNotes || '직무요구·고용불안 영역 고위험, 사내 상담 2회 연계',
+    notes: prev.notes || '테스트 데이터',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -194,6 +216,7 @@ const DpStressTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

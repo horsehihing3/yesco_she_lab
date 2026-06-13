@@ -16,6 +16,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const DOC_TYPES = ['허가증', '신고증', '검사결과서', '측정결과서', '보고서', '취급일지', '교육일지', '기타']
@@ -60,6 +61,19 @@ const PermitDocumentTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('all')
   const [form, setForm] = useState<Partial<PermitDocument>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 인허가 문서 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    docName: prev.docName || '대기배출시설 설치허가증',
+    docType: prev.docType || '허가증',
+    category: prev.category || '환경',
+    relatedPermit: prev.relatedPermit || '2024-대기-00123',
+    issueDate: prev.issueDate || todayStr(),
+    retentionYears: prev.retentionYears ?? 5,
+    fileLocation: prev.fileLocation || '/문서함/환경/대기/2024-대기-00123.pdf',
+    notes: prev.notes || '원본 보관, 사본 부서 비치 (테스트 데이터)',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -201,6 +215,7 @@ const PermitDocumentTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
         </Box>

@@ -16,6 +16,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
@@ -61,6 +62,20 @@ const DpInfectTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('all')
   const [form, setForm] = useState<Partial<DpInfect>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 감염병 관리 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    workerName: prev.workerName || '강서연',
+    department: prev.department || '총무팀',
+    programType: prev.programType || '예방접종',
+    status: prev.status || '완료',
+    diseaseType: prev.diseaseType || '인플루엔자 (4가)',
+    implDate: prev.implDate || todayStr(),
+    nextDueDate: prev.nextDueDate || todayStr(),
+    result: prev.result || '접종 완료, 이상반응 없음',
+    notes: prev.notes || '테스트 데이터',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -166,6 +181,7 @@ const DpInfectTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(selected ?? {})) && (
             <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>

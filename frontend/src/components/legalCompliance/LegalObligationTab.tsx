@@ -39,6 +39,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const OBL_TYPES = ['정기교육', '정기검사·측정', '정기보고·제출', '자체점검', '심사·평가']
@@ -151,6 +152,23 @@ const LegalObligationTab: React.FC = () => {
     if (editing) updateMut.mutate({ id: editing.id, req: form })
     else createMut.mutate(form)
   }
+
+  // DEV ONLY — 비어있는 항목을 법적의무 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    obligationType: prev.obligationType || '정기교육',
+    category: prev.category || '안전',
+    obligationName: prev.obligationName || '근로자 정기 안전보건교육',
+    baseLaw: prev.baseLaw || '산업안전보건법 제29조',
+    cycle: prev.cycle || '분기 1회',
+    dept: prev.dept || '안전환경팀',
+    nextDueDate: prev.nextDueDate || todayStr(),
+    status: prev.status || 'doing',
+    progress: prev.progress ?? 60,
+    evidence: prev.evidence || '교육일지 및 참석자 명단',
+    penalty: prev.penalty || '500만원 이하 과태료',
+    icon: prev.icon || '🎓',
+  }))
 
   return (
     <Box>
@@ -338,6 +356,7 @@ const LegalObligationTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.obligationName || createMut.isPending || updateMut.isPending}>
             저장

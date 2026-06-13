@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const FREQS = ['일', '주', '월', '분기', '반기', '연']
@@ -54,6 +55,21 @@ const PermitInspectionTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterFreq, setFilterFreq] = useState('all')
   const [form, setForm] = useState<Partial<PermitInspection>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 인허가 점검 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    inspectionName: prev.inspectionName || '대기방지시설 정기점검',
+    inspectionType: prev.inspectionType || '법정',
+    frequency: prev.frequency || '분기',
+    targetFacility: prev.targetFacility || '제1공장 보일러동',
+    legalBasis: prev.legalBasis || '대기환경보전법 제31조',
+    lastDate: prev.lastDate || todayStr(),
+    nextDate: prev.nextDate || todayStr(),
+    assignee: prev.assignee || '정유정',
+    lastResult: prev.lastResult || '적합',
+    notes: prev.notes || '정기 점검 항목 (테스트 데이터)',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -197,6 +213,7 @@ const PermitInspectionTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
         </Box>

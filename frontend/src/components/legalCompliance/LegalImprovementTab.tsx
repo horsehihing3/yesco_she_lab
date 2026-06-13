@@ -16,6 +16,7 @@ import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const IMP_TYPES = ['법규준수', '인허가', '의무이행', '자체발굴']
@@ -120,6 +121,21 @@ const LegalImprovementTab: React.FC = () => {
     if (editing) updateMut.mutate({ id: editing.id, req: form })
     else createMut.mutate(form)
   }
+
+  // DEV ONLY — 비어있는 항목을 개선조치 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    improvementType: prev.improvementType || '법규준수',
+    priority: prev.priority || 'high',
+    title: prev.title || '국소배기장치 제어풍속 기준 미달 개선',
+    baseLaw: prev.baseLaw || '산업안전보건기준에 관한 규칙 제429조',
+    description: prev.description || '제어풍속이 법정 기준 미달로 측정되어 배기팬 용량 증설 및 후드 개조 필요 (테스트 데이터)',
+    dept: prev.dept || '안전환경팀',
+    targetDate: prev.targetDate || todayStr(),
+    source: prev.source || '현장점검',
+    colStatus: prev.colStatus || 'register',
+    registeredDate: prev.registeredDate || todayStr(),
+  }))
 
   return (
     <Box>
@@ -266,6 +282,7 @@ const LegalImprovementTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.title || createMut.isPending || updateMut.isPending}>
             저장

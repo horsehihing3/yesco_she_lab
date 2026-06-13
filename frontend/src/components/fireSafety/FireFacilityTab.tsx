@@ -18,6 +18,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const CATEGORIES = ['소화설비', '경보설비', '피난설비', '소화활동설비', '소화용수설비']
@@ -78,6 +79,29 @@ const FireFacilityTab: React.FC = () => {
     if (editing) updateMut.mutate({ id: editing.id, e: form })
     else createMut.mutate(form)
   }
+
+  // DEV ONLY — 비어있는 항목을 소방시설 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    mgmtNo: prev.mgmtNo || 'FF-2026-021',
+    category: prev.category || '소화설비',
+    name: prev.name || '옥내소화전',
+    spec: prev.spec || '65mm 방수구 / 1.7MPa',
+    qty: prev.qty || '12개소',
+    location: prev.location || '본관 1~5층 계단실',
+    installDate: prev.installDate || todayStr(),
+    maker: prev.maker || '한국소방산업',
+    makerNo: prev.makerNo || 'KFI-2024-3380',
+    installer: prev.installer || '대한소방시설(주)',
+    lawBasis: prev.lawBasis || '소방시설법 §12',
+    checkCycle: prev.checkCycle || '연1회',
+    mgrName: prev.mgrName || '김소방',
+    lastCheck: prev.lastCheck || todayStr(),
+    nextCheck: prev.nextCheck || todayStr(),
+    status: prev.status || '정상',
+    acquirePrice: prev.acquirePrice ?? 3500000,
+    note: prev.note || '정기 점검 결과 이상 없음 (테스트 데이터)',
+  }))
 
   return (
     <Box>
@@ -227,6 +251,7 @@ const FireFacilityTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.mgmtNo || !form.name}>저장</Button>
         </DialogActions>

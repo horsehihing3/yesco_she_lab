@@ -19,6 +19,7 @@ import type { OdPlan } from '../../types/occupationalDisease.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
@@ -84,6 +85,20 @@ const OdPlanTab: React.FC = () => {
     if (users[0]) setForm(f => ({ ...f, mgr: users[0].name }))
     setPickerOpen(false)
   }
+
+  // DEV ONLY — 비어있는 항목을 검진계획 더미데이터로 채움 (입력값은 보존, 담당자(mgr)는 조직도 선택이라 제외)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    half: prev.half || '상반기',
+    method: prev.method || '내원검진',
+    orgName: prev.orgName || '한국산업보건협회',
+    startDate: prev.startDate || todayStr(),
+    endDate: prev.endDate || weekFromTodayStr(),
+    targetCount: prev.targetCount ?? 45,
+    hazardFactors: prev.hazardFactors || '소음, 분진',
+    status: prev.status || '계획',
+    note: prev.note || '상반기 정기 특수건강진단 (테스트 데이터)',
+  }))
 
   const createMut = useMutation({ mutationFn: (e: Partial<OdPlan>) => planApi.create(e),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['odPlans'] }); qc.invalidateQueries({ queryKey: ['odStats'] }) } })
@@ -345,6 +360,7 @@ const OdPlanTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={closeDialog}>취소</Button>
           {canSee(MENU, 'DETAIL', '저장', getRoles(editing ?? {})) && (
             <Button variant="contained" onClick={submit} disabled={!form.orgName || !form.half}>저장</Button>

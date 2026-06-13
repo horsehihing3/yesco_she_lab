@@ -18,6 +18,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const EXAM_TYPES = ['배치전', '정기(6개월)', '정기(1년)', '수시']
@@ -47,6 +48,23 @@ const RadHealthTab: React.FC = () => {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<RadHealth | null>(null)
   const [form, setForm] = useState<Partial<RadHealth>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 특수건강진단 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    employeeNo: prev.employeeNo || 'EMP-2024-017',
+    workerName: prev.workerName || '김방사',
+    dept: prev.dept || '비파괴검사팀',
+    examType: prev.examType || '정기(1년)',
+    examDate: prev.examDate || todayStr(),
+    nextExamDate: prev.nextExamDate || todayStr(),
+    examOrg: prev.examOrg || '한국원자력의학원',
+    judgment: prev.judgment || 'A',
+    cbcWbc: prev.cbcWbc || 'WBC 5.8',
+    lensCheck: prev.lensCheck || '정상',
+    cumulativeDose: prev.cumulativeDose ?? 4.27,
+    afterAction: prev.afterAction || '특이소견 없음 · 차기 정기검진 예정',
+  }))
 
   const createMut = useMutation({
     mutationFn: radHealthApi.create,
@@ -189,6 +207,7 @@ const RadHealthTab: React.FC = () => {
           </FormTable>
         </DialogContent>
         <DialogActions>
+          {!editing && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setOpen(false)}>취소</Button>
           <Button variant="contained" onClick={submit} disabled={!form.workerName}>저장</Button>
         </DialogActions>

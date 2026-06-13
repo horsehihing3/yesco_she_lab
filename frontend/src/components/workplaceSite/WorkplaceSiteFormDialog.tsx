@@ -11,6 +11,7 @@ import type { WorkplaceSite, WorkplaceSiteRequest } from '../../types/workplaceS
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import DatePickerField from '../common/DatePickerField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const SITE_TYPES = ['제조', '영업', '물류', '연구', '본사']
@@ -86,6 +87,21 @@ const WorkplaceSiteFormDialog: React.FC<Props> = ({ open, editing, onClose }) =>
     },
     onError: () => showError(t('workplaceSiteFormDialog.msg3', '수정 실패')),
   })
+
+  // DEV ONLY — 비어있는 항목을 사업장 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    siteName: prev.siteName || '서울 도시가스 공급소',
+    siteCode: prev.siteCode || 'STE-001',
+    siteType: prev.siteType || '제조',
+    industry: prev.industry || '도시가스 생산',
+    address: prev.address || '서울특별시 강서구 양천로 100',
+    businessRegNo: prev.businessRegNo || '123-45-67890',
+    representativeContact: prev.representativeContact || '02-1234-5678',
+    riskGrade: prev.riskGrade || 'B',
+    operationStatus: prev.operationStatus || 'ACTIVE',
+    notes: prev.notes || '도시가스 공급 사업장 (테스트 데이터)',
+  }))
 
   const handleSave = () => {
     if (!form.siteName?.trim()) {
@@ -228,6 +244,7 @@ const WorkplaceSiteFormDialog: React.FC<Props> = ({ open, editing, onClose }) =>
         </FormTable>
       </DialogContent>
       <DialogActions>
+        {!editing && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={onClose}>취소</Button>
         <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending}>
           저장

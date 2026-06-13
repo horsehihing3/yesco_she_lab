@@ -15,6 +15,7 @@ import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 
 const CATEGORIES = ['환경', '안전', '보건', '소방', '화학', '건축']
@@ -55,6 +56,24 @@ const PermitRegistryTab: React.FC = () => {
   const [search, setSearch] = useState('')
   const [filterCat, setFilterCat] = useState('all')
   const [form, setForm] = useState<Partial<PermitRegistry>>(emptyForm)
+
+  // DEV ONLY — 비어있는 항목을 인허가 등록대장 도메인 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    category: prev.category || '환경',
+    permitType: prev.permitType || '설치허가',
+    name: prev.name || '대기배출시설 설치허가',
+    law: prev.law || '대기환경보전법 제23조',
+    agency: prev.agency || '한강유역환경청',
+    permitNumber: prev.permitNumber || '2024-대기-00123',
+    cycle: prev.cycle || '5년',
+    issuedDate: prev.issuedDate || todayStr(),
+    expiryDate: prev.expiryDate || todayStr(),
+    facility: prev.facility || '제1공장 보일러동',
+    location: prev.location || '경기도 안산시 단원구',
+    manager: prev.manager || '정유정',
+    notes: prev.notes || '정기 갱신 대상 인허가 (테스트 데이터)',
+  }))
 
   const applySearch = () => setSearch(searchInput)
   const handleResetSearch = () => { setSearchInput(''); setSearch('') }
@@ -217,6 +236,7 @@ const PermitRegistryTab: React.FC = () => {
           </FormRow>
         </FormTable>
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>취소</Button>
           <Button variant="contained" onClick={handleSave} disabled={createM.isPending || updateM.isPending} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>저장</Button>
         </Box>
