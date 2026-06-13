@@ -34,6 +34,7 @@ import axiosInstance from '../../api/axiosInstance'
 import { EhsManager, EhsManagerRequest } from '../../types/ehsManager.types'
 import { ApiResponse } from '../../types/common.types'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 
 const categories = ['EHS', '근로자위원', 'CA']
@@ -79,7 +80,7 @@ const EhsManagerTab: React.FC = () => {
   const canEdit = canSee(MENU, 'DETAIL', '수정', getRoles(selectedManager ?? {}))
   const canDel  = canSee(MENU, 'DETAIL', '삭제', getRoles(selectedManager ?? {}))
 
-  const { control, handleSubmit, reset, setValue } = useForm<EhsManagerRequest>({
+  const { control, handleSubmit, reset, setValue, getValues } = useForm<EhsManagerRequest>({
     defaultValues: {
       roleCategory: '',
       roleDetail: '',
@@ -191,6 +192,21 @@ const EhsManagerTab: React.FC = () => {
       setValue('userCompany', u.company || '')
     }
     setUserPickerOpen(false)
+  }
+
+  // DEV ONLY — 비어있는 항목을 EHS 직책자 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    if (!v.roleCategory) setValue('roleCategory', 'EHS')
+    if (!v.roleDetail) setValue('roleDetail', '안전보건관리책임자')
+    if (!v.userName) setValue('userName', '정유정')
+    if (!v.userMail) setValue('userMail', 'yujeong.jung@com4in.com')
+    if (!v.userCompany) setValue('userCompany', '예스코')
+    if (!v.rolePlace) setValue('rolePlace', '본사')
+    if (!v.userDept) setValue('userDept', '글로벌경영관리팀')
+    if (!v.roleCaHd) setValue('roleCaHd', '안전보건본부')
+    if (!v.roleCaField) setValue('roleCaField', 'EHS부문')
+    if (!v.roleCaTeam) setValue('roleCaTeam', 'EHS팀')
   }
 
   const onSubmit = (data: EhsManagerRequest) => {
@@ -751,6 +767,7 @@ const EhsManagerTab: React.FC = () => {
                 {canEdit && <Button variant="contained" onClick={() => handleEditClick(selectedManager)} sx={{ flex: { xs: 1, sm: 'none' } }}>수정</Button>}
               </>
             )}
+            {dialogMode === 'add' && <DevTestFillButton onFill={fillTestData} />}
             {dialogMode !== 'view' && (
               <Button
                 type="submit"
