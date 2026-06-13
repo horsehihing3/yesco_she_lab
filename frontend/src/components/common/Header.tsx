@@ -38,7 +38,7 @@ const DEV_ACCOUNTS = [
 
 const Header: React.FC = () => {
   const { t } = useTranslation()
-  const { user, login, logout } = useAuth()
+  const { user, impersonate, logout } = useAuth()
   const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [switchingTo, setSwitchingTo] = useState<string | null>(null)
@@ -73,10 +73,11 @@ const Header: React.FC = () => {
     setSwitchingTo(id)
     setLoginError(null)
     try {
-      await login({ username: id, password: 'com4in!!' })
+      // 비밀번호 없이 계정 전환 — 서버가 현재 사용자(SYSTEM_ADMIN) 권한을 검증해 대상 토큰 발급.
+      await impersonate(id)
       queryClient.clear()  // 이전 사용자 캐시 전체 삭제
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : '로그인 실패'
+      const msg = err instanceof Error ? err.message : '전환 실패'
       setLoginError(`${id}: ${msg}`)
     } finally {
       setSwitchingTo(null)

@@ -1,5 +1,6 @@
 package com.smartehs.controller;
 
+import com.smartehs.dto.request.ImpersonateRequest;
 import com.smartehs.dto.request.LoginRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.AuthResponse;
@@ -28,6 +29,18 @@ public class AuthController {
     public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(ApiResponse.success("Login successful", response));
+    }
+
+    @PostMapping("/impersonate")
+    @Operation(summary = "Impersonate user (account switch)",
+            description = "슈퍼관리자(SYSTEM_ADMIN)가 비밀번호 없이 대상 계정의 토큰을 발급받아 전환한다. 호출자 권한은 서버에서 검증한다.")
+    public ResponseEntity<ApiResponse<AuthResponse>> impersonate(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @Valid @RequestBody ImpersonateRequest request) {
+        String token = (authHeader != null && authHeader.startsWith("Bearer "))
+                ? authHeader.substring(7) : null;
+        AuthResponse response = authService.impersonate(token, request.getUsername());
+        return ResponseEntity.ok(ApiResponse.success("Account switched", response));
     }
 
     @PostMapping("/refresh")

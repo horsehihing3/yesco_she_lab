@@ -39,27 +39,40 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(String username) {
+        return generateToken(username, null);
+    }
+
+    /** 계정 전환(impersonation)용: imp 클레임에 원래 슈퍼관리자 username 을 심는다(없으면 일반 토큰). */
+    public String generateToken(String username, String impersonator) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .subject(username)
                 .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(key)
-                .compact();
+                .expiration(expiryDate);
+        if (impersonator != null && !impersonator.isBlank()) {
+            builder.claim("imp", impersonator);
+        }
+        return builder.signWith(key).compact();
     }
 
     public String generateRefreshToken(String username) {
+        return generateRefreshToken(username, null);
+    }
+
+    public String generateRefreshToken(String username, String impersonator) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + refreshExpiration);
 
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .subject(username)
                 .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(key)
-                .compact();
+                .expiration(expiryDate);
+        if (impersonator != null && !impersonator.isBlank()) {
+            builder.claim("imp", impersonator);
+        }
+        return builder.signWith(key).compact();
     }
 
     public String getUsernameFromToken(String token) {
@@ -70,6 +83,17 @@ public class JwtTokenProvider {
                 .getPayload();
 
         return claims.getSubject();
+    }
+
+    /** 계정 전환 토큰의 원래 슈퍼관리자(impersonator) username. 일반 토큰이면 null. */
+    public String getImpersonatorFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        Object imp = claims.get("imp");
+        return imp != null ? imp.toString() : null;
     }
 
     public boolean validateToken(String token) {

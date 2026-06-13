@@ -4,6 +4,7 @@ import { authApi } from '../api/authApi'
 
 interface AuthContextType extends AuthState {
   login: (data: LoginRequest) => Promise<void>
+  impersonate: (username: string) => Promise<void>
   signup: (data: SignupRequest) => Promise<void>
   logout: () => void
 }
@@ -48,6 +49,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAuthData(response)
   }, [setAuthData])
 
+  // 슈퍼관리자 계정 전환 — 비밀번호 없이 대상 계정 토큰으로 교체(서버가 SYSTEM_ADMIN 검증).
+  const impersonate = useCallback(async (username: string) => {
+    const response = await authApi.impersonate(username)
+    setAuthData(response)
+  }, [setAuthData])
+
   const signup = useCallback(async (data: SignupRequest) => {
     await authApi.signup(data)
   }, [])
@@ -80,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [clearAuthData])
 
   return (
-    <AuthContext.Provider value={{ ...state, login, signup, logout }}>
+    <AuthContext.Provider value={{ ...state, login, impersonate, signup, logout }}>
       {children}
     </AuthContext.Provider>
   )
