@@ -31,3 +31,30 @@
 
 > 완료 시 변경 파일 목록 + tsc/grep 검증 결과를 `SONNET-TO-OPUS.md` 에 `[완료]` 로 기록.
 > PROJECT_CONTEXT 갱신은 하지 마라 — Opus가 반영한다.
+
+---
+
+## [지시] 2026-06-13 · 작업 3 (프론트 작업 1·2 완료 후) — raw→DTO 전환: Dp·Od 도메인 배치
+> ⚠️ 이 작업만 예외적으로 **backend** 를 만진다(도메인 분할 병렬 합의). 아래 지정 파일만 건드리고 그 외 backend·PROJECT_CONTEXT·메모리는 금지. Opus는 Contractor·AccidentClaim·Rad·EmergencyContact 담당이라 겹치지 않는다.
+
+**배경**: 컨트롤러 반환 표준 = Response DTO (CLAUDE.md 절대규칙). raw 엔티티 반환을 DTO로 전환하되 **wire(JSON .data) 100% 동일** 유지가 유일 합격기준. Opus가 레퍼런스 2종을 끝내고 검증했다:
+- PersonRef 있는 도메인 템플릿: `dto/response/DpMsdResponse.java` + `DiseasePreventionMgmtController` 의 msd 3개 메서드
+- PersonRef 없는 단순 템플릿: `dto/response/AccidentReportResponse.java`
+
+**네가 맡을 파일 (이것만)**:
+- `controller/DiseasePreventionMgmtController.java` — cvd/stress/respi/hearing/thermal/infect 6개 도메인 (msd는 이미 완료, 따라하면 됨)
+- `controller/OccupationalDiseaseController.java` — Od* 6개 (OdPlan/OdWorker/OdOrg/OdExposure/OdAftercare = PersonRef有, OdFitness = PersonRef無)
+- 신규 DTO 12종: `dto/response/{DpCvd,DpStress,DpRespi,DpHearing,DpThermal,DpInfect}Response.java`, `{OdPlan,OdWorker,OdOrg,OdExposure,OdAftercare,OdFitness}Response.java`
+
+**방법 (도메인 1개당)**:
+1. 모델(`model/Xxx.java`) 필드 확인. `@JsonIgnore PersonRef createdBy` + `@JsonProperty` 브릿지 getter 있으면 → `DpMsdResponse.java` 복사 후 필드 교체. 없으면 → `AccidentReportResponse.java` 스타일.
+   - **DTO JSON 키 = 모델이 실제 직렬화하는 키와 정확히 일치**해야 함(@JsonIgnore 필드는 DTO에서 제외, @JsonProperty flat 필드는 포함). 주석에 `*/` 같은 시퀀스 넣지 말 것(Javadoc 조기종료 버그).
+2. 컨트롤러: 반환 타입 `<Xxx>` → `<XxxResponse>`, list는 `.stream().map(XxxResponse::from).collect(Collectors.toList())`, 단건은 `XxxResponse.from(...)`. **`@RequestBody` 는 모델 그대로** 두고 반환만 감싼다. import 2개(DTO, `java.util.stream.Collectors`) 추가.
+3. **검증(필수)**: `cd backend && ./gradlew.bat compileJava` EXIT0.
+   그리고 wire-diff — `coord/verify_wire.sh` 의 `ENDPOINTS` 에 네 도메인 GET 경로를 **로컬로만** 추가(이 파일 커밋 금지, Opus 소유):
+   - raw 상태(변경 전, 현재 커밋)에서 `bash coord/verify_wire.sh capture coord/wb`
+   - 변경+재빌드+재기동 후 `bash coord/verify_wire.sh capture coord/wa`
+   - `bash coord/verify_wire.sh diff coord/wb coord/wa` → "✅ wire 동일" 떠야 합격. 데이터 없는 엔드포인트는 한 건 POST로 만들어 비교.
+4. 도메인 단위로 작은 commit. push 직전 `pull --rebase`.
+
+> 완료 시 `SONNET-TO-OPUS.md` 에 `[완료]` — 도메인별 compileJava·wire-diff 결과 기록. 막히면 `[질문]`.
