@@ -12,9 +12,10 @@ spring:
       add-mappings: false
 
   datasource:
-    url: jdbc:sqlserver://211.171.152.242:51084;databaseName=SmartEHS_com4in;encrypt=true;trustServerCertificate=true
-    username: com4in
-    password: com4in201!!
+    # 납품/Yesco 전환: 운영에선 MSSQL_URL/USERNAME/PASSWORD 환경변수로 주입. 미설정 시 현재 개발 DB 기본값.
+    url: ${MSSQL_URL:jdbc:sqlserver://211.171.152.242:51084;databaseName=SmartEHS_com4in;encrypt=true;trustServerCertificate=true}
+    username: ${MSSQL_USERNAME:com4in}
+    password: ${MSSQL_PASSWORD:com4in201!!}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
       maximum-pool-size: 10
@@ -85,6 +86,9 @@ logging:
 # Frontend URL (for email links)
 app:
   frontend-url: ${APP_FRONTEND_URL:http://localhost:7500}
+  # CORS 허용 오리진(쉼표 구분). Yesco 전환 시 APP_CORS_ALLOWED_ORIGINS 로 교체.
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:7500,http://localhost:3000,http://localhost:5173,http://211.171.152.242:7500,http://ehs.com4in.com:7500,https://ehs.com4in.com}
 
 # Translation Configuration
 translation:
