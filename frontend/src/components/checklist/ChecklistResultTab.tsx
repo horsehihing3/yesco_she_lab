@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -218,7 +219,7 @@ const ChecklistResultTab: React.FC = () => {
                 <TableRow key={row.id} hover onClick={() => handleRowClick(row.id)} sx={{ cursor: 'pointer' }}>
                   <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{row.title}</TableCell>
                   <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.modUser || row.regUser}</TableCell>
-                  <TableCell align="center">{row.createdAt?.substring(0, 10)}</TableCell>
+                  <TableCell align="center">{formatDate(row.createdAt)}</TableCell>
                 </TableRow>
               ))
             )}
@@ -243,7 +244,7 @@ const ChecklistResultTab: React.FC = () => {
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 60 }}>{t('common.createdAt')}</Typography>
-                  <Typography variant="body2">{row.createdAt?.substring(0, 10)}</Typography>
+                  <Typography variant="body2">{formatDate(row.createdAt)}</Typography>
                 </Box>
               </Box>
             </Paper>

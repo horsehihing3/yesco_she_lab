@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState, useMemo } from 'react'
 import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -177,7 +178,7 @@ const HealthCheckupAdminTab: React.FC = () => {
             </Box>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.checkupDate')}</Typography>
-              <Box sx={valueBorderSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.checkupDate?.substring(0, 10) || ''}</Typography></Box>
+              <Box sx={valueBorderSx}><Typography variant="body2" fontFamily="monospace">{formatDate(selectedItem.checkupDate) || ''}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.hospital')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.hospital || ''}</Typography></Box>
             </Box>
@@ -189,7 +190,7 @@ const HealthCheckupAdminTab: React.FC = () => {
                   : null}
               </Box>
               <Typography sx={labelSx}>{t('healthCheckup.nextCheckupDate')}</Typography>
-              <Box sx={valueSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.nextCheckupDate?.substring(0, 10) || ''}</Typography></Box>
+              <Box sx={valueSx}><Typography variant="body2" fontFamily="monospace">{formatDate(selectedItem.nextCheckupDate) || ''}</Typography></Box>
             </Box>
             <Box sx={{ display: 'flex' }}>
               <Typography sx={labelSx}>{t('healthCheckup.notes')}</Typography>
@@ -211,10 +212,10 @@ const HealthCheckupAdminTab: React.FC = () => {
               [t('healthCheckup.employeeEmail'), selectedItem.employeeEmail || ''],
               [t('healthCheckup.checkupYear'), String(selectedItem.checkupYear)],
               [t('healthCheckup.checkupType'), selectedItem.checkupType || ''],
-              [t('healthCheckup.checkupDate'), selectedItem.checkupDate?.substring(0, 10) || ''],
+              [t('healthCheckup.checkupDate'), formatDate(selectedItem.checkupDate) || ''],
               [t('healthCheckup.hospital'), selectedItem.hospital || ''],
               [t('healthCheckup.overallResult'), selectedItem.overallResult || ''],
-              [t('healthCheckup.nextCheckupDate'), selectedItem.nextCheckupDate?.substring(0, 10) || ''],
+              [t('healthCheckup.nextCheckupDate'), formatDate(selectedItem.nextCheckupDate) || ''],
               [t('healthCheckup.notes'), selectedItem.notes || ''],
             ].map(([label, value], i) => (
               <Box key={i} sx={{ mb: 1.5 }}>
@@ -360,7 +361,7 @@ const HealthCheckupAdminTab: React.FC = () => {
                       <TableCell align="center">{item.employeeDept || ''}</TableCell>
                       <TableCell align="center">{item.checkupYear}</TableCell>
                       <TableCell align="center">{item.checkupType || ''}</TableCell>
-                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{item.checkupDate?.substring(0, 10) || ''}</TableCell>
+                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDate(item.checkupDate) || ''}</TableCell>
                       <TableCell>{item.hospital || ''}</TableCell>
                       <TableCell align="center">
                         {item.overallResult
@@ -388,7 +389,7 @@ const HealthCheckupAdminTab: React.FC = () => {
                   {item.employeeDept} | {item.checkupYear} | {item.checkupType || ''}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {item.checkupDate?.substring(0, 10) || ''} | {item.hospital || ''}
+                  {formatDate(item.checkupDate) || ''} | {item.hospital || ''}
                 </Typography>
                 {item.overallResult && (
                   <Box sx={{ mt: 1 }}>

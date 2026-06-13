@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -57,7 +58,7 @@ const WemReportTab: React.FC = () => {
     const e = endDate || ''
     return [...results]
       .filter((r) => {
-        const d = (r.measurementDate || r.createdAt || '').substring(0, 10)
+        const d = formatDate(r.measurementDate || r.createdAt)
         if (!d) return false
         if (s && d < s) return false
         if (e && d > e) return false
@@ -114,7 +115,7 @@ const WemReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('wem.measurementDate', '측정일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.measurementDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.measurementDate)}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('wem.sampleType', '시료유형')}</TableCell>
               <TableCell>{item.sampleType || ''}</TableCell>
             </TableRow>
@@ -205,7 +206,7 @@ const WemReportTab: React.FC = () => {
                   </TableCell>
                   <TableCell align="center">{imp.department || ''}</TableCell>
                   <TableCell sx={{ whiteSpace: 'pre-wrap' }}>{imp.improvementPlan || ''}</TableCell>
-                  <TableCell align="center" sx={{ fontFamily: 'monospace' }}>{(imp.deadline || '').substring(0, 10)}</TableCell>
+                  <TableCell align="center" sx={{ fontFamily: 'monospace' }}>{formatDate(imp.deadline)}</TableCell>
                   <TableCell align="center">
                     {imp.status ? (
                       <Chip
@@ -231,7 +232,7 @@ const WemReportTab: React.FC = () => {
   )
 
   const columns: ReportColumn<WemResult>[] = [
-    { header: t('wem.measurementDate', '측정일'), align: 'center', width: 110, render: (r) => ((r as any).measurementDate || '').substring(0, 10) },
+    { header: t('wem.measurementDate', '측정일'), align: 'center', width: 110, render: (r) => formatDate((r as any).measurementDate) },
     { header: t('wem.processName', '공정명'), key: 'processName' as keyof WemResult },
     { header: t('wem.factorName', '유해인자'), key: 'factorName' as keyof WemResult },
     { header: t('wem.measuredValue', '측정값'), align: 'center', width: 100, render: (r) => (r as any).measuredValue || '' },

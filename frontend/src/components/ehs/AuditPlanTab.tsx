@@ -1,7 +1,7 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatUserName } from '../../utils/userDisplay'
 import { isSystemAdmin } from '../../utils/auth'
 import { useState } from 'react'
-import { todayStr, weekFromTodayStr } from '../../utils/dateDefaults'
+import { todayStr, weekFromTodayStr, formatDateTime } from '../../utils/dateDefaults'
 import ListSearchBar from '../common/ListSearchBar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -604,7 +604,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">
-                  {selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+                  {selectedItem.createdAt ? formatDateTime(selectedItem.createdAt) : ''}
                 </Typography>
               </Box>
             </Box>
@@ -618,7 +618,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                 <Typography sx={labelSx}>{t('common.modifiedAt', '수정일')}</Typography>
                 <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                   <Typography variant="body2" fontFamily="monospace">
-                    {selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}
+                    {formatDateTime(selectedItem.modifiedAt)}
                   </Typography>
                 </Box>
               </Box>
@@ -631,7 +631,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                   {formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)}
                   {selectedItem.planApprovedAt && (
                     <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                      ({selectedItem.planApprovedBy || ''} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16)})
+                      ({selectedItem.planApprovedBy || ''} | {formatDateTime(selectedItem.planApprovedAt)})
                     </Typography>
                   )}
                 </Typography>
@@ -642,7 +642,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
                   {formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)}
                   {selectedItem.completionApprovedAt && (
                     <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                      ({selectedItem.completionApprovedBy || ''} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16)})
+                      ({selectedItem.completionApprovedBy || ''} | {formatDateTime(selectedItem.completionApprovedAt)})
                     </Typography>
                   )}
                 </Typography>
@@ -679,12 +679,12 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               [t('common.notes', '비고'), selectedItem.notes || ''],
               [t('audit.creator', '작성자'), formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)],
               [t('audit.createdAt', '작성일자'),
-                selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
+                selectedItem.createdAt ? formatDateTime(selectedItem.createdAt) : ''],
               ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt
                 ? [
                     [t('common.modifier', '수정자'), formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
                     [t('common.modifiedAt', '수정일'),
-                      selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+                      formatDateTime(selectedItem.modifiedAt)],
                   ] as Array<[string, string]>
                 : []),
               [t('audit.planApprover', '계획 승인자'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
@@ -842,7 +842,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" fontFamily="monospace">
-                {selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+                {selectedItem?.createdAt ? formatDateTime(selectedItem.createdAt) : ''}
               </Typography>
             </Box>
           </Box>
@@ -856,7 +856,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">
-                  {selectedItem?.modifiedAt ? selectedItem.modifiedAt.replace('T', ' ').substring(0, 16) : ''}
+                  {selectedItem?.modifiedAt ? formatDateTime(selectedItem.modifiedAt) : ''}
                 </Typography>
               </Box>
             </Box>
@@ -960,7 +960,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.createdAt', '작성일자')}</Typography>
-            <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}</Typography>
+            <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{selectedItem?.createdAt ? formatDateTime(selectedItem.createdAt) : ''}</Typography>
           </Box>
           {/* 수정자 / 수정일 — 수정 모드일 때만 */}
           {viewMode === 'edit' && (
@@ -971,7 +971,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Box>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifiedAt', '수정일')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{selectedItem?.modifiedAt ? selectedItem.modifiedAt.replace('T', ' ').substring(0, 16) : ''}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{selectedItem?.modifiedAt ? formatDateTime(selectedItem.modifiedAt) : ''}</Typography>
               </Box>
             </>
           )}

@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react'
 import {
   Box,
@@ -544,7 +545,7 @@ const SafetyChecklistTab = forwardRef<SafetyChecklistTabRef, SafetyChecklistTabP
             </Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" color="text.primary" sx={{ fontFamily: 'monospace' }}>
-                {template?.createdAt?.substring(0, 10) || ''}
+                {formatDate(template?.createdAt) || ''}
               </Typography>
             </Box>
           </Box>

@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState, useEffect } from 'react'
 import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -95,7 +96,7 @@ const AnnualPlanTab: React.FC = () => {
 
   const formatDateOnly = (dateString?: string | null) => {
     if (!dateString) return ''
-    return dateString.substring(0, 10)
+    return formatDate(dateString)
   }
   const todayIso = () => new Date().toISOString().substring(0, 10)
   const { showWarning, showSuccess, showConfirm, showError } = useAlert()

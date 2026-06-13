@@ -1,4 +1,4 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatUserName } from '../../utils/userDisplay'
 import { isSystemAdmin } from '../../utils/auth'
 import { useState, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -26,7 +26,7 @@ import { legalComplianceExecApi, legalCompliancePlanApi } from '../../api/legalC
 import { Audit, AuditRequest, AuditLogEntry, AuditFieldChange } from '../../types/audit.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import DatePickerField from '../common/DatePickerField'
-import { todayStr } from '../../utils/dateDefaults'
+import { todayStr, formatDateTime } from '../../utils/dateDefaults'
 import SafetyChecklistTab, { SafetyChecklistTabRef } from './SafetyChecklistTab'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -418,7 +418,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={valSx}>
               <Typography variant="body2">
-                {selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+                {selectedItem.createdAt ? formatDateTime(selectedItem.createdAt) : ''}
               </Typography>
             </Box>
           </Box>
@@ -431,7 +431,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
               <Box sx={valSx}>
                 <Typography variant="body2">
-                  {selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}
+                  {formatDateTime(selectedItem.modifiedAt)}
                 </Typography>
               </Box>
             </Box>
@@ -443,7 +443,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
                 {formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)}
                 {selectedItem.planApprovedAt && (
                   <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                    ({selectedItem.planApprovedBy || ''} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16)})
+                    ({selectedItem.planApprovedBy || ''} | {formatDateTime(selectedItem.planApprovedAt)})
                   </Typography>
                 )}
               </Typography>
@@ -454,7 +454,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
                 {formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)}
                 {selectedItem.completionApprovedAt && (
                   <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                    ({selectedItem.completionApprovedBy || ''} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16)})
+                    ({selectedItem.completionApprovedBy || ''} | {formatDateTime(selectedItem.completionApprovedAt)})
                   </Typography>
                 )}
               </Typography>
@@ -495,15 +495,15 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
             [t('common.status'), getAuditStatusLabel(selectedItem.status)],
             [t('audit.createdByName', '작성자'), formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)],
             [t('audit.createdAt', '작성일자'),
-              selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
+              selectedItem.createdAt ? formatDateTime(selectedItem.createdAt) : ''],
             ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
               [t('common.modifier', '수정자'), formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
-              [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+              [t('common.modifiedAt', '수정일자'), formatDateTime(selectedItem.modifiedAt)],
             ] : []),
             [t('audit.planApprover', '계획 승인자'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
             [t('audit.completionApprover', '완료 승인자'), formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)],
             [t('audit.completionApprovedAt', '완료 승인일시'),
-              selectedItem.completionApprovedAt ? selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16) : ''],
+              selectedItem.completionApprovedAt ? formatDateTime(selectedItem.completionApprovedAt) : ''],
             ...(checklistTemplateId ? [
               [t('audit.checklistProgress'), `${selectedItem.completedChecklist}/${selectedItem.totalChecklist}`],
               [t('audit.findingCount'), String(selectedItem.findingCount)],
@@ -1026,7 +1026,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
                           {item.completionApproverName || ''}
                         </TableCell>
                         <TableCell align="center" sx={{ fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                          {item.modifiedAt?.replace('T', ' ').substring(0, 16) || ''}
+                          {formatDateTime(item.modifiedAt) || ''}
                         </TableCell>
                         <TableCell align="center" sx={{ fontSize: '0.85rem' }}>
                           {item.modifiedBy || ''}

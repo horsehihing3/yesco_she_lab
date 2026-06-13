@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -48,7 +49,7 @@ const AirEmissionReportTab: React.FC = () => {
     const e = endDate || ''
     return records
       .filter((r) => {
-        const d = (r.measurementDate || '').substring(0, 10)
+        const d = formatDate(r.measurementDate)
         if (!d) return false
         if (s && d < s) return false
         if (e && d > e) return false
@@ -87,7 +88,7 @@ const AirEmissionReportTab: React.FC = () => {
             <TableBody>
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('airEmission.report.date', '측정일')}</TableCell>
-                <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{(item.measurementDate || '').substring(0, 10)}</TableCell>
+                <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{formatDate(item.measurementDate)}</TableCell>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('airEmission.report.facility', '시설')}</TableCell>
                 <TableCell sx={{ width: '30%' }}>{item.facility || ''}</TableCell>
               </TableRow>
@@ -129,7 +130,7 @@ const AirEmissionReportTab: React.FC = () => {
   }
 
   const columns: ReportColumn<AirEmission>[] = [
-    { header: t('airEmission.report.date', '측정일'), align: 'center', width: 110, render: (r) => (r.measurementDate || '').substring(0, 10) },
+    { header: t('airEmission.report.date', '측정일'), align: 'center', width: 110, render: (r) => formatDate(r.measurementDate) },
     { header: t('airEmission.report.facility', '시설'), key: 'facility' as keyof AirEmission },
     { header: t('airEmission.report.pollutant', '오염물질'), align: 'center', width: 120, render: (r) => getPollutantLabel(r.pollutant || '') || r.pollutant || '' },
     { header: t('airEmission.report.measuredValue', '측정값'), align: 'center', width: 120, render: (r) => r.emissionConcentration != null ? `${r.emissionConcentration} ${getEmissionUnitLabel(r.unit || '') || r.unit || ''}` : '' },

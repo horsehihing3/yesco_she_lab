@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -362,7 +363,7 @@ const WasteDisposalTab: React.FC = () => {
                   <Typography variant="body2" fontWeight="bold" sx={{ minWidth: 120 }}>
                     {t('environment.disposalDate')}:
                   </Typography>
-                  <Typography variant="body2">{selectedCard.disposalDate.substring(0, 10)}</Typography>
+                  <Typography variant="body2">{formatDate(selectedCard.disposalDate)}</Typography>
                 </Box>
               )}
               {selectedCard.disposalNotes && (

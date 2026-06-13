@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo, useState } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -60,7 +61,7 @@ const PermitReportTab: React.FC = () => {
     const s = startDate || ''
     const e = endDate || ''
     const pickDate = (i: any) =>
-      (i.completionApprovedAt || i.completedAt || i.workEndDate || i.createdAt || '').substring(0, 10)
+      formatDate(i.completionApprovedAt || i.completedAt || i.workEndDate || i.createdAt)
     return list
       .filter((i: PermitToWork) => i.status === 'DONE')
       .filter((i: PermitToWork) => {
@@ -228,7 +229,7 @@ const PermitReportTab: React.FC = () => {
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('permit.report.findingCount', '부적합 건수')}</TableCell>
               <TableCell sx={{ color: (item.findingCount || 0) > 0 ? 'error.main' : 'inherit', fontWeight: 'bold' }}>{item.findingCount || 0}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('permit.report.completionDate', '완료일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.completedAt || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.completedAt)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -248,9 +249,9 @@ const PermitReportTab: React.FC = () => {
     { header: t('permit.permitId', '허가번호'), align: 'center', width: 130, render: (r) => (r as any).permitId || '' },
     { header: t('permit.title', '제목'), render: (r) => (r as any).title || '' },
     { header: t('permit.permitType', '작업 유형'), align: 'center', width: 120, render: (r) => (r as any).permitType ? getPermitTypeLabel((r as any).permitType) : '' },
-    { header: t('common.startDate', '시작일'), align: 'center', width: 110, render: (r) => ((r as any).workStartDate || '').substring(0, 10) },
-    { header: t('common.endDate', '종료일'), align: 'center', width: 110, render: (r) => ((r as any).workEndDate || '').substring(0, 10) },
-    { header: t('permit.completionApprovedDate', '완료 승인일'), align: 'center', width: 130, render: (r) => (((r as any).completionApprovedAt || (r as any).completedAt || '') as string).substring(0, 10) },
+    { header: t('common.startDate', '시작일'), align: 'center', width: 110, render: (r) => formatDate((r as any).workStartDate) },
+    { header: t('common.endDate', '종료일'), align: 'center', width: 110, render: (r) => formatDate((r as any).workEndDate) },
+    { header: t('permit.completionApprovedDate', '완료 승인일'), align: 'center', width: 130, render: (r) => formatDate((r as any).completionApprovedAt || (r as any).completedAt) },
   ]
 
   return (

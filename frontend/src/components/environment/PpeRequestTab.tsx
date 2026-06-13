@@ -1,3 +1,4 @@
+import { formatDateTime } from '../../utils/dateDefaults'
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -178,9 +179,9 @@ const PpeRequestTab: React.FC = () => {
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.requestId')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requestId}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.status')}</Typography><Box sx={valSx}><Chip label={getStatusLabel(selectedItem.status)} color={STATUS_COLORS[selectedItem.status] || 'default'} size="small" /></Box></Box>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.itemName')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.itemName}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.category')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{getCategoryLabel(selectedItem.itemCategory || '')}</Typography></Box></Box>
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.model')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.itemModel || ''}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.quantity')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.quantity}{selectedItem.isConsumable && <Chip label={t('ppe.consumable', '소모품')} color="warning" size="small" sx={{ ml: 1, fontSize: '0.65rem', height: 18 }} />}</Typography></Box></Box>
-          <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.requester')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatPerson(selectedItem.requesterName, selectedItem.requesterDept, selectedItem.requesterId)}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.requestDate')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requestDate?.replace('T', ' ').substring(0, 16)}</Typography></Box></Box>
-          <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.approver')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatPerson(selectedItem.approverName, selectedItem.approverDept)}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.approvedAt')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.approvedAt?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box></Box>
-          {selectedItem.issuedAt && <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.issuedAt')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.issuedAt?.replace('T', ' ').substring(0, 16)}</Typography></Box></Box>}
+          <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.requester')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatPerson(selectedItem.requesterName, selectedItem.requesterDept, selectedItem.requesterId)}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.requestDate')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatDateTime(selectedItem.requestDate)}</Typography></Box></Box>
+          <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.approver')}</Typography><Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatPerson(selectedItem.approverName, selectedItem.approverDept)}</Typography></Box><Typography sx={dLabelSx}>{t('ppeReq.approvedAt')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatDateTime(selectedItem.approvedAt) || ''}</Typography></Box></Box>
+          {selectedItem.issuedAt && <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.issuedAt')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatDateTime(selectedItem.issuedAt)}</Typography></Box></Box>}
           <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.reason')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.reason || ''}</Typography></Box></Box>
           {selectedItem.rejectionReason && <Box sx={rowSx}><Typography sx={dLabelSx}>{t('ppeReq.rejectionReason')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5, color: 'error.main' }}>{selectedItem.rejectionReason}</Typography></Box></Box>}
           {selectedItem.notes && <Box sx={rowSx}><Typography sx={dLabelSx}>{t('common.notes')}</Typography><Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.notes}</Typography></Box></Box>}
@@ -189,7 +190,7 @@ const PpeRequestTab: React.FC = () => {
             <Typography sx={dLabelSx}>{t('common.creator', '작성자')}</Typography>
             <Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requesterName || ''}</Typography></Box>
             <Typography sx={dLabelSx}>{t('audit.createdAt', '작성일자')}</Typography>
-            <Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.createdAt?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box>
+            <Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{formatDateTime(selectedItem.createdAt) || ''}</Typography></Box>
           </Box>
           {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
           {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
@@ -197,13 +198,13 @@ const PpeRequestTab: React.FC = () => {
               <Typography sx={dLabelSx}>{t('common.modifier', '수정자')}</Typography>
               <Box sx={valBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requesterName || ''}</Typography></Box>
               <Typography sx={dLabelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
-              <Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography></Box>
+              <Box sx={valSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{formatDateTime(selectedItem.modifiedAt)}</Typography></Box>
             </Box>
           )}
         </Box>
         {/* Mobile */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 2 }}>
-          {[[t('ppeReq.requestId'), selectedItem.requestId], [t('ppeReq.status'), getStatusLabel(selectedItem.status)], [t('ppeReq.itemName'), selectedItem.itemName], [t('ppeReq.category'), getCategoryLabel(selectedItem.itemCategory || '')], [t('ppeReq.quantity'), `${selectedItem.quantity}`], [t('ppeReq.requester'), formatPerson(selectedItem.requesterName, selectedItem.requesterDept, selectedItem.requesterId)], [t('ppeReq.requestDate'), selectedItem.requestDate?.replace('T', ' ').substring(0, 16)], [t('ppeReq.approver'), selectedItem.approverName ? formatPerson(selectedItem.approverName, selectedItem.approverDept) : ''], [t('ppeReq.reason'), selectedItem.reason], [t('ppeReq.rejectionReason'), selectedItem.rejectionReason], [t('common.notes'), selectedItem.notes], [t('common.creator', '작성자'), selectedItem.requesterName || ''], [t('audit.createdAt', '작성일자'), selectedItem.createdAt?.replace('T', ' ').substring(0, 16)], ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [[t('common.modifier', '수정자'), selectedItem.requesterName || ''], [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)]] : [])].filter(([, v]) => v).map(([label, value], i) => (
+          {[[t('ppeReq.requestId'), selectedItem.requestId], [t('ppeReq.status'), getStatusLabel(selectedItem.status)], [t('ppeReq.itemName'), selectedItem.itemName], [t('ppeReq.category'), getCategoryLabel(selectedItem.itemCategory || '')], [t('ppeReq.quantity'), `${selectedItem.quantity}`], [t('ppeReq.requester'), formatPerson(selectedItem.requesterName, selectedItem.requesterDept, selectedItem.requesterId)], [t('ppeReq.requestDate'), formatDateTime(selectedItem.requestDate)], [t('ppeReq.approver'), selectedItem.approverName ? formatPerson(selectedItem.approverName, selectedItem.approverDept) : ''], [t('ppeReq.reason'), selectedItem.reason], [t('ppeReq.rejectionReason'), selectedItem.rejectionReason], [t('common.notes'), selectedItem.notes], [t('common.creator', '작성자'), selectedItem.requesterName || ''], [t('audit.createdAt', '작성일자'), formatDateTime(selectedItem.createdAt)], ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [[t('common.modifier', '수정자'), selectedItem.requesterName || ''], [t('common.modifiedAt', '수정일자'), formatDateTime(selectedItem.modifiedAt)]] : [])].filter(([, v]) => v).map(([label, value], i) => (
             <Box key={i}><Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{label}</Typography><Typography variant="body2" sx={{ px: 1.5, py: 0.5, whiteSpace: 'pre-wrap' }}>{value}</Typography></Box>
           ))}
         </Box>
@@ -345,7 +346,7 @@ const PpeRequestTab: React.FC = () => {
                     <TableCell align="center">{getCategoryLabel(item.itemCategory || '')}</TableCell>
                     <TableCell align="center" sx={{ fontFamily: 'monospace' }}>{item.quantity}</TableCell>
                     <TableCell align="center">{item.requesterName || ''}</TableCell>
-                    <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{item.requestDate?.replace('T', ' ').substring(0, 16)}</TableCell>
+                    <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(item.requestDate)}</TableCell>
                     <TableCell align="center"><Chip label={getStatusLabel(item.status)} color={STATUS_COLORS[item.status] || 'default'} size="small" /></TableCell>
                   </TableRow>
                 ))}

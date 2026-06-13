@@ -1,4 +1,4 @@
-﻿import { formatUserName } from '../utils/userDisplay'
+import { formatUserName } from '../utils/userDisplay'
 import React, { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -16,7 +16,7 @@ import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import IconButton from '@mui/material/IconButton'
 import DatePickerField from '../components/common/DatePickerField'
 import { fmtPhone } from '../utils/phoneFormat'
-import { todayStr, weekFromTodayStr } from '../utils/dateDefaults'
+import { todayStr, weekFromTodayStr, formatDate, formatDateTime } from '../utils/dateDefaults'
 import { contractorRegistrationApi } from '../api/contractorRegistrationApi'
 import NumberField from '../components/common/NumberField'
 import { useAlert } from '../contexts/AlertContext'
@@ -519,7 +519,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
                       <TableCell><Typography variant="body2" fontWeight={600}>{item.title}</Typography></TableCell>
                       <TableCell align="center"><Chip label={getRiskLabel(item.riskLevel || '')} color={RISK_COLORS[item.riskLevel || ''] || 'default'} size="small" /></TableCell>
                       <TableCell align="center">
-                        {item.workStartDate?.substring(0, 10) || ''} ~ {item.workEndDate?.substring(0, 10) || ''}
+                        {formatDate(item.workStartDate) || ''} ~ {formatDate(item.workEndDate) || ''}
                       </TableCell>
                       <TableCell align="center">{item.planApproverName || item.approverName || ''}</TableCell>
                       <TableCell align="center"><Chip label={getStatusLabel(item.status)} color={STATUS_COLORS[item.status] || 'default'} variant="outlined" size="small" /></TableCell>
@@ -542,7 +542,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
                   {getPermitTypeLabel(item.workType || '')} | {item.planApproverName || item.approverName || ''}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {item.workStartDate?.substring(0, 10) || ''} ~ {item.workEndDate?.substring(0, 10) || ''}
+                  {formatDate(item.workStartDate) || ''} ~ {formatDate(item.workEndDate) || ''}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5, mt: 1 }}>
                   <Chip label={getRiskLabel(item.riskLevel || '')} color={RISK_COLORS[item.riskLevel || ''] || 'default'} size="small" />
@@ -574,7 +574,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           <Box sx={dRowSx}><Typography sx={dLabelSx}>제목</Typography><Box sx={{ ...dValSx, borderBottom: 0 }}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.title}</Typography></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>작업유형</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{getPermitTypeLabel(selectedItem.workType || '')}</Typography></Box><Typography sx={dLabelSx}>위험등급</Typography><Box sx={dValSx}><Chip label={getRiskLabel(selectedItem.riskLevel || '')} color={RISK_COLORS[selectedItem.riskLevel || ''] || 'default'} size="small" /></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>작업장소</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workLocation || ''}</Typography></Box><Typography sx={dLabelSx}>작업인원</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workersCount || 0}명</Typography></Box></Box>
-          <Box sx={dRowSx}><Typography sx={dLabelSx}>시작일</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workStartDate?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box><Typography sx={dLabelSx}>종료일</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workEndDate?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box></Box>
+          <Box sx={dRowSx}><Typography sx={dLabelSx}>시작일</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatDateTime(selectedItem.workStartDate) || ''}</Typography></Box><Typography sx={dLabelSx}>종료일</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatDateTime(selectedItem.workEndDate) || ''}</Typography></Box></Box>
           {selectedItem.workDescription && <Box sx={dRowSx}><Typography sx={dLabelSx}>작업내용</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.workDescription}</Typography></Box></Box>}
           {selectedItem.safetyMeasures && <Box sx={dRowSx}><Typography sx={dLabelSx}>안전조치</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.safetyMeasures}</Typography></Box></Box>}
           <Box sx={dRowSx}><Typography sx={dLabelSx}>보호구</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requiredPpe || ''}</Typography></Box><Typography sx={dLabelSx}>위험요인</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.hazardFactors || ''}</Typography></Box></Box>
@@ -585,7 +585,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Typography sx={dLabelSx}>작성자</Typography>
             <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)}</Typography></Box>
             <Typography sx={dLabelSx}>작성일자</Typography>
-            <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.createdAt?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box>
+            <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{formatDateTime(selectedItem.createdAt) || ''}</Typography></Box>
           </Box>
           {/* 수정자 / 수정일자 — 수정 이력 있을 때만 */}
           {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
@@ -593,7 +593,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               <Typography sx={dLabelSx}>수정자</Typography>
               <Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)}</Typography></Box>
               <Typography sx={dLabelSx}>수정일자</Typography>
-              <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography></Box>
+              <Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, fontFamily: 'monospace' }}>{formatDateTime(selectedItem.modifiedAt)}</Typography></Box>
             </Box>
           )}
           <Box sx={dRowSx}><Typography sx={dLabelSx}>계획 승인자</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition) || ''}{selectedItem.planApprovedAt && <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>({selectedItem.planApprovedBy} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 19)})</Typography>}</Typography></Box><Typography sx={dLabelSx}>완료 승인자</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition) || ''}{selectedItem.completionApprovedAt && <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>({selectedItem.completionApprovedBy} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 19)})</Typography>}</Typography></Box></Box>
@@ -610,8 +610,8 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             ['위험등급', getRiskLabel(selectedItem.riskLevel || '')],
             ['작업장소', selectedItem.workLocation],
             ['작업인원', `${selectedItem.workersCount || 0}명`],
-            ['시작일', selectedItem.workStartDate?.replace('T', ' ').substring(0, 16)],
-            ['종료일', selectedItem.workEndDate?.replace('T', ' ').substring(0, 16)],
+            ['시작일', formatDateTime(selectedItem.workStartDate)],
+            ['종료일', formatDateTime(selectedItem.workEndDate)],
             ['작업내용', selectedItem.workDescription],
             ['안전조치', selectedItem.safetyMeasures],
             ['보호구', selectedItem.requiredPpe],
@@ -620,10 +620,10 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             ['비고', selectedItem.notes],
             ['일정 반복', !selectedItem.repeatType || selectedItem.repeatType === 'NONE' ? '반복 안 함' : selectedItem.repeatType === 'WEEKDAYS' ? (selectedItem.repeatDays || '').split(',').map((d: string) => ({MON:'월',TUE:'화',WED:'수',THU:'목',FRI:'금',SAT:'토',SUN:'일'}[d] || d)).join(', ') : `${selectedItem.repeatInterval || 1} ${selectedItem.repeatType === 'DAILY' ? '일' : selectedItem.repeatType === 'WEEKLY' ? '주' : '개월'}마다`],
             ['작성자', formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)],
-            ['작성일자', selectedItem.createdAt?.replace('T', ' ').substring(0, 16) || ''],
+            ['작성일자', formatDateTime(selectedItem.createdAt) || ''],
             ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
               ['수정자', formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
-              ['수정일자', selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+              ['수정일자', formatDateTime(selectedItem.modifiedAt)],
             ] : []),
             ['계획 승인자', formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
             ['완료 승인자', formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)],
@@ -845,11 +845,11 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>시작일</Typography>
             <Box sx={valSxBorder}>
-              <DatePickerField value={form.workStartDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={form.workEndDate?.substring(0, 10)} />
+              <DatePickerField value={formatDate(form.workStartDate) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={formatDate(form.workEndDate)} />
             </Box>
             <Typography sx={labelSx}>종료일</Typography>
             <Box sx={valSx}>
-              <DatePickerField value={form.workEndDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workEndDate: v + 'T17:00:00' })} size="small" minDate={form.workStartDate?.substring(0, 10)} />
+              <DatePickerField value={formatDate(form.workEndDate) || null} onChange={(v) => setForm({ ...form, workEndDate: v + 'T17:00:00' })} size="small" minDate={formatDate(form.workStartDate)} />
             </Box>
           </Box>
           {/* Row: workDescription */}
@@ -959,7 +959,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Typography sx={labelSx}>작성일자</Typography>
             <Box sx={valSx}>
               <Typography variant="body2" fontFamily="monospace">
-                {selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : todayStr()}
+                {selectedItem?.createdAt ? formatDateTime(selectedItem.createdAt) : todayStr()}
               </Typography>
             </Box>
           </Box>
@@ -1085,11 +1085,11 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>시작일</Typography>
-            <DatePickerField value={form.workStartDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={form.workEndDate?.substring(0, 10)} />
+            <DatePickerField value={formatDate(form.workStartDate) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={formatDate(form.workEndDate)} />
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>종료일</Typography>
-            <DatePickerField value={form.workEndDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workEndDate: v + 'T17:00:00' })} size="small" minDate={form.workStartDate?.substring(0, 10)} />
+            <DatePickerField value={formatDate(form.workEndDate) || null} onChange={(v) => setForm({ ...form, workEndDate: v + 'T17:00:00' })} size="small" minDate={formatDate(form.workStartDate)} />
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작업내용</Typography>
@@ -1189,7 +1189,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <Box sx={{ flex: 1 }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작성일자</Typography>
               <Typography variant="body2" fontFamily="monospace" sx={{ px: 1.5 }}>
-                {selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : todayStr()}
+                {selectedItem?.createdAt ? formatDateTime(selectedItem.createdAt) : todayStr()}
               </Typography>
             </Box>
           </Box>

@@ -1,3 +1,4 @@
+import { formatDateTime } from '../utils/dateDefaults'
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -61,7 +62,7 @@ const emptyForm: Partial<IncidentResponse> = {
 
 const toLocalInputValue = (iso?: string) => {
   if (!iso) return ''
-  return iso.replace('T', ' ').substring(0, 16).replace(' ', 'T')
+  return formatDateTime(iso).replace(' ', 'T')
 }
 
 const fmtDateTime = (s?: string) => {

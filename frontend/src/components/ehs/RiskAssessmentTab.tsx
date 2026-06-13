@@ -1,4 +1,4 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatUserName } from '../../utils/userDisplay'
 import { useState, useEffect } from 'react'
 import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -913,7 +913,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                         <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: proc0.evaluator ? 'left' : 'center' }}>{proc0.evaluator || ''}</TableCell>
                         <TableCell sx={lblCellSx}>{t('riskAssessment.evaluationDate', '평가일시')}</TableCell>
                         <TableCell sx={{ textAlign: proc0.evaluationDate ? 'left' : 'center', fontFamily: proc0.evaluationDate ? 'monospace' : undefined }}>
-                          {proc0.evaluationDate ? proc0.evaluationDate.substring(0, 10) : ''}
+                          {proc0.evaluationDate ? formatDate(proc0.evaluationDate) : ''}
                         </TableCell>
                       </TableRow>
                       {/* 작성자 | 작성일자 */}
@@ -982,7 +982,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Box>
                   <Box>
                     <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
-                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{proc0.evaluationDate ? proc0.evaluationDate.substring(0, 10) : ''}</Typography>
+                    <Typography variant="body2" sx={{ px: 1.5, py: 0.5, fontFamily: 'monospace' }}>{proc0.evaluationDate ? formatDate(proc0.evaluationDate) : ''}</Typography>
                   </Box>
                   <Box>
                     <Typography variant="body2" fontWeight="bold" sx={mLbl}>{t('common.creator', '작성자')}</Typography>
@@ -1241,7 +1241,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Box>
                   <Typography sx={lbl}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
                   <Box sx={val}>
-                    <DatePickerField size="small" value={proc0.evaluationDate ? proc0.evaluationDate.substring(0, 10) : null}
+                    <DatePickerField size="small" value={proc0.evaluationDate ? formatDate(proc0.evaluationDate) : null}
                       onChange={(v) => handleProcessFieldChange(proc0Idx, 'evaluationDate', v || '')} />
                   </Box>
                 </Box>
@@ -1370,7 +1370,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                 {/* 평가일시 */}
                 <Box>
                   <Typography variant="body2" fontWeight="bold" sx={lblCls}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
-                  <DatePickerField size="small" value={proc0.evaluationDate ? proc0.evaluationDate.substring(0, 10) : null}
+                  <DatePickerField size="small" value={proc0.evaluationDate ? formatDate(proc0.evaluationDate) : null}
                     onChange={(v) => handleProcessFieldChange(proc0Idx, 'evaluationDate', v || '')} />
                 </Box>
                 {/* 작성자 */}
@@ -1513,10 +1513,10 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             <Typography sx={labelSx}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, display: 'flex', alignItems: 'center' }}>
               {readOnly ? (
-                <Typography variant="body2" sx={{ py: 0.5, textAlign: process.evaluationDate ? 'left' : 'center' }}>{process.evaluationDate ? process.evaluationDate.substring(0, 10) : ''}</Typography>
+                <Typography variant="body2" sx={{ py: 0.5, textAlign: process.evaluationDate ? 'left' : 'center' }}>{process.evaluationDate ? formatDate(process.evaluationDate) : ''}</Typography>
               ) : (
                 <DatePickerField size="small"
-                  value={process.evaluationDate ? process.evaluationDate.substring(0, 10) : null}
+                  value={process.evaluationDate ? formatDate(process.evaluationDate) : null}
                   onChange={(v) => handleProcessFieldChange(globalIndex, 'evaluationDate', v || '')} />
               )}
             </Box>
@@ -1528,10 +1528,10 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('riskAssessment.evaluationDate', '평가일시')}</Typography>
             {readOnly ? (
-              <Typography variant="body2" sx={{ px: 1.5, textAlign: process.evaluationDate ? 'left' : 'center' }}>{process.evaluationDate ? process.evaluationDate.substring(0, 10) : ''}</Typography>
+              <Typography variant="body2" sx={{ px: 1.5, textAlign: process.evaluationDate ? 'left' : 'center' }}>{process.evaluationDate ? formatDate(process.evaluationDate) : ''}</Typography>
             ) : (
               <DatePickerField size="small"
-                value={process.evaluationDate ? process.evaluationDate.substring(0, 10) : null}
+                value={process.evaluationDate ? formatDate(process.evaluationDate) : null}
                 onChange={(v) => handleProcessFieldChange(globalIndex, 'evaluationDate', v || '')} />
             )}
           </Box>

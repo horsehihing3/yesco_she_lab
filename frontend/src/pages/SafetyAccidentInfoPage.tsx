@@ -1,3 +1,4 @@
+import { formatDate } from '../utils/dateDefaults'
 import React, { useState, useRef, useTransition } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -369,7 +370,7 @@ const SafetyAccidentInfoPage: React.FC = () => {
           </Box>
           <Typography sx={labelSx}>작성일자</Typography>
           <Box sx={valSx}>
-            <Typography variant="body2">{viewMode === 'create' ? todayStr() : (detailData?.createdAt?.substring(0, 10) || '')}</Typography>
+            <Typography variant="body2">{viewMode === 'create' ? todayStr() : (formatDate(detailData?.createdAt) || '')}</Typography>
           </Box>
         </Box>
       </Paper>
@@ -428,7 +429,7 @@ const SafetyAccidentInfoPage: React.FC = () => {
         </Box>
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>작성일자</Typography>
-          <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMode === 'create' ? todayStr() : (detailData?.createdAt?.substring(0, 10) || '')}</Typography>
+          <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMode === 'create' ? todayStr() : (formatDate(detailData?.createdAt) || '')}</Typography>
         </Box>
       </Box>
 

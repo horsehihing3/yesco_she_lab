@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatDate } from '../../utils/dateDefaults'
+import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -57,7 +58,7 @@ const ContractorReportTab: React.FC = () => {
     return list
       .filter((i: ContractorPlan) => i.status === 'DONE')
       .filter((i: ContractorPlan) => {
-        const d = ((i as any).completionApprovedAt || i.workEndDate || i.createdAt || '').substring(0, 10)
+        const d = formatDate((i as any).completionApprovedAt || i.workEndDate || i.createdAt)
         if (!d) return false
         if (s && d < s) return false
         if (e && d > e) return false
@@ -139,9 +140,9 @@ const ContractorReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.startDate', '시작일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.workStartDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.workStartDate)}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.endDate', '종료일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.workEndDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.workEndDate)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.planApprover', '계획 승인자')}</TableCell>
@@ -221,7 +222,7 @@ const ContractorReportTab: React.FC = () => {
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('contractor.report.findingCount', '부적합 건수')}</TableCell>
               <TableCell sx={{ color: (item.findingCount || 0) > 0 ? 'error.main' : 'inherit', fontWeight: 'bold' }}>{item.findingCount || 0}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('contractor.report.completionDate', '완료일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.completionApprovedAt || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.completionApprovedAt)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -242,8 +243,8 @@ const ContractorReportTab: React.FC = () => {
     { header: t('contractor.title', '작업명'), key: 'title' },
     { header: t('contractor.workType', '작업 유형'), align: 'center', width: 110, render: (r) => r.workType ? getWorkTypeLabel(r.workType) : '' },
     { header: t('contractor.riskLevel', '위험 등급'), align: 'center', width: 100, render: (r) => r.riskLevel ? <Chip size="small" label={getRiskLabel(r.riskLevel)} color={RISK_COLORS[r.riskLevel] || 'default'} /> : '' },
-    { header: t('common.startDate', '시작일'), align: 'center', width: 110, render: (r) => (r.workStartDate || '').substring(0, 10) },
-    { header: t('common.endDate', '종료일'), align: 'center', width: 110, render: (r) => (r.workEndDate || '').substring(0, 10) },
+    { header: t('common.startDate', '시작일'), align: 'center', width: 110, render: (r) => formatDate(r.workStartDate) },
+    { header: t('common.endDate', '종료일'), align: 'center', width: 110, render: (r) => formatDate(r.workEndDate) },
     { header: t('contractor.completionApprovedDate', '완료 승인일'), align: 'center', width: 130, render: (r) => (((r as any).completionApprovedAt || '') as string).substring(0, 10) },
   ]
 

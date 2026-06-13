@@ -13,6 +13,7 @@ import { useAuth } from '../../context/AuthContext'
 import axiosInstance from '../../api/axiosInstance'
 import type { ApiResponse } from '../../types/common.types'
 import LoadingOverlay from '../common/LoadingOverlay'
+import { formatDateTime } from '../../utils/dateDefaults'
 
 export interface EhsAlertComment {
   id: number
@@ -44,8 +45,6 @@ const updateComment = async (commentId: number, content: string) => {
 const deleteComment = async (commentId: number) => {
   await axiosInstance.delete(`/alerts/comments/${commentId}`)
 }
-
-const formatDateTime = (s?: string) => s ? s.replace('T', ' ').slice(0, 16) : ''
 
 interface CommentRowProps {
   comment: EhsAlertComment

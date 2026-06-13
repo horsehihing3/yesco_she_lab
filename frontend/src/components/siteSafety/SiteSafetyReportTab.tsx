@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatDate } from '../../utils/dateDefaults'
+import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import SignatureImage from '../common/SignatureImage'
 import { useQuery, useQueries } from '@tanstack/react-query'
@@ -55,7 +56,7 @@ const SiteSafetyReportTab: React.FC = () => {
         i.status === 'APPROVED' || i.status === 'DONE'
       )
       .filter((i: SiteSafetyPlan) => {
-        const d = (i.workStartDate || i.createdAt || '').substring(0, 10)
+        const d = formatDate(i.workStartDate || i.createdAt)
         if (!d) return false
         if (s && d < s) return false
         if (e && d > e) return false
@@ -137,9 +138,9 @@ const SiteSafetyReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.startDate', '시작일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.workStartDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.workStartDate)}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.endDate', '종료일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.workEndDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.workEndDate)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>계획 승인자</TableCell>
@@ -253,7 +254,7 @@ const SiteSafetyReportTab: React.FC = () => {
               <TableCell sx={{ color: (item.findingCount || 0) > 0 ? 'error.main' : 'inherit', fontWeight: 'bold' }}>{item.findingCount || 0}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>완료일</TableCell>
               <TableCell sx={{ fontFamily: 'monospace' }}>
-                {item.status === 'DONE' && item.modifiedAt ? item.modifiedAt.substring(0, 10) : ''}
+                {item.status === 'DONE' && item.modifiedAt ? formatDate(item.modifiedAt) : ''}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -275,8 +276,8 @@ const SiteSafetyReportTab: React.FC = () => {
     { header: '작업명', key: 'title' },
     { header: '작업 유형', align: 'center', width: 110, render: (r) => r.workType || '' },
     { header: '위험 등급', align: 'center', width: 100, render: (r) => r.riskLevel ? <Chip size="small" label={RISK_LABEL[r.riskLevel] || r.riskLevel} color={RISK_COLORS[r.riskLevel] || 'default'} /> : '' },
-    { header: t('common.startDate', '시작일'), align: 'center', width: 110, render: (r) => (r.workStartDate || '').substring(0, 10) },
-    { header: t('common.endDate', '종료일'), align: 'center', width: 110, render: (r) => (r.workEndDate || '').substring(0, 10) },
+    { header: t('common.startDate', '시작일'), align: 'center', width: 110, render: (r) => formatDate(r.workStartDate) },
+    { header: t('common.endDate', '종료일'), align: 'center', width: 110, render: (r) => formatDate(r.workEndDate) },
     { header: t('common.status', '상태'), align: 'center', width: 100, render: (r) => <Chip size="small" label={STATUS_LABEL[r.status] || r.status} color={STATUS_COLOR[r.status] || 'default'} /> },
   ]
 

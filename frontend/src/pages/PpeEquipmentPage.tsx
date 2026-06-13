@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { useMenuRule } from '../hooks/useMenuRule'
 import { useButtonRules } from '../hooks/useButtonRules'
-import { todayStr } from '../utils/dateDefaults'
+import { todayStr, formatDateTime } from '../utils/dateDefaults'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -513,7 +513,7 @@ const PpeEquipmentPage: React.FC = () => {
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={valSx}>
               <Typography variant="body2" fontFamily="monospace">
-                {viewMode === 'edit' && selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : todayStr()}
+                {viewMode === 'edit' && selectedItem?.createdAt ? formatDateTime(selectedItem.createdAt) : todayStr()}
               </Typography>
             </Box>
           </Box>
@@ -929,7 +929,7 @@ const PpeEquipmentPage: React.FC = () => {
                   const ac = ACTION_TYPE_CHIP[h.actionType as PpeActionType] || ACTION_TYPE_CHIP.ISSUE
                   return (
                     <TableRow key={h.id} hover>
-                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{h.actionDate?.replace('T', ' ').substring(0, 16)}</TableCell>
+                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(h.actionDate)}</TableCell>
                       <TableCell align="center"><Chip label={ac.label} color={ac.color} size="small" /></TableCell>
                       <TableCell>{h.itemName}</TableCell>
                       <TableCell align="center">{h.quantity}</TableCell>
@@ -954,7 +954,7 @@ const PpeEquipmentPage: React.FC = () => {
                     <Chip label={ac.label} color={ac.color} size="small" />
                     <Box sx={{ flex: 1 }} />
                     <Typography variant="caption" fontFamily="monospace" color="text.secondary">
-                      {h.actionDate?.replace('T', ' ').substring(0, 16)}
+                      {formatDateTime(h.actionDate)}
                     </Typography>
                   </Box>
                   <Typography fontWeight="bold" color="primary" sx={{ mb: 0.5 }}>

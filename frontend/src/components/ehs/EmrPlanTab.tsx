@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatDateTime } from '../../utils/dateDefaults'
+import { formatUserName } from '../../utils/userDisplay'
 import { isSystemAdmin } from '../../utils/auth'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -470,7 +471,7 @@ const EmrPlanTab: React.FC = () => {
               <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">
-                  {selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+                  {selectedItem.createdAt ? formatDateTime(selectedItem.createdAt) : ''}
                 </Typography>
               </Box>
             </Box>
@@ -483,7 +484,7 @@ const EmrPlanTab: React.FC = () => {
                 </Box>
                 <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
                 <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
-                  <Typography variant="body2">{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+                  <Typography variant="body2">{formatDateTime(selectedItem.modifiedAt)}</Typography>
                 </Box>
               </Box>
             )}
@@ -539,10 +540,10 @@ const EmrPlanTab: React.FC = () => {
               [t('common.notes'), selectedItem.notes || ''],
               [t('common.creator', '작성자'), formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || ''],
               [t('audit.createdAt', '작성일자'),
-                selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
+                selectedItem.createdAt ? formatDateTime(selectedItem.createdAt) : ''],
               ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
                 [t('common.modifier', '수정자'), formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition) || ''],
-                [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+                [t('common.modifiedAt', '수정일자'), formatDateTime(selectedItem.modifiedAt)],
               ] as Array<[string, string]> : []),
               [t('emr.planApprover'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
               [t('emr.completionApprover'), formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)],
@@ -702,7 +703,7 @@ const EmrPlanTab: React.FC = () => {
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">
                 {viewMode === 'edit' && selectedItem?.createdAt
-                  ? selectedItem.createdAt.replace('T', ' ').substring(0, 16)
+                  ? formatDateTime(selectedItem.createdAt)
                   : new Date().toISOString().substring(0, 10)}
               </Typography>
             </Box>
@@ -716,7 +717,7 @@ const EmrPlanTab: React.FC = () => {
               </Box>
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2">{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+                <Typography variant="body2">{formatDateTime(selectedItem.modifiedAt)}</Typography>
               </Box>
             </Box>
           )}
@@ -814,7 +815,7 @@ const EmrPlanTab: React.FC = () => {
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('audit.createdAt', '작성일자')}</Typography>
             <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>
               {viewMode === 'edit' && selectedItem?.createdAt
-                ? selectedItem.createdAt.replace('T', ' ').substring(0, 16)
+                ? formatDateTime(selectedItem.createdAt)
                 : new Date().toISOString().substring(0, 10)}
             </Typography>
           </Box>
@@ -827,7 +828,7 @@ const EmrPlanTab: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.modifiedAt', '수정일자')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatDateTime(selectedItem.modifiedAt)}</Typography>
               </Box>
             </>
           )}

@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -91,7 +92,6 @@ const WaterStandardTab: React.FC = () => {
     showConfirm(t('common.confirmDelete'), () => deleteMutation.mutate(selectedItem.id))
   }
 
-  const formatDate = (dateStr?: string) => dateStr ? dateStr.substring(0, 10) : ''
 
   const cellSx = { borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }
 

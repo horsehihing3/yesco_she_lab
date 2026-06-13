@@ -1,3 +1,4 @@
+import { formatDate } from '../../../utils/dateDefaults'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -69,7 +70,7 @@ const EhsBudgetReportTab: React.FC = () => {
     const e = endDate || ''
     return [...expenses]
       .filter(i => {
-        const d = (i.expenseDate || i.createdAt || '').substring(0, 10)
+        const d = formatDate(i.expenseDate || i.createdAt)
         if (!d) return false
         if (s && d < s) return false
         if (e && d > e) return false
@@ -108,7 +109,7 @@ const EhsBudgetReportTab: React.FC = () => {
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('budget.year', '연도')}</TableCell>
                 <TableCell sx={{ width: '30%' }}>{item.budgetYear}</TableCell>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('budget.expenseDate', '집행일')}</TableCell>
-                <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{(item.expenseDate || '').substring(0, 10)}</TableCell>
+                <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{formatDate(item.expenseDate)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('budget.category', '구분')}</TableCell>
@@ -169,7 +170,7 @@ const EhsBudgetReportTab: React.FC = () => {
 
   const columns: ReportColumn<EhsBudgetExpense>[] = [
     { header: t('budget.year', '연도'), align: 'center', width: 80, render: (r) => r.budgetYear },
-    { header: t('budget.expenseDate', '집행일'), align: 'center', width: 110, render: (r) => (r.expenseDate || '').substring(0, 10) },
+    { header: t('budget.expenseDate', '집행일'), align: 'center', width: 110, render: (r) => formatDate(r.expenseDate) },
     { header: t('budget.category', '구분'), align: 'center', width: 110, render: (r) => getCategoryLabel(r.category) || r.category },
     { header: t('budget.itemName', '항목'), render: (r) => r.itemName },
     { header: t('budget.department', '부서'), align: 'center', width: 120, render: (r) => r.department || '' },

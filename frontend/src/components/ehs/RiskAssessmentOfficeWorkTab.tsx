@@ -1445,7 +1445,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                     </TableCell>
                     <TableCell>{detail.reductionMeasures || ''}</TableCell>
                     <TableCell align="center">{detail.improvementManager || ''}</TableCell>
-                    <TableCell align="center">{detail.improvementDeadline ? detail.improvementDeadline.substring(0, 10) : ''}</TableCell>
+                    <TableCell align="center">{detail.improvementDeadline ? formatDate(detail.improvementDeadline) : ''}</TableCell>
                     <TableCell align="center">
                       {readOnly ? (detail.improvedPossibilityGrade || '') : (
                         <FormControl size="small" sx={{ minWidth: 60 }}>

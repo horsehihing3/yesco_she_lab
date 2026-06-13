@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -80,7 +81,7 @@ const WaterReportTab: React.FC = () => {
     const e = endDate || ''
     return list
       .filter((r: any) => {
-        const d = (r.measurementDate || '').substring(0, 10)
+        const d = formatDate(r.measurementDate)
         if (!d) return false
         if (s && d < s) return false
         if (e && d > e) return false
@@ -116,7 +117,7 @@ const WaterReportTab: React.FC = () => {
             <TableBody>
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('water.report.date', '측정일')}</TableCell>
-                <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{(item.measurementDate || '').substring(0, 10)}</TableCell>
+                <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{formatDate(item.measurementDate)}</TableCell>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('water.report.workplacePoint', '측정 지점')}</TableCell>
                 <TableCell sx={{ width: '30%' }}>{item.measurementPoint || ''}</TableCell>
               </TableRow>
@@ -175,7 +176,7 @@ const WaterReportTab: React.FC = () => {
   }
 
   const columns: ReportColumn<any>[] = [
-    { header: t('water.report.date', '측정일'), align: 'center', width: 110, render: (r) => (r.measurementDate || '').substring(0, 10) },
+    { header: t('water.report.date', '측정일'), align: 'center', width: 110, render: (r) => formatDate(r.measurementDate) },
     { header: t('water.report.workplacePoint', '측정 지점'), render: (r) => r.measurementPoint || '' },
     { header: 'pH', align: 'center', width: 70, render: (r) => r.ph != null ? r.ph : '' },
     { header: 'BOD', align: 'center', width: 70, render: (r) => r.bod != null ? r.bod : '' },

@@ -12,7 +12,7 @@ import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../common/DatePickerField'
-import { todayStr } from '../../utils/dateDefaults'
+import { todayStr, formatDate } from '../../utils/dateDefaults'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
 import { carbonEmissionApi } from '../../api/carbonApi'
@@ -157,7 +157,6 @@ const CarbonEmissionTab: React.FC = () => {
     showConfirm(t('common.confirmDelete'), () => deleteMutation.mutate(selectedItem.id))
   }
 
-  const formatDate = (dateStr?: string | null) => dateStr ? dateStr.substring(0, 10) : ''
 
   // List View
   const renderListView = () => (

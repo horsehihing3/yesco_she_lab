@@ -394,8 +394,8 @@ const NearMissPage: React.FC = () => {
         content: a.improvementMeasures || '',
         department: a.manageDept || '',
         responsible: a.responsiblePerson || '',
-        dueDate: a.planDate ? a.planDate.substring(0, 10) : '',
-        completedDate: a.completeDate ? a.completeDate.substring(0, 10) : '',
+        dueDate: a.planDate ? formatDate(a.planDate) : '',
+        completedDate: a.completeDate ? formatDate(a.completeDate) : '',
       })))
     } else {
       setMeasures([])
@@ -1174,8 +1174,8 @@ const NearMissPage: React.FC = () => {
                     <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{action.improvementMeasures || ''}</TableCell>
                     <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{action.manageDept || ''}</TableCell>
                     <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{action.responsiblePerson || ''}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{action.planDate ? action.planDate.substring(0, 10) : ''}</TableCell>
-                    <TableCell sx={{ textAlign: 'center' }}>{action.completeDate ? action.completeDate.substring(0, 10) : ''}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: 'center' }}>{action.planDate ? formatDate(action.planDate) : ''}</TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>{action.completeDate ? formatDate(action.completeDate) : ''}</TableCell>
                   </TableRow>
                 ))
               ) : (

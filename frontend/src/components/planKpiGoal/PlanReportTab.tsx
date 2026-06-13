@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatDate } from '../../utils/dateDefaults'
+import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -86,7 +87,7 @@ const PlanReportTab: React.FC = () => {
     const e = endDate || ''
     return items
       .filter(p => {
-        const c = (p.createdAt || '').substring(0, 10)
+        const c = formatDate(p.createdAt)
         if (s && c < s) return false
         if (e && c > e) return false
         return true

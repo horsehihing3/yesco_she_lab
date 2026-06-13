@@ -12,7 +12,7 @@ import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import DatePickerField from '../common/DatePickerField'
-import { todayStr } from '../../utils/dateDefaults'
+import { todayStr, formatDate } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
@@ -158,7 +158,6 @@ const WasteManageTab: React.FC = () => {
     showConfirm(t('common.confirmDelete'), () => deleteMutation.mutate(selectedItem.id))
   }
 
-  const formatDate = (dateStr?: string) => dateStr ? dateStr.substring(0, 10) : ''
 
   const statusTabs = [
     { value: 'ALL', label: t('common.all') },

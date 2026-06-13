@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -105,10 +106,6 @@ const getStatusColor = (status: EducationStatus): 'info' | 'success' | 'default'
   }
 }
 
-const formatDate = (dateStr?: string) => {
-  if (!dateStr) return ''
-  return dateStr.substring(0, 10)
-}
 
 // ===== API Functions =====
 const fetchEducations = async (page: number, size: number): Promise<PageResponse<SafetyEducation>> => {

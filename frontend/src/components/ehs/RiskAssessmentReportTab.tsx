@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatDate } from '../../utils/dateDefaults'
+import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -44,7 +45,7 @@ const RiskAssessmentReportTab: React.FC = () => {
     const s = startDate || ''
     const e = endDate || ''
     const pickDate = (i: any) =>
-      (i.completionApprovedAt || i.completedDate || i.modifiedAt || i.createdAt || '').substring(0, 10)
+      formatDate(i.completionApprovedAt || i.completedDate || i.modifiedAt || i.createdAt)
     return list
       .filter((i: RiskAssessment) => i.status === 'COMPLETED')
       .filter((i: RiskAssessment) => {
@@ -139,9 +140,9 @@ const RiskAssessmentReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.createdAt', '등록일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.createdAt || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.createdAt)}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('riskAssessment.completedDate', '완료일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.completedDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.completedDate)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

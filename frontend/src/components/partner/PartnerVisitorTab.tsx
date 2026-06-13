@@ -21,7 +21,7 @@ import { partnerVisitorApi, partnerStatsApi } from '../../api/partnerApi'
 import type { PartnerVisitor } from '../../types/partner.types'
 import StatCard from '../legalCompliance/StatCard'
 import DatePickerField from '../common/DatePickerField'
-import { todayStr } from '../../utils/dateDefaults'
+import { todayStr, formatDateTime } from '../../utils/dateDefaults'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
@@ -322,7 +322,7 @@ const PartnerVisitorTab: React.FC = () => {
               <TableBody>
                 {filtered.map(v => (
                   <TableRow key={v.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(v)}>
-                    <TableCell align="center">{v.visitDt?.replace('T', ' ').slice(0, 16) || '-'}</TableCell>
+                    <TableCell align="center">{formatDateTime(v.visitDt) || '-'}</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 700 }}>{v.visitorName}</TableCell>
                     <TableCell>{v.companyName || '-'}</TableCell>
                     <TableCell align="center">{v.position || '-'}</TableCell>

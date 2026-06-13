@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -32,7 +33,7 @@ const TrainingReportTab: React.FC = () => {
     const list = data?.content || []
     const s = startDate || ''
     const e = endDate || ''
-    const pickDate = (i: TrainingApplication) => (i.completionDate || i.approvedAt || i.createdAt || '').substring(0, 10)
+    const pickDate = (i: TrainingApplication) => formatDate(i.completionDate || i.approvedAt || i.createdAt)
     return list
       .filter(i => i.status === 'COMPLETED')
       .filter(i => {
@@ -70,7 +71,7 @@ const TrainingReportTab: React.FC = () => {
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('training.applicationNo', '신청번호')}</TableCell>
               <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{item.applicationNo}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('training.applyDate', '신청일')}</TableCell>
-              <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{(item.applyDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>{formatDate(item.applyDate)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('training.applicantName', '신청자')}</TableCell>
@@ -94,9 +95,9 @@ const TrainingReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('training.courseDate', '교육일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.courseDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.courseDate)}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('training.completionDate', '이수일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{(item.completionDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate(item.completionDate)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('training.approvedBy', '승인자')}</TableCell>
@@ -121,8 +122,8 @@ const TrainingReportTab: React.FC = () => {
     { header: t('training.courseName', '교육명'), render: (r) => r.courseName },
     { header: t('training.applicantName', '신청자'), align: 'center', width: 100, render: (r) => r.applicantName },
     { header: t('training.applicantDept', '소속'), align: 'center', width: 130, render: (r) => r.applicantDept || '' },
-    { header: t('training.courseDate', '교육일'), align: 'center', width: 110, render: (r) => (r.courseDate || '').substring(0, 10) },
-    { header: t('training.completionDate', '이수일'), align: 'center', width: 110, render: (r) => (r.completionDate || '').substring(0, 10) },
+    { header: t('training.courseDate', '교육일'), align: 'center', width: 110, render: (r) => formatDate(r.courseDate) },
+    { header: t('training.completionDate', '이수일'), align: 'center', width: 110, render: (r) => formatDate(r.completionDate) },
   ]
 
   return (

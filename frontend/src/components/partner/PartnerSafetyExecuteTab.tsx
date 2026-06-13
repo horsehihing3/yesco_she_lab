@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -88,7 +89,7 @@ const PartnerSafetyExecuteTab: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
           <Typography variant="h6" fontWeight="bold" sx={{ flex: 1 }}>{selectedPlan.title}</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
-            {selectedPlan.createdAt?.substring(0, 10)}
+            {formatDate(selectedPlan.createdAt)}
           </Typography>
           <Chip
             label={STATUS_LABEL[selectedPlan.status] ?? selectedPlan.status}
@@ -121,7 +122,7 @@ const PartnerSafetyExecuteTab: React.FC = () => {
             <FormLabel>작성일</FormLabel>
             <FormCell borderRight>
               <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-                {selectedPlan.createdAt?.substring(0, 10) || '-'}
+                {formatDate(selectedPlan.createdAt) || '-'}
               </Typography>
             </FormCell>
             <FormLabel>작성자</FormLabel>

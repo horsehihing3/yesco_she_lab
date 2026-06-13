@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -140,7 +141,6 @@ const CarbonDashboardTab: React.FC = () => {
 
   const totalEmission = byScope.reduce((sum, s) => sum + s.value, 0)
 
-  const formatDate = (dateStr?: string) => dateStr ? dateStr.substring(0, 10) : ''
 
   const getScopeColor = (scope: number): 'primary' | 'success' | 'info' => {
     if (scope === 1) return 'primary'

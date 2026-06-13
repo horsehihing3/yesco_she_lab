@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -87,7 +88,6 @@ const WaterDashboardTab: React.FC = () => {
     queryFn: () => waterStandardApi.findAllList(),
   })
 
-  const formatDate = (dateStr?: string) => dateStr ? dateStr.substring(0, 10) : ''
 
   const isExceeded = (record: WaterQuality, standardList: WaterStandard[]): boolean => {
     const checkValue = (value: number | undefined, itemName: string): boolean => {

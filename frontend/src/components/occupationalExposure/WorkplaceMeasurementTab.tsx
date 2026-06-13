@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -166,10 +167,6 @@ const getResultStatusColor = (status: MeasurementResultStatus): 'success' | 'war
   }
 }
 
-const formatDate = (dateStr?: string) => {
-  if (!dateStr) return ''
-  return dateStr.substring(0, 10)
-}
 
 const emptyDetailRow = (): WorkplaceMeasurementDetailRequest => ({
   hazardousFactor: '',

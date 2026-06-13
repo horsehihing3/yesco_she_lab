@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatDate } from '../../utils/dateDefaults'
+import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -67,7 +68,7 @@ const EmrReportTab: React.FC = () => {
     const s = startDate || ''
     const e = endDate || ''
     const pickDate = (i: EnrichedDrill) =>
-      (i.completionApprovedAt || i.trainingEndDate || i.scheduledDate || i.createdAt || '').substring(0, 10)
+      formatDate(i.completionApprovedAt || i.trainingEndDate || i.scheduledDate || i.createdAt)
     return enriched
       .filter((i) => i.status === 'DONE' || i.status === 'COMPLETED')
       .filter((i) => {
@@ -119,9 +120,9 @@ const EmrReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.startDate', '시작일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{((item as any).trainingStartDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate((item as any).trainingStartDate)}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.endDate', '종료일')}</TableCell>
-              <TableCell sx={{ fontFamily: 'monospace' }}>{((item as any).trainingEndDate || '').substring(0, 10)}</TableCell>
+              <TableCell sx={{ fontFamily: 'monospace' }}>{formatDate((item as any).trainingEndDate)}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('common.planApprover', '계획 승인자')}</TableCell>
@@ -193,9 +194,9 @@ const EmrReportTab: React.FC = () => {
     { header: t('emr.planName', '훈련명'), render: (r) => r.planName || r.drillName || '' },
     { header: t('emr.planType', '유형'), align: 'center', width: 170, render: (r) => <span style={{ whiteSpace: 'nowrap' }}>{getPlanTypeLabel(r.planType || r.drillType || '') || r.planType || r.drillType || ''}</span> },
     { header: t('emr.responsibleDept', '담당 부서'), align: 'center', width: 200, render: (r) => r.responsibleDept || r.targetDept || '' },
-    { header: t('common.startDate', '시작일'), align: 'center', width: 110, render: (r) => (r.trainingStartDate || r.scheduledDate || '').substring(0, 10) },
-    { header: t('common.endDate', '종료일'), align: 'center', width: 110, render: (r) => (r.trainingEndDate || '').substring(0, 10) },
-    { header: t('emr.completionApprovedDate', '완료 승인일'), align: 'center', width: 130, render: (r) => (r.completionApprovedAt || '').substring(0, 10) },
+    { header: t('common.startDate', '시작일'), align: 'center', width: 110, render: (r) => formatDate(r.trainingStartDate || r.scheduledDate) },
+    { header: t('common.endDate', '종료일'), align: 'center', width: 110, render: (r) => formatDate(r.trainingEndDate) },
+    { header: t('emr.completionApprovedDate', '완료 승인일'), align: 'center', width: 130, render: (r) => formatDate(r.completionApprovedAt) },
   ]
 
   return (

@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo, useState } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -40,7 +41,7 @@ const AuditReportTab: React.FC = () => {
     const s = startDate || ''
     const e = endDate || ''
     const pickDate = (i: any) =>
-      (i.completionApprovedAt || i.auditDate || i.createdAt || '').substring(0, 10)
+      formatDate(i.completionApprovedAt || i.auditDate || i.createdAt)
     return list
       .filter(i => i.status === 'COMPLETED')
       .filter(i => {
@@ -169,7 +170,7 @@ const AuditReportTab: React.FC = () => {
   const columns: ReportColumn<Audit>[] = [
     { header: t('audit.auditId', '감사번호'), key: 'auditId' as keyof Audit, align: 'center', width: 130 },
     { header: t('audit.title', '제목'), key: 'title' as keyof Audit },
-    { header: t('audit.auditDate', '감사일'), align: 'center', width: 110, render: (r) => ((r as any).auditDate || '').substring(0, 10) },
+    { header: t('audit.auditDate', '감사일'), align: 'center', width: 110, render: (r) => formatDate((r as any).auditDate) },
     { header: t('audit.auditor', '감사자'), key: 'auditor' as keyof Audit, align: 'center', width: 100 },
     { header: t('common.status', '상태'), align: 'center', width: 110, render: (r) => <Chip size="small" label={(r as any).status} /> },
   ]

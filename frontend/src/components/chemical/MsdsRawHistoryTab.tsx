@@ -14,7 +14,7 @@ import { useAlert } from '../../contexts/AlertContext'
 import { msdsApi } from '../../api/chemicalApi'
 import { Msds } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
-import { todayStr } from '../../utils/dateDefaults'
+import { todayStr, formatDate } from '../../utils/dateDefaults'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -251,7 +251,7 @@ const MsdsRawHistoryTab: React.FC = () => {
                 <TableCell align="center" sx={cellBorderSx}><Chip label={getChangeTypeLabel(item.isLatest ? 'LATEST' : 'OLD')} size="small" color={item.isLatest ? 'primary' : 'default'} /></TableCell>
                 <TableCell sx={cellBorderSx}>{item.changeSummary || ''}</TableCell>
                 <TableCell align="center" sx={cellBorderSx}>{item.registeredBy || ''}</TableCell>
-                <TableCell align="center">{item.issueDate || item.createdAt?.substring(0, 10) || ''}</TableCell>
+                <TableCell align="center">{item.issueDate || formatDate(item.createdAt) || ''}</TableCell>
               </TableRow>
             )) : (
               <TableRow>

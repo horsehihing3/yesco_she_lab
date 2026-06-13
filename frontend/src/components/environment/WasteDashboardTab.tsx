@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -99,7 +100,6 @@ const WasteDashboardTab: React.FC = () => {
     queryFn: () => wasteManageApi.findAll(0, 1000),
   })
 
-  const formatDate = (dateStr?: string) => dateStr ? dateStr.substring(0, 10) : ''
 
   const calcDday = (disposalDate: string) => {
     const now = new Date()

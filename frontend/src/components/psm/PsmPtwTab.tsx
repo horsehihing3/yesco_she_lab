@@ -1,3 +1,4 @@
+import { formatDateTime } from '../../utils/dateDefaults'
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -176,8 +177,8 @@ const PsmPtwTab: React.FC = () => {
                         <TableCell align="center">{PERMIT_TYPES.find(t => t.v === p.permitType)?.l || p.permitType}</TableCell>
                         <TableCell>{p.workName}</TableCell>
                         <TableCell sx={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.workLocation || '-'}</TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{p.startAt?.replace('T', ' ').substring(0, 16) || '-'}</TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{p.endAt?.replace('T', ' ').substring(0, 16) || '-'}</TableCell>
+                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(p.startAt) || '-'}</TableCell>
+                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(p.endAt) || '-'}</TableCell>
                         <TableCell align="center">{p.supervisorName || '-'}</TableCell>
                         <TableCell align="center"><Chip size="small" label={PTW_STATUS[p.status]?.l} color={PTW_STATUS[p.status]?.c} /></TableCell>
                       </TableRow>
@@ -253,12 +254,12 @@ const PsmPtwTab: React.FC = () => {
           <FormLabel required>시작 일시</FormLabel>
           <FormCell borderRight>
             {isEdit ? <TextField fullWidth size="small" type="datetime-local" value={v.startAt?.substring(0, 16) || ''} onChange={e => setV({ startAt: e.target.value })} />
-              : <Typography variant="body2" fontFamily="monospace">{v.startAt?.replace('T', ' ').substring(0, 16) || ''}</Typography>}
+              : <Typography variant="body2" fontFamily="monospace">{formatDateTime(v.startAt) || ''}</Typography>}
           </FormCell>
           <FormLabel required>종료 일시</FormLabel>
           <FormCell>
             {isEdit ? <TextField fullWidth size="small" type="datetime-local" value={v.endAt?.substring(0, 16) || ''} onChange={e => setV({ endAt: e.target.value })} />
-              : <Typography variant="body2" fontFamily="monospace">{v.endAt?.replace('T', ' ').substring(0, 16) || ''}</Typography>}
+              : <Typography variant="body2" fontFamily="monospace">{formatDateTime(v.endAt) || ''}</Typography>}
           </FormCell>
         </FormRow>
         <FormRow>
@@ -351,7 +352,7 @@ const PsmPtwTab: React.FC = () => {
           <FormLabel>서명 일시</FormLabel>
           <FormCell>
             {isEdit ? <TextField fullWidth size="small" type="datetime-local" value={v.supervisorSignedAt?.substring(0, 16) || ''} onChange={e => setV({ supervisorSignedAt: e.target.value })} />
-              : <Typography variant="body2" fontFamily="monospace">{v.supervisorSignedAt?.replace('T', ' ').substring(0, 16) || ''}</Typography>}
+              : <Typography variant="body2" fontFamily="monospace">{formatDateTime(v.supervisorSignedAt) || ''}</Typography>}
           </FormCell>
         </FormRow>
         <FormRow>
@@ -363,7 +364,7 @@ const PsmPtwTab: React.FC = () => {
           <FormLabel>승인 일시</FormLabel>
           <FormCell>
             {isEdit ? <TextField fullWidth size="small" type="datetime-local" value={v.ehsApprovedAt?.substring(0, 16) || ''} onChange={e => setV({ ehsApprovedAt: e.target.value })} />
-              : <Typography variant="body2" fontFamily="monospace">{v.ehsApprovedAt?.replace('T', ' ').substring(0, 16) || ''}</Typography>}
+              : <Typography variant="body2" fontFamily="monospace">{formatDateTime(v.ehsApprovedAt) || ''}</Typography>}
           </FormCell>
         </FormRow>
         <FormRow>
@@ -375,7 +376,7 @@ const PsmPtwTab: React.FC = () => {
           <FormLabel>승인 일시</FormLabel>
           <FormCell>
             {isEdit ? <TextField fullWidth size="small" type="datetime-local" value={v.opsApprovedAt?.substring(0, 16) || ''} onChange={e => setV({ opsApprovedAt: e.target.value })} />
-              : <Typography variant="body2" fontFamily="monospace">{v.opsApprovedAt?.replace('T', ' ').substring(0, 16) || ''}</Typography>}
+              : <Typography variant="body2" fontFamily="monospace">{formatDateTime(v.opsApprovedAt) || ''}</Typography>}
           </FormCell>
         </FormRow>
         <FormRow last>

@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -166,7 +167,7 @@ const SafetyChecklistWrapper: React.FC<SafetyChecklistWrapperProps> = ({ categor
                     </TableCell>
                     <TableCell align="center">{tmpl.itemCount || 0}</TableCell>
                     <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                      {tmpl.createdAt?.substring(0, 10) || ''}
+                      {formatDate(tmpl.createdAt) || ''}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -189,7 +190,7 @@ const SafetyChecklistWrapper: React.FC<SafetyChecklistWrapperProps> = ({ categor
                   {t('checklist.itemCount', '항목 수')}: {tmpl.itemCount || 0}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {t('common.createdAt', '작성일')}: {tmpl.createdAt?.substring(0, 10) || ''}
+                  {t('common.createdAt', '작성일')}: {formatDate(tmpl.createdAt) || ''}
                 </Typography>
               </Paper>
             ))}

@@ -11,7 +11,7 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import DatePickerField from '../common/DatePickerField'
-import { todayStr } from '../../utils/dateDefaults'
+import { todayStr, formatDate } from '../../utils/dateDefaults'
 import { useCodeMap } from '../../hooks/useCodeMap'
 import { disposalCompanyApi } from '../../api/environmentApi'
 import { DisposalCompany, DisposalCompanyRequest } from '../../types/environment.types'
@@ -121,7 +121,6 @@ const DisposalCompanyTab: React.FC = () => {
     showConfirm(t('common.confirmDelete'), () => deleteMutation.mutate(selectedItem.id))
   }
 
-  const formatDate = (dateStr?: string) => dateStr ? dateStr.substring(0, 10) : ''
 
   const getDaysUntilExpiry = (dateStr?: string): number | null => {
     if (!dateStr) return null

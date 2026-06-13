@@ -678,7 +678,7 @@ const WemImprovementTab: React.FC = () => {
           <Box sx={labelSx}>{t('common.creator', '작성자')}</Box>
           <Box sx={valBorderSx}><Typography variant="body2">{fmtPerson(detail?.createdByName || user?.name, detail?.createdByTeam || user?.department, detail?.createdByPosition || user?.position)}</Typography></Box>
           <Box sx={labelSx}>{t('audit.createdAt', '작성일자')}</Box>
-          <Box sx={valSx}><Typography variant="body2">{viewMode === 'edit' ? detail?.createdAt?.substring(0, 10) : todayStr()}</Typography></Box>
+          <Box sx={valSx}><Typography variant="body2">{viewMode === 'edit' ? formatDate(detail?.createdAt) : todayStr()}</Typography></Box>
         </Box>
         {/* 수정자 | 수정일자 — 수정 모드만 */}
         {viewMode === 'edit' && (

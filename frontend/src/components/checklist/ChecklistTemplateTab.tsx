@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -390,7 +391,7 @@ const ChecklistTemplateTab: React.FC = () => {
                   </TableCell>
                   <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{row.title}</TableCell>
                   <TableCell align="center" sx={{ borderRight: 1, borderColor: 'divider' }}>{row.modUser || row.regUser}</TableCell>
-                  <TableCell align="center">{row.createdAt?.substring(0, 10)}</TableCell>
+                  <TableCell align="center">{formatDate(row.createdAt)}</TableCell>
                 </TableRow>
               ))
             )}
@@ -421,7 +422,7 @@ const ChecklistTemplateTab: React.FC = () => {
                 </Box>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Typography variant="body2" sx={{ bgcolor: 'grey.200', px: 1, py: 0.25, borderRadius: 0.5, minWidth: 50 }}>{t('common.createdAt')}</Typography>
-                  <Typography variant="body2">{row.createdAt?.substring(0, 10)}</Typography>
+                  <Typography variant="body2">{formatDate(row.createdAt)}</Typography>
                 </Box>
               </Box>
             </Paper>
@@ -505,7 +506,7 @@ const ChecklistTemplateTab: React.FC = () => {
                 </Typography>
                 <Typography sx={{ ...detailLabelSx }}>{t('common.createdAt')}</Typography>
                 <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }}>
-                  {detailData.createdAt?.substring(0, 10) || ''}
+                  {formatDate(detailData.createdAt) || ''}
                 </Typography>
               </Box>
             </Box>
@@ -603,7 +604,7 @@ const ChecklistTemplateTab: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.createdAt')}</Typography>
-                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{detailData.createdAt?.substring(0, 10) || ''}</Typography>
+                <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{formatDate(detailData.createdAt) || ''}</Typography>
               </Box>
             </Box>
           </Paper>

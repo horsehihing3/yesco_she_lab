@@ -1,3 +1,4 @@
+import { formatDate } from '../utils/dateDefaults'
 import { useState, useMemo } from 'react'
 import { isEhsManager } from '../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -367,7 +368,7 @@ const MyHealthCheckupPage: React.FC = () => {
                     <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleOpenDetail(item)}>
                       <TableCell align="center">{item.checkupYear}</TableCell>
                       <TableCell align="center">{item.checkupType || ''}</TableCell>
-                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{item.checkupDate?.substring(0, 10) || ''}</TableCell>
+                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDate(item.checkupDate) || ''}</TableCell>
                       <TableCell>{item.hospital || ''}</TableCell>
                       <TableCell align="center">
                         {item.overallResult ? <Chip label={item.overallResult} size="small" color={getOverallResultColor(item.overallResult)} /> : ''}
@@ -375,7 +376,7 @@ const MyHealthCheckupPage: React.FC = () => {
                       <TableCell align="center">
                         <Chip label={t(`healthCheckup.statusLabels.${item.checkupStatus}`)} size="small" color={getStatusColor(item.checkupStatus)} />
                       </TableCell>
-                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{item.nextCheckupDate?.substring(0, 10) || ''}</TableCell>
+                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDate(item.nextCheckupDate) || ''}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -391,7 +392,7 @@ const MyHealthCheckupPage: React.FC = () => {
                   <Chip label={t(`healthCheckup.statusLabels.${item.checkupStatus}`)} size="small" color={getStatusColor(item.checkupStatus)} />
                 </Box>
                 <Typography variant="body2" color="text.secondary">
-                  {item.checkupDate?.substring(0, 10) || ''} | {item.hospital || ''}
+                  {formatDate(item.checkupDate) || ''} | {item.hospital || ''}
                   {item.overallResult ? ` | ${item.overallResult}` : ''}
                 </Typography>
               </Paper>
@@ -439,7 +440,7 @@ const MyHealthCheckupPage: React.FC = () => {
             </Box>
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.checkupDate')}</Typography>
-              <Typography sx={valueCellBorderSx}>{selectedItem.checkupDate?.substring(0, 10) || ''}</Typography>
+              <Typography sx={valueCellBorderSx}>{formatDate(selectedItem.checkupDate) || ''}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.hospital')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.hospital || ''}</Typography>
             </Box>
@@ -455,7 +456,7 @@ const MyHealthCheckupPage: React.FC = () => {
             </Box>
             <Box sx={{ display: 'flex' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.nextCheckupDate')}</Typography>
-              <Typography sx={valueCellBorderSx}>{selectedItem.nextCheckupDate?.substring(0, 10) || ''}</Typography>
+              <Typography sx={valueCellBorderSx}>{formatDate(selectedItem.nextCheckupDate) || ''}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.notes')}</Typography>
               <Typography sx={{ ...valueCellSx, whiteSpace: 'pre-wrap' }}>{selectedItem.notes || ''}</Typography>
             </Box>
@@ -473,10 +474,10 @@ const MyHealthCheckupPage: React.FC = () => {
               { label: t('healthCheckup.employeeEmail'), value: selectedItem.employeeEmail || '' },
               { label: t('healthCheckup.checkupYear'), value: String(selectedItem.checkupYear) },
               { label: t('healthCheckup.checkupType'), value: selectedItem.checkupType || '' },
-              { label: t('healthCheckup.checkupDate'), value: selectedItem.checkupDate?.substring(0, 10) || '' },
+              { label: t('healthCheckup.checkupDate'), value: formatDate(selectedItem.checkupDate) || '' },
               { label: t('healthCheckup.hospital'), value: selectedItem.hospital || '' },
               { label: t('healthCheckup.overallResult'), value: selectedItem.overallResult || '' },
-              { label: t('healthCheckup.nextCheckupDate'), value: selectedItem.nextCheckupDate?.substring(0, 10) || '' },
+              { label: t('healthCheckup.nextCheckupDate'), value: formatDate(selectedItem.nextCheckupDate) || '' },
               { label: t('healthCheckup.notes'), value: selectedItem.notes || '' },
             ].map((row, idx, arr) => (
               <Box key={idx} sx={{ mb: idx < arr.length - 1 ? 1.5 : 0 }}>

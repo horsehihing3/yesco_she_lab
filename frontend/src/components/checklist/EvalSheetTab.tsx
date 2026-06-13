@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -395,7 +396,7 @@ const EvalSheetTab: React.FC = () => {
                       <TableCell align="center" sx={{ fontWeight: 'bold' }}>{idx + 1}</TableCell>
                       <TableCell><Typography variant="body2" fontWeight={600} color="primary">{row.title}</Typography></TableCell>
                       <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                        {row.createdAt?.substring(0, 10) || ''}
+                        {formatDate(row.createdAt) || ''}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -415,7 +416,7 @@ const EvalSheetTab: React.FC = () => {
                     <Typography fontWeight="bold" color="primary" sx={{ flex: 1 }}>{row.title}</Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
-                    {t('common.createdAt', '작성일')}: {row.createdAt?.substring(0, 10) || ''}
+                    {t('common.createdAt', '작성일')}: {formatDate(row.createdAt) || ''}
                   </Typography>
                 </Paper>
               ))}
@@ -478,7 +479,7 @@ const EvalSheetTab: React.FC = () => {
             <Box sx={labelCellSx}>{t('common.createdAt', '작성일자')}</Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" color="text.primary" sx={{ fontFamily: 'monospace' }}>
-                {(meta?.createdAt || items?.[0]?.createdAt)?.substring(0, 10) || ''}
+                {formatDate(meta?.createdAt || items?.[0]?.createdAt)}
               </Typography>
             </Box>
           </Box>

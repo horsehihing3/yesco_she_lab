@@ -1,3 +1,4 @@
+import { formatDate, formatDateTime } from '../utils/dateDefaults'
 import React, { useState, useEffect, useRef, useTransition } from 'react'
 import { formatUserName } from '../utils/userDisplay'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -565,7 +566,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           </Box>
           <Typography sx={labelSx}>{t('processActivity.creationDate', '작성일자')}</Typography>
           <Box sx={valSx}>
-            <Typography variant="body2">{viewMode === 'create' ? todayStr() : (displayData.creationDate || ((displayData as ProcessActivityForm).createdAt?.substring(0, 10) ?? ''))}</Typography>
+            <Typography variant="body2">{viewMode === 'create' ? todayStr() : (displayData.creationDate || formatDate((displayData as ProcessActivityForm).createdAt))}</Typography>
           </Box>
         </Box>
         {/* 수정자 | 수정일자 — edit 모드 또는 수정 이력 있을 때 */}
@@ -580,7 +581,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             </Box>
             <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
             <Box sx={valSx}>
-              <Typography variant="body2">{(displayData as ProcessActivityForm).modifiedAt?.replace('T', ' ').substring(0, 16) ?? ''}</Typography>
+              <Typography variant="body2">{formatDateTime((displayData as ProcessActivityForm).modifiedAt)}</Typography>
             </Box>
           </Box>
         )}
@@ -596,7 +597,7 @@ const ProcessActivityWorkPage: React.FC = () => {
         </Box>
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('processActivity.creationDate', '작성일자')}</Typography>
-          <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMode === 'create' ? todayStr() : (displayData.creationDate || ((displayData as ProcessActivityForm).createdAt?.substring(0, 10) ?? ''))}</Typography>
+          <Typography variant="body2" sx={{ px: 1.5, py: 0.5 }}>{viewMode === 'create' ? todayStr() : (displayData.creationDate || formatDate((displayData as ProcessActivityForm).createdAt))}</Typography>
         </Box>
         <Box>
           <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('processActivity.division', '부문명')}</Typography>

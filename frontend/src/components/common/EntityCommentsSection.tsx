@@ -13,6 +13,7 @@ import { useAuth } from '../../context/AuthContext'
 import axiosInstance from '../../api/axiosInstance'
 import type { ApiResponse } from '../../types/common.types'
 import LoadingOverlay from './LoadingOverlay'
+import { formatDateTime } from '../../utils/dateDefaults'
 
 // EHS 알림 댓글 컴포넌트(EhsAlertCommentsSection) 를 다른 엔티티(EHS 메시지 / Q&A 등) 에 재사용하기 위해
 // 엔티티별 기본 URL 만 prop 으로 받아 동작하는 범용 컴포넌트.
@@ -28,8 +29,6 @@ export interface EntityComment {
   createdAt: string
   modifiedAt?: string
 }
-
-const formatDateTime = (s?: string) => s ? s.replace('T', ' ').slice(0, 16) : ''
 
 interface CommentRowProps {
   comment: EntityComment

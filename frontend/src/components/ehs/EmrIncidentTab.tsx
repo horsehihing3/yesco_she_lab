@@ -1,3 +1,4 @@
+import { formatDateTime } from '../../utils/dateDefaults'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -242,7 +243,7 @@ const EmrIncidentTab: React.FC = () => {
                         <TableCell align="center">
                           <Chip label={getStatusLabel(item.status)} color={statusColors[item.status] || 'default'} size="small" />
                         </TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{item.reportedAt?.replace('T', ' ').substring(0, 16) || ''}</TableCell>
+                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(item.reportedAt) || ''}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

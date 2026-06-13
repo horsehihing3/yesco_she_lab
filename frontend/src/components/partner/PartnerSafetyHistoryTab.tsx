@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import React, { useState, useMemo, useEffect } from 'react'
 import SignatureImage from '../common/SignatureImage'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -279,7 +280,7 @@ const PartnerSafetyHistoryTab: React.FC = () => {
                     <TableCell sx={{ fontWeight: 600, color: 'primary.main' }}>{plan?.title || ''}</TableCell>
                     <TableCell align="center">{getTemplateName(e.checklistTemplateId)}</TableCell>
                     <TableCell align="center">{e.name}</TableCell>
-                    <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{(e.completedAt || '').substring(0, 10)}</TableCell>
+                    <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDate(e.completedAt)}</TableCell>
                   </TableRow>
                 )
               })
@@ -306,7 +307,7 @@ const PartnerSafetyHistoryTab: React.FC = () => {
                   체크리스트: {getTemplateName(e.checklistTemplateId)}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                  작성자: {e.name} · 작성일: {(e.completedAt || '').substring(0, 10)}
+                  작성자: {e.name} · 작성일: {formatDate(e.completedAt)}
                 </Typography>
               </Paper>
             )

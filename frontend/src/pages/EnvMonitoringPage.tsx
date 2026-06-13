@@ -14,7 +14,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 import DatePickerField from '../components/common/DatePickerField'
-import { todayStr } from '../utils/dateDefaults'
+import { todayStr, formatDate } from '../utils/dateDefaults'
 import NumberField from '../components/common/NumberField'
 import { useAlert } from '../contexts/AlertContext'
 import { envMonitoringApi } from '../api/envMonitoringApi'
@@ -204,7 +204,7 @@ const EnvMonitoringPage: React.FC = () => {
           {/* Row 3: Measurement Date / Parameter */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.measureDate')}</Box>
-            <Box sx={valueCellBorderSx}>{selectedItem.measurementDate ? selectedItem.measurementDate?.substring(0, 10) : ''}</Box>
+            <Box sx={valueCellBorderSx}>{selectedItem.measurementDate ? formatDate(selectedItem.measurementDate) : ''}</Box>
             <Box sx={labelCellSx}>{t('envMon.parameter')}</Box>
             <Box sx={valueCellSx}>{selectedItem.parameterName}</Box>
           </Box>
@@ -260,7 +260,7 @@ const EnvMonitoringPage: React.FC = () => {
             [t('envMon.status'), getStatusLabel(selectedItem.status)],
             [t('envMon.type'), getTypeLabel(selectedItem.monitorType)],
             [t('envMon.location'), selectedItem.location || ''],
-            [t('envMon.measureDate'), selectedItem.measurementDate ? selectedItem.measurementDate?.substring(0, 10) : ''],
+            [t('envMon.measureDate'), selectedItem.measurementDate ? formatDate(selectedItem.measurementDate) : ''],
             [t('envMon.parameter'), selectedItem.parameterName],
             [t('envMon.measuredValue'), `${selectedItem.measuredValue} ${selectedItem.unit}`],
             [t('envMon.standardValue'), selectedItem.standardValue != null ? `${selectedItem.standardValue} ${selectedItem.unit}` : ''],
@@ -338,7 +338,7 @@ const EnvMonitoringPage: React.FC = () => {
             <Box sx={labelCellSx}>{t('envMon.measureDate')}</Box>
             <Box sx={valueCellSx}>
               <DatePickerField
-                value={form.measurementDate ? form.measurementDate.substring(0, 10) : ''}
+                value={form.measurementDate ? formatDate(form.measurementDate) : ''}
                 onChange={(v) => setForm({ ...form, measurementDate: v ? `${v}T00:00:00` : '' })}
               />
             </Box>
@@ -458,7 +458,7 @@ const EnvMonitoringPage: React.FC = () => {
             <TextField size="small" fullWidth value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
           </Box>
           <DatePickerField
-            value={form.measurementDate ? form.measurementDate.substring(0, 10) : ''}
+            value={form.measurementDate ? formatDate(form.measurementDate) : ''}
             onChange={(v) => setForm({ ...form, measurementDate: v ? `${v}T00:00:00` : '' })}
           />
           <Box>
@@ -666,7 +666,7 @@ const EnvMonitoringPage: React.FC = () => {
                           ? (item.exceedRate != null ? `${item.exceedRate}%` : 'Y')
                           : 'N'}
                       </TableCell>
-                      <TableCell align="center">{item.measurementDate ? item.measurementDate?.substring(0, 10) : ''}</TableCell>
+                      <TableCell align="center">{item.measurementDate ? formatDate(item.measurementDate) : ''}</TableCell>
                     </TableRow>
                   )
                 })}
@@ -687,7 +687,7 @@ const EnvMonitoringPage: React.FC = () => {
                     {getTypeLabel(item.monitorType)} | {item.location || ''} | {item.measuredValue} {item.unit}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {item.measurementDate ? item.measurementDate?.substring(0, 10) : ''}
+                    {item.measurementDate ? formatDate(item.measurementDate) : ''}
                   </Typography>
                 </Paper>
               )

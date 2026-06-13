@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -22,10 +23,6 @@ const labelSx = {
 }
 const valueSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }
 
-const formatDate = (dateString?: string | null) => {
-  if (!dateString) return ''
-  return dateString.substring(0, 10)
-}
 
 const getTypeChipColor = (type: string): 'info' | 'warning' | 'success' | 'error' | 'default' => {
   switch (type) {

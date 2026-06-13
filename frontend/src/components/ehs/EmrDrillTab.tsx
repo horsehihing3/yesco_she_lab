@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatDateTime } from '../../utils/dateDefaults'
+import { formatUserName } from '../../utils/userDisplay'
 import { isSystemAdmin } from '../../utils/auth'
 import { useState, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -440,7 +441,7 @@ const EmrDrillTab: React.FC = () => {
                             {item.findingCount}
                           </TableCell>
                           <TableCell align="center" sx={{ fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                            {item.modifiedAt?.replace('T', ' ').substring(0, 16) || ''}
+                            {formatDateTime(item.modifiedAt) || ''}
                           </TableCell>
                           <TableCell align="center" sx={{ fontSize: '0.85rem' }}>
                             {item.modifiedBy || ''}
@@ -623,7 +624,7 @@ const EmrDrillTab: React.FC = () => {
             [t('emr.evacuationTime'), selectedItem.evacuationTime || ''],
             [t('emr.score'), selectedItem.score ? getDrillScoreLabel(selectedItem.score) : ''],
             [t('common.modifiedBy', '수정자'), selectedItem.modifiedBy || ''],
-            [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt?.replace('T', ' ').substring(0, 16) || ''],
+            [t('common.modifiedAt', '수정일자'), formatDateTime(selectedItem.modifiedAt) || ''],
             ...(checklistTemplateId ? [
               [t('audit.checklistProgress'), `${selectedItem.completedChecklist}/${selectedItem.totalChecklist}`],
               [t('audit.findingCount'), String(selectedItem.findingCount)],

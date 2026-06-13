@@ -1,7 +1,7 @@
-﻿import { formatUserName } from '../utils/userDisplay'
+import { formatUserName } from '../utils/userDisplay'
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { fmtPhone } from '../utils/phoneFormat'
-import { todayStr, weekFromTodayStr } from '../utils/dateDefaults'
+import { todayStr, weekFromTodayStr, formatDateTime } from '../utils/dateDefaults'
 import ReadTextField from '../components/common/ReadTextField'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -527,11 +527,11 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
       ? (formatUserName(selected.createdByTeam, selected.createdByName, selected.createdByPosition) || selected.modifiedBy || '-')
       : (formatUserName(user?.department, user?.name, user?.position) || user?.name || '-')
     const createdDate = selected?.createdAt
-      ? selected.createdAt.replace('T', ' ').slice(0, 16)
+      ? formatDateTime(selected.createdAt)
       : new Date().toISOString().replace('T', ' ').slice(0, 16)
     const hasModified = selected?.modifiedAt && selected.modifiedAt !== selected?.createdAt
     const modifiedDate = hasModified
-      ? selected!.modifiedAt.replace('T', ' ').slice(0, 16)
+      ? formatDateTime(selected!.modifiedAt)
       : new Date().toISOString().replace('T', ' ').slice(0, 16)
     const showModifiedRow = viewMode === 'edit' || (isReadonly && hasModified)
     return (

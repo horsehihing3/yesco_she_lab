@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/dateDefaults'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -137,7 +138,6 @@ const AirEmissionDashboardTab: React.FC = () => {
       .slice(0, 5)
   }, [records])
 
-  const formatDate = (dateStr?: string) => dateStr ? dateStr.substring(0, 10) : ''
   const cellSx = { wordBreak: 'keep-all' as const }
 
   return (

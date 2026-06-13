@@ -8,13 +8,39 @@
 
 ---
 
-<!-- 아래에 최신 항목을 위에 추가(prepend). 예시:
-
 ## [완료] 2026-06-13 · 작업 1 — 날짜 포맷 유틸 통일
-- 추가: frontend/src/utils/dateFormat.ts (formatDate, formatDateTime)
-- 치환: (변경 파일 목록)
-- 검증: tsc --noEmit 신규에러 0 / grep 잔존 0
-- 비고:
 
-## [질문] 2026-06-13 · ...
--->
+### 추가
+- `frontend/src/utils/dateDefaults.ts` — `formatDate(v?)` 및 `formatDateTime(v?)` 함수 추가
+
+### 치환 (68개 파일)
+- `v?.substring(0, 10)` → `formatDate(v)`
+- `v?.replace('T', ' ').substring(0, 16)` → `formatDateTime(v)`
+- 각 파일 상단에 `import { formatDate, formatDateTime } from '...'` 자동 삽입
+
+### 수동 수정 필요했던 예외 사항
+| 파일 | 이유 |
+|------|------|
+| `RiskAssessmentTab.tsx`, `RiskAssessmentOfficeWorkTab.tsx` | 기존 local `formatDate` 정의(`split('T')[0]`)가 있어 import만 제거 |
+| `NearMissPage.tsx` | 기존 local `formatDate`(`new Date().toISOString()` 기반, 타임존 변환) 가 있어 import만 제거 |
+| `WemFactorTab/ImprovementTab/PlanTab/ResultTab` | 기존 local `formatDate` 있어 import 제거 (Wem 계열은 `todayStr`만 유지) |
+| `tformatDate` 오탐 9개 파일 | 스크립트의 lazy regex `.+?`가 `t('key', 'text')` 함수호출 괄호를 넘어 매칭. 수동 복원 |
+| `ProcessActivityWorkPage.tsx`, `SafetyAccidentInfoPage.tsx`, `SafetyHazardInfoPage.tsx`, `SiteSafetyManagementPage.tsx`, Wem 4개 | `.formatDate(field)` 오탐 — `obj?.createdAt?.substring(0,10)` → `obj?.formatDate(createdAt)` 오변환. `formatDate(obj?.createdAt)` 로 복원 |
+| `EntityCommentsSection.tsx`, `EhsAlertCommentsSection.tsx` | local `formatDateTime` 제거 후 import 교체 |
+| `EvalSheetTab.tsx` | optional-chain 복합 표현식 수동 처리 |
+
+### 의도적으로 미변환 항목 (Opus 참고)
+- `RiskAssessmentTab.tsx`, `RiskAssessmentOfficeWorkTab.tsx` local `fmtDateTime` — 반환값이 `'-'` (null 시 `''` 아님), 동작이 다름 → 보존
+- `IncidentResponsePage.tsx:70` local `fmtDateTime` — 동일 이유
+- `KpiStatusTab.tsx`, `PlanReportTab.tsx` local `formatDateOnly` — 전용 표시 형식
+- `new Date(...).toISOString().substring(0, 10)` — Date 연산 (DB 값 아님), 스코프 밖
+
+### 검증
+- `npx tsc --noEmit` 에러 수: 364 (기준선 364과 동일, 신규 에러 0)
+- `grep tformatDate`: 0건
+- `grep '\.formatDate('`: 0건
+- `grep '\.substring(0, 10)'`: 남아있는 것은 전부 Date 연산 또는 local formatDate 내부
+
+### 작업 2 — 다음 지시 대기 중
+Opus의 Task 2 (인라인 axiosInstance 제거) 지시를 기다립니다.
+

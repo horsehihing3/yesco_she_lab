@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatDateTime } from '../../utils/dateDefaults'
+import { formatUserName } from '../../utils/userDisplay'
 import { useState, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -135,7 +136,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={valSx}>
               <Typography variant="body2">
-                {selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''}
+                {selectedItem.createdAt ? formatDateTime(selectedItem.createdAt) : ''}
               </Typography>
             </Box>
           </Box>
@@ -147,7 +148,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
               </Box>
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
               <Box sx={valSx}>
-                <Typography variant="body2">{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+                <Typography variant="body2">{formatDateTime(selectedItem.modifiedAt)}</Typography>
               </Box>
             </Box>
           )}
@@ -158,7 +159,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
                 {formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)}
                 {selectedItem.planApprovedAt && (
                   <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                    ({selectedItem.planApprovedBy || ''} | {selectedItem.planApprovedAt.replace('T', ' ').substring(0, 16)})
+                    ({selectedItem.planApprovedBy || ''} | {formatDateTime(selectedItem.planApprovedAt)})
                   </Typography>
                 )}
               </Typography>
@@ -169,7 +170,7 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
                 {formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)}
                 {selectedItem.completionApprovedAt && (
                   <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-                    ({selectedItem.completionApprovedBy || ''} | {selectedItem.completionApprovedAt.replace('T', ' ').substring(0, 16)})
+                    ({selectedItem.completionApprovedBy || ''} | {formatDateTime(selectedItem.completionApprovedAt)})
                   </Typography>
                 )}
               </Typography>
@@ -203,10 +204,10 @@ const AuditFindingTab: React.FC<AuditFindingTabProps> = ({ variant = 'audit' }) 
             [t('common.notes', '비고'), selectedItem.notes || linkedPlan?.notes],
             [t('audit.createdByName', '작성자'), formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition)],
             [t('audit.createdAt', '작성일자'),
-              selectedItem.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : ''],
+              selectedItem.createdAt ? formatDateTime(selectedItem.createdAt) : ''],
             ...(selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt ? [
               [t('common.modifier', '수정자'), formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)],
-              [t('common.modifiedAt', '수정일자'), selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)],
+              [t('common.modifiedAt', '수정일자'), formatDateTime(selectedItem.modifiedAt)],
             ] : []),
             [t('audit.planApprover', '계획 승인자'), formatUserName(selectedItem.planApproverTeam, selectedItem.planApproverName, selectedItem.planApproverPosition)],
             [t('audit.completionApprover', '완료 승인자'), formatUserName(selectedItem.completionApproverTeam, selectedItem.completionApproverName, selectedItem.completionApproverPosition)],

@@ -1,3 +1,4 @@
+import { formatDateTime } from '../../utils/dateDefaults'
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -136,7 +137,7 @@ const PsmIncidentTab: React.FC = () => {
                       <TableRow key={i.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(i)}>
                         <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{i.incidentNo}</TableCell>
                         <TableCell align="center">{INCIDENT_TYPES.find(t => t.v === i.incidentType)?.l || '-'}</TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{i.occurAt?.replace('T', ' ').substring(0, 16) || '-'}</TableCell>
+                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{formatDateTime(i.occurAt) || '-'}</TableCell>
                         <TableCell>{i.location || '-'}</TableCell>
                         <TableCell sx={{ fontSize: '0.85rem' }}>{i.relatedEquipment || '-'}</TableCell>
                         <TableCell align="center">
@@ -207,7 +208,7 @@ const PsmIncidentTab: React.FC = () => {
             <FormLabel>발생 일시</FormLabel>
             <FormCell>
               {isEdit ? <TextField fullWidth size="small" type="datetime-local" value={v.occurAt?.substring(0, 16) || ''} onChange={e => setV({ occurAt: e.target.value })} />
-                : <Typography variant="body2" fontFamily="monospace">{v.occurAt?.replace('T', ' ').substring(0, 16) || ''}</Typography>}
+                : <Typography variant="body2" fontFamily="monospace">{formatDateTime(v.occurAt) || ''}</Typography>}
             </FormCell>
           </FormRow>
           <FormRow>
@@ -250,7 +251,7 @@ const PsmIncidentTab: React.FC = () => {
             <FormLabel>보고 일시</FormLabel>
             <FormCell>
               {isEdit ? <TextField fullWidth size="small" type="datetime-local" value={v.reportedAt?.substring(0, 16) || ''} onChange={e => setV({ reportedAt: e.target.value })} />
-                : <Typography variant="body2" fontFamily="monospace">{v.reportedAt?.replace('T', ' ').substring(0, 16) || ''}</Typography>}
+                : <Typography variant="body2" fontFamily="monospace">{formatDateTime(v.reportedAt) || ''}</Typography>}
             </FormCell>
           </FormRow>
           <FormRow last>

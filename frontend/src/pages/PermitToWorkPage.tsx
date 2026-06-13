@@ -1,4 +1,5 @@
-﻿import { formatUserName } from '../utils/userDisplay'
+import { formatDate, formatDateTime } from '../utils/dateDefaults'
+import { formatUserName } from '../utils/userDisplay'
 import { isEhsManager } from '../utils/auth'
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useButtonRules } from '../hooks/useButtonRules'
@@ -492,7 +493,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
                       <TableCell><Typography variant="body2" fontWeight={600}>{item.title}</Typography></TableCell>
                       <TableCell align="center"><Chip label={getRiskLabel(item.riskLevel)} color={RISK_COLORS[item.riskLevel] || 'default'} size="small" /></TableCell>
                       <TableCell align="center">
-                        {item.workStartDate?.substring(0, 10) || ''} ~ {item.workEndDate?.substring(0, 10) || ''}
+                        {formatDate(item.workStartDate) || ''} ~ {formatDate(item.workEndDate) || ''}
                       </TableCell>
                       <TableCell align="center">{item.requesterName || ''}</TableCell>
                       <TableCell align="center"><Chip label={getStatusLabel(item.status)} color={STATUS_COLORS[item.status] || 'default'} variant="outlined" size="small" /></TableCell>
@@ -515,7 +516,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
                   {getPermitTypeLabel(item.permitType)} | {item.requesterName || ''}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {item.workStartDate?.substring(0, 10) || ''} ~ {item.workEndDate?.substring(0, 10) || ''}
+                  {formatDate(item.workStartDate) || ''} ~ {formatDate(item.workEndDate) || ''}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5, mt: 1 }}>
                   <Chip label={getRiskLabel(item.riskLevel)} color={RISK_COLORS[item.riskLevel] || 'default'} size="small" />
@@ -550,7 +551,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.permitId')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.permitId}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.status')}</Typography><Box sx={dValSx}><Chip label={getStatusLabel(selectedItem.status)} color={STATUS_COLORS[selectedItem.status] || 'default'} variant="outlined" size="small" /></Box></Box>
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.type')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{getPermitTypeLabel(selectedItem.permitType)}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.riskLevel')}</Typography><Box sx={dValSx}><Chip label={getRiskLabel(selectedItem.riskLevel)} color={RISK_COLORS[selectedItem.riskLevel] || 'default'} size="small" /></Box></Box>
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.title')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.title}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.workersCount')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workersCount || 0}명</Typography></Box></Box>
-            <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.workLocation')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workLocation || ''}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.workPeriod')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workStartDate?.replace('T', ' ').substring(0, 16) || ''} ~ {selectedItem.workEndDate?.replace('T', ' ').substring(0, 16) || ''}</Typography></Box></Box>
+            <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.workLocation')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.workLocation || ''}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.workPeriod')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatDateTime(selectedItem.workStartDate) || ''} ~ {formatDateTime(selectedItem.workEndDate) || ''}</Typography></Box></Box>
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('common.creator', '작성자')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatUserName(selectedItem.createdByTeam || selectedItem.requesterDept, selectedItem.createdByName || selectedItem.requesterName, selectedItem.createdByPosition || '')}</Typography></Box></Box>
             {/* 계획 / 완료 결재자 표시 */}
             <Box sx={dRowSx}>
@@ -609,7 +610,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               [t('ptw.riskLevel'), getRiskLabel(selectedItem.riskLevel)],
               [t('ptw.title'), selectedItem.title],
               [t('ptw.workLocation'), selectedItem.workLocation],
-              [t('ptw.workPeriod'), `${selectedItem.workStartDate?.replace('T', ' ').substring(0, 16) || ''} ~ ${selectedItem.workEndDate?.replace('T', ' ').substring(0, 16) || ''}`],
+              [t('ptw.workPeriod'), `${formatDateTime(selectedItem.workStartDate) || ''} ~ ${formatDateTime(selectedItem.workEndDate) || ''}`],
               [t('common.creator', '작성자'), formatUserName(selectedItem.createdByTeam || selectedItem.requesterDept, selectedItem.createdByName || selectedItem.requesterName, selectedItem.createdByPosition || '')],
               [t('ptw.workersCount'), `${selectedItem.workersCount || 0}명`],
               [t('ptw.requiredPpe'), selectedItem.requiredPpe],
@@ -748,11 +749,11 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.startDate')}</Typography>
             <Box sx={valSxBorder}>
-              <DatePickerField value={form.workStartDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={form.workEndDate?.substring(0, 10)} />
+              <DatePickerField value={formatDate(form.workStartDate) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={formatDate(form.workEndDate)} />
             </Box>
             <Typography sx={labelSx}>{t('ptw.endDate')}</Typography>
             <Box sx={valSx}>
-              <DatePickerField value={form.workEndDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workEndDate: v + 'T17:00:00' })} size="small" minDate={form.workStartDate?.substring(0, 10)} />
+              <DatePickerField value={formatDate(form.workEndDate) || null} onChange={(v) => setForm({ ...form, workEndDate: v + 'T17:00:00' })} size="small" minDate={formatDate(form.workStartDate)} />
             </Box>
           </Box>
           {/* Row: description */}
@@ -812,7 +813,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             <Typography sx={labelSx}>{t('audit.createdAt', '작성일자')}</Typography>
             <Box sx={valSx}>
               <Typography variant="body2" fontFamily="monospace">
-                {viewMode === 'edit' && selectedItem?.createdAt ? selectedItem.createdAt.replace('T', ' ').substring(0, 16) : new Date().toISOString().substring(0, 10)}
+                {viewMode === 'edit' && selectedItem?.createdAt ? formatDateTime(selectedItem.createdAt) : new Date().toISOString().substring(0, 10)}
               </Typography>
             </Box>
           </Box>
@@ -825,7 +826,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               </Box>
               <Typography sx={labelSx}>{t('common.modifiedAt', '수정일자')}</Typography>
               <Box sx={valSx}>
-                <Typography variant="body2" fontFamily="monospace">{selectedItem.modifiedAt.replace('T', ' ').substring(0, 16)}</Typography>
+                <Typography variant="body2" fontFamily="monospace">{formatDateTime(selectedItem.modifiedAt)}</Typography>
               </Box>
             </Box>
           )}
@@ -963,13 +964,13 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('ptw.startDate')}
             </Typography>
-            <DatePickerField value={form.workStartDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={form.workEndDate?.substring(0, 10)} />
+            <DatePickerField value={formatDate(form.workStartDate) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={formatDate(form.workEndDate)} />
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
               {t('ptw.endDate')}
             </Typography>
-            <DatePickerField value={form.workEndDate?.substring(0, 10) || null} onChange={(v) => setForm({ ...form, workEndDate: v + 'T17:00:00' })} size="small" minDate={form.workStartDate?.substring(0, 10)} />
+            <DatePickerField value={formatDate(form.workEndDate) || null} onChange={(v) => setForm({ ...form, workEndDate: v + 'T17:00:00' })} size="small" minDate={formatDate(form.workStartDate)} />
           </Box>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
