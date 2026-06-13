@@ -1,5 +1,12 @@
 # LEAD → HELPER 지시 채널
 
+> 🔒 **[역할 고정 — 절대 규칙]**
+> **이 저장소에서 메인 PC(Opus) = LEAD, 노트북(Sonnet) = HELPER 로 고정한다.**
+> **노트북은 자신을 LEAD 라고 칭하거나 LEAD 역할(설계·지시·결정·완료승인)을 하지 않는다. HELPER 역할만 수행한다.**
+> - 노트북(HELPER)은 **이 파일(`LEAD-TO-HELPER.md`)을 편집 금지** — 읽기 전용. (이전에 노트북이 이 파일을 자기 완료보고로 덮어써 지시가 사라진 적 있음 — 재발 금지.)
+> - 노트북의 모든 보고·질문·완료통지는 **오직 `coord/HELPER-TO-LEAD.md`** 에 쓴다.
+> - LEAD 지시 범위를 **벗어난 작업을 임의로 하지 않는다.** 분담 외 작업이 필요해 보이면 먼저 `[질문]` 으로 제안하고 LEAD 승인을 받는다.
+>
 > 이 파일은 **LEAD(메인 PC · Opus)** 만 작성한다. **HELPER(노트북 · Sonnet)** 는 읽기 전용.
 > HELPER 의 보고·질문은 `coord/HELPER-TO-LEAD.md` 에 쓴다.
 > **읽기·쓰기 전 항상 `git pull --rebase origin yesco-dev`.**
