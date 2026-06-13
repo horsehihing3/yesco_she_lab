@@ -118,6 +118,7 @@ public class PermitToWorkService {
                 .planApprover(PersonRef.of(request.getPlanApproverUserId(), request.getPlanApproverName(), request.getPlanApproverTeam(), request.getPlanApproverPosition()))
                 .completionApprover(PersonRef.of(request.getCompletionApproverUserId(), request.getCompletionApproverName(), request.getCompletionApproverTeam(), request.getCompletionApproverPosition()))
                 .createdBy(PersonRef.of(request.getCreatedByUserId(), request.getCreatedByName(), request.getCreatedByTeam(), request.getCreatedByPosition()))
+                .isExternal(request.getIsExternal() != null ? request.getIsExternal() : false)
                 .deleted(false)
                 .build();
         mapper.insert(permit);
@@ -173,6 +174,7 @@ public class PermitToWorkService {
         permit.setWorkersCount(request.getWorkersCount());
         permit.setRejectionReason(request.getRejectionReason());
         permit.setNotes(request.getNotes());
+        if (request.getIsExternal() != null) permit.setIsExternal(request.getIsExternal());
         permit.setInspectorName(request.getInspectorName());
         permit.setPlanApproverUserId(request.getPlanApproverUserId());
         permit.setPlanApproverTeam(request.getPlanApproverTeam());
