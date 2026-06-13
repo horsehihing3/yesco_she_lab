@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
-  Box, Paper, Typography, Button, TextField, FormControl, Select, MenuItem,
+  Box, Paper, Typography, Button, TextField, Select, MenuItem,
   SelectChangeEvent, Chip, Dialog, DialogTitle, DialogContent, DialogActions,
 } from '@mui/material'
 import { wasteManageApi, disposalCompanyApi } from '../../api/environmentApi'

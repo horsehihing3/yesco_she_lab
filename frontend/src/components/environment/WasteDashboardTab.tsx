@@ -83,7 +83,7 @@ const WasteDashboardTab: React.FC = () => {
   const { t } = useTranslation()
   const { isDarkMode } = useThemeMode()
   const { getLabel: getWasteTypeLabel } = useCodeMap('WASTE_TYPE')
-  const { getLabel: getWasteStatusLabel } = useCodeMap('WASTE_STATUS')
+
   const { getLabel: getWasteUnitLabel } = useCodeMap('WASTE_UNIT')
   const { getLabel: getDeptLabel } = useCodeMap('WASTE_DEPARTMENT')
 

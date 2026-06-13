@@ -14,7 +14,7 @@ import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import DevTestFillButton from '../common/DevTestFillButton'
 import { waterWorkplaceApi, waterSamplingPointApi } from '../../api/environmentApi'
-import { WaterWorkplace, WaterWorkplaceRequest, WaterSamplingPoint, WaterSamplingPointRequest } from '../../types/environment.types'
+import { WaterWorkplace, WaterWorkplaceRequest, WaterSamplingPointRequest } from '../../types/environment.types'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 

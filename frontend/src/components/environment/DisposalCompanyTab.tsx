@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import {
-  Box, TextField, Button, Table, TableBody, TableCell, TableContainer, TableRow,
+  Box, TextField, Button,
   Paper, Typography, Pagination, IconButton, FormControl, Select, MenuItem, SelectChangeEvent,
   Grid, Chip,
 } from '@mui/material'

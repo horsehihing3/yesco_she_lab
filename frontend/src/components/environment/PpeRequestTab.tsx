@@ -51,7 +51,7 @@ const PpeRequestTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('PPE_REQUEST_STATUS')
-  const { codeList: categoryCodes, getLabel: getCategoryLabel } = useCodeMap('PPE_CATEGORY')
+  const { getLabel: getCategoryLabel } = useCodeMap('PPE_CATEGORY')
 
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [selectedItem, setSelectedItem] = useState<PpeRequestItem | null>(null)

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import {
   Box, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Typography, Pagination, IconButton,
+  Paper, Typography, Pagination,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import NumberField from '../common/NumberField'
