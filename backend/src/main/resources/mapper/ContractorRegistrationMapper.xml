@@ -53,7 +53,11 @@
         <result property="workZone"           column="work_zone"/>
         <result property="deleted"            column="deleted"/>
         <result property="createdBy"  column="created_by"  typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
-        <result property="modifiedBy" column="modified_by" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <!-- 수정자: modified_by 는 레거시 username 문자열 컬럼 충돌이라 flat 유지 -->
+        <result property="modifiedByUserId"   column="modified_by_user_id"/>
+        <result property="modifiedByName"     column="modified_by_name"/>
+        <result property="modifiedByTeam"     column="modified_by_team"/>
+        <result property="modifiedByPosition" column="modified_by_position"/>
         <result property="createdAt"  column="created_at"/>
         <result property="modifiedAt" column="modified_at"/>
     </resultMap>
@@ -121,7 +125,9 @@
             health_mgr_name, health_mgr_position, health_mgr_cert, health_mgr_tel, health_mgr_email,
             internal_dept, internal_name, internal_tel, memo,
             contract_start, contract_end, contract_type, contract_amount, work_zone,
-            deleted, created_by, modified_by, created_at, modified_at
+            deleted, created_by,
+            modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
+            created_at, modified_at
         ) VALUES (
             #{regNo}, #{bizNum}, #{corpNum}, #{companyName}, #{ceoName}, #{bizType}, #{bizCategory},
             #{zipCode}, #{addr1}, #{addr2}, #{tel}, #{fax}, #{email}, #{homepage}, #{empSize},
@@ -133,7 +139,7 @@
             #{contractStart,jdbcType=DATE}, #{contractEnd,jdbcType=DATE}, #{contractType}, #{contractAmount}, #{workZone},
             0,
             #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
-            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
             GETDATE(), GETDATE()
         )
     </insert>
@@ -155,7 +161,10 @@
             internal_dept = #{internalDept}, internal_name = #{internalName}, internal_tel = #{internalTel}, memo = #{memo},
             contract_start = #{contractStart,jdbcType=DATE}, contract_end = #{contractEnd,jdbcType=DATE},
             contract_type = #{contractType}, contract_amount = #{contractAmount}, work_zone = #{workZone},
-            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name    = #{modifiedByName},
+            modified_by_team    = #{modifiedByTeam},
+            modified_by_position = #{modifiedByPosition},
             modified_at = GETDATE()
         WHERE id = #{id} AND deleted = 0
     </update>

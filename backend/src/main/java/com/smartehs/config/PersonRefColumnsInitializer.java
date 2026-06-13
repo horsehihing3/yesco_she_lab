@@ -44,8 +44,8 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
         // tb_site_safety_plan: modified_by 는 레거시 username 문자열 컬럼이라 제외(수정자 flat).
         // plan_approver 는 기존에 user_id 컬럼만 있고 team/name 컬럼이 없어 INSERT가 깨져 있었음 → JSON으로 통합(컬럼 신규생성).
         new Object[]{"tb_site_safety_plan", new String[]{"created_by", "plan_approver", "completion_approver"}},
-        // 작성+수정
-        new Object[]{"tb_contractor_registration", CM},
+        // tb_contractor_registration: modified_by 는 레거시 username 문자열(nvarchar200) 컬럼 충돌이라 제외(수정자 flat). 작성자만 JSON.
+        new Object[]{"tb_contractor_registration", C},
         // tb_health_checkup_plan: created_by 는 레거시 문자열(nvarchar200) 컬럼이라 제외(작성자 flat). 수정자/승인자는 JSON.
         new Object[]{"tb_health_checkup_plan", new String[]{"modified_by", "plan_approver", "completion_approver"}},
         // tb_legal_compliance_exec: modified_by 는 레거시 username 문자열이라 제외(수정자 flat). 작성/승인자는 JSON.

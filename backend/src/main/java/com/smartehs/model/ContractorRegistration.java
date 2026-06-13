@@ -65,8 +65,12 @@ public class ContractorRegistration {
     private String workZone;
 
     private Boolean deleted;
-    @JsonIgnore private PersonRef createdBy;
-    @JsonIgnore private PersonRef modifiedBy;
+    @JsonIgnore private PersonRef createdBy;          // 작성자 — JSON 1컬럼(created_by NVARCHAR(MAX))
+    // 수정자 — tb_contractor_registration.modified_by 는 레거시 username 문자열(nvarchar200) 컬럼 충돌이라 flat 유지(JSON 미전환)
+    private Long modifiedByUserId;
+    private String modifiedByName;
+    private String modifiedByTeam;
+    private String modifiedByPosition;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -80,13 +84,4 @@ public class ContractorRegistration {
     public void setCreatedByName(String v)     { (createdBy = ensure(createdBy)).setName(v); }
     public void setCreatedByTeam(String v)     { (createdBy = ensure(createdBy)).setTeam(v); }
     public void setCreatedByPosition(String v) { (createdBy = ensure(createdBy)).setPosition(v); }
-
-    @JsonProperty("modifiedByUserId")   public Long   getModifiedByUserId()   { return PersonRef.userId(modifiedBy); }
-    @JsonProperty("modifiedByName")     public String getModifiedByName()     { return PersonRef.name(modifiedBy); }
-    @JsonProperty("modifiedByTeam")     public String getModifiedByTeam()     { return PersonRef.team(modifiedBy); }
-    @JsonProperty("modifiedByPosition") public String getModifiedByPosition() { return PersonRef.position(modifiedBy); }
-    public void setModifiedByUserId(Long v)     { (modifiedBy = ensure(modifiedBy)).setUserId(v); }
-    public void setModifiedByName(String v)     { (modifiedBy = ensure(modifiedBy)).setName(v); }
-    public void setModifiedByTeam(String v)     { (modifiedBy = ensure(modifiedBy)).setTeam(v); }
-    public void setModifiedByPosition(String v) { (modifiedBy = ensure(modifiedBy)).setPosition(v); }
 }

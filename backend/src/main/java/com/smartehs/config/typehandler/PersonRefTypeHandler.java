@@ -51,8 +51,15 @@ public class PersonRefTypeHandler extends BaseTypeHandler<PersonRef> {
 
     private PersonRef parse(String json) throws SQLException {
         if (json == null || json.isBlank()) return null;
+        String trimmed = json.trim();
+        // 레거시 평문(username 등 비-JSON) 값 방어: JSON 객체가 아니면 name 으로 감싸 graceful 처리(500 방지)
+        if (trimmed.charAt(0) != '{') {
+            PersonRef p = new PersonRef();
+            p.setName(trimmed);
+            return p;
+        }
         try {
-            return OM.readValue(json, PersonRef.class);
+            return OM.readValue(trimmed, PersonRef.class);
         } catch (Exception e) {
             throw new SQLException("PersonRef 역직렬화 실패: " + json, e);
         }
