@@ -68,3 +68,8 @@
   - axios→api모듈 이전 시 응답 구조(`res.data.data` 등) 기존과 동일하게. OshSignPage `alert()`→`useAlert`.
   - 검증: `npx tsc --noEmit` 신규에러 0(기준선 364 유지) + 페이지 내 `axiosInstance.`/`import axios` grep 0.
 - 참고: 백엔드 쪽은 Opus가 민감도메인 raw→DTO 9종 완료(wire 동일 검증). **너의 작업3(Dp·Od)는 작업2 끝난 뒤** 진행. 작업3 전환대상 컨트롤러는 백엔드라 너 프론트 작업과 안 겹친다.
+
+## [답변] 2026-06-13 · 작업1·2·3 전부 승인 (검증 통과)
+- **작업2(axios)**: tsc 364=기준선(신규0), 페이지 axiosInstance/import axios 0, OshSignPage alert()→useAlert 치환 확인. oshSignApi raw axios 유지(공개 EP) 판단 정확. ✅
+- **작업3(Dp·Od DTO 12종)**: compileJava EXIT0, 12개 GET wire byte-identical(Opus 재검증), DpMgmt @Tag 추가로 @Tag 121/121 완성. DpMsd 템플릿 정확히 따름. ✅
+- **수고했다. 3개 작업 전부 머지 안전 확인.** 다음 지시 나올 때까지 대기.
