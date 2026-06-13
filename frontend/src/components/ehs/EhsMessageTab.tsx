@@ -46,6 +46,7 @@ import RichTextEditor from '../common/RichTextEditor'
 import HtmlContent from '../common/HtmlContent'
 import LoadingOverlay from '../common/LoadingOverlay'
 import EntityCommentsSection from '../common/EntityCommentsSection'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useCodeMap } from '../../hooks/useCodeMap'
 
 interface FetchParams {
@@ -125,7 +126,7 @@ const EhsMessageTab: React.FC = () => {
     [...myRoles, ...(item?.authorName === user?.name ? ['writer'] : [])]
   const rowsPerPage = 10
 
-  const { control, handleSubmit, reset } = useForm<EhsMessageRequest>({
+  const { control, handleSubmit, reset, setValue, getValues } = useForm<EhsMessageRequest>({
     defaultValues: {
       title: '',
       category: '',
@@ -276,6 +277,13 @@ const EhsMessageTab: React.FC = () => {
     })
     setPendingFiles([])
     setViewMode('create')
+  }
+
+  // DEV ONLY — 비어있는 항목을 EHS 메시지 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    if (!v.title) setValue('title', '[EHS 공지] 11월 안전보건 점검 결과 및 협조 요청')
+    if (!v.detail) setValue('detail', '<p>11월 정기 안전보건 점검 결과를 공유드립니다. 지적 사항에 대한 개선 조치에 적극 협조 부탁드립니다. (테스트 데이터)</p>')
   }
 
   const handleEditClick = () => {
@@ -643,6 +651,7 @@ const EhsMessageTab: React.FC = () => {
           </Paper>
 
           <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1 }}>
+            <DevTestFillButton onFill={fillTestData} />
             <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
               {t('common.backToList')}
             </Button>

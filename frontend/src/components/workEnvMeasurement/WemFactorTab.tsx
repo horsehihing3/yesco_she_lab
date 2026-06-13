@@ -19,6 +19,7 @@ import axiosInstance from '../../api/axiosInstance'
 import { WemFactor, WemFactorRequest } from '../../types/workEnvMeasurement.types'
 import { ApiResponse, PageResponse } from '../../types/common.types'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 import useCodeMap from '../../hooks/useCodeMap'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -213,6 +214,21 @@ const WemFactorTab: React.FC = () => {
       deleteMutation.mutate(selectedItem.id)
     }
   }
+
+  // DEV ONLY — 비어있는 항목을 유해인자 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    factorName: prev.factorName || '소음',
+    factorNameEn: prev.factorNameEn || 'Noise',
+    casNumber: prev.casNumber || '-',
+    factorType: prev.factorType || hazardTypeCodes[0]?.code || '',
+    twa: prev.twa || '85 dB(A)',
+    stel: prev.stel || '115 dB(A)',
+    ceilingValue: prev.ceilingValue || '140 dB(A)',
+    unit: prev.unit || 'dB(A)',
+    usedProcess: prev.usedProcess || '도장 공정 (제2공장)',
+    remarks: prev.remarks || '물리적 인자 (테스트 데이터)',
+  }))
 
   const handleSubmit = async () => {
     if (!formData.factorName) {
@@ -635,6 +651,7 @@ const WemFactorTab: React.FC = () => {
         )}
       </Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>

@@ -15,6 +15,7 @@ import { todayStr, formatDate } from '../../utils/dateDefaults'
 import UserSelectModal from '../common/UserSelectModal'
 import type { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { wasteComplianceApi } from '../../api/environmentApi'
 import { WasteCompliance, WasteComplianceRequest } from '../../types/environment.types'
 
@@ -129,6 +130,15 @@ const WasteComplianceTab: React.FC = () => {
     })
     setViewMode('edit')
   }
+
+  // DEV ONLY — 비어있는 항목을 폐기물 법규준수 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    regulationName: prev.regulationName || '폐기물관리법 제18조',
+    checkItem: prev.checkItem || '지정폐기물 보관기간 준수 여부',
+    violationDetails: prev.violationDetails || '보관기간 초과 사례 없음 (테스트 데이터)',
+    correctiveAction: prev.correctiveAction || '보관대장 주기적 점검 강화',
+  }))
 
   const handleSave = () => {
     if (viewMode === 'create') {
@@ -434,10 +444,12 @@ const WasteComplianceTab: React.FC = () => {
       </Box>
       {/* Buttons */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

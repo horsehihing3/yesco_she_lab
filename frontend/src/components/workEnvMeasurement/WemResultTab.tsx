@@ -22,6 +22,7 @@ import NumberField from '../common/NumberField'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 import useCodeMap from '../../hooks/useCodeMap'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -231,6 +232,23 @@ const WemResultTab: React.FC = () => {
       deleteMutation.mutate(selectedItem.id)
     }
   }
+
+  // DEV ONLY — 비어있는 항목을 측정 결과 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    processName: prev.processName || '도장 공정 (제2공장)',
+    factorName: prev.factorName || '소음',
+    sampleType: prev.sampleType || sampleTypeCodes[0]?.code || '',
+    measuredValue: prev.measuredValue || '88.5 dB(A)',
+    twaValue: prev.twaValue || '85.0 dB(A)',
+    stelValue: prev.stelValue || '92.0 dB(A)',
+    exposureStandard: prev.exposureStandard || '90 dB(A)',
+    exceedRate: prev.exceedRate ?? 98,
+    judgment: prev.judgment || judgmentCodes[0]?.code || '',
+    measurementDate: prev.measurementDate || todayStr(),
+    measurementAgency: prev.measurementAgency || '한국산업안전보건공단',
+    remarks: prev.remarks || '하절기 정기 측정 (테스트 데이터)',
+  }))
 
   const handleSubmit = async () => {
     if (!formData.processName || !formData.factorName) {
@@ -693,6 +711,7 @@ const WemResultTab: React.FC = () => {
         )}
       </Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>

@@ -42,6 +42,7 @@ import HtmlContent from '../common/HtmlContent'
 import RichTextEditor from '../common/RichTextEditor'
 import LoadingOverlay from '../common/LoadingOverlay'
 import EhsAlertCommentsSection from './EhsAlertCommentsSection'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -330,6 +331,15 @@ const EhsAlertTab: React.FC = () => {
     link.click()
     link.remove()
     window.URL.revokeObjectURL(url)
+  }
+
+  // DEV ONLY — 비어있는 항목을 EHS 알림 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    setFormData(prev => ({
+      ...prev,
+      title: prev.title || '[안전알림] 동절기 결빙 구간 미끄럼 주의',
+      detail: prev.detail || '<p>최근 기온 급강하로 옥외 통로 결빙이 우려됩니다. 이동 시 보행로 결빙 구간을 확인하고 미끄럼에 주의해 주시기 바랍니다. (테스트 데이터)</p>',
+    }))
   }
 
   const handleSubmit = async () => {
@@ -741,6 +751,7 @@ const EhsAlertTab: React.FC = () => {
 
         {/* Form Actions - PDF 페이지 10 하단 */}
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 3 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={viewMode === 'edit' ? () => setViewMode('detail') : handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
             {viewMode === 'edit' ? t('common.cancel') : t('common.backToList')}
           </Button>

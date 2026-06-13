@@ -83,6 +83,7 @@ type RiskAssessmentDetail = import('../../types/riskAssessment.types').RiskAsses
   approverName?: string
 }
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 import useCodeMap from '../../hooks/useCodeMap'
 import SafetyInspectionTab from './SafetyInspectionTab'
 import { fetchSafetyTemplates, createSafetyInspection, updateSafetyInspection, fetchInspectionByRiskAssessment } from '../../api/safetyChecklistApi'
@@ -522,6 +523,23 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
     if (confirmed && selectedAssessment) {
       deleteMutation.mutate(selectedAssessment.id)
     }
+  }
+
+  // DEV ONLY — 비어있는 항목을 사무직 위험성평가 더미데이터로 채움 (입력값·체크리스트·승인자 보존)
+  const fillTestData = () => {
+    setFormData(prev => ({
+      ...prev,
+      title: prev.title || '사무직 위험성평가 – 사무·외주 작업',
+    }))
+    const SAMPLE_ACTIONS: Record<string, string> = {
+      '사무업무': 'VDU 작업(모니터·키보드 사용)',
+      '외주': '외주 청소·시설관리 작업',
+      '출장/현장방문': '현장 점검 출장 이동',
+    }
+    setActivityProcesses(prev => prev.map(p => ({
+      ...p,
+      detailAction: p.detailAction || SAMPLE_ACTIONS[p.majorCategory] || '일상 사무 작업',
+    })))
   }
 
   const handleSubmit = async () => {
@@ -1105,6 +1123,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
 
       {/* Form Actions - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mt: 3, justifyContent: 'flex-end' }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {viewMode === 'edit' ? (
           <Button variant="outlined" onClick={handleBackToDetail}>{t('common.cancel')}</Button>
         ) : (
@@ -1116,6 +1135,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
       </Box>
       {/* Form Actions - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {viewMode === 'edit' ? (
           <Button variant="outlined" onClick={handleBackToDetail} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         ) : (

@@ -9,6 +9,7 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import NumberField from '../common/NumberField'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { waterStandardApi } from '../../api/environmentApi'
 import { WaterStandard, WaterStandardRequest } from '../../types/environment.types'
 
@@ -78,6 +79,16 @@ const WaterStandardTab: React.FC = () => {
     })
     setViewMode('edit')
   }
+
+  // DEV ONLY — 비어있는 항목을 수질 기준 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    itemName: prev.itemName || 'COD',
+    unit: prev.unit || 'mg/L',
+    minValue: prev.minValue || 0,
+    maxValue: prev.maxValue || 40,
+    remark: prev.remark || '청정지역 배출 허용기준 (테스트 데이터)',
+  }))
 
   const handleSave = () => {
     if (viewMode === 'create') {
@@ -283,10 +294,12 @@ const WaterStandardTab: React.FC = () => {
 
       {/* Buttons */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

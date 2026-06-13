@@ -13,6 +13,7 @@ import AddIcon from '@mui/icons-material/Add'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr, formatDate } from '../../utils/dateDefaults'
 import { useCodeMap } from '../../hooks/useCodeMap'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { disposalCompanyApi } from '../../api/environmentApi'
 import { DisposalCompany, DisposalCompanyRequest } from '../../types/environment.types'
 
@@ -107,6 +108,19 @@ const DisposalCompanyTab: React.FC = () => {
     })
     setViewMode('edit')
   }
+
+  // DEV ONLY — 비어있는 항목을 처리업체 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    companyName: prev.companyName || '그린환경자원',
+    companyCode: prev.companyCode || 'DC-001',
+    businessNumber: prev.businessNumber || '123-45-67890',
+    ceoName: prev.ceoName || '박정환',
+    phone: prev.phone || '02-1234-5678',
+    address: prev.address || '경기도 화성시 향남읍 산업로 25',
+    wasteTypes: prev.wasteTypes || '폐유, 폐합성수지',
+    licenseNumber: prev.licenseNumber || 'WL-2024-0456',
+  }))
 
   const handleSave = () => {
     if (viewMode === 'create') {
@@ -417,10 +431,12 @@ const DisposalCompanyTab: React.FC = () => {
 
       {/* Buttons */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

@@ -16,6 +16,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr, formatDate } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { waterQualityApi } from '../../api/environmentApi'
 import { WaterQuality, WaterQualityRequest } from '../../types/environment.types'
 
@@ -91,6 +92,20 @@ const WaterQualityTab: React.FC = () => {
     setSelectedManager(null)
     setViewMode('edit')
   }
+
+  // DEV ONLY — 비어있는 항목을 수질 측정 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    measurementDate: prev.measurementDate || todayStr(),
+    measurementPoint: prev.measurementPoint || '최종 방류구',
+    ph: prev.ph ?? 7.2,
+    bod: prev.bod ?? 8.5,
+    cod: prev.cod ?? 25.3,
+    ss: prev.ss ?? 12.0,
+    tN: prev.tN ?? 18.5,
+    tP: prev.tP ?? 1.2,
+    remark: prev.remark || '정기 수질 측정 (테스트 데이터)',
+  }))
 
   const handleSave = () => {
     const saveData = selectedManager
@@ -346,10 +361,12 @@ const WaterQualityTab: React.FC = () => {
       </Box>
       {/* Buttons */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

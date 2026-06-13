@@ -9,6 +9,7 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import NumberField from '../common/NumberField'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { airEmissionStandardApi } from '../../api/environmentApi'
 import { AirEmissionStandard, AirEmissionStandardRequest } from '../../types/environment.types'
 import { useCodeMap } from '../../hooks/useCodeMap'
@@ -57,6 +58,16 @@ const AirEmissionStandardTab: React.FC = () => {
     setFormData({ itemName: selectedItem.itemName, unit: selectedItem.unit, minValue: selectedItem.minValue, maxValue: selectedItem.maxValue, remark: selectedItem.remark })
     setViewMode('edit')
   }
+  // DEV ONLY — 비어있는 항목을 대기배출 기준 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    itemName: prev.itemName || 'NOx',
+    unit: prev.unit || emissionUnitCodes[0]?.code || '',
+    minValue: prev.minValue || 0,
+    maxValue: prev.maxValue || 80,
+    remark: prev.remark || '질소산화물 배출 허용기준 (테스트 데이터)',
+  }))
+
   const handleSave = () => {
     if (viewMode === 'create') createMutation.mutate(formData)
     else if (viewMode === 'edit' && selectedItem) updateMutation.mutate({ id: selectedItem.id, data: formData })
@@ -221,10 +232,12 @@ const AirEmissionStandardTab: React.FC = () => {
         <Box><Typography variant="body2" fontWeight="bold" sx={mLabelSx}>{t('airEmission.standard.remark')}</Typography><TextField fullWidth size="small" value={formData.remark || ''} onChange={(e) => setFormData({ ...formData, remark: e.target.value })} /></Box>
       </Box>
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

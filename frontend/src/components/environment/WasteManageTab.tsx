@@ -16,6 +16,7 @@ import { todayStr, formatDate } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { wasteManageApi } from '../../api/environmentApi'
 import { WasteManage, WasteManageRequest } from '../../types/environment.types'
 
@@ -141,6 +142,18 @@ const WasteManageTab: React.FC = () => {
     setSelectedManager(null)
     setViewMode('edit')
   }
+
+  // DEV ONLY — 비어있는 항목을 폐기물 관리 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    wasteCode: prev.wasteCode || 'WST-2026-001',
+    wasteName: prev.wasteName || '폐유',
+    wasteCategory: prev.wasteCategory || wasteCategoryCodes[0]?.code || '',
+    generationAmount: prev.generationAmount ?? 350,
+    department: prev.department || departmentCodes[0]?.code || '',
+    storageLocation: prev.storageLocation || '제1공장 폐기물 보관창고',
+    remark: prev.remark || '지정폐기물 위탁처리 (테스트 데이터)',
+  }))
 
   const handleSave = () => {
     const saveData = selectedManager
@@ -462,10 +475,12 @@ const WasteManageTab: React.FC = () => {
       </Box>
       {/* Buttons */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

@@ -59,6 +59,7 @@ import {
 } from '../../types/riskAssessment.types'
 import LoadingOverlay from '../common/LoadingOverlay'
 import RejectReasonDialog from '../common/RejectReasonDialog'
+import DevTestFillButton from '../common/DevTestFillButton'
 import useCodeMap from '../../hooks/useCodeMap'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -442,6 +443,20 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     if (confirmed && selectedAssessment) {
       deleteMutation.mutate(selectedAssessment.id)
     }
+  }
+
+  // DEV ONLY — 비어있는 항목을 위험성평가 더미데이터로 채움 (입력값·승인자·평가자 보존)
+  const fillTestData = () => {
+    setFormData(prev => ({
+      ...prev,
+      title: prev.title || '위험성평가 – 사무업무',
+    }))
+    setActivityProcesses(prev => {
+      const base = prev.length > 0 ? prev : [{ majorCategoryIdx: 1, majorCategory: MAJOR_CATEGORIES[0], detailAction: '', evaluationDate: new Date().toISOString().substring(0, 10), evaluator: '', isTarget: true }]
+      const next = [...base]
+      next[0] = { ...next[0], detailAction: next[0].detailAction || 'VDU 작업(모니터·키보드 사용)' }
+      return next
+    })
   }
 
   const handleSubmit = async () => {
@@ -1452,6 +1467,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
 
       {/* Form Actions - PC */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mt: 3, justifyContent: 'flex-end' }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {viewMode === 'edit' ? (
           <Button variant="outlined" onClick={handleBackToDetail}>{t('common.cancel')}</Button>
         ) : (
@@ -1463,6 +1479,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       </Box>
       {/* Form Actions - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {viewMode === 'edit' ? (
           <Button variant="outlined" onClick={handleBackToDetail} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         ) : (

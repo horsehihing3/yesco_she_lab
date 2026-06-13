@@ -30,6 +30,7 @@ import DepartmentSelectModal from '../common/DepartmentSelectModal'
 import useCodeMap from '../../hooks/useCodeMap'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { Role } from '../../data/buttonManageData'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 const FILE_ENTITY_TYPE = 'health_checkup_plan'
 
@@ -351,6 +352,22 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
     )
     if (ok) deleteMutation.mutate(selectedItem.id)
   }
+  // DEV ONLY — 비어있는 항목을 건강검진 계획 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    setFormData(prev => ({
+      ...prev,
+      planName: prev.planName || `${currentYear}년 ${getTypeLabel(prev.checkupType) || prev.checkupType} 건강검진 계획`,
+      targetDept: prev.targetDept || '글로벌경영관리팀',
+      targetCount: prev.targetCount ? prev.targetCount : 25,
+      hospital: prev.hospital || '서울의료원 건강검진센터',
+      hazardFactors: prev.checkupType !== 'GENERAL' ? (prev.hazardFactors || '소음, 분진, 유기용제') : prev.hazardFactors,
+      planStartDate: prev.planStartDate || `${currentYear}-03-01`,
+      planEndDate: prev.planEndDate || `${currentYear}-05-31`,
+      status: prev.status || 'PLANNED',
+      notes: prev.notes || '정기 건강검진 계획 (테스트 데이터)',
+    }))
+  }
+
   const handleSubmit = async () => {
     if (!formData.planName?.trim()) {
       showWarning(t('healthCheckupPlan.planName', '계획명') + ' ' + t('common.required', '필수입니다'))
@@ -883,6 +900,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
         </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {viewMode === 'edit' ? t('common.cancel', '취소') : t('common.backToList', '목록')}
         </Button>

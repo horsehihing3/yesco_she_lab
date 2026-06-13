@@ -70,6 +70,7 @@ import { NearMiss, NearMissRequest, NearMissActionRequest, NearMissStatus } from
 import useCodeMap from '../hooks/useCodeMap'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 import { FileMetadata } from '../types/file.types'
 import AccidentReportTab from '../components/ehs/AccidentReportTab'
 import NearMissDashboardTab from '../components/ehs/NearMissDashboardTab'
@@ -221,7 +222,16 @@ const NearMissPage: React.FC = () => {
     enabled: activeTab !== 'REPORT' && activeTab !== 'DASHBOARD',
   })
 
-  const { register, handleSubmit, reset, control, setValue } = useForm<NearMissRequest>()
+  const { register, handleSubmit, reset, control, setValue, getValues } = useForm<NearMissRequest>()
+
+  // DEV ONLY — 비어있는 항목을 아차사고 더미데이터로 채움 (입력값·발생장소·작성자 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    if (!v.occTitle) setValue('occTitle', '계단 이동 중 미끄러짐 아차사고')
+    if (!v.occInfo) setValue('occInfo', '우천으로 젖은 계단을 내려가던 중 미끄러질 뻔하였으나 난간을 잡아 사고를 면함. 미끄럼 방지 패드 부재가 원인으로 추정됨.')
+    if (!v.occSiteInfo) setValue('occSiteInfo', '본관 동측 비상계단 3층~2층 구간')
+    if (!v.company) setValue('company', '예스코')
+  }
 
   const createMutation = useMutation({
     mutationFn: (data: NearMissRequest) => nearMissApi.create(data),
@@ -2029,6 +2039,7 @@ const NearMissPage: React.FC = () => {
 
         {/* Actions */}
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           {/* 작성/수정 폼에서는 항상 '취소' 라벨 (목록 아님) */}
           <Button variant="outlined" sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }} onClick={() => {
             if (editingNearMiss && viewNearMiss) {

@@ -17,6 +17,7 @@ import { todayStr, formatDate } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { airEmissionApi } from '../../api/environmentApi'
 import { AirEmission, AirEmissionRequest } from '../../types/environment.types'
 
@@ -101,6 +102,16 @@ const AirEmissionTab: React.FC = () => {
     setSelectedManager(null)
     setViewMode('edit')
   }
+
+  // DEV ONLY — 비어있는 항목을 대기배출 측정 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    measurementDate: prev.measurementDate || todayStr(),
+    facility: prev.facility || '제1보일러 배출구',
+    emissionConcentration: prev.emissionConcentration ?? 45.2,
+    emissionStandard: prev.emissionStandard ?? 80,
+    remark: prev.remark || '대기오염물질 자가측정 (테스트 데이터)',
+  }))
 
   const handleSave = () => {
     const saveData = selectedManager
@@ -382,10 +393,12 @@ const AirEmissionTab: React.FC = () => {
       </Box>
       {/* Buttons */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

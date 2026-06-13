@@ -13,6 +13,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { useCodeMap } from '../../hooks/useCodeMap'
 import { emissionFactorApi } from '../../api/carbonApi'
 import { EmissionFactor, EmissionFactorRequest } from '../../types/carbon.types'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -126,6 +127,17 @@ const EmissionFactorTab: React.FC = () => {
     if (!selectedItem) return
     showConfirm(t('common.confirmDelete'), () => deleteMutation.mutate(selectedItem.id))
   }
+
+  // DEV ONLY — 비어있는 항목을 배출계수 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    energySource: prev.energySource || '도시가스(LNG)',
+    unit: prev.unit || unitCodes[0]?.code || '',
+    factorValue: prev.factorValue || 2.1765,
+    baseYear: prev.baseYear || new Date().getFullYear(),
+    referenceOrg: prev.referenceOrg || '환경부 온실가스종합정보센터',
+    remark: prev.remark || '국가 고유 배출계수 (테스트 데이터)',
+  }))
 
   const formatFactorValue = (value: number) => {
     if (value === 0) return '0.0000'
@@ -370,10 +382,12 @@ const EmissionFactorTab: React.FC = () => {
       </Box>
       {/* Buttons */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

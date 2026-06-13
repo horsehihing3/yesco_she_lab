@@ -12,6 +12,7 @@ import ListSearchBar from '../common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { waterWorkplaceApi, waterSamplingPointApi } from '../../api/environmentApi'
 import { WaterWorkplace, WaterWorkplaceRequest, WaterSamplingPoint, WaterSamplingPointRequest } from '../../types/environment.types'
 
@@ -127,6 +128,14 @@ const WaterWorkplaceTab: React.FC = () => {
     setSelectedManager(null)
     setViewMode('edit')
   }
+
+  // DEV ONLY — 비어있는 항목을 수질 사업장 더미데이터로 채움 (입력값은 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    workplaceName: prev.workplaceName || '제1정수장 방류구',
+    region: prev.region || '서울 강서구',
+    remark: prev.remark || '하천 방류 사업장 (테스트 데이터)',
+  }))
 
   const handleSave = () => {
     const saveData = selectedManager
@@ -405,10 +414,12 @@ const WaterWorkplaceTab: React.FC = () => {
 
       {/* Buttons */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>{t('common.save')}</Button>
       </Box>
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 3 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: 1, minWidth: 0 }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} sx={{ flex: 1, minWidth: 0 }}>{t('common.save')}</Button>
       </Box>

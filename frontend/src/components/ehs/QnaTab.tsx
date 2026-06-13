@@ -41,6 +41,7 @@ import HtmlContent from '../common/HtmlContent'
 import RichTextEditor from '../common/RichTextEditor'
 import LoadingOverlay from '../common/LoadingOverlay'
 import EntityCommentsSection from '../common/EntityCommentsSection'
+import DevTestFillButton from '../common/DevTestFillButton'
 import useCodeMap from '../../hooks/useCodeMap'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -351,6 +352,16 @@ const QnaTab: React.FC = () => {
     link.click()
     link.remove()
     window.URL.revokeObjectURL(url)
+  }
+
+  // DEV ONLY — 비어있는 항목을 Q&A 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    setFormData(prev => ({
+      ...prev,
+      title: prev.title || '특수건강검진 대상자 선정 기준 문의',
+      content: prev.content || '<p>소음 작업 부서의 특수건강검진 대상자 선정 기준이 궁금합니다. 주 몇 시간 이상 노출 시 대상이 되는지 안내 부탁드립니다. (테스트 데이터)</p>',
+      category: prev.category || 'SAFETY',
+    }))
   }
 
   const handleSubmit = async () => {
@@ -978,6 +989,7 @@ const QnaTab: React.FC = () => {
 
       {/* Form Actions */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={viewMode === 'edit' ? () => setViewMode('detail') : handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>

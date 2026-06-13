@@ -22,6 +22,7 @@ import NumberField from '../common/NumberField'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 import useCodeMap from '../../hooks/useCodeMap'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -236,6 +237,21 @@ const WemPlanTab: React.FC = () => {
       deleteMutation.mutate(selectedItem.id)
     }
   }
+
+  // DEV ONLY — 비어있는 항목을 측정 계획 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    processName: prev.processName || '도장 공정 (제2공장)',
+    department: prev.department || '생산기술팀',
+    hazardType: prev.hazardType || hazardTypeCodes[0]?.code || '',
+    measurementCycle: prev.measurementCycle || cycleCodes[0]?.code || '',
+    lastMeasurementDate: prev.lastMeasurementDate || todayStr(),
+    nextMeasurementDate: prev.nextMeasurementDate || todayStr(),
+    status: prev.status || statusCodes[0]?.code || '',
+    measurementAgency: prev.measurementAgency || '한국산업안전보건공단',
+    agencyCode: prev.agencyCode || 'WEM-2026-001',
+    remarks: prev.remarks || '연간 정기 측정 계획 (테스트 데이터)',
+  }))
 
   const handleSubmit = async () => {
     if (!formData.processName) {
@@ -645,6 +661,7 @@ const WemPlanTab: React.FC = () => {
         )}
       </Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>

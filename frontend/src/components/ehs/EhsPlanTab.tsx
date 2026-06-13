@@ -54,6 +54,7 @@ import { EhsPlan, EhsPlanRequest } from '../../types/ehsPlan.types'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useCodeMap } from '../../hooks/useCodeMap'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 const PLAN_COLORS = ['#2A9D8F', '#E76F51', '#264653', '#E9C46A', '#F4A261', '#6A4C93', '#1982C4', '#FF595E']
 
@@ -133,7 +134,7 @@ const EhsPlanTab: React.FC = () => {
     queryFn: () => fetchPlansByDateRange(startDateStr, endDateStr),
   })
 
-  const { handleSubmit, reset, control, formState: { errors } } = useForm<EhsPlanRequest>()
+  const { handleSubmit, reset, control, setValue, getValues, formState: { errors } } = useForm<EhsPlanRequest>()
   const [userSelectModalOpen, setUserSelectModalOpen] = useState(false)
   const [recipientChips, setRecipientChips] = useState<RecipientChip[]>([])
   const [recipientInput, setRecipientInput] = useState('')
@@ -197,6 +198,16 @@ const EhsPlanTab: React.FC = () => {
     }
     setRecipientInput('')
     setDialogOpen(true)
+  }
+
+  // DEV ONLY — 비어있는 항목을 EHS Plan 더미데이터로 채움 (입력값·날짜·수신자 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    if (!v.title) setValue('title', '월간 안전보건 합동점검')
+    if (!v.planDetail) setValue('planDetail', '각 사업장 순회 합동 안전보건 점검 및 지적사항 개선 확인 (테스트 데이터)')
+    if (!v.planCategory) setValue('planCategory', 'schedule')
+    if (!v.planDate) setValue('planDate', todayStr())
+    if (!v.planEndDate) setValue('planEndDate', weekFromTodayStr())
   }
 
   const handleCloseDialog = () => {
@@ -768,6 +779,7 @@ const EhsPlanTab: React.FC = () => {
             </Box>
           </DialogContent>
           <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'divider', gap: 1 }}>
+            {!editingPlan && <DevTestFillButton onFill={fillTestData} />}
             <Button type="button" variant="outlined" onClick={handleCancelDialog}>{t('common.cancel')}</Button>
             <Button type="submit" variant="contained" disabled={isProcessing}>
               {t('common.save')}

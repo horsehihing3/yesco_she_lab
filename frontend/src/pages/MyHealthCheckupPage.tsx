@@ -37,6 +37,7 @@ import DatePickerField from '../components/common/DatePickerField'
 import HospitalSearchModal from '../components/common/HospitalSearchModal'
 import AiReportModal from '../components/common/AiReportModal'
 import { myHealthCheckupApi } from '../api/myHealthCheckupApi'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 import {
   HealthCheckup,
   HealthCheckupRequest,
@@ -123,7 +124,7 @@ const MyHealthCheckupPage: React.FC = () => {
     return Array.from({ length: 10 }, (_, i) => cur - i)
   }, [])
 
-  const { control, handleSubmit, reset, setValue, watch } = useForm<HealthCheckupRequest>({
+  const { control, handleSubmit, reset, setValue, watch, getValues } = useForm<HealthCheckupRequest>({
     defaultValues: {
       employeeId: '', employeeName: '', employeeDept: '', employeeEmail: '',
       checkupYear: new Date().getFullYear(), checkupType: 'GENERAL', isTarget: true,
@@ -131,6 +132,28 @@ const MyHealthCheckupPage: React.FC = () => {
       nextCheckupDate: '', notes: '',
     },
   })
+
+  // DEV ONLY — 비어있는 항목을 건강검진 더미데이터로 채움 (입력값·직원정보 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    const today = new Date().toISOString().slice(0, 10)
+    if (!v.checkupDate) setValue('checkupDate', today)
+    if (!v.hospital) setValue('hospital', '한국의료재단 종합검진센터')
+    if (!v.overallResult && overallResultCodes.length > 0) setValue('overallResult', overallResultCodes[0].code)
+    if (!v.nextCheckupDate) setValue('nextCheckupDate', `${new Date().getFullYear() + 1}-${today.slice(5)}`)
+    if (!v.notes) setValue('notes', '정기 건강검진 (테스트 데이터)')
+    if (detailRows.length === 0) {
+      setDetailRows([{
+        bodyPart: 'chest',
+        category: '흉부 X-ray',
+        resultValue: '정상',
+        referenceRange: '정상',
+        resultStatus: 'normal',
+        notes: '',
+        _region: getRegionForBodyPart('chest'),
+      }])
+    }
+  }
 
   // ===== Queries =====
   const myIdentifier = user?.email || user?.username || ''
@@ -882,6 +905,7 @@ const MyHealthCheckupPage: React.FC = () => {
 
         {/* Form Actions */}
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setViewMode('list')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {t('common.cancel')}
           </Button>

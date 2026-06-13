@@ -22,6 +22,7 @@ import NumberField from '../common/NumberField'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 import DepartmentSelectModal from '../common/DepartmentSelectModal'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import useCodeMap from '../../hooks/useCodeMap'
@@ -242,6 +243,24 @@ const WemImprovementTab: React.FC = () => {
       deleteMutation.mutate(selectedItem.id)
     }
   }
+
+  // DEV ONLY — 비어있는 항목을 개선조치 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    processName: prev.processName || '도장 공정 (제2공장)',
+    factorName: prev.factorName || '소음',
+    measuredValue: prev.measuredValue || '88.5',
+    exposureStandard: prev.exposureStandard || '90',
+    exceedRate: prev.exceedRate ?? 98,
+    exceedLevel: prev.exceedLevel || exceedLevelCodes[0]?.code || '',
+    department: prev.department || '생산기술팀',
+    measurementDate: prev.measurementDate || todayStr(),
+    measurementAgency: prev.measurementAgency || '한국산업안전보건공단',
+    deadline: prev.deadline || todayStr(),
+    improvementPlan: prev.improvementPlan || '방음 부스 설치 및 귀마개 지급, 작업 순환 배치',
+    status: prev.status || statusCodes[0]?.code || '',
+    remarks: prev.remarks || '노출기준 초과 개선조치 (테스트 데이터)',
+  }))
 
   const handleSubmit = async () => {
     if (!formData.processName || !formData.factorName) {
@@ -710,6 +729,7 @@ const WemImprovementTab: React.FC = () => {
         )}
       </Box>
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>
