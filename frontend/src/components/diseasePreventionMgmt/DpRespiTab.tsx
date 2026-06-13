@@ -1,5 +1,4 @@
-import { useState, useMemo } from 'react'
-import { isSystemAdmin } from '../../utils/auth'
+﻿import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -41,7 +40,6 @@ const DpRespiTab: React.FC = () => {
   const { showConfirm, showSuccess, showError } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isSystemAdmin(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const getRoles = (item: { createdByUserId?: number | null }): string[] => {
     const roles = [...myRoles]

@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { isSystemAdmin } from '../../utils/auth'
+﻿import { useState } from 'react'
 import { fmtPerson } from '../../utils/personFormat'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -18,7 +17,6 @@ import { useButtonRules } from '../../hooks/useButtonRules'
 import axiosInstance from '../../api/axiosInstance'
 import { WemPlan, WemPlanRequest } from '../../types/workEnvMeasurement.types'
 import { ApiResponse, PageResponse } from '../../types/common.types'
-import NumberField from '../common/NumberField'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import LoadingOverlay from '../common/LoadingOverlay'
@@ -106,7 +104,6 @@ const WemPlanTab: React.FC = () => {
   const { showWarning, showSuccess, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isSystemAdmin(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const getRoles = (item: { createdByUserId?: number | null }): string[] => {
     const roles = [...myRoles]

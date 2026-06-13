@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+﻿import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { Box, Grid, Paper, Typography, CircularProgress } from '@mui/material'
 import { dpMgmtStatsApi } from '../../api/diseasePreventionMgmtApi'
