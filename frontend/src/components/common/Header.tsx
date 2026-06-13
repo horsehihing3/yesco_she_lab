@@ -32,6 +32,7 @@ const DEV_ACCOUNTS = [
   { id: 'gs5655',        name: '홍길동',   label: '글로벌경영관리팀 팀원' },
   { id: 'junseok.kwak',  name: '곽준석',   label: 'T/S팀 팀장' },
   { id: 'yuhyun.ha',     name: '하유현',   label: 'T/S팀 팀원' },
+  { id: 'jihyun.nam',    name: '남지현',   label: '교육훈련관리자' },
   { id: 'com4in',        name: 'com4in',  label: '관리자' },
 ]
 
