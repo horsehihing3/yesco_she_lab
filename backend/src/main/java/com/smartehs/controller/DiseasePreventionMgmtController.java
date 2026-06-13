@@ -1,6 +1,7 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.dto.response.DpMsdResponse;
 import com.smartehs.model.*;
 import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.IdmUser;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/disease-prevention-mgmt")
@@ -22,10 +24,10 @@ public class DiseasePreventionMgmtController {
     private final IdmMapper idmMapper;
 
     // MSD
-    @GetMapping("/msd")          public ResponseEntity<ApiResponse<List<DpMsd>>> msd()                                        { return ResponseEntity.ok(ApiResponse.success(svc.findAllMsd())); }
+    @GetMapping("/msd")          public ResponseEntity<ApiResponse<List<DpMsdResponse>>> msd()                                { return ResponseEntity.ok(ApiResponse.success(svc.findAllMsd().stream().map(DpMsdResponse::from).collect(Collectors.toList()))); }
     
     @PostMapping("/msd")
-    public ResponseEntity<ApiResponse<DpMsd>> createMsd(@RequestBody DpMsd e, Authentication authentication) {
+    public ResponseEntity<ApiResponse<DpMsdResponse>> createMsd(@RequestBody DpMsd e, Authentication authentication) {
         if (authentication != null) {
             IdmUser u = idmMapper.findByUid(authentication.getName());
             if (u != null) {
@@ -35,10 +37,10 @@ public class DiseasePreventionMgmtController {
                 e.setCreatedByPosition(u.getTitleName());
             }
         }
-        return ResponseEntity.ok(ApiResponse.success(svc.createMsd(e)));
+        return ResponseEntity.ok(ApiResponse.success(DpMsdResponse.from(svc.createMsd(e))));
     }
-    
-    @PutMapping("/msd/{id}")     public ResponseEntity<ApiResponse<DpMsd>> updateMsd(@PathVariable Long id, @RequestBody DpMsd e) { return ResponseEntity.ok(ApiResponse.success(svc.updateMsd(id, e))); }
+
+    @PutMapping("/msd/{id}")     public ResponseEntity<ApiResponse<DpMsdResponse>> updateMsd(@PathVariable Long id, @RequestBody DpMsd e) { return ResponseEntity.ok(ApiResponse.success(DpMsdResponse.from(svc.updateMsd(id, e)))); }
     @DeleteMapping("/msd/{id}")  public ResponseEntity<ApiResponse<Void>> deleteMsd(@PathVariable Long id)                    { svc.deleteMsd(id); return ResponseEntity.ok(ApiResponse.success(null)); }
 
     // CVD
