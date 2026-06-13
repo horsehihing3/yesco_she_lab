@@ -34,21 +34,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  List,
-  ListItemButton,
-  ListItemText,
   InputAdornment,
   Tabs,
   Tab,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import DrawIcon from '@mui/icons-material/Draw'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import SearchIcon from '@mui/icons-material/Search'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
@@ -65,7 +60,6 @@ import { nearMissApi } from '../api/nearMissApi'
 import { fileApi } from '../api/fileApi'
 import { floorDrawingApi } from '../api/floorDrawingApi'
 import { FloorDrawing } from '../types/floorDrawing.types'
-import { PageResponse } from '../types/common.types'
 import { NearMiss, NearMissRequest, NearMissActionRequest, NearMissStatus } from '../types/nearMiss.types'
 import useCodeMap from '../hooks/useCodeMap'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
@@ -114,7 +108,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 const NearMissPage: React.FC = () => {
   const { t, i18n } = useTranslation()
   const queryClient = useQueryClient()
-  const theme = useTheme()
+  useTheme()
   const { showConfirm, showSuccess } = useAlert()
   const { codeMap: statusKeys } = useCodeMap('NEAR_MISS_STATUS')
   // 사고 대응 4종 — 코드 그룹 (INCIDENT_RESP_*)
@@ -467,13 +461,6 @@ const NearMissPage: React.FC = () => {
       updateMutation.mutate({ id: editingNearMiss.id, data: payload })
     } else {
       createMutation.mutate(payload)
-    }
-  }
-
-  const handleDelete = async (id: number) => {
-    const confirmed = await showConfirm(t('nearMiss.confirmDelete'))
-    if (confirmed) {
-      deleteMutation.mutate(id)
     }
   }
 

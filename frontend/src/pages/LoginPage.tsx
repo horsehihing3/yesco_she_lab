@@ -27,7 +27,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 const LoginPage: React.FC = () => {
   const navigate = useNavigate()
   const { login, isAuthenticated } = useAuth()
-  const { isDarkMode } = useThemeMode()
+  useThemeMode()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 

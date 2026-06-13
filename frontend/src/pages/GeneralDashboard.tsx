@@ -31,15 +31,6 @@ import EhsBudgetOverview from '../components/ehs/ehsBudget/EhsBudgetOverview'
 import SafetyGoalProgressTable from '../components/planKpiGoal/SafetyGoalProgressTable'
 import WeatherWidget from '../components/dashboard/WeatherWidget'
 
-// shadcn/ui v4 chart colors (Tailwind v4 blue palette)
-const COLORS = {
-  chart1: '#93C5FD',
-  chart2: '#3B82F6',
-  chart3: '#2563EB',
-  chart4: '#1D4ED8',
-  chart5: '#1E40AF',
-}
-
 // shadcn v4 ChartTooltipContent - 다크/라이트 모드 대응
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ShadcnTooltip = ({ active, payload, label, hideLabel }: { active?: boolean; payload?: any[]; label?: string | number; hideLabel?: boolean }) => {
@@ -709,7 +700,6 @@ const EhsAlert = () => {
 const EhsPlanDashboard = () => {
   const { t, i18n } = useTranslation()
   const { isDarkMode } = useThemeMode()
-  const navigate = useNavigate()
   const borderColor = isDarkMode ? '#27272a' : '#e5e7eb'
   const hoverBg = isDarkMode ? '#1a1a2e' : '#f9fafb'
   const todayBg = isDarkMode ? '#1e3a5f' : '#dbeafe'

@@ -371,21 +371,6 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
     notes: prev.notes || '작업 전 안전교육 실시 (테스트 데이터)',
   }))
 
-  const handleSubmit = async (item: ContractorPlan) => {
-    const ok = await showConfirm(t('contractorManagementPage.msg2', '승인 요청하시겠습니까?'))
-    if (ok) submitMutation.mutate(item.id)
-  }
-
-  const handleApprove = async (item: ContractorPlan) => {
-    const ok = await showConfirm(t('contractorManagementPage.msg3', '승인하시겠습니까?'))
-    if (ok) approveMutation.mutate(item.id)
-  }
-
-  const handleReject = async (item: ContractorPlan) => {
-    const ok = await showConfirm(t('contractorManagementPage.msg4', '반려하시겠습니까?'))
-    if (ok) rejectMutation.mutate(item.id)
-  }
-
   const handleUserSelect = (users: UserInfo[]) => {
     if (users.length > 0 && approverPickTarget) {
       const u = users[0]

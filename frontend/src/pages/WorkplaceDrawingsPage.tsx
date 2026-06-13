@@ -23,7 +23,6 @@ import {
   Tooltip,
   Menu,
   Chip,
-  Grid,
 } from '@mui/material'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
@@ -55,7 +54,6 @@ import { FileMetadata } from '../types/common.types'
 import { workplaceSiteApi } from '../api/workplaceSiteApi'
 import type { WorkplaceSite } from '../types/workplaceSite.types'
 import WorkplaceSiteFormDialog from '../components/workplaceSite/WorkplaceSiteFormDialog'
-import DomainAddIcon from '@mui/icons-material/DomainAdd'
 
 // 컴포넌트 내부용 디바이스 인터페이스 (x, y 좌표 사용)
 interface DisplayDevice {
@@ -756,7 +754,7 @@ interface WorkplaceDrawingsPageProps {
 }
 
 const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly = false }) => {
-  const theme = useTheme()
+  useTheme()
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { t } = useTranslation()

@@ -15,7 +15,6 @@ import {
   TableRow,
   CircularProgress,
   Alert,
-  TextField,
   Chip,
   Pagination,
   IconButton,
@@ -66,7 +65,7 @@ const DonutChart: React.FC<DonutChartProps> = ({ data, size = 150, title, unit =
   const total = data.reduce((sum, item) => sum + item.value, 0)
   let currentAngle = 0
 
-  const createArc = (startAngle: number, endAngle: number, color: string) => {
+  const createArc = (startAngle: number, endAngle: number, _color: string) => {
     const radius = size / 2 - 10
     const innerRadius = radius * 0.6
     const centerX = size / 2
@@ -135,7 +134,7 @@ const quarterKeys = ['all', 'q1', 'q2', 'q3', 'q4'] as const
 
 const AdminPage: React.FC = () => {
   const { t } = useTranslation()
-  const theme = useTheme()
+  useTheme()
   const [tabValue, setTabValue] = useState(0)
   const [searchInput, setSearchInput] = useState('')
   const [searchText, setSearchText] = useState('')

@@ -106,7 +106,7 @@ const ApprovalLinePage: React.FC = () => {
   const [localLines, setLocalLines] = useState<ApprovalLineItem[]>([])
   const [hasChanges, setHasChanges] = useState(false)
   const [selectedDeptNodeId, setSelectedDeptNodeId] = useState<string | null>(null)
-  const [userSearchQuery, setUserSearchQuery] = useState('')
+  const [, setUserSearchQuery] = useState('')
 
   // ----- Company Tree Query -----
   const { data: companyTree, isLoading: isLoadingTree } = useQuery({
