@@ -8,10 +8,20 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
-### 🔵 다음 세션 시작점 — npm run build 통과 확인 + myRoles/getRoles 공용 util (2026-06-14 세션 12 완료)
-- **tsc 95→0 완료** (세션 12). 다음 단계: `cd frontend && npm run build` 로 빌드 통과 확인.
-- **1순위**: `myRoles`/`getRoles` 중복 → 공용 util 수렴 (LEAD 설계 후 노트북 적용)
-- **그 외 대기**: 로컬 개발 DB(Docker MSSQL+시드) / 백엔드 API 권한제어 설계. 상세 `docs/PRE_YESCO_READINESS.md`.
+### ✅ 완료 — TASK-2 프론트 타입오류 0 + 빌드 GREEN (2026-06-14 세션 13, Opus LEAD + Sonnet HELPER 2-PC)
+- **목표 달성**: 프론트 `tsc` **364→0**, `npm run build` **성공**(14462 modules, 27.96s, 청크크기 경고만 잔존·비차단). 세션시작 95에서 0으로.
+- **[A] 타입 갭**: getRoles 헬퍼가 읽는 `createdByUserId` 등 누락 필드를 `.types.ts` 에 추가 — Dp* 6 / Od* 5(Exposure/Org/Worker/Aftercare/Fitness) / HealthCheckupRecord / EhsManager / EmergencyContact / EmergencyPlan(modifiedByTeam·Position) / User(position·active) / NearMissRequest(occHour·occMinute) / SiteSafetyPlan(inspector*)·Request(modifiedBy).
+- **[B] 실버그 수정**: WemFactor `todayStr` import누락(렌더크래시) / LegalLaw·OdAftercare `getRoles(selected)` 미정의변수→selectedItem·selectedAft·selectedFit(상세 렌더 크래시) / Chemical `.handler`→`handlerName`(담당자 미표시·미저장) / FileMetadata `.fileName`→`originalFilename`(첨부파일명 미표시) / EmrReport planId 타입충돌 / EhsBudget·EhsPlan null-safety / PpeRequest 죽은 `viewMode==='edit'` 비교 제거 / ApprovalManagePage FieldDef 타입선언.
+- **협업**: HELPER가 `619c2ff` 한 커밋으로 [A]+[B] 전부 처리(중간에 분담 겹쳐 LEAD 일부 중복작업은 폐기). LEAD는 OdAftercare 크래시(`e9f88b0`)·typo 3종(`8fb5d3f`) 선행 푸시. 채널 `coord/LEAD-TO-HELPER.md`.
+- 브랜치 `main`=`yesco-dev`=`619c2ff`, 원격 동기화.
+
+### 🟡 빌드는 통과했으나 기능 미완성 — 후속 과제 (세션13 발견, 타입에러 아님)
+- **SiteSafetyPlan `inspector*` (점검자 서명 기능)**: 프론트 타입만 추가, **백엔드 SiteSafetyPlan 모델/응답에 inspector 필드 없음** → SiteSafetyReportTab 점검자/서명일/서명이미지 항상 '미지정/미서명'. 백엔드 와이어 추가 or UI 제거 결정 필요.
+- **User `position`/`active`**: 타입만 추가, 백엔드 UserResponse 미반환 → AdminPage 직위/활성 빈값 가능. users API 보강 여부 확인.
+- **NearMiss `occHour`/`occMinute`**: 타입 추가됨. 폼 저장/조회 왕복 런타임 검증 필요.
+
+### 🔵 다음 후보 (LEAD 설계 후 분업)
+- 1순위 `myRoles`/`getRoles` 중복(탭마다 로컬정의) → 공용 util 수렴 / 로컬 개발 DB(Docker MSSQL+시드) / 백엔드 API 권한제어 설계. 상세 `docs/PRE_YESCO_READINESS.md`.
 
 ### ✅ 완료 — 세션 12 (2026-06-14, Opus LEAD + Sonnet HELPER 2-PC 병렬)
 - **✅ TASK-2 tsc 364→95→0**: 타입갭 메우기(TASK-2A) + 실버그 수정(TASK-2B) LEAD 단독 완료. 수정 파일: diseasePreventionMgmt/occupationalDisease/ehsManager/emergencyExtended/user/nearMiss/siteSafety .types.ts, healthCheckupRecordApi.ts, LegalLawTab/OdAftercareTab/EmrPlanTab/AnnualPlanTab/EmrReportTab(EnrichedDrill Omit+override)/EhsBudgetExpenseTab/EhsPlanTab/PpeRequestTab/ChemicalInventoryTab/HealthCheckupPlanTab/OdPlanTab/ApprovalManagePage/WorkPlacePage. commit `619c2ff`.
