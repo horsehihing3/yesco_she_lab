@@ -295,12 +295,11 @@ const PsmMocTab: React.FC = () => {
             <FormCell><Typography variant="body2" color="error" sx={{ whiteSpace: 'pre-wrap' }}>{v.rejectReason}</Typography></FormCell>
           </FormRow>
         )}
-        {(isEdit || !v.rejectReason) && (
+        {isEdit && (
           <FormRow last>
-            <FormLabel>{viewMode === 'edit' || viewMode === 'create' ? '반려 사유' : '비고'}</FormLabel>
+            <FormLabel>반려 사유</FormLabel>
             <FormCell>
-              {isEdit ? <TextField fullWidth size="small" multiline minRows={2} value={v.rejectReason || ''} onChange={e => setV({ rejectReason: e.target.value })} placeholder="반려 시 사유 입력" />
-                : <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>—</Typography>}
+              <TextField fullWidth size="small" multiline minRows={2} value={v.rejectReason || ''} onChange={e => setV({ rejectReason: e.target.value })} placeholder="반려 시 사유 입력" />
             </FormCell>
           </FormRow>
         )}

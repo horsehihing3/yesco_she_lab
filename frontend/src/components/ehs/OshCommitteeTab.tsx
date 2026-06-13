@@ -615,11 +615,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
               <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'divider', py: 1.5 } }}>
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.location')}</TableCell>
+                    <TableCell sx={{ width: 140, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.location')}</TableCell>
                     <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>
                       {committeeDetail.oshLocation}{committeeDetail.oshLocationDetail && ` - ${committeeDetail.oshLocationDetail}`}
                     </TableCell>
-                    <TableCell sx={{ width: 128, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.date')}</TableCell>
+                    <TableCell sx={{ width: 140, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.date')}</TableCell>
                     <TableCell>{formatDate(committeeDetail.oshDate)}</TableCell>
                   </TableRow>
                   <TableRow>
@@ -865,7 +865,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* Row 1: 장소 | 날짜 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.location')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', gap: 1 }}>
@@ -887,7 +887,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                 fullWidth
               />
             </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.date')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -900,7 +900,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
           {/* Row 2: 주요안건 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.mainAgenda')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -918,7 +918,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
           {/* Row 3: 코멘트 */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.comment')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -936,7 +936,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
           {/* Row 4: 첨부파일 */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.attachments')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
