@@ -8,6 +8,14 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
+### 🟢 진행 중 — 승인 로직 표준화 (2026-06-13 세션 11, 예스코 투입 D-2)
+- **배경**: 승인 메커니즘 3종 공존(중앙 tb_approval / 인라인 2단계 / 단순status) + 권한체크·API·승인자검증 불일치. 예스코 결재시스템(미지수) 연동 전 표준화 필요.
+- **[x] 승인 로직 전수 감사 완료**: 중앙메뉴 노출 4종(PpeRequest·PermitToWork·Training·Chemical) vs 자체탭 10종. 권한체크 누락 = HealthCheckupPlan·SiteSafety·RiskAssessment(+PermitToWork·PpeRequest). 권한체크 구현됨 = AuditPlan·EmrPlan·ContractorPlan·LegalPlan·EhsAnnualPlan.
+- **[x] `docs/APPROVAL_STANDARD.md` 작성**: 현황맵 + 표준 상태머신 + 권한규칙(ensureCanApprove) + API규약(transition) + **예스코 연동 seam(ApprovalGateway, 모드 A/B/C)** + 미팅 확인질문 + 이행 우선순위.
+- **[ ] 지금(예스코무관)**: 권한체크 누락 보강(ensureCanApprove 이식, ⚠️데모데이터 후) / RiskAssessment status 대소문자 재확인.
+- **[ ] 예스코 확인 후**: UI 노출규칙 확정 / transition API 통일 / 프론트 권한유틸·RejectDialog 공통화 / ApprovalGateway 구현. 구현단계는 backend/frontend 분업 가능.
+
+
 ### 🟢 진행 중 — 표준화 6순위: 컨트롤러 반환 표준화(raw→DTO) + 예외 표준화 (2026-06-13 세션 11)
 - **표준 결정**: 컨트롤러 반환 = **Response DTO** 표준 채택(raw 엔티티 신규 금지·convert-on-touch·민감도메인 우선). CLAUDE.md 절대규칙에 명문화. raw↔DTO는 *모델↔계약* 문제로 PersonRef(*DB↔wire*)와 무관·공존(레퍼런스 EhsAnnualPlan). **빅뱅 전환 안 함**(전체 106개 raw 중 민감도메인 ~22개만 우선).
 - **[x] #2 예외 표준화 (8파일, commit c20f557)**: `RuntimeException` → not-found 27건 `ResourceNotFoundException`(404)·검증/중복 14건 `BadRequestException`(400). 기존엔 GlobalExceptionHandler catch-all이 500+고정메시지로 메시지를 뭉개던 UX 버그 동시수정. 인프라/IO 15건은 RuntimeException 유지. 대상: AccidentReport/EhsManager/OSHCommittee/WorkplaceSite/RiskAssessment Service + OSHCommitteeController + ChecklistExcelService.

@@ -164,4 +164,5 @@ public void setCreatedByPosition(String v){ (createdBy = ensure(createdBy)).setP
 | `PROJECT_CONTEXT.md` | 현재 TODO · 완료 이력 · 진척도 · 이슈 |
 | `docs/SYSTEM_ANALYSIS.md` | 시스템 구조 분석 (인증·결재·사용자·권한) |
 | `docs/FORM_LAYOUT_CONVENTION.md` | 폼 테이블 행 배치 규칙 (등록·수정·상세 공통 흐름) |
+| `docs/APPROVAL_STANDARD.md` | 승인(결재) 로직 표준 + 예스코 연동 seam (현황맵·상태머신·권한규칙·연동지점) |
 | `컴포인__예스코_SHE_시스템_구축_제안서.pdf` | 원본 기획서 — 전체 기능 요구사항 |
