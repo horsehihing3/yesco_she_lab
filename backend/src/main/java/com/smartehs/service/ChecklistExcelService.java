@@ -1,6 +1,7 @@
 package com.smartehs.service;
 
 import com.smartehs.dto.request.ChecklistTemplateMasterRequest.ChecklistItemRequest;
+import com.smartehs.exception.BadRequestException;
 import com.smartehs.mapper.ChecklistTemplateItemMapper;
 import com.smartehs.model.ChecklistTemplateItem;
 import com.smartehs.model.ChecklistResultItem;
@@ -62,6 +63,8 @@ public class ChecklistExcelService {
 
                 items.add(new ChecklistItemRequest(category, checkItem, checkContent, isNormal, isAbnormal, remarks, checkStandard, actionTaken, confirm));
             }
+        } catch (BadRequestException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("엑셀 파싱 실패: " + e.getMessage(), e);
         }
@@ -151,6 +154,8 @@ public class ChecklistExcelService {
 
                 items.add(new ChecklistItemRequest(category, checkItem, checkContent, isNormal, isAbnormal, remarks, checkStandard, actionTaken, confirm));
             }
+        } catch (BadRequestException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("엑셀 파싱 실패: " + e.getMessage(), e);
         }
@@ -165,7 +170,7 @@ public class ChecklistExcelService {
         List<ChecklistTemplateItem> templateItems = templateItemMapper.findByMasterId(templateId);
 
         if (templateItems.size() != excelItems.size()) {
-            throw new RuntimeException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (행 개수 불일치: 서식=" + templateItems.size() + "행, 엑셀=" + excelItems.size() + "행)");
+            throw new BadRequestException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (행 개수 불일치: 서식=" + templateItems.size() + "행, 엑셀=" + excelItems.size() + "행)");
         }
 
         for (int i = 0; i < templateItems.size(); i++) {
@@ -176,25 +181,25 @@ public class ChecklistExcelService {
             String tplCat = tpl.getCategory() != null ? tpl.getCategory().trim() : "";
             String excelCat = excel.getCategory() != null ? excel.getCategory().trim() : "";
             if (!tplCat.equals(excelCat)) {
-                throw new RuntimeException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (" + rowNum + "행 '구분' 불일치)");
+                throw new BadRequestException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (" + rowNum + "행 '구분' 불일치)");
             }
 
             String tplItem = tpl.getCheckItem() != null ? tpl.getCheckItem().trim() : "";
             String excelItem = excel.getCheckItem() != null ? excel.getCheckItem().trim() : "";
             if (!tplItem.equals(excelItem)) {
-                throw new RuntimeException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (" + rowNum + "행 '점검항목' 불일치)");
+                throw new BadRequestException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (" + rowNum + "행 '점검항목' 불일치)");
             }
 
             String tplContent = tpl.getCheckContent() != null ? tpl.getCheckContent().trim() : "";
             String excelContent = excel.getCheckContent() != null ? excel.getCheckContent().trim() : "";
             if (!tplContent.equals(excelContent)) {
-                throw new RuntimeException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (" + rowNum + "행 '점검내용' 불일치)");
+                throw new BadRequestException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (" + rowNum + "행 '점검내용' 불일치)");
             }
 
             String tplStd = tpl.getCheckStandard() != null ? tpl.getCheckStandard().trim() : "";
             String excelStd = excel.getCheckStandard() != null ? excel.getCheckStandard().trim() : "";
             if (!tplStd.equals(excelStd)) {
-                throw new RuntimeException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (" + rowNum + "행 '점검기준' 불일치)");
+                throw new BadRequestException("업로드한 파일이 선택한 서식과 일치하지 않습니다. (" + rowNum + "행 '점검기준' 불일치)");
             }
         }
     }
@@ -444,28 +449,28 @@ public class ChecklistExcelService {
 
     private void validateExcelTemplate(Sheet sheet) {
         int lastRow = sheet.getLastRowNum();
-        if (lastRow < 4) throw new RuntimeException("엑셀 파일의 행 수가 부족합니다. 최소 5행 이상이어야 합니다.");
+        if (lastRow < 4) throw new BadRequestException("엑셀 파일의 행 수가 부족합니다. 최소 5행 이상이어야 합니다.");
 
         Row row0 = sheet.getRow(0);
-        if (row0 == null) throw new RuntimeException("1행이 존재하지 않습니다.");
+        if (row0 == null) throw new BadRequestException("1행이 존재하지 않습니다.");
         boolean row0HasValue = false;
         for (int c = 0; c <= 8; c++) {
             if (!getCellValue(row0, c).isBlank()) { row0HasValue = true; break; }
         }
-        if (!row0HasValue) throw new RuntimeException("1행에 제목 텍스트가 없습니다.");
+        if (!row0HasValue) throw new BadRequestException("1행에 제목 텍스트가 없습니다.");
 
         Row row1 = sheet.getRow(1);
-        if (row1 == null) throw new RuntimeException("2행이 존재하지 않습니다.");
-        if (!getCellValue(row1, 0).contains("점검일자")) throw new RuntimeException("2행 A열에 '점검일자:' 텍스트가 없습니다.");
-        if (!getCellValue(row1, 4).contains("점검자")) throw new RuntimeException("2행 E열에 '점검자:' 텍스트가 없습니다.");
+        if (row1 == null) throw new BadRequestException("2행이 존재하지 않습니다.");
+        if (!getCellValue(row1, 0).contains("점검일자")) throw new BadRequestException("2행 A열에 '점검일자:' 텍스트가 없습니다.");
+        if (!getCellValue(row1, 4).contains("점검자")) throw new BadRequestException("2행 E열에 '점검자:' 텍스트가 없습니다.");
 
         String[] expectedHeaders = {"구분", "점검항목", "점검내용", "정상", "이상", "비고", "점검기준", "조치사항", "확인"};
         Row headerRow = sheet.getRow(3);
-        if (headerRow == null) throw new RuntimeException("4행에 헤더가 없습니다.");
+        if (headerRow == null) throw new BadRequestException("4행에 헤더가 없습니다.");
         for (int c = 0; c < expectedHeaders.length; c++) {
             String actual = getCellValue(headerRow, c).trim();
             if (!expectedHeaders[c].equals(actual)) {
-                throw new RuntimeException("4행 " + (char)('A' + c) + "열: 기대값='" + expectedHeaders[c] + "', 실제값='" + actual + "'");
+                throw new BadRequestException("4행 " + (char)('A' + c) + "열: 기대값='" + expectedHeaders[c] + "', 실제값='" + actual + "'");
             }
         }
     }

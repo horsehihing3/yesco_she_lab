@@ -15,6 +15,7 @@ import com.smartehs.mapper.RiskAssessmentDetailMapper;
 import com.smartehs.mapper.RiskAssessmentFormMapper;
 import com.smartehs.mapper.RiskAssessmentMapper;
 import com.smartehs.mapper.RiskRegisterMapper;
+import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.model.RiskActivityProcess;
 import com.smartehs.model.PersonRef;
 import com.smartehs.model.RiskAssessment;
@@ -135,7 +136,7 @@ public class RiskAssessmentService {
     public RiskAssessmentResponse findById(Long id) {
         RiskAssessment assessment = riskAssessmentMapper.findById(id);
         if (assessment == null) {
-            throw new RuntimeException("Risk Assessment not found with id: " + id);
+            throw new ResourceNotFoundException("Risk Assessment not found with id: " + id);
         }
         return toResponseWithDetails(assessment);
     }
@@ -143,7 +144,7 @@ public class RiskAssessmentService {
     public RiskAssessmentResponse findByRiskId(String riskId) {
         RiskAssessment assessment = riskAssessmentMapper.findByRiskId(riskId);
         if (assessment == null) {
-            throw new RuntimeException("Risk Assessment not found with riskId: " + riskId);
+            throw new ResourceNotFoundException("Risk Assessment not found with riskId: " + riskId);
         }
         return toResponseWithDetails(assessment);
     }
@@ -189,7 +190,7 @@ public class RiskAssessmentService {
     public RiskAssessmentResponse update(Long id, RiskAssessmentRequest request, String changedBy) {
         RiskAssessment assessment = riskAssessmentMapper.findById(id);
         if (assessment == null) {
-            throw new RuntimeException("Risk Assessment not found with id: " + id);
+            throw new ResourceNotFoundException("Risk Assessment not found with id: " + id);
         }
 
         RiskAssessment before = cloneForDiff(assessment);
@@ -241,7 +242,7 @@ public class RiskAssessmentService {
     public RiskAssessmentResponse updateStatus(Long id, String status, String rejectReason, Boolean allowResubmit, String changedBy) {
         RiskAssessment assessment = riskAssessmentMapper.findById(id);
         if (assessment == null) {
-            throw new RuntimeException("Risk Assessment not found with id: " + id);
+            throw new ResourceNotFoundException("Risk Assessment not found with id: " + id);
         }
 
         String oldStatus = assessment.getStatus();
@@ -274,7 +275,7 @@ public class RiskAssessmentService {
     public RiskAssessmentResponse transition(Long id, String action, String rejectReason, String username) {
         RiskAssessment assessment = riskAssessmentMapper.findById(id);
         if (assessment == null) {
-            throw new RuntimeException("Risk Assessment not found with id: " + id);
+            throw new ResourceNotFoundException("Risk Assessment not found with id: " + id);
         }
 
         // 반려 사유 필수 검증 (계획·완료 결재 반려 양쪽 모두)
@@ -381,7 +382,7 @@ public class RiskAssessmentService {
     public void delete(Long id) {
         RiskAssessment assessment = riskAssessmentMapper.findById(id);
         if (assessment == null) {
-            throw new RuntimeException("Risk Assessment not found with id: " + id);
+            throw new ResourceNotFoundException("Risk Assessment not found with id: " + id);
         }
 
         String riskId = assessment.getRiskId();
@@ -421,7 +422,7 @@ public class RiskAssessmentService {
     public RiskActivityProcessResponse updateActivityProcess(Long id, RiskActivityProcessRequest request) {
         RiskActivityProcess process = activityProcessMapper.findById(id);
         if (process == null) {
-            throw new RuntimeException("Activity Process not found with id: " + id);
+            throw new ResourceNotFoundException("Activity Process not found with id: " + id);
         }
 
         process.setMajorCategoryIdx(request.getMajorCategoryIdx());
@@ -439,7 +440,7 @@ public class RiskAssessmentService {
     public void deleteActivityProcess(Long id) {
         RiskActivityProcess process = activityProcessMapper.findById(id);
         if (process == null) {
-            throw new RuntimeException("Activity Process not found with id: " + id);
+            throw new ResourceNotFoundException("Activity Process not found with id: " + id);
         }
         String riskId = process.getRiskId();
         activityProcessMapper.delete(id);
@@ -505,7 +506,7 @@ public class RiskAssessmentService {
     public RiskAssessmentDetailResponse updateAssessmentDetail(Long id, RiskAssessmentDetailRequest request) {
         RiskAssessmentDetail detail = assessmentDetailMapper.findById(id);
         if (detail == null) {
-            throw new RuntimeException("Assessment Detail not found with id: " + id);
+            throw new ResourceNotFoundException("Assessment Detail not found with id: " + id);
         }
 
         int riskScore = request.getPossibilityGrade() * request.getResultGrade();
@@ -546,7 +547,7 @@ public class RiskAssessmentService {
     public void deleteAssessmentDetail(Long id) {
         RiskAssessmentDetail detail = assessmentDetailMapper.findById(id);
         if (detail == null) {
-            throw new RuntimeException("Assessment Detail not found with id: " + id);
+            throw new ResourceNotFoundException("Assessment Detail not found with id: " + id);
         }
         assessmentDetailMapper.delete(id);
     }
@@ -594,7 +595,7 @@ public class RiskAssessmentService {
     public RiskRegisterResponse updateRiskRegister(Long id, RiskRegisterRequest request) {
         RiskRegister register = riskRegisterMapper.findById(id);
         if (register == null) {
-            throw new RuntimeException("Risk Register not found with id: " + id);
+            throw new ResourceNotFoundException("Risk Register not found with id: " + id);
         }
 
         register.setRegisterNum(request.getRegisterNum());
@@ -618,7 +619,7 @@ public class RiskAssessmentService {
     public void deleteRiskRegister(Long id) {
         RiskRegister register = riskRegisterMapper.findById(id);
         if (register == null) {
-            throw new RuntimeException("Risk Register not found with id: " + id);
+            throw new ResourceNotFoundException("Risk Register not found with id: " + id);
         }
         String riskId = register.getRiskId();
         riskRegisterMapper.delete(id);

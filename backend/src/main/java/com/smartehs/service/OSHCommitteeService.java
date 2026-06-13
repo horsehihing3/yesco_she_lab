@@ -3,6 +3,7 @@ package com.smartehs.service;
 import com.smartehs.dto.request.OSHCommitteeRequest;
 import com.smartehs.dto.response.OSHCommitteeAttendeeResponse;
 import com.smartehs.dto.response.OSHCommitteeResponse;
+import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.model.OSHCommittee;
 import com.smartehs.model.OSHCommitteeAttendee;
 import com.smartehs.mapper.OSHCommitteeMapper;
@@ -59,7 +60,7 @@ public class OSHCommitteeService {
     public OSHCommitteeResponse findById(Long id) {
         OSHCommittee committee = oshCommitteeMapper.findById(id);
         if (committee == null) {
-            throw new RuntimeException("OSH Committee not found with id: " + id);
+            throw new ResourceNotFoundException("OSH Committee not found with id: " + id);
         }
         List<OSHCommitteeAttendeeResponse> attendees = attendeeMapper.findByOshId(committee.getOshId()).stream()
                 .map(OSHCommitteeAttendeeResponse::from)
@@ -70,7 +71,7 @@ public class OSHCommitteeService {
     public OSHCommitteeResponse findByOshId(String oshId) {
         OSHCommittee committee = oshCommitteeMapper.findByOshId(oshId);
         if (committee == null) {
-            throw new RuntimeException("OSH Committee not found with oshId: " + oshId);
+            throw new ResourceNotFoundException("OSH Committee not found with oshId: " + oshId);
         }
         return OSHCommitteeResponse.from(committee);
     }
@@ -102,7 +103,7 @@ public class OSHCommitteeService {
     public OSHCommitteeResponse update(Long id, OSHCommitteeRequest request) {
         OSHCommittee committee = oshCommitteeMapper.findById(id);
         if (committee == null) {
-            throw new RuntimeException("OSH Committee not found with id: " + id);
+            throw new ResourceNotFoundException("OSH Committee not found with id: " + id);
         }
 
         committee.setOshDate(request.getOshDate() != null ? request.getOshDate().atStartOfDay() : null);
@@ -125,7 +126,7 @@ public class OSHCommitteeService {
     public void delete(Long id) {
         OSHCommittee committee = oshCommitteeMapper.findById(id);
         if (committee == null) {
-            throw new RuntimeException("OSH Committee not found with id: " + id);
+            throw new ResourceNotFoundException("OSH Committee not found with id: " + id);
         }
         oshCommitteeMapper.delete(id);
     }

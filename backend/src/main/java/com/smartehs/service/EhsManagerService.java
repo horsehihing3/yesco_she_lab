@@ -2,6 +2,7 @@ package com.smartehs.service;
 
 import com.smartehs.dto.request.EhsManagerRequest;
 import com.smartehs.dto.response.EhsManagerResponse;
+import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.model.EhsManager;
 import com.smartehs.model.IdmUser;
 import com.smartehs.mapper.EhsManagerMapper;
@@ -49,7 +50,7 @@ public class EhsManagerService {
     public EhsManagerResponse findById(Long id) {
         EhsManager manager = ehsManagerMapper.findById(id);
         if (manager == null) {
-            throw new RuntimeException("EHS Manager not found with id: " + id);
+            throw new ResourceNotFoundException("EHS Manager not found with id: " + id);
         }
         return EhsManagerResponse.from(manager);
     }
@@ -86,7 +87,7 @@ public class EhsManagerService {
     public EhsManagerResponse update(Long id, EhsManagerRequest request) {
         EhsManager manager = ehsManagerMapper.findById(id);
         if (manager == null) {
-            throw new RuntimeException("EHS Manager not found with id: " + id);
+            throw new ResourceNotFoundException("EHS Manager not found with id: " + id);
         }
 
         manager.setRoleCategory(request.getRoleCategory());
@@ -115,7 +116,7 @@ public class EhsManagerService {
     public void delete(Long id) {
         EhsManager manager = ehsManagerMapper.findById(id);
         if (manager == null) {
-            throw new RuntimeException("EHS Manager not found with id: " + id);
+            throw new ResourceNotFoundException("EHS Manager not found with id: " + id);
         }
         manager.setActive(false);
         ehsManagerMapper.update(manager);

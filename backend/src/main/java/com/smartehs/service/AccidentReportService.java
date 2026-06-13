@@ -1,5 +1,6 @@
 package com.smartehs.service;
 
+import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.AccidentReportMapper;
 import com.smartehs.model.AccidentReport;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class AccidentReportService {
 
     public AccidentReport findById(Long id) {
         AccidentReport r = mapper.findById(id);
-        if (r == null) throw new RuntimeException("Accident report not found: " + id);
+        if (r == null) throw new ResourceNotFoundException("Accident report not found: " + id);
         return r;
     }
 
@@ -40,7 +41,7 @@ public class AccidentReportService {
     @Transactional
     public AccidentReport update(Long id, AccidentReport report) {
         AccidentReport existing = mapper.findById(id);
-        if (existing == null) throw new RuntimeException("Accident report not found: " + id);
+        if (existing == null) throw new ResourceNotFoundException("Accident report not found: " + id);
         report.setId(id);
         if (report.getIsNearMiss() == null) report.setIsNearMiss(false);
         if (report.getIsFatal() == null) report.setIsFatal(false);

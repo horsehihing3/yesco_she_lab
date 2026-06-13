@@ -3,6 +3,7 @@ package com.smartehs.service;
 import com.smartehs.dto.request.WorkplaceSiteRequest;
 import com.smartehs.mapper.FloorDrawingMapper;
 import com.smartehs.mapper.WorkplaceSiteMapper;
+import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.model.WorkplaceSite;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class WorkplaceSiteService {
 
     public WorkplaceSite findById(Long id) {
         WorkplaceSite site = mapper.findById(id);
-        if (site == null) throw new RuntimeException("사업장을 찾을 수 없습니다: " + id);
+        if (site == null) throw new ResourceNotFoundException("사업장을 찾을 수 없습니다: " + id);
         return site;
     }
 

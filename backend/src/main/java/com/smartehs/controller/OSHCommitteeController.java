@@ -4,6 +4,8 @@ import com.smartehs.dto.request.OSHCommitteeRequest;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.OSHCommitteeAttendeeResponse;
 import com.smartehs.dto.response.OSHCommitteeResponse;
+import com.smartehs.exception.BadRequestException;
+import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.model.OSHCommittee;
 import com.smartehs.model.OSHCommitteeAttendee;
 import com.smartehs.mapper.OSHCommitteeAttendeeMapper;
@@ -108,7 +110,7 @@ public class OSHCommitteeController {
     public ResponseEntity<ApiResponse<List<OSHCommitteeAttendeeResponse>>> getAttendees(@PathVariable Long id) {
         OSHCommittee committee = oshCommitteeMapper.findById(id);
         if (committee == null) {
-            throw new RuntimeException("OSH Committee not found with id: " + id);
+            throw new ResourceNotFoundException("OSH Committee not found with id: " + id);
         }
         List<OSHCommitteeAttendeeResponse> attendees = attendeeMapper.findByOshId(committee.getOshId())
                 .stream()
@@ -125,7 +127,7 @@ public class OSHCommitteeController {
             @RequestBody Map<String, Object> attendeeData) {
         OSHCommittee committee = oshCommitteeMapper.findById(id);
         if (committee == null) {
-            throw new RuntimeException("OSH Committee not found with id: " + id);
+            throw new ResourceNotFoundException("OSH Committee not found with id: " + id);
         }
 
         String userName = (String) attendeeData.get("userName");
@@ -134,7 +136,7 @@ public class OSHCommitteeController {
         // Check if already exists
         OSHCommitteeAttendee existing = attendeeMapper.findByOshIdAndAttendeeMail(committee.getOshId(), userEmail);
         if (existing != null) {
-            throw new RuntimeException("이미 등록된 참석자입니다.");
+            throw new BadRequestException("이미 등록된 참석자입니다.");
         }
 
         OSHCommitteeAttendee attendee = OSHCommitteeAttendee.builder()
@@ -160,7 +162,7 @@ public class OSHCommitteeController {
             @RequestBody List<Map<String, Object>> attendeesData) {
         OSHCommittee committee = oshCommitteeMapper.findById(id);
         if (committee == null) {
-            throw new RuntimeException("OSH Committee not found with id: " + id);
+            throw new ResourceNotFoundException("OSH Committee not found with id: " + id);
         }
 
         for (Map<String, Object> data : attendeesData) {
@@ -214,7 +216,7 @@ public class OSHCommitteeController {
             @PathVariable Long attendeeId) {
         OSHCommittee committee = oshCommitteeMapper.findById(id);
         if (committee == null) {
-            throw new RuntimeException("OSH Committee not found with id: " + id);
+            throw new ResourceNotFoundException("OSH Committee not found with id: " + id);
         }
 
         attendeeMapper.delete(attendeeId);
@@ -234,7 +236,7 @@ public class OSHCommitteeController {
             @PathVariable Long attendeeId) {
         OSHCommitteeAttendee attendee = attendeeMapper.findById(attendeeId);
         if (attendee == null) {
-            throw new RuntimeException("Attendee not found with id: " + attendeeId);
+            throw new ResourceNotFoundException("Attendee not found with id: " + attendeeId);
         }
 
         attendee.setIsSigned(true);
@@ -253,7 +255,7 @@ public class OSHCommitteeController {
             @RequestBody Map<String, String> body) {
         OSHCommitteeAttendee attendee = attendeeMapper.findById(attendeeId);
         if (attendee == null) {
-            throw new RuntimeException("Attendee not found with id: " + attendeeId);
+            throw new ResourceNotFoundException("Attendee not found with id: " + attendeeId);
         }
 
         String signatureImage = body.get("signatureImage");
