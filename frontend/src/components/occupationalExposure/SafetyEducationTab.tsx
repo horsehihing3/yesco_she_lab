@@ -45,6 +45,7 @@ import {
 } from '../../types/occupationalExposure.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 // ===== Style Constants =====
 const labelCellSx = {
@@ -274,7 +275,7 @@ const SafetyEducationTab: React.FC = () => {
   const isProcessing = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
 
   // ===== Form =====
-  const { control, handleSubmit, reset } = useForm<SafetyEducationRequest>({
+  const { control, handleSubmit, reset, getValues, setValue } = useForm<SafetyEducationRequest>({
     defaultValues: {
       title: '',
       educationType: 'REGULAR',
@@ -414,6 +415,30 @@ const SafetyEducationTab: React.FC = () => {
 
   const handleRemoveAttendeeRow = (index: number) => {
     setAttendeeRows((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  // DEV ONLY — 비어있는 항목을 안전보건교육 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    if (!v.title) setValue('title', '2026년 상반기 정기 안전보건교육')
+    if (!v.educationType) setValue('educationType', 'REGULAR')
+    if (!v.educationCategory) setValue('educationCategory', '작업장 안전수칙')
+    if (!v.educationDate) setValue('educationDate', new Date().toISOString().slice(0, 10))
+    if (v.educationHours == null) setValue('educationHours', 6)
+    if (!v.location) setValue('location', '본사 대강당')
+    if (!v.instructorName) setValue('instructorName', '김안전')
+    if (!v.instructorOrg) setValue('instructorOrg', '한국산업안전보건공단')
+    if (!v.hazardousFactors) setValue('hazardousFactors', '소음, 분진, 추락')
+    if (!v.educationContent) setValue('educationContent', '산업안전보건법 주요 내용 및 작업장 안전수칙 교육')
+    if (!v.status) setValue('status', 'COMPLETED')
+    if (!v.notes) setValue('notes', '정기 안전보건교육 (테스트 데이터)')
+    setAttendeeRows((prev) => prev.length > 0 ? prev : [{
+      attendeeName: '홍길동',
+      attendeeEmail: 'gildong.hong@yesco.co.kr',
+      attendeeDept: '생산1팀',
+      attendeeCompany: '예스코',
+      employeeId: 'EMP-1001',
+    }])
   }
 
   const onSubmit = async (data: SafetyEducationRequest) => {
@@ -1332,6 +1357,7 @@ const SafetyEducationTab: React.FC = () => {
 
         {/* Form Actions */}
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {viewMode === 'edit' ? t('common.cancel') : t('common.list')}
           </Button>

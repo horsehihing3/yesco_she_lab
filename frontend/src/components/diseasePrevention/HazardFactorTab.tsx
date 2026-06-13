@@ -36,6 +36,7 @@ import DatePickerField from '../common/DatePickerField'
 import LoadingOverlay from '../common/LoadingOverlay'
 import useCodeMap from '../../hooks/useCodeMap'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -673,6 +674,53 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
     const f = formData
     const set = (patch: Partial<HazardFactorRequest>) => setFormData({ ...f, ...patch })
 
+    // DEV ONLY — 비어있는 항목을 유해인자 더미데이터로 채움 (입력값 보존, 유형별 필드 포함)
+    const fillTestData = () => {
+      const today = new Date().toISOString().slice(0, 10)
+      const NAMES: Record<string, string> = {
+        CHEMICAL: '톨루엔',
+        PHYSICAL: '소음',
+        BIOLOGICAL: '결핵균',
+        ERGONOMIC: '반복작업(VDT)',
+        PSYCHOSOCIAL: '직무스트레스',
+      }
+      const patch: Partial<HazardFactorRequest> = {
+        factorName: f.factorName || (NAMES[hazardType] || '유해인자'),
+        category: f.category || '관리대상 유해인자',
+        process: f.process || '도장 공정',
+        riskLevel: f.riskLevel || (riskCodes[0]?.code ?? f.riskLevel),
+        preventionStatus: f.preventionStatus || (preventionCodes[0]?.code ?? f.preventionStatus),
+        preventionRate: f.preventionRate ?? 60,
+        lastCheckDate: f.lastCheckDate || today,
+        preventionDetail: f.preventionDetail || '국소배기장치 설치 및 정기 측정 실시 (테스트 데이터)',
+        remarks: f.remarks || '반기 1회 작업환경측정 대상 (테스트 데이터)',
+      }
+      if (hazardType === 'CHEMICAL') {
+        patch.casNumber = f.casNumber || '108-88-3'
+        patch.measuredValue = f.measuredValue || '15 ppm'
+        patch.exposureStandard = f.exposureStandard || '50 ppm (TWA)'
+      }
+      if (hazardType === 'PHYSICAL') {
+        patch.measuredValue = f.measuredValue || '88 dB'
+        patch.exposureStandard = f.exposureStandard || '90 dB (8시간 TWA)'
+      }
+      if (hazardType === 'BIOLOGICAL') {
+        patch.exposureRoute = f.exposureRoute || '비말 감염(호흡기)'
+        patch.vaccinationStatus = f.vaccinationStatus || (vaccinationCodes[0]?.code ?? f.vaccinationStatus)
+      }
+      if (hazardType === 'ERGONOMIC') {
+        patch.assessmentMethod = f.assessmentMethod || 'RULA'
+        patch.assessmentScore = f.assessmentScore || '5점 (개선 필요)'
+      }
+      if (hazardType === 'PSYCHOSOCIAL') {
+        patch.targetGroup = f.targetGroup || '콜센터 상담직'
+        patch.assessmentMethod = f.assessmentMethod || 'KOSS-SF 단축형'
+        patch.targetCount = f.targetCount ?? 40
+        patch.highRiskCount = f.highRiskCount ?? 8
+      }
+      set(patch)
+    }
+
     // Common form rows for PC
     const renderPcForm = () => (
       <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
@@ -924,6 +972,7 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
         {renderPcForm()}
         {renderMobileForm()}
         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: 1, md: 0 } }}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleSubmit} sx={{ flex: { xs: 1, md: 0 } }}>{t('common.save', '저장')}</Button>
         </Box>

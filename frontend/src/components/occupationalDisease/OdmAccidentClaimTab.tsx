@@ -29,6 +29,7 @@ import LoadingOverlay from '../common/LoadingOverlay'
 import useCodeMap from '../../hooks/useCodeMap'
 import axiosInstance from '../../api/axiosInstance'
 import { ApiResponse } from '../../types/common.types'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 interface DocFile {
   id: number
@@ -302,6 +303,44 @@ const OdmAccidentClaimTab: React.FC = () => {
     if (confirmed) {
       submitMutation.mutate(selectedItem.id)
     }
+  }
+
+  // DEV ONLY — 비어있는 항목을 산재 신청 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const today = new Date().toISOString().slice(0, 10)
+    setFormData(prev => ({
+      ...prev,
+      workerName: prev.workerName || '홍길동',
+      workerSsn: prev.workerSsn || '850101-1234567',
+      workerPhone: prev.workerPhone || '010-1234-5678',
+      workerAddress: prev.workerAddress || '서울특별시 중구 세종대로 100',
+      workerJobType: prev.workerJobType || '용접공',
+      workerJoinDate: prev.workerJoinDate || today,
+      workerDept: prev.workerDept || '생산1팀',
+      companyName: prev.companyName || '예스코',
+      companyRepName: prev.companyRepName || '김대표',
+      companyBizNo: prev.companyBizNo || '123-45-67890',
+      companyAddress: prev.companyAddress || '서울특별시 중구 세종대로 100',
+      companyPhone: prev.companyPhone || '02-1234-5678',
+      companyIndustry: prev.companyIndustry || '도시가스 공급업',
+      companyWorkersCount: prev.companyWorkersCount ?? 250,
+      diseaseName: prev.diseaseName || '소음성 난청',
+      diseaseCode: prev.diseaseCode || 'H83.3',
+      onsetDate: prev.onsetDate || today,
+      diagnosisDate: prev.diagnosisDate || today,
+      exposurePeriod: prev.exposurePeriod || '10년 6개월',
+      exposureFactor: prev.exposureFactor || '85dB 이상 소음',
+      workHistory: prev.workHistory || '2015년 입사 후 용접·절단 공정에서 지속 근무 (테스트 데이터)',
+      hospitalName: prev.hospitalName || '근로복지공단 서울병원',
+      hospitalDept: prev.hospitalDept || '이비인후과',
+      treatmentStartDate: prev.treatmentStartDate || today,
+      treatmentEndDate: prev.treatmentEndDate || today,
+      treatmentType: prev.treatmentType || '통원치료',
+      applicantName: prev.applicantName || '홍길동',
+      applicantRelation: prev.applicantRelation || '본인',
+      applyDate: prev.applyDate || today,
+      notes: prev.notes || '직업성 난청 요양급여 신청 (테스트 데이터)',
+    }))
   }
 
   const handleSave = async () => {
@@ -1040,6 +1079,7 @@ const OdmAccidentClaimTab: React.FC = () => {
 
       {/* Buttons */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>

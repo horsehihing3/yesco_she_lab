@@ -23,6 +23,7 @@ import DepartmentSelectModal from '../../common/DepartmentSelectModal'
 import useCodeMap from '../../../hooks/useCodeMap'
 import { useAuth } from '../../../context/AuthContext'
 import { formatUserName } from '../../../utils/userDisplay'
+import DevTestFillButton from '../../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -254,6 +255,17 @@ const EhsBudgetExpenseTab: React.FC = () => {
       deleteMutation.mutate(selectedItem.id)
     }
   }
+
+  // DEV ONLY — 비어있는 항목을 EHS 예산 집행 더미데이터로 채움 (입력값 보존)
+  // 분류는 해당 연도 예산수립(plan)에 존재하는 값만 유효 → 첫 번째 plan 분류 사용(없으면 미설정)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    category: prev.category || (formYearPlans[0]?.category ?? prev.category),
+    itemName: prev.itemName || '안전화 50켤레 구매',
+    amount: prev.amount || 1500000,
+    expenseDate: prev.expenseDate || todayStr(),
+    note: prev.note || '정기 보호구 구매 집행 (테스트 데이터)',
+  }))
 
   const handleSubmit = async () => {
     if (!formData.category) {
@@ -688,6 +700,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
      </Box>
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>

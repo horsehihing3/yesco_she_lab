@@ -31,6 +31,7 @@ import { useForm } from 'react-hook-form'
 import { useAlert } from '../contexts/AlertContext'
 import { workplaceApi } from '../api/workplaceApi'
 import { WorkPlace, WorkPlaceRequest } from '../types/workPlace.types'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 
 const WorkPlacePage: React.FC = () => {
   const { t } = useTranslation()
@@ -47,7 +48,14 @@ const WorkPlacePage: React.FC = () => {
     queryFn: () => workplaceApi.listPaged(page, rowsPerPage),
   })
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<WorkPlaceRequest>()
+  const { register, handleSubmit, reset, getValues, setValue, formState: { errors } } = useForm<WorkPlaceRequest>()
+
+  // DEV ONLY — 비어있는 항목을 사업장 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    if (!v.place) setValue('place', '제1공장 생산동')
+    if (!v.floor) setValue('floor', '지상 2층')
+  }
 
   const createMutation = useMutation({
     mutationFn: (data: WorkPlaceRequest) => workplaceApi.create(data),
@@ -210,6 +218,7 @@ const WorkPlacePage: React.FC = () => {
             <TextField fullWidth label="Image Path" margin="normal" {...register('imagePath')} />
           </DialogContent>
           <DialogActions>
+            {!editingWorkPlace && <DevTestFillButton onFill={fillTestData} />}
             <Button variant="outlined" onClick={handleCloseDialog}>Cancel</Button>
             <Button type="submit" variant="contained" disabled={createMutation.isPending || updateMutation.isPending}>
               {editingWorkPlace ? 'Update' : 'Create'}

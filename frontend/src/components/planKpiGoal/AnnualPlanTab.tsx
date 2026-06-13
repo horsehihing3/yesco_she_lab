@@ -28,6 +28,7 @@ import useCodeMap from '../../hooks/useCodeMap'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import GoalsTable, { GOAL_TEMPLATE, buildTemplateGoals } from './GoalsTable'
 import { formatUserName } from '../../utils/userDisplay'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -369,6 +370,16 @@ const AnnualPlanTab: React.FC = () => {
       next[idx] = { ...next[idx], ...patch }
       return { ...f, goals: next }
     })
+  }
+
+  // DEV ONLY — 비어있는 항목을 연간 계획 더미데이터로 채움 (입력값·승인자·작성자 보존)
+  const fillTestData = () => {
+    setFormData(f => ({
+      ...f,
+      planName: f.planName || `${f.planYear}년 EHS 연간 안전보건계획`,
+      description: f.description || '산업재해 예방 및 안전보건경영시스템 강화를 위한 연간 추진 계획',
+      remarks: f.remarks || '정기 연간계획 (테스트 데이터)',
+    }))
   }
 
   const items = data?.content || []
@@ -727,6 +738,7 @@ const AnnualPlanTab: React.FC = () => {
       />
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {viewMode === 'edit' ? t('common.cancel') : t('common.backToList')}
         </Button>

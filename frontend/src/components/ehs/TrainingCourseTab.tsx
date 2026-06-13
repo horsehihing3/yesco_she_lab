@@ -18,6 +18,7 @@ import LoadingOverlay from '../common/LoadingOverlay'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import useCodeMap from '../../hooks/useCodeMap'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -177,6 +178,25 @@ const TrainingCourseTab: React.FC = () => {
     )
     if (ok) deleteMutation.mutate(selectedItem.id)
   }
+  // DEV ONLY — 비어있는 항목을 교육 과정 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const today = new Date().toISOString().slice(0, 10)
+    setFormData(prev => ({
+      ...prev,
+      courseCode: prev.courseCode || 'TC-2026-001',
+      courseName: prev.courseName || '관리감독자 정기 안전보건교육',
+      targetAudience: prev.targetAudience || '생산팀 관리감독자',
+      instructor: prev.instructor || '정유정',
+      durationHours: prev.durationHours || 16,
+      cycle: prev.cycle || (cycleCodes[0]?.code ?? prev.cycle),
+      dateStart: prev.dateStart || today,
+      dateEnd: prev.dateEnd || today,
+      location: prev.location || '본사 3층 교육장',
+      lawBasis: prev.lawBasis || '산업안전보건법 제29조',
+      description: prev.description || '관리감독자 대상 법정 정기교육 (테스트 데이터)',
+    }))
+  }
+
   const handleSubmit = async () => {
     if (!formData.courseCode?.trim()) {
       showWarning(t('trainingCourse.courseCode', '과정코드') + ' ' + t('common.required', '필수입니다'))
@@ -505,6 +525,7 @@ const TrainingCourseTab: React.FC = () => {
         </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList}>
           {t('common.cancel', '취소')}
         </Button>

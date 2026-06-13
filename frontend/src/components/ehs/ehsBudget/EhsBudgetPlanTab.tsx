@@ -17,6 +17,7 @@ import LoadingOverlay from '../../common/LoadingOverlay'
 import useCodeMap from '../../../hooks/useCodeMap'
 import { useAuth } from '../../../context/AuthContext'
 import { formatUserName } from '../../../utils/userDisplay'
+import DevTestFillButton from '../../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -211,6 +212,15 @@ const EhsBudgetPlanTab: React.FC = () => {
       deleteMutation.mutate(selectedItem.id)
     }
   }
+
+  // DEV ONLY — 비어있는 항목을 EHS 예산 계획 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setFormData(prev => ({
+    ...prev,
+    category: prev.category || (categoryCodes[0]?.code ?? prev.category),
+    itemName: prev.itemName || '보호구 구매 (안전화·안전모)',
+    planAmount: prev.planAmount || 5000000,
+    note: prev.note || '연간 정기 구매 예산 (테스트 데이터)',
+  }))
 
   const handleSubmit = async () => {
     if (!formData.category) {
@@ -578,6 +588,7 @@ const EhsBudgetPlanTab: React.FC = () => {
      </Box>
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>

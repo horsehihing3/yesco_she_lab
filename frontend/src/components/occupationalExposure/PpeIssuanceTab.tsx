@@ -39,6 +39,7 @@ import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
 import useCodeMap from '../../hooks/useCodeMap'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -124,7 +125,7 @@ const PpeIssuanceTab: React.FC = () => {
   }
 
   // Form
-  const { control, handleSubmit, reset, watch, setValue } = useForm<PpeIssuanceRequest>({
+  const { control, handleSubmit, reset, watch, setValue, getValues } = useForm<PpeIssuanceRequest>({
     defaultValues: {
       employeeId: '',
       employeeName: '',
@@ -378,6 +379,24 @@ const PpeIssuanceTab: React.FC = () => {
     } else if (viewMode === 'edit' && selectedIssuance) {
       updateMutation.mutate({ id: selectedIssuance.id, data: formValues })
     }
+  }
+
+  // DEV ONLY — 비어있는 항목을 보호구 지급 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    const today = new Date().toISOString().slice(0, 10)
+    if (!v.employeeId) setValue('employeeId', 'EMP-3001')
+    if (!v.employeeName) setValue('employeeName', '박보호')
+    if (!v.employeeDept) setValue('employeeDept', '생산3팀')
+    if (!v.employeeEmail) setValue('employeeEmail', 'boho.park@yesco.co.kr')
+    if (!v.ppeType && ppeTypeCodes[0]?.code) setValue('ppeType', ppeTypeCodes[0].code)
+    if (!v.ppeName) setValue('ppeName', '안전모')
+    if (!v.ppeModel) setValue('ppeModel', 'SH-100')
+    if (!v.quantity) setValue('quantity', 1)
+    if (!v.issuanceDate) setValue('issuanceDate', today)
+    if (!v.hazardousFactor) setValue('hazardousFactor', '낙하물, 충격')
+    if (!v.issuanceReason) setValue('issuanceReason', '신규 작업자 배치에 따른 보호구 지급')
+    if (!v.notes) setValue('notes', '보호구 지급 (테스트 데이터)')
   }
 
   const formatDate = (dateString?: string) => {
@@ -1203,6 +1222,7 @@ const PpeIssuanceTab: React.FC = () => {
 
         {/* Form Actions */}
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button
             variant="outlined"
             onClick={viewMode === 'edit' ? () => setViewMode('detail') : handleBackToList}

@@ -47,6 +47,7 @@ import {
 } from '../../types/occupationalExposure.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 // ===== Common Table Styles =====
 const labelCellSx = {
@@ -256,7 +257,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
   const isProcessing = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
 
   // ===== Form =====
-  const { control, handleSubmit, reset } = useForm<WorkplaceMeasurementRequest>({
+  const { control, handleSubmit, reset, getValues, setValue } = useForm<WorkplaceMeasurementRequest>({
     defaultValues: {
       measurementYear: new Date().getFullYear(),
       measurementHalf: 'FIRST',
@@ -379,6 +380,31 @@ const WorkplaceMeasurementTab: React.FC = () => {
 
   const handleRemoveDetailRow = (index: number) => {
     setDetailRows((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  // DEV ONLY — 비어있는 항목을 작업환경측정 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    if (!v.measurementHalf) setValue('measurementHalf', 'FIRST')
+    if (!v.measurementDate) setValue('measurementDate', new Date().toISOString().slice(0, 10))
+    if (!v.measurementAgency) setValue('measurementAgency', '한국산업안전보건공단')
+    if (!v.measurementSite) setValue('measurementSite', '제1공장 생산동')
+    if (!v.measurementSiteDetail) setValue('measurementSiteDetail', '용접 작업장 (2층)')
+    if (!v.status) setValue('status', 'COMPLETED')
+    if (!v.overallResult) setValue('overallResult', 'PASS')
+    if (!v.notes) setValue('notes', '정기 작업환경측정 (테스트 데이터)')
+    setDetailRows((prev) => prev.length > 0 ? prev : [{
+      hazardousFactor: '소음',
+      factorType: 'PHYSICAL',
+      workProcess: '용접 공정',
+      measurementValue: '82.5',
+      exposureStandard: '90',
+      unit: 'dB',
+      resultRatio: 0.92,
+      resultStatus: 'normal',
+      employeeCount: 5,
+      notes: '',
+    }])
   }
 
   const currentYear = new Date().getFullYear()
@@ -1334,6 +1360,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
 
         {/* Form Actions */}
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {viewMode === 'edit' ? t('common.cancel') : t('common.list')}
           </Button>

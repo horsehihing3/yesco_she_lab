@@ -41,6 +41,7 @@ import {
 } from '../../types/occupationalExposure.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import LoadingOverlay from '../common/LoadingOverlay'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 // ===== Common Table Styles =====
 const labelCellSx = {
@@ -234,7 +235,7 @@ const PrePlacementExamTab: React.FC = () => {
   const isProcessing = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
 
   // ===== Form =====
-  const { control, handleSubmit, reset } = useForm<PrePlacementExamRequest>({
+  const { control, handleSubmit, reset, getValues, setValue } = useForm<PrePlacementExamRequest>({
     defaultValues: {
       employeeId: '',
       employeeName: '',
@@ -361,6 +362,24 @@ const PrePlacementExamTab: React.FC = () => {
     }
     if (viewMode === 'create') createMutation.mutate(payload)
     else if (viewMode === 'edit') updateMutation.mutate(payload)
+  }
+
+  // DEV ONLY — 비어있는 항목을 배치전건강진단 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    const v = getValues()
+    if (!v.employeeId) setValue('employeeId', 'EMP-2001')
+    if (!v.employeeName) setValue('employeeName', '이배치')
+    if (!v.employeeDept) setValue('employeeDept', '생산2팀')
+    if (!v.employeeEmail) setValue('employeeEmail', 'baechi.lee@yesco.co.kr')
+    if (!v.examDate) setValue('examDate', new Date().toISOString().slice(0, 10))
+    if (!v.targetJob) setValue('targetJob', '용접 작업')
+    if (!v.hazardousFactors) setValue('hazardousFactors', '소음, 용접흄, 망간')
+    if (!v.hospital) setValue('hospital', '서울근로자건강센터')
+    if (!v.examResult || v.examResult === 'PENDING') setValue('examResult', 'FIT')
+    if (!v.resultDetail) setValue('resultDetail', '해당 직무 수행에 의학적 이상 소견 없음')
+    if (!v.restrictionDetail) setValue('restrictionDetail', '없음')
+    if (!v.status || v.status === 'PENDING') setValue('status', 'COMPLETED')
+    if (!v.notes) setValue('notes', '배치전건강진단 (테스트 데이터)')
   }
 
   // ==============================================
@@ -1136,6 +1155,7 @@ const PrePlacementExamTab: React.FC = () => {
 
         {/* Form Actions */}
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => setViewMode(viewMode === 'edit' ? 'detail' : 'list')} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
             {viewMode === 'edit' ? t('common.cancel') : t('common.list')}
           </Button>
