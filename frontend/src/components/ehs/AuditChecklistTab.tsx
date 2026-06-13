@@ -22,6 +22,7 @@ registerAllModules()
 import { useAlert } from '../../contexts/AlertContext'
 import { useThemeMode } from '../../context/ThemeContext'
 import { auditChecklistApi } from '../../api/auditApi'
+import DevTestFillButton from '../common/DevTestFillButton'
 import {
   AuditChecklistTemplate, AuditChecklistTemplateRequest,
   AuditChecklistItemRequest,
@@ -250,6 +251,21 @@ const AuditChecklistTab: React.FC = () => {
   const handleDelete = async (item: AuditChecklistTemplate) => {
     const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
     if (confirmed) deleteMutation.mutate(item.id)
+  }
+  // DEV ONLY — 비어있는 항목을 감사 체크리스트 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => {
+    setForm(prev => ({
+      ...prev,
+      templateName: prev.templateName || '내부감사 체크리스트(테스트)',
+      auditType: prev.auditType || 'INTERNAL',
+      description: prev.description || '안전보건 내부감사 점검 항목 (테스트 데이터)',
+    }))
+    if (formItems.length === 0) {
+      setFormItems([
+        { section: '안전관리', itemText: '안전보건 관리체계가 문서화되어 있는가?', legalRef: '산업안전보건법 제14조', isCritical: true, sortOrder: 1 },
+        { section: '안전관리', itemText: '위험성평가를 정기적으로 실시하는가?', legalRef: '산업안전보건법 제36조', isCritical: false, sortOrder: 2 },
+      ])
+    }
   }
 
   let items = data?.content || []
@@ -515,6 +531,7 @@ const AuditChecklistTab: React.FC = () => {
         </Paper>
 
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => { if (selectedItem) { setViewMode('detail') } else { handleBackToList() } }} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} disabled={!form.templateName} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

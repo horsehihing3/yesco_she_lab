@@ -19,6 +19,7 @@ import { useAlert } from '../../contexts/AlertContext'
 import { emergencyResponseApi } from '../../api/emergencyResponseApi'
 import { EmergencyResponse, EmergencyResponseRequest } from '../../types/emergencyResponse.types'
 import useCodeMap from '../../hooks/useCodeMap'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -149,6 +150,20 @@ const EmrIncidentTab: React.FC = () => {
     const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
     if (confirmed) deleteMutation.mutate(item.id)
   }
+  // DEV ONLY — 비어있는 항목을 비상 사고 더미데이터로 채움 (보고자·지휘자는 조직도 선택이라 제외)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    title: prev.title || '화재 발생 대응 (테스트)',
+    emergencyType: prev.emergencyType || typeCodes[0]?.code || '',
+    status: prev.status || 'STANDBY',
+    location: prev.location || '본사 3층 전기실',
+    casualtiesCount: prev.casualtiesCount ?? 0,
+    description: prev.description || '전기실 분전반에서 발화로 추정되는 연기 발생, 초기 대응 실시',
+    damageDescription: prev.damageDescription || '분전반 일부 소손, 인명 피해 없음',
+    actionsTaken: prev.actionsTaken || '소화기 초기 진화 후 자위소방대 출동, 전원 차단 및 대피 안내',
+    lessonsLearned: prev.lessonsLearned || '분전반 정기 점검 주기 단축 필요',
+    notes: prev.notes || '비상 대응 훈련 겸 실제 대응 (테스트 데이터)',
+  }))
 
   let items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -588,6 +603,7 @@ const EmrIncidentTab: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

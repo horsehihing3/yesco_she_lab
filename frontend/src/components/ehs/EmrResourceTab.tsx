@@ -19,6 +19,7 @@ import { useButtonRules } from '../../hooks/useButtonRules'
 import { emergencyResourceApi } from '../../api/emergencyExtendedApi'
 import { EmergencyResource, EmergencyResourceRequest } from '../../types/emergencyExtended.types'
 import useCodeMap from '../../hooks/useCodeMap'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -120,6 +121,18 @@ const EmrResourceTab: React.FC = () => {
     const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
     if (confirmed) deleteMutation.mutate(item.id)
   }
+  // DEV ONLY — 비어있는 항목을 비상 자원·장비 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    resourceName: prev.resourceName || '소화기(분말 ABC)',
+    resourceType: prev.resourceType || resourceTypeCodes[0]?.code || '',
+    quantity: prev.quantity ?? 10,
+    availableQty: prev.availableQty ?? 10,
+    location: prev.location || '본사 1층 복도 소화전함',
+    status: prev.status || 'NORMAL',
+    disposalDate: prev.disposalDate || todayStr(),
+    notes: prev.notes || '월 1회 압력 게이지 점검 (테스트 데이터)',
+  }))
 
   let items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -437,6 +450,7 @@ const EmrResourceTab: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

@@ -16,6 +16,7 @@ import { todayStr } from '../../utils/dateDefaults'
 import { chemicalClpApi } from '../../api/chemicalApi'
 import type { ChemicalClp } from '../../types/chemical.types'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -72,6 +73,19 @@ const ClpTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: ChemicalClp) => { const ok = await showConfirm(t('common.confirmDelete', '삭제하시겠습니까?')); if (ok) deleteMut.mutate(item.id) }
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 CLP 분류 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    chemicalName: prev.chemicalName || '톨루엔',
+    casNumber: prev.casNumber || '108-88-3',
+    clpClassification: prev.clpClassification || 'Flam. Liq. 2, Repr. 2, STOT RE 2',
+    signalWord: prev.signalWord || (signalWordCodes[0]?.code ?? 'Danger'),
+    hCodes: prev.hCodes || 'H225, H361d, H373',
+    pCodes: prev.pCodes || 'P210, P260, P280',
+    lastUpdated: prev.lastUpdated || todayStr(),
+    status: prev.status || (clpStatusCodes[0]?.code ?? 'LATEST'),
+  }))
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -222,6 +236,7 @@ const ClpTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         </Box>

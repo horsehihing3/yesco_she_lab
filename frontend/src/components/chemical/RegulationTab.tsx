@@ -16,6 +16,7 @@ import NumberField from '../common/NumberField'
 import { chemicalRegulationApi } from '../../api/chemicalApi'
 import type { ChemicalRegulation } from '../../types/chemical.types'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -84,6 +85,18 @@ const RegulationTab: React.FC = () => {
   const handleDelete = async (item: ChemicalRegulation) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setRegType(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 화학규제 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    regName: prev.regName || '화학물질관리법',
+    regType: prev.regType || 'DOMESTIC',
+    authority: prev.authority || '환경부',
+    applicableCount: prev.applicableCount || 24,
+    lastRevisionDate: prev.lastRevisionDate || todayStr(),
+    nextReviewDate: prev.nextReviewDate || todayStr(),
+    status: prev.status || 'ACTIVE',
+  }))
 
   const getStatusLabel = (status: string) => {
     const map: Record<string, string> = {
@@ -245,6 +258,7 @@ const RegulationTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

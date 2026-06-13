@@ -40,6 +40,7 @@ import { FileMetadata } from '../types/common.types'
 import { PermitToWork, PermitToWorkRequest } from '../types/permitToWork.types'
 import { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import useCodeMap from '../hooks/useCodeMap'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -334,6 +335,21 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     const ok = await showConfirm(`${item.title}\n${t('common.delete')}하시겠습니까?`)
     if (ok) deleteMutation.mutate(item.id)
   }
+
+  // DEV ONLY — 비어있는 항목을 작업 허가 더미데이터로 채움 (입력값 보존, 상태/승인자/일시는 유지)
+  const fillTestData = () => setForm(f => ({
+    ...f,
+    title: f.title || '배관 용접 작업 허가 신청',
+    permitType: f.permitType || permitTypes[0]?.code || '',
+    riskLevel: f.riskLevel || riskLevels[0]?.code || '',
+    workLocation: f.workLocation || '제1공장 배관 설비동 2층',
+    workersCount: f.workersCount ?? 3,
+    description: f.description || '노후 배관 교체 및 용접 작업 (테스트 데이터)',
+    safetyMeasures: f.safetyMeasures || '화기작업 전 가연물 제거, 소화기 비치, 작업 전 가스농도 측정',
+    hazardFactors: f.hazardFactors || '화재·폭발, 화상, 유해가스 흡입',
+    emergencyContact: f.emergencyContact || fmtPhone('01012345678'),
+    notes: f.notes || '작업 전 안전교육 실시 예정 (테스트 데이터)',
+  }))
 
   const handleUserSelect = (users: UserInfo[]) => {
     if (users.length > 0) {
@@ -1083,6 +1099,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
 
         {/* Save / Cancel buttons */}
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' }, flexWrap: 'wrap' }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

@@ -15,6 +15,7 @@ import NumberField from '../common/NumberField'
 import { erpMaterialApi } from '../../api/chemicalApi'
 import type { ErpMaterial } from '../../types/chemical.types'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -77,6 +78,21 @@ const ErpMaterialTab: React.FC = () => {
   const handleDelete = async (item: ErpMaterial) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 ERP 원자재 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    materialCode: prev.materialCode || 'MAT-TOL-001',
+    materialName: prev.materialName || '톨루엔 (공업용)',
+    chemicalName: prev.chemicalName || '톨루엔',
+    casNumber: prev.casNumber || '108-88-3',
+    supplier: prev.supplier || '한국화학(주)',
+    stockQuantity: prev.stockQuantity || 500,
+    unit: prev.unit || 'kg',
+    unitPrice: prev.unitPrice || 3500,
+    lastIncomingDate: prev.lastIncomingDate || todayStr(),
+    status: prev.status || 'NORMAL',
+  }))
 
   const getStatusLabel = (status: string) => {
     const map: Record<string, string> = {
@@ -248,6 +264,7 @@ const ErpMaterialTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

@@ -15,7 +15,9 @@ import { chemicalIncomingApi, chemicalUsageApi } from '../../api/chemicalApi'
 import { ChemicalIncoming, ChemicalUsage } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
 import NumberField from '../common/NumberField'
+import { todayStr } from '../../utils/dateDefaults'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -105,6 +107,19 @@ const IncomingUsageTab: React.FC = () => {
   const handleIncomingDelete = async (item: ChemicalIncoming) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) incomingDeleteMut.mutate(item.id) }
   const handleIncomingReset = () => { setIncomingKeywordInput(''); setIncomingKeyword(''); setIncomingPage(0) }
 
+  // DEV ONLY — 비어있는 항목을 입고 더미데이터로 채움 (입력값 보존)
+  const fillIncomingTestData = () => setIncomingForm(prev => ({
+    ...prev,
+    incomingDate: prev.incomingDate || todayStr(),
+    chemicalName: prev.chemicalName || '톨루엔',
+    supplier: prev.supplier || '한국화학(주)',
+    quantity: prev.quantity || 200,
+    unit: prev.unit || 'kg',
+    warehouseCode: prev.warehouseCode || 'WH-A-01',
+    handler: prev.handler || '정유정',
+    msdsConfirmed: prev.msdsConfirmed || true,
+  }))
+
   // ===== Usage mutations =====
   const invalidateUsage = () => queryClient.invalidateQueries({ queryKey: ['chemicalUsage'] })
   const usageCreateMut = useMutation({ mutationFn: (r: Partial<ChemicalUsage>) => chemicalUsageApi.create(r), onSuccess: () => { invalidateUsage(); showSuccess(t('common.saved')); handleUsageBackToList() }, onError: () => showError(t('common.error')) })
@@ -122,6 +137,19 @@ const IncomingUsageTab: React.FC = () => {
   const handleUsageSave = () => { if (selectedUsage && usageViewMode === 'edit') usageUpdateMut.mutate({ id: selectedUsage.id, r: usageForm }); else usageCreateMut.mutate(usageForm) }
   const handleUsageDelete = async (item: ChemicalUsage) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) usageDeleteMut.mutate(item.id) }
   const handleUsageReset = () => { setUsageKeywordInput(''); setUsageKeyword(''); setUsagePage(0) }
+
+  // DEV ONLY — 비어있는 항목을 사용 더미데이터로 채움 (입력값 보존)
+  const fillUsageTestData = () => setUsageForm(prev => ({
+    ...prev,
+    usageDate: prev.usageDate || todayStr(),
+    chemicalName: prev.chemicalName || '톨루엔',
+    department: prev.department || '생산1팀',
+    purpose: prev.purpose || '도장 공정 세척용',
+    usageQuantity: prev.usageQuantity || 50,
+    unit: prev.unit || 'kg',
+    handler: prev.handler || '정유정',
+    remainingStock: prev.remainingStock || '150 kg',
+  }))
 
   return (
     <Box>
@@ -228,6 +256,7 @@ const IncomingUsageTab: React.FC = () => {
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+                {incomingViewMode === 'create' && <DevTestFillButton onFill={fillIncomingTestData} />}
                 <Button variant="outlined" onClick={handleIncomingBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
                 <Button variant="contained" onClick={handleIncomingSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
               </Box>
@@ -411,6 +440,7 @@ const IncomingUsageTab: React.FC = () => {
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+                {usageViewMode === 'create' && <DevTestFillButton onFill={fillUsageTestData} />}
                 <Button variant="outlined" onClick={handleUsageBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
                 <Button variant="contained" onClick={handleUsageSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
               </Box>

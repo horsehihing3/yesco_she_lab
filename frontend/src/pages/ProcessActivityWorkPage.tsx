@@ -25,6 +25,7 @@ import DeptUserMultiSelectModal from '../components/common/DeptUserMultiSelectMo
 import type { UserInfo, CompanyTreeNode } from '../components/common/UserSelectModal'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -185,6 +186,26 @@ const ProcessActivityWorkPage: React.FC = () => {
     if (!confirmed) return
     deleteMutation.mutate(selectedId)
   }
+
+  // DEV ONLY — 비어있는 항목을 공정/활동 더미데이터로 채움 (입력값·그룹키 보존)
+  const fillTestData = () => setForm(f => ({
+    ...f,
+    title: f.title || '제조1팀 공정/활동별 작업내용',
+    divisionName: f.divisionName || '생산본부',
+    description: f.description || '공정별 작업내용 및 적용법규 조사 (테스트 데이터)',
+    creationDate: f.creationDate || todayStr(),
+    processes: f.processes.map((p, pi) => pi === 0 ? {
+      ...p,
+      majorCategory: p.majorCategory || '제조 공정',
+      middleCategory: p.middleCategory || '조립 라인',
+      subCategory: p.subCategory || '부품 조립 작업',
+      items: (p.items && p.items.length > 0 ? p.items : [emptyItem(1)]).map((it, ii) => ii === 0 ? {
+        ...it,
+        workContent: it.workContent || '전동 공구를 이용한 부품 체결',
+        applicableLaw: it.applicableLaw || '산업안전보건기준에 관한 규칙 제32조',
+      } : it),
+    } : p),
+  }))
 
   const addProcess = () => setForm(f => ({
     ...f,
@@ -799,6 +820,7 @@ const ProcessActivityWorkPage: React.FC = () => {
       <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, justifyContent: 'flex-end' }}>
         {isEditing ? (
           <>
+            {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
             <Button variant="outlined" onClick={handleCancel}>{t('common.cancel', '취소')}</Button>
             <Button variant="contained" onClick={handleSave} disabled={isProcessing}>
               {t('common.save', '저장')}
@@ -816,6 +838,7 @@ const ProcessActivityWorkPage: React.FC = () => {
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 2 }}>
         {isEditing ? (
           <>
+            {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
             <Button variant="outlined" onClick={handleCancel} sx={{ flex: 1 }}>{t('common.cancel', '취소')}</Button>
             <Button variant="contained" onClick={handleSave} disabled={isProcessing} sx={{ flex: 1 }}>
               {t('common.save', '저장')}

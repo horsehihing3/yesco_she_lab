@@ -17,6 +17,7 @@ import { useAlert } from '../contexts/AlertContext'
 import { ergonomicsApi } from '../api/ergonomicsApi'
 import { ErgonomicsAssessment, ErgonomicsAssessmentRequest } from '../types/ergonomics.types'
 import useCodeMap from '../hooks/useCodeMap'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -178,6 +179,23 @@ const ErgonomicsPage: React.FC = () => {
     setRiskFilter('')
     setPage(0)
   }
+
+  // DEV ONLY — 비어있는 항목을 근골격계 평가 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm((prev) => ({
+    ...prev,
+    assessType: prev.assessType || assessTypes[0]?.code || '',
+    workProcess: prev.workProcess || '중량물 운반 작업',
+    workDescription: prev.workDescription || '20kg 이상 자재를 수작업으로 반복 운반하는 작업',
+    assessDate: prev.assessDate || todayStr(),
+    score: prev.score ?? 7,
+    riskLevel: prev.riskLevel || riskLevels[0]?.code || '',
+    affectedBodyParts: prev.affectedBodyParts || 'SHOULDER,LOWER_BACK',
+    symptoms: prev.symptoms || '어깨 결림 및 요통 호소',
+    improvementAction: prev.improvementAction || '운반 보조기구 도입 및 2인 1조 작업 전환',
+    improvementDeadline: prev.improvementDeadline || todayStr(),
+    improvementStatus: prev.improvementStatus || 'PENDING',
+    notes: prev.notes || '정기 점검 대상 (테스트 데이터)',
+  }))
 
   const items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -638,6 +656,7 @@ const ErgonomicsPage: React.FC = () => {
 
       {/* Action buttons */}
       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: 1, md: 0 } }}>{t('common.cancel')}</Button>
         <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: 1, md: 0 } }}>{t('common.save')}</Button>
       </Box>

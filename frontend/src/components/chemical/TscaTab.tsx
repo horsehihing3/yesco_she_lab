@@ -14,6 +14,7 @@ import useCodeMap from '../../hooks/useCodeMap'
 import { chemicalTscaApi } from '../../api/chemicalApi'
 import type { ChemicalTsca } from '../../types/chemical.types'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -71,6 +72,19 @@ const TscaTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: ChemicalTsca) => { const ok = await showConfirm(t('common.confirmDelete', '삭제하시겠습니까?')); if (ok) deleteMut.mutate(item.id) }
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 TSCA 규제 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    chemicalName: prev.chemicalName || '톨루엔',
+    casNumber: prev.casNumber || '108-88-3',
+    inventoryStatus: prev.inventoryStatus || (tscaInvCodes[0]?.code ?? 'LISTED'),
+    regulationSection: prev.regulationSection || 'Section 8(b)',
+    reportingDuty: prev.reportingDuty || 'CDR 정기보고 대상',
+    exportToUs: prev.exportToUs || 'Y',
+    pmnRequired: prev.pmnRequired || (tscaPmnCodes[0]?.code ?? 'N'),
+    status: prev.status || (tscaStatusCodes[0]?.code ?? 'COMPLIANT'),
+  }))
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -229,6 +243,7 @@ const TscaTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         </Box>

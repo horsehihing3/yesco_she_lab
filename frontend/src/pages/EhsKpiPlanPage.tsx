@@ -16,6 +16,7 @@ import DatePickerField from '../components/common/DatePickerField'
 import NumberField from '../components/common/NumberField'
 import { useAlert } from '../contexts/AlertContext'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 import { ehsKpiPlanApi } from '../api/ehsKpiPlanApi'
 import { EhsKpiPlan, EhsKpiPlanRequest } from '../types/ehsKpi.types'
 import useCodeMap from '../hooks/useCodeMap'
@@ -151,6 +152,25 @@ const EhsKpiPlanPage: React.FC = () => {
     if (ok) deleteMut.mutate(item.id)
   }
   const handleReset = () => { setSearchText(''); setTypeFilter(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 EHS KPI 지표 더미데이터로 채움 (입력값 보존)
+  // 담당자는 사람 선택 필드이므로 채우지 않는다.
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    indicatorName: prev.indicatorName || '아차사고 발굴 건수',
+    indicatorType: prev.indicatorType || indicatorTypes[0]?.code || '',
+    status: prev.status || statusList[0]?.code || '',
+    measurementPeriod: prev.measurementPeriod || periodTypes[0]?.code || '',
+    unit: prev.unit || unitCodes[0]?.code || '',
+    department: prev.department || '안전환경팀',
+    targetValue: prev.targetValue ?? 100,
+    currentValue: prev.currentValue ?? 65,
+    achievementRate: prev.achievementRate ?? 65,
+    startDate: prev.startDate || todayStr(),
+    endDate: prev.endDate || weekFromTodayStr(),
+    description: prev.description || '연간 아차사고 발굴 목표 달성을 위한 지표',
+    notes: prev.notes || '분기별 모니터링 (테스트 데이터)',
+  }))
 
   const items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -548,6 +568,7 @@ const EhsKpiPlanPage: React.FC = () => {
       </Box>
 
       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: 1, md: 0 } }}>{t('common.cancel', '취소')}</Button>
         <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: 1, md: 0 } }}>{t('common.save', '저장')}</Button>
       </Box>

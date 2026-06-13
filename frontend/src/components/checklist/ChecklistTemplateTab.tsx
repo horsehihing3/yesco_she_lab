@@ -37,6 +37,7 @@ import { useTranslation } from 'react-i18next'
 import LoadingOverlay from '../common/LoadingOverlay'
 import DatePickerField from '../common/DatePickerField'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
+import DevTestFillButton from '../common/DevTestFillButton'
 import { useAlert } from '../../contexts/AlertContext'
 import { useAuth } from '../../context/AuthContext'
 import {
@@ -243,6 +244,23 @@ const ChecklistTemplateTab: React.FC = () => {
       createMutation.mutate(request)
     } else if (viewMode === 'edit' && selectedId) {
       updateMutation.mutate({ id: selectedId, data: request })
+    }
+  }
+
+  // DEV ONLY — 비어있는 항목을 체크리스트 템플릿 더미데이터로 채움 (입력값 보존)
+  // 점검자·점검책임자·시설관리자는 사람 선택 필드이므로 채우지 않는다.
+  const fillTestData = () => {
+    if (!formTitle.trim()) setFormTitle('소방시설 일상점검 체크리스트')
+    if (!formCheckDate) setFormCheckDate(new Date().toISOString().slice(0, 10))
+    // 항목이 기본 1행(전부 공란)일 때만 샘플 점검항목으로 채운다.
+    const isPristine = formItems.length === 1 &&
+      !formItems[0].category && !formItems[0].checkItem && !formItems[0].checkContent
+    if (isPristine) {
+      setFormItems([
+        { category: '소화설비', checkItem: '소화기 외관 상태', checkContent: '소화기 파손·부식·압력게이지 정상 여부 확인', isNormal: 'O', isAbnormal: '', remarks: '', checkStandard: '압력게이지 녹색 범위', actionTaken: '', confirm: '' },
+        { category: '경보설비', checkItem: '화재감지기 작동', checkContent: '감지기 점등 및 수신반 표시 정상 여부 확인', isNormal: 'O', isAbnormal: '', remarks: '', checkStandard: '수신반 정상 표시', actionTaken: '', confirm: '' },
+        { category: '피난설비', checkItem: '유도등 점등 상태', checkContent: '피난유도등 점등 및 비상전원 전환 확인', isNormal: 'O', isAbnormal: '', remarks: '테스트 데이터', checkStandard: '상시 점등 유지', actionTaken: '', confirm: '' },
+      ])
     }
   }
 
@@ -797,6 +815,7 @@ const ChecklistTemplateTab: React.FC = () => {
 
       {/* Form Actions */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1, mt: 2 }}>
+        {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         <Button variant="outlined" onClick={viewMode === 'edit' ? () => setViewMode('detail') : handleBackToList} sx={{ flex: { xs: 1, sm: 'none' } }}>
           {t('common.cancel', '취소')}
         </Button>

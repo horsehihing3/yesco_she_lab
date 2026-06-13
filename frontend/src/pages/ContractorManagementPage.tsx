@@ -36,6 +36,7 @@ import SafetyChecklistTab, { SafetyChecklistTabRef } from '../components/ehs/Saf
 import ContractorReportTab from '../components/contractor/ContractorReportTab'
 import ContractorDashboardTab from '../components/contractor/ContractorDashboardTab'
 import RejectReasonDialog from '../components/common/RejectReasonDialog'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -353,6 +354,22 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
     const ok = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
     if (ok) deleteMutation.mutate(item.id)
   }
+
+  // DEV ONLY — 비어있는 항목을 협력업체 위험성평가 더미데이터로 채움 (입력값 보존)
+  // 승인자(사람 선택)·작업자·보호구/체크리스트(재고·템플릿 종속 드롭다운)는 채우지 않는다.
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    title: prev.title || '배관 용접 작업 위험성평가',
+    workType: prev.workType || permitTypes[0]?.code || '',
+    riskLevel: prev.riskLevel || riskLevels[0]?.code || '',
+    workLocation: prev.workLocation || '제2공장 옥외 배관 구역',
+    workersCount: prev.workersCount ?? 4,
+    workDescription: prev.workDescription || '노후 배관 절단 및 신규 배관 용접 작업',
+    safetyMeasures: prev.safetyMeasures || '화기작업 허가, 소화기 비치, 감시자 배치, 환기 실시',
+    hazardFactors: prev.hazardFactors || '화재·폭발, 유해가스 흡입, 화상',
+    emergencyContact: prev.emergencyContact || '010-1234-5678',
+    notes: prev.notes || '작업 전 안전교육 실시 (테스트 데이터)',
+  }))
 
   const handleSubmit = async (item: ContractorPlan) => {
     const ok = await showConfirm(t('contractorManagementPage.msg2', '승인 요청하시겠습니까?'))
@@ -1274,6 +1291,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
 
         {/* Save / Cancel buttons */}
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' }, flexWrap: 'wrap', mt: 3 }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

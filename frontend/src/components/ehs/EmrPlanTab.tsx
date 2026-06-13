@@ -28,6 +28,7 @@ import { SafetyChecklistTemplate } from '../../types/safetyChecklist.types'
 import { EmergencyPlan, EmergencyPlanRequest, EmergencyResource } from '../../types/emergencyExtended.types'
 import useCodeMap from '../../hooks/useCodeMap'
 import { fetchTeamLeader } from '../../api/approvalApi'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 type UserPickTarget = 'planApprover' | 'completionApprover' | null
@@ -232,6 +233,18 @@ const EmrPlanTab: React.FC = () => {
     const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
     if (confirmed) deleteMutation.mutate(item.id)
   }
+  // DEV ONLY — 비어있는 항목을 비상 계획 더미데이터로 채움 (담당자·부서·승인자·체크리스트는 선택형이라 제외)
+  const today = new Date().toISOString().slice(0, 10)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    planName: prev.planName || '화재 비상대응 훈련 계획(테스트)',
+    planType: prev.planType || planTypeCodes[0]?.code || '',
+    trainingStartDate: prev.trainingStartDate || today,
+    trainingEndDate: prev.trainingEndDate || today,
+    description: prev.description || '사업장 화재 발생 시 초기 대응 및 대피 절차 숙달을 위한 비상 훈련',
+    responseSteps: prev.responseSteps || '1) 화재 감지·신고 2) 초기 진화 3) 대피 방송 4) 인원 점검 5) 소방 인계',
+    notes: prev.notes || '연 1회 정기 비상 훈련 (테스트 데이터)',
+  }))
 
   // 결재 권한 체크: 지정된 승인자 본인 또는 admin
   const canApprovePlan = (d: EmergencyPlan) => {
@@ -873,6 +886,7 @@ const EmrPlanTab: React.FC = () => {
         )}
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

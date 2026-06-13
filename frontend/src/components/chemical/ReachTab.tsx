@@ -16,6 +16,7 @@ import { todayStr } from '../../utils/dateDefaults'
 import { chemicalReachApi } from '../../api/chemicalApi'
 import type { ChemicalReach } from '../../types/chemical.types'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -72,6 +73,19 @@ const ReachTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: ChemicalReach) => { const ok = await showConfirm(t('common.confirmDelete', '삭제하시겠습니까?')); if (ok) deleteMut.mutate(item.id) }
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 REACH 등록 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    chemicalName: prev.chemicalName || '톨루엔',
+    casNumber: prev.casNumber || '108-88-3',
+    registrationNo: prev.registrationNo || '01-2119471310-51',
+    svhc: prev.svhc || (reachYnCodes[0]?.code ?? 'N'),
+    authorizationRequired: prev.authorizationRequired || (reachYnCodes[0]?.code ?? 'N'),
+    restrictionNote: prev.restrictionNote || '부속서 XVII 제한 대상 아님',
+    registrationDate: prev.registrationDate || todayStr(),
+    status: prev.status || (reachStatusCodes[0]?.code ?? 'REGISTERED'),
+  }))
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -230,6 +244,7 @@ const ReachTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         </Box>

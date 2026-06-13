@@ -15,6 +15,7 @@ import { msdsApi } from '../../api/chemicalApi'
 import { Msds } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr, formatDate } from '../../utils/dateDefaults'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -71,6 +72,17 @@ const MsdsProductHistoryTab: React.FC = () => {
   }
   const handleDelete = async (item: Msds) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 제품 MSDS 변경이력 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    itemName: prev.itemName || '아세톤 60% 희석액',
+    itemCode: prev.itemCode || 'PRD-2024-018',
+    version: prev.version || '2.1',
+    changeType: prev.changeType || changeTypeCodes[0]?.code || prev.changeType,
+    changeSummary: prev.changeSummary || 'GHS 분류 개정에 따른 유해성 문구 수정',
+    issueDate: prev.issueDate || todayStr(),
+  }))
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -198,6 +210,7 @@ const MsdsProductHistoryTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

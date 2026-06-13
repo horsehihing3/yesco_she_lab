@@ -18,6 +18,7 @@ import useCodeMap from '../../hooks/useCodeMap'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import axiosInstance from '../../api/axiosInstance'
 import { ApiResponse } from '../../types/common.types'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 // 회사 트리에서 username → dept 이름 매핑을 추출 — 부서코드(예: '00041') 가 아닌 부서명을 표시하기 위함.
 interface CompanyTreeNode {
@@ -138,6 +139,14 @@ const PpeRequestTab: React.FC = () => {
   const handleOpenCreate = () => { setSelectedItem(null); setForm({ itemName: '', quantity: 1, requesterName: user?.name, requesterDept: user?.department, requesterId: user?.username }); setViewMode('create') }
   const handleOpenEdit = (item: PpeRequestItem) => { setSelectedItem(item); setForm({ equipmentId: item.equipmentId, itemName: item.itemName, itemCategory: item.itemCategory, itemModel: item.itemModel, quantity: item.quantity, reason: item.reason, requesterName: item.requesterName, requesterDept: item.requesterDept, requesterId: item.requesterId, notes: item.notes }); setViewMode('create') }
   const handleSave = () => createMut.mutate(form)
+
+  // DEV ONLY — 비어있는 항목을 보호구 신청 더미데이터로 채움 (입력값 보존)
+  // 품목·수량은 재고 선택(handleEquipmentSelect)에 종속되므로 사유·비고만 채운다.
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    reason: prev.reason || '신규 작업자 현장 투입에 따른 보호구 지급 요청 (테스트 데이터)',
+    notes: prev.notes || '사이즈 L 요청',
+  }))
   const handleDelete = async (item: PpeRequestItem) => { const ok = await showConfirm(`${item.itemName}\n${t('common.delete')}하시겠습니까?`); if (ok) deleteMut.mutate(item.id) }
 
   const handleIssue = async (id: number) => {
@@ -284,6 +293,7 @@ const PpeRequestTab: React.FC = () => {
           <Box><Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.notes')}</Typography><TextField fullWidth size="small" value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {!selectedItem && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

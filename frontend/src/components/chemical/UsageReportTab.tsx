@@ -16,6 +16,7 @@ import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -77,6 +78,19 @@ const UsageReportTab: React.FC = () => {
   const handleDelete = async (item: ChemicalUsageReport) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 화학물질 사용량 보고 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    chemicalName: prev.chemicalName || '톨루엔',
+    casNumber: prev.casNumber || '108-88-3',
+    annualUsage: prev.annualUsage || 1200,
+    unit: prev.unit || 'kg',
+    usagePurpose: prev.usagePurpose || '세정·도장 공정 용제',
+    reportDeadline: prev.reportDeadline || todayStr(),
+    submitDate: prev.submitDate || todayStr(),
+    status: prev.status || 'COLLECTING',
+  }))
 
   const getStatusChip = (status: string) => {
     const info = statusMap[status]
@@ -200,6 +214,7 @@ const UsageReportTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

@@ -13,6 +13,7 @@ import NumberField from '../common/NumberField'
 import { chemicalWarehouseApi } from '../../api/chemicalApi'
 import { ChemicalWarehouse } from '../../types/chemical.types'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -84,6 +85,19 @@ const WarehouseTab: React.FC = () => {
   const handleDelete = async (item: ChemicalWarehouse) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 화학물질 창고 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    warehouseName: prev.warehouseName || '제1위험물저장창고',
+    storageType: prev.storageType || 'GENERAL',
+    location: prev.location || '본사 A동 지하 1층',
+    storedItemsCount: prev.storedItemsCount || 12,
+    totalStock: prev.totalStock || '3,200 L',
+    temperature: prev.temperature || '18℃',
+    humidity: prev.humidity || '45%',
+    status: prev.status || 'NORMAL',
+  }))
 
   const getStorageTypeLabel = (type?: string) => {
     const map: Record<string, string> = {
@@ -259,6 +273,7 @@ const WarehouseTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

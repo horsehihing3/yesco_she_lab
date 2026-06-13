@@ -14,6 +14,7 @@ import { useAlert } from '../../contexts/AlertContext'
 import { chemicalApi } from '../../api/chemicalApi'
 import { Chemical, ChemicalRequest } from '../../types/chemical.types'
 import useCodeMap from '../../hooks/useCodeMap'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -63,6 +64,26 @@ const ChemicalInventoryTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: Chemical) => { const ok = await showConfirm(`${item.chemicalNameKo}\n${t('common.delete')}하시겠습니까?`); if (ok) deleteMut.mutate(item.id) }
   const handleReset = () => { setSearchInput(''); setSearchText(''); setHazardFilter(''); setStatusFilter(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 화학물질 재고 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    chemicalNameKo: prev.chemicalNameKo || '아세톤',
+    chemicalNameEn: prev.chemicalNameEn || 'Acetone',
+    casNumber: prev.casNumber || '67-64-1',
+    hazardClass: prev.hazardClass || hazardCodes[0]?.code || '',
+    unit: prev.unit || unitCodes[0]?.code || '',
+    status: prev.status || statusCodes[0]?.code || '',
+    storageQuantity: prev.storageQuantity ?? 200,
+    maxStorageLimit: prev.maxStorageLimit ?? 500,
+    storageLocation: prev.storageLocation || '제1위험물저장소',
+    supplier: prev.supplier || '한국화학공업',
+    signalWord: prev.signalWord || '위험',
+    ghsPictogram: prev.ghsPictogram || 'GHS02, GHS07',
+    hazardStatements: prev.hazardStatements || 'H225 고인화성 액체 및 증기',
+    precautionaryStatements: prev.precautionaryStatements || 'P210 열·스파크·화염·고열로부터 멀리하시오',
+    emergencyProcedure: prev.emergencyProcedure || '누출 시 환기 후 모래·흡착제로 회수 (테스트 데이터)',
+  }))
 
   const items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -178,6 +199,7 @@ const ChemicalInventoryTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

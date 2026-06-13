@@ -21,6 +21,7 @@ import DeptUserMultiSelectModal from '../components/common/DeptUserMultiSelectMo
 import type { UserInfo } from '../components/common/UserSelectModal'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -171,6 +172,26 @@ const SafetyHazardInfoPage: React.FC = () => {
     if (!selectedId) return
     if (await showConfirm('삭제하시겠습니까?')) deleteMut.mutate(selectedId)
   }
+
+  // DEV ONLY — 비어있는 항목을 위험정보 더미데이터로 채움 (입력값·_pk 키 보존)
+  const fillTestData = () => setForm(f => ({
+    ...f,
+    title: f.title || '안전보건상 위험정보 조사서',
+    divisionName: f.divisionName || '생산본부',
+    description: f.description || '공정별 유해·위험요인 조사 (테스트 데이터)',
+    surveyDate: f.surveyDate || todayStr(),
+    items: (f.items || []).map((it, i) => i === 0 ? {
+      ...it,
+      processActivity: it.processActivity || '용접 작업',
+      machineName: it.machineName || 'CO2 용접기',
+      machineQty: it.machineQty ?? 2,
+      chemicalName: it.chemicalName || '용접 흄',
+      chemicalQty: it.chemicalQty || '5kg/일',
+      exposureTime: it.exposureTime || '4시간',
+      permitWork: it.permitWork || '화기작업',
+      specialTraining: it.specialTraining || '대상',
+    } : it),
+  }))
 
   const updateItem = (idx: number, patch: Partial<SafetyHazardItem>) => {
     setForm(f => ({ ...f, items: (f.items || []).map((it, i) => i === idx ? { ...it, ...patch } : it) }))
@@ -626,6 +647,7 @@ const SafetyHazardInfoPage: React.FC = () => {
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', gap: 1, mt: 2 }}>
         {isEditing ? (
           <>
+            {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
             <Button variant="outlined" onClick={handleCancel}>취소</Button>
             <Button variant="contained" onClick={handleSave} disabled={isProcessing}>저장</Button>
           </>
@@ -641,6 +663,7 @@ const SafetyHazardInfoPage: React.FC = () => {
       <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1, mt: 2 }}>
         {isEditing ? (
           <>
+            {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
             <Button variant="outlined" onClick={handleCancel} sx={{ flex: 1 }}>취소</Button>
             <Button variant="contained" onClick={handleSave} disabled={isProcessing} sx={{ flex: 1 }}>저장</Button>
           </>

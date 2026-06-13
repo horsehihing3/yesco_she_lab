@@ -15,6 +15,7 @@ import { ChemicalLotTracking } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
 import NumberField from '../common/NumberField'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -74,6 +75,19 @@ const LotTrackingTab: React.FC = () => {
   const handleDelete = async (item: ChemicalLotTracking) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 LOT 추적 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    chemicalName: prev.chemicalName || '톨루엔',
+    incomingDate: prev.incomingDate || todayStr(),
+    incomingQuantity: prev.incomingQuantity || '200 kg',
+    currentLocation: prev.currentLocation || '제1창고 A-01',
+    usedQuantity: prev.usedQuantity || '50 kg',
+    remainingQuantity: prev.remainingQuantity || '150 kg',
+    elapsedDays: prev.elapsedDays || 15,
+    status: prev.status || 'STORED',
+  }))
 
   const getStatusChip = (status: string) => {
     const info = statusMap[status]
@@ -193,6 +207,7 @@ const LotTrackingTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

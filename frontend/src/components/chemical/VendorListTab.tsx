@@ -16,6 +16,7 @@ import NumberField from '../common/NumberField'
 import { chemicalVendorApi } from '../../api/chemicalApi'
 import type { ChemicalVendor } from '../../types/chemical.types'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -84,6 +85,19 @@ const VendorListTab: React.FC = () => {
   const handleDelete = async (item: ChemicalVendor) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
 
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 화학물질 공급업체 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    vendorName: prev.vendorName || '대한화학공업(주)',
+    representative: prev.representative || '김대한',
+    contactPerson: prev.contactPerson || '이공급',
+    phone: prev.phone || fmtPhone('0212345678'),
+    supplyItemsCount: prev.supplyItemsCount || 5,
+    msdsStatus: prev.msdsStatus || 'COMPLETE',
+    lastTransactionDate: prev.lastTransactionDate || todayStr(),
+    grade: prev.grade || 'A',
+  }))
 
   const getMsdsLabel = (status?: string) => {
     const map: Record<string, string> = {
@@ -250,6 +264,7 @@ const VendorListTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

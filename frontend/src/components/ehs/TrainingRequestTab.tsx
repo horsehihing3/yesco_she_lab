@@ -18,6 +18,7 @@ import useCodeMap from '../../hooks/useCodeMap'
 import axiosInstance from '../../api/axiosInstance'
 import { ApiResponse, PageResponse } from '../../types/common.types'
 import { SafetyEducation, SafetyEducationRequest } from '../../types/occupationalExposure.types'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -148,6 +149,18 @@ const TrainingRequestTab: React.FC = () => {
     const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
     if (confirmed) deleteMutation.mutate(item.id)
   }
+  // DEV ONLY — 비어있는 항목을 교육 신청 더미데이터로 채움 (작성자 정보는 로그인 사용자라 제외)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    title: prev.title || '2026년 상반기 정기 안전보건교육',
+    educationType: prev.educationType || typeCodes[0]?.code || 'REGULAR',
+    educationDate: prev.educationDate || todayStr(),
+    educationHours: prev.educationHours ?? 2,
+    location: prev.location || '본사 대강당',
+    instructorName: prev.instructorName || '홍길동',
+    instructorOrg: prev.instructorOrg || '한국산업안전보건공단',
+    educationContent: prev.educationContent || '산업안전보건법 주요 내용, 작업장 위험요인 및 안전수칙, 비상시 행동요령',
+  }))
 
   let items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -398,6 +411,7 @@ const TrainingRequestTab: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

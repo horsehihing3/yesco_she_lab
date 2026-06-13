@@ -21,6 +21,7 @@ import { envMonitoringApi } from '../api/envMonitoringApi'
 import { EnvMonitoring, EnvMonitoringRequest } from '../types/envMonitoring.types'
 import useCodeMap from '../hooks/useCodeMap'
 import StatCard from '../components/legalCompliance/StatCard'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -168,6 +169,24 @@ const EnvMonitoringPage: React.FC = () => {
     const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
     if (confirmed) deleteMutation.mutate(item.id)
   }
+
+  // DEV ONLY — 비어있는 항목을 환경 모니터링 더미데이터로 채움 (입력값 보존)
+  // 측정자(사람)·초과율(초과여부 종속)은 채우지 않는다.
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    monitorType: prev.monitorType || typeCodes[0]?.code || '',
+    status: prev.status || statusCodes[0]?.code || 'NORMAL',
+    location: prev.location || '제1공장 배출구 A',
+    parameterName: prev.parameterName || '미세먼지(PM10)',
+    measuredValue: prev.measuredValue || 42.5,
+    unit: prev.unit || 'µg/m³',
+    standardValue: prev.standardValue ?? 80,
+    standardName: prev.standardName || '대기환경보전법 배출허용기준',
+    equipmentName: prev.equipmentName || '베타레이 먼지측정기',
+    equipmentModel: prev.equipmentModel || 'BAM-1020',
+    correctiveAction: prev.correctiveAction || '기준 이내 정상 측정, 추가 조치 불필요 (테스트 데이터)',
+    notes: prev.notes || '정기 측정 건',
+  }))
 
   const items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -548,6 +567,7 @@ const EnvMonitoringPage: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={handleGoToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

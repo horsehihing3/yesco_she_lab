@@ -16,6 +16,7 @@ import { msdsApi } from '../../api/chemicalApi'
 import { Msds } from '../../types/chemical.types'
 import DatePickerField from '../common/DatePickerField'
 import { todayStr } from '../../utils/dateDefaults'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -70,6 +71,17 @@ const MsdsRawOldTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: Msds) => { const ok = await showConfirm(t('common.confirmDelete')); if (ok) deleteMut.mutate(item.id) }
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 원료 MSDS 구버전 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    itemName: prev.itemName || '톨루엔',
+    casNumber: prev.casNumber || '108-88-3',
+    version: prev.version || '1.0',
+    issueDate: prev.issueDate || todayStr(),
+    retireDate: prev.retireDate || todayStr(),
+    retireReason: prev.retireReason || '신규 버전(2.0) 발행으로 폐기',
+  }))
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -218,6 +230,7 @@ const MsdsRawOldTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>
         </Box>

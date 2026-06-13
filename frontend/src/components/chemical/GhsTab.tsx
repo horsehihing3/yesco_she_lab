@@ -14,6 +14,7 @@ import useCodeMap from '../../hooks/useCodeMap'
 import { chemicalGhsApi } from '../../api/chemicalApi'
 import type { ChemicalGhs } from '../../types/chemical.types'
 import StatCard from '../legalCompliance/StatCard'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -68,6 +69,19 @@ const GhsTab: React.FC = () => {
   const handleSave = () => { if (selectedItem && viewMode === 'edit') updateMut.mutate({ id: selectedItem.id, r: form }); else createMut.mutate(form) }
   const handleDelete = async (item: ChemicalGhs) => { const ok = await showConfirm(t('common.confirmDelete', '삭제하시겠습니까?')); if (ok) deleteMut.mutate(item.id) }
   const handleReset = () => { setKeywordInput(''); setKeyword(''); setPage(0) }
+
+  // DEV ONLY — 비어있는 항목을 GHS 분류 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    chemicalName: prev.chemicalName || '톨루엔',
+    casNumber: prev.casNumber || '108-88-3',
+    physicalHazard: prev.physicalHazard || '인화성 액체 2',
+    healthHazard: prev.healthHazard || '생식독성 2, 특정표적장기독성(반복노출) 2',
+    environmentalHazard: prev.environmentalHazard || '수생환경유해성 만성 3',
+    signalWord: prev.signalWord || '위험',
+    ghsVersion: prev.ghsVersion || 'Rev.9',
+    status: prev.status || (ghsStatusCodes[0]?.code ?? 'LATEST'),
+  }))
 
   // ==================== DETAIL VIEW ====================
   if (viewMode === 'detail' && selectedItem) {
@@ -206,6 +220,7 @@ const GhsTab: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel', '취소')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>
         </Box>

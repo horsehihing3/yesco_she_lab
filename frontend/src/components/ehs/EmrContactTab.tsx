@@ -19,6 +19,7 @@ import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import { useAlert } from '../../contexts/AlertContext'
 import { emergencyContactApi } from '../../api/emergencyExtendedApi'
 import { EmergencyContact, EmergencyContactRequest } from '../../types/emergencyExtended.types'
+import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -136,6 +137,16 @@ const EmrContactTab: React.FC = () => {
     const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
     if (confirmed) deleteMutation.mutate(item.id)
   }
+  // DEV ONLY — 비어있는 항목을 비상 연락처 더미데이터로 채움 (담당자명은 조직도 선택이라 제외)
+  const fillTestData = () => setForm(prev => ({
+    ...prev,
+    organization: prev.organization || '안전보건팀',
+    phoneNumber: prev.phoneNumber || fmtPhone('01012345678'),
+    email: prev.email || 'safety@yesco.co.kr',
+    contactType: prev.contactType || 'INTERNAL',
+    sortOrder: prev.sortOrder ?? 1,
+    notes: prev.notes || '비상 시 우선 연락 (테스트 데이터)',
+  }))
 
   let items = data?.content || []
   const totalPages = data?.totalPages || 0
@@ -449,6 +460,7 @@ const EmrContactTab: React.FC = () => {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.cancel')}</Button>
           {canSave && <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save')}</Button>}
         </Box>

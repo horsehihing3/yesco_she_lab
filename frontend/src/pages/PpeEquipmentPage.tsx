@@ -38,6 +38,7 @@ import PpeRequestTab from '../components/environment/PpeRequestTab'
 import StatCard from '../components/legalCompliance/StatCard'
 import ListSearchBar from '../components/common/ListSearchBar'
 import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
+import DevTestFillButton from '../components/common/DevTestFillButton'
 
 const STATUS_CHIP: Record<PpeEquipmentStatus, { color: 'success' | 'warning' | 'error' | 'info'; label: string }> = {
   NORMAL: { color: 'success', label: 'ppe.statusNormal' },
@@ -199,6 +200,24 @@ const PpeEquipmentPage: React.FC = () => {
     const confirmed = await showConfirm(`${item.name}\n${t('common.delete')}하시겠습니까?`)
     if (confirmed) deleteMutation.mutate(item.id)
   }
+
+  // DEV ONLY — 비어있는 항목을 보호구 장비 더미데이터로 채움 (입력값 보존)
+  const fillTestData = () => setForm((prev) => ({
+    ...prev,
+    name: prev.name || '안전모 (낙하물 방지용)',
+    category: prev.category || categoryCodes[0]?.code || '',
+    model: prev.model || 'SH-2000',
+    certification: prev.certification || 'KCs 제2024-1234호',
+    stockQuantity: prev.stockQuantity || 50,
+    minStock: prev.minStock ?? 10,
+    maxStock: prev.maxStock ?? 100,
+    expiryDate: prev.expiryDate || todayStr(),
+    inspectCycle: prev.inspectCycle || inspectCycleCodes[0]?.code || '',
+    lastInspectDate: prev.lastInspectDate || todayStr(),
+    nextInspectDate: prev.nextInspectDate || todayStr(),
+    storageLocation: prev.storageLocation || '안전관리실 A-3 캐비닛',
+    notes: prev.notes || '정기 지급 품목 (테스트 데이터)',
+  }))
 
   const calcStockRate = (item: { stockQuantity: number; maxStock?: number; isConsumable?: boolean }): number | null => {
     if (item.isConsumable || !item.maxStock || item.maxStock === 0) return null
@@ -551,6 +570,7 @@ const PpeEquipmentPage: React.FC = () => {
 
         {/* Buttons */}
         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'stretch', sm: 'flex-end' } }}>
+          {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           <Button variant="outlined" onClick={() => viewMode === 'edit' ? setViewMode('detail') : handleBackToList()} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: 1, sm: 'none' } }}>{t('common.save')}</Button>
         </Box>
