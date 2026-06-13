@@ -46,7 +46,6 @@ const IncomingUsageTab: React.FC = () => {
   const [incomingKeywordInput, setIncomingKeywordInput] = useState('')
   const [incomingKeyword, setIncomingKeyword] = useState('')
   const applyIncomingSearch = () => { setIncomingKeyword(incomingKeywordInput); setIncomingPage(0) }
-  const resetIncomingSearch = () => { setIncomingKeywordInput(''); setIncomingKeyword(''); setIncomingPage(0) }
 
   // ===== Usage state =====
   const [usageViewMode, setUsageViewMode] = useState<ViewMode>('list')
@@ -56,7 +55,6 @@ const IncomingUsageTab: React.FC = () => {
   const [usageKeywordInput, setUsageKeywordInput] = useState('')
   const [usageKeyword, setUsageKeyword] = useState('')
   const applyUsageSearch = () => { setUsageKeyword(usageKeywordInput); setUsagePage(0) }
-  const resetUsageSearch = () => { setUsageKeywordInput(''); setUsageKeyword(''); setUsagePage(0) }
 
   // ===== Incoming query =====
   const { data: incomingData, isLoading: incomingLoading } = useQuery({

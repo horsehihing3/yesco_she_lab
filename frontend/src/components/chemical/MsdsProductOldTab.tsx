@@ -43,7 +43,7 @@ const MsdsProductOldTab: React.FC = () => {
   const [form, setForm] = useState(emptyForm)
   const [page, setPage] = useState(0)
   const [keywordInput, setKeywordInput] = useState('')
-  const [keyword, setKeyword] = useState('')
+  const [, setKeyword] = useState('')
   const applySearch = () => { setKeyword(keywordInput); setPage(0) }
 
   const { data, isLoading } = useQuery({
