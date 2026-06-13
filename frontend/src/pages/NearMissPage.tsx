@@ -231,6 +231,10 @@ const NearMissPage: React.FC = () => {
     if (!v.occInfo) setValue('occInfo', '우천으로 젖은 계단을 내려가던 중 미끄러질 뻔하였으나 난간을 잡아 사고를 면함. 미끄럼 방지 패드 부재가 원인으로 추정됨.')
     if (!v.occSiteInfo) setValue('occSiteInfo', '본관 동측 비상계단 3층~2층 구간')
     if (!v.company) setValue('company', '예스코')
+    // 사고 대응 분류 — 비상유형/상태/심각도 (코드 목록 첫 항목)
+    if (!v.emergencyType && incRespTypeList[0]) setValue('emergencyType', incRespTypeList[0].code)
+    if (!v.responseStatus && incRespStatusList[0]) setValue('responseStatus', incRespStatusList[0].code)
+    if (!v.severity && incRespSeverityList[0]) setValue('severity', incRespSeverityList[0].code)
   }
 
   const createMutation = useMutation({

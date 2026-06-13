@@ -283,6 +283,9 @@ const EhsMessageTab: React.FC = () => {
   const fillTestData = () => {
     const v = getValues()
     if (!v.title) setValue('title', '[EHS 공지] 11월 안전보건 점검 결과 및 협조 요청')
+    if (!v.subCategory && targets[0]) setValue('subCategory', targets[0])   // 대상
+    if (!v.category && categories[0]) setValue('category', categories[0])   // 카테고리
+    if (!v.authorRole && roles[0]) setValue('authorRole', roles[0])         // 직책
     if (!v.detail) setValue('detail', '<p>11월 정기 안전보건 점검 결과를 공유드립니다. 지적 사항에 대한 개선 조치에 적극 협조 부탁드립니다. (테스트 데이터)</p>')
   }
 

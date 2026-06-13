@@ -399,7 +399,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
       workProcess: '용접 공정',
       measurementValue: '82.5',
       exposureStandard: '90',
-      unit: 'dB',
+      unit: unitCodes[0]?.codeValue || unitCodes[0]?.code || '',
       resultRatio: 0.92,
       resultStatus: 'normal',
       employeeCount: 5,

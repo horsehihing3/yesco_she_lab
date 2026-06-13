@@ -147,11 +147,15 @@ const WasteManageTab: React.FC = () => {
   const fillTestData = () => setFormData(prev => ({
     ...prev,
     wasteCode: prev.wasteCode || 'WST-2026-001',
+    wasteType: prev.wasteType || wasteTypeCodes[0]?.code || '',
     wasteName: prev.wasteName || '폐유',
     wasteCategory: prev.wasteCategory || wasteCategoryCodes[0]?.code || '',
     generationAmount: prev.generationAmount ?? 350,
+    unit: prev.unit || wasteUnitCodes[0]?.code || '',
     department: prev.department || departmentCodes[0]?.code || '',
     storageLocation: prev.storageLocation || '제1공장 폐기물 보관창고',
+    disposalMethod: prev.disposalMethod || disposalMethodCodes[0]?.code || '',
+    disposalCompany: prev.disposalCompany || disposalCompanyCodes[0]?.code || '',
     remark: prev.remark || '지정폐기물 위탁처리 (테스트 데이터)',
   }))
 

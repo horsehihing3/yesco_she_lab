@@ -527,9 +527,15 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
 
   // DEV ONLY — 비어있는 항목을 사무직 위험성평가 더미데이터로 채움 (입력값·체크리스트·승인자 보존)
   const fillTestData = () => {
+    // 체크리스트 후보(OFFICE_WORK 카테고리) — Step 2/3/4 연결 셀렉트 자동 선택용
+    const officeCandidates = (safetyTemplates || []).filter(tpl => tpl.categoryType === 'OFFICE_WORK')
     setFormData(prev => ({
       ...prev,
       title: prev.title || '사무직 위험성평가 – 사무·외주 작업',
+      site: prev.site || (sites[0] ?? prev.site),                                  // 지역
+      officeChecklistId: prev.officeChecklistId ?? officeCandidates[0]?.id,        // Step 2 체크리스트
+      sanupChecklistId: prev.sanupChecklistId ?? officeCandidates[0]?.id,          // Step 3 체크리스트
+      jungdaeChecklistId: prev.jungdaeChecklistId ?? officeCandidates[0]?.id,      // Step 4 체크리스트
     }))
     const SAMPLE_ACTIONS: Record<string, string> = {
       '사무업무': 'VDU 작업(모니터·키보드 사용)',

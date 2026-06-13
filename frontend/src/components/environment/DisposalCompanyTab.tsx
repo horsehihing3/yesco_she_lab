@@ -120,6 +120,8 @@ const DisposalCompanyTab: React.FC = () => {
     address: prev.address || '경기도 화성시 향남읍 산업로 25',
     wasteTypes: prev.wasteTypes || '폐유, 폐합성수지',
     licenseNumber: prev.licenseNumber || 'WL-2024-0456',
+    rating: prev.rating || ratingCodes[0]?.code || '',
+    status: prev.status || 'ACTIVE',
   }))
 
   const handleSave = () => {

@@ -450,6 +450,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
     setFormData(prev => ({
       ...prev,
       title: prev.title || '위험성평가 – 사무업무',
+      site: prev.site || (sites[0] ?? prev.site),   // 사업장(지역)
     }))
     setActivityProcesses(prev => {
       const base = prev.length > 0 ? prev : [{ majorCategoryIdx: 1, majorCategory: MAJOR_CATEGORIES[0], detailAction: '', evaluationDate: new Date().toISOString().substring(0, 10), evaluator: '', isTarget: true }]

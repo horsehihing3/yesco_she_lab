@@ -136,8 +136,10 @@ const WasteComplianceTab: React.FC = () => {
     ...prev,
     regulationName: prev.regulationName || '폐기물관리법 제18조',
     checkItem: prev.checkItem || '지정폐기물 보관기간 준수 여부',
+    status: prev.status || statusCodes[0]?.code || '',
     violationDetails: prev.violationDetails || '보관기간 초과 사례 없음 (테스트 데이터)',
     correctiveAction: prev.correctiveAction || '보관대장 주기적 점검 강화',
+    actionStatus: prev.actionStatus || actionStatusCodes[0]?.code || '',
   }))
 
   const handleSave = () => {
