@@ -125,9 +125,12 @@ ApprovalGateway
 
 ### 지금 (예스코 무관, 저위험)
 - [x] 본 표준 문서화
-- [ ] **권한체크 누락 보강**: HealthCheckupPlan · SiteSafetyPlan · RiskAssessment 에 `ensureCanApprove` 이식 (PermitToWork·PpeRequest 포함 검토).
-  - ⚠️ *기존 데이터에 승인자 미지정이면 Admin만 승인 가능*해짐 → 예스코 데모 데이터 세팅 후 적용 권장.
-- [ ] RiskAssessment status 대소문자 잔존 재확인(세션8 마이그레이션 검증).
+- [x] **권한체크 누락 보강(인라인 2단계 3종)**: HealthCheckupPlan · SiteSafetyPlan · RiskAssessment `transition()` 에 `ensureCanApprove` 이식(approve=계획승인자/complete=완료승인자/reject=양쪽, Admin bypass, username null·system 스킵). 런타임 검증: TEAM_MEMBER 비승인자 approve → **403** "지정된 승인자만…"(데이터 변형 없음). compileJava EXIT0.
+  - ⚠️ **데모 주의**: 승인자 미지정 레코드는 이제 Admin만 승인 가능(특히 risk_assessment 다수가 planApprover=null). 예스코 데모 전 승인자 세팅 or Admin 계정 사용.
+- [ ] **잔존 — 추가 게이팅 필요**:
+  - PermitToWork · PpeRequest (중앙 tb_approval 메커니즘 — approve/reject·updateStatus 무검증). 중앙 `ApprovalController.update()` 자체도 무검증.
+  - RiskAssessment `updateStatus(PATCH /{id}/status)` 미게이팅(프론트 승인엔 미사용이나 status 직접변경 가능).
+- [ ] **🐛 RiskAssessment status 소문자 버그 확정**: `transition()`이 `submitted/approved/...` **소문자** 기록하는데 프론트·DB데이터·타도메인은 **대문자**(`APPROVED`). 세션8 마이그레이션이 transition 경로엔 미적용 → approve 시 status 깨짐. status 표준화 때 대문자로 수정 필요.
 
 ### 예스코 모델 확인 후
 - [ ] §4.4 UI 노출 규칙 확정 + 중앙/자체 정리

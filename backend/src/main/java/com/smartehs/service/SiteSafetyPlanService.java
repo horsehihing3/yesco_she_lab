@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -29,6 +31,8 @@ public class SiteSafetyPlanService {
     private final SiteSafetyPlanMapper planMapper;
     private final SiteSafetyWorkerMapper workerMapper;
     private final IdmMapper idmMapper;
+
+    private static final Set<String> ADMIN_ROLES = Set.of("SYSTEM_ADMIN");
 
     @Transactional(readOnly = true)
     public Page<SiteSafetyPlan> findAll(String planType, Pageable pageable) {
@@ -84,6 +88,7 @@ public class SiteSafetyPlanService {
     public SiteSafetyPlan transition(Long id, String action, String username, String rejectReason) {
         SiteSafetyPlan existing = planMapper.findById(id);
         if (existing == null) throw new ResourceNotFoundException("SiteSafetyPlan", "id", id);
+        ensureCanApprove(existing, action, username);
 
         String nextStatus;
         boolean approved;
@@ -125,6 +130,26 @@ public class SiteSafetyPlanService {
         }
         planMapper.transition(id, nextStatus, approved, username, stage, rejectReason);
         return findById(id);
+    }
+
+    /** 승인 결정(approve/reject/complete)은 지정 승인자 또는 Admin만. submit/completionSubmit 등 작성자 행위는 게이팅 안 함. */
+    private void ensureCanApprove(SiteSafetyPlan plan, String action, String username) {
+        if (!"approve".equals(action) && !"reject".equals(action) && !"complete".equals(action)) return;
+        if (username == null || username.isEmpty() || "system".equals(username)) return;
+        IdmUser u;
+        try { u = idmMapper.findByUid(username); } catch (Exception e) { u = null; }
+        if (u == null) throw new AccessDeniedException("승인 권한이 없습니다.");
+        if (u.getUserRole() != null && ADMIN_ROLES.contains(u.getUserRole())) return;
+        boolean planOk = matchesApprover(plan.getPlanApproverUserId(), plan.getPlanApproverName(), u);
+        boolean compOk = matchesApprover(plan.getCompletionApproverUserId(), plan.getCompletionApproverName(), u);
+        boolean ok = "approve".equals(action) ? planOk : "complete".equals(action) ? compOk : (planOk || compOk);
+        if (!ok) throw new AccessDeniedException("지정된 승인자만 승인/반려할 수 있습니다.");
+    }
+
+    private static boolean matchesApprover(Long approverId, String approverName, IdmUser u) {
+        if (approverId != null && approverId.equals(u.getUidNumber())) return true;
+        if (approverName != null && u.getUserName() != null && approverName.equalsIgnoreCase(u.getUserName())) return true;
+        return false;
     }
 
     @Transactional

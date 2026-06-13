@@ -12,7 +12,8 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - **배경**: 승인 메커니즘 3종 공존(중앙 tb_approval / 인라인 2단계 / 단순status) + 권한체크·API·승인자검증 불일치. 예스코 결재시스템(미지수) 연동 전 표준화 필요.
 - **[x] 승인 로직 전수 감사 완료**: 중앙메뉴 노출 4종(PpeRequest·PermitToWork·Training·Chemical) vs 자체탭 10종. 권한체크 누락 = HealthCheckupPlan·SiteSafety·RiskAssessment(+PermitToWork·PpeRequest). 권한체크 구현됨 = AuditPlan·EmrPlan·ContractorPlan·LegalPlan·EhsAnnualPlan.
 - **[x] `docs/APPROVAL_STANDARD.md` 작성**: 현황맵 + 표준 상태머신 + 권한규칙(ensureCanApprove) + API규약(transition) + **예스코 연동 seam(ApprovalGateway, 모드 A/B/C)** + 미팅 확인질문 + 이행 우선순위.
-- **[ ] 지금(예스코무관)**: 권한체크 누락 보강(ensureCanApprove 이식, ⚠️데모데이터 후) / RiskAssessment status 대소문자 재확인.
+- **[x] 권한체크 누락 보강(인라인 3종)**: HealthCheckupPlan·SiteSafety·RiskAssessment transition()에 ensureCanApprove 이식. 런타임 검증 TEAM_MEMBER approve→403(변형없음), compileJava EXIT0. ⚠️데모: 승인자 미지정 레코드는 Admin만 승인(risk_assessment 다수 planApprover=null).
+- **[ ] 잔존(예스코무관)**: PermitToWork·PpeRequest·중앙 ApprovalController 무검증 / RiskAssessment updateStatus 미게이팅 / **🐛RiskAssessment transition() 소문자 status 버그**(프론트·데이터는 대문자) → status 표준화 때 수정. 상세 `docs/APPROVAL_STANDARD.md §7`.
 - **[ ] 예스코 확인 후**: UI 노출규칙 확정 / transition API 통일 / 프론트 권한유틸·RejectDialog 공통화 / ApprovalGateway 구현. 구현단계는 backend/frontend 분업 가능.
 
 
