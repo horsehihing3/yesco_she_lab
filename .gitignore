@@ -3,3 +3,12 @@
 # 로컬 실행 로그 (커밋 금지)
 *-run.log
 *-run-err.log
+*.log
+server.log
+backend-err.log
+
+# e2e 생성물 (playwright: node_modules/report/results)
+/e2e/
+
+# 일회성 스크립트 (커밋 금지)
+fix_*.py
