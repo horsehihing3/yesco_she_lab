@@ -99,7 +99,7 @@ public class HealthCheckupPlanService {
         plan.setHospital(req.getHospital());
         plan.setPlanStartDate(req.getPlanStartDate());
         plan.setPlanEndDate(req.getPlanEndDate());
-        plan.setStatus(req.getStatus());
+        // status는 게이팅된 transition()으로만 변경 — 전체수정(PUT)에서는 기존 상태 보존(무검증 승인 우회 방지)
         plan.setNotes(req.getNotes());
         plan.setPlanApproverUserId(req.getPlanApproverUserId());
         plan.setPlanApproverTeam(req.getPlanApproverTeam());

@@ -73,6 +73,8 @@ public class SiteSafetyPlanService {
         SiteSafetyPlan existing = planMapper.findById(id);
         if (existing == null) throw new ResourceNotFoundException("SiteSafetyPlan", "id", id);
         plan.setId(id);
+        // status는 게이팅된 transition()으로만 변경 — 전체수정(PUT)에서는 기존 상태 보존(무검증 승인 우회 방지)
+        plan.setStatus(existing.getStatus());
         planMapper.update(plan);
         return findById(id);
     }

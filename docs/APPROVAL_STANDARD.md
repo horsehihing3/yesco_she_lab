@@ -127,6 +127,7 @@ ApprovalGateway
 - [x] 본 표준 문서화
 - [x] **권한체크 누락 보강(인라인 2단계 3종)**: HealthCheckupPlan · SiteSafetyPlan · RiskAssessment `transition()` 에 `ensureCanApprove` 이식(approve=계획승인자/complete=완료승인자/reject=양쪽, Admin bypass, username null·system 스킵). 런타임 검증: TEAM_MEMBER 비승인자 approve → **403** "지정된 승인자만…"(데이터 변형 없음). compileJava EXIT0.
   - ⚠️ **데모 주의**: 승인자 미지정 레코드는 이제 Admin만 승인 가능(특히 risk_assessment 다수가 planApprover=null). 예스코 데모 전 승인자 세팅 or Admin 계정 사용.
+- [x] **PUT 전체수정 status 우회 차단 완료(HealthCheckupPlan · SiteSafetyPlan)**: 두 도메인 `update()` 가 요청 body의 `status` 를 무검증으로 덮어쓰던 경로를 제거 → status 는 게이팅된 `transition()` 으로만 변경, PUT 은 기존 상태 보존. 안전한 형제 `RiskAssessment.update()`(status 미변경)와 동일 패턴으로 통일. compileJava EXIT0.
 - [ ] **잔존 — 추가 게이팅 필요**:
   - PermitToWork · PpeRequest (중앙 tb_approval 메커니즘 — approve/reject·updateStatus 무검증). 중앙 `ApprovalController.update()` 자체도 무검증.
   - RiskAssessment `updateStatus(PATCH /{id}/status)` 미게이팅(프론트 승인엔 미사용이나 status 직접변경 가능).
