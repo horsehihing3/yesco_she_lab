@@ -26,10 +26,8 @@ import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
-import DownloadIcon from '@mui/icons-material/Download'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import Radio from '@mui/material/Radio'
@@ -53,7 +51,6 @@ import {
   deleteTemplate,
   copyTemplate,
   uploadTemplateExcel,
-  downloadTemplateExcel,
 } from '../../api/checklistApi'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -292,21 +289,6 @@ const ChecklistTemplateTab: React.FC = () => {
   const handleRemoveRow = (index: number) => {
     if (formItems.length <= 1) return
     setFormItems(formItems.filter((_, i) => i !== index))
-  }
-
-  const handleDeleteClick = (e: React.MouseEvent, id: number) => {
-    e.stopPropagation()
-    setDeleteTargetId(id)
-    setDeleteDialogOpen(true)
-  }
-
-  const handleDownload = async (e: React.MouseEvent, id: number, title: string) => {
-    e.stopPropagation()
-    try {
-      await downloadTemplateExcel(id, title)
-    } catch {
-      showAlert('error', t('common.failed'))
-    }
   }
 
   const columns: { key: keyof ChecklistItem; label: string }[] = [

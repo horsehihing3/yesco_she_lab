@@ -70,7 +70,6 @@ const CommentRow: React.FC<CommentRowProps> = ({
   onReplyToggle, onEditToggle, onReplyTextChange, onEditTextChange,
   onSubmitReply, onSubmitEdit, onDelete, pending,
 }) => {
-  const { t } = useTranslation()
   const canModify = !!myName && comment.authorName === myName
   const isReplyOpen = replyOpenId === comment.id
   const isEditOpen = editOpenId === comment.id

@@ -62,7 +62,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ isMobile = false, onClose
 
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
 
   // 기상청 API base_time 계산 (매 정시 발표, 40분 이후 조회 가능)
   const getBaseTime = () => {

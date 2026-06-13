@@ -4,12 +4,11 @@ import { isSystemAdmin } from '../../utils/auth'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
-import { Role } from '../../data/buttonManageData'
 import { useTranslation } from 'react-i18next'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, Select, MenuItem,
-  FormControl, Chip, Pagination, CircularProgress, Alert, IconButton, Checkbox,
+  FormControl, Chip, Pagination, CircularProgress, Alert, IconButton,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -68,7 +67,6 @@ const EmrPlanTab: React.FC = () => {
   const { showSuccess, showError, showConfirm, showWarning } = useAlert()
   const { user: authUser } = useAuth()
   const isAdmin = isSystemAdmin(authUser)
-  const canEditDraft = (item: { createdByUserId?: number | null }) => isAdmin || item.createdByUserId === authUser?.id
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 비상 훈련 › 비상 계획'
   const getRoles = (item: { createdByUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
@@ -245,14 +243,6 @@ const EmrPlanTab: React.FC = () => {
     responseSteps: prev.responseSteps || '1) 화재 감지·신고 2) 초기 진화 3) 대피 방송 4) 인원 점검 5) 소방 인계',
     notes: prev.notes || '연 1회 정기 비상 훈련 (테스트 데이터)',
   }))
-
-  // 결재 권한 체크: 지정된 승인자 본인 또는 admin
-  const canApprovePlan = (d: EmergencyPlan) => {
-    if (isAdmin) return true
-    if (d.planApproverUserId && authUser?.id && d.planApproverUserId === authUser.id) return true
-    if (d.planApproverName && authUser?.name && d.planApproverName === authUser.name) return true
-    return false
-  }
 
   let items = data?.content || []
   const totalPages = data?.totalPages || 0

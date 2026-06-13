@@ -11,7 +11,6 @@ import {
   LinearProgress, Dialog, DialogTitle, DialogContent, DialogActions,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import HistoryIcon from '@mui/icons-material/History'
 import DatePickerField from '../common/DatePickerField'
@@ -149,35 +148,8 @@ const EmrDrillTab: React.FC = () => {
     onError: () => showError(t('common.error')),
   })
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => emergencyDrillApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['emrDrills'] })
-      queryClient.invalidateQueries({ queryKey: ['emrDrillStatus'] })
-      showSuccess(t('common.deleted'))
-      handleBackToList()
-    },
-    onError: () => showError(t('common.error')),
-  })
-
   const handleBackToList = () => { setViewMode('list'); setSelectedItem(null); setForm({ ...emptyForm }) }
-  const handleOpenCreate = () => { setSelectedItem(null); setForm({ ...emptyForm }); setViewMode('create') }
   const handleOpenDetail = (item: EmergencyDrill) => { setSelectedItem(item); setViewMode('detail') }
-  const handleOpenEdit = (item?: EmergencyDrill) => {
-    const target = item || selectedItem
-    if (!target) return
-    setSelectedItem(target)
-    setForm({
-      planId: target.planId,
-      drillName: target.drillName, drillType: target.drillType,
-      targetDept: target.targetDept, scheduledDate: target.scheduledDate,
-      participantCount: target.participantCount, evacuationTime: target.evacuationTime,
-      status: target.status, score: target.score,
-      location: target.location, targetTime: target.targetTime,
-      scenario: target.scenario, notes: target.notes,
-    })
-    setViewMode('edit')
-  }
   const handleSave = async () => {
     if (selectedItem && viewMode === 'detail') {
       // 체크리스트 항목/서명 저장
@@ -199,37 +171,6 @@ const EmrDrillTab: React.FC = () => {
     }
     if (selectedItem) updateMutation.mutate({ id: selectedItem.id, req: form })
     else createMutation.mutate(form)
-  }
-  const handleDelete = async (item: EmergencyDrill) => {
-    const confirmed = await showConfirm(t('common.confirmDelete', '정말로 삭제하시겠습니까?'))
-    if (confirmed) deleteMutation.mutate(item.id)
-  }
-  const handleStatusChange = async (newStatus: string) => {
-    if (!selectedItem) return
-    if (newStatus === 'COMPLETED') {
-      if (!checklistRef.current?.isAllChecked()) {
-        showError(t('emr.allChecklistMustBeChecked', '모든 체크리스트 항목이 체크되어야 완료할 수 있습니다.'))
-        return
-      }
-      const ok = await showConfirm(t('emr.confirmComplete', '훈련을 완료 처리하시겠습니까?'))
-      if (!ok) return
-    }
-    try {
-      await emergencyDrillApi.update(selectedItem.id, {
-        planId: selectedItem.planId,
-        drillName: selectedItem.drillName, drillType: selectedItem.drillType,
-        targetDept: selectedItem.targetDept || '', scheduledDate: selectedItem.scheduledDate,
-        participantCount: selectedItem.participantCount, evacuationTime: selectedItem.evacuationTime,
-        status: newStatus, score: selectedItem.score, location: selectedItem.location,
-        targetTime: selectedItem.targetTime, scenario: selectedItem.scenario, notes: selectedItem.notes,
-      } as EmergencyDrillRequest)
-      const updated = await emergencyDrillApi.getById(selectedItem.id)
-      setSelectedItem(updated)
-      queryClient.invalidateQueries({ queryKey: ['emrDrills'] })
-      queryClient.invalidateQueries({ queryKey: ['emrDrillStatus'] })
-      refetchLogs()
-      showSuccess(t('common.saved'))
-    } catch { showError(t('common.error')) }
   }
 
   // 완료 승인: drill 상태 COMPLETED + 연결된 plan 을 DONE 으로 전이 (지정된 완료 승인자 또는 admin 만)

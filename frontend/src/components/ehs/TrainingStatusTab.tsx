@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Box, Typography, Paper, Grid, TextField, Select, MenuItem, FormControl,
+  Box, Typography, Paper, Grid, Select, MenuItem, FormControl,
   Chip, CircularProgress, Alert, Table, TableHead, TableRow, TableCell, TableBody, TableContainer,
   Pagination, Button, IconButton,
 } from '@mui/material'
@@ -17,8 +17,6 @@ import { TrainingApplication } from '../../types/trainingApplication.types'
 import { formatUserName } from '../../utils/userDisplay'
 import useCodeMap from '../../hooks/useCodeMap'
 import RejectReasonDialog from '../common/RejectReasonDialog'
-
-const BUTTON_MENU = 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)'
 
 type ViewMode = 'list' | 'detail'
 

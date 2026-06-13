@@ -15,7 +15,7 @@ const STATUS_DEFAULTS: Record<string, string> = {
   DRAFT: '작성중', PENDING_APPROVAL: '결재중', APPROVED: '승인', DONE: '완료', REJECTED: '반려',
 }
 
-const KpiCard: React.FC<{ label: string; value: number | string; color?: string }> = ({ label, value, color = CHART_COLORS.blue }) => (
+const KpiCard: React.FC<{ label: string; value: number | string; color?: string }> = ({ label, value, color: _color = CHART_COLORS.blue }) => (
   <Paper sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
     <Typography variant="caption" color="text.secondary">{label}</Typography>
     <Typography variant="h4" fontWeight="bold" sx={{ mt: 0.5 }}>{value}</Typography>

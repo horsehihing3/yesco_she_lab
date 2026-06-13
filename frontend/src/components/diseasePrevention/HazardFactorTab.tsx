@@ -354,12 +354,6 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
     LOW: '#10b981',
   }
 
-  const PREVENTION_BORDER_COLORS: Record<string, string> = {
-    COMPLETED: '#10b981',
-    IN_PROGRESS: '#3b82f6',
-    PLANNED: '#8b5cf6',
-    NOT_STARTED: '#f43f5e',
-  }
 
   const getProgressColor = (rate: number | undefined | null) => {
     if (rate == null) return '#9e9e9e'
@@ -517,7 +511,6 @@ const HazardFactorTab: React.FC<HazardFactorTabProps> = ({ hazardType }) => {
             <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2 }}>{t('hazardFactorTab.section1', '예방조치 현황')}</Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
               {items.filter(item => item.preventionDetail).slice(0, 4).map((item, idx) => {
-                const borderColor = PREVENTION_BORDER_COLORS[item.preventionStatus || ''] || '#9e9e9e'
                 const pColor = getProgressColor(item.preventionRate)
                 return (
                   <Paper key={idx} variant="outlined" sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 3, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>

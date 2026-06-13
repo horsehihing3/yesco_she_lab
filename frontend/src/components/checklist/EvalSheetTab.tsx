@@ -62,7 +62,7 @@ const EvalSheetTab: React.FC = () => {
     queryFn: () => evalSheetApi.listMetas(),
   })
 
-  const { data: items, isLoading } = useQuery({
+  const { data: items } = useQuery({
     queryKey: ['evalSheetItems', selectedMetaId],
     queryFn: () => evalSheetApi.getAll(selectedMetaId || undefined),
     enabled: viewMode === 'detail' && selectedMetaId != null,
@@ -188,15 +188,6 @@ const EvalSheetTab: React.FC = () => {
       setCopyTargetId(null)
       showSuccess(t('common.saved', '복사되었습니다.'))
     } catch { showError(t('common.error', '실패했습니다.')) }
-  }
-
-  const handleDeleteMeta = async (id: number) => {
-    if (!(await showConfirm(t('common.confirmDelete', '정말 삭제하시겠습니까?')))) return
-    try {
-      await evalSheetApi.deleteMeta(id)
-      queryClient.invalidateQueries({ queryKey: ['evalSheetMetas'] })
-      showSuccess(t('common.deleted', '삭제되었습니다'))
-    } catch { showError(t('common.error')) }
   }
 
   const handleEdit = () => {

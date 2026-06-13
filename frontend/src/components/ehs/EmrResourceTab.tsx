@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -47,7 +46,6 @@ const EmrResourceTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isSystemAdmin(user) || user?.role === 'TEAM_ADMIN'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const { codeList: resourceTypeCodes, getLabel: getResourceTypeLabel } = useCodeMap('RESOURCE_TYPE')
   const { codeList: resourceStatusCodes, getLabel: getResourceStatusLabel } = useCodeMap('RESOURCE_STATUS')

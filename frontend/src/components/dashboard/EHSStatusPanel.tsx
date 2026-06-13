@@ -99,7 +99,7 @@ const EHSStatusPanel: React.FC<EHSStatusPanelProps> = ({
   factory,
   statistics,
   messages,
-  alerts,
+  alerts: _alerts,
   onClose,
   isMobile = false,
 }) => {

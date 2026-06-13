@@ -1,12 +1,11 @@
 import { formatDate } from '../../utils/dateDefaults'
 import { useState, useMemo } from 'react'
-import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, TextField, Select, MenuItem,
+  TableHead, TableRow, Select, MenuItem,
   FormControl, Chip, Pagination, CircularProgress, Alert, IconButton, Button,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -74,7 +73,6 @@ const HealthCheckupAdminTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isSystemAdmin(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const { codeList: statusCodes, getLabel: getStatusLabel } = useCodeMap('CHECKUP_STATUS')
 

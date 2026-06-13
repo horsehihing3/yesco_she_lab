@@ -1,11 +1,9 @@
 import { useState, useRef } from 'react'
-import { isSystemAdmin } from '../../utils/auth'
 import { useAuth } from '../../context/AuthContext'
 import { useButtonRules } from '../../hooks/useButtonRules'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box,
-  TextField,
   Button,
   Table,
   TableBody,
@@ -16,10 +14,6 @@ import {
   Paper,
   IconButton,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   CircularProgress,
   Chip,
   List,
@@ -275,7 +269,6 @@ const SafetyRulesTab: React.FC = () => {
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [pendingFilePreview, setPendingFilePreview] = useState<string | null>(null)
   const { user } = useAuth()
-  const isAdmin = isSystemAdmin(user)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 문서'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]

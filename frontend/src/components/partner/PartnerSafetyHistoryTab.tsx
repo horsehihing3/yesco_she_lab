@@ -4,7 +4,7 @@ import SignatureImage from '../common/SignatureImage'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
-  Box, Paper, Typography, Button, Alert, TextField, IconButton,
+  Box, Paper, Typography, Button, Alert, IconButton,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -13,7 +13,6 @@ import { partnerSafetyExecutionApi, PartnerSafetyExecution } from '../../api/par
 import { siteSafetyPlanApi } from '../../api/siteSafetyApi'
 import { fetchSafetyTemplates } from '../../api/safetyChecklistApi'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
-import SafetyChecklistTab from '../ehs/SafetyChecklistTab'
 
 type SnapshotItem = {
   categoryName: string

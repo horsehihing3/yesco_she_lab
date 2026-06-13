@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Box, Typography, Paper, CircularProgress } from '@mui/material'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
-  PieChart, Pie, Cell, LabelList,
+  PieChart, Pie, LabelList,
 } from 'recharts'
 import axiosInstance from '../../api/axiosInstance'
 import { ApiResponse, PageResponse } from '../../types/common.types'
@@ -16,7 +16,7 @@ const STATUS_DEFAULTS: Record<string, string> = {
   PENDING: '대기', IN_PROGRESS: '진행중', COMPLETED: '완료', REJECTED: '반려',
 }
 
-const KpiCard: React.FC<{ label: string; value: number | string; color?: string }> = ({ label, value, color = CHART_COLORS.blue }) => (
+const KpiCard: React.FC<{ label: string; value: number | string; color?: string }> = ({ label, value, color: _color = CHART_COLORS.blue }) => (
   <Paper sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
     <Typography variant="caption" color="text.secondary">{label}</Typography>
     <Typography variant="h4" fontWeight="bold" sx={{ mt: 0.5 }}>{value}</Typography>

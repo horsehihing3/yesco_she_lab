@@ -1,11 +1,10 @@
 import { useMemo, useRef, useState } from 'react'
-import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import ListSearchBar from '../common/ListSearchBar'
 import {
   Box, Paper, Typography, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Button, IconButton, CircularProgress, TextField, Alert,
+  TableHead, TableRow, Button, IconButton, CircularProgress, Alert,
   Dialog, DialogTitle, DialogContent, DialogActions, Chip,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -26,7 +25,6 @@ const HealthCheckupRecordTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const isAdmin = isSystemAdmin(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const getRoles = (item: { createdByUserId?: number | null }): string[] => {
     const roles = [...myRoles]

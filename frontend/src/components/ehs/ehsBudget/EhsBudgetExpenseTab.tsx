@@ -73,17 +73,6 @@ const CATEGORY_COLORS: Record<string, 'error' | 'success' | 'info' | 'warning' |
   ETC: 'default',
 }
 
-// 예산 수립 KPI 카드와 같은 borderLeft 색상 패턴 (분류별 색상)
-const CATEGORY_BORDER_COLORS: Record<string, string> = {
-  SAFETY:      '#ef4444', // red
-  PPE:         '#f59e0b', // amber
-  TRAINING:    '#3b82f6', // blue
-  HEALTH:      '#22c55e', // green
-  ENV_MEASURE: '#06b6d4', // cyan
-  EMERGENCY:   '#8b5cf6', // violet
-  FACILITY:    '#64748b', // slate
-  ETC:         '#a3a3a3', // neutral
-}
 
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
@@ -345,7 +334,6 @@ const EhsBudgetExpenseTab: React.FC = () => {
             const used = sumByCategory[c.code] || 0
             const remaining = planned - used
             const overspent = remaining < 0
-            const borderColor = CATEGORY_BORDER_COLORS[c.code] || '#a3a3a3'
             return (
               <Grid item xs={6} sm={4} md={3} lg={1.5} key={c.code}>
                 <Paper sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>

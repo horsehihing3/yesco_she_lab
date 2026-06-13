@@ -1,6 +1,6 @@
 import { formatDate } from '../../utils/dateDefaults'
 import { useState, useEffect } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
   Box, Paper, Typography, Button, Alert, Chip,
@@ -12,7 +12,6 @@ import { SiteSafetyPlan } from '../../types/siteSafety.types'
 import SafetyChecklistTab from '../ehs/SafetyChecklistTab'
 import { FormTable, FormRow, FormLabel, FormCell } from '../common/FormTable'
 import { formatUserName } from '../../utils/userDisplay'
-import { useAlert } from '../../contexts/AlertContext'
 
 const buildExecuteUrl = (planId: number) =>
   `${window.location.origin}/partner-safety-execute/${planId}`
@@ -45,7 +44,6 @@ const readSubmitted = (planId: number): SubmittedRecord | null => {
 
 const PartnerSafetyExecuteTab: React.FC = () => {
   const { t } = useTranslation()
-  const qc = useQueryClient()
 
   const [selectedPlan, setSelectedPlan] = useState<SiteSafetyPlan | null>(null)
   // 다른 탭(실행 새 창)에서 submit 한 결과를 storage 이벤트로 감지하기 위한 카운터

@@ -1,5 +1,4 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { isSystemAdmin } from '../../utils/auth'
 import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
@@ -27,10 +26,6 @@ import {
   MenuItem,
   IconButton,
   SelectChangeEvent,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   CircularProgress,
   Alert,
   Chip,
@@ -114,10 +109,9 @@ const EhsMessageTab: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
   const [page, setPage] = useState(0)
-  const [selectedMessage, setSelectedMessage] = useState<EhsMessage | null>(null)
+  const [, setSelectedMessage] = useState<EhsMessage | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [viewMessage, setViewMessage] = useState<EhsMessage | null>(null)
-  const isAdmin = isSystemAdmin(user)
   const { canSee } = useButtonRules()
   const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 메시지'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
@@ -387,15 +381,6 @@ const EhsMessageTab: React.FC = () => {
   const filteredMessages = roleFilter
     ? messages.filter((msg) => msg.authorRole === roleFilter)
     : messages
-
-  // Label cell style
-  const labelCellSx = {
-    width: 128,
-    fontWeight: 'bold',
-    bgcolor: 'grey.100',
-    textAlign: 'center',
-    borderRight: 1, borderColor: 'divider',
-  }
 
   if (isLoading) {
     return (

@@ -46,7 +46,7 @@ import { oshCommitteeApi } from '../../api/oshCommitteeApi'
 import { fileApi } from '../../api/fileApi'
 import { workplaceApi } from '../../api/workplaceApi'
 import { OSHCommittee, OSHCommitteeRequest } from '../../types/oshCommittee.types'
-import { PageResponse, FileMetadata } from '../../types/common.types'
+import { FileMetadata } from '../../types/common.types'
 import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import LoadingOverlay from '../common/LoadingOverlay'
 import DevTestFillButton from '../common/DevTestFillButton'
@@ -442,13 +442,6 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
   }
 
 
-  // 외부 참석자 추가 (이름·소속업체·전화번호)
-  const handleOpenExternalDialog = () => {
-    setExternalName('')
-    setExternalCompany('')
-    setExternalPhone('')
-    setExternalDialogOpen(true)
-  }
   const handleConfirmExternal = () => {
     const name = externalName.trim()
     const company = externalCompany.trim()

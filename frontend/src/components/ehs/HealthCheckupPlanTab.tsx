@@ -1,5 +1,4 @@
 ﻿import { formatUserName } from '../../utils/userDisplay'
-import { isSystemAdmin } from '../../utils/auth'
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -29,7 +28,6 @@ import UserSelectModal, { UserInfo } from '../common/UserSelectModal'
 import DepartmentSelectModal from '../common/DepartmentSelectModal'
 import useCodeMap from '../../hooks/useCodeMap'
 import { useButtonRules } from '../../hooks/useButtonRules'
-import { Role } from '../../data/buttonManageData'
 import DevTestFillButton from '../common/DevTestFillButton'
 
 const FILE_ENTITY_TYPE = 'health_checkup_plan'
@@ -138,7 +136,6 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
   const { user } = useAuth()
   const { canSee } = useButtonRules()
   const MENU = '보건 관리 › 건강 검진 관리 › 건강검진 계획'
-  const isAdmin = isSystemAdmin(user)
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const currentWriter = user?.name || user?.username || ''
   const { codeList: typeCodes, getLabel: getTypeLabel } = useCodeMap('HEALTH_CHECKUP_TYPE')

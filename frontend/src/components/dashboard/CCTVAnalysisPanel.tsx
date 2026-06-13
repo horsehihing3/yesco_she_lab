@@ -403,7 +403,6 @@ const CCTVAnalysisPanel: React.FC<CCTVAnalysisPanelProps> = ({ onClose, factoryI
         <List disablePadding sx={{ maxHeight: isMobile ? 'calc(20vh)' : 'calc(100vh - 380px)', overflowY: 'auto' }}>
           {filteredResults.map((result) => {
             const eventInfo = EVENT_TYPE_INFO[result.eventType]
-            const camera = MOCK_CAMERAS.find((c) => c.id === result.cameraId)
             return (
               <ListItem
                 key={result.id}

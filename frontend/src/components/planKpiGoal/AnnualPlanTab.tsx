@@ -3,12 +3,11 @@ import { useState, useEffect } from 'react'
 import { isSystemAdmin } from '../../utils/auth'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useButtonRules } from '../../hooks/useButtonRules'
-import { Role } from '../../data/buttonManageData'
 import {
   Box, TextField, Button, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, Paper, Typography, Pagination,
   IconButton, CircularProgress, Alert, Chip, Select, MenuItem,
-  FormControl, Checkbox,
+  FormControl,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
@@ -341,13 +340,6 @@ const AnnualPlanTab: React.FC = () => {
 
   // 권한 헬퍼: 계획 승인자 본인 또는 admin 만 계획 승인/반려 가능
   const isAdmin = isSystemAdmin(authUser)
-  const canEditDraft = (d: { createdByUserId?: number | null }) => isAdmin || d.createdByUserId === authUser?.id
-  const canApprovePlan = (d: { planApproverUserId?: number | null; planApproverName?: string | null }) => {
-    if (isAdmin) return true
-    if (d.planApproverUserId && authUser?.id && d.planApproverUserId === authUser.id) return true
-    if (d.planApproverName && authUser?.name && d.planApproverName === authUser.name) return true
-    return false
-  }
   const { canSee } = useButtonRules()
   const MENU_ANNUAL = 'EHS 경영 › KPI목표 › 연간계획'
   const getRoles = (d: { createdByUserId?: number|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
