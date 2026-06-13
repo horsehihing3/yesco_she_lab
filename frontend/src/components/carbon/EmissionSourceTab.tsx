@@ -17,12 +17,6 @@ import DevTestFillButton from '../common/DevTestFillButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
-const scopeChipColor = (scope?: number): 'success' | 'info' | 'warning' | 'default' => {
-  if (scope === 1) return 'success'
-  if (scope === 2) return 'info'
-  if (scope === 3) return 'warning'
-  return 'default'
-}
 
 const statusChipColor = (status?: string | null): 'success' | 'warning' | 'error' | 'default' => {
   if (status === 'OPERATING') return 'success'
