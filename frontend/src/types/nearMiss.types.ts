@@ -57,6 +57,9 @@ export interface NearMiss {
   responseStatus?: string  // INCIDENT_RESP_STATUS
   isDrill?: boolean
   severity?: string        // INCIDENT_RESP_SEVERITY
+  managerName?: string     // 담당자
+  dueDate?: string         // 조치 마감일
+  completedDate?: string   // 완료일
   createdAt: string
   modifiedAt: string
   actions?: NearMissAction[]

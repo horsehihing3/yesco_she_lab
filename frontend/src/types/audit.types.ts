@@ -112,6 +112,8 @@ export interface AuditPlanRequest {
   completionApproverName?: string
   createdByUserId?: number | null
   createdByName?: string
+  createdByTeam?: string
+  createdByPosition?: string
 }
 
 export interface Audit {
@@ -180,6 +182,8 @@ export interface AuditRequest {
   completionApproverName?: string
   createdByUserId?: number | null
   createdByName?: string
+  createdByTeam?: string
+  createdByPosition?: string
 }
 
 export interface AuditChecklistTemplate {
