@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Order(107)
-@Component
+// @Component  // [PersonRef-3 / 2026-06-13] flat 컬럼 DROP 완료로 비활성 — JSON(PersonRefColumnsInitializer) 단일소스, obsolete 초기화기
 @RequiredArgsConstructor
 public class EmergencyPlanCreatedByMigrationInitializer implements CommandLineRunner {
 

@@ -33,7 +33,8 @@ public class PsmTablesInitializer implements CommandLineRunner {
                 executeSqlFile("db/V206__create_psm_ptw.sql");
                 log.info("PSM 테이블 생성 완료");
             }
-            ensureTeamPositionColumns();
+            // [PersonRef-3 / 2026-06-13] flat team/position 컬럼 DROP 완료로 비활성 — JSON(PersonRefColumnsInitializer) 단일소스
+            // ensureTeamPositionColumns();
         } catch (Exception e) {
             log.warn("PSM 테이블 초기화 실패", e);
         }
