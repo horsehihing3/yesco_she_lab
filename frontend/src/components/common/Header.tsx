@@ -18,9 +18,14 @@ import TableViewIcon from '@mui/icons-material/TableView'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../context/AuthContext'
-import { DEV_SESSION_KEY, isDevToolsVisible } from '../../utils/devMode'
+import { isSystemAdmin } from '../../utils/auth'
+import { DEV_SESSION_KEY } from '../../utils/devMode'
 import LanguageSelector from './LanguageSelector'
 import ThemeSelector from './ThemeSelector'
+
+// 슈퍼관리자가 시작한 계정 전환(impersonation) 세션 표식.
+// 비-관리자 계정으로 전환해도 이 플래그로 전환 메뉴를 유지(서버는 토큰 imp 클레임으로 인가).
+const IMP_ACTIVE_KEY = 'imp_active'
 
 // DEV ONLY — 납품 전 삭제
 const DEV_ACCOUNTS = [
@@ -51,8 +56,10 @@ const Header: React.FC = () => {
     }
   }, [user?.username])
 
-  // DEV ONLY — localhost 이거나 com4in_dev 로 시작한 세션이면 계정전환 노출
-  const showDevSwitch = isDevToolsVisible() || user?.username === 'com4in_dev'
+  // 계정 전환 메뉴는 '실제 전환 가능자'에게만 노출 — 슈퍼관리자(SYSTEM_ADMIN)이거나,
+  // 슈퍼관리자가 시작한 전환 세션일 때. (서버도 동일하게 SYSTEM_ADMIN/ imp 를 검증)
+  // → 비-관리자에게는 메뉴가 보이지 않아 클릭 후 403 나는 혼선이 없다.
+  const showDevSwitch = isSystemAdmin(user) || sessionStorage.getItem(IMP_ACTIVE_KEY) === '1'
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -65,6 +72,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     handleMenuClose()
     sessionStorage.removeItem(DEV_SESSION_KEY)
+    sessionStorage.removeItem(IMP_ACTIVE_KEY)
     logout()
   }
 
@@ -75,6 +83,7 @@ const Header: React.FC = () => {
     try {
       // 비밀번호 없이 계정 전환 — 서버가 현재 사용자(SYSTEM_ADMIN) 권한을 검증해 대상 토큰 발급.
       await impersonate(id)
+      sessionStorage.setItem(IMP_ACTIVE_KEY, '1')  // 전환 세션 유지 → 비-관리자로 전환해도 메뉴/복귀 가능
       queryClient.clear()  // 이전 사용자 캐시 전체 삭제
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : '전환 실패'
