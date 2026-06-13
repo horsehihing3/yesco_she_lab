@@ -8,6 +8,27 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
+### 🔵 다음 세션 시작점 — TASK-2 구조적 타입오류 정리 (2026-06-14 세션 12 이어서)
+- **목표**: 프론트 `tsc` 0 → `npm run build` 통과 (지금은 baseline>0라 빌드가 원래 RED). 현재 **tsc 95** (세션시작 364→95, 269 감소). 측정: `cd frontend && npx tsc --noEmit 2>&1 | grep -c "error TS"`.
+- **남은 95 분류**:
+  - **[A] 타입 갭 ~31 (안전)**: SiteSafetyPlan(10)·EmergencyPlan(8)·User(6)·Chemical(3)·FileMetadata(3)·SiteSafetyPlanRequest(1) — 코드가 읽는 PersonRef flat/도메인 필드를 `.types.ts` 에 추가 (Audit/NearMiss 와 동일 패턴, 이미 완료됨).
+  - **[B] ⚠️ 실제 버그 가능성 ~26**: TS2304(이름없음) 8 / TS2345(인자불일치) 18 — **타입으로 덮지 말고 한 건씩 조사**(진짜 버그 찾는 기회. 이번 세션 isExternal·삭제확인 버그처럼).
+  - 기타 산발 ~38.
+- **2-PC 협업**: 노트북(Sonnet HELPER)은 TASK-1(미사용 156건 제거) 완료·승인 후 **대기**. 채널 `coord/LEAD-TO-HELPER.md` / `HELPER-TO-LEAD.md`. [A] 기계적 타입추가는 노트북에 맡길 수 있음.
+- **그 외 대기**: 1순위 `myRoles`/`getRoles` 중복 → 공용 util 수렴(LEAD 설계 후 노트북 적용) / 로컬 개발 DB(Docker MSSQL+시드) / 백엔드 API 권한제어 설계. 상세 `docs/PRE_YESCO_READINESS.md`.
+
+### ✅ 완료 — 세션 12 (2026-06-14, Opus LEAD + Sonnet HELPER 2-PC 병렬)
+- **🐛 협력업체 작업허가 isExternal 미저장 fix**: PermitToWorkService.create() 빌더에 `.isExternal` 누락 → 외부 목록 항상 빔. create/update 보강 + id27 백필. 런타임 검증(생성→is_external=1→목록노출).
+- **슈퍼관리자 계정전환(impersonation)**: 비번 없이 — `POST /auth/impersonate` 가 호출자 SYSTEM_ADMIN 서버검증 후 대상 토큰 발급(JWT `imp` 클레임으로 연쇄전환/복귀 인가). 헤더 'DEV 계정전환'=impersonate(localhost는 비번폴백). 비관리자/무토큰 403 검증.
+- **DEV 도구 마스터 스위치**: `VITE_DEV_TOOLS=off` 로 테스트버튼·계정전환·빠른로그인 일괄 비활성(`utils/devMode.devToolsEnabled`, `.env.example`).
+- **신규 등록 폼 ~87개 '테스트 데이터' 버튼**: 빈 항목 + select 자동채움(`DevTestFillButton`).
+- **설정 외부화(Yesco seam)**: DB(`MSSQL_*`)·CORS(`APP_CORS_ALLOWED_ORIGINS`)·로깅레벨(`LOG_LEVEL_*`) env화(현재값 기본) + JWT 취약기본값 기동경고.
+- **죽은 파일 27개 삭제**(오펀 컴포넌트 23 + 스텁페이지 4, `vite build` ✓). 완성 기능 페이지는 보존. `coord/DEAD_FILES_PENDING.md`.
+- **tsc 364→95**: vite-env(−12)·NumberField string허용(−39)·노트북 미사용(−156)·LEAD예약(−9)·죽은파일(−23)·알림콜백오버로드(−12, +깨진 삭제확인 버그fix)·Audit/NearMiss 타입(−18).
+- **`docs/PRE_YESCO_READINESS.md` 신규**: Yesco 전환 우선순위·seam맵·현황.
+- 서버: 백엔드 7501 / 프론트 7500 가동중(세션종료 시 정리 가능). 브랜치 `main`=`yesco-dev`=`8b804a3`, 원격 동기화.
+
+
 ### 🟢 진행 중 — 승인 로직 표준화 (2026-06-13 세션 11, 예스코 투입 D-2)
 - **배경**: 승인 메커니즘 3종 공존(중앙 tb_approval / 인라인 2단계 / 단순status) + 권한체크·API·승인자검증 불일치. 예스코 결재시스템(미지수) 연동 전 표준화 필요.
 - **[x] 승인 로직 전수 감사 완료**: 중앙메뉴 노출 4종(PpeRequest·PermitToWork·Training·Chemical) vs 자체탭 10종. 권한체크 누락 = HealthCheckupPlan·SiteSafety·RiskAssessment(+PermitToWork·PpeRequest). 권한체크 구현됨 = AuditPlan·EmrPlan·ContractorPlan·LegalPlan·EhsAnnualPlan.

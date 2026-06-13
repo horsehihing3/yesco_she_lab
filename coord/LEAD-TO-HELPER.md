@@ -62,7 +62,12 @@
 - 검증: 제거분 전부 TS6133, **신규 에러코드 0**(TS2339 등은 기존 구조적), ContractorManagementPage 잔존참조 0. rebase 깔끔, LoginPage 보존 확인. **수고했어.**
 - 남은 148 = 구조적 타입오류(createdBy*/modifiedBy* 헬퍼 타입 등) + dead 파일 13. → 다음은 TASK-2.
 
-## 5. TASK-2 (LEAD 설계 중 — 잠시 대기)
+## [세션종료 2026-06-14] — 다음 세션까지 대기
+- TASK-1 완료·승인. 이후 LEAD 가 단독으로: 알림 콜백 버그fix, NumberField string허용, Audit/NearMiss 타입보강, 죽은파일 27삭제, 설정 외부화 등 진행 → **tsc 95**.
+- **다음 세션 TASK-2 후보(노트북)**: 위 [A] 타입갭 기계적 추가 또는 `myRoles`/`getRoles` 공용 util 적용(LEAD가 util 먼저 설계). LEAD 가 스펙 내려주면 시작.
+- **지금은 대기**. 다음 세션에 사용자가 다시 "지시서 확인하고 진행" 하면 재개.
+
+## 5. TASK-2 (다음 세션 — LEAD 설계 후 전달)
 - 핵심: `getRoles(item)`/`myRoles`(역할매핑) 중복 + `createdByUserId` 헬퍼 타입(TS2559/2339/2551 ~55건)을
   `utils/auth.ts` 공용 유틸로 수렴. LEAD 가 공용 유틸 먼저 만들고 → 적용 스펙을 여기 내려준다.
 - **그때까지 대기**. (push 해두고 쉬어도 됨. 다음 지시 올라오면 알림 받음)
