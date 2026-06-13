@@ -62,46 +62,14 @@
 - 검증: 제거분 전부 TS6133, **신규 에러코드 0**(TS2339 등은 기존 구조적), ContractorManagementPage 잔존참조 0. rebase 깔끔, LoginPage 보존 확인. **수고했어.**
 - 남은 148 = 구조적 타입오류(createdBy*/modifiedBy* 헬퍼 타입 등) + dead 파일 13. → 다음은 TASK-2.
 
-## 5. TASK-2A — 타입 갭 메우기 (HELPER 담당 · 2026-06-14 세션13 LEAD 지시)
+## [완료] TASK-2A + TASK-2B — LEAD 단독 처리 (2026-06-14)
+- HELPER 부재 중 LEAD 가 2A(타입갭)+2B(실버그) 동시 완료. **tsc 95→0**.
+- commit `619c2ff` (rebase 후 push 완료).
+- 수정 파일: diseasePreventionMgmt/occupationalDisease/ehsManager/emergencyExtended/user/nearMiss/siteSafety .types.ts + healthCheckupRecordApi.ts + 11개 컴포넌트/페이지.
 
-**배경**: 각 탭의 로컬 `getRoles = (item: { createdByUserId?: number | null }) => ...` 에
-`getRoles(selected ?? {})` 로 넘기는 도메인 타입에 `createdByUserId` 가 없어서 TS2559/TS2345 발생.
-타입에 필드만 추가하면 해소된다. **컴포넌트(.tsx) 는 절대 건드리지 말 것** — 타입 파일만 수정.
-
-**현재 tsc = 95** (`cd frontend && npx tsc --noEmit 2>&1 | grep -c "error TS"`).
-
-**컨벤션 레퍼런스**: `emergencyExtended.types.ts` 의 `EmergencyPlan` — 이미 `createdByUserId?: number | null` 등 올바른 형태로 들어가 있음. 똑같이 맞춰라.
-
-### 추가할 필드 (이 표 외엔 건드리지 말 것)
-
-| 파일 | 인터페이스 | 추가 필드 | 해소 |
-|---|---|---|---|
-| `types/diseasePreventionMgmt.types.ts` | DpHearing, DpInfect, DpMsd, DpRespi, DpStress, DpThermal | `createdByUserId?: number \| null` | 18 |
-| `types/occupationalDisease.types.ts` | OdExposure, OdOrg, OdWorker, OdAftercare, OdFitness | `createdByUserId?: number \| null` | 15 |
-| `types/healthCheckup.types.ts` | HealthCheckupRecord | `createdByUserId?: number \| null` | 1 |
-| `types/ehsManager.types.ts` | EhsManager | `createdByUserId?: number \| null` | 2 |
-| `types/emergencyExtended.types.ts` | EmergencyContact | `createdByUserId?: number \| null` | 3 |
-| `types/emergencyExtended.types.ts` | EmergencyPlan | `modifiedByTeam?: string \| null` + `modifiedByPosition?: string \| null` | 4 |
-
-**합계 ~43건 해소** (95 → ~52 목표). ※ OdAftercare/OdFitness 6건은 LEAD가 `selected`→`selectedAft/Fit` 크래시버그 수정하며 드러난 타입갭(같은 패턴).
-
-**철칙**:
-1. 위 표의 **필드만** 추가. 인터페이스에 해당 필드가 **이미 있으면 건너뛰기**(중복 추가 금지). 추가 전 인터페이스 본문을 읽어 확인.
-2. `.tsx` / `.ts`(컴포넌트·로직) 파일은 **절대 수정 금지**. `types/*.types.ts` 6개만.
-3. 파일 하나 끝낼 때마다 `npx tsc --noEmit 2>&1 | grep -c "error TS"` → **카운트 감소** + **신규 에러코드 0**. 아니면 되돌리고 `[블로커]`.
-4. 커밋 단위 = 타입 파일 1개. 예: `fix(types): add createdByUserId to Dp* interfaces (getRoles 갭)`.
-
-**수용 기준**(완료 보고): 시작/종료 tsc 카운트, 수정 파일·인터페이스 목록, "신규 에러코드 0" 문구, 커밋 목록.
-
-## 6. DO NOT TOUCH — TASK-2 라운드 (LEAD 가 버그조사·판단으로 처리 중)
-아래는 타입 갭처럼 보여도 **오타 버그/반쪽 기능/판단필요** 라 LEAD 가 직접 처리한다. 손대지 말 것:
-- `types/chemical.types.ts` (Chemical) — `.handler` 는 실필드 `handlerName` 오타 버그(LEAD가 .tsx 수정).
-- `types/file.types.ts` (FileMetadata) — `.fileName` 은 실필드 `originalFilename` 오타 버그.
-- `types/user.types.ts` (User) — `position`/`active` 는 판단 필요.
-- `types/siteSafety.types.ts` (SiteSafetyPlan/Request) — `inspector*` 는 백엔드 미구현 서명기능, `modifiedBy` 판단필요.
-- 모든 `.tsx` 파일, `pages/*`, `App.tsx` 등 — LEAD 가 TS2304/TS2345/TS2339 버그건 처리 중.
+## 5. TASK-3 — (다음 지시 대기)
+현재 **대기 중** — 다음 작업 지시 전까지 pull 후 대기.
 
 ---
-### 첫 응답으로 해 줄 것
-`git pull --rebase origin yesco-dev` 후 `coord/HELPER-TO-LEAD.md` 에
-`[진행] TASK-2A 시작 — diseasePreventionMgmt.types.ts 부터` 로 시작하고, 타입 파일 하나 끝낼 때마다 카운트와 함께 한 줄씩 추가해 줘.
+### 현재 할 일
+`git pull --rebase origin yesco-dev` 후 `coord/HELPER-TO-LEAD.md` 에 `[완료] sync 완료, TASK-3 지시 대기` 보고.
