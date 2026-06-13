@@ -62,20 +62,46 @@
 - 검증: 제거분 전부 TS6133, **신규 에러코드 0**(TS2339 등은 기존 구조적), ContractorManagementPage 잔존참조 0. rebase 깔끔, LoginPage 보존 확인. **수고했어.**
 - 남은 148 = 구조적 타입오류(createdBy*/modifiedBy* 헬퍼 타입 등) + dead 파일 13. → 다음은 TASK-2.
 
-## [세션종료 2026-06-14] — 다음 세션까지 대기
-- TASK-1 완료·승인. 이후 LEAD 가 단독으로: 알림 콜백 버그fix, NumberField string허용, Audit/NearMiss 타입보강, 죽은파일 27삭제, 설정 외부화 등 진행 → **tsc 95**.
-- **다음 세션 TASK-2 후보(노트북)**: 위 [A] 타입갭 기계적 추가 또는 `myRoles`/`getRoles` 공용 util 적용(LEAD가 util 먼저 설계). LEAD 가 스펙 내려주면 시작.
-- **지금은 대기**. 다음 세션에 사용자가 다시 "지시서 확인하고 진행" 하면 재개.
+## 5. TASK-2A — 타입 갭 메우기 (HELPER 담당 · 2026-06-14 세션13 LEAD 지시)
 
-## 5. TASK-2 (다음 세션 — LEAD 설계 후 전달)
-- 핵심: `getRoles(item)`/`myRoles`(역할매핑) 중복 + `createdByUserId` 헬퍼 타입(TS2559/2339/2551 ~55건)을
-  `utils/auth.ts` 공용 유틸로 수렴. LEAD 가 공용 유틸 먼저 만들고 → 적용 스펙을 여기 내려준다.
-- **그때까지 대기**. (push 해두고 쉬어도 됨. 다음 지시 올라오면 알림 받음)
-- (구 안내)
-- 구조적 타입오류 일괄 수정: `NumberField` 의 `value` prop `string|number` 허용(공용 1파일),
-  `createdByUserId` 헬퍼 타입(각 탭 `getRoles`/`canEditDraft` 파라미터) 완화. → 설계서 내려오면 적용/검증.
+**배경**: 각 탭의 로컬 `getRoles = (item: { createdByUserId?: number | null }) => ...` 에
+`getRoles(selected ?? {})` 로 넘기는 도메인 타입에 `createdByUserId` 가 없어서 TS2559/TS2345 발생.
+타입에 필드만 추가하면 해소된다. **컴포넌트(.tsx) 는 절대 건드리지 말 것** — 타입 파일만 수정.
+
+**현재 tsc = 95** (`cd frontend && npx tsc --noEmit 2>&1 | grep -c "error TS"`).
+
+**컨벤션 레퍼런스**: `emergencyExtended.types.ts` 의 `EmergencyPlan` — 이미 `createdByUserId?: number | null` 등 올바른 형태로 들어가 있음. 똑같이 맞춰라.
+
+### 추가할 필드 (이 표 외엔 건드리지 말 것)
+
+| 파일 | 인터페이스 | 추가 필드 | 해소 |
+|---|---|---|---|
+| `types/diseasePreventionMgmt.types.ts` | DpHearing, DpInfect, DpMsd, DpRespi, DpStress, DpThermal | `createdByUserId?: number \| null` | 18 |
+| `types/occupationalDisease.types.ts` | OdExposure, OdOrg, OdWorker | `createdByUserId?: number \| null` | 9 |
+| `types/healthCheckup.types.ts` | HealthCheckupRecord | `createdByUserId?: number \| null` | 1 |
+| `types/ehsManager.types.ts` | EhsManager | `createdByUserId?: number \| null` | 2 |
+| `types/emergencyExtended.types.ts` | EmergencyContact | `createdByUserId?: number \| null` | 3 |
+| `types/emergencyExtended.types.ts` | EmergencyPlan | `modifiedByTeam?: string \| null` + `modifiedByPosition?: string \| null` | 4 |
+
+**합계 ~37건 해소** (95 → ~58 목표).
+
+**철칙**:
+1. 위 표의 **필드만** 추가. 인터페이스에 해당 필드가 **이미 있으면 건너뛰기**(중복 추가 금지). 추가 전 인터페이스 본문을 읽어 확인.
+2. `.tsx` / `.ts`(컴포넌트·로직) 파일은 **절대 수정 금지**. `types/*.types.ts` 6개만.
+3. 파일 하나 끝낼 때마다 `npx tsc --noEmit 2>&1 | grep -c "error TS"` → **카운트 감소** + **신규 에러코드 0**. 아니면 되돌리고 `[블로커]`.
+4. 커밋 단위 = 타입 파일 1개. 예: `fix(types): add createdByUserId to Dp* interfaces (getRoles 갭)`.
+
+**수용 기준**(완료 보고): 시작/종료 tsc 카운트, 수정 파일·인터페이스 목록, "신규 에러코드 0" 문구, 커밋 목록.
+
+## 6. DO NOT TOUCH — TASK-2 라운드 (LEAD 가 버그조사·판단으로 처리 중)
+아래는 타입 갭처럼 보여도 **오타 버그/반쪽 기능/판단필요** 라 LEAD 가 직접 처리한다. 손대지 말 것:
+- `types/chemical.types.ts` (Chemical) — `.handler` 는 실필드 `handlerName` 오타 버그(LEAD가 .tsx 수정).
+- `types/file.types.ts` (FileMetadata) — `.fileName` 은 실필드 `originalFilename` 오타 버그.
+- `types/user.types.ts` (User) — `position`/`active` 는 판단 필요.
+- `types/siteSafety.types.ts` (SiteSafetyPlan/Request) — `inspector*` 는 백엔드 미구현 서명기능, `modifiedBy` 판단필요.
+- 모든 `.tsx` 파일, `pages/*`, `App.tsx` 등 — LEAD 가 TS2304/TS2345/TS2339 버그건 처리 중.
 
 ---
 ### 첫 응답으로 해 줄 것
-`coord/HELPER-TO-LEAD.md` 에 `[진행] TASK-1 시작 — components/chemical 부터` 로 시작하고,
-각 디렉터리 완료마다 한 줄씩 카운트와 함께 추가해 줘.
+`git pull --rebase origin yesco-dev` 후 `coord/HELPER-TO-LEAD.md` 에
+`[진행] TASK-2A 시작 — diseasePreventionMgmt.types.ts 부터` 로 시작하고, 타입 파일 하나 끝낼 때마다 카운트와 함께 한 줄씩 추가해 줘.
