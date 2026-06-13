@@ -4,7 +4,8 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import { useState, useEffect } from 'react'
 
 interface NumberFieldProps {
-  value: number | null | undefined
+  /** 느슨한 폼 상태(string|number)도 허용 — 내부에서 number|null 로 1회 정규화한다. */
+  value: number | string | null | undefined
   onChange: (value: number | null) => void
   min?: number
   max?: number
@@ -25,6 +26,13 @@ interface NumberFieldProps {
   sx?: SxProps<Theme>
 }
 
+/** prop 으로 들어온 number|string|null|undefined 을 number|null 로 정규화. */
+const toNum = (v: number | string | null | undefined): number | null => {
+  if (v == null || v === '') return null
+  const n = typeof v === 'number' ? v : parseFloat(v)
+  return Number.isNaN(n) ? null : n
+}
+
 const formatWithComma = (n: number): string => {
   // 음수도 처리: 절대값 격삼위 콤마 + 부호
   const sign = n < 0 ? '-' : ''
@@ -33,7 +41,7 @@ const formatWithComma = (n: number): string => {
 }
 
 const NumberField = ({
-  value,
+  value: valueProp,
   onChange,
   min,
   max,
@@ -51,6 +59,7 @@ const NumberField = ({
   thousandSeparator = true,
   sx,
 }: NumberFieldProps) => {
+  const value = toNum(valueProp)
   const precision = step.toString().includes('.') ? step.toString().split('.')[1].length : 0
 
   // ===== readOnly: Typography 렌더 (상세 모드) =====

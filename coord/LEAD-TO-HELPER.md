@@ -21,7 +21,9 @@
 
 ## 2. 현재 상태 (LEAD 가 공유)
 - 브랜치 `yesco-dev` (= `main` 과 동일). 백엔드는 LEAD PC 에서 7501, 프론트 7500 가동 중(네 PC 에선 띄울 필요 없음).
-- 프론트 `tsc` baseline: **352 에러** (`cd frontend && npx tsc --noEmit 2>&1 | grep -c "error TS"`).
+- 프론트 `tsc` baseline: **313 에러** (`cd frontend && npx tsc --noEmit 2>&1 | grep -c "error TS"`).
+  - (LEAD 진행분: vite-env.d.ts 로 import.meta.env 12건, NumberField value prop 확장으로 string|number 39건 해소 → 364→313.)
+  - 남은 313 중 다수가 TS6133(미사용) = **TASK-1 대상**.
 - 죽은 파일 감사 완료 → `coord/DEAD_FILES_PENDING.md` (삭제 결정 대기, **건드리지 말 것**).
 
 ## 3. TASK-1 — 프론트 미사용 코드 제거 (tsc TS6133)
