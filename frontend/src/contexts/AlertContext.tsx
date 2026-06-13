@@ -13,7 +13,8 @@ interface AlertContextType {
   showError: (message: string, options?: AlertOptions) => Promise<boolean>;
   showWarning: (message: string, options?: AlertOptions) => Promise<boolean>;
   showInfo: (message: string, options?: AlertOptions) => Promise<boolean>;
-  showConfirm: (message: string, options?: AlertOptions) => Promise<boolean>;
+  // 2번째 인자로 AlertOptions 또는 레거시 onConfirm 콜백(확인 시 실행) 허용.
+  showConfirm: (message: string, options?: AlertOptions | (() => void)) => Promise<boolean>;
 }
 
 interface DialogState {
@@ -65,7 +66,12 @@ export const AlertProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return showAlert('info', message, options);
   }, [showAlert]);
 
-  const showConfirm = useCallback((message: string, options?: AlertOptions) => {
+  const showConfirm = useCallback((message: string, options?: AlertOptions | (() => void)) => {
+    // 레거시 콜백 형태 지원: showConfirm(msg, () => onConfirm()). 확인 시 콜백 실행(미await 호출부 복구).
+    if (typeof options === 'function') {
+      const onConfirm = options;
+      return showAlert('confirm', message).then((ok) => { if (ok) onConfirm(); return ok; });
+    }
     return showAlert('confirm', message, options);
   }, [showAlert]);
 
