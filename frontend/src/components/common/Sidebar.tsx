@@ -8,7 +8,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography,
   Tooltip,
   Collapse,
 } from '@mui/material'
@@ -18,9 +17,7 @@ import BarChartIcon from '@mui/icons-material/BarChart'
 import SecurityIcon from '@mui/icons-material/Security'
 import AssessmentIcon from '@mui/icons-material/Assessment'
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
-import EngineeringIcon from '@mui/icons-material/Engineering'
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
-import CoronavirusIcon from '@mui/icons-material/Coronavirus'
 import ApprovalIcon from '@mui/icons-material/FactCheck'
 import FactCheckIcon from '@mui/icons-material/FactCheck'
 import NatureIcon from '@mui/icons-material/Nature'
@@ -38,18 +35,14 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop'
 import Co2Icon from '@mui/icons-material/Co2'
 import GavelIcon from '@mui/icons-material/Gavel'
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
-import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew'
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation'
 import SensorsIcon from '@mui/icons-material/Sensors'
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
-import InsightsIcon from '@mui/icons-material/Insights'
 import TrackChangesIcon from '@mui/icons-material/TrackChanges'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import SchoolIcon from '@mui/icons-material/School'
 import HandshakeIcon from '@mui/icons-material/Handshake'
 import RadioactiveIcon from '@mui/icons-material/Bolt'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
-import FiberNewIcon from '@mui/icons-material/FiberNew'
 import AddBusinessIcon from '@mui/icons-material/AddBusiness'
 import TuneIcon from '@mui/icons-material/Tune'
 import { useThemeMode } from '../../context/ThemeContext'

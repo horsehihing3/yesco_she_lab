@@ -208,17 +208,6 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
     onError: () => showError(t('common.error')),
   })
 
-  const approveMutation = useMutation({
-    mutationFn: (id: number) => contractorPlanApi.approve(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contractor'] })
-      queryClient.invalidateQueries({ queryKey: ['contractorApproval'] })
-      showSuccess(t('common.saved'))
-      handleBackToList()
-    },
-    onError: () => showError(t('common.error')),
-  })
-
   const transitionMutation = useMutation({
     mutationFn: ({ id, action, rejectReason }: { id: number; action: 'submit' | 'approve' | 'reject' | 'completionSubmit' | 'complete'; rejectReason?: string }) =>
       contractorPlanApi.transition(id, action, rejectReason),
@@ -234,34 +223,12 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
     },
   })
 
-  const rejectMutation = useMutation({
-    mutationFn: (id: number) => contractorPlanApi.update(id, { ...form, status: 'REJECTED', title: selectedItem?.title || '' }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contractor'] })
-      queryClient.invalidateQueries({ queryKey: ['contractorApproval'] })
-      showSuccess(t('common.saved'))
-      handleBackToList()
-    },
-    onError: () => showError(t('common.error')),
-  })
-
   const deleteMutation = useMutation({
     mutationFn: (id: number) => contractorPlanApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contractor'] })
       queryClient.invalidateQueries({ queryKey: ['contractorApproval'] })
       showSuccess(t('common.deleted'))
-      handleBackToList()
-    },
-    onError: () => showError(t('common.error')),
-  })
-
-  const submitMutation = useMutation({
-    mutationFn: (id: number) => contractorPlanApi.update(id, { title: selectedItem?.title || '', status: 'REQUESTED' }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contractor'] })
-      queryClient.invalidateQueries({ queryKey: ['contractorApproval'] })
-      showSuccess(t('common.saved'))
       handleBackToList()
     },
     onError: () => showError(t('common.error')),

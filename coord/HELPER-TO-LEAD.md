@@ -7,7 +7,5 @@
 
 ---
 
-<!-- 여기 아래에 시간순으로 보고를 추가하세요. 예:
 ## [진행] 2026-06-14 · TASK-1 시작
-- components/chemical 정리 중. 시작 tsc=352.
--->
+- 시작 tsc 에러 = **313**. components/chemical 부터 순차 정리 진행.

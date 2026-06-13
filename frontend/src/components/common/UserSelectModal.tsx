@@ -136,19 +136,6 @@ const collectAllNodeIds = (nodes: CompanyTreeNode[]): string[] => {
   return ids
 }
 
-// 트리 검색 (label 매칭 + 부모 경로 유지)
-const filterDeptTree = (nodes: CompanyTreeNode[], query: string): CompanyTreeNode[] => {
-  const lower = query.toLowerCase()
-  const filterNode = (node: CompanyTreeNode): CompanyTreeNode | null => {
-    const filteredChildren = (node.children || []).map(filterNode).filter((c): c is CompanyTreeNode => c !== null)
-    if (node.label.toLowerCase().includes(lower) || filteredChildren.length > 0) {
-      return { ...node, children: filteredChildren }
-    }
-    return null
-  }
-  return nodes.map(filterNode).filter((n): n is CompanyTreeNode => n !== null)
-}
-
 const UserSelectModal = ({
   open,
   onClose,
@@ -166,7 +153,7 @@ const UserSelectModal = ({
   const [tempSelected, setTempSelected] = useState<UserInfo[]>([])
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [deptKeyword, setDeptKeyword] = useState('')
-  const [userKeyword, setUserKeyword] = useState('')
+  const [, setUserKeyword] = useState('')
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const allowExpansionRef = useRef(false)
 

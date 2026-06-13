@@ -77,7 +77,6 @@ const fontFamily = [
 const createBaseTheme = (colors: typeof lightColors, mode: 'light' | 'dark', variant: 'light' | 'dark' | 'yesco' = mode): Theme => {
   const isYesco = variant === 'yesco'
   const yescoNavy = '#0F2147'
-  const yescoNavyDeep = '#0A1733'
   const yescoRed = '#E60012'
   const theme = createTheme({
     palette: {

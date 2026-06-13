@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Box, Typography, useTheme } from '@mui/material'
 import { BodyComponent } from 'reactjs-human-body'
 import type { PartsInput } from 'reactjs-human-body/dist/components/BodyComponent/BodyComponent'
