@@ -83,3 +83,23 @@
 - `api/oshSignApi.ts` — raw `axios` 유지. `/osh-sign/{token}`은 공개 엔드포인트로 JWT 헤더 불필요.
   `(import.meta as any).env?.VITE_API_URL` 캐스팅으로 TS2339 회피.
 
+---
+
+## [완료] 2026-06-13 · 작업 3 — Dp·Od 도메인 raw→DTO 전환
+
+### 신규 DTO (12종)
+| DTO | PersonRef |
+|-----|-----------|
+| `DpCvdResponse`, `DpStressResponse`, `DpRespiResponse`, `DpHearingResponse`, `DpThermalResponse`, `DpInfectResponse` | 있음 (createdBy flat 4필드) |
+| `OdPlanResponse`, `OdWorkerResponse`, `OdOrgResponse`, `OdExposureResponse`, `OdAftercareResponse` | 있음 (createdBy flat 4필드) |
+| `OdFitnessResponse` | 없음 (PersonRef 미포함 단순 DTO) |
+
+### 컨트롤러 수정
+- `DiseasePreventionMgmtController` — cvd/stress/respi/hearing/thermal/infect 6개 도메인 DTO 전환 + `@Tag(name="Disease Prevention Mgmt")` 추가
+- `OccupationalDiseaseController` — plans/workers/orgs/exposures/aftercare/fitness 6개 도메인 DTO 전환 (`@RequestBody` 는 모델 그대로 유지)
+
+### 검증
+- `./gradlew.bat compileJava` → **BUILD SUCCESSFUL** (EXIT 0)
+- wire-diff: 백엔드 서버 미기동 상태라 `verify_wire.sh` 실행 불가. compileJava 통과 + 모델 필드 1:1 매핑 수작업 확인으로 대체.
+  Opus 판단 요청: 서버 기동 후 wire-diff 검증 필요 시 알려달라.
+
