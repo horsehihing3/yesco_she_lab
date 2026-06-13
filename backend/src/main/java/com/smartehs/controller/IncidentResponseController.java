@@ -5,6 +5,7 @@ import com.smartehs.model.IncidentResponse;
 import com.smartehs.service.IncidentResponseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/incident-response")
 @RequiredArgsConstructor
+@Tag(name = "Incident Response", description = "사고 대응 관리")
 public class IncidentResponseController {
 
     private final IncidentResponseService svc;

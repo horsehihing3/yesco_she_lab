@@ -5,6 +5,7 @@ import com.smartehs.model.*;
 import com.smartehs.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/partner")
 @RequiredArgsConstructor
+@Tag(name = "Partner", description = "협력사 평가·방문자 관리")
 public class PartnerController {
 
     private final PartnerService svc;

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/health-checkup-records")
 @RequiredArgsConstructor
+@Tag(name = "Health Checkup Record", description = "건강검진 기록 관리")
 public class HealthCheckupRecordController {
 
     private final HealthCheckupRecordMapper mapper;

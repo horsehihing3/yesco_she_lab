@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/site-safety-plans")
 @RequiredArgsConstructor
+@Tag(name = "Site Safety Plan", description = "현장 안전 작업계획")
 public class SiteSafetyPlanController {
 
     private final SiteSafetyPlanService svc;

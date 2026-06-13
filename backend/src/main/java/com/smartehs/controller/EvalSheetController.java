@@ -7,6 +7,7 @@ import com.smartehs.model.EvalSheetItem;
 import com.smartehs.model.EvalSheetMeta;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/eval-sheet")
 @RequiredArgsConstructor
+@Tag(name = "Eval Sheet", description = "평가표 메타·항목")
 public class EvalSheetController {
 
     private final EvalSheetItemMapper itemMapper;

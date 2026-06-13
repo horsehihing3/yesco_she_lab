@@ -5,6 +5,7 @@ import com.smartehs.model.*;
 import com.smartehs.service.FireSafetyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/fire-safety")
 @RequiredArgsConstructor
+@Tag(name = "Fire Safety", description = "소방·방재 안전 관리")
 public class FireSafetyController {
 
     private final FireSafetyService svc;

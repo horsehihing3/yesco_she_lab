@@ -5,6 +5,7 @@ import com.smartehs.model.*;
 import com.smartehs.service.PermitLifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/permit-lifecycle")
 @RequiredArgsConstructor
+@Tag(name = "Permit Lifecycle", description = "인허가 생애주기 관리")
 public class PermitLifecycleController {
 
     private final PermitLifecycleService svc;

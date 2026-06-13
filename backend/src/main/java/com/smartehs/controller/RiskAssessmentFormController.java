@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/risk-assessment-forms")
 @RequiredArgsConstructor
+@Tag(name = "Risk Assessment Form", description = "위험성 평가표")
 public class RiskAssessmentFormController {
 
     private final RiskAssessmentFormService formService;

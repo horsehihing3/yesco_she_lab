@@ -42,7 +42,7 @@
 - PersonRef 없는 단순 템플릿: `dto/response/AccidentReportResponse.java`
 
 **네가 맡을 파일 (이것만)**:
-- `controller/DiseasePreventionMgmtController.java` — cvd/stress/respi/hearing/thermal/infect 6개 도메인 (msd는 이미 완료, 따라하면 됨)
+- `controller/DiseasePreventionMgmtController.java` — cvd/stress/respi/hearing/thermal/infect 6개 도메인 (msd는 이미 완료, 따라하면 됨). **추가: 이 컨트롤러에 클래스 `@Tag` 누락 — 작업3 하는 김에 `@Tag(name="Disease Prevention Mgmt", description="질병 예방 관리")` + import 추가**(다른 120개 컨트롤러는 Opus가 이미 @Tag 통일 완료, 이 1개만 충돌회피로 남겨둠).
 - `controller/OccupationalDiseaseController.java` — Od* 6개 (OdPlan/OdWorker/OdOrg/OdExposure/OdAftercare = PersonRef有, OdFitness = PersonRef無)
 - 신규 DTO 12종: `dto/response/{DpCvd,DpStress,DpRespi,DpHearing,DpThermal,DpInfect}Response.java`, `{OdPlan,OdWorker,OdOrg,OdExposure,OdAftercare,OdFitness}Response.java`
 

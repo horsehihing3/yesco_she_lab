@@ -12,11 +12,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/safety-hazard-forms")
 @RequiredArgsConstructor
+@Tag(name = "Safety Hazard Form", description = "안전 위험요인 양식")
 public class SafetyHazardController {
 
     private final SafetyHazardService service;

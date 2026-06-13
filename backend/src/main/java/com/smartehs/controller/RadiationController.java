@@ -8,6 +8,7 @@ import com.smartehs.model.*;
 import com.smartehs.service.RadiationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/radiation")
 @RequiredArgsConstructor
+@Tag(name = "Radiation", description = "방사선 안전 관리")
 public class RadiationController {
 
     private final RadiationService svc;

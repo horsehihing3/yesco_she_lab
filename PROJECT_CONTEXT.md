@@ -14,6 +14,11 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - **[x] raw→DTO 레퍼런스 2종 + 검증 완료**: `AccidentReportResponse`(PersonRef無)·`DpMsdResponse`(PersonRef有 템플릿) + 컨트롤러 전환. `coord/verify_wire.sh` 작성(전후 GET `.data` 동일성 diff). DpMsd 실데이터 6341B **wire byte-identical 검증 통과**. compileJava EXIT0, 서버 재기동 완료.
 - **[x] Opus 담당 양산 완료** (9 DTO, wire byte-identical 전수검증): EmergencyContact·AccidentClaim(+Doc)·Rad(Health/Dose/Worker)·ContractorRegistration(66필드)·ContractorPlan(58필드·PersonRef 4개)·ContractorWorker. 컨트롤러 5개 전환, compileJava EXIT0, 재기동 후 9개 GET `.data` 전후 동일 확인(verify_wire.sh).
 - **[ ] Sonnet 담당 양산**: Dp* 6 + Od* 6 (DiseasePreventionMgmtController·OccupationalDiseaseController, 프론트 작업 후) — 지시는 `coord/OPUS-TO-SONNET.md` 작업3.
+
+### ✅ 완료 — 표준화: Swagger @Tag 일관성 (2026-06-13 세션 11, Opus)
+- CLAUDE.md "Swagger 어노테이션 필수" 규칙 미준수 컨트롤러 16개 발견 → 15개에 클래스 `@Tag(name, description)` + import 추가. 순수 추가·wire/behavior 무영향, compileJava EXIT0.
+- 대상: EvalSheet·FireSafety·FloorDrawing·HealthCheckupRecord·IncidentResponse·Partner·PermitLifecycle·ProcessActivity·Radiation·RiskAssessment·RiskAssessmentForm·SafetyAccident·SafetyHazard·SiteSafetyPlan·Translation. **120/121 커버**.
+- 남은 1개 `DiseasePreventionMgmtController`는 Sonnet 작업3(DTO) 충돌회피로 제외 → 작업3 때 함께 추가하도록 지시.
 - **[ ] 후순위(convert-on-touch)**: 비개인 Rad(Source/Zone/Measurement/Drill/Accident)·Partner(Eval/Visitor). 전체 raw 53컨트롤러 중 비민감은 손댈 때 전환.
 
 ### ✅ 완료 — 작성자/승인자 표시 팀·성명·직위 풀포맷 통일 (2026-06-13 세션 10)

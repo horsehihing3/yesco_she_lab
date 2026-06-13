@@ -9,6 +9,7 @@ import com.smartehs.service.FloorDrawingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/floor-drawings")
 @RequiredArgsConstructor
+@Tag(name = "Floor Drawing", description = "도면 관리")
 public class FloorDrawingController {
 
     private final FloorDrawingService floorDrawingService;
