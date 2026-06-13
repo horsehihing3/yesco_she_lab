@@ -1,6 +1,9 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.dto.response.RadDoseResponse;
+import com.smartehs.dto.response.RadHealthResponse;
+import com.smartehs.dto.response.RadWorkerResponse;
 import com.smartehs.model.*;
 import com.smartehs.service.RadiationService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/radiation")
@@ -24,15 +28,15 @@ public class RadiationController {
     @DeleteMapping("/sources/{id}") public ResponseEntity<ApiResponse<Void>> deleteSrc(@PathVariable Long id) { svc.deleteSource(id); return ResponseEntity.ok(ApiResponse.success(null)); }
 
     // Worker
-    @GetMapping("/workers") public ResponseEntity<ApiResponse<List<RadWorker>>> listWk() { return ResponseEntity.ok(ApiResponse.success(svc.findAllWorkers())); }
-    @PostMapping("/workers") public ResponseEntity<ApiResponse<RadWorker>> createWk(@RequestBody RadWorker e) { return ResponseEntity.ok(ApiResponse.success(svc.createWorker(e))); }
-    @PutMapping("/workers/{id}") public ResponseEntity<ApiResponse<RadWorker>> updateWk(@PathVariable Long id, @RequestBody RadWorker e) { return ResponseEntity.ok(ApiResponse.success(svc.updateWorker(id, e))); }
+    @GetMapping("/workers") public ResponseEntity<ApiResponse<List<RadWorkerResponse>>> listWk() { return ResponseEntity.ok(ApiResponse.success(svc.findAllWorkers().stream().map(RadWorkerResponse::from).collect(Collectors.toList()))); }
+    @PostMapping("/workers") public ResponseEntity<ApiResponse<RadWorkerResponse>> createWk(@RequestBody RadWorker e) { return ResponseEntity.ok(ApiResponse.success(RadWorkerResponse.from(svc.createWorker(e)))); }
+    @PutMapping("/workers/{id}") public ResponseEntity<ApiResponse<RadWorkerResponse>> updateWk(@PathVariable Long id, @RequestBody RadWorker e) { return ResponseEntity.ok(ApiResponse.success(RadWorkerResponse.from(svc.updateWorker(id, e)))); }
     @DeleteMapping("/workers/{id}") public ResponseEntity<ApiResponse<Void>> deleteWk(@PathVariable Long id) { svc.deleteWorker(id); return ResponseEntity.ok(ApiResponse.success(null)); }
 
     // Dose
-    @GetMapping("/doses") public ResponseEntity<ApiResponse<List<RadDose>>> listDose() { return ResponseEntity.ok(ApiResponse.success(svc.findAllDoses())); }
-    @PostMapping("/doses") public ResponseEntity<ApiResponse<RadDose>> createDose(@RequestBody RadDose e) { return ResponseEntity.ok(ApiResponse.success(svc.createDose(e))); }
-    @PutMapping("/doses/{id}") public ResponseEntity<ApiResponse<RadDose>> updateDose(@PathVariable Long id, @RequestBody RadDose e) { return ResponseEntity.ok(ApiResponse.success(svc.updateDose(id, e))); }
+    @GetMapping("/doses") public ResponseEntity<ApiResponse<List<RadDoseResponse>>> listDose() { return ResponseEntity.ok(ApiResponse.success(svc.findAllDoses().stream().map(RadDoseResponse::from).collect(Collectors.toList()))); }
+    @PostMapping("/doses") public ResponseEntity<ApiResponse<RadDoseResponse>> createDose(@RequestBody RadDose e) { return ResponseEntity.ok(ApiResponse.success(RadDoseResponse.from(svc.createDose(e)))); }
+    @PutMapping("/doses/{id}") public ResponseEntity<ApiResponse<RadDoseResponse>> updateDose(@PathVariable Long id, @RequestBody RadDose e) { return ResponseEntity.ok(ApiResponse.success(RadDoseResponse.from(svc.updateDose(id, e)))); }
     @DeleteMapping("/doses/{id}") public ResponseEntity<ApiResponse<Void>> deleteDose(@PathVariable Long id) { svc.deleteDose(id); return ResponseEntity.ok(ApiResponse.success(null)); }
 
     // Zone
@@ -48,9 +52,9 @@ public class RadiationController {
     @DeleteMapping("/measurements/{id}") public ResponseEntity<ApiResponse<Void>> deleteM(@PathVariable Long id) { svc.deleteMeasurement(id); return ResponseEntity.ok(ApiResponse.success(null)); }
 
     // Health
-    @GetMapping("/healths") public ResponseEntity<ApiResponse<List<RadHealth>>> listH() { return ResponseEntity.ok(ApiResponse.success(svc.findAllHealths())); }
-    @PostMapping("/healths") public ResponseEntity<ApiResponse<RadHealth>> createH(@RequestBody RadHealth e) { return ResponseEntity.ok(ApiResponse.success(svc.createHealth(e))); }
-    @PutMapping("/healths/{id}") public ResponseEntity<ApiResponse<RadHealth>> updateH(@PathVariable Long id, @RequestBody RadHealth e) { return ResponseEntity.ok(ApiResponse.success(svc.updateHealth(id, e))); }
+    @GetMapping("/healths") public ResponseEntity<ApiResponse<List<RadHealthResponse>>> listH() { return ResponseEntity.ok(ApiResponse.success(svc.findAllHealths().stream().map(RadHealthResponse::from).collect(Collectors.toList()))); }
+    @PostMapping("/healths") public ResponseEntity<ApiResponse<RadHealthResponse>> createH(@RequestBody RadHealth e) { return ResponseEntity.ok(ApiResponse.success(RadHealthResponse.from(svc.createHealth(e)))); }
+    @PutMapping("/healths/{id}") public ResponseEntity<ApiResponse<RadHealthResponse>> updateH(@PathVariable Long id, @RequestBody RadHealth e) { return ResponseEntity.ok(ApiResponse.success(RadHealthResponse.from(svc.updateHealth(id, e)))); }
     @DeleteMapping("/healths/{id}") public ResponseEntity<ApiResponse<Void>> deleteH(@PathVariable Long id) { svc.deleteHealth(id); return ResponseEntity.ok(ApiResponse.success(null)); }
 
     // Accident

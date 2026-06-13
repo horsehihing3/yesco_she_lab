@@ -1,6 +1,7 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.dto.response.EmergencyContactResponse;
 import com.smartehs.model.EmergencyContact;
 import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.IdmUser;
@@ -26,28 +27,31 @@ public class EmergencyContactController {
 
     @GetMapping
     @Operation(summary = "비상 연락처 전체 목록 조회")
-    public ResponseEntity<ApiResponse<Page<EmergencyContact>>> findAll(
+    public ResponseEntity<ApiResponse<Page<EmergencyContactResponse>>> findAll(
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(emergencyContactService.findAll(pageable)));
+        return ResponseEntity.ok(ApiResponse.success(
+                emergencyContactService.findAll(pageable).map(EmergencyContactResponse::from)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "비상 연락처 상세 조회")
-    public ResponseEntity<ApiResponse<EmergencyContact>> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(emergencyContactService.findById(id)));
+    public ResponseEntity<ApiResponse<EmergencyContactResponse>> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+                EmergencyContactResponse.from(emergencyContactService.findById(id))));
     }
 
     @GetMapping("/type/{contactType}")
     @Operation(summary = "유형별 비상 연락처 조회")
-    public ResponseEntity<ApiResponse<Page<EmergencyContact>>> findByContactType(
+    public ResponseEntity<ApiResponse<Page<EmergencyContactResponse>>> findByContactType(
             @PathVariable String contactType,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(emergencyContactService.findByContactType(contactType, pageable)));
+        return ResponseEntity.ok(ApiResponse.success(
+                emergencyContactService.findByContactType(contactType, pageable).map(EmergencyContactResponse::from)));
     }
 
     @PostMapping
     @Operation(summary = "비상 연락처 등록")
-    public ResponseEntity<ApiResponse<EmergencyContact>> create(@RequestBody EmergencyContact emergencyContact, Authentication authentication) {
+    public ResponseEntity<ApiResponse<EmergencyContactResponse>> create(@RequestBody EmergencyContact emergencyContact, Authentication authentication) {
         if (authentication != null) {
             IdmUser u = idmMapper.findByUid(authentication.getName());
             if (u != null) {
@@ -57,13 +61,15 @@ public class EmergencyContactController {
                 emergencyContact.setCreatedByPosition(u.getTitleName());
             }
         }
-        return ResponseEntity.ok(ApiResponse.success(emergencyContactService.create(emergencyContact)));
+        return ResponseEntity.ok(ApiResponse.success(
+                EmergencyContactResponse.from(emergencyContactService.create(emergencyContact))));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "비상 연락처 수정")
-    public ResponseEntity<ApiResponse<EmergencyContact>> update(@PathVariable Long id, @RequestBody EmergencyContact emergencyContact) {
-        return ResponseEntity.ok(ApiResponse.success(emergencyContactService.update(id, emergencyContact)));
+    public ResponseEntity<ApiResponse<EmergencyContactResponse>> update(@PathVariable Long id, @RequestBody EmergencyContact emergencyContact) {
+        return ResponseEntity.ok(ApiResponse.success(
+                EmergencyContactResponse.from(emergencyContactService.update(id, emergencyContact))));
     }
 
     @DeleteMapping("/{id}")

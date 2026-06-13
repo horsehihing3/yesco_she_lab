@@ -24,6 +24,13 @@ PASS="${WIRE_PASS:-com4in!!}"
 ENDPOINTS=(
   "/accident-reports"
   "/disease-prevention-mgmt/msd"
+  "/emergency-contact"
+  "/accident-claims"
+  "/radiation/workers"
+  "/radiation/doses"
+  "/radiation/healths"
+  "/contractor-registrations"
+  "/contractor-plans"
 )
 
 norm() { python -c "import sys,json; o=json.load(sys.stdin); print(json.dumps(o.get('data'),sort_keys=True,ensure_ascii=False,indent=2))"; }

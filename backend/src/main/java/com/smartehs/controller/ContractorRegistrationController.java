@@ -1,6 +1,7 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.dto.response.ContractorRegistrationResponse;
 import com.smartehs.model.ContractorRegistration;
 import com.smartehs.service.ContractorRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,22 +29,24 @@ public class ContractorRegistrationController {
 
     @GetMapping
     @Operation(summary = "협력 업체 등록 목록 조회 (검색 + 상태 필터)")
-    public ResponseEntity<ApiResponse<Page<ContractorRegistration>>> search(
+    public ResponseEntity<ApiResponse<Page<ContractorRegistrationResponse>>> search(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String regStatus,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(service.search(keyword, regStatus, pageable)));
+        return ResponseEntity.ok(ApiResponse.success(
+                service.search(keyword, regStatus, pageable).map(ContractorRegistrationResponse::from)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "협력 업체 등록 상세 조회")
-    public ResponseEntity<ApiResponse<ContractorRegistration>> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(service.findById(id)));
+    public ResponseEntity<ApiResponse<ContractorRegistrationResponse>> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorRegistrationResponse.from(service.findById(id))));
     }
 
     @PostMapping
     @Operation(summary = "협력 업체 등록 생성")
-    public ResponseEntity<ApiResponse<ContractorRegistration>> create(
+    public ResponseEntity<ApiResponse<ContractorRegistrationResponse>> create(
             @RequestBody ContractorRegistration reg,
             Authentication authentication) {
         if (authentication != null) {
@@ -55,12 +58,13 @@ public class ContractorRegistrationController {
                 reg.setCreatedByPosition(u.getTitleName());
             }
         }
-        return ResponseEntity.ok(ApiResponse.success(service.create(reg)));
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorRegistrationResponse.from(service.create(reg))));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "협력 업체 등록 수정")
-    public ResponseEntity<ApiResponse<ContractorRegistration>> update(
+    public ResponseEntity<ApiResponse<ContractorRegistrationResponse>> update(
             @PathVariable Long id,
             @RequestBody ContractorRegistration reg,
             Authentication authentication) {
@@ -73,16 +77,18 @@ public class ContractorRegistrationController {
                 reg.setModifiedByUserId(u.getUidNumber());
             }
         }
-        return ResponseEntity.ok(ApiResponse.success(service.update(id, reg)));
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorRegistrationResponse.from(service.update(id, reg))));
     }
 
     @PatchMapping("/{id}/status")
     @Operation(summary = "등록 상태 변경 (APPROVED/REVIEW/HOLD)")
-    public ResponseEntity<ApiResponse<ContractorRegistration>> updateStatus(
+    public ResponseEntity<ApiResponse<ContractorRegistrationResponse>> updateStatus(
             @PathVariable Long id,
             @RequestBody Map<String, String> body) {
         String regStatus = body.get("regStatus");
-        return ResponseEntity.ok(ApiResponse.success(service.updateRegStatus(id, regStatus)));
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorRegistrationResponse.from(service.updateRegStatus(id, regStatus))));
     }
 
     @DeleteMapping("/{id}")

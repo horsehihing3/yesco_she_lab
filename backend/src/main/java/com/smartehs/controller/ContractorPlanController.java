@@ -1,6 +1,8 @@
 package com.smartehs.controller;
 
 import com.smartehs.dto.response.ApiResponse;
+import com.smartehs.dto.response.ContractorPlanResponse;
+import com.smartehs.dto.response.ContractorWorkerResponse;
 import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.ContractorPlan;
 import com.smartehs.model.ContractorWorker;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/contractor-plans")
@@ -30,28 +33,31 @@ public class ContractorPlanController {
 
     @GetMapping
     @Operation(summary = "협력사 계획 전체 목록 조회")
-    public ResponseEntity<ApiResponse<Page<ContractorPlan>>> findAll(
+    public ResponseEntity<ApiResponse<Page<ContractorPlanResponse>>> findAll(
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.findAll(pageable)));
+        return ResponseEntity.ok(ApiResponse.success(
+                contractorPlanService.findAll(pageable).map(ContractorPlanResponse::from)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "협력사 계획 상세 조회")
-    public ResponseEntity<ApiResponse<ContractorPlan>> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.findById(id)));
+    public ResponseEntity<ApiResponse<ContractorPlanResponse>> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorPlanResponse.from(contractorPlanService.findById(id))));
     }
 
     @GetMapping("/status/{status}")
     @Operation(summary = "상태별 협력사 계획 조회")
-    public ResponseEntity<ApiResponse<Page<ContractorPlan>>> findByStatus(
+    public ResponseEntity<ApiResponse<Page<ContractorPlanResponse>>> findByStatus(
             @PathVariable String status,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.findByStatus(status, pageable)));
+        return ResponseEntity.ok(ApiResponse.success(
+                contractorPlanService.findByStatus(status, pageable).map(ContractorPlanResponse::from)));
     }
 
     @PostMapping
     @Operation(summary = "협력사 계획 등록")
-    public ResponseEntity<ApiResponse<ContractorPlan>> create(
+    public ResponseEntity<ApiResponse<ContractorPlanResponse>> create(
             @RequestBody ContractorPlan plan, Authentication authentication) {
         if (authentication != null) {
             IdmUser u = idmMapper.findByUid(authentication.getName());
@@ -62,12 +68,13 @@ public class ContractorPlanController {
                 plan.setCreatedByPosition(u.getTitleName());
             }
         }
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.create(plan)));
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorPlanResponse.from(contractorPlanService.create(plan))));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "협력사 계획 수정")
-    public ResponseEntity<ApiResponse<ContractorPlan>> update(
+    public ResponseEntity<ApiResponse<ContractorPlanResponse>> update(
             @PathVariable Long id,
             @RequestBody ContractorPlan plan,
             Authentication authentication) {
@@ -80,27 +87,30 @@ public class ContractorPlanController {
                 plan.setModifiedByUserId(u.getUidNumber());
             }
         }
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.update(id, plan)));
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorPlanResponse.from(contractorPlanService.update(id, plan))));
     }
 
     @PatchMapping("/{id}/approve")
     @Operation(summary = "협력사 계획 승인")
-    public ResponseEntity<ApiResponse<ContractorPlan>> approve(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<ApiResponse<ContractorPlanResponse>> approve(@PathVariable Long id, Authentication authentication) {
         String approvedBy = authentication.getName();
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.approve(id, approvedBy)));
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorPlanResponse.from(contractorPlanService.approve(id, approvedBy))));
     }
 
     @PatchMapping("/{id}/transition")
     @Operation(summary = "협력사 계획 결재 전이",
                description = "action: submit / approve / reject / completionSubmit / complete; rejectReason required when reject")
-    public ResponseEntity<ApiResponse<ContractorPlan>> transition(
+    public ResponseEntity<ApiResponse<ContractorPlanResponse>> transition(
             @PathVariable Long id,
             @RequestBody Map<String, Object> body,
             Authentication authentication) {
         String action = String.valueOf(body.get("action"));
         String rejectReason = body.get("rejectReason") != null ? String.valueOf(body.get("rejectReason")) : null;
         String username = authentication != null ? authentication.getName() : "system";
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.transition(id, action, username, rejectReason)));
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorPlanResponse.from(contractorPlanService.transition(id, action, username, rejectReason))));
     }
 
     @DeleteMapping("/{id}")
@@ -112,14 +122,17 @@ public class ContractorPlanController {
 
     @GetMapping("/{id}/workers")
     @Operation(summary = "협력사 작업자 목록 조회")
-    public ResponseEntity<ApiResponse<List<ContractorWorker>>> getWorkers(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.findWorkersByPlanId(id)));
+    public ResponseEntity<ApiResponse<List<ContractorWorkerResponse>>> getWorkers(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+                contractorPlanService.findWorkersByPlanId(id).stream()
+                        .map(ContractorWorkerResponse::from).collect(Collectors.toList())));
     }
 
     @PostMapping("/{id}/workers")
     @Operation(summary = "협력사 작업자 등록")
-    public ResponseEntity<ApiResponse<ContractorWorker>> addWorker(@PathVariable Long id, @RequestBody ContractorWorker worker) {
-        return ResponseEntity.ok(ApiResponse.success(contractorPlanService.addWorker(id, worker)));
+    public ResponseEntity<ApiResponse<ContractorWorkerResponse>> addWorker(@PathVariable Long id, @RequestBody ContractorWorker worker) {
+        return ResponseEntity.ok(ApiResponse.success(
+                ContractorWorkerResponse.from(contractorPlanService.addWorker(id, worker))));
     }
 
     @DeleteMapping("/{id}/workers")

@@ -1,5 +1,7 @@
 package com.smartehs.controller;
 
+import com.smartehs.dto.response.AccidentClaimDocResponse;
+import com.smartehs.dto.response.AccidentClaimResponse;
 import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.model.AccidentClaim;
 import com.smartehs.model.AccidentClaimDoc;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accident-claims")
@@ -27,58 +30,65 @@ public class AccidentClaimController {
 
     @GetMapping
     @Operation(summary = "산업재해 신청 전체 목록 조회")
-    public ResponseEntity<ApiResponse<Page<AccidentClaim>>> findAll(
+    public ResponseEntity<ApiResponse<Page<AccidentClaimResponse>>> findAll(
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(accidentClaimService.findAll(pageable)));
+        return ResponseEntity.ok(ApiResponse.success(
+                accidentClaimService.findAll(pageable).map(AccidentClaimResponse::from)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "산업재해 신청 상세 조회")
-    public ResponseEntity<ApiResponse<AccidentClaim>> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(accidentClaimService.findById(id)));
+    public ResponseEntity<ApiResponse<AccidentClaimResponse>> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+                AccidentClaimResponse.from(accidentClaimService.findById(id))));
     }
 
     @GetMapping("/status/{status}")
     @Operation(summary = "상태별 산업재해 신청 조회")
-    public ResponseEntity<ApiResponse<Page<AccidentClaim>>> findByStatus(
+    public ResponseEntity<ApiResponse<Page<AccidentClaimResponse>>> findByStatus(
             @PathVariable String status,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(accidentClaimService.findByStatus(status, pageable)));
+        return ResponseEntity.ok(ApiResponse.success(
+                accidentClaimService.findByStatus(status, pageable).map(AccidentClaimResponse::from)));
     }
 
     @GetMapping("/my")
     @Operation(summary = "내 산업재해 신청 목록 조회")
-    public ResponseEntity<ApiResponse<Page<AccidentClaim>>> findMy(
+    public ResponseEntity<ApiResponse<Page<AccidentClaimResponse>>> findMy(
             Authentication authentication,
             @PageableDefault(size = 20) Pageable pageable) {
         String createdBy = authentication.getName();
-        return ResponseEntity.ok(ApiResponse.success(accidentClaimService.findByCreatedBy(createdBy, pageable)));
+        return ResponseEntity.ok(ApiResponse.success(
+                accidentClaimService.findByCreatedBy(createdBy, pageable).map(AccidentClaimResponse::from)));
     }
 
     @PostMapping
     @Operation(summary = "산업재해 신청 등록")
-    public ResponseEntity<ApiResponse<AccidentClaim>> create(
+    public ResponseEntity<ApiResponse<AccidentClaimResponse>> create(
             @RequestBody AccidentClaim claim,
             Authentication authentication) {
         String createdBy = authentication.getName();
-        return ResponseEntity.ok(ApiResponse.success(accidentClaimService.create(claim, createdBy)));
+        return ResponseEntity.ok(ApiResponse.success(
+                AccidentClaimResponse.from(accidentClaimService.create(claim, createdBy))));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "산업재해 신청 수정")
-    public ResponseEntity<ApiResponse<AccidentClaim>> update(
+    public ResponseEntity<ApiResponse<AccidentClaimResponse>> update(
             @PathVariable Long id,
             @RequestBody AccidentClaim claim) {
-        return ResponseEntity.ok(ApiResponse.success(accidentClaimService.update(id, claim)));
+        return ResponseEntity.ok(ApiResponse.success(
+                AccidentClaimResponse.from(accidentClaimService.update(id, claim))));
     }
 
     @PatchMapping("/{id}/status")
     @Operation(summary = "산업재해 신청 상태 변경")
-    public ResponseEntity<ApiResponse<AccidentClaim>> updateStatus(
+    public ResponseEntity<ApiResponse<AccidentClaimResponse>> updateStatus(
             @PathVariable Long id,
             @RequestBody Map<String, String> body) {
         String status = body.get("status");
-        return ResponseEntity.ok(ApiResponse.success(accidentClaimService.updateStatus(id, status)));
+        return ResponseEntity.ok(ApiResponse.success(
+                AccidentClaimResponse.from(accidentClaimService.updateStatus(id, status))));
     }
 
     @DeleteMapping("/{id}")
@@ -90,8 +100,10 @@ public class AccidentClaimController {
 
     @GetMapping("/{id}/docs")
     @Operation(summary = "산업재해 신청 서류 목록 조회")
-    public ResponseEntity<ApiResponse<List<AccidentClaimDoc>>> getDocs(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(accidentClaimService.findDocsByClaimId(id)));
+    public ResponseEntity<ApiResponse<List<AccidentClaimDocResponse>>> getDocs(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+                accidentClaimService.findDocsByClaimId(id).stream()
+                        .map(AccidentClaimDocResponse::from).collect(Collectors.toList())));
     }
 
     @PatchMapping("/docs/{docId}/submit")

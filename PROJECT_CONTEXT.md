@@ -12,7 +12,8 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - **표준 결정**: 컨트롤러 반환 = **Response DTO** 표준 채택(raw 엔티티 신규 금지·convert-on-touch·민감도메인 우선). CLAUDE.md 절대규칙에 명문화. raw↔DTO는 *모델↔계약* 문제로 PersonRef(*DB↔wire*)와 무관·공존(레퍼런스 EhsAnnualPlan). **빅뱅 전환 안 함**(전체 106개 raw 중 민감도메인 ~22개만 우선).
 - **[x] #2 예외 표준화 (8파일, commit c20f557)**: `RuntimeException` → not-found 27건 `ResourceNotFoundException`(404)·검증/중복 14건 `BadRequestException`(400). 기존엔 GlobalExceptionHandler catch-all이 500+고정메시지로 메시지를 뭉개던 UX 버그 동시수정. 인프라/IO 15건은 RuntimeException 유지. 대상: AccidentReport/EhsManager/OSHCommittee/WorkplaceSite/RiskAssessment Service + OSHCommitteeController + ChecklistExcelService.
 - **[x] raw→DTO 레퍼런스 2종 + 검증 완료**: `AccidentReportResponse`(PersonRef無)·`DpMsdResponse`(PersonRef有 템플릿) + 컨트롤러 전환. `coord/verify_wire.sh` 작성(전후 GET `.data` 동일성 diff). DpMsd 실데이터 6341B **wire byte-identical 검증 통과**. compileJava EXIT0, 서버 재기동 완료.
-- **[ ] 양산 분담(도메인 분할 병렬)**: **Sonnet** = Dp* 6 + Od* 6 (DiseasePreventionMgmtController·OccupationalDiseaseController, 프론트 작업 후) — 지시는 `coord/OPUS-TO-SONNET.md` 작업3. **Opus** = Contractor(Reg/Plan, 다중PersonRef·대형)·AccidentClaim(+Doc)·RadHealth/Dose/Worker·EmergencyContact.
+- **[x] Opus 담당 양산 완료** (9 DTO, wire byte-identical 전수검증): EmergencyContact·AccidentClaim(+Doc)·Rad(Health/Dose/Worker)·ContractorRegistration(66필드)·ContractorPlan(58필드·PersonRef 4개)·ContractorWorker. 컨트롤러 5개 전환, compileJava EXIT0, 재기동 후 9개 GET `.data` 전후 동일 확인(verify_wire.sh).
+- **[ ] Sonnet 담당 양산**: Dp* 6 + Od* 6 (DiseasePreventionMgmtController·OccupationalDiseaseController, 프론트 작업 후) — 지시는 `coord/OPUS-TO-SONNET.md` 작업3.
 - **[ ] 후순위(convert-on-touch)**: 비개인 Rad(Source/Zone/Measurement/Drill/Accident)·Partner(Eval/Visitor). 전체 raw 53컨트롤러 중 비민감은 손댈 때 전환.
 
 ### ✅ 완료 — 작성자/승인자 표시 팀·성명·직위 풀포맷 통일 (2026-06-13 세션 10)
