@@ -39,8 +39,7 @@ Yesco 변경이 닿는 지점을 좁힌다.
 - [ ] Response DTO / 예외 표준 convert-on-touch 지속.
 
 ## 4순위 — 불필요한 것 정리 (신중)
-- [~] **죽은 파일 ~43개** 감사 완료 → `coord/DEAD_FILES_PENDING.md`. **삭제 범위 사용자 결정 대기**.
-  - ⚠ 메뉴/기능 삭제는 Yesco 미정 → "확실히 죽은 중복본"만, 완성 기능 페이지는 보존(재연결 가능성).
+- [x] **죽은 파일 정리(1차)**: 명백한 폐기본 **27개 삭제**(오펀 컴포넌트 23 + 스텁페이지 4). `vite build` ✓, tsc 148→125. 완성 기능 페이지(Environment·WorkPlace 등)는 Yesco 재연결 대비 보존.
 - [x] **DEV 도구 플래그 통합**: `VITE_DEV_TOOLS=off` 단일 마스터 스위치로 테스트데이터 버튼·헤더 계정전환·로그인 빠른로그인 일괄 on/off (`utils/devMode.devToolsEnabled`). 삭제 대신 납품빌드에서 끔. `.env.example` 문서화.
 
 ## 5순위 — 보안 (납품 전 필수)

@@ -1,4 +1,10 @@
-# 죽은 파일 후보 (미참조 · 삭제 결정 대기)
+# 죽은 파일 후보 (미참조)
+
+> **[2026-06-14 처리]** 옵션1(명백한 폐기본만) 실행 — **27개 삭제**(오펀 컴포넌트 23 + 스텁페이지 4: ComingSoon·KpiDashboard·SystemManage·Ergonomics). `vite build` ✓, tsc 148→125.
+> **보존**: 완성 기능 페이지(EnvironmentManage·WorkPlace·OshCommittee·PpeIssuance·EhsAlert/Message/Officer/Plan·EmergencyNotification·PrePlacementExam·SafetyEducation·ChemicalManage·ChemicalMsds·ChecklistResult/Template·EhsDocument) — Yesco 메뉴 재연결 가능성으로 남김. 아래는 이력.
+
+---
+# (이력) 삭제 결정 대기였던 목록
 
 > 2026-06-14 정적 감사 결과. **어디서도 import 되지 않아 화면에 안 뜨는** 파일들.
 > 문자열 컴포넌트 레지스트리·lazy 로딩 없음 확인 → 정적분석 결론적. 대조군(`PpeRequestTab`=사용중) 정확히 구분됨.
