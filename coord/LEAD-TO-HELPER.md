@@ -97,5 +97,27 @@
 3. **NearMiss `occHour`/`occMinute`**: NearMissRequest 타입에 추가. 실제 폼 저장/조회 왕복 검증 필요(런타임).
 → 위 3건은 타입에러는 아니라 빌드와 무관. 별도 기능 과제로 PROJECT_CONTEXT에 기록함.
 
+## 7. TASK-3 — 죽은 named export 정리 (타입+기타, HELPER 담당 · 2026-06-14 세션13)
+
+**배경**: ts-prune 감사로 미사용 export 발견. 파일 통째로 죽은 건 LEAD가 이미 30파일 삭제(페이지·탭·API). 남은 건 *살아있는 파일 안의 미사용 export*. **HELPER = 타입+기타 30개 / LEAD = api 함수 39개** 분담(파일 안 겹침).
+
+**리스트**: `coord/deadcode_helper_list.txt` (30줄, `파일경로:줄 - 심볼명` 형식). 이게 네 작업 대상 전부.
+
+**작업 방식**:
+1. 리스트의 각 `심볼명`(export된 interface/type/const/함수)을 **선언째 제거**.
+2. **통째 죽은 타입파일 5개는 파일 자체를 삭제**(모든 export가 리스트에 있음):
+   `types/diseasePrevention.types.ts` / `emergencyResponse.types.ts` / `ergonomics.types.ts` / `kpi.types.ts` / `safetyCommittee.types.ts`
+   → 단, 삭제 전 `grep -rl "그파일명"` 로 import하는 곳 0 확인(있으면 그 import도 죽은 코드일 수 있으나 **멈추고 [질문]**).
+3. 나머지(부분)는 해당 export 선언만 제거: `envMonitoring.types`(EnvMonitorType/Status 2개만), `healthCheckup.types`(CheckupType/OverallResult), `occupationalExposure.types`(Workplace*/Ppe*/SafetyEducation* 7개 — **PrePlacement* 는 건드리지 말 것, 살아있음**), `file.types`(FileUploadRequest), `riskAssessment.types`(RISK_4M_OPTIONS/STATUS_OPTIONS), `styles/theme.ts`(themeColors), `utils/excelExport.ts`(exportToExcel/formatDateForExport), `utils/phoneFormat.ts`(isValidPhone), `components/common/YescoSidebarIcons.tsx`(YescoDefault).
+
+**철칙**:
+- 리스트에 **명시된 심볼만** 제거. 추측 금지.
+- **`src/api/*` 절대 금지** (LEAD 담당).
+- 파일 하나(또는 몇 개) 처리할 때마다 `cd frontend && npx tsc --noEmit 2>&1 | grep -c "error TS"` = **0 유지**. 만약 에러나면 = 그 export가 실제로 쓰이던 것(ts-prune 오탐) → **그 항목만 되돌리고** 계속.
+- 끝나면 `npm run build` 통과 1회 확인.
+- 커밋 단위 자유(타입 묶음). 메시지 예: `chore(deadcode): remove unused type exports (ts-prune)`.
+
+**수용 기준 보고**: 처리한 심볼/파일 목록, 삭제한 파일, "tsc 0 유지·build 통과", 되돌린 오탐 있으면 명시.
+
 ### 현재 할 일 (HELPER)
-`git pull --rebase origin yesco-dev` 후 **§5 TASK-3 지시 대기**. 착수 시 `coord/HELPER-TO-LEAD.md` 에 `[진행]` 부터 보고(위 📢 보고의무 참조).
+`git pull --rebase origin yesco-dev` 후 **§7 TASK-3 진행**. 착수 시 `coord/HELPER-TO-LEAD.md` 에 `[진행] TASK-3 시작` 부터 보고. (LEAD는 동시에 api 함수 39개 정리 중 — api 파일은 건드리지 말 것)
