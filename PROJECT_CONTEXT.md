@@ -15,10 +15,11 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - **협업**: HELPER가 `619c2ff` 한 커밋으로 [A]+[B] 전부 처리(중간에 분담 겹쳐 LEAD 일부 중복작업은 폐기). LEAD는 OdAftercare 크래시(`e9f88b0`)·typo 3종(`8fb5d3f`) 선행 푸시. 채널 `coord/LEAD-TO-HELPER.md`.
 - 브랜치 `main`=`yesco-dev`=`619c2ff`, 원격 동기화.
 
-### 🟡 빌드는 통과했으나 기능 미완성 — 후속 과제 (세션13 발견, 타입에러 아님)
-- **SiteSafetyPlan `inspector*` (점검자 서명 기능)**: 프론트 타입만 추가, **백엔드 SiteSafetyPlan 모델/응답에 inspector 필드 없음** → SiteSafetyReportTab 점검자/서명일/서명이미지 항상 '미지정/미서명'. 백엔드 와이어 추가 or UI 제거 결정 필요.
-- **User `position`/`active`**: 타입만 추가, 백엔드 UserResponse 미반환 → AdminPage 직위/활성 빈값 가능. users API 보강 여부 확인.
-- **NearMiss `occHour`/`occMinute`**: 타입 추가됨. 폼 저장/조회 왕복 런타임 검증 필요.
+### ✅ 완료 — 미완성 3건 처리 (세션 13, LEAD)
+- **[x] NearMiss 발생시각 (`8c844de`)**: 날짜+시+분 3필드를 onSubmit에서 LocalDateTime(`...THH:mm:00`)으로 결합 안 해 시:분 유실(항상 00:00) + reset()이 발생일시 누락해 수정 시 통째로 날아가던 버그. 결합/분리 추가. 프론트 전용. ⚠️런타임 왕복검증 권장.
+- **[x] User active (`ee5792f`)**: AdminPage 상태 컬럼 전원 '비활성'. position은 이미 반환(타입만 빠졌던 것). `UserInfoResponse`에 `active` 추가, `T_IDM_USER.UserStatus='10'`→boolean 매핑. compileJava EXIT0. ⚠️**서버 재시작 후 적용**.
+- **[x] SiteSafety 점검자 서명 (`669fa82`)**: 입력UI·백엔드 필드 전무한 스캐폴딩(항상 '미서명')이라, 사용자 결정에 따라 **레포트 죽은 섹션 제거**(숨김). 점검자 서명은 예스코 OSH 서명 워크플로우 확정 후 정식 빌드 예정(예스코 신규요청 "산보위 싸인 기능"과 함께).
+- 빌드 GREEN 유지(tsc 0, vite build ✓).
 
 ### 🔵 다음 후보 (LEAD 설계 후 분업)
 - 1순위 `myRoles`/`getRoles` 중복(탭마다 로컬정의) → 공용 util 수렴 / 로컬 개발 DB(Docker MSSQL+시드) / 백엔드 API 권한제어 설계. 상세 `docs/PRE_YESCO_READINESS.md`.
