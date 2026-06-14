@@ -1,0 +1,21 @@
+﻿src/components/ehs/EmrReportTab.tsx(55,13): error TS2322: Type '{ planIdString: string | undefined; planName: string; planType: string; responsibleDept: string | undefined; trainingStartDate: string | undefined; trainingEndDate: string | undefined; ... 21 more ...; modifiedAt: string; }' is not assignable to type 'EnrichedDrill'.
+  Type '{ planIdString: string | undefined; planName: string; planType: string; responsibleDept: string | undefined; trainingStartDate: string | undefined; trainingEndDate: string | undefined; ... 21 more ...; modifiedAt: string; }' is not assignable to type 'Partial<EmergencyPlan>'.
+    Types of property 'planId' are incompatible.
+      Type 'number | undefined' is not assignable to type 'string | undefined'.
+        Type 'number' is not assignable to type 'string'.
+src/components/occupationalDisease/OdAftercareTab.tsx(164,50): error TS2559: Type 'OdAftercare' has no properties in common with type '{ createdByUserId?: number | null | undefined; }'.
+src/components/occupationalDisease/OdAftercareTab.tsx(167,50): error TS2559: Type 'OdAftercare' has no properties in common with type '{ createdByUserId?: number | null | undefined; }'.
+src/components/occupationalDisease/OdAftercareTab.tsx(218,50): error TS2345: Argument of type 'OdAftercare | {}' is not assignable to parameter of type '{ createdByUserId?: number | null | undefined; }'.
+  Type 'OdAftercare' has no properties in common with type '{ createdByUserId?: number | null | undefined; }'.
+src/components/occupationalDisease/OdAftercareTab.tsx(240,50): error TS2559: Type 'OdFitness' has no properties in common with type '{ createdByUserId?: number | null | undefined; }'.
+src/components/occupationalDisease/OdAftercareTab.tsx(243,50): error TS2559: Type 'OdFitness' has no properties in common with type '{ createdByUserId?: number | null | undefined; }'.
+src/components/occupationalDisease/OdAftercareTab.tsx(288,50): error TS2345: Argument of type 'OdFitness | {}' is not assignable to parameter of type '{ createdByUserId?: number | null | undefined; }'.
+  Type 'OdFitness' has no properties in common with type '{ createdByUserId?: number | null | undefined; }'.
+src/pages/ApprovalManagePage.tsx(185,17): error TS2339: Property 'onlyIf' does not exist on type '{ key: string; label: string; isChip?: undefined; isStatusChip?: undefined; } | { key: string; label: string; isChip: boolean; isStatusChip?: undefined; } | { key: string; label: string; isStatusChip: boolean; isChip?: undefined; } | { ...; } | { ...; } | { ...; }'.
+  Property 'onlyIf' does not exist on type '{ key: string; label: string; isChip?: undefined; isStatusChip?: undefined; }'.
+src/pages/ApprovalManagePage.tsx(185,57): error TS2339: Property 'onlyIf' does not exist on type '{ key: string; label: string; isChip?: undefined; isStatusChip?: undefined; } | { key: string; label: string; isChip: boolean; isStatusChip?: undefined; } | { key: string; label: string; isStatusChip: boolean; isChip?: undefined; } | { ...; } | { ...; } | { ...; }'.
+  Property 'onlyIf' does not exist on type '{ key: string; label: string; isChip?: undefined; isStatusChip?: undefined; }'.
+src/pages/ApprovalManagePage.tsx(227,28): error TS2339: Property 'isStatusChip' does not exist on type '{ key: string; label: string; isChip?: undefined; isStatusChip?: undefined; } | { key: string; label: string; isChip: boolean; isStatusChip?: undefined; } | { key: string; label: string; isStatusChip: boolean; isChip?: undefined; } | { ...; } | { ...; } | { ...; }'.
+  Property 'isStatusChip' does not exist on type '{ key: string; label: string; onlyIf?: undefined; }'.
+src/pages/ApprovalManagePage.tsx(229,31): error TS2339: Property 'isChip' does not exist on type '{ key: string; label: string; isChip?: undefined; isStatusChip?: undefined; } | { key: string; label: string; isChip: boolean; isStatusChip?: undefined; } | { key: string; label: string; isStatusChip: boolean; isChip?: undefined; } | { ...; } | { ...; } | { ...; }'.
+  Property 'isChip' does not exist on type '{ key: string; label: string; onlyIf?: undefined; }'.

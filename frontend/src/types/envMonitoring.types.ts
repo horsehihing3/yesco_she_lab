@@ -1,6 +1,3 @@
-export type EnvMonitorType = 'AIR_QUALITY' | 'WATER_QUALITY' | 'SOIL' | 'NOISE' | 'ODOR'
-export type EnvMonitorStatus = 'NORMAL' | 'CAUTION' | 'WARNING' | 'DANGER'
-
 export interface EnvMonitoring {
   id: number
   monitorId: string

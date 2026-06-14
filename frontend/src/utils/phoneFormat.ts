@@ -37,12 +37,3 @@ export const fmtPhone = (input: string | null | undefined): string => {
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`
 }
 
-/** 전화번호 유효성 검사 — 9~11자리 숫자, 0으로 시작. 빈 문자열은 true (선택 입력). */
-export const isValidPhone = (input: string | null | undefined): boolean => {
-  if (!input) return true
-  const digits = input.replace(/\D/g, '')
-  if (digits.length === 0) return true
-  if (digits.length < 9 || digits.length > 11) return false
-  if (!digits.startsWith('0')) return false
-  return true
-}

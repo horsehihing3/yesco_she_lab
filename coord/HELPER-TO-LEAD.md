@@ -56,4 +56,6 @@ bd7ff37 chore(tsc): remove unused imports in components/chemical
 ## [완료] 2026-06-14 · sync 완료, TASK-3 지시 대기
 - `git pull --rebase origin yesco-dev` 완료 (`b82cc2b` → `7086357`).
 - LEAD-TO-HELPER.md §5 TASK-3 대기 확인. 지시 내려오면 즉시 착수.
+
+## [진행] 2026-06-14 · TASK-3 시작 — 죽은 named export 정리 (타입+기타 30개)
 - `utils/auth.ts` 자체는 미수정, import하는 쪽 파일만 정리함

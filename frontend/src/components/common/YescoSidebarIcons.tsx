@@ -167,17 +167,6 @@ export const YescoChecklist: React.FC<IconProps> = ({ size }) => wrapSvg(
   </>, size,
 )
 
-// ── Default: 단순 도큐먼트 ──
-export const YescoDefault: React.FC<IconProps> = ({ size }) => wrapSvg(
-  <>
-    <rect x="7" y="5" width="18" height="22" rx="2" fill={WHITE} />
-    <rect x="10" y="10" width="12" height="1.5" fill={RED} />
-    <rect x="10" y="14" width="12" height="1.5" fill={RED} />
-    <rect x="10" y="18" width="8" height="1.5" fill={RED} />
-    <circle cx="22" cy="22" r="2" fill={RED} />
-  </>, size,
-)
-
 // textKey → 컴포넌트 매핑
 const ICON_MAP: Record<string, React.FC<IconProps>> = {
   'nav.dashboard':           YescoDashboard,

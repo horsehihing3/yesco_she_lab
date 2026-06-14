@@ -559,12 +559,5 @@ export const createLightTheme = (): Theme => createBaseTheme(lightColors, 'light
 export const createDarkTheme  = (): Theme => createBaseTheme(darkColors,  'dark',  'dark')
 export const createYescoTheme = (): Theme => createBaseTheme(yescoColors, 'light', 'yesco')
 
-// Export colors for use in components
-export const themeColors = {
-  light: lightColors,
-  dark: darkColors,
-  yesco: yescoColors,
-}
-
 // Default export for backward compatibility
 export default createLightTheme()

@@ -1,6 +1,4 @@
 export type CheckupStatus = 'PENDING' | 'SCHEDULED' | 'COMPLETED' | 'OVERDUE'
-export type CheckupType = 'GENERAL' | 'SPECIAL' | 'HIRING'
-export type OverallResult = 'A' | 'B' | 'C1' | 'C2' | 'D1' | 'D2'
 export type ResultStatus = 'normal' | 'caution' | 'abnormal'
 
 export type BodyPart =

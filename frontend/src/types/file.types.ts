@@ -14,8 +14,3 @@ export interface FileMetadata {
   translationStatus?: string | null
 }
 
-export interface FileUploadRequest {
-  file: File
-  entityType: string
-  entityId: string
-}

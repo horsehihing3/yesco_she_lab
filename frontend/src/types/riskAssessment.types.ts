@@ -223,25 +223,6 @@ export const RISK_GRADE_CRITERIA = {
   '매우높음(VH)': { rangeKey: 'gradeVHRange', levelKey: 'gradeVHLevel', colorKey: 'gradeVHColor', actionKey: 'gradeVHAction' },
 }
 
-// 4M 분류
-export const RISK_4M_OPTIONS = [
-  { value: '기계적', label: '기계적' },
-  { value: '화학적', label: '화학적' },
-  { value: '물리적', label: '물리적' },
-  { value: '전기적', label: '전기적' },
-  { value: '인간공학적', label: '인간공학적' },
-  { value: '생물학적', label: '생물학적' },
-]
-
-// 상태 옵션
-export const STATUS_OPTIONS = [
-  { value: 'DRAFT', label: '작성중', color: 'default' },
-  { value: 'SUBMITTED', label: '제출', color: 'info' },
-  { value: 'APPROVED', label: '승인', color: 'success' },
-  { value: 'REJECTED', label: '반려', color: 'error' },
-  { value: 'COMPLETED', label: '완료', color: 'success' },
-]
-
 // 위험성 평가서 (Form Template)
 export interface RiskAssessmentFormMaster {
   id: number
