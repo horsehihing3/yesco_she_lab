@@ -1275,7 +1275,7 @@ const NearMissPage: React.FC = () => {
             {/* Row 0: 발생일시 | 성명 */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
               <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-                {t('nearMiss.occDateTimeLabel')}
+                {t('nearMiss.occDateTimeLabel')}<span style={{ color: '#d32f2f', marginLeft: 2 }}>*</span>
               </Typography>
               <Box sx={{ flex: 2.5, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', gap: 1, alignItems: 'center' }}>
                 <Controller
@@ -1339,7 +1339,7 @@ const NearMissPage: React.FC = () => {
                 {/* 발생장소 */}
                 <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
                   <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-                    {t('nearMiss.occLocation')}
+                    {t('nearMiss.occLocation')}<span style={{ color: '#d32f2f', marginLeft: 2 }}>*</span>
                   </Typography>
                   <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
                     <Box sx={{ display: 'flex', gap: 1, px: 2, py: 1, borderBottom: 1, borderColor: 'divider' }}>
@@ -1369,7 +1369,7 @@ const NearMissPage: React.FC = () => {
                 {/* 발생개요 */}
                 <Box sx={{ display: 'flex' }}>
                   <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
-                    {t('nearMiss.occOverview')}
+                    {t('nearMiss.occOverview')}<span style={{ color: '#d32f2f', marginLeft: 2 }}>*</span>
                   </Typography>
                   <Box sx={{ flex: 1, bgcolor: 'background.paper' }}>
                     <Box sx={{ px: 2, py: 1, borderBottom: 1, borderColor: 'divider' }}>
@@ -1460,7 +1460,7 @@ const NearMissPage: React.FC = () => {
           {/* 모바일용 레이아웃 */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
             <Box>
-              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occDateTimeLabel')}</Typography>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occDateTimeLabel')}<span style={{ color: '#d32f2f', marginLeft: 2 }}>*</span></Typography>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap', px: 0.5 }}>
                 <Controller
                   name="occDate"
@@ -1509,7 +1509,7 @@ const NearMissPage: React.FC = () => {
               <TextField fullWidth size="small" placeholder={t('nearMiss.department')} {...register('authorDept')} />
             </Box>
             <Box>
-              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occLocation')}</Typography>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occLocation')}<span style={{ color: '#d32f2f', marginLeft: 2 }}>*</span></Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <TextField
                   size="small"
@@ -1533,7 +1533,7 @@ const NearMissPage: React.FC = () => {
               </Box>
             </Box>
             <Box>
-              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occOverview')}</Typography>
+              <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occOverview')}<span style={{ color: '#d32f2f', marginLeft: 2 }}>*</span></Typography>
               <TextField fullWidth size="small" placeholder={t('nearMiss.incidentDescriptionShort')} multiline rows={3} {...register('occInfo')} />
               <Box sx={{ mt: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: (existingOverviewFiles.length > 0 || overviewFiles.length > 0) ? 1 : 0 }}>
