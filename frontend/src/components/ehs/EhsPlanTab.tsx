@@ -20,6 +20,8 @@ import {
   Radio,
   FormControlLabel,
   Chip,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
@@ -131,6 +133,10 @@ const EhsPlanTab: React.FC = () => {
     queryKey: ['ehsPlans', startDateStr, endDateStr],
     queryFn: () => fetchPlansByDateRange(startDateStr, endDateStr),
   })
+
+  // PC/모바일 레이아웃 동시 마운트 시 react-hook-form 중복 등록으로 입력값 유실 → 한 레이아웃만 마운트
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
 
   const { handleSubmit, reset, control, setValue, getValues, formState: { errors } } = useForm<EhsPlanRequest>()
   const [userSelectModalOpen, setUserSelectModalOpen] = useState(false)
@@ -577,6 +583,7 @@ const EhsPlanTab: React.FC = () => {
           </DialogTitle>
           <DialogContent>
             {/* PC Layout */}
+            {isDesktop && (
             <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mt: 2 }}>
               {/* Row 1: Category (Radio) */}
               <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -697,8 +704,10 @@ const EhsPlanTab: React.FC = () => {
                 </Box>
               </Box>
             </Box>
+            )}
 
             {/* Mobile Layout */}
+            {!isDesktop && (
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mt: 2 }}>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('ehsPlan.category')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
@@ -775,6 +784,7 @@ const EhsPlanTab: React.FC = () => {
                 </Box>
               </Box>
             </Box>
+            )}
           </DialogContent>
           <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'divider', gap: 1 }}>
             {!editingPlan && <DevTestFillButton onFill={fillTestData} />}
