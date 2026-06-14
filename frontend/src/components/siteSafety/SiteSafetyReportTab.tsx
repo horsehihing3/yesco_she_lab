@@ -1,7 +1,6 @@
 import { formatDate } from '../../utils/dateDefaults'
 import { formatUserName } from '../../utils/userDisplay'
 import { useMemo, useState } from 'react'
-import SignatureImage from '../common/SignatureImage'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -144,9 +143,7 @@ const SiteSafetyReportTab: React.FC = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>계획 승인자</TableCell>
-              <TableCell>{formatUserName(item.planApproverTeam, item.planApproverName, item.planApproverPosition) || ''}</TableCell>
-              <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>점검자</TableCell>
-              <TableCell>{formatUserName(item.inspectorTeam, item.inspectorName, item.inspectorPosition) || ''}</TableCell>
+              <TableCell colSpan={3}>{formatUserName(item.planApproverTeam, item.planApproverName, item.planApproverPosition) || ''}</TableCell>
             </TableRow>
             {item.workDescription && (
               <TableRow>
@@ -203,38 +200,6 @@ const SiteSafetyReportTab: React.FC = () => {
         </TableContainer>
       )}
 
-      {/* 3. 점검자 서명 */}
-      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>
-        3. 점검자 서명
-      </Typography>
-      <TableContainer sx={{ mb: 3 }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
-          <TableBody>
-            <TableRow>
-              <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>점검자</TableCell>
-              <TableCell sx={{ width: '30%' }}>
-                {formatUserName(item.inspectorTeam, item.inspectorName, item.inspectorPosition) || '미지정'}
-              </TableCell>
-              <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>서명일시</TableCell>
-              <TableCell sx={{ width: '30%', fontFamily: 'monospace' }}>
-                {item.inspectorSignedAt ? item.inspectorSignedAt.replace('T', ' ').substring(0, 19) : '미서명'}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>서명 이미지</TableCell>
-              <TableCell colSpan={3} sx={{ p: 2 }}>
-                {item.inspectorSignature ? (
-                  <Box sx={{ display: 'inline-block', border: 1, borderColor: 'divider', bgcolor: '#fff', p: 0.5 }}>
-                    <SignatureImage src={item.inspectorSignature} alt="signature" maxHeight={100} maxWidth={320} />
-                  </Box>
-                ) : (
-                  <Typography variant="body2" color="text.secondary">서명이 등록되지 않았습니다.</Typography>
-                )}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
 
       {/* 4. 점검 요약 */}
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>
