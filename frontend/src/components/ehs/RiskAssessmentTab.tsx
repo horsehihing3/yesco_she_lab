@@ -146,7 +146,12 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
 
   const isAdmin = isSystemAdmin(user)
   const { canSee } = useButtonRules()
-  const MENU = '안전 관리 › 위험성 평가'
+  // 버튼관리 메뉴 경로를 모드별로 분기 — 계획/관리/관리(관리자) 각각 별도 버튼규칙
+  const MENU = mode === 'plan'
+    ? '안전 관리 › 위험성 평가 › 계획'
+    : mode === 'admin'
+      ? '안전 관리 › 위험성 평가 › 관리(관리자)'
+      : '안전 관리 › 위험성 평가 › 관리'
   const getItemRoles = (item: { authorName?: string|null; planApproverName?: string|null; completionApproverName?: string|null } | null): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
@@ -348,6 +353,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       formId: typeof firstFormId === 'number' ? firstFormId : undefined,
       ...(leader ? {
         planApproverName: leader.name, planApproverPosition: leader.position, planApproverTeam: leader.team,
+        completionApproverName: leader.name, completionApproverPosition: leader.position, completionApproverTeam: leader.team,
       } : {}),
     })
     setActivityProcesses([
@@ -484,7 +490,9 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
   const transitionMutation = useMutation({
     mutationFn: ({ id, action, rejectReason }: { id: number; action: 'submit' | 'approve' | 'reject' | 'completionSubmit' | 'complete'; rejectReason?: string }) =>
       riskAssessmentApi.transition(id, action, rejectReason),
-    onSuccess: async () => {
+    onSuccess: async (updated) => {
+      // 감사계획 패턴: 전이 응답으로 선택 항목을 즉시 갱신 → 상세화면 버튼 상태가 바로 반영됨
+      setSelectedAssessment(updated)
       queryClient.invalidateQueries({ queryKey: ['riskAssessments'] })
       queryClient.invalidateQueries({ queryKey: ['riskAssessmentDetail'] })
       queryClient.invalidateQueries({ queryKey: ['riskAssessmentLogs'] })
@@ -1097,7 +1105,9 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           </Box>
 
           {(() => {
-            const status = (assessmentDetail?.status || '').toLowerCase()
+            // 감사계획(AuditPlanTab) 패턴 정렬: 버튼 게이트는 목록 행(selectedAssessment) 의 status 를 사용한다.
+            // (상세조회 getById 는 작성자 권한/타이밍에 따라 불안정 → 의존 제거). status 는 대문자로 정규화.
+            const status = (selectedAssessment?.status || assessmentDetail?.status || '').toUpperCase()
             const itemRoles = getItemRoles(selectedAssessment)
 
             const buttons: React.ReactNode[] = []
@@ -1293,7 +1303,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                     {t('riskAssessment.planApprover', '계획 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
                   </Typography>
                   <Box sx={{ ...valBr, gap: 1 }}>
-                    <TextField fullWidth size="small" value={formData.planApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <TextField fullWidth size="small" value={formatUserName(formData.planApproverTeam, formData.planApproverName, formData.planApproverPosition) || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
                     <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
                       <PersonSearchIcon fontSize="small" />
                     </Button>
@@ -1302,7 +1312,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                     {t('riskAssessment.completionApprover', '완료 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
                   </Typography>
                   <Box sx={{ ...val, gap: 1 }}>
-                    <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <TextField fullWidth size="small" value={formatUserName(formData.completionApproverTeam, formData.completionApproverName, formData.completionApproverPosition) || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
                     <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                       <PersonSearchIcon fontSize="small" />
                     </Button>
@@ -1420,7 +1430,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                     {t('riskAssessment.planApprover', '계획 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <TextField fullWidth size="small" value={formData.planApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <TextField fullWidth size="small" value={formatUserName(formData.planApproverTeam, formData.planApproverName, formData.planApproverPosition) || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
                     <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
                       <PersonSearchIcon fontSize="small" />
                     </Button>
@@ -1432,7 +1442,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                     {t('riskAssessment.completionApprover', '완료 승인자')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <TextField fullWidth size="small" value={formData.completionApproverName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                    <TextField fullWidth size="small" value={formatUserName(formData.completionApproverTeam, formData.completionApproverName, formData.completionApproverPosition) || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
                     <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                       <PersonSearchIcon fontSize="small" />
                     </Button>

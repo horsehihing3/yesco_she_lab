@@ -436,9 +436,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 위험성평가 ─── 일반관리자 = RISK_ASSESS_ADMIN (DB 지정) ─────────────────
+  // ── 위험성평가 › 계획 ─── 일반관리자 = RISK_ASSESS_ADMIN (DB 지정) ────────────
   {
-    menuPath: '안전 관리 › 위험성 평가', menuKey: 'nav.riskAssessment',
+    menuPath: '안전 관리 › 위험성 평가 › 계획', menuKey: 'nav.riskAssessment',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: ADMIN_ONLY }] },
@@ -466,8 +466,31 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '수정', roles: WRITER_ADMIN },
           { button: '삭제', roles: WRITER_ADMIN },
         ] },
+    ],
+  },
+  // ── 위험성평가 › 관리 ─── 실시·완료 결재 흐름 ───────────────────────────────
+  {
+    menuPath: '안전 관리 › 위험성 평가 › 관리', menuKey: 'nav.riskAssessment',
+    statuses: [
       { status: 'APPROVED', statusLabel: '실시중', statusColor: 'default',
         statusNote: '관리 모드에서는 APPROVED 상태를 "실시중"으로 표시 (완료 결재 흐름)',
+        buttons: [
+          { button: '저장 (실시 내용)', roles: WRITER_ADMIN },
+          { button: '완료 결재 상신',   roles: WRITER_ADMIN },
+        ] },
+      { status: 'COMPLETION_SUBMITTED', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '반려 (완료)',    roles: ADMIN_COMP },
+          { button: '완료 결재 승인', roles: ADMIN_COMP },
+        ] },
+    ],
+  },
+  // ── 위험성평가 › 관리(관리자) ─── 전체 조회(어드민) + 완료 결재 오버사이트 ─────
+  {
+    menuPath: '안전 관리 › 위험성 평가 › 관리(관리자)', menuKey: 'nav.riskAssessment',
+    statuses: [
+      { status: 'APPROVED', statusLabel: '실시중', statusColor: 'default',
+        statusNote: '전체 조회(어드민) — 모든 사업장의 승인된 항목',
         buttons: [
           { button: '저장 (실시 내용)', roles: WRITER_ADMIN },
           { button: '완료 결재 상신',   roles: WRITER_ADMIN },

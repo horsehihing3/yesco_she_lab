@@ -72,7 +72,7 @@
          created_at, modified_at)
         VALUES
         (#{planYear}, #{checkupType}, #{planName}, #{targetDept}, #{targetCount}, #{completedCount},
-         #{hazardFactors}, #{hospital}, #{planStartDate}, #{planEndDate}, #{status}, #{notes},
+         #{hazardFactors}, #{hospital}, #{planStartDate,jdbcType=DATE}, #{planEndDate,jdbcType=DATE}, #{status}, #{notes},
          #{createdBy}, #{createdByName}, #{createdByDept}, #{createdByTeam}, #{createdByPosition},
          #{planApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
          #{completionApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
@@ -90,8 +90,8 @@
             completed_count = #{completedCount},
             hazard_factors  = #{hazardFactors},
             hospital        = #{hospital},
-            plan_start_date = #{planStartDate},
-            plan_end_date   = #{planEndDate},
+            plan_start_date = #{planStartDate,jdbcType=DATE},
+            plan_end_date   = #{planEndDate,jdbcType=DATE},
             status          = #{status},
             notes           = #{notes},
             plan_approver       = #{planApprover,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
