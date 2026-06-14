@@ -11,7 +11,7 @@
 | 도메인 | 담당 | 메뉴수 | 완료 | 비고 |
 |---|---|---|---|---|
 | EHS경영 | LEAD | 9 | 9 | **전체 완료** (8 검증 + 도면뷰 N/A) — 결재4개 풀E2E, 잔여4개 CRUD스모크 |
-| 안전관리 | HELPER | 8 | 0 | 노트북 착수 |
+| 안전관리 | HELPER | 8 | 8 | **전체 완료** — 결함 3종 발견(아래 결함표 참조) |
 | 협력업체관리 | LEAD | 6 | 6 | **전체 완료** (작업허가는 PTW 재사용→안전관리 커버) |
 
 ---
@@ -36,14 +36,22 @@
 
 | # | 메뉴 | 라우트 | 주요 테이블(PersonRef역할) | 결재흐름 | ①정적 | ②E2E | ③프론트 | 결과 | 비고 |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 위험요인정보 | /safety-hazard-info | tb_safety_hazard_form(작성/수정) | 無 | ⬜ | ⬜ | ⬜ | ⬜ | 다중항목 폼 |
-| 2 | 사고정보 | /safety-accident-info | tb_safety_accident_form(작성/수정) | 無 | ⬜ | ⬜ | ⬜ | ⬜ | 다중항목 폼 |
-| 3 | 공정활동작업 | /process-activity-work | tb_process_activity_form(작성/수정) | 無 | ⬜ | ⬜ | ⬜ | ⬜ | 계층(공정→항목) |
-| 4 | 위험성평가 | /risk-assessment | tb_risk_assessment(계획/완료승인) | 상신→승인→완료 | ⬜ | ⬜ | ⬜ | ⬜ | 결재 有 |
-| 5 | 현장안전관리 | /site-safety-mgmt | tb_site_safety_plan(작성/계획/완료, 수정flat) | 상신→승인→완료 | ⬜ | ⬜ | ⬜ | ⬜ | 혼합테이블·파일 |
-| 6 | 아차사고 | /near-miss | tb_near_miss(비PersonRef로 추정) | 無 | ⬜ | ⬜ | ⬜ | ⬜ | 파일·도면마커 |
-| 7 | 작업허가(PTW) | /safety-work | tb_permit_to_work(작성/계획/완료) | 상신→승인→완료상신→완료 | ⬜ | ⬜ | ⬜ | ⬜ | 2단계 결재·파일 |
-| 8 | 보호구 | /ppe-equipment | tb_ppe_equipment(비PersonRef로 추정) | 無 | ⬜ | ⬜ | ⬜ | ⬜ | 재고+요청 2탭 |
+| 1 | 위험요인정보 | /safety-hazard-info | tb_safety_hazard_form(작성/수정) | 無 | ✅ | ⚠️ 23PASS/9FAIL | △ | ⚠️ | **결함A**: UPDATE 500 — modified_by 컬럼 타입 불일치(SQL Server error 257). CREATE는 정상 |
+| 2 | 사고정보 | /safety-accident-info | tb_safety_accident_form(작성/수정) | 無 | ✅ | ⚠️ 동일 | △ | ⚠️ | **결함A 동일**: tb_safety_accident_form.modified_by UPDATE 실패 |
+| 3 | 공정활동작업 | /process-activity-work | tb_process_activity_form(작성/수정) | 無 | ✅ | ⚠️ 동일 | △ | ⚠️ | **결함A 동일**: tb_process_activity_form.modified_by UPDATE 실패 |
+| 4 | 위험성평가 | /risk-assessment | tb_risk_assessment(계획/완료승인) | 상신→승인→완료 | ✅ | ⚠️ 11PASS/13FAIL | △ | ⚠️ | **결함B**: CREATE 500 — `author_user_id` 컬럼 DB에 미존재(BadSqlGrammarException) |
+| 5 | 현장안전관리 | /site-safety-mgmt | tb_site_safety_plan(작성/계획/완료, 수정flat) | 상신→승인→완료 | ✅ | ✅ 25PASS/1FAIL | △ | ✅ | **결함C**: `completionApprovedAt` complete 전환 후 미기록(transition SQL에 해당 CASE 없음) |
+| 6 | 아차사고 | /near-miss | tb_near_miss(비PersonRef) | 無 | ✅ | ✅ 24PASS/0FAIL | ✅ | ✅ | 전 CRUD 통과. 프론트 payload 12개 필드 일치 |
+| 7 | 작업허가(PTW) | /safety-work | tb_permit_to_work(작성/계획/완료) | 상신→승인→완료상신→완료 | ✅ | ✅ 26PASS/0FAIL | △ | ✅ | 결재 전 사이클 통과. 최종상태=DONE(COMPLETED 아님) — 테스트 보정 완료 |
+| 8 | 보호구 | /ppe-equipment+/ppe-request | tb_ppe_equipment·tb_ppe_request(비PersonRef) | 無/승인→지급 | ✅ | ✅ 22PASS/0FAIL | △ | ✅ | 재고 CRUD + 지급신청 승인→지급 전 사이클 통과 |
+
+### 안전관리 결함 목록
+
+| ID | 영향 테이블 | 엔드포인트 | 증상 | 근본원인 | 심각도 |
+|---|---|---|---|---|---|
+| 결함A | tb_safety_hazard_form, tb_safety_accident_form, tb_process_activity_form | PUT /safety-hazard-forms/{id} 외 2개 | UPDATE 500 — UncategorizedSQLException: SQL Server error 257 "Implicit conversion from data type varbinary to date" on modified_by column | `modified_by` 컬럼이 PersonRef NVARCHAR(MAX)가 아닌 기존 타입으로 존재 → PersonRefColumnsInitializer가 COL_LENGTH() 체크로 스킵, TypeHandler의 ps.setString()이 UPDATE 시 실패. INSERT(CREATE)는 정상 | 높음(수정 불가) |
+| 결함B | tb_risk_assessment | POST /risk-assessments | CREATE 500 — BadSqlGrammarException: 열 이름 'author_user_id'이(가) 유효하지 않습니다 | Mapper INSERT SQL이 `author_user_id` 컬럼을 참조하나 DB 테이블에 해당 컬럼 미존재 | 높음(등록 불가) |
+| 결함C | tb_site_safety_plan | PATCH /site-safety-plans/{id}/transition (action=complete) | `completionApprovedAt` 항상 null | transition UPDATE SQL에 complete 액션 시 completion_approved_at 기록 CASE가 없음 (plan_approved_at만 처리) | 중간(완료일시 미기록) |
 
 ---
 

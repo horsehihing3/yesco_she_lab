@@ -72,3 +72,44 @@ bd7ff37 chore(tsc): remove unused imports in components/chemical
 - 오탐(되돌린 항목): 없음
 - 커밋: `7cc4757`
 - `utils/auth.ts` 자체는 미수정, import하는 쪽 파일만 정리함
+
+---
+
+## [완료] 2026-06-14 · TASK-4 — 안전관리 E2E 전체 완료
+
+스크립트 6개 실행 완료. **결함 3종(A·B·C) 발견** — 코드 무수정, 결함 보고만.
+
+### 스크립트별 결과
+
+| 스크립트 | 메뉴 | PASS | FAIL | 비고 |
+|---|---|---|---|---|
+| e2e_safety_forms_test.py | 위험요인정보·사고정보·공정활동작업 | 23 | 9 | 결함A: UPDATE 500 |
+| e2e_risk_assessment_test.py | 위험성평가 | 11 | 13 | 결함B: CREATE 500 |
+| e2e_site_safety_test.py | 현장안전관리 | 25 | 1 | 결함C: completionApprovedAt null |
+| e2e_near_miss_test.py | 아차사고 | 24 | 0 | 전 PASS |
+| e2e_permit_to_work_test.py | 작업허가/PTW | 26 | 0 | 전 PASS |
+| e2e_ppe_test.py | 보호구 재고+지급신청 | 22 | 0 | 전 PASS |
+
+### [질문] 결함 A — tb_safety_hazard_form 외 2개 테이블: UPDATE 500
+
+**영향**: `PUT /safety-hazard-forms/{id}`, `PUT /safety-accident-forms/{id}`, `PUT /process-activity-forms/{id}` 모두 500 실패  
+**증상**: INSERT(CREATE)는 정상, UPDATE만 실패  
+**SQL Server 오류**: error 257 — "Implicit conversion from data type varbinary to date is not allowed"  
+**추정 원인**: `modified_by` 컬럼이 PersonRef NVARCHAR(MAX)가 아닌 기존 타입으로 이미 존재 → `PersonRefColumnsInitializer`의 `COL_LENGTH()` 체크가 "존재함" 판정으로 NVARCHAR(MAX) 생성을 스킵 → `PersonRefTypeHandler.ps.setString()` 이 UPDATE 파라미터로 전달될 때 기존 컬럼 타입과 충돌  
+**확인 SQL**: `SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME IN ('tb_safety_hazard_form','tb_safety_accident_form','tb_process_activity_form') AND COLUMN_NAME='modified_by'`  
+**LEAD 조치 필요**: PersonRefColumnsInitializer가 기존 non-NVARCHAR 컬럼을 ALTER TABLE로 교체하도록 수정 필요, 또는 해당 테이블 `modified_by` 컬럼 타입 직접 확인 후 수동 ALTER
+
+### [질문] 결함 B — tb_risk_assessment: CREATE 500
+
+**영향**: `POST /risk-assessments` 전체 실패 (테이블에 author_user_id 컬럼 없음)  
+**SQL Server 오류**: BadSqlGrammarException — "열 이름 'author_user_id'이(가) 유효하지 않습니다"  
+**Mapper 위치**: `RiskAssessmentMapper.xml` insert 문에 `author_user_id`, `author_name`, `author_team`, `author_position`, `author_dept`, `author_mail` 참조  
+**LEAD 조치 필요**: DB에 해당 컬럼 추가 또는 Mapper INSERT에서 컬럼 제거. PersonRefColumnsInitializer에 tb_risk_assessment author 컬럼 등록 여부 확인.
+
+### [질문] 결함 C — tb_site_safety_plan: completionApprovedAt 미기록
+
+**영향**: `PATCH /site-safety-plans/{id}/transition?action=complete` 후 `completionApprovedAt` 항상 null  
+**원인**: `SiteSafetyPlanMapper.transition` SQL에 `plan_approved_at` CASE만 있고 `completion_approved_at` 기록 CASE 없음  
+**LEAD 조치 필요**: transition UPDATE SQL에 `completion_approved_at = CASE WHEN action='complete' THEN GETDATE() ELSE completion_approved_at END` 추가 검토
+
+자세한 결함 내역: `coord/E2E_TEST_RESULTS.md` 안전관리 결함 목록 참조.
