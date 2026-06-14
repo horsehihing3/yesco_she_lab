@@ -68,6 +68,7 @@ import DevTestFillButton from '../components/common/DevTestFillButton'
 import { FileMetadata } from '../types/file.types'
 import AccidentReportTab from '../components/ehs/AccidentReportTab'
 import NearMissDashboardTab from '../components/ehs/NearMissDashboardTab'
+import { useAuth } from '../context/AuthContext'
 
 const statusColors: Record<NearMissStatus, 'default' | 'warning' | 'info' | 'success' | 'error'> = {
   PENDING: 'warning',
@@ -110,6 +111,7 @@ const NearMissPage: React.FC = () => {
   const queryClient = useQueryClient()
   useTheme()
   const { showConfirm, showSuccess, showError } = useAlert()
+  const { user } = useAuth()
   // 저장 실패(검증 등) 시 원인을 사용자에게 표시 — 기존엔 onError가 없어 무반응이었음
   const showSaveError = (err: any) => {
     const fieldErrors = err?.response?.data?.data
@@ -351,9 +353,9 @@ const NearMissPage: React.FC = () => {
       occSite: '',
       occSiteInfo: '',
       company: '',
-      authorName: '',
-      authorEmail: '',
-      authorDept: '',
+      authorName: user?.name || '',
+      authorEmail: user?.email || '',
+      authorDept: user?.department || '',
       status: 'PENDING',
       emergencyType: '',
       responseStatus: '',
@@ -454,6 +456,15 @@ const NearMissPage: React.FC = () => {
   }
 
   const onSubmit = async (formData: NearMissRequest) => {
+    // 필수 항목 체크 — 발생일시 / 발생장소 / 발생개요
+    const missing: string[] = []
+    if (!formData.occDate) missing.push('발생일시')
+    if (!formData.occSite) missing.push('발생장소')
+    if (!formData.occInfo) missing.push('발생개요')
+    if (missing.length > 0) {
+      showError(`다음 필수 항목을 입력해주세요: ${missing.join(', ')}`)
+      return
+    }
     const confirmed = await showConfirm(t('common.confirmSave'))
     if (!confirmed) return
 
