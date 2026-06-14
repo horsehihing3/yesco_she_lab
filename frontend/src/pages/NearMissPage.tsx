@@ -349,6 +349,9 @@ const NearMissPage: React.FC = () => {
       responseStatus: '',
       isDrill: false,
       severity: '',
+      occDate: '',
+      occHour: '10',
+      occMinute: '00',
     })
     setViewMode('create')
   }
@@ -382,6 +385,10 @@ const NearMissPage: React.FC = () => {
       responseStatus: nearMiss.responseStatus || '',
       isDrill: nearMiss.isDrill || false,
       severity: nearMiss.severity || '',
+      // 발생일시(LocalDateTime) → 날짜/시/분 분리 복원
+      occDate: nearMiss.occDate ? nearMiss.occDate.substring(0, 10) : '',
+      occHour: nearMiss.occDate && nearMiss.occDate.length >= 13 ? nearMiss.occDate.substring(11, 13) : '10',
+      occMinute: nearMiss.occDate && nearMiss.occDate.length >= 16 ? nearMiss.occDate.substring(14, 16) : '00',
     })
     // 기존 조치사항 로드
     if (nearMiss.actions && nearMiss.actions.length > 0) {
@@ -450,8 +457,13 @@ const NearMissPage: React.FC = () => {
     const currentImageFileId = drawingImageFiles && drawingImageFiles.length > selectedDrawingImageIndex
       ? drawingImageFiles[selectedDrawingImageIndex].id
       : undefined
+    // 발생일시: 날짜(occDate) + 시(occHour) + 분(occMinute) → LocalDateTime 으로 결합
+    const occDateTime = formData.occDate
+      ? `${formData.occDate}T${formData.occHour || '00'}:${formData.occMinute || '00'}:00`
+      : undefined
     const payload = {
       ...formData,
+      occDate: occDateTime,
       actions,
       occSiteX: markerPosition?.x ?? undefined,
       occSiteY: markerPosition?.y ?? undefined,
