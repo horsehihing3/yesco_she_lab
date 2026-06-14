@@ -10,7 +10,7 @@
 ## 진행 요약
 | 도메인 | 담당 | 메뉴수 | 완료 | 비고 |
 |---|---|---|---|---|
-| EHS경영 | LEAD | 9 | 1 | 감사점검 완료 |
+| EHS경영 | LEAD | 9 | 3 | 감사점검·계획KPI·비상대응 완료 |
 | 안전관리 | HELPER | 8 | 0 | 착수 대기 |
 
 ---
@@ -20,8 +20,8 @@
 | # | 메뉴 | 라우트 | 주요 테이블(PersonRef역할) | 결재흐름 | ①정적 | ②E2E | ③프론트 | 결과 | 비고 |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | 감사점검 | /audit-inspection | tb_audit_plan(ALL4)·tb_audit(작성/계획/완료, 수정flat) | 계획상신→승인 / 실시수정→완료승인 | ✅ | ✅ 26+22 PASS | ✅ payload일치 | ✅ | 계획+실시 전 사이클·혼합테이블 완료 |
-| 2 | 계획·KPI·목표 | /plan-kpi-goal | tb_ehs_annual_plan(ALL4) | 상신→계획승인→완료승인 | ⬜ | ⬜ | ⬜ | ⬜ | 레퍼런스 DTO패턴 |
-| 3 | 비상대응 | /emergency-response | tb_emergency_plan(ALL4)·tb_emergency_contact(작성) | 상신→승인→완료 | ⬜ | ⬜ | ⬜ | ⬜ | 다중탭 |
+| 2 | 계획·KPI·목표 | /plan-kpi-goal | tb_ehs_annual_plan(ALL4) | 상신→계획승인→완료승인 | ✅ | ✅ 26 PASS | ✅ payload일치 | ✅ | 2단계결재·계획/완료 양쪽반려 통과 (DTO패턴) |
+| 3 | 비상대응 | /emergency-response | tb_emergency_plan(ALL4)·tb_emergency_contact(작성) | 상신→승인→완료 | ✅ | ✅ 15 PASS | ✅ payload일치 | ✅ | 계획 2단계결재+훈련자동생성, 연락처 CRUD |
 | 4 | 법규준수 | /legal-compliance | tb_legal_compliance_plan(ALL4)·tb_legal_compliance_exec(작성/계획/완료,수정flat)·tb_legal_law(작성) | 상신→승인 | ⬜ | ⬜ | ⬜ | ⬜ | 혼합테이블 포함 |
 | 5 | EHS소통 | /ehs/communication | tb_ehs_manager(작성) 등 | 혼합/대부분無 | ⬜ | ⬜ | ⬜ | ⬜ | 컨테이너(여러 탭) |
 | 6 | 교육관리 | /training | (착수 시 확정) | 일부有 | ⬜ | ⬜ | ⬜ | ⬜ | 템플릿 의존 |
