@@ -13,6 +13,7 @@
 | EHS경영 | LEAD | 9 | 9 | **전체 완료** (8 검증 + 도면뷰 N/A) — 결재4개 풀E2E, 잔여4개 CRUD스모크 |
 | 안전관리 | HELPER | 8 | 8 | **전체 완료** — 결함 3종 발견(아래 결함표 참조) |
 | 협력업체관리 | LEAD | 6 | 6 | **전체 완료** (작업허가는 PTW 재사용→안전관리 커버) |
+| 보건관리 | LEAD | 4 | 4 | 검증완료 — ⚠️**건강검진계획 등록 버그 1건 발견** |
 
 ---
 
@@ -65,6 +66,21 @@
 | 4 | 협력사평가 | /partner-mgmt → /partner/evals | tb_partner_eval(비PersonRef) | 無 | ✅ | ✅ CRUD | △ | ✅ | 평가 CRUD |
 | 5 | 협력사노사협의회 | /partner-osh-committee → /osh-committees | tb_osh_committee(비PersonRef) | 출석/서명 | ✅ | ✅ CRUD | △ | ✅ | 협의회 CRUD |
 | 6 | 협력사작업허가 | /partner-permit | tb_permit_to_work(작성/계획/완료) | 2단계결재 | ⏭️ | ⏭️ | ⏭️ | ⏭️ | PermitToWorkPage(mode=external) 재사용 → **안전관리(HELPER) PTW로 커버** |
+
+## 보건관리 (LEAD 담당 — 협력업체관리 후 추가)
+
+| # | 메뉴 | 라우트 | 주요 테이블(PersonRef역할) | 결재흐름 | ①정적 | ②E2E | ③프론트 | 결과 | 비고 |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 건강검진 | /health-checkup/admin → /health-checkup-plan | tb_health_checkup_plan(수정/계획/완료, 작성flat) | 상신→승인→완료 | ✅ | ⚠️ **등록불가** | - | ⚠️ | **[버그] 등록 500 — 아래 발견사항 참조** |
+| 2 | 작업환경측정 | /work-env-measurement → /wem-plans | tb_wem_plan(작성/수정) | 無 | ✅ | ✅ CRUD | △ | ✅ | 날짜 필수(프론트 항상 전송). null 시 jdbcType 누락 견고성흠 |
+| 3 | 직업병관리 | /occupational-disease | tb_od_plan/worker/org/exposure(작성·민감) | 無 | ✅ | ✅ CRUD(plans) | △ | ✅ | 민감 개인정보, 작성자 flat·중첩없음 |
+| 4 | 질병예방관리 | /disease-prevention-mgmt | tb_dp_msd/cvd/...(작성·민감) | 無 | ✅ | ✅ CRUD(msd) | △ | ✅ | 민감 개인정보, 작성자 flat·중첩없음 |
+
+### 🐞 발견사항 (실제 버그)
+- **[BUG·중] 건강검진계획(/health-checkup-plan) 등록 전부 실패(500)** — INSERT가 존재하지 않는 컬럼 `created_by_dept` 참조.
+  - 근본원인: `AllTablesPersonColumnsInitializer`는 `created_by_user_id/name/team/position`만 보장(**dept 누락**). `created_by_dept`는 V120 Flyway에만 정의 → **Flyway 비활성**이라 이 DB에 미생성. 매퍼(HealthCheckupPlanMapper INSERT·resultMap)는 여전히 `created_by_dept` 참조 → 모든 등록 INSERT 실패.
+  - 영향: 건강검진 계획 신규 등록 불가(수정/조회는 영향 적음). 기존 5건은 과거 데이터.
+  - 수정안(택1): (A) 초기화기에 `tb_health_checkup_plan.created_by_dept` ensure 추가 — 매퍼·wire 무변경, 최소 (권장) / (B) 매퍼·모델·DTO·서비스에서 `created_by_dept` 제거(부서표시 손실). ※(A)는 서버 재기동 시 ALTER TABLE — 공유DB 스키마 변경이라 승인 후 적용.
 
 ### 발견사항 (비결함 메모)
 - `LegalLawResponse`·`EhsManagerResponse` 는 작성자(createdBy*)를 **wire 에 노출하지 않음**(설계 — created_by JSON 저장은 됨, 화면엔 reviewer 등 다른 필드 표시). E2E에서 작성자 검증 제외 대상.
