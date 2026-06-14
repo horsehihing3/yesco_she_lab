@@ -23,6 +23,8 @@ import {
   FormControl,
   Select,
   SelectChangeEvent,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -266,6 +268,10 @@ const SafetyEducationTab: React.FC = () => {
   })
 
   const isProcessing = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
+
+  // PC/모바일 레이아웃 동시 마운트 시 react-hook-form 중복 등록으로 입력값 유실 → 한 레이아웃만 마운트
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
 
   // ===== Form =====
   const { control, handleSubmit, reset, getValues, setValue } = useForm<SafetyEducationRequest>({
@@ -901,6 +907,7 @@ const SafetyEducationTab: React.FC = () => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Form - PC */}
+        {isDesktop && (
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
@@ -1082,8 +1089,10 @@ const SafetyEducationTab: React.FC = () => {
             </Box>
           </Box>
         </Box>
+        )}
 
         {/* Form - Mobile */}
+        {!isDesktop && (
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 3 }}>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
@@ -1198,6 +1207,7 @@ const SafetyEducationTab: React.FC = () => {
             )} />
           </Box>
         </Box>
+        )}
 
         {/* ===== Attendees Section (Editable) ===== */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -1210,6 +1220,7 @@ const SafetyEducationTab: React.FC = () => {
         </Box>
 
         {/* Attendees Editable Table - PC */}
+        {isDesktop && (
         <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto', mb: 3 }}>
           <Table size="small" sx={{ minWidth: 700, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
             <TableHead>
@@ -1288,8 +1299,10 @@ const SafetyEducationTab: React.FC = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        )}
 
         {/* Attendees Editable - Mobile */}
+        {!isDesktop && (
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5, mb: 3 }}>
           {attendeeRows.length > 0 ? (
             attendeeRows.map((row, idx) => (
@@ -1347,6 +1360,7 @@ const SafetyEducationTab: React.FC = () => {
             </Paper>
           )}
         </Box>
+        )}
 
         {/* Form Actions */}
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
