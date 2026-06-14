@@ -24,7 +24,6 @@ import ApprovalPage from './pages/ApprovalPage'
 import ChecklistPage from './pages/ChecklistPage'
 import WasteManagePage from './pages/WasteManagePage'
 import CarbonManagePage from './pages/CarbonManagePage'
-import MyHealthCheckupPage from './pages/MyHealthCheckupPage'
 import WaterQualityManagePage from './pages/WaterQualityManagePage'
 import AirEmissionManagePage from './pages/AirEmissionManagePage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -57,11 +56,8 @@ import ChemicalRegulationPage from './pages/ChemicalRegulationPage'
 import PsmManagementPage from './pages/PsmManagementPage'
 import LegalCompliancePage from './pages/LegalCompliancePage'
 import EhsBudgetPage from './pages/EhsBudgetPage'
-import EhsKpiPlanPage from './pages/EhsKpiPlanPage'
-import DiseasePreventionPage from './pages/DiseasePreventionPage'
 import PlanKpiGoalPage from './pages/PlanKpiGoalPage'
 import TrainingPage from './pages/TrainingPage'
-import WorkplaceMeasurementPage from './pages/WorkplaceMeasurementPage'
 import WorkEnvMeasurementPage from './pages/WorkEnvMeasurementPage'
 import OccupationalDiseasePage from './pages/OccupationalDiseasePage'
 import LegalFacilityPage from './pages/LegalFacilityPage'
@@ -135,7 +131,6 @@ function App() {
         <Route path="contractor" element={<ContractorManagementPage />} />
         <Route path="site-safety-mgmt" element={<SiteSafetyManagementPage />} />
         <Route path="health-checkup/admin" element={<HealthCheckupPage />} />
-        <Route path="health-checkup/my" element={<MyHealthCheckupPage />} />
         <Route path="occupational-exposure" element={<OccupationalExposurePage />} />
         <Route path="workplace-drawings" element={<WorkplaceDrawingsPage />} />
         <Route path="workplace-drawings/view" element={<PageWithTitle titleKey="nav.workplaceDrawingsView"><WorkplaceDrawingsViewPage /></PageWithTitle>} />
@@ -144,8 +139,6 @@ function App() {
         <Route path="environment" element={<Navigate to="/environment/waste" replace />} />
         <Route path="environment/waste" element={<WasteManagePage />} />
         <Route path="environment/carbon" element={<CarbonManagePage />} />
-        <Route path="environment/water" element={<WaterQualityManagePage />} />
-        <Route path="environment/water-quality" element={<WaterQualityManagePage />} />
         <Route path="environment/air-emission" element={<AirEmissionManagePage />} />
         <Route path="environment/air-water" element={<WaterQualityManagePage />} />
         <Route path="environment/monitoring" element={<EnvMonitoringPage />} />
@@ -162,9 +155,8 @@ function App() {
         <Route path="legal-compliance" element={<LegalCompliancePage />} />
         <Route path="environment/compliance" element={<Navigate to="/legal-compliance" replace />} />
         <Route path="ehs-budget" element={<EhsBudgetPage />} />
-        <Route path="work-environment" element={<WorkplaceMeasurementPage />} />
         <Route path="work-env-measurement" element={<WorkEnvMeasurementPage />} />
-        <Route path="ergonomics" element={<Navigate to="/disease-prevention" replace />} />
+        <Route path="ergonomics" element={<Navigate to="/disease-prevention-mgmt" replace />} />
         <Route path="occupational-disease" element={<OccupationalDiseasePage />} />
         <Route path="legal-facility" element={<LegalFacilityPage />} />
         <Route path="partner-mgmt" element={<PartnerMgmtPage />} />
@@ -177,8 +169,6 @@ function App() {
         <Route path="incident-response" element={<PageWithTitle titleKey="nav.incidentResponse"><IncidentResponsePage /></PageWithTitle>} />
         <Route path="permit-lifecycle" element={<PermitLifecyclePage />} />
         <Route path="disease-prevention-mgmt" element={<DiseasePreventionMgmtPage />} />
-        <Route path="disease-prevention" element={<DiseasePreventionPage />} />
-        <Route path="ehs/kpi" element={<EhsKpiPlanPage />} />
         <Route path="plan-kpi-goal" element={<PlanKpiGoalPage />} />
         <Route path="contractor-safety" element={<PageWithTitle titleKey="nav.contractorSafety"><Box><Typography color="text.secondary" sx={{ py: 8, textAlign: 'center' }}>Coming Soon</Typography></Box></PageWithTitle>} />
         <Route path="outsourcing-mgmt" element={<PageWithTitle titleKey="nav.outsourcingMgmt"><Box><Typography color="text.secondary" sx={{ py: 8, textAlign: 'center' }}>Coming Soon</Typography></Box></PageWithTitle>} />
