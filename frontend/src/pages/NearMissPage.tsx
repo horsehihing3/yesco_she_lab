@@ -1256,7 +1256,7 @@ const NearMissPage: React.FC = () => {
               <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.occDateTimeLabel')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', gap: 1, alignItems: 'center' }}>
+              <Box sx={{ flex: 2.5, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', gap: 1, alignItems: 'center' }}>
                 <Controller
                   name="occDate"
                   control={control}
@@ -1274,7 +1274,7 @@ const NearMissPage: React.FC = () => {
                   control={control}
                   defaultValue="10"
                   render={({ field }) => (
-                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                    <FormControl size="small" sx={{ minWidth: 72 }}>
                       <Select {...field}>
                         {Array.from({ length: 24 }, (_, i) => (
                           <MenuItem key={i} value={i.toString().padStart(2, '0')}>{i.toString().padStart(2, '0')}</MenuItem>
@@ -1288,7 +1288,7 @@ const NearMissPage: React.FC = () => {
                   control={control}
                   defaultValue="00"
                   render={({ field }) => (
-                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                    <FormControl size="small" sx={{ minWidth: 72 }}>
                       <Select {...field}>
                         {Array.from({ length: 60 }, (_, i) => (
                           <MenuItem key={i} value={i.toString().padStart(2, '0')}>{i.toString().padStart(2, '0')}</MenuItem>
@@ -1307,7 +1307,7 @@ const NearMissPage: React.FC = () => {
               <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('nearMiss.department')}
               </Typography>
-              <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
+              <Box sx={{ flex: 1.5, px: 2, py: 1, bgcolor: 'background.paper' }}>
                 <TextField fullWidth size="small" placeholder={t('nearMiss.department')} {...register('authorDept')} />
               </Box>
             </Box>
@@ -1453,7 +1453,7 @@ const NearMissPage: React.FC = () => {
                   control={control}
                   defaultValue="10"
                   render={({ field }) => (
-                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                    <FormControl size="small" sx={{ minWidth: 72 }}>
                       <Select {...field}>
                         {Array.from({ length: 24 }, (_, i) => (
                           <MenuItem key={i} value={i.toString().padStart(2, '0')}>{i.toString().padStart(2, '0')}</MenuItem>
@@ -1468,7 +1468,7 @@ const NearMissPage: React.FC = () => {
                   control={control}
                   defaultValue="00"
                   render={({ field }) => (
-                    <FormControl size="small" sx={{ minWidth: 70 }}>
+                    <FormControl size="small" sx={{ minWidth: 72 }}>
                       <Select {...field}>
                         {Array.from({ length: 60 }, (_, i) => (
                           <MenuItem key={i} value={i.toString().padStart(2, '0')}>{i.toString().padStart(2, '0')}</MenuItem>
