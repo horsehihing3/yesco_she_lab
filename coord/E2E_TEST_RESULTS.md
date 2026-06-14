@@ -12,7 +12,7 @@
 |---|---|---|---|---|
 | EHS경영 | LEAD | 9 | 9 | **전체 완료** (8 검증 + 도면뷰 N/A) — 결재4개 풀E2E, 잔여4개 CRUD스모크 |
 | 안전관리 | HELPER | 8 | 0 | 노트북 착수 |
-| 협력업체관리 | LEAD | 6 | 2 | contractor 계획/등록 완료, 잔여4 진행 |
+| 협력업체관리 | LEAD | 6 | 6 | **전체 완료** (작업허가는 PTW 재사용→안전관리 커버) |
 
 ---
 
@@ -53,10 +53,10 @@
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | 협력사위험성평가 | /contractor → /contractor-plans | tb_contractor_plan(ALL4) | 상신→승인→완료(2단계) | ✅ | ✅ 10 PASS | ⬜ | ✅ | 2단계결재·반려 통과 (DTO패턴) |
 | 2 | 협력사등록 | /contractor-registration | tb_contractor_registration(작성·민감개인정보) | 상태변경 | ✅ | ✅ 4 PASS | ⬜ | ✅ | CRUD+상태, 작성자 flat 노출·중첩없음 |
-| 3 | 협력사안전관리 | /partner-safety-mgmt | tb_partner_safety_execution(비PersonRef) | ? | ⬜ | ⬜ | ⬜ | ⬜ | 스모크 예정 |
-| 4 | 협력사평가 | /partner-mgmt | tb_contractor_eval(비PersonRef) | 無 | ⬜ | ⬜ | ⬜ | ⬜ | 스모크 예정 |
-| 5 | 협력사노사협의회 | /partner-osh-committee | tb_osh_committee(비PersonRef) | ? | ⬜ | ⬜ | ⬜ | ⬜ | 스모크 예정 |
-| 6 | 협력사작업허가 | /partner-permit | (착수 시 확정) | ? | ⬜ | ⬜ | ⬜ | ⬜ | 스모크 예정 |
+| 3 | 협력사안전관리 | /partner-safety-mgmt → /partner-safety-executions | tb_partner_safety_execution(비PersonRef) | create+complete | ✅ | ✅ 등록+토큰 | △ | ✅ | 토큰 자가점검(PUT수정 없음·정상) |
+| 4 | 협력사평가 | /partner-mgmt → /partner/evals | tb_partner_eval(비PersonRef) | 無 | ✅ | ✅ CRUD | △ | ✅ | 평가 CRUD |
+| 5 | 협력사노사협의회 | /partner-osh-committee → /osh-committees | tb_osh_committee(비PersonRef) | 출석/서명 | ✅ | ✅ CRUD | △ | ✅ | 협의회 CRUD |
+| 6 | 협력사작업허가 | /partner-permit | tb_permit_to_work(작성/계획/완료) | 2단계결재 | ⏭️ | ⏭️ | ⏭️ | ⏭️ | PermitToWorkPage(mode=external) 재사용 → **안전관리(HELPER) PTW로 커버** |
 
 ### 발견사항 (비결함 메모)
 - `LegalLawResponse`·`EhsManagerResponse` 는 작성자(createdBy*)를 **wire 에 노출하지 않음**(설계 — created_by JSON 저장은 됨, 화면엔 reviewer 등 다른 필드 표시). E2E에서 작성자 검증 제외 대상.
