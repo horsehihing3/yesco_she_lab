@@ -109,7 +109,15 @@ const NearMissPage: React.FC = () => {
   const { t, i18n } = useTranslation()
   const queryClient = useQueryClient()
   useTheme()
-  const { showConfirm, showSuccess } = useAlert()
+  const { showConfirm, showSuccess, showError } = useAlert()
+  // 저장 실패(검증 등) 시 원인을 사용자에게 표시 — 기존엔 onError가 없어 무반응이었음
+  const showSaveError = (err: any) => {
+    const fieldErrors = err?.response?.data?.data
+    const detail = fieldErrors && typeof fieldErrors === 'object'
+      ? Object.values(fieldErrors).join(', ')
+      : (err?.response?.data?.message || '')
+    showError(detail ? `저장에 실패했습니다: ${detail}` : '저장에 실패했습니다. 필수 항목을 확인해주세요.')
+  }
   const { codeMap: statusKeys } = useCodeMap('NEAR_MISS_STATUS')
   // 사고 대응 4종 — 코드 그룹 (INCIDENT_RESP_*)
   const { codeList: incRespTypeList, codeMap: incRespTypeMap } = useCodeMap('INCIDENT_RESP_TYPE')
@@ -239,6 +247,7 @@ const NearMissPage: React.FC = () => {
       await showSuccess(t('common.saveSuccess'))
       handleBackToList()
     },
+    onError: showSaveError,
   })
 
   const updateMutation = useMutation({
@@ -249,6 +258,7 @@ const NearMissPage: React.FC = () => {
       await showSuccess(t('common.saveSuccess'))
       handleBackToList()
     },
+    onError: showSaveError,
   })
 
   const deleteMutation = useMutation({
