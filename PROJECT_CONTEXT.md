@@ -8,6 +8,14 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
+### ✅ 완료 — 🔴 이중 레이아웃 중복 register 데이터손실 버그 전수 수정 (2026-06-14 세션 13)
+- **증상**: PC/모바일 레이아웃을 CSS(display)로만 토글해 둘 다 DOM 마운트 → react-hook-form `register`/`Controller`가 같은 name으로 2번 등록 → RHF가 보이는 입력이 아닌 숨겨진(빈) 입력을 읽어 **입력값이 빈값으로 저장**되는 데이터 손실. NearMiss 실DB(id127 전필드 빈값)로 확정.
+- **수정**: `useMediaQuery(theme.breakpoints.up('md'), {noSsr:true})`로 **화면 폭에 따라 한 레이아웃만 마운트**(폼 dual-layout 블록 조건부 렌더)해 중복 제거. 9개 폼 전부 tsc 0 + 빌드 GREEN.
+- **대상 9개**: NearMissPage / PpeIssuanceTab / PrePlacementExamTab / SafetyEducationTab / WorkplaceMeasurementTab / EhsPlanTab / EhsManagerTab / EhsMessageTab / MyHealthCheckupPage.
+- **검증**: 정적(tsc·build) 완료. ⚠️ **런타임 등록→DB 왕복 확인 권장**(폼별 1건). NearMiss는 부수 수정(발생시각·onError·occTitle필수해제·작성자 세션자동세팅·필수체크 발생일시/장소/개요+별표) 동반.
+- **참고 패턴**: 다른 RHF 폼 신규 작성 시 PC/모바일 dual-layout은 반드시 `isDesktop` 조건부 마운트(CSS display 토글 금지). 커밋 `241e573`(NearMiss) 등 레퍼런스.
+
+
 ### ✅ 완료 — TASK-2 프론트 타입오류 0 + 빌드 GREEN (2026-06-14 세션 13, Opus LEAD + Sonnet HELPER 2-PC)
 - **목표 달성**: 프론트 `tsc` **364→0**, `npm run build` **성공**(14462 modules, 27.96s, 청크크기 경고만 잔존·비차단). 세션시작 95에서 0으로.
 - **[A] 타입 갭**: getRoles 헬퍼가 읽는 `createdByUserId` 등 누락 필드를 `.types.ts` 에 추가 — Dp* 6 / Od* 5(Exposure/Org/Worker/Aftercare/Fitness) / HealthCheckupRecord / EhsManager / EmergencyContact / EmergencyPlan(modifiedByTeam·Position) / User(position·active) / NearMissRequest(occHour·occMinute) / SiteSafetyPlan(inspector*)·Request(modifiedBy).
