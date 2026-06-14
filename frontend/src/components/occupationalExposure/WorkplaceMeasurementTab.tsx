@@ -23,6 +23,8 @@ import {
   FormControl,
   Select,
   SelectChangeEvent,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -252,6 +254,10 @@ const WorkplaceMeasurementTab: React.FC = () => {
   })
 
   const isProcessing = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
+
+  // PC/모바일 레이아웃 동시 마운트 시 react-hook-form 중복 등록으로 입력값 유실 → 한 레이아웃만 마운트
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
 
   // ===== Form =====
   const { control, handleSubmit, reset, getValues, setValue } = useForm<WorkplaceMeasurementRequest>({
@@ -811,6 +817,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Form - PC */}
+        {isDesktop && (
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={formLabelSx}>
@@ -976,8 +983,10 @@ const WorkplaceMeasurementTab: React.FC = () => {
             </Box>
           </Box>
         </Box>
+        )}
 
         {/* Form - Mobile */}
+        {!isDesktop && (
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 3 }}>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
@@ -1069,6 +1078,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
             )} />
           </Box>
         </Box>
+        )}
 
         {/* ===== Detail Rows Section (Editable Table) ===== */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
@@ -1076,6 +1086,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
         </Typography>
 
         {/* Detail Editable Table - PC */}
+        {isDesktop && (
         <Paper sx={{ display: { xs: 'none', md: 'block' }, p: 2, mb: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 1 }}>
             <Button size="small" startIcon={<AddIcon />} onClick={handleAddDetailRow}>
@@ -1217,8 +1228,10 @@ const WorkplaceMeasurementTab: React.FC = () => {
             </Table>
           </TableContainer>
         </Paper>
+        )}
 
         {/* Detail Editable Cards - Mobile */}
+        {!isDesktop && (
         <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 1 }}>
             <Button size="small" startIcon={<AddIcon />} onClick={handleAddDetailRow}>
@@ -1354,6 +1367,7 @@ const WorkplaceMeasurementTab: React.FC = () => {
             </Paper>
           )}
         </Box>
+        )}
 
         {/* Form Actions */}
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
