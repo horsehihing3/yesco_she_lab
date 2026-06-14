@@ -29,6 +29,8 @@ import {
   CircularProgress,
   Alert,
   Chip,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -119,6 +121,10 @@ const EhsMessageTab: React.FC = () => {
   const getDetailRoles = (item: { authorName?: string } | null): string[] =>
     [...myRoles, ...(item?.authorName === user?.name ? ['writer'] : [])]
   const rowsPerPage = 10
+
+  // PC/모바일 레이아웃 동시 마운트 시 react-hook-form 중복 등록으로 입력값 유실 → 한 레이아웃만 마운트
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
 
   const { control, handleSubmit, reset, setValue, getValues } = useForm<EhsMessageRequest>({
     defaultValues: {
@@ -406,6 +412,7 @@ const EhsMessageTab: React.FC = () => {
           <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
             <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }} />
             {/* PC용 테이블 레이아웃 */}
+            {isDesktop && (
             <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: 제목 */}
               <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -544,8 +551,10 @@ const EhsMessageTab: React.FC = () => {
                 </Box>
               </Box>
             </Box>
+            )}
 
             {/* 모바일용 레이아웃 */}
+            {!isDesktop && (
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.title')}</Typography>
@@ -636,6 +645,7 @@ const EhsMessageTab: React.FC = () => {
                 </Box>
               </Box>
             </Box>
+            )}
           </Paper>
 
           <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1 }}>
@@ -782,6 +792,7 @@ const EhsMessageTab: React.FC = () => {
           <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
             <input type="file" ref={fileInputRef} onChange={handleFileSelect} multiple style={{ display: 'none' }} />
             {/* PC용 테이블 레이아웃 */}
+            {isDesktop && (
             <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: 제목 */}
               <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -920,8 +931,10 @@ const EhsMessageTab: React.FC = () => {
                 </Box>
               </Box>
             </Box>
+            )}
 
             {/* 모바일용 레이아웃 */}
+            {!isDesktop && (
             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
               <Box>
                 <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('common.title')}</Typography>
@@ -1012,6 +1025,7 @@ const EhsMessageTab: React.FC = () => {
                 </Box>
               </Box>
             </Box>
+            )}
           </Paper>
 
           <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1 }}>
