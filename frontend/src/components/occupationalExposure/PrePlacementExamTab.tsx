@@ -24,6 +24,8 @@ import {
   Select,
   SelectChangeEvent,
   Switch,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -233,6 +235,10 @@ const PrePlacementExamTab: React.FC = () => {
   })
 
   const isProcessing = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
+
+  // PC/모바일 레이아웃 동시 마운트 시 react-hook-form 중복 등록으로 입력값 유실 → 한 레이아웃만 마운트
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
 
   // ===== Form =====
   const { control, handleSubmit, reset, getValues, setValue } = useForm<PrePlacementExamRequest>({
@@ -766,6 +772,7 @@ const PrePlacementExamTab: React.FC = () => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Form - PC */}
+        {isDesktop && (
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           {/* Row 1: employeeId / employeeName */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -1005,8 +1012,10 @@ const PrePlacementExamTab: React.FC = () => {
             </Box>
           </Box>
         </Box>
+        )}
 
         {/* Form - Mobile */}
+        {!isDesktop && (
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 3 }}>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
@@ -1152,6 +1161,7 @@ const PrePlacementExamTab: React.FC = () => {
             )} />
           </Box>
         </Box>
+        )}
 
         {/* Form Actions */}
         <Box sx={{ display: 'flex', gap: 1, mt: 3, justifyContent: { xs: 'stretch', md: 'flex-end' } }}>
