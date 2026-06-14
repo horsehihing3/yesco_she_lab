@@ -8,12 +8,12 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
-### ✅ 완료 — 🔴 이중 레이아웃 중복 register 데이터손실 버그 전수 수정 (2026-06-14 세션 13)
-- **증상**: PC/모바일 레이아웃을 CSS(display)로만 토글해 둘 다 DOM 마운트 → react-hook-form `register`/`Controller`가 같은 name으로 2번 등록 → RHF가 보이는 입력이 아닌 숨겨진(빈) 입력을 읽어 **입력값이 빈값으로 저장**되는 데이터 손실. NearMiss 실DB(id127 전필드 빈값)로 확정.
-- **수정**: `useMediaQuery(theme.breakpoints.up('md'), {noSsr:true})`로 **화면 폭에 따라 한 레이아웃만 마운트**(폼 dual-layout 블록 조건부 렌더)해 중복 제거. 9개 폼 전부 tsc 0 + 빌드 GREEN.
-- **대상 9개**: NearMissPage / PpeIssuanceTab / PrePlacementExamTab / SafetyEducationTab / WorkplaceMeasurementTab / EhsPlanTab / EhsManagerTab / EhsMessageTab / MyHealthCheckupPage.
-- **검증**: 정적(tsc·build) 완료. ⚠️ **런타임 등록→DB 왕복 확인 권장**(폼별 1건). NearMiss는 부수 수정(발생시각·onError·occTitle필수해제·작성자 세션자동세팅·필수체크 발생일시/장소/개요+별표) 동반.
-- **참고 패턴**: 다른 RHF 폼 신규 작성 시 PC/모바일 dual-layout은 반드시 `isDesktop` 조건부 마운트(CSS display 토글 금지). 커밋 `241e573`(NearMiss) 등 레퍼런스.
+### ✅ 완료 — 🔴 이중 레이아웃 중복 register 데이터손실 (NearMiss 한정 — 런타임 검증으로 범위 확정, 2026-06-14 세션 13)
+- **증상**: PC/모바일 레이아웃을 CSS(display)로만 토글해 둘 다 DOM 마운트 → react-hook-form 같은 name 2번 등록. **`register`(비제어형) 텍스트필드는** RHF가 숨겨진(빈) 입력을 읽어 **입력값이 빈값 저장**됨.
+- **⚠️ 핵심 — 버그는 `register`(비제어형)만 해당. `Controller`(제어형)는 안전(손실 없음).** 런타임 A/B(로컬 dual-mount 임시복원 → 발생개요(register) 저장 시 "필수값" = 빈값 확인 / Controller 폼 2종은 운영·로컬 모두 정상)로 확정.
+- **수정 대상 = NearMissPage 1개** (유일하게 register 텍스트필드 사용: occInfo/occSiteInfo/authorName/authorDept). `useMediaQuery(up('md'),{noSsr})`로 한 레이아웃만 마운트(8블록 조건부) → 중복 제거. 커밋 `241e573`.
+- **초기 과잉진단 → revert**: 처음 Controller 폼 8개(PpeIssuance/PrePlacement/SafetyEducation/WorkplaceMeasurement/EhsPlan/EhsManager/EhsMessage/MyHealthCheckup)도 같은 수정했으나 **Controller라 불필요 → 전부 revert**(`241e573` 외 8커밋 역적용). 그 8폼은 원래 안전.
+- **참고 패턴**: 신규 RHF 폼에서 PC/모바일 dual-layout + **`register`(비제어)** 조합은 금지 → `isDesktop` 조건부 마운트 또는 `Controller` 사용. tsc 0 + 빌드 GREEN.
 
 
 ### ✅ 완료 — TASK-2 프론트 타입오류 0 + 빌드 GREEN (2026-06-14 세션 13, Opus LEAD + Sonnet HELPER 2-PC)

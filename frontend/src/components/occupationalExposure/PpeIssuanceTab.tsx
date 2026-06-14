@@ -28,8 +28,6 @@ import {
   Chip,
   Radio,
   Tooltip,
-  useTheme,
-  useMediaQuery,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import AddIcon from '@mui/icons-material/Add'
@@ -125,12 +123,6 @@ const PpeIssuanceTab: React.FC = () => {
     if (item?.authorName && user?.name && item.authorName === user.name) roles.push('writer')
     return roles
   }
-
-  // PC/모바일 레이아웃을 CSS(display)로만 토글하면 두 레이아웃이 동시에 마운트돼
-  // react-hook-form register/Controller가 같은 name으로 2번 등록 → 숨겨진(빈) 입력을 읽어
-  // 입력값이 빈값으로 저장되는 데이터 손실 버그. 화면 폭에 따라 한 레이아웃만 마운트한다.
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
 
   // Form
   const { control, handleSubmit, reset, watch, setValue, getValues } = useForm<PpeIssuanceRequest>({
@@ -575,7 +567,6 @@ const PpeIssuanceTab: React.FC = () => {
       ) : issuanceDetail ? (
         <>
           {/* PC Detail Layout */}
-          {isDesktop && (
           <Paper sx={{ display: { xs: 'none', md: 'block' }, p: 3, bgcolor: 'grey.50' }}>
             <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
               {/* Row 1: employeeId | employeeName */}
@@ -681,10 +672,8 @@ const PpeIssuanceTab: React.FC = () => {
               )}
             </Box>
           </Paper>
-          )}
 
           {/* Mobile Detail Layout */}
-          {!isDesktop && (
           <Paper sx={{ display: { xs: 'block', md: 'none' }, p: 2, bgcolor: 'grey.50' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box>
@@ -783,7 +772,6 @@ const PpeIssuanceTab: React.FC = () => {
               )}
             </Box>
           </Paper>
-          )}
         </>
       ) : null}
     </>
@@ -794,7 +782,6 @@ const PpeIssuanceTab: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Paper sx={{ p: { xs: 2, md: 3 }, bgcolor: 'grey.50', mb: 3 }}>
           {/* PC Form Layout */}
-          {isDesktop && (
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {/* Row 1: employeeId | employeeName */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -1024,10 +1011,8 @@ const PpeIssuanceTab: React.FC = () => {
               </Box>
             </Box>
           </Box>
-          )}
 
           {/* Mobile Form Layout */}
-          {!isDesktop && (
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
             <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
@@ -1233,7 +1218,6 @@ const PpeIssuanceTab: React.FC = () => {
               />
             </Box>
           </Box>
-          )}
         </Paper>
 
         {/* Form Actions */}

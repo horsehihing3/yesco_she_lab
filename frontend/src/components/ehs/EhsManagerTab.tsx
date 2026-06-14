@@ -25,8 +25,6 @@ import {
   MenuItem,
   CircularProgress,
   Alert,
-  useTheme,
-  useMediaQuery,
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AddIcon from '@mui/icons-material/Add'
@@ -79,10 +77,6 @@ const EhsManagerTab: React.FC = () => {
   const canNew  = canSee(MENU, 'LIST',   'New',  myRoles)
   const canEdit = canSee(MENU, 'DETAIL', '수정', getRoles(selectedManager ?? {}))
   const canDel  = canSee(MENU, 'DETAIL', '삭제', getRoles(selectedManager ?? {}))
-
-  // PC/모바일 레이아웃 동시 마운트 시 react-hook-form 중복 등록으로 입력값 유실 → 한 레이아웃만 마운트
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
 
   const { control, handleSubmit, reset, setValue, getValues } = useForm<EhsManagerRequest>({
     defaultValues: {
@@ -510,7 +504,6 @@ const EhsManagerTab: React.FC = () => {
             {dialogMode !== 'view' && (
               <>
                 {/* PC용 테이블 레이아웃 */}
-                {isDesktop && (
                 <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mt: 1 }}>
                   {/* Row 1: 카테고리 | 담당자 */}
                   <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -650,10 +643,8 @@ const EhsManagerTab: React.FC = () => {
                     </Box>
                   </Box>
                 </Box>
-                )}
 
                 {/* 모바일용 레이아웃 */}
-                {!isDesktop && (
                 <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, pt: 1 }}>
                   <Box>
                     <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>
@@ -758,7 +749,6 @@ const EhsManagerTab: React.FC = () => {
                     />
                   </Box>
                 </Box>
-                )}
               </>
             )}
           </DialogContent>
