@@ -1,6 +1,5 @@
 package com.smartehs.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ public class NearMissRequest {
 
     private Long workPlaceId;
 
-    @NotBlank(message = "Title is required")
+    // 제목: 화면 입력란·표시 없는 레거시 필드 → 필수 해제(빈값 허용). 비면 빈 문자열로 저장됨.
     private String occTitle;
 
     private LocalDateTime occDate;
