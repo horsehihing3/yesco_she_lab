@@ -25,6 +25,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -121,6 +123,10 @@ const MyHealthCheckupPage: React.FC = () => {
     const cur = new Date().getFullYear()
     return Array.from({ length: 10 }, (_, i) => cur - i)
   }, [])
+
+  // PC/모바일 레이아웃 동시 마운트 시 react-hook-form 중복 등록으로 입력값 유실 → 한 레이아웃만 마운트
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
 
   const { control, handleSubmit, reset, setValue, watch, getValues } = useForm<HealthCheckupRequest>({
     defaultValues: {
@@ -540,6 +546,7 @@ const MyHealthCheckupPage: React.FC = () => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Form - PC */}
+        {isDesktop && (
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           {/* Employee info - auto-filled & disabled */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -687,8 +694,10 @@ const MyHealthCheckupPage: React.FC = () => {
             </Box>
           </Box>
         </Box>
+        )}
 
         {/* Form - Mobile */}
+        {!isDesktop && (
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2, mb: 3 }}>
           <Box>
             <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('healthCheckup.employeeId')}</Typography>
@@ -817,6 +826,7 @@ const MyHealthCheckupPage: React.FC = () => {
             )} />
           </Box>
         </Box>
+        )}
 
         {/* ===== Detail Results Section (Body Diagram + Editable Table) ===== */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
