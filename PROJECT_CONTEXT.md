@@ -8,6 +8,14 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ## ⚡ 다음 세션 작업 (우선순위 순)
 
+### ✅ 완료 — 죽은 코드 전수 정리 (2026-06-14 세션 13, ts-prune + 검증)
+- **메뉴 미연결 라우트 감사**: 17개 중 리다이렉트5/CommingSoon2/부모1 제외 → 죽은 중복 페이지 정리(work-environment·disease-prevention·ehs/kpi 등 메뉴에 더 완성된 버전 존재), 중복 라우트 제거(water·health-checkup/my), /ergonomics→disease-prevention-mgmt 교정.
+- **ts-prune 죽은 export 감사**: 통째 죽은 파일 삭제 — 페이지래퍼 14(탭형 페이지로 대체된 구버전) + 연쇄 죽은 탭 4 + 죽은 API 5(checklistApi 등) + HELPER가 죽은 타입파일 6(diseasePrevention/emergencyResponse/ergonomics/kpi/safetyCommittee.types + excelExport) + 부분 타입 24심볼. **총 ~30파일 삭제 + 24심볼**.
+- **남긴 것**: 부분 미사용 api 함수 ~23개(approval/legal/safetyChecklist) = tree-shaken cosmetic이라 생략(bulk 제거 시 한줄 export over-remove 위험 확인). over-export 74(used in module)도 보류.
+- **검증**: tsc 0 + build GREEN 전구간 + 런타임 샘플(배치전건강진단 — HELPER가 깎은 occupationalExposure.types 공유, 정상). **살아있는 기능 무영향 확정**.
+- ⚠️ **2-PC 협업 교훈**: dual-layout register는 `register`(비제어)만 손실(NearMiss), `Controller`는 안전 → 8폼 과잉수정 revert. bulk 스크립트 over-remove는 tsc 게이트가 잡음. **고치기 전 1개 검증 / 고가치만 확실히·저가치 생략** 원칙.
+
+
 ### ✅ 완료 — 🔴 이중 레이아웃 중복 register 데이터손실 (NearMiss 한정 — 런타임 검증으로 범위 확정, 2026-06-14 세션 13)
 - **증상**: PC/모바일 레이아웃을 CSS(display)로만 토글해 둘 다 DOM 마운트 → react-hook-form 같은 name 2번 등록. **`register`(비제어형) 텍스트필드는** RHF가 숨겨진(빈) 입력을 읽어 **입력값이 빈값 저장**됨.
 - **⚠️ 핵심 — 버그는 `register`(비제어형)만 해당. `Controller`(제어형)는 안전(손실 없음).** 런타임 A/B(로컬 dual-mount 임시복원 → 발생개요(register) 저장 시 "필수값" = 빈값 확인 / Controller 폼 2종은 운영·로컬 모두 정상)로 확정.
