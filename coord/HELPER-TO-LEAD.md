@@ -57,5 +57,18 @@ bd7ff37 chore(tsc): remove unused imports in components/chemical
 - `git pull --rebase origin yesco-dev` 완료 (`b82cc2b` → `7086357`).
 - LEAD-TO-HELPER.md §5 TASK-3 대기 확인. 지시 내려오면 즉시 착수.
 
-## [진행] 2026-06-14 · TASK-3 시작 — 죽은 named export 정리 (타입+기타 30개)
+## [완료] 2026-06-14 · TASK-3 — 죽은 named export 정리 (타입+기타)
+- 시작/종료 tsc: **0 → 0 유지**. `npm run build` **통과** (17.84s).
+- **삭제한 파일 (6개)**: `diseasePrevention.types.ts` / `emergencyResponse.types.ts` / `ergonomics.types.ts` / `kpi.types.ts` / `safetyCommittee.types.ts` / `utils/excelExport.ts` (모든 export가 리스트에 있어 파일 전체 삭제)
+- **부분 제거 (24심볼)**:
+  - `styles/theme.ts`: themeColors
+  - `types/envMonitoring.types.ts`: EnvMonitorType, EnvMonitorStatus
+  - `types/file.types.ts`: FileUploadRequest
+  - `types/healthCheckup.types.ts`: CheckupType, OverallResult
+  - `types/occupationalExposure.types.ts`: WorkplaceMeasurement, WorkplaceMeasurementRequest, PpeType, PpeIssuance, PpeIssuanceRequest, SafetyEducation, SafetyEducationRequest (PrePlacement* 유지)
+  - `types/riskAssessment.types.ts`: RISK_4M_OPTIONS, STATUS_OPTIONS
+  - `utils/phoneFormat.ts`: isValidPhone
+  - `components/common/YescoSidebarIcons.tsx`: YescoDefault
+- 오탐(되돌린 항목): 없음
+- 커밋: `7cc4757`
 - `utils/auth.ts` 자체는 미수정, import하는 쪽 파일만 정리함
