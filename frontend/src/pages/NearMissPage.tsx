@@ -30,6 +30,7 @@ import {
   FormControlLabel,
   Radio,
   useTheme,
+  useMediaQuery,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -108,7 +109,11 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 const NearMissPage: React.FC = () => {
   const { t, i18n } = useTranslation()
   const queryClient = useQueryClient()
-  useTheme()
+  const theme = useTheme()
+  // 반응형 레이아웃을 CSS(display)로만 숨기면 PC/모바일 두 레이아웃이 동시에 마운트돼
+  // react-hook-form Controller가 같은 name으로 2번 등록 → 값 바인딩이 깨진다(발생일자 선택 불가 등).
+  // 화면 폭에 따라 한 레이아웃만 마운트하도록 분기한다.
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true })
   const { showConfirm, showSuccess } = useAlert()
   const { codeMap: statusKeys } = useCodeMap('NEAR_MISS_STATUS')
   // 사고 대응 4종 — 코드 그룹 (INCIDENT_RESP_*)
@@ -1250,6 +1255,7 @@ const NearMissPage: React.FC = () => {
         </Typography>
         <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* PC용 테이블 레이아웃 */}
+          {isDesktop && (
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {/* Row 0: 발생일시 | 성명 */}
             <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
@@ -1435,8 +1441,10 @@ const NearMissPage: React.FC = () => {
               </Box>
             </Box>
           </Box>
+          )}
 
           {/* 모바일용 레이아웃 */}
+          {!isDesktop && (
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
             <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.occDateTimeLabel')}</Typography>
@@ -1589,6 +1597,7 @@ const NearMissPage: React.FC = () => {
               )}
             </Box>
           </Box>
+          )}
         </Paper>
 
         {/* 사고 대응 분류 — 비상유형/상태/심각도 (코드) */}
@@ -1597,6 +1606,7 @@ const NearMissPage: React.FC = () => {
         </Typography>
         <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* PC용 테이블 레이아웃 */}
+          {isDesktop && (
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'divider' } }}>
               <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
@@ -1646,8 +1656,10 @@ const NearMissPage: React.FC = () => {
               </Table>
             </TableContainer>
           </Box>
+          )}
 
           {/* 모바일용 레이아웃 — 셀렉박스 하나씩 한 줄 */}
+          {!isDesktop && (
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1, py: 0.75, borderRadius: 0.5, fontSize: '0.75rem', textAlign: 'center' }}>비상유형</Typography>
@@ -1689,6 +1701,7 @@ const NearMissPage: React.FC = () => {
               />
             </Box>
           </Box>
+          )}
         </Paper>
 
         {/* 위험성 파악 섹션 - 반응형 */}
@@ -1697,6 +1710,7 @@ const NearMissPage: React.FC = () => {
         </Typography>
         <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* PC용 테이블 레이아웃 */}
+          {isDesktop && (
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer component={Paper} variant="outlined" sx={{ '& .MuiPaper-root': { borderColor: 'divider' } }}>
               <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
@@ -1751,8 +1765,10 @@ const NearMissPage: React.FC = () => {
               </Table>
             </TableContainer>
           </Box>
+          )}
 
           {/* 모바일용 레이아웃 */}
+          {!isDesktop && (
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
             <Box>
               <Typography variant="body2" fontWeight="bold" sx={{ mb: 1, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('nearMiss.intensity')}</Typography>
@@ -1797,6 +1813,7 @@ const NearMissPage: React.FC = () => {
               />
             </Box>
           </Box>
+          )}
         </Paper>
 
         {/* 조치사항 섹션 - 반응형 */}
