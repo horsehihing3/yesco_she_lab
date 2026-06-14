@@ -21,6 +21,7 @@ public class UserInfoResponse {
     private String company;
     private String role;
     private String position;
+    private Boolean active;
 
     public static UserInfoResponse fromIdmUser(IdmUser user) {
         return UserInfoResponse.builder()
@@ -33,6 +34,8 @@ public class UserInfoResponse {
                 .company(user.getCompanyCode())
                 .role(user.getUserRole() != null ? user.getUserRole() : "TEAM_MEMBER")
                 .position(user.getTitleName())
+                // T_IDM_USER.UserStatus '10' = 정상/활성 (관리자 조회·DEV계정 기준과 동일)
+                .active("10".equals(user.getUserStatus()))
                 .build();
     }
 }
