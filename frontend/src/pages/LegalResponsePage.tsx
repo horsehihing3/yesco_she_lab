@@ -191,7 +191,10 @@ const LegalResponsePage: React.FC = () => {
     },
   })
 
-  const isLoading = searchFetching || regFetching || revFetching || syncMut.isPending || updateRegMut.isPending || checkRegMut.isPending
+  const isLoading = searchFetching || regFetching || revFetching
+    || syncMut.isPending || updateRegMut.isPending || checkRegMut.isPending
+    || updateRevMut.isPending || deleteRevMut.isPending
+    || createMut.isPending || deleteRegMut.isPending
 
   return (
     <Box>
