@@ -60,12 +60,12 @@ const RISK_COLORS: Record<string, 'default' | 'success' | 'warning' | 'error'> =
 // Style constants
 const labelSx = {
   width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }
-const valSxBorder = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const valSxBorder = { ...valSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 // =============================================
@@ -537,8 +537,8 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   if (viewMode === 'detail' && selectedItem) {
     const dLabelSx = { ...labelSx, width: 140, minWidth: 140 }
     const dValSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'divider' }
-    const dRowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+    const dRowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -587,7 +587,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             {selectedItem.safetyMeasures && <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.safetyMeasures')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.safetyMeasures}</Typography></Box></Box>}
             {selectedItem.hazardFactors && <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.hazardFactors')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.hazardFactors}</Typography></Box></Box>}
             {selectedItem.rejectionReason && <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.rejectionReason')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.rejectionReason}</Typography></Box></Box>}
-            {selectedItem.notes && <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}><Typography sx={dLabelSx}>{t('common.notes')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.notes}</Typography></Box></Box>}
+            {selectedItem.notes && <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}><Typography sx={dLabelSx}>{t('common.notes')}</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.notes}</Typography></Box></Box>}
             {existingFiles.length > 0 && (
               <Box sx={{ display: 'flex' }}>
                 <Typography sx={dLabelSx}>{t('common.attachments', '첨부파일')}</Typography>
@@ -715,12 +715,12 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
         {/* Desktop form - table-style layout */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {/* Row: title */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.title')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valSx}><TextField fullWidth size="small" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></Box>
           </Box>
           {/* Row: type + risk */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.type')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" displayEmpty value={form.permitType} onChange={(e) => setForm({ ...form, permitType: e.target.value })}>
@@ -737,7 +737,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Box>
           </Box>
           {/* Row: location + workers */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.workLocation')}</Typography>
             <Box sx={valSxBorder}>
               <TextField fullWidth size="small" value={form.workLocation || ''} onChange={(e) => setForm({ ...form, workLocation: e.target.value })} />
@@ -748,7 +748,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Box>
           </Box>
           {/* Row: start date + end date */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.startDate')}</Typography>
             <Box sx={valSxBorder}>
               <DatePickerField value={formatDate(form.workStartDate) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={formatDate(form.workEndDate)} />
@@ -759,27 +759,27 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Box>
           </Box>
           {/* Row: description */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.description')}</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={2} value={form.description || ''} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Box>
           </Box>
           {/* 안전 조치 사항 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.safetyMeasures')}</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={3} value={form.safetyMeasures || ''} onChange={(e) => setForm({ ...form, safetyMeasures: e.target.value })} /></Box>
           </Box>
           {/* 위험 요인 — 안전 조치 사항과 동일 크기 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.hazardFactors')}</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={3} value={form.hazardFactors || ''} onChange={(e) => setForm({ ...form, hazardFactors: e.target.value })} /></Box>
           </Box>
           {/* 비고 — 안전 조치 사항과 동일 크기 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ppe.notes')}</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={3} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></Box>
           </Box>
           {/* 필요 보호구 | 비상 연락처 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.requiredPpe')}</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" multiple displayEmpty
@@ -805,7 +805,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Box>
           </Box>
           {/* 작성자 | 작성일자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
             <Box sx={valSxBorder}>
               <Typography variant="body2">
@@ -821,7 +821,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
           </Box>
           {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
           {viewMode === 'edit' && selectedItem?.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
               <Box sx={valSxBorder}>
                 <Typography variant="body2">{selectedItem.modifiedBy || ''}</Typography>
@@ -834,7 +834,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
           )}
           {/* External worker rows */}
           {isExternalMode && (
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('permit.workerInfo', '작업자 정보')}</Typography>
               <Box sx={{ ...valSx, display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'flex-start' }}>
                 {workers.map((w, idx) => (
@@ -860,7 +860,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Box>
           )}
           {/* 계획 승인자 | 완료 승인자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('common.planApprover', '계획 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valSxBorder, display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField size="small" fullWidth InputProps={{ readOnly: true }}
@@ -877,7 +877,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Box>
           </Box>
           {/* 첨부파일 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('common.attachments', '첨부파일')}</Typography>
             <Box sx={{ ...valSx, flexDirection: 'column', gap: 1 }}>
               <Button variant="outlined" size="small" component="label" startIcon={<AttachFileIcon />}>
@@ -899,7 +899,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
             </Box>
           </Box>
           {/* 체크리스트 — 맨 아래 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('ptw.checklist', '체크리스트')}</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" displayEmpty value={form.checklistTemplateId || ''} onChange={(e) => setForm({ ...form, checklistTemplateId: e.target.value ? Number(e.target.value) : undefined })}>
@@ -1404,8 +1404,8 @@ const PostWorkInspectionContent: React.FC = () => {
   if (viewMode === 'detail' && selectedItem) {
     const dLabelSx = { ...labelSx, width: 140, minWidth: 140 }
     const dValSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'divider' }
-    const dRowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+    const dRowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>

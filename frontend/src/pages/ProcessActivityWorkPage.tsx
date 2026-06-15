@@ -574,7 +574,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           </Box>
         </Box>
         {/* 작성자 | 작성일자 */}
-        <Box sx={{ display: 'flex', borderBottom: (viewMode === 'edit' || ((displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt)) ? 1 : 0, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', borderBottom: (viewMode === 'edit' || ((displayData as ProcessActivityForm).modifiedAt && (displayData as ProcessActivityForm).modifiedAt !== (displayData as ProcessActivityForm).createdAt)) ? 1 : 0, borderColor: dividerColor }}>
           <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
           <Box sx={valBorderSx}>
             <Typography variant="body2">{formatUserName(
@@ -668,7 +668,7 @@ const ProcessActivityWorkPage: React.FC = () => {
       {/* 공정/활동 + 작업내용 테이블 */}
       <Paper variant="outlined" sx={{ mb: 2 }}>
         <TableContainer sx={{ overflowX: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 1100, '& td, & th': { borderRight: '1px solid', borderColor: 'divider' } }}>
+          <Table size="small" sx={{ minWidth: 1100, '& td, & th': { borderRight: '1px solid', borderColor: dividerColor } }}>
             <TableHead sx={{ bgcolor: 'grey.100' }}>
               <TableRow>
                 <TableCell sx={hSx} align="center" width={160}>{t('processActivity.majorCategory', '대분류')}</TableCell>

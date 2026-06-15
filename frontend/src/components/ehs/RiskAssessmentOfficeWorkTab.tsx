@@ -785,24 +785,24 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
 
             {/* PC용 테이블 레이아웃 */}
             <TableContainer component={Paper} variant="outlined" sx={{ display: { xs: 'none', md: 'block' }, overflowX: 'auto', '& .MuiPaper-root': { borderColor: 'divider' } }}>
-              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
+              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' } }}>
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.title')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{assessmentDetail.title}</TableCell>
-                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.region')}</TableCell>
+                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('common.title')}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{assessmentDetail.title}</TableCell>
+                    <TableCell sx={{ width: 100, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('riskAssessment.region')}</TableCell>
                     <TableCell>{assessmentDetail.site}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.author')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{assessmentDetail.authorName || ''}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.department')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('riskAssessment.author')}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{assessmentDetail.authorName || ''}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('riskAssessment.department')}</TableCell>
                     <TableCell>{assessmentDetail.authorDept || ''}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.status')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{getStatusChip(assessmentDetail.status)}</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('riskAssessment.completedDate')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('common.status')}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{getStatusChip(assessmentDetail.status)}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('riskAssessment.completedDate')}</TableCell>
                     <TableCell>{formatDate(assessmentDetail.completedDate)}</TableCell>
                   </TableRow>
                 </TableBody>
@@ -972,11 +972,11 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
         {/* PC용 테이블 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* Row 1: 제목 | 지역 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.title')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <TextField
                 fullWidth
                 size="small"
@@ -986,7 +986,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
                 required
               />
             </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.region')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1003,14 +1003,14 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
             </Box>
           </Box>
           {/* Row 2: 작성자 | 소속 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.author')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">{formData.authorName || user?.name || user?.username || ''}</Typography>
             </Box>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.department')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1026,10 +1026,10 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Box>
           {/* Row 3: 이메일 | 소속사 */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('riskAssessment.email')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <TextField
                 fullWidth
                 size="small"
@@ -1158,7 +1158,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
   const renderProcessItem = (process: RiskActivityProcessRequest, _itemNumber: number, globalIndex: number, readOnly: boolean) => {
     const labelSx = {
       width: 160, minWidth: 160, fontWeight: 'bold', bgcolor: 'grey.100',
-      px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+      px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
       display: 'flex', alignItems: 'center', fontSize: '0.875rem',
       justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center', whiteSpace: 'pre-line',
     }
@@ -1169,7 +1169,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
         {/* PC 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           {/* Row 1: 세부활동, 공정 내용 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('riskAssessment.detailActivityProcess')}</Typography>
             <Box sx={{ flex: 1, px: 2, py: 1 }}>
               {readOnly ? (
@@ -1182,7 +1182,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Box>
 
           {/* Row 3: 작업발생주기(빈도) - Radio buttons */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('riskAssessment.frequencyLabel')}</Typography>
             <Box sx={{ flex: 1, px: 2, py: 0.5, display: 'flex', alignItems: 'center' }}>
               {readOnly ? (
@@ -1202,9 +1202,9 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
           </Box>
 
           {/* Row 4: 작업시간 | 작업자(적정) | 작업자(현황) */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('riskAssessment.workHoursPerSession')}</Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: 'divider' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               {readOnly ? (
                 <Typography variant="body2" sx={{ py: 0.5 }}>{process.workHours || ''}</Typography>
               ) : (
@@ -1213,7 +1213,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
               )}
             </Box>
             <Typography sx={smallLabelSx}>{t('riskAssessment.workerAppropriate')}</Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: 'divider' }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               {readOnly ? (
                 <Typography variant="body2" sx={{ py: 0.5 }}>{process.worker || ''}</Typography>
               ) : (
@@ -1325,7 +1325,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
 
     const categoryLabelSx = {
       width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-      borderRight: 1, borderColor: 'divider',
+      borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center',
       borderBottom: isLast ? 0 : 1,
@@ -1352,7 +1352,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
         </Box>
         {/* 모바일 레이아웃 */}
         <Box sx={{ display: { xs: 'block', md: 'none' }, borderBottom: isLast ? 0 : 1, borderColor: 'divider' }}>
-          <Typography sx={{ fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1, borderBottom: 1, borderColor: 'divider', fontSize: '0.875rem' }}>
+          <Typography sx={{ fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1, borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', fontSize: '0.875rem' }}>
             {displayNum}. {categoryName}
           </Typography>
           {content === 'process' && process ? (

@@ -35,12 +35,12 @@ const STATUS_CHIP: Record<string, { color: 'success' | 'warning' | 'info' | 'err
 // ===== Table-style form cell styles =====
 const labelCellSx = {
   width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const,
 }
 const valueCellSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }
-const valueCellBorderSx = { ...valueCellSx, borderRight: 1, borderColor: 'divider' }
+const valueCellBorderSx = { ...valueCellSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
 const EMPTY_FORM: EnvMonitoringRequest = {
   monitorType: '', status: 'NORMAL', location: '', measurementDate: '',
@@ -201,7 +201,7 @@ const EnvMonitoringPage: React.FC = () => {
         {/* PC Detail */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           {/* Row 1: Monitor ID / Status */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.monitorId')}</Box>
             <Box sx={valueCellBorderSx}>{selectedItem.monitorId}</Box>
             <Box sx={labelCellSx}>{t('envMon.status')}</Box>
@@ -214,28 +214,28 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 2: Type / Location */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.type')}</Box>
             <Box sx={valueCellBorderSx}>{getTypeLabel(selectedItem.monitorType)}</Box>
             <Box sx={labelCellSx}>{t('envMon.location')}</Box>
             <Box sx={valueCellSx}>{selectedItem.location || ''}</Box>
           </Box>
           {/* Row 3: Measurement Date / Parameter */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.measureDate')}</Box>
             <Box sx={valueCellBorderSx}>{selectedItem.measurementDate ? formatDate(selectedItem.measurementDate) : ''}</Box>
             <Box sx={labelCellSx}>{t('envMon.parameter')}</Box>
             <Box sx={valueCellSx}>{selectedItem.parameterName}</Box>
           </Box>
           {/* Row 4: Measured Value / Standard Value */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.measuredValue')}</Box>
             <Box sx={valueCellBorderSx}>{selectedItem.measuredValue} {selectedItem.unit}</Box>
             <Box sx={labelCellSx}>{t('envMon.standardValue')}</Box>
             <Box sx={valueCellSx}>{selectedItem.standardValue != null ? `${selectedItem.standardValue} ${selectedItem.unit}` : ''}</Box>
           </Box>
           {/* Row 5: Standard Name / Exceed */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.standardName')}</Box>
             <Box sx={valueCellBorderSx}>{selectedItem.standardName || ''}</Box>
             <Box sx={labelCellSx}>{t('envMon.exceedYn')}</Box>
@@ -248,21 +248,21 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 6: Measurer / Department */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.measurer')}</Box>
             <Box sx={valueCellBorderSx}>{selectedItem.measurerName || ''}</Box>
             <Box sx={labelCellSx}>{t('common.department') || 'Department'}</Box>
             <Box sx={valueCellSx}>{selectedItem.measurerDept || ''}</Box>
           </Box>
           {/* Row 7: Equipment / Equipment Model */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.equipment')}</Box>
             <Box sx={valueCellBorderSx}>{selectedItem.equipmentName || ''}</Box>
             <Box sx={labelCellSx}>{t('envMon.equipmentModel')}</Box>
             <Box sx={valueCellSx}>{selectedItem.equipmentModel || ''}</Box>
           </Box>
           {/* Row 8: Corrective Action */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.correctiveAction')}</Box>
             <Box sx={valueCellSx}>{selectedItem.correctiveAction || ''}</Box>
           </Box>
@@ -317,7 +317,7 @@ const EnvMonitoringPage: React.FC = () => {
         {/* PC Form */}
         <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
           {/* Row 1: Type / Status */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.type')}</Box>
             <Box sx={valueCellBorderSx}>
               <FormControl size="small" fullWidth>
@@ -349,7 +349,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 2: Location / Measurement Date */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.location')}</Box>
             <Box sx={valueCellBorderSx}>
               <TextField size="small" fullWidth value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
@@ -363,7 +363,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 3: Parameter / Measured Value */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.parameter')}</Box>
             <Box sx={valueCellBorderSx}>
               <TextField size="small" fullWidth value={form.parameterName} onChange={(e) => setForm({ ...form, parameterName: e.target.value })} />
@@ -374,7 +374,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 4: Unit / Standard Value */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.unit')}</Box>
             <Box sx={valueCellBorderSx}>
               <TextField size="small" fullWidth value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} />
@@ -385,7 +385,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 5: Standard Name / Exceed */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.standardName')}</Box>
             <Box sx={valueCellBorderSx}>
               <TextField size="small" fullWidth value={form.standardName} onChange={(e) => setForm({ ...form, standardName: e.target.value })} />
@@ -405,7 +405,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 6: Exceed Rate / Measurer */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.exceedRate')}</Box>
             <Box sx={valueCellBorderSx}>
               <NumberField size="small" fullWidth value={form.exceedRate ?? ''} onChange={(v) => setForm({ ...form, exceedRate: v ?? undefined })} />
@@ -416,7 +416,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 7: Department / Equipment */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('common.department') || 'Department'}</Box>
             <Box sx={valueCellBorderSx}>
               <TextField size="small" fullWidth value={form.measurerDept} onChange={(e) => setForm({ ...form, measurerDept: e.target.value })} />
@@ -427,7 +427,7 @@ const EnvMonitoringPage: React.FC = () => {
             </Box>
           </Box>
           {/* Row 8: Equipment Model / Notes */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('envMon.equipmentModel')}</Box>
             <Box sx={valueCellBorderSx}>
               <TextField size="small" fullWidth value={form.equipmentModel} onChange={(e) => setForm({ ...form, equipmentModel: e.target.value })} />

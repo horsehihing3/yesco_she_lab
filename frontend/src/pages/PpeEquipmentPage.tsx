@@ -43,10 +43,10 @@ const STATUS_CHIP: Record<PpeEquipmentStatus, { color: 'success' | 'warning' | '
   LOW_STOCK: { color: 'info', label: 'ppe.statusLowStock' },
 }
 
-const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
 const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -374,12 +374,12 @@ const PpeEquipmentPage: React.FC = () => {
             [t('ppe.department'), selectedItem.department || ''],
             [t('ppe.notes'), selectedItem.notes || ''],
           ].map(([label, value], i) => (
-            <Box key={i} sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box key={i} sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{label}</Typography>
               <Box sx={valSx}><Typography variant="body2">{value}</Typography></Box>
             </Box>
           ))}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={{ ...labelSx, width: 110, minWidth: 110 }}>{'재고율'}</Typography>
             <Box sx={valSx}>
               {(() => {

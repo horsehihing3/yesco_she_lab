@@ -76,16 +76,16 @@ const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'defa
 // ===== Table Cell Styles =====
 const labelCellSx = {
   width: 110, minWidth: 110, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const,
 }
 const valueCellSx = {
   flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center',
 }
-const valueCellBorderSx = { ...valueCellSx, borderRight: 1, borderColor: 'divider' }
+const valueCellBorderSx = { ...valueCellSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 const formLabelSx = { ...labelCellSx, width: 100, minWidth: 100 }
-const formValueSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }
+const formValueSx = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
 // ===== View Mode =====
 type MyViewMode = 'list' | 'detail' | 'create' | 'edit'
@@ -418,31 +418,31 @@ const MyHealthCheckupPage: React.FC = () => {
             {t('healthCheckup.checkupInfo')}
           </Typography>
           <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.employeeId')}</Typography>
               <Typography sx={valueCellBorderSx}>{selectedItem.employeeId || ''}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.employeeName')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.employeeName || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.employeeDept')}</Typography>
               <Typography sx={valueCellBorderSx}>{selectedItem.employeeDept || ''}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.employeeEmail')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.employeeEmail || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.checkupYear')}</Typography>
               <Typography sx={valueCellBorderSx}>{selectedItem.checkupYear}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.checkupType')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.checkupType || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.checkupDate')}</Typography>
               <Typography sx={valueCellBorderSx}>{formatDate(selectedItem.checkupDate) || ''}</Typography>
               <Typography sx={labelCellSx}>{t('healthCheckup.hospital')}</Typography>
               <Typography sx={valueCellSx}>{selectedItem.hospital || ''}</Typography>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelCellSx}>{t('healthCheckup.overallResult')}</Typography>
               <Box sx={valueCellBorderSx}>
                 {selectedItem.overallResult ? <Chip label={selectedItem.overallResult} size="small" color={getOverallResultColor(selectedItem.overallResult)} /> : ''}
@@ -542,7 +542,7 @@ const MyHealthCheckupPage: React.FC = () => {
         {/* Form - PC */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           {/* Employee info - auto-filled & disabled */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={formLabelSx}>{t('healthCheckup.employeeId')}</Typography>
             <Box sx={formValueSx}>
               <Controller name="employeeId" control={control} render={({ field }) => (
@@ -556,7 +556,7 @@ const MyHealthCheckupPage: React.FC = () => {
               )} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={formLabelSx}>{t('healthCheckup.employeeDept')}</Typography>
             <Box sx={formValueSx}>
               <Controller name="employeeDept" control={control} render={({ field }) => (
@@ -571,7 +571,7 @@ const MyHealthCheckupPage: React.FC = () => {
             </Box>
           </Box>
           {/* Editable fields */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('healthCheckup.checkupYear')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -599,7 +599,7 @@ const MyHealthCheckupPage: React.FC = () => {
               )} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('healthCheckup.checkupStatus')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -626,7 +626,7 @@ const MyHealthCheckupPage: React.FC = () => {
               )} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('healthCheckup.checkupDate')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
@@ -664,7 +664,7 @@ const MyHealthCheckupPage: React.FC = () => {
               )} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={formLabelSx}>{t('healthCheckup.nextCheckupDate')}</Typography>
             <Box sx={formValueSx}>
               <Controller name="nextCheckupDate" control={control} render={({ field }) => (
@@ -838,11 +838,11 @@ const MyHealthCheckupPage: React.FC = () => {
                 <Table size="small" sx={{ minWidth: 700, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
                   <TableHead>
                     <TableRow sx={{ bgcolor: 'grey.100' }}>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 140 }} align="center">{t('healthCheckup.bodyPart')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 120 }} align="center">{t('healthCheckup.category')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.resultValue')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', display: { xs: 'none', md: 'table-cell' } }} align="center">{t('healthCheckup.referenceRange')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', width: 100 }} align="center">{t('healthCheckup.resultStatus')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', width: 140 }} align="center">{t('healthCheckup.bodyPart')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', width: 120 }} align="center">{t('healthCheckup.category')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">{t('healthCheckup.resultValue')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: { xs: 'none', md: 'table-cell' } }} align="center">{t('healthCheckup.referenceRange')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', width: 100 }} align="center">{t('healthCheckup.resultStatus')}</TableCell>
                       <TableCell sx={{ fontWeight: 'bold', width: 80 }} align="center">{t('common.delete')}</TableCell>
                     </TableRow>
                   </TableHead>

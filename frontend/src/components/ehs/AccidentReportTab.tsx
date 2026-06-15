@@ -119,7 +119,7 @@ const AccidentReportTab: React.FC = () => {
 
   const borderCell = {
     border: '1px solid',
-    borderColor: 'divider',
+    borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
     px: 1,
     py: 0.75,
     fontSize: '0.85rem',

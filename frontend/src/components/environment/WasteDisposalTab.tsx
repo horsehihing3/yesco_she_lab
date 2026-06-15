@@ -107,10 +107,11 @@ const WasteDisposalTab: React.FC = () => {
 
   const paperBg = isDarkMode ? '#18181b' : 'background.paper'
 
-  const formLabelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+  const borderColorSx = (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider'
+  const formLabelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: borderColorSx, display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
   const formValSx = { flex: 1, px: 2, py: 1, display: 'flex', alignItems: 'center' }
-  const formValBorderSx = { ...formValSx, borderRight: 1, borderColor: 'divider' }
-  const formRowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+  const formValBorderSx = { ...formValSx, borderRight: 1, borderColor: borderColorSx }
+  const formRowSx = { display: 'flex', borderBottom: 1, borderColor: borderColorSx }
 
   return (
     <Box>

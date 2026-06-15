@@ -34,7 +34,7 @@ type UserPickTarget = 'planApprover' | 'completionApprover' | null
 
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
@@ -396,7 +396,7 @@ const EmrPlanTab: React.FC = () => {
             </Box>
           )}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.planId')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.planId}</Typography>
@@ -406,7 +406,7 @@ const EmrPlanTab: React.FC = () => {
                 <Typography variant="body2">{getPlanTypeLabel(selectedItem.planType)}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.planName')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontWeight={600}>{selectedItem.planName}</Typography>
@@ -416,7 +416,7 @@ const EmrPlanTab: React.FC = () => {
                 {statusChip(selectedItem)}
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.responsibleName')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{selectedItem.responsibleName || ''}</Typography>
@@ -426,7 +426,7 @@ const EmrPlanTab: React.FC = () => {
                 <Typography variant="body2">{selectedItem.responsibleDept || ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.trainingStartDate')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.trainingStartDate || ''}</Typography>
@@ -436,20 +436,20 @@ const EmrPlanTab: React.FC = () => {
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.trainingEndDate || ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('common.description')}</Typography>
               <Box sx={valueSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.description || ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.responseSteps')}</Typography>
               <Box sx={valueSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.responseSteps || ''}</Typography>
               </Box>
             </Box>
             {selectedItem.resourceIds && (
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                 <Typography sx={labelSx}>{t('emr.resources', '자원·장비')}</Typography>
                 <Box sx={{ ...valueSx, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                   {allResources.filter(r => selectedItem.resourceIds!.split(',').map(Number).includes(r.id)).map(r => (
@@ -459,14 +459,14 @@ const EmrPlanTab: React.FC = () => {
                 </Box>
               </Box>
             )}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('common.notes')}</Typography>
               <Box sx={valueSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.notes || ''}</Typography>
               </Box>
             </Box>
             {/* 작성자 | 작성일자 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || ''}</Typography>
@@ -480,7 +480,7 @@ const EmrPlanTab: React.FC = () => {
             </Box>
             {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
             {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                 <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
                 <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                   <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition) || ''}</Typography>
@@ -492,7 +492,7 @@ const EmrPlanTab: React.FC = () => {
               </Box>
             )}
             {/* 계획승인자 | 완료승인자 — 체크리스트 바로 위 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.planApprover')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="body2">
@@ -629,7 +629,7 @@ const EmrPlanTab: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         {/* PC Form */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.planName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.planName} onChange={(e) => setForm({ ...form, planName: e.target.value })} />
@@ -642,7 +642,7 @@ const EmrPlanTab: React.FC = () => {
               </Select>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.responsibleName')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField fullWidth size="small" value={form.responsibleName || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
@@ -654,7 +654,7 @@ const EmrPlanTab: React.FC = () => {
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowDeptModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.trainingStartDate')}</Typography>
             <Box sx={valueBorderSx}>
               <DatePickerField value={form.trainingStartDate || null} onChange={(v) => setForm({ ...form, trainingStartDate: v })} size="small" />
@@ -664,7 +664,7 @@ const EmrPlanTab: React.FC = () => {
               <DatePickerField value={form.trainingEndDate || null} onChange={(v) => setForm({ ...form, trainingEndDate: v })} size="small" />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.resources', '자원·장비')}</Typography>
             <Box sx={valueSx}>
               <Autocomplete
@@ -678,26 +678,26 @@ const EmrPlanTab: React.FC = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('common.description')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={3} value={form.description || ''} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.responseSteps')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={4} value={form.responseSteps || ''} onChange={(e) => setForm({ ...form, responseSteps: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('common.notes')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={2} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
             </Box>
           </Box>
           {/* 작성자 | 작성일자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('common.creator', '작성자')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">{formatUserName(form.createdByTeam || authUser?.department, form.createdByName || authUser?.name, form.createdByPosition || authUser?.position) || ''}</Typography>
@@ -713,7 +713,7 @@ const EmrPlanTab: React.FC = () => {
           </Box>
           {/* 수정자 | 수정일자 — 수정 모드 + 이력 있을 때만 */}
           {viewMode === 'edit' && selectedItem && selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition) || ''}</Typography>
@@ -725,7 +725,7 @@ const EmrPlanTab: React.FC = () => {
             </Box>
           )}
           {/* 계획승인자 | 완료승인자 — 체크리스트 바로 위 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.planApprover')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={{ ...valueBorderSx, gap: 1, display: 'flex', alignItems: 'center' }}>
               <TextField size="small" fullWidth placeholder={t('common.selectFromOrg', '조직도에서 선택')} value={formatUserName(form.planApproverTeam, form.planApproverName, form.planApproverPosition) || ''} InputProps={{ readOnly: true }} />

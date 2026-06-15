@@ -150,16 +150,16 @@ ${detailLines || '(상세 결과 없음)'}
                 [t('healthCheckup.checkupDate'), checkup.checkupDate || '', t('healthCheckup.overallResult'), checkup.overallResult || ''],
                 [t('healthCheckup.hospital'), checkup.hospital || '', '', ''],
               ].map((row, idx, arr) => (
-                <Box key={idx} sx={{ display: 'flex', borderBottom: idx < arr.length - 1 ? 1 : 0, borderColor: 'divider' }}>
-                  <Typography sx={{ width: '15%', minWidth: 90, bgcolor: 'grey.100', fontWeight: 'bold', px: 1.5, py: 1, fontSize: '0.875rem', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
+                <Box key={idx} sx={{ display: 'flex', borderBottom: idx < arr.length - 1 ? 1 : 0, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+                  <Typography sx={{ width: '15%', minWidth: 90, bgcolor: 'grey.100', fontWeight: 'bold', px: 1.5, py: 1, fontSize: '0.875rem', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center' }}>
                     {row[0]}
                   </Typography>
-                  <Typography sx={{ flex: row[2] ? undefined : 1, width: row[2] ? '35%' : undefined, px: 1.5, py: 1, fontSize: '0.875rem', borderRight: row[2] ? 1 : 0, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
+                  <Typography sx={{ flex: row[2] ? undefined : 1, width: row[2] ? '35%' : undefined, px: 1.5, py: 1, fontSize: '0.875rem', borderRight: row[2] ? 1 : 0, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center' }}>
                     {row[1]}
                   </Typography>
                   {row[2] && (
                     <>
-                      <Typography sx={{ width: '15%', minWidth: 90, bgcolor: 'grey.100', fontWeight: 'bold', px: 1.5, py: 1, fontSize: '0.875rem', borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
+                      <Typography sx={{ width: '15%', minWidth: 90, bgcolor: 'grey.100', fontWeight: 'bold', px: 1.5, py: 1, fontSize: '0.875rem', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center' }}>
                         {row[2]}
                       </Typography>
                       <Typography sx={{ width: '35%', px: 1.5, py: 1, fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>

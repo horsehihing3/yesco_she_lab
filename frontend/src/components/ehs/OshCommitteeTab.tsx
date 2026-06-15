@@ -614,26 +614,26 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
             {/* 기본 정보 */}
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('common.basicInfo')}</Typography>
             <TableContainer component={Paper} variant="outlined" sx={{ mb: 3, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
-              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'divider', py: 1.5 } }}>
+              <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', py: 1.5 } }}>
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ width: 140, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.location')}</TableCell>
-                    <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>
+                    <TableCell sx={{ width: 140, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('common.location')}</TableCell>
+                    <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                       {committeeDetail.oshLocation}{committeeDetail.oshLocationDetail && ` - ${committeeDetail.oshLocationDetail}`}
                     </TableCell>
-                    <TableCell sx={{ width: 140, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.date')}</TableCell>
+                    <TableCell sx={{ width: 140, fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('common.date')}</TableCell>
                     <TableCell>{formatDate(committeeDetail.oshDate)}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.mainAgenda')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('common.mainAgenda')}</TableCell>
                     <TableCell colSpan={3} sx={{ whiteSpace: 'pre-wrap' }}>{committeeDetail.mainAgenda || ''}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.comment')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('common.comment')}</TableCell>
                     <TableCell colSpan={3}>{committeeDetail.comment || ''}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: 'divider' }}>{t('common.attachments')}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', textAlign: 'center', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('common.attachments')}</TableCell>
                     <TableCell colSpan={3}>
                       {committeeFiles && committeeFiles.length > 0 ? (
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -866,11 +866,11 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
         {/* PC용 테이블 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* Row 1: 장소 | 날짜 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.location')}
             </Typography>
-            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', display: 'flex', gap: 1 }}>
+            <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', gap: 1 }}>
               <FormControl size="small" sx={{ minWidth: 150 }}>
                 <Select
                   value={formData.oshLocation}
@@ -889,7 +889,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
                 fullWidth
               />
             </Box>
-            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.date')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -901,8 +901,8 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </Box>
 
           {/* Row 2: 주요안건 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.mainAgenda')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -919,8 +919,8 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
           </Box>
 
           {/* Row 3: 코멘트 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem', justifyContent: 'center', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.comment')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -938,7 +938,7 @@ const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
 
           {/* Row 4: 첨부파일 */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.attachments')}
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>

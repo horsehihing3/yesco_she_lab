@@ -69,6 +69,7 @@ import PartnerSafetyExecutePage from './pages/PartnerSafetyExecutePage'
 import RadiationMgmtPage from './pages/RadiationMgmtPage'
 import FireSafetyPage from './pages/FireSafetyPage'
 import IncidentResponsePage from './pages/IncidentResponsePage'
+import LegalResponsePage from './pages/LegalResponsePage'
 import PermitLifecyclePage from './pages/PermitLifecyclePage'
 import DiseasePreventionMgmtPage from './pages/DiseasePreventionMgmtPage'
 import ContractorRegistrationPage from './pages/ContractorRegistrationPage'
@@ -167,6 +168,7 @@ function App() {
         <Route path="radiation-mgmt" element={<RadiationMgmtPage />} />
         <Route path="fire-safety" element={<FireSafetyPage />} />
         <Route path="incident-response" element={<PageWithTitle titleKey="nav.incidentResponse"><IncidentResponsePage /></PageWithTitle>} />
+        <Route path="legal-response" element={<PageWithTitle titleKey="nav.legalResponse"><LegalResponsePage /></PageWithTitle>} />
         <Route path="permit-lifecycle" element={<PermitLifecyclePage />} />
         <Route path="disease-prevention-mgmt" element={<DiseasePreventionMgmtPage />} />
         <Route path="plan-kpi-goal" element={<PlanKpiGoalPage />} />

@@ -185,8 +185,8 @@ const EmergencyNotificationTab: React.FC = () => {
         {/* PC용 테이블 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* 발송 방법 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('emergency.sendingMethod')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -202,8 +202,8 @@ const EmergencyNotificationTab: React.FC = () => {
           </Box>
 
           {/* 제목 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('common.title')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -218,8 +218,8 @@ const EmergencyNotificationTab: React.FC = () => {
           </Box>
 
           {/* 내용 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('emergency.content')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -236,7 +236,7 @@ const EmergencyNotificationTab: React.FC = () => {
 
           {/* 수신자 */}
           <Box sx={{ display: 'flex' }}>
-            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', pt: 2, wordBreak: 'keep-all', textAlign: 'center' }}>
               {t('emergency.recipient')} <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
             <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -519,8 +519,8 @@ const EmergencyNotificationTab: React.FC = () => {
               {/* PC용 폼 테이블 레이아웃 */}
               <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mt: 2 }}>
                 {/* 제목 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('common.title')}
                   </Typography>
                   <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
@@ -528,8 +528,8 @@ const EmergencyNotificationTab: React.FC = () => {
                   </Typography>
                 </Box>
                 {/* 내용 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('emergency.content')}
                   </Typography>
                   <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', minHeight: 80 }}>
@@ -537,14 +537,14 @@ const EmergencyNotificationTab: React.FC = () => {
                   </Typography>
                 </Box>
                 {/* 발송일시 | 발송방법 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('emergency.sendDateTime')}
                   </Typography>
-                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                     {formatDate(historyDetailDialog.sentAt)}
                   </Typography>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('emergency.sendingMethod')}
                   </Typography>
                   <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>
@@ -553,13 +553,13 @@ const EmergencyNotificationTab: React.FC = () => {
                 </Box>
                 {/* 수신자 수 | 상태 */}
                 <Box sx={{ display: 'flex' }}>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('emergency.recipientCount')}
                   </Typography>
-                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
+                  <Typography sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }}>
                     {historyDetailDialog.recipientCount}
                   </Typography>
-                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
+                  <Typography sx={{ width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', wordBreak: 'keep-all', textAlign: 'center' }}>
                     {t('common.status')}
                   </Typography>
                   <Box sx={{ flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }}>

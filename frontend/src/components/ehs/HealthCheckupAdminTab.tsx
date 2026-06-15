@@ -22,7 +22,7 @@ import BodyDiagram, { regionBodyParts } from '../common/BodyDiagram'
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 const labelSx = {
   width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
@@ -150,37 +150,37 @@ const HealthCheckupAdminTab: React.FC = () => {
         <Box sx={{ mb: 3, display: { xs: 'none', md: 'block' } }}>
           <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>{t('healthCheckup.checkupInfo')}</Typography>
           <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.checkupId')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2" fontFamily="monospace">{selectedItem.checkupId}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.checkupStatus')}</Typography>
               <Box sx={valueSx}><Chip label={getStatusLabel(selectedItem.checkupStatus) || selectedItem.checkupStatus} size="small" color={statusColors[selectedItem.checkupStatus] || 'default'} /></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.employeeName')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2" fontWeight={600}>{selectedItem.employeeName || ''}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.employeeDept')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.employeeDept || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.employeeId')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2">{selectedItem.employeeId || ''}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.employeeEmail')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.employeeEmail || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.checkupYear')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2">{selectedItem.checkupYear}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.checkupType')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.checkupType || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.checkupDate')}</Typography>
               <Box sx={valueBorderSx}><Typography variant="body2" fontFamily="monospace">{formatDate(selectedItem.checkupDate) || ''}</Typography></Box>
               <Typography sx={labelSx}>{t('healthCheckup.hospital')}</Typography>
               <Box sx={valueSx}><Typography variant="body2">{selectedItem.hospital || ''}</Typography></Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('healthCheckup.overallResult')}</Typography>
               <Box sx={valueBorderSx}>
                 {selectedItem.overallResult

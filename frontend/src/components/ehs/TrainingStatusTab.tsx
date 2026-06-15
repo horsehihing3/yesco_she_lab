@@ -26,14 +26,14 @@ const STATUS_COLOR: Record<string, 'default' | 'primary' | 'warning' | 'success'
 
 const labelSx = {
   width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
-const lastRowSx = { display: 'flex', borderColor: 'divider' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+const lastRowSx = { display: 'flex', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
 const TrainingStatusTab: React.FC = () => {
   const { t } = useTranslation()
@@ -276,7 +276,7 @@ const TrainingStatusTab: React.FC = () => {
 
       {/* Table */}
       <TableContainer component={Paper} sx={{ overflowX: 'auto', border: 1, borderColor: 'divider' }}>
-        <Table size="small" sx={{ '& td, & th': { borderRight: '1px solid', borderColor: 'divider' }, '& td:last-child, & th:last-child': { borderRight: 'none' } }}>
+        <Table size="small" sx={{ '& td, & th': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }, '& td:last-child, & th:last-child': { borderRight: 'none' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
               <TableCell align="center" sx={{ fontWeight: 'bold', width: 60 }}>No</TableCell>

@@ -787,17 +787,17 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
 
       {/* Table - PC */}
       <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>
-        <Table size="small" sx={{ minWidth: 1100, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
+        <Table size="small" sx={{ minWidth: 1100, '& .MuiTableCell-root': { borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' } }}>
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell sx={{ fontWeight: 'bold', width: 200, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.region')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('common.title')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 110, minWidth: 110, borderRight: 1, borderColor: 'divider', whiteSpace: 'nowrap' }} align="center">{t('riskAssessment.author')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.department')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 90, borderRight: 1, borderColor: 'divider', whiteSpace: 'nowrap' }} align="center">{t('riskAssessment.itemCount', '항목 수')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('common.status')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.approver')}</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: isPlanMode ? 0 : 1, borderColor: 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.completedDate')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 200, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.region')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', wordBreak: 'keep-all' }} align="center">{t('common.title')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 110, minWidth: 110, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', whiteSpace: 'nowrap' }} align="center">{t('riskAssessment.author')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.department')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 90, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', whiteSpace: 'nowrap' }} align="center">{t('riskAssessment.itemCount', '항목 수')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', wordBreak: 'keep-all' }} align="center">{t('common.status')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 80, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.approver')}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', width: 120, borderRight: isPlanMode ? 0 : 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', wordBreak: 'keep-all' }} align="center">{t('riskAssessment.completedDate')}</TableCell>
               {!isPlanMode && (
                 <TableCell sx={{ fontWeight: 'bold', width: 100, wordBreak: 'keep-all' }} align="center">{t('riskAssessment.assessmentCount')}</TableCell>
               )}
@@ -893,7 +893,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             const fmtDt = (s?: string | null) => s ? s.replace('T', ' ').substring(0, 16) : ''
             const hasModified = !!(assessmentDetail.modifiedAt && assessmentDetail.modifiedAt !== assessmentDetail.createdAt)
             const checklistName = assessmentDetail.formTitle || (formTemplates || []).find(f => f.id === assessmentDetail.formId)?.title || ''
-            const lblCellSx = { width: 130, minWidth: 130, fontWeight: 'bold' as const, bgcolor: 'grey.100', textAlign: 'center' as const, borderRight: 1, borderColor: 'divider', wordBreak: 'keep-all' as const, whiteSpace: 'nowrap' as const }
+            const lblCellSx = { width: 130, minWidth: 130, fontWeight: 'bold' as const, bgcolor: 'grey.100', textAlign: 'center' as const, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', wordBreak: 'keep-all' as const, whiteSpace: 'nowrap' as const }
             const mLbl = { mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }
             return (
               <Box sx={{ mb: 3 }}>
@@ -909,7 +909,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
 
                 {/* PC */}
                 <TableContainer component={Paper} variant="outlined" sx={{ display: { xs: 'none', md: 'block' }, overflowX: 'auto', '& .MuiPaper-root': { borderColor: 'divider' } }}>
-                  <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: 'divider' } }}>
+                  <Table size="small" sx={{ minWidth: 600, '& .MuiTableCell-root': { borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' } }}>
                     <TableBody>
                       {/* 제목 */}
                       <TableRow>
@@ -919,14 +919,14 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {/* 사업장 | 부서 */}
                       <TableRow>
                         <TableCell sx={lblCellSx}>{t('riskAssessment.region')}</TableCell>
-                        <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: assessmentDetail.site ? 'left' : 'center' }}>{assessmentDetail.site || ''}</TableCell>
+                        <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', textAlign: assessmentDetail.site ? 'left' : 'center' }}>{assessmentDetail.site || ''}</TableCell>
                         <TableCell sx={lblCellSx}>{t('riskAssessment.department')}</TableCell>
                         <TableCell sx={{ textAlign: assessmentDetail.authorDept ? 'left' : 'center' }}>{assessmentDetail.authorDept || ''}</TableCell>
                       </TableRow>
                       {/* 평가자 | 평가일시 */}
                       <TableRow>
                         <TableCell sx={lblCellSx}>{t('riskAssessment.evaluator', '평가자')}</TableCell>
-                        <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: proc0.evaluator ? 'left' : 'center' }}>{proc0.evaluator || ''}</TableCell>
+                        <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', textAlign: proc0.evaluator ? 'left' : 'center' }}>{proc0.evaluator || ''}</TableCell>
                         <TableCell sx={lblCellSx}>{t('riskAssessment.evaluationDate', '평가일시')}</TableCell>
                         <TableCell sx={{ textAlign: proc0.evaluationDate ? 'left' : 'center', fontFamily: proc0.evaluationDate ? 'monospace' : undefined }}>
                           {proc0.evaluationDate ? formatDate(proc0.evaluationDate) : ''}
@@ -935,7 +935,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {/* 작성자 | 작성일자 */}
                       <TableRow>
                         <TableCell sx={lblCellSx}>{t('common.creator', '작성자')}</TableCell>
-                        <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{formatUserName(assessmentDetail.authorTeam, assessmentDetail.authorName, assessmentDetail.authorPosition)}</TableCell>
+                        <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{formatUserName(assessmentDetail.authorTeam, assessmentDetail.authorName, assessmentDetail.authorPosition)}</TableCell>
                         <TableCell sx={lblCellSx}>{t('audit.createdAt', '작성일자')}</TableCell>
                         <TableCell sx={{ fontFamily: 'monospace' }}>{fmtDt(assessmentDetail.createdAt)}</TableCell>
                       </TableRow>
@@ -943,7 +943,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {hasModified && (
                         <TableRow>
                           <TableCell sx={lblCellSx}>{t('common.modifier', '수정자')}</TableCell>
-                          <TableCell sx={{ borderRight: 1, borderColor: 'divider' }}>{(assessmentDetail as any)?.modifiedByName || ''}</TableCell>
+                          <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{(assessmentDetail as any)?.modifiedByName || ''}</TableCell>
                           <TableCell sx={lblCellSx}>{t('common.modifiedAt', '수정일자')}</TableCell>
                           <TableCell sx={{ fontFamily: 'monospace' }}>{fmtDt(assessmentDetail.modifiedAt)}</TableCell>
                         </TableRow>
@@ -951,7 +951,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                       {/* 계획승인자 | 완료승인자 */}
                       <TableRow>
                         <TableCell sx={{ ...lblCellSx, width: 130, minWidth: 130, whiteSpace: 'nowrap' }}>{t('riskAssessment.planApprover', '계획 승인자')}</TableCell>
-                        <TableCell sx={{ borderRight: 1, borderColor: 'divider', textAlign: assessmentDetail.planApproverName ? 'left' : 'center' }}>
+                        <TableCell sx={{ borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', textAlign: assessmentDetail.planApproverName ? 'left' : 'center' }}>
                           {formatUserName(assessmentDetail.planApproverTeam, assessmentDetail.planApproverName, assessmentDetail.planApproverPosition) || ''}
                           {assessmentDetail.planApprovedAt && (
                             <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
@@ -1056,7 +1056,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               <>
                 {/* PC 테이블 */}
                 <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: '1px solid', borderColor: 'divider' }}>
-                  <Table size="small" sx={{ '& td, & th': { borderRight: '1px solid', borderColor: 'divider', px: 1.5, py: 1 }, '& td:last-child, & th:last-child': { borderRight: 'none' } }}>
+                  <Table size="small" sx={{ '& td, & th': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', px: 1.5, py: 1 }, '& td:last-child, & th:last-child': { borderRight: 'none' } }}>
                     <TableHead>
                       <TableRow sx={{ bgcolor: 'grey.100' }}>
                         <TableCell sx={{ fontWeight: 'bold', width: 160, textAlign: 'center' }}>{t('common.date', '일시')}</TableCell>
@@ -1209,10 +1209,10 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
         {/* PC용 테이블 레이아웃 */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {(() => {
-            const lbl = { width: 130, minWidth: 130, fontWeight: 'bold' as const, bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const, whiteSpace: 'nowrap' as const }
+            const lbl = { width: 130, minWidth: 130, fontWeight: 'bold' as const, bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const, whiteSpace: 'nowrap' as const }
             const lblWide = lbl
             const val = { flex: 1, px: 2, py: 1, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-            const valBr = { ...val, borderRight: 1, borderColor: 'divider' }
+            const valBr = { ...val, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
             const proc0 = activityProcesses[0] || { majorCategoryIdx: 1, majorCategory: MAJOR_CATEGORIES[0], detailAction: '', evaluationDate: '', evaluator: '', isTarget: true }
             const proc0Idx = Math.max(0, activityProcesses.findIndex(p => p.majorCategoryIdx === 1))
             const hasModified = !!(selectedAssessment?.modifiedAt && selectedAssessment.modifiedAt !== selectedAssessment.createdAt)
@@ -1220,7 +1220,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
             return (
               <>
                 {/* 제목 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                   <Typography sx={lbl}>{t('common.title')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
                   <Box sx={val}>
                     <TextField fullWidth size="small" placeholder={t('riskAssessment.form.titlePlaceholder')} value={formData.title}
@@ -1228,7 +1228,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Box>
                 </Box>
                 {/* 사업장 | 부서 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                   <Typography sx={lbl}>{t('riskAssessment.region')}</Typography>
                   <Box sx={valBr}>
                     <FormControl fullWidth size="small">
@@ -1247,7 +1247,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Box>
                 </Box>
                 {/* 평가자 | 평가일시 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                   <Typography sx={lbl}>{t('riskAssessment.evaluator', '평가자')}</Typography>
                   <Box sx={{ ...valBr, gap: 1 }}>
                     <TextField fullWidth size="small" value={proc0.evaluator || ''} InputProps={{ readOnly: true }} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
@@ -1262,7 +1262,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Box>
                 </Box>
                 {/* 작성자 | 작성일자 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                   <Typography sx={lbl}>{t('common.creator', '작성자')}</Typography>
                   <Box sx={valBr}>
                     <Typography variant="body2">{formatUserName(formData.authorTeam || user?.department, formData.authorName || user?.name || user?.username, formData.authorPosition || user?.position)}</Typography>
@@ -1276,7 +1276,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                 </Box>
                 {/* 수정자 | 수정일자 — 수정 이력 있을 때만 */}
                 {hasModified && (
-                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                  <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                     <Typography sx={lbl}>{t('common.modifier', '수정자')}</Typography>
                     <Box sx={valBr}>
                       <Typography variant="body2">{(selectedAssessment as any)?.modifiedByName || ''}</Typography>
@@ -1288,7 +1288,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Box>
                 )}
                 {/* 계획승인자 | 완료승인자 */}
-                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+                <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                   <Typography sx={lblWide}>
                     {t('riskAssessment.planApprover', '계획 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
                   </Typography>
@@ -1516,12 +1516,12 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       <Box sx={{ mb: 2 }}>
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>{t('checklist.checklistInfo', '체크리스트 정보')}</Typography>
         <Paper sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>{t('common.title', '제목')}</Box>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>{t('common.title', '제목')}</Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center', justifyContent: title ? 'flex-start' : 'center' }}><Typography variant="body2">{title}</Typography></Box>
           </Box>
           <Box sx={{ display: 'flex' }}>
-            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>{t('common.description', '설명')}</Box>
+            <Box sx={{ width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>{t('common.description', '설명')}</Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center', justifyContent: description ? 'flex-start' : 'center' }}><Typography variant="body2">{description}</Typography></Box>
           </Box>
         </Paper>
@@ -1580,22 +1580,22 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
           <Box sx={{ display: 'flex' }}>
             <Box sx={{
               minWidth: 120, px: 2, py: 0.5,
-              bgcolor: 'grey.100', borderRight: 1, borderColor: 'divider',
+              bgcolor: 'grey.100', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 'bold', fontSize: '0.875rem',
             }}>평균위험도</Box>
             <Box sx={{ minWidth: 80 }}>
               <Box sx={{
-                px: 2, py: 0.25, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider',
+                px: 2, py: 0.25, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
                 textAlign: 'center', fontWeight: 'bold', fontSize: '0.8rem',
               }}>개선전</Box>
               <Box sx={{ px: 2, py: 0.5, textAlign: 'center', fontWeight: 'bold' }}>
                 {fmtAvg(beforeAvg)}
               </Box>
             </Box>
-            <Box sx={{ minWidth: 80, borderLeft: 1, borderColor: 'divider' }}>
+            <Box sx={{ minWidth: 80, borderLeft: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Box sx={{
-                px: 2, py: 0.25, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider',
+                px: 2, py: 0.25, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
                 textAlign: 'center', fontWeight: 'bold', fontSize: '0.8rem',
               }}>개선후</Box>
               <Box sx={{ px: 2, py: 0.5, textAlign: 'center', fontWeight: 'bold' }}>
@@ -1607,7 +1607,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       </Box>
 
       <TableContainer component={Paper} sx={{ overflowX: 'auto', border: 1, borderColor: 'divider' }}>
-        <Table size="small" sx={{ minWidth: 1900, '& td, & th': { borderRight: '1px solid', borderColor: 'divider', wordBreak: 'keep-all' } }}>
+        <Table size="small" sx={{ minWidth: 1900, '& td, & th': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', wordBreak: 'keep-all' } }}>
           <TableHead>
             {/* 1단 그룹 헤더 — 체크리스트 관리의 위험성평가 양식과 동일한 셀 제목 구조 */}
             <TableRow sx={{ bgcolor: 'grey.100' }}>
@@ -1618,10 +1618,10 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               <TableCell rowSpan={2} sx={{ fontWeight: 'bold', width: 50, bgcolor: 'grey.100' }} align="center">N/A</TableCell>
               <TableCell rowSpan={2} sx={{ fontWeight: 'bold', minWidth: 200, bgcolor: 'grey.100' }} align="center">현재안전조치</TableCell>
               <TableCell colSpan={3} sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }} align="center">현재 위험도</TableCell>
-              <TableCell rowSpan={2} sx={{ fontWeight: 'bold', width: 70, bgcolor: 'grey.100', borderLeft: '1px solid', borderColor: 'divider' }} align="center">위험등급</TableCell>
+              <TableCell rowSpan={2} sx={{ fontWeight: 'bold', width: 70, bgcolor: 'grey.100', borderLeft: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">위험등급</TableCell>
               <TableCell colSpan={2} sx={{ fontWeight: 'bold', minWidth: 280, bgcolor: 'grey.100' }} align="center">개선대책</TableCell>
               <TableCell colSpan={3} sx={{ fontWeight: 'bold', bgcolor: 'grey.100' }} align="center">개선후 위험도</TableCell>
-              <TableCell rowSpan={2} sx={{ fontWeight: 'bold', width: 70, bgcolor: 'grey.100', borderLeft: '1px solid', borderColor: 'divider' }} align="center">위험등급</TableCell>
+              <TableCell rowSpan={2} sx={{ fontWeight: 'bold', width: 70, bgcolor: 'grey.100', borderLeft: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">위험등급</TableCell>
             </TableRow>
             {/* 2단 서브 헤더 */}
             <TableRow sx={{ bgcolor: 'grey.100' }}>
@@ -1854,7 +1854,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
       />
 
       {/* 위험도 매트릭스 Dialog */}
-      <Dialog open={guideDialogOpen} onClose={() => setGuideDialogOpen(false)} maxWidth="lg" fullWidth sx={{ '& .MuiDialog-paper': { mx: { xs: 1, sm: 2 } }, '& .MuiTableCell-root': { border: '1px solid', borderColor: 'divider' } }}>
+      <Dialog open={guideDialogOpen} onClose={() => setGuideDialogOpen(false)} maxWidth="lg" fullWidth sx={{ '& .MuiDialog-paper': { mx: { xs: 1, sm: 2 } }, '& .MuiTableCell-root': { border: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' } }}>
         <DialogTitle sx={{ borderBottom: 1, borderColor: 'divider', pb: { xs: 1.5, sm: 2 }, pt: { xs: 1.5, sm: 2 }, px: { xs: 2, sm: 3 }, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' }, wordBreak: 'keep-all' }}>

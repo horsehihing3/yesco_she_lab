@@ -153,13 +153,13 @@ const BodyDiagram: React.FC<{
           </Button>
         </Box>
         <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflowX: 'auto' }}>
-          <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderColor: 'divider', whiteSpace: 'nowrap' } }}>
+          <Table size="small" sx={{ minWidth: 400, '& .MuiTableCell-root': { borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', whiteSpace: 'nowrap' } }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.100' }}>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.bodyPart')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.category')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.resultValue')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">{t('healthCheckup.referenceRange')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">{t('healthCheckup.bodyPart')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">{t('healthCheckup.category')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">{t('healthCheckup.resultValue')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">{t('healthCheckup.referenceRange')}</TableCell>
                 <TableCell sx={{ fontWeight: 'bold' }} align="center">{t('healthCheckup.resultStatus')}</TableCell>
               </TableRow>
             </TableHead>

@@ -80,6 +80,7 @@ const menuItems: MenuItem[] = [
       { textKey: 'nav.ehsBudget', icon: <AccountBalanceIcon />, path: '/ehs-budget' },
       { textKey: 'nav.incidentResponse', icon: <WarningAmberIcon />, path: '/incident-response' },
       { textKey: 'nav.workplaceDrawingsView', icon: <PublicIcon />, path: '/workplace-drawings/view' },
+      { textKey: 'nav.legalResponse', icon: <GavelIcon />, path: '/legal-response' },
     ],
   },
   {

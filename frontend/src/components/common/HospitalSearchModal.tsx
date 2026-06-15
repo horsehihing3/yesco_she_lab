@@ -36,7 +36,7 @@ const formLabelSx = {
   px: 2,
   py: 1.5,
   borderRight: 1,
-  borderColor: 'divider',
+  borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex',
   alignItems: 'center',
   fontSize: '0.875rem',
@@ -134,7 +134,7 @@ const HospitalSearchModal = ({ open, onClose, onSelect, initialValue }: Hospital
         {/* Form Table */}
         <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {/* Hospital Name Row */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={formLabelSx}>
               {t('healthCheckup.hospitalName')}
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
