@@ -35,7 +35,7 @@ const statusColors: Record<string, 'info' | 'success' | 'error'> = {
 
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
@@ -439,7 +439,7 @@ const EmrDrillTab: React.FC = () => {
         {/* PC Detail — 상단 항목은 비상 계획 상세와 동일한 레이아웃 (linkedPlan 기준) */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           {/* 1: 계획번호 / 유형 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.planId')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" fontFamily="monospace">{linkedPlan?.planId || ''}</Typography>
@@ -450,7 +450,7 @@ const EmrDrillTab: React.FC = () => {
             </Box>
           </Box>
           {/* 2: 계획명 / 상태 (드릴 상태) */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.planName')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" fontWeight={600}>{linkedPlan?.planName || selectedItem.drillName}</Typography>
@@ -461,7 +461,7 @@ const EmrDrillTab: React.FC = () => {
             </Box>
           </Box>
           {/* 3: 담당부서 / 담당자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.responsibleDept')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">{linkedPlan?.responsibleDept || ''}</Typography>
@@ -472,7 +472,7 @@ const EmrDrillTab: React.FC = () => {
             </Box>
           </Box>
           {/* 4: 훈련 시작일 / 종료일 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.trainingStartDate')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" fontFamily="monospace">{linkedPlan?.trainingStartDate || ''}</Typography>
@@ -483,7 +483,7 @@ const EmrDrillTab: React.FC = () => {
             </Box>
           </Box>
           {/* 5: 작성자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.writer')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">
@@ -492,7 +492,7 @@ const EmrDrillTab: React.FC = () => {
             </Box>
           </Box>
           {/* 6: 계획 승인자 / 완료 승인자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.planApprover')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2">
@@ -517,14 +517,14 @@ const EmrDrillTab: React.FC = () => {
             </Box>
           </Box>
           {/* 7: 설명 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('common.description')}</Typography>
             <Box sx={valueSx}>
               <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{linkedPlan?.description || ''}</Typography>
             </Box>
           </Box>
           {/* 8: 대응 절차 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.responseSteps')}</Typography>
             <Box sx={valueSx}>
               <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{linkedPlan?.responseSteps || ''}</Typography>
@@ -532,7 +532,7 @@ const EmrDrillTab: React.FC = () => {
           </Box>
           {/* 9: 자원·장비 */}
           {linkedPlan?.resourceIds && (
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.resources', '자원·장비')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                 {allResources.filter(r => linkedPlan.resourceIds!.split(',').map(Number).includes(r.id)).map(r => (
@@ -760,7 +760,7 @@ const EmrDrillTab: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         {/* PC Form */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.drillName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.drillName} onChange={(e) => setForm({ ...form, drillName: e.target.value })} />
@@ -772,7 +772,7 @@ const EmrDrillTab: React.FC = () => {
               </Select>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.targetDept')}</Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.targetDept || ''} onChange={(e) => setForm({ ...form, targetDept: e.target.value })} />
@@ -782,7 +782,7 @@ const EmrDrillTab: React.FC = () => {
               <TextField fullWidth size="small" value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.scheduledDate')}</Typography>
             <Box sx={valueBorderSx}>
               <DatePickerField value={form.scheduledDate || null} onChange={(v) => setForm({ ...form, scheduledDate: v })} size="small" />
@@ -792,7 +792,7 @@ const EmrDrillTab: React.FC = () => {
               <NumberField fullWidth size="small" value={form.participantCount ?? ''} onChange={(v) => setForm({ ...form, participantCount: (v ?? undefined) as number | undefined })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.targetTime')}</Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.targetTime || ''} onChange={(e) => setForm({ ...form, targetTime: e.target.value })} />
@@ -805,7 +805,7 @@ const EmrDrillTab: React.FC = () => {
             </Box>
           </Box>
           {viewMode === 'edit' && (
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.evacuationTime')}</Typography>
               <Box sx={valueBorderSx}>
                 <TextField fullWidth size="small" value={form.evacuationTime || ''} onChange={(e) => setForm({ ...form, evacuationTime: e.target.value })} />
@@ -819,7 +819,7 @@ const EmrDrillTab: React.FC = () => {
               </Box>
             </Box>
           )}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.scenario')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={4} value={form.scenario || ''} onChange={(e) => setForm({ ...form, scenario: e.target.value })} />

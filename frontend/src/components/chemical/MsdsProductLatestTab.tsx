@@ -24,10 +24,10 @@ const headerCellSx = { fontWeight: 'bold', borderRight: 1, borderColor: 'divider
 const lastHeaderCellSx = { fontWeight: 'bold', wordBreak: 'keep-all' }
 const cellBorderSx = { borderRight: 1, borderColor: 'divider' }
 
-const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
 const emptyForm = { itemName: '', itemCode: '', version: '', issueDate: '', language: '', exportCountries: '', fileSize: '', status: 'VALID', msdsType: 'PRODUCT' as const, isLatest: true }
 

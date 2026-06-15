@@ -317,14 +317,14 @@ const TrainingApplyTab: React.FC = () => {
                 {(() => {
                   const labelSx = {
                     width: 96, minWidth: 96, fontWeight: 'bold', bgcolor: 'grey.100',
-                    px: 1.5, py: 1, borderRight: 1, borderColor: 'divider',
+                    px: 1.5, py: 1, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
                     display: 'flex', alignItems: 'center', fontSize: '0.8rem',
                     justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center' as const,
                   }
                   const valSx = { flex: 1, px: 1.5, py: 0.75, bgcolor: 'background.paper', display: 'flex', alignItems: 'center' }
-                  const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
-                  const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
-                  const lastRowSx = { display: 'flex', borderColor: 'divider' }
+                  const valBorderSx = { ...valSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+                  const rowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+                  const lastRowSx = { display: 'flex', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
                   return (
                     <>
                       <Box sx={rowSx}>

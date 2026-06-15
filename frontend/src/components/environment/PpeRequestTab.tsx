@@ -39,10 +39,11 @@ const STATUS_COLORS: Record<string, 'default' | 'info' | 'success' | 'warning' |
   REQUESTED: 'info', APPROVED: 'success', ISSUED: 'success', RETURNED: 'default', REJECTED: 'error', CANCELLED: 'default',
 }
 
-const labelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
+const borderColorSx = (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider'
+const labelSx = { width: 120, minWidth: 120, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: borderColorSx, display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all' as const }
 const valSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: borderColorSx }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: borderColorSx }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 const PpeRequestTab: React.FC = () => {

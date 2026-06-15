@@ -40,10 +40,10 @@ const statusColors: Record<string, 'default' | 'warning' | 'info' | 'success' | 
 }
 
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
-const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', textAlign: 'center' as const, wordBreak: 'keep-all' as const }
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', textAlign: 'center' as const, wordBreak: 'keep-all' as const }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
 const emptyForm: AuditRequest = { auditName: '', auditType: 'REGULAR', targetDept: '', auditor: '', auditDate: '', summary: '', status: 'PLAN' }
 
@@ -584,7 +584,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           {selectedItem.status !== 'COMPLETED' && (
             <>
               {selectedItem.status !== 'PENDING_CLOSE' && canSee(MENU, selectedItem.status, '수정', getRoles(selectedItem)) && (
-                <Button variant="contained" color="warning" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                <Button variant="contained" color="primary" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                   {t('common.edit', '수정')}
                 </Button>
               )}
@@ -974,9 +974,8 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
         />
       </Box>
 
-      {isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
-      ) : items.length === 0 ? (
+      {isLoading ? null
+      : items.length === 0 ? (
         <Alert severity="info" sx={{ m: 2 }}>{t('common.noData')}</Alert>
       ) : (
         <>

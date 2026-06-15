@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.LegalResponseMapper">
+
+    <resultMap id="RegistryRM" type="com.smartehs.model.LegalRegistry">
+        <id property="id" column="id"/>
+        <result property="lawId" column="law_id"/>
+        <result property="lawName" column="law_name"/>
+        <result property="lawType" column="law_type"/>
+        <result property="category" column="category"/>
+        <result property="competentOrg" column="competent_org"/>
+        <result property="promulgationNo" column="promulgation_no"/>
+        <result property="promulgationDt" column="promulgation_dt"/>
+        <result property="enforceDt" column="enforce_dt"/>
+        <result property="status" column="status"/>
+        <result property="detailLink" column="detail_link"/>
+        <result property="memo" column="memo"/>
+        <result property="createdByUserId" column="created_by_user_id"/>
+        <result property="createdByName" column="created_by_name"/>
+        <result property="createdByTeam" column="created_by_team"/>
+        <result property="createdByPosition" column="created_by_position"/>
+        <result property="modifiedByUserId" column="modified_by_user_id"/>
+        <result property="modifiedByName" column="modified_by_name"/>
+        <result property="modifiedByTeam" column="modified_by_team"/>
+        <result property="modifiedByPosition" column="modified_by_position"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findAllRegistry" resultMap="RegistryRM">
+        SELECT * FROM tb_legal_registry
+        <where>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (law_name LIKE '%' + #{keyword} + '%'
+                     OR competent_org LIKE '%' + #{keyword} + '%')
+            </if>
+        </where>
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findRegistryById" resultMap="RegistryRM">
+        SELECT * FROM tb_legal_registry WHERE id = #{id}
+    </select>
+
+    <select id="findRegistryByLawId" resultMap="RegistryRM">
+        SELECT TOP 1 * FROM tb_legal_registry WHERE law_id = #{lawId}
+    </select>
+
+    <insert id="insertRegistry" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_legal_registry
+            (law_id, law_name, law_type, category, competent_org,
+             promulgation_no, promulgation_dt, enforce_dt, status, detail_link, memo,
+             created_by_user_id, created_by_name, created_by_team, created_by_position,
+             modified_by_user_id, modified_by_name, modified_by_team, modified_by_position,
+             created_at, modified_at)
+        VALUES
+            (#{lawId}, #{lawName}, #{lawType}, #{category}, #{competentOrg},
+             #{promulgationNo}, #{promulgationDt}, #{enforceDt}, #{status}, #{detailLink}, #{memo},
+             #{createdByUserId,jdbcType=BIGINT}, #{createdByName}, #{createdByTeam}, #{createdByPosition},
+             #{modifiedByUserId,jdbcType=BIGINT}, #{modifiedByName}, #{modifiedByTeam}, #{modifiedByPosition},
+             GETDATE(), GETDATE())
+    </insert>
+
+    <update id="updateRegistry">
+        UPDATE tb_legal_registry SET
+            law_name = #{lawName},
+            law_type = #{lawType},
+            category = #{category},
+            competent_org = #{competentOrg},
+            promulgation_no = #{promulgationNo},
+            promulgation_dt = #{promulgationDt},
+            enforce_dt = #{enforceDt},
+            status = #{status},
+            detail_link = #{detailLink},
+            memo = #{memo},
+            modified_by_user_id = #{modifiedByUserId,jdbcType=BIGINT},
+            modified_by_name = #{modifiedByName},
+            modified_by_team = #{modifiedByTeam},
+            modified_by_position = #{modifiedByPosition},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteRegistry">
+        DELETE FROM tb_legal_registry WHERE id = #{id}
+    </delete>
+
+    <select id="countRegistry" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_registry
+    </select>
+
+    <select id="countRegistryByCategory" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_registry WHERE category = #{category}
+    </select>
+
+    <!-- ============ Revision Log ============ -->
+    <resultMap id="RevisionRM" type="com.smartehs.model.LegalRevisionLog">
+        <id property="id" column="id"/>
+        <result property="lawId" column="law_id"/>
+        <result property="lawName" column="law_name"/>
+        <result property="revisionType" column="revision_type"/>
+        <result property="revisionNo" column="revision_no"/>
+        <result property="revisionDt" column="revision_dt"/>
+        <result property="enforceDt" column="enforce_dt"/>
+        <result property="summary" column="summary"/>
+        <result property="detailLink" column="detail_link"/>
+        <result property="reviewStatus" column="review_status"/>
+        <result property="impactLevel" column="impact_level"/>
+        <result property="fetchedAt" column="fetched_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+    </resultMap>
+
+    <select id="findRevisionLogs" resultMap="RevisionRM">
+        SELECT * FROM tb_legal_revision_log
+        <where>
+            <if test="status != null and status != ''">
+                AND review_status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (law_name LIKE '%' + #{keyword} + '%' OR summary LIKE '%' + #{keyword} + '%')
+            </if>
+        </where>
+        ORDER BY revision_dt DESC, id DESC
+    </select>
+
+    <select id="findRevisionLogById" resultMap="RevisionRM">
+        SELECT * FROM tb_legal_revision_log WHERE id = #{id}
+    </select>
+
+    <insert id="insertRevisionLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_legal_revision_log
+            (law_id, law_name, revision_type, revision_no, revision_dt, enforce_dt,
+             summary, detail_link, review_status, impact_level, fetched_at, created_at, modified_at)
+        VALUES
+            (#{lawId}, #{lawName}, #{revisionType}, #{revisionNo}, #{revisionDt}, #{enforceDt},
+             #{summary}, #{detailLink}, #{reviewStatus}, #{impactLevel}, GETDATE(), GETDATE(), GETDATE())
+    </insert>
+
+    <update id="updateRevisionLog">
+        UPDATE tb_legal_revision_log SET
+            review_status = #{reviewStatus},
+            impact_level = #{impactLevel},
+            summary = #{summary},
+            modified_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteRevisionLog">
+        DELETE FROM tb_legal_revision_log WHERE id = #{id}
+    </delete>
+
+    <select id="countRevisionByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_legal_revision_log
+        <where>
+            <if test="status != null and status != ''">
+                AND review_status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="findRevisionByLawIdAndDate" resultType="java.lang.Integer">
+        SELECT TOP 1 1 FROM tb_legal_revision_log
+        WHERE law_id = #{lawId} AND revision_dt = #{revisionDt}
+    </select>
+
+    <!-- 등록 법령들의 미완료(검토대기/검토중/조치필요) 개정 카운트 -->
+    <select id="countOpenRevisionsByLawIds" resultType="java.util.HashMap">
+        SELECT law_id AS lawId, COUNT(*) AS cnt
+        FROM tb_legal_revision_log
+        WHERE review_status IN ('PENDING','IN_REVIEW','NEED_ACTION')
+          AND law_id IN
+            <foreach collection="lawIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        GROUP BY law_id
+    </select>
+</mapper>

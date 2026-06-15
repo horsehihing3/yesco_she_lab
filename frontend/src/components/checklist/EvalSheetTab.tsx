@@ -429,7 +429,7 @@ const EvalSheetTab: React.FC = () => {
     return sums
   })()
 
-  const labelCellSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' } as const
+  const labelCellSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' } as const
 
   return (
     <Box>
@@ -438,7 +438,7 @@ const EvalSheetTab: React.FC = () => {
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>{t('checklist.checklistInfo', '체크리스트 정보')}</Typography>
         <Paper sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* 제목 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('common.title', '제목')}</Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
               {isEditing ? (
@@ -453,7 +453,7 @@ const EvalSheetTab: React.FC = () => {
             </Box>
           </Box>
           {/* 설명 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Box sx={labelCellSx}>{t('common.description', '설명')}</Box>
             <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }}>
               {isEditing ? (

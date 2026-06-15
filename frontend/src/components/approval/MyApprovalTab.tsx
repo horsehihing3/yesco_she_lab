@@ -17,7 +17,7 @@ const ROWS_PER_PAGE = 10
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 const labelSx = {
   width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
@@ -267,7 +267,7 @@ const MyApprovalTab: React.FC = () => {
                   { label: t('approval.requestDate'), value: formatDate(selectedItem.requestDate) },
                   { label: t('approval.content'), value: parseContent(selectedItem.content).description || selectedItem.content || '' },
                 ].map((field, idx, arr) => (
-                  <Box key={idx} sx={{ display: 'flex', borderBottom: idx < arr.length - 1 ? 1 : 0, borderColor: 'divider' }}>
+                  <Box key={idx} sx={{ display: 'flex', borderBottom: idx < arr.length - 1 ? 1 : 0, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                     <Typography sx={labelSx}>{field.label}</Typography>
                     <Box sx={valueSx}>
                       {field.chip ? (

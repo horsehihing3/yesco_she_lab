@@ -105,7 +105,7 @@ const RiskAssessmentReportTab: React.FC = () => {
         1. {t('riskAssessment.report.overviewTitle', '평가 개요')}
       </Typography>
       <TableContainer sx={{ mb: 3 }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableBody>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('riskAssessment.riskId', '평가번호')}</TableCell>

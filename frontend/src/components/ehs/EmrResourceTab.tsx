@@ -28,7 +28,7 @@ const statusColors: Record<string, 'success' | 'warning' | 'error' | 'default'> 
 
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
@@ -259,7 +259,7 @@ const EmrResourceTab: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           {/* PC Detail */}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.resourceId')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.resourceId}</Typography>
@@ -269,7 +269,7 @@ const EmrResourceTab: React.FC = () => {
                 <Chip label={getResourceStatusLabel(selectedItem.status)} color={statusColors[selectedItem.status] || 'default'} size="small" />
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.resourceName')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontWeight={600}>{selectedItem.resourceName}</Typography>
@@ -279,7 +279,7 @@ const EmrResourceTab: React.FC = () => {
                 <Typography variant="body2">{getResourceTypeLabel(selectedItem.resourceType)}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.quantity')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{selectedItem.quantity}</Typography>
@@ -289,13 +289,13 @@ const EmrResourceTab: React.FC = () => {
                 <Typography variant="body2">{selectedItem.availableQty}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.location')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{selectedItem.location || ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.disposalDate')}</Typography>
               <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.disposalDate || ''}</Typography>
@@ -346,7 +346,7 @@ const EmrResourceTab: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         {/* PC Form */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.resourceName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.resourceName} onChange={(e) => setForm({ ...form, resourceName: e.target.value })} />
@@ -359,7 +359,7 @@ const EmrResourceTab: React.FC = () => {
               </Select>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.quantity')}</Typography>
             <Box sx={valueBorderSx}>
               <NumberField fullWidth size="small" value={form.quantity ?? ''} onChange={(v) => setForm({ ...form, quantity: v ?? undefined })} />
@@ -369,7 +369,7 @@ const EmrResourceTab: React.FC = () => {
               <NumberField fullWidth size="small" value={form.availableQty ?? ''} onChange={(v) => setForm({ ...form, availableQty: v ?? undefined })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.location')}</Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.location || ''} onChange={(e) => setForm({ ...form, location: e.target.value })} />
@@ -382,7 +382,7 @@ const EmrResourceTab: React.FC = () => {
               </Select>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.disposalDate')}</Typography>
             <Box sx={valueSx}>
               <DatePickerField value={form.disposalDate || null} onChange={(v) => setForm({ ...form, disposalDate: v })} size="small" />

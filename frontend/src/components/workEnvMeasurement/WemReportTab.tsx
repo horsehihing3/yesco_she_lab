@@ -105,7 +105,7 @@ const WemReportTab: React.FC = () => {
         1. {t('wem.report.overviewTitle', '측정 개요')}
       </Typography>
       <TableContainer sx={{ mb: 3 }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', borderBottomColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableBody>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('wem.processName', '공정명')}</TableCell>
@@ -148,7 +148,7 @@ const WemReportTab: React.FC = () => {
         2. {t('wem.report.measurementTitle', '측정값 / 노출기준')}
       </Typography>
       <TableContainer sx={{ mb: 3 }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', borderBottomColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableBody>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('wem.measuredValue', '측정값')}</TableCell>

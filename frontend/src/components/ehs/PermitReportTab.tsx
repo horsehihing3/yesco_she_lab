@@ -113,7 +113,7 @@ const PermitReportTab: React.FC = () => {
         1. {t('permit.report.overviewTitle', '허가 개요')}
       </Typography>
       <TableContainer sx={{ mb: 3 }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableBody>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('permit.permitId', '허가번호')}</TableCell>
@@ -217,7 +217,7 @@ const PermitReportTab: React.FC = () => {
         3. {t('permit.report.checklistSummaryTitle', '점검 요약')}
       </Typography>
       <TableContainer sx={{ mb: 3 }}>
-        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+        <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
           <TableBody>
             <TableRow>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('permit.report.totalChecklist', '전체 항목')}</TableCell>

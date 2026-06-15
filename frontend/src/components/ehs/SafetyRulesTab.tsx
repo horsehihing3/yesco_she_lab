@@ -525,7 +525,7 @@ const SafetyRulesTab: React.FC = () => {
       }}>
         {/* Folder Tree - Left Panel */}
         <Paper variant="outlined" sx={{ width: { xs: '100%', md: 250 }, flexShrink: 0, overflow: 'auto', maxHeight: { xs: 200, md: 'none' }, border: 1, borderColor: 'divider' }}>
-          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography variant="subtitle2" fontWeight="bold">
               {t('safetyRules.folder')}
             </Typography>
@@ -546,7 +546,7 @@ const SafetyRulesTab: React.FC = () => {
 
         {/* File List - Center Panel */}
         <TableContainer component={Paper} variant="outlined" sx={{ flex: 1, overflowX: 'auto', minHeight: { xs: 300, md: 'auto' }, border: 1, borderColor: 'divider' }}>
-          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography variant="subtitle2" fontWeight="bold">
               {getFolderName(selectedFolder)}
             </Typography>
@@ -554,9 +554,9 @@ const SafetyRulesTab: React.FC = () => {
           <Table size="small" stickyHeader sx={{ minWidth: 500 }}>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyRules.filename')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 100, borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyRules.fileSize')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 120, borderRight: 1, borderColor: 'divider' }} align="center">{t('safetyRules.registeredDate')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">{t('safetyRules.filename')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 100, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">{t('safetyRules.fileSize')}</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 120, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">{t('safetyRules.registeredDate')}</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', bgcolor: 'grey.100', width: 100 }} align="center">
                   {t('safetyRules.actions')}
                 </TableCell>
@@ -651,7 +651,7 @@ const SafetyRulesTab: React.FC = () => {
 
         {/* Preview Panel - Right Panel */}
         <Paper variant="outlined" sx={{ width: { xs: '100%', md: 350 }, flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: { xs: 250, md: 'auto' }, overflow: 'hidden', border: 1, borderColor: 'divider' }}>
-          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ p: 1, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography variant="subtitle2" fontWeight="bold">
               {t('safetyRules.preview')}
             </Typography>

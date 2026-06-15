@@ -95,6 +95,12 @@ app:
 translation:
   enabled: true
 
+# 법제처 국가법령정보센터 OpenAPI
+# OC(기관코드): https://open.law.go.kr 회원가입 시 이메일 ID(@앞)가 OC
+# 등록 IP에서만 호출 가능. 환경변수 LAW_API_OC 로 override 가능.
+law-api:
+  oc: ${LAW_API_OC:com4in}
+
 # Springdoc OpenAPI
 springdoc:
   api-docs:

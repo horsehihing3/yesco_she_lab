@@ -80,7 +80,7 @@ const SafetyGoalProgressTable: React.FC<Props> = () => {
     >
       <Table size="small" sx={{
         minWidth: 900,
-        '& td, & th': { borderRight: '1px solid', borderBottom: '1px solid', borderColor: 'divider' },
+        '& td, & th': { borderRight: '1px solid', borderBottom: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' },
       }}>
         <TableHead>
           <TableRow>

@@ -22,12 +22,12 @@ const ROWS_PER_PAGE = 10
 
 const labelSx = {
   width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valueSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem', display: 'flex', alignItems: 'center' }
-const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'divider' }
+const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 // content 파싱: "requestId | description"
@@ -199,7 +199,7 @@ const ApprovalManagePage: React.FC = () => {
         <Paper sx={{ p: 3, mb: 3, bgcolor: 'grey.50', display: { xs: 'none', md: 'block' } }}>
           <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
             {fieldPairs.map((pair, idx) => (
-              <Box key={idx} sx={{ display: 'flex', borderBottom: idx < fieldPairs.length - 1 ? 1 : 0, borderColor: 'divider' }}>
+              <Box key={idx} sx={{ display: 'flex', borderBottom: idx < fieldPairs.length - 1 ? 1 : 0, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                 {pair.length === 2 ? (
                   <>
                     {renderCell(pair[0], true)}

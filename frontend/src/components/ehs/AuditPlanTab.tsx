@@ -33,12 +33,12 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valueSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }
-const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: 'divider' }
+const valueBorderSx = { ...valueSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 const headerCellSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 const emptyForm: AuditPlanRequest = {
@@ -67,7 +67,7 @@ const ChecklistPreview: React.FC<{ templateId?: number | null }> = ({ templateId
   // RiskAssessment 의 renderChecklistInfo 와 동일한 라벨 셀 스타일
   const infoLabelSx = {
     width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100',
-    px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+    px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
     display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center',
   }
 
@@ -77,7 +77,7 @@ const ChecklistPreview: React.FC<{ templateId?: number | null }> = ({ templateId
         {t('checklist.checklistInfo', '체크리스트 정보')}
       </Typography>
       <Paper sx={{ border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
-        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
           <Box sx={infoLabelSx}>{t('common.title', '제목')}</Box>
           <Box sx={{ flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center', justifyContent: title ? 'flex-start' : 'center' }}>
             <Typography variant="body2">{title || ''}</Typography>
@@ -428,9 +428,8 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           </Box>
         </Box>
 
-        {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
-        ) : items.length === 0 ? (
+        {isLoading ? null
+        : items.length === 0 ? (
           <Alert severity="info" sx={{ m: 2 }}>{t('common.noData')}</Alert>
         ) : (
           <>
@@ -539,7 +538,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           {/* PC Detail — 흐름: 제목/유형 → 부서/상태 → 목적 → [도메인필드] → 비고 → 작성자/부서/생성일 → 수정자/부서/수정일 → 계획승인자/완료승인자 → 체크리스트 */}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
             {/* 계획번호 | 감사 유형 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('audit.planId')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.planId || ''}</Typography>
@@ -550,7 +549,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Box>
             </Box>
             {/* 감사명 | 상태 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('audit.auditName')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontWeight={600}>{selectedItem.auditName}</Typography>
@@ -565,7 +564,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Box>
             </Box>
             {/* 감사원 | 대상 부서 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('audit.auditor')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 {(() => {
@@ -583,7 +582,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Box>
             </Box>
             {/* 시작일 | 종료일 — 감사원 아래 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('audit.planStartDate')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.planStartDate || ''}</Typography>
@@ -594,21 +593,21 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Box>
             </Box>
             {/* 목적 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('audit.purpose')}</Typography>
               <Box sx={valueSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.purpose || ''}</Typography>
               </Box>
             </Box>
             {/* 비고 — 목적 바로 아래, 풀폭 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('common.notes', '비고')}</Typography>
               <Box sx={valueSx}>
                 <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{selectedItem.notes || ''}</Typography>
               </Box>
             </Box>
             {/* 작성자 | 생성일 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('audit.creator', '작성자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || ''}</Typography>
@@ -622,7 +621,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             </Box>
             {/* 수정자 | 수정일 — 수정 이력 있을 때만(modifiedAt이 createdAt과 다른 경우) 표시 */}
             {selectedItem.modifiedAt && selectedItem.modifiedAt !== selectedItem.createdAt && (
-              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+              <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
                 <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
                 <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                   <Typography variant="body2">{formatUserName(selectedItem.modifiedByTeam, selectedItem.modifiedByName, selectedItem.modifiedByPosition)}</Typography>
@@ -636,7 +635,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
               </Box>
             )}
             {/* 계획승인자 | 완료승인자 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('audit.planApprover', '계획 승인자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">
@@ -781,7 +780,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
         {/* PC Form — 흐름: 제목/유형 → 부서/(상태:생략) → 목적 → [도메인필드] → 비고(생략) → 작성자/부서/생성일 → 수정자/부서/수정일 → 계획승인자/완료승인자 → 체크리스트 */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
           {/* 제목 | 유형 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('audit.auditName')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.auditName} onChange={(e) => setForm({ ...form, auditName: e.target.value })} />
@@ -795,7 +794,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             </Box>
           </Box>
           {/* 감사원 | 대상 부서 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>
               {t('audit.auditor')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
@@ -821,7 +820,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             </Box>
           </Box>
           {/* 시작일 | 종료일 — 감사원 아래 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('audit.planStartDate')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <DatePickerField value={form.planStartDate || null} onChange={(v) => setForm({ ...form, planStartDate: v })} size="small" maxDate={form.planEndDate} />
@@ -832,21 +831,21 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             </Box>
           </Box>
           {/* 목적 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('audit.purpose')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={3} value={form.purpose || ''} onChange={(e) => setForm({ ...form, purpose: e.target.value })} />
             </Box>
           </Box>
           {/* 비고 — 목적 바로 아래, 풀폭 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('common.notes', '비고')}</Typography>
             <Box sx={valueSx}>
               <TextField fullWidth size="small" multiline rows={3} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
             </Box>
           </Box>
           {/* 작성자 | 생성일 — 등록 모드: 생성일은 저장 후 표시되므로 빈 셀 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('audit.creator', '작성자')}</Typography>
             <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2">{formatUserName(form.createdByTeam, form.createdByName || user?.name || user?.username, form.createdByPosition) || ''}</Typography>
@@ -860,7 +859,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           </Box>
           {/* 수정자 | 수정일 — 수정 모드일 때만 표시 (등록 시점에는 의미 없음) */}
           {viewMode === 'edit' && (
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('common.modifier', '수정자')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2">{formatUserName(selectedItem?.modifiedByTeam, selectedItem?.modifiedByName, selectedItem?.modifiedByPosition) || formatUserName(user?.department, user?.name, user?.position)}</Typography>
@@ -874,7 +873,7 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
             </Box>
           )}
           {/* 계획승인자 | 완료승인자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>
               {t('audit.planApprover', '계획 승인자')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>

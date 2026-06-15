@@ -113,7 +113,7 @@ const WaterReportTab: React.FC = () => {
           1. {t('water.report.measurementInfo', '측정 정보')}
         </Typography>
         <TableContainer sx={{ mb: 3 }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', borderBottomColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableBody>
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100', width: '20%' }}>{t('water.report.date', '측정일')}</TableCell>
@@ -129,7 +129,7 @@ const WaterReportTab: React.FC = () => {
           2. {t('water.report.measurementValues', '측정값')}
         </Typography>
         <TableContainer sx={{ mb: 3 }}>
-          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+          <Table size="small" sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', borderBottomColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
             <TableHead>
               <TableRow>
                 <TableCell align="center" sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>{t('water.report.itemName', '항목')}</TableCell>

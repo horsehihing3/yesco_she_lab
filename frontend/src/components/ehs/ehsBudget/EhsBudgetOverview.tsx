@@ -132,7 +132,7 @@ const EhsBudgetOverview: React.FC<EhsBudgetOverviewProps> = ({
           <Grid item xs={12} md={2.4} key={idx}>
             <Paper sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
               <Typography variant="body2" color="text.secondary">{card.label}</Typography>
-              <Typography fontWeight="bold" sx={{ mt: 0.75, fontSize: { xs: '1.75rem', md: '2.25rem' }, lineHeight: 1.2 }}>
+              <Typography fontWeight="bold" sx={{ mt: 0.75, fontSize: { xs: '1.5rem', md: '1.5rem', lg: '1.75rem' }, lineHeight: 1.2, whiteSpace: 'nowrap' }}>
                 {card.value}
               </Typography>
             </Paper>

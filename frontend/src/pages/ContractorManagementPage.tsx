@@ -54,12 +54,12 @@ const RISK_COLORS: Record<string, 'default' | 'success' | 'warning' | 'error'> =
 // Style constants
 const labelSx = {
   width: 128, minWidth: 128, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
 const valSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper', fontSize: '0.875rem' }
-const valSxBorder = { ...valSx, borderRight: 1, borderColor: 'divider' }
+const valSxBorder = { ...valSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 const hSx = { fontWeight: 'bold', whiteSpace: 'nowrap' as const }
 
 // =============================================
@@ -530,8 +530,8 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   if (viewMode === 'detail' && selectedItem) {
     const dLabelSx = { ...labelSx, width: 140, minWidth: 140 }
     const dValSx = { flex: 1, px: 2, py: 1.5, bgcolor: 'background.paper' }
-    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: 'divider' }
-    const dRowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+    const dValBorderSx = { ...dValSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+    const dRowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -778,12 +778,12 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
         {/* Desktop form - table-style layout */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {/* Row: title */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>제목<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valSx}><TextField fullWidth size="small" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></Box>
           </Box>
           {/* Row: workType + riskLevel */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>작업유형</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" displayEmpty value={form.workType || ''} onChange={(e) => setForm({ ...form, workType: e.target.value })}>
@@ -800,7 +800,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: workLocation + workersCount */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>작업장소</Typography>
             <Box sx={valSxBorder}>
               <TextField fullWidth size="small" value={form.workLocation || ''} onChange={(e) => setForm({ ...form, workLocation: e.target.value })} />
@@ -811,7 +811,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: workStartDate + workEndDate */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>시작일</Typography>
             <Box sx={valSxBorder}>
               <DatePickerField value={formatDate(form.workStartDate) || null} onChange={(v) => setForm({ ...form, workStartDate: v + 'T08:00:00' })} size="small" maxDate={formatDate(form.workEndDate)} />
@@ -822,17 +822,17 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: workDescription */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>작업내용</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={2} value={form.workDescription || ''} onChange={(e) => setForm({ ...form, workDescription: e.target.value })} /></Box>
           </Box>
           {/* Row: safetyMeasures */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>안전조치</Typography>
             <Box sx={valSx}><TextField fullWidth size="small" multiline rows={2} value={form.safetyMeasures || ''} onChange={(e) => setForm({ ...form, safetyMeasures: e.target.value })} /></Box>
           </Box>
           {/* Row: requiredPpe + hazardFactors */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>보호구</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" multiple displayEmpty
@@ -856,7 +856,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: emergencyContact + notes */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>비상연락처</Typography>
             <Box sx={valSxBorder}>
               <TextField fullWidth size="small" value={form.emergencyContact || ''} onChange={(e) => { const nums = e.target.value.replace(/[^0-9]/g, '').slice(0, 11); let formatted = nums; if (nums.length > 7) formatted = nums.slice(0,3) + '-' + nums.slice(3,7) + '-' + nums.slice(7); else if (nums.length > 3) formatted = nums.slice(0,3) + '-' + nums.slice(3); setForm({ ...form, emergencyContact: formatted }) }} inputProps={{ inputMode: 'numeric', maxLength: 13 }} />
@@ -867,7 +867,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: 일정 반복 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>일정 반복</Typography>
             <Box sx={{ ...valSx, flexDirection: 'column', gap: 1, py: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => setForm({ ...form, repeatType: 'NONE', repeatInterval: undefined })}>
@@ -920,7 +920,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Row: 작성자 | 작성일자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>작성자</Typography>
             <Box sx={valSxBorder}>
               <Typography variant="body2">{selectedItem ? (formatUserName(selectedItem.createdByTeam, selectedItem.createdByName, selectedItem.createdByPosition) || user?.name || '') : (formatUserName(user?.department, user?.name, user?.position) || user?.name || '')}</Typography>
@@ -934,7 +934,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           </Box>
           {/* Row: 수정자 | 수정일자 — 수정 모드에서만 표시 */}
           {viewMode === 'edit' && selectedItem && (
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>수정자</Typography>
               <Box sx={valSxBorder}>
                 <Typography variant="body2">{formatUserName(user?.department, user?.name, user?.position)}</Typography>
@@ -946,12 +946,12 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           )}
           {/* Row: 계획 승인자 | 완료 승인자 */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>
               계획 승인자
               <Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography>
             </Typography>
-            <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center', py: 1, borderRight: 1, borderColor: 'divider' }}>
+            <Box sx={{ ...valSx, display: 'flex', gap: 1, alignItems: 'center', py: 1, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <TextField fullWidth size="small" value={form.planApproverName || ''} InputProps={{ readOnly: true }}
                 placeholder="조직도에서 선택" />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
@@ -971,7 +971,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             </Box>
           </Box>
           {/* Workers section (먼저) */}
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>작업자 정보</Typography>
             <Box sx={{ ...valSx, flexDirection: 'column', py: 2 }}>
               {workers.map((w, idx) => (

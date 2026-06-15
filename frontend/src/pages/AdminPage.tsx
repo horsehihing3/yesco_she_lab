@@ -341,10 +341,10 @@ const AdminPage: React.FC = () => {
                 <Table size="small" sx={{ minWidth: 650 }}>
                   <TableHead>
                     <TableRow sx={{ bgcolor: 'grey.100' }}>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('common.name')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('emergency.email')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('emergency.department')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('emergency.position')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('common.name')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('emergency.email')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('emergency.department')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('emergency.position')}</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }} align="center">
                         {t('common.status')}
                       </TableCell>
@@ -580,23 +580,23 @@ const AdminPage: React.FC = () => {
             <Table size="small" sx={{ minWidth: 800 }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.100' }}>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }}>{t('admin.division')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>{t('admin.division')}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">
                     {t('admin.months.jan')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">
                     {t('admin.months.feb')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">
                     {t('admin.months.mar')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">
                     {t('admin.months.apr')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">
                     {t('admin.months.may')}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: 'divider' }} align="center">
+                  <TableCell sx={{ fontWeight: 'bold', borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }} align="center">
                     {t('admin.months.jun')}
                   </TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }} align="center">

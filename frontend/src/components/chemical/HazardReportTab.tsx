@@ -27,10 +27,10 @@ const hazardClassColorMap: Record<string, 'error' | 'warning'> = {
   '부식성': 'warning',
 }
 
-const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
+const labelSx = { width: 130, minWidth: 130, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem' }
 const valSx = { flex: 1, px: 2, py: 1.5, display: 'flex', alignItems: 'center' }
-const valBorderSx = { ...valSx, borderRight: 1, borderColor: 'divider' }
-const rowSx = { display: 'flex', borderBottom: 1, borderColor: 'divider' }
+const valBorderSx = { ...valSx, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
+const rowSx = { display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }
 
 const emptyForm = { reportYear: new Date().getFullYear(), chemicalName: '', casNumber: '', hazardClass: '', annualHandling: '', handlingFacility: '', reportDeadline: '', submitDate: '', status: 'COLLECTING' }
 

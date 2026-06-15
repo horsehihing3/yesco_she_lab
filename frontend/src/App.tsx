@@ -54,7 +54,6 @@ import ChemicalMsdsProductPage from './pages/ChemicalMsdsProductPage'
 import ChemicalLifecyclePage from './pages/ChemicalLifecyclePage'
 import ChemicalRegulationPage from './pages/ChemicalRegulationPage'
 import PsmManagementPage from './pages/PsmManagementPage'
-import LegalCompliancePage from './pages/LegalCompliancePage'
 import EhsBudgetPage from './pages/EhsBudgetPage'
 import PlanKpiGoalPage from './pages/PlanKpiGoalPage'
 import TrainingPage from './pages/TrainingPage'
@@ -69,6 +68,7 @@ import PartnerSafetyExecutePage from './pages/PartnerSafetyExecutePage'
 import RadiationMgmtPage from './pages/RadiationMgmtPage'
 import FireSafetyPage from './pages/FireSafetyPage'
 import IncidentResponsePage from './pages/IncidentResponsePage'
+import LegalResponsePage from './pages/LegalResponsePage'
 import PermitLifecyclePage from './pages/PermitLifecyclePage'
 import DiseasePreventionMgmtPage from './pages/DiseasePreventionMgmtPage'
 import ContractorRegistrationPage from './pages/ContractorRegistrationPage'
@@ -152,8 +152,8 @@ function App() {
         <Route path="audit-inspection" element={<AuditInspectionPage />} />
         <Route path="ppe-equipment" element={<PpeEquipmentPage />} />
         <Route path="training" element={<TrainingPage />} />
-        <Route path="legal-compliance" element={<LegalCompliancePage />} />
-        <Route path="environment/compliance" element={<Navigate to="/legal-compliance" replace />} />
+        <Route path="legal-compliance" element={<Navigate to="/legal-response" replace />} />
+        <Route path="environment/compliance" element={<Navigate to="/legal-response" replace />} />
         <Route path="ehs-budget" element={<EhsBudgetPage />} />
         <Route path="work-env-measurement" element={<WorkEnvMeasurementPage />} />
         <Route path="ergonomics" element={<Navigate to="/disease-prevention-mgmt" replace />} />
@@ -167,6 +167,7 @@ function App() {
         <Route path="radiation-mgmt" element={<RadiationMgmtPage />} />
         <Route path="fire-safety" element={<FireSafetyPage />} />
         <Route path="incident-response" element={<PageWithTitle titleKey="nav.incidentResponse"><IncidentResponsePage /></PageWithTitle>} />
+        <Route path="legal-response" element={<PageWithTitle titleKey="nav.legalResponse"><LegalResponsePage /></PageWithTitle>} />
         <Route path="permit-lifecycle" element={<PermitLifecyclePage />} />
         <Route path="disease-prevention-mgmt" element={<DiseasePreventionMgmtPage />} />
         <Route path="plan-kpi-goal" element={<PlanKpiGoalPage />} />

@@ -25,7 +25,7 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 const labelSx = {
   width: 140, minWidth: 140, fontWeight: 'bold', bgcolor: 'grey.100',
-  px: 2, py: 1.5, borderRight: 1, borderColor: 'divider',
+  px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider',
   display: 'flex', alignItems: 'center', fontSize: '0.875rem',
   justifyContent: 'center', wordBreak: 'keep-all' as const, textAlign: 'center',
 }
@@ -277,7 +277,7 @@ const EmrContactTab: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           {/* PC Detail */}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.contactId')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontFamily="monospace">{selectedItem.contactId}</Typography>
@@ -287,7 +287,7 @@ const EmrContactTab: React.FC = () => {
                 <Typography variant="body2">{selectedItem.contactType === 'INTERNAL' ? t('emr.internal') : t('emr.external')}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.organization')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontWeight={600}>{selectedItem.organization}</Typography>
@@ -297,7 +297,7 @@ const EmrContactTab: React.FC = () => {
                 <Typography variant="body2">{selectedItem.contactName}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.phoneNumber')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" fontWeight={600}>{selectedItem.phoneNumber}</Typography>
@@ -307,7 +307,7 @@ const EmrContactTab: React.FC = () => {
                 <Typography variant="body2">{selectedItem.email || ''}</Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
               <Typography sx={labelSx}>{t('emr.isEmergency')}</Typography>
               <Box sx={{ ...valueBorderSx, display: 'flex', alignItems: 'center' }}>
                 {selectedItem.isEmergency ? (
@@ -362,7 +362,7 @@ const EmrContactTab: React.FC = () => {
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         {/* PC Form */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.organization')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} />
@@ -373,7 +373,7 @@ const EmrContactTab: React.FC = () => {
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setShowUserModal(true)}><PersonSearchIcon fontSize="small" /></Button>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.phoneNumber')}<Typography component="span" sx={{ color: 'error.main', ml: 0.5 }}>*</Typography></Typography>
             <Box sx={valueBorderSx}>
               <TextField fullWidth size="small" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: fmtPhone(e.target.value) })} />
@@ -383,7 +383,7 @@ const EmrContactTab: React.FC = () => {
               <TextField fullWidth size="small" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.contactType')}</Typography>
             <Box sx={valueBorderSx}>
               <Select fullWidth size="small" value={form.contactType || 'INTERNAL'} onChange={(e) => setForm({ ...form, contactType: e.target.value })} displayEmpty>
@@ -397,7 +397,7 @@ const EmrContactTab: React.FC = () => {
               <NumberField fullWidth size="small" value={form.sortOrder ?? ''} onChange={(v) => setForm({ ...form, sortOrder: v ?? undefined })} />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
             <Typography sx={labelSx}>{t('emr.isEmergency')}</Typography>
             <Box sx={{ ...valueSx, display: 'flex', alignItems: 'center' }}>
               <FormControlLabel control={<Checkbox checked={form.isEmergency || false} onChange={(e) => setForm({ ...form, isEmergency: e.target.checked })} />} label="" />

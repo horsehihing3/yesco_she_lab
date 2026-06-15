@@ -1368,7 +1368,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           {/* PC Layout */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
             <Paper sx={(theme: any) => ({ width: 320, flexShrink: 0, overflow: 'auto', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">{t('factory.selectWorkplace')}</Typography>
                 {renderSiteAddButton()}
               </Box>
@@ -1383,7 +1383,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           {/* Mobile */}
           <Box sx={{ display: { xs: 'block', md: 'none' } }}>
             <Paper sx={{ mb: 2 }}>
-              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">{t('factory.selectWorkplace')}</Typography>
                 {renderSiteAddButton()}
               </Box>
@@ -1412,7 +1412,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
             {/* Left Panel - 사업장/층 선택 */}
             <Paper sx={(theme: any) => ({ width: 320, flexShrink: 0, overflow: 'auto', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }) })}>
-              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography variant="subtitle1" fontWeight="bold">
                   {t('factory.selectWorkplace')}
                 </Typography>
@@ -1601,7 +1601,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
             {/* 사업장/층 선택 드롭다운 */}
             <Paper variant="outlined">
-              <Box sx={{ px: 1.5, py: 0.75, bgcolor: 'grey.100', borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ px: 1.5, py: 0.75, bgcolor: 'grey.100', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
                 <Typography sx={{ fontWeight: 'bold', fontSize: '0.875rem' }}>
                   {t('factory.selectWorkplace')}
                 </Typography>
@@ -1822,8 +1822,8 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
           {/* PC용 테이블 레이아웃 */}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mt: 2 }}>
             {/* Row 1: 도면명 | 사업장 — 사업장은 항상 readOnly (사업장 수정에서만 변경) */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('workplaceDrawing.drawingName')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
@@ -1835,7 +1835,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                   helperText="사업장명은 [사업장 수정]에서 변경 가능"
                 />
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('workplace.title')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1848,8 +1848,8 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
               </Box>
             </Box>
             {/* Row 2: 층 | 설명 */}
-            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: 'divider' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('common.floor')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider' }}>
@@ -1861,7 +1861,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
                   onChange={(e) => setDrawingForm({ ...drawingForm, floor: e.target.value })}
                 />
               </Box>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('common.description')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
@@ -1876,7 +1876,7 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
             </Box>
             {/* Row 3: 도면 이미지 */}
             <Box sx={{ display: 'flex' }}>
-              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
+              <Typography sx={{ width: 100, minWidth: 100, fontWeight: 'bold', bgcolor: 'grey.100', px: 2, py: 1.5, borderRight: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider', display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center', wordBreak: 'keep-all', textAlign: 'center' }}>
                 {t('workplaceDrawing.drawingImage')}
               </Typography>
               <Box sx={{ flex: 1, px: 2, py: 1, bgcolor: 'background.paper' }}>
