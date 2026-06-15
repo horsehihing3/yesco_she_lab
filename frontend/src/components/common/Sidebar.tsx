@@ -76,11 +76,10 @@ const menuItems: MenuItem[] = [
       { textKey: 'nav.auditInspection', icon: <SearchIcon />, path: '/audit-inspection' },
       { textKey: 'nav.trainingMgmt', icon: <SchoolIcon />, path: '/training' },
       { textKey: 'nav.emergencyResponse', icon: <WarningAmberIcon />, path: '/emergency-response' },
-      { textKey: 'nav.complianceMgmt', icon: <GavelIcon />, path: '/legal-compliance' },
+      { textKey: 'nav.legalResponse', icon: <GavelIcon />, path: '/legal-response' },
       { textKey: 'nav.ehsBudget', icon: <AccountBalanceIcon />, path: '/ehs-budget' },
       { textKey: 'nav.incidentResponse', icon: <WarningAmberIcon />, path: '/incident-response' },
       { textKey: 'nav.workplaceDrawingsView', icon: <PublicIcon />, path: '/workplace-drawings/view' },
-      { textKey: 'nav.legalResponse', icon: <GavelIcon />, path: '/legal-response' },
     ],
   },
   {

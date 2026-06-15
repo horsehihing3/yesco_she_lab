@@ -12,9 +12,9 @@ export const legalResponseApi = {
     })
     return res.data.data!
   },
-  syncRecent: async (display = 30): Promise<any> => {
+  syncRecent: async (display = 100, pages = 1): Promise<any> => {
     const res = await axiosInstance.post<ApiResponse<any>>(`${BASE}/external/sync-recent`, null, {
-      params: { display },
+      params: { display, pages },
     })
     return res.data.data
   },

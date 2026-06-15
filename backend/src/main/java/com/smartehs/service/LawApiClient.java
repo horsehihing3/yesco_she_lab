@@ -83,29 +83,35 @@ public class LawApiClient {
         }
     }
 
-    /**
-     * 최근 개정 법령 — type=eflaw(현행법령) sort=ddes(공포일 내림차순) 등 활용
-     */
+    /** 최근 개정 법령 — page=1 기본 */
     public LegalSearchResult fetchRecentRevisions(int display) {
-        // efYd(시행일자) 정렬은 미지원이라 공포일 기준 최근 N건을 가져옴
+        return fetchRecentRevisions(display, 1);
+    }
+
+    /**
+     * 최근 개정 법령 — 페이지 지정
+     * @param display 페이지당 항목 수 (최대 100)
+     * @param page    페이지 (1부터)
+     */
+    public LegalSearchResult fetchRecentRevisions(int display, int page) {
         URI uri = UriComponentsBuilder.fromHttpUrl(SEARCH_URL)
                 .queryParam("OC", oc)
                 .queryParam("target", "law")
                 .queryParam("type", "XML")
                 .queryParam("display", Math.min(display, 100))
-                .queryParam("page", 1)
+                .queryParam("page", Math.max(1, page))
                 .queryParam("sort", "ddes")  // 공포일 내림차순
                 .encode(StandardCharsets.UTF_8)
                 .build()
                 .toUri();
-        log.info("[법제처 API] 최근개정 호출 URL: {}", uri);
+        log.info("[법제처 API] 최근개정 호출 URL (page={}): {}", page, uri);
         try {
             ResponseEntity<String> resp = rest.getForEntity(uri, String.class);
-            return parseSearchXml(resp.getBody(), 1, display);
+            return parseSearchXml(resp.getBody(), page, display);
         } catch (Exception e) {
             log.warn("법제처 최근개정 호출 실패: {}", e.getMessage());
             return LegalSearchResult.builder()
-                    .totalCount(0).page(1).size(display)
+                    .totalCount(0).page(page).size(display)
                     .items(new ArrayList<>())
                     .build();
         }

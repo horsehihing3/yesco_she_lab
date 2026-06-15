@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import React, { useState, useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient, useIsFetching } from '@tanstack/react-query'
 import {
   Box, Paper, Typography, Button, TextField, IconButton, Tabs, Tab, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Grid, Select, MenuItem, FormControl, Link as MuiLink,
+  Grid, Select, MenuItem, FormControl, Link as MuiLink, Pagination,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -18,6 +18,8 @@ import { LegalSearchItem, LegalRegistry, LegalRevisionLog } from '../types/legal
 import StatCard from '../components/legalCompliance/StatCard'
 import LoadingOverlay from '../components/common/LoadingOverlay'
 import ListSearchBar from '../components/common/ListSearchBar'
+import AuditPlanTab from '../components/ehs/AuditPlanTab'
+import AuditExecutionTab from '../components/ehs/AuditExecutionTab'
 
 const CATEGORIES = ['안전', '보건', '환경', '화학물질', '소방']
 
@@ -157,18 +159,27 @@ const LegalResponsePage: React.FC = () => {
   const [revStatus, setRevStatus] = useState('')
   const [revKeywordInput, setRevKeywordInput] = useState('')
   const [revKeyword, setRevKeyword] = useState('')
-  const applyRevSearch = () => setRevKeyword(revKeywordInput)
+  const applyRevSearch = () => { setRevKeyword(revKeywordInput); setRevPage(1) }
   const { data: revisions = [], isFetching: revFetching } = useQuery({
     queryKey: ['legalRevisions', revStatus, revKeyword],
     queryFn: () => legalResponseApi.listRevisions(revStatus || undefined, revKeyword || undefined),
   })
 
+  // 클라이언트 사이드 페이징
+  const REV_PAGE_SIZE = 20
+  const [revPage, setRevPage] = useState(1)
+  const revTotalPages = Math.max(1, Math.ceil(revisions.length / REV_PAGE_SIZE))
+  // status/keyword 변경 시 1페이지로
+  useEffect(() => { setRevPage(1) }, [revStatus, revKeyword])
+  const revPaged = revisions.slice((revPage - 1) * REV_PAGE_SIZE, revPage * REV_PAGE_SIZE)
+
+  const [syncPages, setSyncPages] = useState(1) // 1=100건, 2=200건, 5=500건, 10=1000건
   const syncMut = useMutation({
-    mutationFn: () => legalResponseApi.syncRecent(50),
+    mutationFn: () => legalResponseApi.syncRecent(100, syncPages),
     onSuccess: (data: any) => {
       qc.invalidateQueries({ queryKey: ['legalRevisions'] })
       qc.invalidateQueries({ queryKey: ['legalKpi'] })
-      showSuccess(`동기화 완료: ${data?.inserted ?? 0}건 신규 등록`)
+      showSuccess(`${data?.fetched ?? 0}건 조회 — 신규 ${data?.inserted ?? 0}건 등록`)
     },
     onError: () => showError('법제처 API 호출에 실패했습니다.'),
   })
@@ -182,37 +193,56 @@ const LegalResponsePage: React.FC = () => {
     },
   })
 
+  // 법규 대응 계획/실시 탭 — 목록/상세/체크리스트 등 관련 쿼리 fetch 감지
+  const auditFetching = useIsFetching({
+    predicate: (q) => {
+      const k = q.queryKey?.[0] as string | undefined
+      if (!k) return false
+      return (
+        k === 'safetyTemplate' || k === 'safetyTemplateDetail' ||  // 체크리스트 템플릿
+        k === 'auditPlans' || k === 'auditPlanForExec' ||           // 계획 목록/상세
+        k === 'auditExec' || k === 'auditExecStatus' ||             // 실시 목록
+        k === 'auditExecFindings' || k === 'auditLogs'              // 실시 부가
+      )
+    },
+  })
   const isLoading = searchFetching || regFetching || revFetching
     || syncMut.isPending || updateRegMut.isPending || checkRegMut.isPending
     || updateRevMut.isPending
     || createMut.isPending || deleteRegMut.isPending
+    || ((tab === 3 || tab === 4) && auditFetching > 0)
 
   return (
     <Box sx={{ pb: 4 }}>
       <LoadingOverlay open={isLoading} message="로딩 중..." />
 
       {/* KPI */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={6} md={2.4}><StatCard value={kpi?.totalLaws ?? 0} label="등록 법령" sub="총 관리 법령" /></Grid>
-        <Grid item xs={6} md={2.4}><StatCard value={kpi?.pending ?? 0} label="검토 대기" sub="신규 개정사항" /></Grid>
-        <Grid item xs={6} md={2.4}><StatCard value={kpi?.inReview ?? 0} label="검토 중" sub="진행 중" /></Grid>
-        <Grid item xs={6} md={2.4}><StatCard value={kpi?.done ?? 0} label="완료" sub="조치 완료" /></Grid>
-        <Grid item xs={6} md={2.4}><StatCard value={kpi?.needAction ?? 0} label="조치 필요" sub="사내 대응 필요" /></Grid>
+      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ mb: { xs: 2, md: 3 } }}>
+        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.totalLaws ?? 0} label="등록 법령" sub="총 관리 법령" /></Grid>
+        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.pending ?? 0} label="검토 대기" sub="신규 개정사항" /></Grid>
+        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.inReview ?? 0} label="검토 중" sub="진행 중" /></Grid>
+        <Grid item xs={6} sm={6} md={2.4}><StatCard value={kpi?.done ?? 0} label="완료" sub="조치 완료" /></Grid>
+        <Grid item xs={12} sm={6} md={2.4}><StatCard value={kpi?.needAction ?? 0} label="조치 필요" sub="사내 대응 필요" /></Grid>
       </Grid>
 
       {/* Tabs */}
       <Box sx={{ mb: 2 }}>
-        <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto">
+        <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto"
+          allowScrollButtonsMobile
+          sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: { xs: '0.78rem', md: '0.875rem' } } }}>
           <Tab label="법령 검색" />
           <Tab label="등록 법령 관리" />
           <Tab label="개정 모니터링" />
+          <Tab label="법규 대응 계획" />
+          <Tab label="법규 대응 실시" />
         </Tabs>
       </Box>
 
       {/* TAB 0: 법령 검색 */}
       {tab === 0 && (
         <Box>
-          <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* PC 검색 */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mb: 2, flexWrap: 'wrap', alignItems: 'center' }}>
             <ListSearchBar
               placeholder="법령명 검색 (예: 산업안전보건법)"
               value={searchInput}
@@ -224,8 +254,19 @@ const LegalResponsePage: React.FC = () => {
               법제처 국가법령정보센터 OpenAPI 실시간 조회 — 결과 행에서 [등록] 클릭 시 사내 관리 목록에 추가
             </Typography>
           </Box>
+          {/* Mobile 검색 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+            <ListSearchBar fullWidth
+              placeholder="법령명 검색 (예: 산업안전보건법)"
+              value={searchInput}
+              onChange={setSearchInput}
+              onSearch={() => setSearchKeyword(searchInput)}
+            />
+          </Box>
 
-          <Paper variant="outlined">
+          {/* PC 테이블 — 검색 후에만 표시 */}
+          {searchKeyword && (
+          <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer>
               <Table size="small" sx={{
                 '& .MuiTableCell-root': { borderRight: (theme: any) => `1px solid ${dividerColor(theme)}` },
@@ -243,11 +284,7 @@ const LegalResponsePage: React.FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {!searchKeyword ? (
-                    <TableRow><TableCell colSpan={7} align="center" sx={{ py: 6, color: 'text.disabled' }}>
-                      검색어를 입력하고 검색 버튼을 눌러주세요.
-                    </TableCell></TableRow>
-                  ) : (searchData?.items || []).length === 0 ? (
+                  {(searchData?.items || []).length === 0 ? (
                     <TableRow><TableCell colSpan={7} align="center" sx={{ py: 6, color: 'text.disabled' }}>
                       검색 결과가 없습니다.
                     </TableCell></TableRow>
@@ -284,6 +321,43 @@ const LegalResponsePage: React.FC = () => {
               </Table>
             </TableContainer>
           </Paper>
+          )}
+
+          {/* Mobile 카드 — 검색 후에만 표시 */}
+          {searchKeyword && (
+          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+            {(searchData?.items || []).length === 0 ? (
+              <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>검색 결과가 없습니다.</Paper>
+            ) : (searchData?.items || []).map((it, i) => (
+              <Paper key={`${it.lawId}-${i}`} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    {it.detailLink ? (
+                      <MuiLink href={it.detailLink} target="_blank" rel="noopener" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 'bold' }}>
+                        {it.lawName} <OpenInNewIcon sx={{ fontSize: 12, verticalAlign: 'middle' }} />
+                      </MuiLink>
+                    ) : <Typography variant="body2" fontWeight="bold">{it.lawName}</Typography>}
+                  </Box>
+                  {it.lawId && registeredLawIds.has(it.lawId) ? (
+                    <Chip label="등록됨" size="small" color="success" />
+                  ) : (
+                    <Button size="small" variant="outlined" startIcon={<AddIcon />}
+                      disabled={createMut.isPending}
+                      onClick={() => handleRegisterFromSearch(it)}>등록</Button>
+                  )}
+                </Box>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+                  {it.lawType && <Chip label={it.lawType} size="small" variant="outlined" />}
+                  {it.revisionType && <Chip label={it.revisionType} size="small" />}
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                  {it.competentOrg || ''} · 공포 {it.promulgationDt || '-'} · 시행 {it.enforceDt || '-'}
+                </Typography>
+              </Paper>
+            ))}
+          </Box>
+          )}
+
           {searchData && (
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
               전체 {searchData.totalCount?.toLocaleString() ?? 0}건 중 {searchData.items?.length ?? 0}건 표시
@@ -295,7 +369,8 @@ const LegalResponsePage: React.FC = () => {
       {/* TAB 1: 등록 법령 관리 */}
       {tab === 1 && (
         <Box>
-          <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+          {/* PC 검색/필터 */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mb: 2, flexWrap: 'wrap' }}>
             <FormControl size="small" sx={{ minWidth: 140 }}>
               <Select value={regCategory} displayEmpty onChange={(e) => setRegCategory(e.target.value)}>
                 <MenuItem value="">전체 분야</MenuItem>
@@ -316,8 +391,33 @@ const LegalResponsePage: React.FC = () => {
               개정 확인
             </Button>
           </Box>
+          {/* Mobile 검색/필터 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+            <FormControl size="small" fullWidth>
+              <Select value={regCategory} displayEmpty onChange={(e) => setRegCategory(e.target.value)}>
+                <MenuItem value="">전체 분야</MenuItem>
+                {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <ListSearchBar fullWidth
+              placeholder="법령명/소관부처"
+              value={regKeywordInput}
+              onChange={setRegKeywordInput}
+              onSearch={applyRegSearch}
+            />
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button variant="outlined" size="small" startIcon={<RefreshIcon />}
+                onClick={() => { setRegKeywordInput(''); setRegKeyword(''); qc.invalidateQueries({ queryKey: ['legalRegistry'] }) }}
+                sx={{ flex: 1 }}>초기화</Button>
+              <Button variant="contained" size="small" startIcon={<SyncIcon />}
+                disabled={checkRegMut.isPending || registry.length === 0}
+                onClick={() => checkRegMut.mutate()}
+                sx={{ flex: 1 }}>개정 확인</Button>
+            </Box>
+          </Box>
 
-          <Paper variant="outlined">
+          {/* PC 테이블 */}
+          <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer>
               <Table size="small" sx={{
                 '& .MuiTableCell-root': { borderRight: (theme: any) => `1px solid ${dividerColor(theme)}` },
@@ -354,7 +454,7 @@ const LegalResponsePage: React.FC = () => {
                         <CategorySelect value={r.category || ''}
                           onChange={(v) => updateRegMut.mutate({ id: r.id!, r: { ...r, category: v } })} />
                       </TableCell>
-                      <TableCell align="center">{r.competentOrg || '-'}</TableCell>
+                      <TableCell align="center" sx={{ wordBreak: 'keep-all' }}>{r.competentOrg || '-'}</TableCell>
                       <TableCell align="center">{r.enforceDt || '-'}</TableCell>
                       <TableCell align="center">
                         {(() => {
@@ -379,13 +479,59 @@ const LegalResponsePage: React.FC = () => {
               </Table>
             </TableContainer>
           </Paper>
+
+          {/* Mobile 카드 */}
+          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+            {registry.length === 0 ? (
+              <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>
+                등록된 법령이 없습니다. [법령 검색] 탭에서 추가하세요.
+              </Paper>
+            ) : registry.map(r => {
+              const cnt = r.lawId ? (regRevCounts[r.lawId] || 0) : 0
+              return (
+                <Paper key={r.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      {r.detailLink ? (
+                        <MuiLink href={r.detailLink} target="_blank" rel="noopener" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 'bold' }}>
+                          {r.lawName} <OpenInNewIcon sx={{ fontSize: 12, verticalAlign: 'middle' }} />
+                        </MuiLink>
+                      ) : <Typography variant="body2" fontWeight="bold">{r.lawName}</Typography>}
+                    </Box>
+                    <IconButton size="small" color="error" onClick={() => handleDeleteRegistry(r.id!)}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center', mb: 0.5 }}>
+                    {r.lawType && <Chip label={r.lawType} size="small" variant="outlined" />}
+                    {cnt > 0 ? (
+                      <Chip label={`개정 ${cnt}건`} size="small" color="error"
+                            onClick={() => { setRevKeywordInput(r.lawName); setRevStatus(''); setTab(2); setRevKeyword(r.lawName) }}
+                            sx={{ cursor: 'pointer' }} />
+                    ) : (
+                      <Chip label="최신" size="small" color="success" variant="outlined" />
+                    )}
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Typography variant="caption" color="text.secondary">분야:</Typography>
+                    <CategorySelect value={r.category || ''}
+                      onChange={(v) => updateRegMut.mutate({ id: r.id!, r: { ...r, category: v } })} />
+                  </Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                    {r.competentOrg || ''} · 시행 {r.enforceDt || '-'} · 등록 {r.createdAt?.substring(0, 10) || '-'}
+                  </Typography>
+                </Paper>
+              )
+            })}
+          </Box>
         </Box>
       )}
 
       {/* TAB 2: 개정 모니터링 */}
       {tab === 2 && (
         <Box>
-          <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+          {/* PC 검색/필터 */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mb: 2, flexWrap: 'wrap' }}>
             <FormControl size="small" sx={{ minWidth: 160 }}>
               <Select value={revStatus} displayEmpty onChange={(e) => setRevStatus(e.target.value)}>
                 <MenuItem value="">전체 상태</MenuItem>
@@ -400,13 +546,55 @@ const LegalResponsePage: React.FC = () => {
               sx={{ minWidth: 280 }}
             />
             <IconButton onClick={() => { setRevKeywordInput(''); setRevKeyword(''); qc.invalidateQueries({ queryKey: ['legalRevisions'] }) }}><RefreshIcon /></IconButton>
-            <Button variant="contained" startIcon={<SyncIcon />} sx={{ ml: 'auto' }}
-              disabled={syncMut.isPending} onClick={() => syncMut.mutate()}>
-              법제처 API 동기화
-            </Button>
+            <Box sx={{ ml: 'auto', display: 'flex', gap: 1, alignItems: 'center' }}>
+              <FormControl size="small" sx={{ minWidth: 110 }}>
+                <Select value={syncPages} onChange={(e) => setSyncPages(Number(e.target.value))}>
+                  <MenuItem value={1}>100건</MenuItem>
+                  <MenuItem value={2}>200건</MenuItem>
+                  <MenuItem value={5}>500건</MenuItem>
+                  <MenuItem value={10}>1000건</MenuItem>
+                </Select>
+              </FormControl>
+              <Button variant="contained" startIcon={<SyncIcon />}
+                disabled={syncMut.isPending} onClick={() => syncMut.mutate()}>
+                법제처 API 동기화
+              </Button>
+            </Box>
+          </Box>
+          {/* Mobile 검색/필터 */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+            <FormControl size="small" fullWidth>
+              <Select value={revStatus} displayEmpty onChange={(e) => setRevStatus(e.target.value)}>
+                <MenuItem value="">전체 상태</MenuItem>
+                {Object.entries(STATUS_CHIP).map(([k, v]) => <MenuItem key={k} value={k}>{v.label}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <ListSearchBar fullWidth
+              placeholder="법령명/요약 검색"
+              value={revKeywordInput}
+              onChange={setRevKeywordInput}
+              onSearch={applyRevSearch}
+            />
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button variant="outlined" size="small" startIcon={<RefreshIcon />}
+                onClick={() => { setRevKeywordInput(''); setRevKeyword(''); qc.invalidateQueries({ queryKey: ['legalRevisions'] }) }}
+                sx={{ flex: 1 }}>초기화</Button>
+              <FormControl size="small" sx={{ flex: 1 }}>
+                <Select value={syncPages} onChange={(e) => setSyncPages(Number(e.target.value))}>
+                  <MenuItem value={1}>100건</MenuItem>
+                  <MenuItem value={2}>200건</MenuItem>
+                  <MenuItem value={5}>500건</MenuItem>
+                  <MenuItem value={10}>1000건</MenuItem>
+                </Select>
+              </FormControl>
+              <Button variant="contained" size="small" startIcon={<SyncIcon />}
+                disabled={syncMut.isPending} onClick={() => syncMut.mutate()}
+                sx={{ flex: 1.5 }}>동기화</Button>
+            </Box>
           </Box>
 
-          <Paper variant="outlined">
+          {/* PC 테이블 */}
+          <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer>
               <Table size="small" sx={{
                 '& .MuiTableCell-root': { borderRight: (theme: any) => `1px solid ${dividerColor(theme)}` },
@@ -427,7 +615,7 @@ const LegalResponsePage: React.FC = () => {
                     <TableRow><TableCell colSpan={6} align="center" sx={{ py: 6, color: 'text.disabled' }}>
                       개정 이력이 없습니다. [법제처 API 동기화]를 눌러 최신 개정사항을 가져오세요.
                     </TableCell></TableRow>
-                  ) : revisions.map(r => (
+                  ) : revPaged.map(r => (
                     <TableRow key={r.id} hover>
                       <TableCell>
                         {r.detailLink ? (
@@ -461,8 +649,58 @@ const LegalResponsePage: React.FC = () => {
               </Table>
             </TableContainer>
           </Paper>
+
+          {/* Mobile 카드 */}
+          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+            {revisions.length === 0 ? (
+              <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>
+                개정 이력이 없습니다. [동기화]를 눌러 최신 개정사항을 가져오세요.
+              </Paper>
+            ) : revPaged.map(r => (
+              <Paper key={r.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+                {r.detailLink ? (
+                  <MuiLink href={r.detailLink} target="_blank" rel="noopener" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 'bold', display: 'block', mb: 0.5 }}>
+                    {r.lawName} <OpenInNewIcon sx={{ fontSize: 12, verticalAlign: 'middle' }} />
+                  </MuiLink>
+                ) : <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5 }}>{r.lawName}</Typography>}
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.75 }}>
+                  {r.revisionType && <Chip label={r.revisionType} size="small" variant="outlined" />}
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                  공포 {r.revisionDt || '-'} · 시행 {r.enforceDt || '-'}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <FormControl size="small" sx={{ flex: 1 }}>
+                    <Select value={r.impactLevel || 'MID'}
+                      onChange={(e) => updateRevMut.mutate({ id: r.id!, r: { ...r, impactLevel: e.target.value } })}>
+                      {Object.entries(IMPACT_CHIP).map(([k, v]) => <MenuItem key={k} value={k}>영향: {v.label}</MenuItem>)}
+                    </Select>
+                  </FormControl>
+                  <FormControl size="small" sx={{ flex: 1.2 }}>
+                    <Select value={r.reviewStatus || 'PENDING'}
+                      onChange={(e) => updateRevMut.mutate({ id: r.id!, r: { ...r, reviewStatus: e.target.value } })}>
+                      {Object.entries(STATUS_CHIP).map(([k, v]) => <MenuItem key={k} value={k}>{v.label}</MenuItem>)}
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Paper>
+            ))}
+          </Box>
+
+          {/* 페이지네이션 */}
+          {revTotalPages > 1 && (
+            <Box display="flex" justifyContent="center" mt={2}>
+              <Pagination count={revTotalPages} page={revPage} onChange={(_, v) => setRevPage(v)} color="primary" />
+            </Box>
+          )}
         </Box>
       )}
+
+      {/* TAB 3: 법규 대응 계획 */}
+      {tab === 3 && <AuditPlanTab variant="legal-compliance" />}
+
+      {/* TAB 4: 법규 대응 실시 */}
+      {tab === 4 && <AuditExecutionTab variant="legal-compliance" />}
     </Box>
   )
 }

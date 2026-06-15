@@ -34,8 +34,9 @@ public class LegalResponseController {
 
     @PostMapping("/external/sync-recent")
     public ResponseEntity<ApiResponse<Map<String, Object>>> syncRecent(
-            @RequestParam(defaultValue = "30") int display) {
-        return ResponseEntity.ok(ApiResponse.success(service.syncRecentRevisions(display)));
+            @RequestParam(defaultValue = "100") int display,
+            @RequestParam(defaultValue = "1") int pages) {
+        return ResponseEntity.ok(ApiResponse.success(service.syncRecentRevisionsMulti(display, pages)));
     }
 
     // ===== 등록 법령 (Registry) =====

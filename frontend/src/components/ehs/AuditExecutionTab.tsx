@@ -584,7 +584,7 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
           {selectedItem.status !== 'COMPLETED' && (
             <>
               {selectedItem.status !== 'PENDING_CLOSE' && canSee(MENU, selectedItem.status, '수정', getRoles(selectedItem)) && (
-                <Button variant="contained" color="warning" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+                <Button variant="contained" color="primary" onClick={() => handleOpenEdit(selectedItem)} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
                   {t('common.edit', '수정')}
                 </Button>
               )}
@@ -974,9 +974,8 @@ const AuditExecutionTab: React.FC<AuditExecutionTabProps> = ({ variant = 'audit'
         />
       </Box>
 
-      {isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
-      ) : items.length === 0 ? (
+      {isLoading ? null
+      : items.length === 0 ? (
         <Alert severity="info" sx={{ m: 2 }}>{t('common.noData')}</Alert>
       ) : (
         <>

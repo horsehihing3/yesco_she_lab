@@ -428,9 +428,8 @@ const AuditPlanTab: React.FC<AuditPlanTabProps> = ({ variant = 'audit' }) => {
           </Box>
         </Box>
 
-        {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
-        ) : items.length === 0 ? (
+        {isLoading ? null
+        : items.length === 0 ? (
           <Alert severity="info" sx={{ m: 2 }}>{t('common.noData')}</Alert>
         ) : (
           <>

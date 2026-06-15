@@ -28,34 +28,50 @@ public class LegalResponseService {
         return lawApi.searchLaws(query, page, display);
     }
 
-    /** 최근 개정 가져와 DB 캐시 — 중복(law_id+revision_dt) 회피, 신규만 insert */
-    @Transactional
+    /** 최근 개정 가져와 DB 캐시 — page=1 한 페이지만 */
     public Map<String, Object> syncRecentRevisions(int display) {
-        LegalSearchResult r = lawApi.fetchRecentRevisions(display);
-        int inserted = 0;
-        for (LegalSearchResult.Item it : r.getItems()) {
-            if (it.getLawId() == null || it.getLawId().isEmpty()) continue;
-            String revDt = (it.getPromulgationDt() != null) ? it.getPromulgationDt() : it.getEnforceDt();
-            Integer exists = mapper.findRevisionByLawIdAndDate(it.getLawId(), revDt);
-            if (exists != null) continue;
+        return syncRecentRevisionsMulti(display, 1);
+    }
 
-            LegalRevisionLog log = LegalRevisionLog.builder()
-                    .lawId(it.getLawId())
-                    .lawName(it.getLawName())
-                    .revisionType(it.getRevisionType())
-                    .revisionDt(revDt)
-                    .enforceDt(it.getEnforceDt())
-                    .detailLink(it.getDetailLink())
-                    .reviewStatus("PENDING")
-                    .impactLevel("MID")
-                    .build();
-            mapper.insertRevisionLog(log);
-            inserted++;
+    /**
+     * 최근 개정 N 페이지 순회 + DB 저장
+     * @param display 페이지당 항목 수 (최대 100)
+     * @param pages   순회할 페이지 수 (1~10 권장)
+     */
+    @Transactional
+    public Map<String, Object> syncRecentRevisionsMulti(int display, int pages) {
+        int fetched = 0, inserted = 0, totalAvailable = 0;
+        int p = Math.max(1, pages);
+        for (int page = 1; page <= p; page++) {
+            LegalSearchResult r = lawApi.fetchRecentRevisions(display, page);
+            if (page == 1) totalAvailable = r.getTotalCount();
+            if (r.getItems().isEmpty()) break;  // 더 이상 결과 없으면 종료
+            fetched += r.getItems().size();
+            for (LegalSearchResult.Item it : r.getItems()) {
+                if (it.getLawId() == null || it.getLawId().isEmpty()) continue;
+                String revDt = (it.getPromulgationDt() != null) ? it.getPromulgationDt() : it.getEnforceDt();
+                Integer exists = mapper.findRevisionByLawIdAndDate(it.getLawId(), revDt);
+                if (exists != null) continue;
+
+                LegalRevisionLog rev = LegalRevisionLog.builder()
+                        .lawId(it.getLawId())
+                        .lawName(it.getLawName())
+                        .revisionType(it.getRevisionType())
+                        .revisionDt(revDt)
+                        .enforceDt(it.getEnforceDt())
+                        .detailLink(it.getDetailLink())
+                        .reviewStatus("PENDING")
+                        .impactLevel("MID")
+                        .build();
+                mapper.insertRevisionLog(rev);
+                inserted++;
+            }
         }
         Map<String, Object> result = new HashMap<>();
-        result.put("fetched", r.getItems().size());
+        result.put("fetched", fetched);
         result.put("inserted", inserted);
-        result.put("totalAvailable", r.getTotalCount());
+        result.put("totalAvailable", totalAvailable);
+        result.put("pages", p);
         return result;
     }
 
