@@ -182,22 +182,13 @@ const LegalResponsePage: React.FC = () => {
     },
   })
 
-  const deleteRevMut = useMutation({
-    mutationFn: (id: number) => legalResponseApi.deleteRevision(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['legalRevisions'] })
-      qc.invalidateQueries({ queryKey: ['legalKpi'] })
-      showSuccess('삭제되었습니다.')
-    },
-  })
-
   const isLoading = searchFetching || regFetching || revFetching
     || syncMut.isPending || updateRegMut.isPending || checkRegMut.isPending
-    || updateRevMut.isPending || deleteRevMut.isPending
+    || updateRevMut.isPending
     || createMut.isPending || deleteRegMut.isPending
 
   return (
-    <Box>
+    <Box sx={{ pb: 4 }}>
       <LoadingOverlay open={isLoading} message="로딩 중..." />
 
       {/* KPI */}
@@ -429,12 +420,11 @@ const LegalResponsePage: React.FC = () => {
                     <TableCell sx={headerSx} align="center" width={120}>시행일</TableCell>
                     <TableCell sx={headerSx} align="center" width={120}>영향도</TableCell>
                     <TableCell sx={headerSx} align="center" width={120}>검토상태</TableCell>
-                    <TableCell sx={headerSx} align="center" width={80}>작업</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {revisions.length === 0 ? (
-                    <TableRow><TableCell colSpan={7} align="center" sx={{ py: 6, color: 'text.disabled' }}>
+                    <TableRow><TableCell colSpan={6} align="center" sx={{ py: 6, color: 'text.disabled' }}>
                       개정 이력이 없습니다. [법제처 API 동기화]를 눌러 최신 개정사항을 가져오세요.
                     </TableCell></TableRow>
                   ) : revisions.map(r => (
@@ -464,11 +454,6 @@ const LegalResponsePage: React.FC = () => {
                             {Object.entries(STATUS_CHIP).map(([k, v]) => <MenuItem key={k} value={k}>{v.label}</MenuItem>)}
                           </Select>
                         </FormControl>
-                      </TableCell>
-                      <TableCell align="center">
-                        <IconButton size="small" color="error" onClick={() => deleteRevMut.mutate(r.id!)}>
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
