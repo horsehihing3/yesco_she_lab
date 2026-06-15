@@ -27,4 +27,6 @@ public interface LegalResponseMapper {
     int deleteRevisionLog(Long id);
     int countRevisionByStatus(@Param("status") String status);
     Integer findRevisionByLawIdAndDate(@Param("lawId") String lawId, @Param("revisionDt") String revisionDt);
+    // 등록 법령(law_id 셋) 기준 미완료 개정 카운트
+    List<java.util.Map<String, Object>> countOpenRevisionsByLawIds(@Param("lawIds") List<String> lawIds);
 }

@@ -62,7 +62,9 @@ const LegalResponsePage: React.FC = () => {
 
   // ===== Tab 1: 등록 법령 =====
   const [regCategory, setRegCategory] = useState('')
+  const [regKeywordInput, setRegKeywordInput] = useState('')
   const [regKeyword, setRegKeyword] = useState('')
+  const applyRegSearch = () => setRegKeyword(regKeywordInput)
   const { data: registry = [], isFetching: regFetching } = useQuery({
     queryKey: ['legalRegistry', regCategory, regKeyword],
     queryFn: () => legalResponseApi.listRegistry(regCategory || undefined, regKeyword || undefined),
@@ -89,6 +91,27 @@ const LegalResponsePage: React.FC = () => {
   })
   const registeredLawIds = new Set(allRegistry.map(r => r.lawId).filter(Boolean) as string[])
 
+  // 등록 법령별 미완료 개정 카운트
+  const { data: regRevCounts = {} } = useQuery({
+    queryKey: ['legalRegistryRevCounts'],
+    queryFn: () => legalResponseApi.registryRevisionCounts(),
+  })
+
+  // 등록 법령 일괄 개정 확인
+  const checkRegMut = useMutation({
+    mutationFn: () => legalResponseApi.checkRegistryRevisions(),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ['legalRegistryRevCounts'] })
+      qc.invalidateQueries({ queryKey: ['legalRevisions'] })
+      qc.invalidateQueries({ queryKey: ['legalKpi'] })
+      const msg = data.inserted > 0
+        ? `${data.checked}건 확인 — 신규 개정 ${data.inserted}건 등록 (개정 모니터링 탭 확인)`
+        : `${data.checked}건 확인 — 신규 개정 없음`
+      showSuccess(msg)
+    },
+    onError: () => showError('개정 확인에 실패했습니다.'),
+  })
+
   const deleteRegMut = useMutation({
     mutationFn: (id: number) => legalResponseApi.deleteRegistry(id),
     onSuccess: () => {
@@ -97,6 +120,17 @@ const LegalResponsePage: React.FC = () => {
       qc.invalidateQueries({ queryKey: ['legalKpi'] })
       showSuccess('삭제되었습니다.')
     },
+  })
+
+  // 등록 법령 부분 수정 (분야 변경 등) — useMutation 으로 로딩 상태 표시
+  const updateRegMut = useMutation({
+    mutationFn: ({ id, r }: { id: number; r: LegalRegistry }) => legalResponseApi.updateRegistry(id, r),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['legalRegistry'] })
+      qc.invalidateQueries({ queryKey: ['legalRegistryAll'] })
+      showSuccess('수정되었습니다.')
+    },
+    onError: () => showError('수정에 실패했습니다.'),
   })
 
   const handleRegisterFromSearch = (item: LegalSearchItem) => {
@@ -157,7 +191,7 @@ const LegalResponsePage: React.FC = () => {
     },
   })
 
-  const isLoading = searchFetching || regFetching || revFetching || syncMut.isPending
+  const isLoading = searchFetching || regFetching || revFetching || syncMut.isPending || updateRegMut.isPending || checkRegMut.isPending
 
   return (
     <Box>
@@ -175,7 +209,7 @@ const LegalResponsePage: React.FC = () => {
       {/* Tabs */}
       <Box sx={{ mb: 2 }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto">
-          <Tab label="법령 검색 (법제처 OpenAPI)" />
+          <Tab label="법령 검색" />
           <Tab label="등록 법령 관리" />
           <Tab label="개정 모니터링" />
         </Tabs>
@@ -232,7 +266,7 @@ const LegalResponsePage: React.FC = () => {
                           </MuiLink>
                         ) : it.lawName}
                       </TableCell>
-                      <TableCell align="center">{it.lawType || '-'}</TableCell>
+                      <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>{it.lawType || '-'}</TableCell>
                       <TableCell align="center">{it.competentOrg || '-'}</TableCell>
                       <TableCell align="center">{it.promulgationDt || '-'}</TableCell>
                       <TableCell align="center">{it.enforceDt || '-'}</TableCell>
@@ -274,9 +308,19 @@ const LegalResponsePage: React.FC = () => {
                 {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
               </Select>
             </FormControl>
-            <TextField size="small" placeholder="법령명/소관부처" value={regKeyword}
-                       onChange={(e) => setRegKeyword(e.target.value)} sx={{ minWidth: 220 }} />
-            <IconButton onClick={() => qc.invalidateQueries({ queryKey: ['legalRegistry'] })}><RefreshIcon /></IconButton>
+            <ListSearchBar
+              placeholder="법령명/소관부처"
+              value={regKeywordInput}
+              onChange={setRegKeywordInput}
+              onSearch={applyRegSearch}
+              sx={{ minWidth: 280 }}
+            />
+            <IconButton onClick={() => { setRegKeywordInput(''); setRegKeyword(''); qc.invalidateQueries({ queryKey: ['legalRegistry'] }) }}><RefreshIcon /></IconButton>
+            <Button variant="contained" startIcon={<SyncIcon />} sx={{ ml: 'auto' }}
+              disabled={checkRegMut.isPending || registry.length === 0}
+              onClick={() => checkRegMut.mutate()}>
+              개정 확인
+            </Button>
           </Box>
 
           <Paper variant="outlined">
@@ -292,13 +336,14 @@ const LegalResponsePage: React.FC = () => {
                     <TableCell sx={headerSx} align="center" width={110}>분야</TableCell>
                     <TableCell sx={headerSx} align="center" width={140}>소관부처</TableCell>
                     <TableCell sx={headerSx} align="center" width={120}>시행일자</TableCell>
+                    <TableCell sx={headerSx} align="center" width={110}>개정 상태</TableCell>
                     <TableCell sx={headerSx} align="center" width={120}>등록일</TableCell>
-                    <TableCell sx={headerSx} align="center" width={100}>작업</TableCell>
+                    <TableCell sx={headerSx} align="center" width={80}>작업</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {registry.length === 0 ? (
-                    <TableRow><TableCell colSpan={7} align="center" sx={{ py: 6, color: 'text.disabled' }}>
+                    <TableRow><TableCell colSpan={8} align="center" sx={{ py: 6, color: 'text.disabled' }}>
                       등록된 법령이 없습니다. [법령 검색] 탭에서 추가하세요.
                     </TableCell></TableRow>
                   ) : registry.map(r => (
@@ -310,13 +355,24 @@ const LegalResponsePage: React.FC = () => {
                           </MuiLink>
                         ) : r.lawName}
                       </TableCell>
-                      <TableCell align="center">{r.lawType || '-'}</TableCell>
+                      <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>{r.lawType || '-'}</TableCell>
                       <TableCell align="center">
                         <CategorySelect value={r.category || ''}
-                          onChange={(v) => updateRegMutLocal(r.id!, { ...r, category: v }, qc, showSuccess)} />
+                          onChange={(v) => updateRegMut.mutate({ id: r.id!, r: { ...r, category: v } })} />
                       </TableCell>
                       <TableCell align="center">{r.competentOrg || '-'}</TableCell>
                       <TableCell align="center">{r.enforceDt || '-'}</TableCell>
+                      <TableCell align="center">
+                        {(() => {
+                          const cnt = r.lawId ? (regRevCounts[r.lawId] || 0) : 0
+                          if (cnt > 0) return (
+                            <Chip label={`개정 ${cnt}건`} size="small" color="error"
+                                  onClick={() => { setRevKeyword(''); setRevKeywordInput(r.lawName); setRevStatus(''); setTab(2); setRevKeyword(r.lawName) }}
+                                  sx={{ cursor: 'pointer' }} />
+                          )
+                          return <Chip label="최신" size="small" color="success" variant="outlined" />
+                        })()}
+                      </TableCell>
                       <TableCell align="center">{r.createdAt?.substring(0, 10) || '-'}</TableCell>
                       <TableCell align="center">
                         <IconButton size="small" color="error" onClick={() => handleDeleteRegistry(r.id!)}>
@@ -432,14 +488,5 @@ const CategorySelect: React.FC<{ value: string; onChange: (v: string) => void }>
     </Select>
   </FormControl>
 )
-
-// Registry 부분 업데이트 (분야 변경 등) — useMutation 외부 호출이라 별도 함수
-const updateRegMutLocal = async (id: number, r: LegalRegistry, qc: any, showSuccess: (m: string) => void) => {
-  try {
-    await legalResponseApi.updateRegistry(id, r)
-    qc.invalidateQueries({ queryKey: ['legalRegistry'] })
-    showSuccess('수정되었습니다.')
-  } catch {}
-}
 
 export default LegalResponsePage

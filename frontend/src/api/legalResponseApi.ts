@@ -40,6 +40,16 @@ export const legalResponseApi = {
   deleteRegistry: async (id: number): Promise<void> => {
     await axiosInstance.delete(`${BASE}/registry/${id}`)
   },
+  // 등록 법령별 미완료 개정 카운트 (lawId -> count)
+  registryRevisionCounts: async (): Promise<Record<string, number>> => {
+    const res = await axiosInstance.get<ApiResponse<Record<string, number>>>(`${BASE}/registry/revision-counts`)
+    return res.data.data || {}
+  },
+  // 일괄 개정 확인 (법제처 API 호출)
+  checkRegistryRevisions: async (): Promise<{ checked: number; inserted: number; changes: any[] }> => {
+    const res = await axiosInstance.post<ApiResponse<any>>(`${BASE}/registry/check-revisions`)
+    return res.data.data
+  },
   // Revisions
   listRevisions: async (status?: string, keyword?: string): Promise<LegalRevisionLog[]> => {
     const res = await axiosInstance.get<ApiResponse<LegalRevisionLog[]>>(`${BASE}/revisions`, {

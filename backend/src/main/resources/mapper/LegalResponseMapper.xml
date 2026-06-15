@@ -167,4 +167,16 @@
         SELECT TOP 1 1 FROM tb_legal_revision_log
         WHERE law_id = #{lawId} AND revision_dt = #{revisionDt}
     </select>
+
+    <!-- 등록 법령들의 미완료(검토대기/검토중/조치필요) 개정 카운트 -->
+    <select id="countOpenRevisionsByLawIds" resultType="java.util.HashMap">
+        SELECT law_id AS lawId, COUNT(*) AS cnt
+        FROM tb_legal_revision_log
+        WHERE review_status IN ('PENDING','IN_REVIEW','NEED_ACTION')
+          AND law_id IN
+            <foreach collection="lawIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        GROUP BY law_id
+    </select>
 </mapper>

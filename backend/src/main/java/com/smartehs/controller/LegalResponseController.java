@@ -71,6 +71,18 @@ public class LegalResponseController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
+    /** 등록 법령별 미완료 개정 카운트 (lawId → count) */
+    @GetMapping("/registry/revision-counts")
+    public ResponseEntity<ApiResponse<Map<String, Long>>> registryRevisionCounts() {
+        return ResponseEntity.ok(ApiResponse.success(service.getRegistryRevisionCounts()));
+    }
+
+    /** 등록 법령 전체에 대해 법제처 API로 개정 여부 일괄 확인 */
+    @PostMapping("/registry/check-revisions")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> checkRegistryRevisions() {
+        return ResponseEntity.ok(ApiResponse.success(service.checkRegistryRevisions()));
+    }
+
     // ===== 개정 추적 (Revision Log) =====
     @GetMapping("/revisions")
     public ResponseEntity<ApiResponse<List<LegalRevisionLog>>> listRevisions(
