@@ -146,7 +146,7 @@ const DisasterFacilityTab: React.FC = () => {
         </Alert>
       )}
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
         <ListSearchBar placeholder="시설명/위치/화학물질 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
           sx={{ width: { xs: '100%', sm: 240 } }} />
         <TextField select size="small" sx={{ minWidth: 170 }} label={t('disasterFacilityTab.label7', '유형')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
@@ -154,13 +154,13 @@ const DisasterFacilityTab: React.FC = () => {
           {FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setEditing(null); setForm({ ...emptyFac, installDate: todayStr(), lastCheck: todayStr(), nextCheck: todayStr() }); setOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setEditing(null); setForm({ ...emptyFac, installDate: todayStr(), lastCheck: todayStr(), nextCheck: todayStr() }); setOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0, ml: { sm: 'auto !important' } }}>New</Button>
       </Stack>
 
       <Paper variant="outlined" sx={{ mb: 3 }}>
         {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1500, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">관리번호</TableCell>
                 <TableCell>시설명</TableCell>
@@ -211,8 +211,8 @@ const DisasterFacilityTab: React.FC = () => {
       </Stack>
       <Paper variant="outlined">
         {inspLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1300, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">점검일</TableCell>
                 <TableCell>시설명</TableCell>

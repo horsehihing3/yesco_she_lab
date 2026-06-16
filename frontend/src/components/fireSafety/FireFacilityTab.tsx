@@ -140,8 +140,8 @@ const FireFacilityTab: React.FC = () => {
 
       <Paper variant="outlined">
         {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1500, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">관리번호</TableCell>
                 <TableCell>시설명</TableCell>

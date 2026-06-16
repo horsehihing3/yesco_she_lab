@@ -190,8 +190,8 @@ const FireComplianceTab: React.FC = () => {
       </Stack>
       <Paper variant="outlined">
         {l2 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell>보고 종류</TableCell>
                 <TableCell align="center">근거 법령</TableCell>

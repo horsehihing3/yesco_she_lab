@@ -119,8 +119,8 @@ const FireEmergencyTab: React.FC = () => {
       </Stack>
       <Paper variant="outlined" sx={{ mb: 3 }}>
         {l1 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">기관 유형</TableCell>
                 <TableCell>기관·업체명</TableCell>
@@ -163,8 +163,8 @@ const FireEmergencyTab: React.FC = () => {
       </Stack>
       <Paper variant="outlined">
         {l2 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">훈련일</TableCell>
                 <TableCell align="center">종류</TableCell>

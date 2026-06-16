@@ -168,8 +168,8 @@ const FireInspectionTab: React.FC = () => {
       </Stack>
       <Paper variant="outlined" sx={{ mb: 3 }}>
         {l2 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1500, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">번호</TableCell>
                 <TableCell>시설</TableCell>
@@ -221,8 +221,8 @@ const FireInspectionTab: React.FC = () => {
       </Stack>
       <Paper variant="outlined" sx={{ mb: 3 }}>
         {l1 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">점검번호</TableCell>
                 <TableCell>점검명</TableCell>
@@ -267,8 +267,8 @@ const FireInspectionTab: React.FC = () => {
       </Stack>
       <Paper variant="outlined">
         {l3 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell>점검 종류</TableCell>
                 <TableCell align="center">법령 근거</TableCell>
