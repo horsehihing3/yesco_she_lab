@@ -2,6 +2,7 @@ package com.smartehs.service;
 
 import com.smartehs.dto.response.LegalSearchResult;
 import com.smartehs.mapper.LegalResponseMapper;
+import com.smartehs.model.LegalFilter;
 import com.smartehs.model.LegalRegistry;
 import com.smartehs.model.LegalRevisionLog;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,41 @@ public class LegalResponseService {
 
     private final LegalResponseMapper mapper;
     private final LawApiClient lawApi;
+
+    // ===== 필터 (법령 화이트리스트) =====
+    public LegalFilter getFilter() {
+        LegalFilter f = mapper.findFilter();
+        if (f == null) return LegalFilter.builder().allowedLaws("").build();
+        return f;
+    }
+
+    @Transactional
+    public LegalFilter updateFilter(String allowedLaws) {
+        LegalFilter cur = mapper.findFilter();
+        if (cur == null) {
+            // 데이터 없을 시 안전 처리 — 신규 row 생성 mapper 없으니 일단 빈 반환
+            return LegalFilter.builder().allowedLaws(allowedLaws).build();
+        }
+        cur.setAllowedLaws(allowedLaws == null ? "" : allowedLaws);
+        mapper.updateFilter(cur);
+        return mapper.findFilter();
+    }
+
+    /** 필터 키워드 리스트 — 빈 줄/공백 제거 */
+    private List<String> filterKeywords() {
+        LegalFilter f = mapper.findFilter();
+        if (f == null || f.getAllowedLaws() == null) return java.util.Collections.emptyList();
+        return Arrays.stream(f.getAllowedLaws().split("\\r?\\n"))
+                .map(String::trim).filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    /** law_name 이 키워드 중 하나라도 포함하면 매칭 */
+    private boolean isLawAllowed(String lawName, List<String> keywords) {
+        if (lawName == null || keywords.isEmpty()) return false;
+        for (String k : keywords) if (lawName.contains(k)) return true;
+        return false;
+    }
 
     // ===== 외부 API (검색) =====
     public LegalSearchResult searchExternal(String query, int page, int display) {
@@ -40,15 +77,18 @@ public class LegalResponseService {
      */
     @Transactional
     public Map<String, Object> syncRecentRevisionsMulti(int display, int pages) {
-        int fetched = 0, inserted = 0, totalAvailable = 0;
+        List<String> keywords = filterKeywords();
+        int fetched = 0, inserted = 0, skipped = 0, totalAvailable = 0;
         int p = Math.max(1, pages);
         for (int page = 1; page <= p; page++) {
             LegalSearchResult r = lawApi.fetchRecentRevisions(display, page);
             if (page == 1) totalAvailable = r.getTotalCount();
-            if (r.getItems().isEmpty()) break;  // 더 이상 결과 없으면 종료
+            if (r.getItems().isEmpty()) break;
             fetched += r.getItems().size();
             for (LegalSearchResult.Item it : r.getItems()) {
                 if (it.getLawId() == null || it.getLawId().isEmpty()) continue;
+                // 필터에 해당하지 않으면 skip
+                if (!isLawAllowed(it.getLawName(), keywords)) { skipped++; continue; }
                 String revDt = (it.getPromulgationDt() != null) ? it.getPromulgationDt() : it.getEnforceDt();
                 Integer exists = mapper.findRevisionByLawIdAndDate(it.getLawId(), revDt);
                 if (exists != null) continue;
@@ -70,6 +110,7 @@ public class LegalResponseService {
         Map<String, Object> result = new HashMap<>();
         result.put("fetched", fetched);
         result.put("inserted", inserted);
+        result.put("filtered", skipped);
         result.put("totalAvailable", totalAvailable);
         result.put("pages", p);
         return result;
@@ -111,7 +152,12 @@ public class LegalResponseService {
 
     // ===== Revision Log =====
     public List<LegalRevisionLog> listRevisions(String status, String keyword) {
-        return mapper.findRevisionLogs(status, keyword);
+        List<LegalRevisionLog> all = mapper.findRevisionLogs(status, keyword);
+        List<String> keywords = filterKeywords();
+        if (keywords.isEmpty()) return all;
+        return all.stream()
+                .filter(r -> isLawAllowed(r.getLawName(), keywords))
+                .collect(Collectors.toList());
     }
 
     public LegalRevisionLog getRevision(Long id) { return mapper.findRevisionLogById(id); }

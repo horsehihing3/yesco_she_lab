@@ -44,12 +44,12 @@ const PsmPidTab: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>P&amp;ID 공정흐름도 — Node 3 (U300 구역)</Typography>
+      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>P&amp;ID 뷰어</Typography>
 
       <Grid container spacing={2}>
         {/* P&ID 캔버스 */}
         <Grid item xs={12} md={8}>
-          <Paper variant="outlined" sx={{ position: 'relative', height: 460, overflow: 'hidden', bgcolor: 'grey.50' }}>
+          <Paper variant="outlined" sx={{ position: 'relative', height: { xs: 320, md: 460 }, overflow: 'hidden', bgcolor: 'grey.50' }}>
             <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
               <defs>
                 <marker id="psm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">

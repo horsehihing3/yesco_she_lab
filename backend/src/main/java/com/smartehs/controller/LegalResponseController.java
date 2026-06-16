@@ -4,6 +4,7 @@ import com.smartehs.dto.response.ApiResponse;
 import com.smartehs.dto.response.LegalSearchResult;
 import com.smartehs.mapper.IdmMapper;
 import com.smartehs.model.IdmUser;
+import com.smartehs.model.LegalFilter;
 import com.smartehs.model.LegalRegistry;
 import com.smartehs.model.LegalRevisionLog;
 import com.smartehs.service.LegalResponseService;
@@ -113,6 +114,17 @@ public class LegalResponseController {
     @GetMapping("/kpi")
     public ResponseEntity<ApiResponse<Map<String, Object>>> kpi() {
         return ResponseEntity.ok(ApiResponse.success(service.getKpi()));
+    }
+
+    // ===== Filter (개정 모니터링 화이트리스트) =====
+    @GetMapping("/filter")
+    public ResponseEntity<ApiResponse<LegalFilter>> getFilter() {
+        return ResponseEntity.ok(ApiResponse.success(service.getFilter()));
+    }
+
+    @PutMapping("/filter")
+    public ResponseEntity<ApiResponse<LegalFilter>> updateFilter(@RequestBody Map<String, String> body) {
+        return ResponseEntity.ok(ApiResponse.success(service.updateFilter(body.getOrDefault("allowedLaws", ""))));
     }
 
     // ===== Internal =====

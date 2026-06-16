@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance'
 import { ApiResponse } from '../types/common.types'
-import { LegalSearchResult, LegalRegistry, LegalRevisionLog, LegalKpi } from '../types/legalResponse.types'
+import { LegalSearchResult, LegalRegistry, LegalRevisionLog, LegalKpi, LegalFilter } from '../types/legalResponse.types'
 
 const BASE = '/legal-response'
 
@@ -67,6 +67,15 @@ export const legalResponseApi = {
   // KPI
   getKpi: async (): Promise<LegalKpi> => {
     const res = await axiosInstance.get<ApiResponse<LegalKpi>>(`${BASE}/kpi`)
+    return res.data.data!
+  },
+  // Filter (개정 모니터링 화이트리스트)
+  getFilter: async (): Promise<LegalFilter> => {
+    const res = await axiosInstance.get<ApiResponse<LegalFilter>>(`${BASE}/filter`)
+    return res.data.data!
+  },
+  updateFilter: async (allowedLaws: string): Promise<LegalFilter> => {
+    const res = await axiosInstance.put<ApiResponse<LegalFilter>>(`${BASE}/filter`, { allowedLaws })
     return res.data.data!
   },
 }

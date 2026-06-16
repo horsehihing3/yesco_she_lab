@@ -140,45 +140,80 @@ const PsmIncidentTab: React.FC = () => {
     const items = data?.content || []
     return (
       <Box>
-        <Box sx={{ display: 'flex', mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* PC toolbar */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant="subtitle1" fontWeight="bold">{t('psmIncidentTab.section1', '사고보고')}</Typography>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>{t('common.new', '신규 등록')}</Button>
+        </Box>
+        {/* Mobile toolbar */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+          <Typography variant="subtitle1" fontWeight="bold">{t('psmIncidentTab.section1', '사고보고')}</Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>{t('common.new', '신규 등록')}</Button>
+          </Box>
         </Box>
         {isLoading ? <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
           : items.length === 0 ? <Alert severity="info">{t('common.noData')}</Alert>
           : (
-            <Paper variant="outlined">
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: 'grey.100' }}>
-                      <TableCell sx={{ fontWeight: 'bold' }}>사고 번호</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">유형</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">발생 일시</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>장소</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>관련 설비</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">중대성</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {items.map(i => (
-                      <TableRow key={i.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(i)}>
-                        <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{i.incidentNo}</TableCell>
-                        <TableCell align="center">{INCIDENT_TYPES.find(t => t.v === i.incidentType)?.l || '-'}</TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{formatDateTime(i.occurAt) || '-'}</TableCell>
-                        <TableCell>{i.location || '-'}</TableCell>
-                        <TableCell sx={{ fontSize: '0.85rem' }}>{i.relatedEquipment || '-'}</TableCell>
-                        <TableCell align="center">
-                          {i.severity && <Chip size="small" label={SEVERITY.find(s => s.v === i.severity)?.l || i.severity} color={SEVERITY.find(s => s.v === i.severity)?.c} />}
-                        </TableCell>
-                        <TableCell align="center"><Chip size="small" label={STATUS_LABEL[i.status]} color={STATUS_COLOR[i.status]} /></TableCell>
+            <>
+              {/* PC Table */}
+              <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ bgcolor: 'grey.100' }}>
+                        <TableCell sx={{ fontWeight: 'bold' }}>사고 번호</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">유형</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">발생 일시</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>장소</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>관련 설비</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">중대성</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
+                    </TableHead>
+                    <TableBody>
+                      {items.map(i => (
+                        <TableRow key={i.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(i)}>
+                          <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{i.incidentNo}</TableCell>
+                          <TableCell align="center">{INCIDENT_TYPES.find(t => t.v === i.incidentType)?.l || '-'}</TableCell>
+                          <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{formatDateTime(i.occurAt) || '-'}</TableCell>
+                          <TableCell>{i.location || '-'}</TableCell>
+                          <TableCell sx={{ fontSize: '0.85rem' }}>{i.relatedEquipment || '-'}</TableCell>
+                          <TableCell align="center">
+                            {i.severity && <Chip size="small" label={SEVERITY.find(s => s.v === i.severity)?.l || i.severity} color={SEVERITY.find(s => s.v === i.severity)?.c} />}
+                          </TableCell>
+                          <TableCell align="center"><Chip size="small" label={STATUS_LABEL[i.status]} color={STATUS_COLOR[i.status]} /></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+              {/* Mobile Card List */}
+              <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                {items.map(i => (
+                  <Paper key={i.id} variant="outlined" sx={{ p: 1.5, mb: 1, cursor: 'pointer' }} onClick={() => handleRowClick(i)}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                      <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography variant="body2" fontWeight="bold" sx={{ wordBreak: 'break-all' }}>
+                          <span style={{ fontFamily: 'monospace' }}>{i.incidentNo}</span> · {INCIDENT_TYPES.find(t => t.v === i.incidentType)?.l || '-'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                          {formatDateTime(i.occurAt) || '-'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                          {i.location || '-'} · {i.relatedEquipment || '-'}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end' }}>
+                        {i.severity && <Chip size="small" label={SEVERITY.find(s => s.v === i.severity)?.l || i.severity} color={SEVERITY.find(s => s.v === i.severity)?.c} />}
+                        <Chip size="small" label={STATUS_LABEL[i.status]} color={STATUS_COLOR[i.status]} />
+                      </Box>
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
+            </>
           )}
       </Box>
     )
@@ -193,7 +228,7 @@ const PsmIncidentTab: React.FC = () => {
     <Box>
       <LoadingOverlay open={isProcessing} />
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
-        사고보고 {viewMode === 'create' ? '신규 등록' : viewMode === 'edit' ? '수정' : '상세'}
+        {t('psmIncidentTab.section1', '사고보고')}
       </Typography>
 
       <Stepper activeStep={step} alternativeLabel sx={{ mb: 3 }}>
@@ -493,7 +528,9 @@ const PsmIncidentTab: React.FC = () => {
           {step > 0 && <Button variant="outlined" onClick={() => setStep(s => s - 1)}>← 이전</Button>}
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" onClick={handleBackToList}>{t('common.list', '목록')}</Button>
+          <Button variant="outlined" onClick={handleBackToList}>
+            {isEdit ? t('common.cancel', '취소') : t('common.list', '목록')}
+          </Button>
           {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
           {step < 3 && <Button variant="contained" onClick={() => setStep(s => s + 1)}>다음 →</Button>}
           {step === 3 && (

@@ -4,6 +4,7 @@ import {
   Box, Paper, Typography, Button, TextField, IconButton, Tabs, Tab, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Grid, Select, MenuItem, FormControl, Link as MuiLink, Pagination,
+  Dialog, DialogTitle, DialogContent, DialogActions,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -173,6 +174,26 @@ const LegalResponsePage: React.FC = () => {
   useEffect(() => { setRevPage(1) }, [revStatus, revKeyword])
   const revPaged = revisions.slice((revPage - 1) * REV_PAGE_SIZE, revPage * REV_PAGE_SIZE)
 
+  // 필터 (개정 모니터링 화이트리스트)
+  const { data: filter } = useQuery({
+    queryKey: ['legalFilter'],
+    queryFn: () => legalResponseApi.getFilter(),
+  })
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false)
+  const [filterDraft, setFilterDraft] = useState('')
+  const openFilterDialog = () => { setFilterDraft(filter?.allowedLaws || ''); setFilterDialogOpen(true) }
+  const updateFilterMut = useMutation({
+    mutationFn: (laws: string) => legalResponseApi.updateFilter(laws),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['legalFilter'] })
+      qc.invalidateQueries({ queryKey: ['legalRevisions'] })
+      qc.invalidateQueries({ queryKey: ['legalKpi'] })
+      setFilterDialogOpen(false)
+      showSuccess('필터가 저장되었습니다.')
+    },
+    onError: () => showError('필터 저장 실패'),
+  })
+
   const [syncPages, setSyncPages] = useState(1) // 1=100건, 2=200건, 5=500건, 10=1000건
   const syncMut = useMutation({
     mutationFn: () => legalResponseApi.syncRecent(100, syncPages),
@@ -216,15 +237,6 @@ const LegalResponsePage: React.FC = () => {
     <Box sx={{ pb: 4 }}>
       <LoadingOverlay open={isLoading} message="로딩 중..." />
 
-      {/* KPI */}
-      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ mb: { xs: 2, md: 3 } }}>
-        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.totalLaws ?? 0} label="등록 법령" sub="총 관리 법령" /></Grid>
-        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.pending ?? 0} label="검토 대기" sub="신규 개정사항" /></Grid>
-        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.inReview ?? 0} label="검토 중" sub="진행 중" /></Grid>
-        <Grid item xs={6} sm={6} md={2.4}><StatCard value={kpi?.done ?? 0} label="완료" sub="조치 완료" /></Grid>
-        <Grid item xs={12} sm={6} md={2.4}><StatCard value={kpi?.needAction ?? 0} label="조치 필요" sub="사내 대응 필요" /></Grid>
-      </Grid>
-
       {/* Tabs */}
       <Box sx={{ mb: 2 }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto"
@@ -237,6 +249,15 @@ const LegalResponsePage: React.FC = () => {
           <Tab label="법규 대응 실시" />
         </Tabs>
       </Box>
+
+      {/* KPI */}
+      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ mb: { xs: 2, md: 3 } }}>
+        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.totalLaws ?? 0} label="등록 법령" sub="총 관리 법령" /></Grid>
+        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.pending ?? 0} label="검토 대기" sub="신규 개정사항" /></Grid>
+        <Grid item xs={6} sm={4} md={2.4}><StatCard value={kpi?.inReview ?? 0} label="검토 중" sub="진행 중" /></Grid>
+        <Grid item xs={6} sm={6} md={2.4}><StatCard value={kpi?.done ?? 0} label="완료" sub="조치 완료" /></Grid>
+        <Grid item xs={12} sm={6} md={2.4}><StatCard value={kpi?.needAction ?? 0} label="조치 필요" sub="사내 대응 필요" /></Grid>
+      </Grid>
 
       {/* TAB 0: 법령 검색 */}
       {tab === 0 && (
@@ -555,6 +576,7 @@ const LegalResponsePage: React.FC = () => {
                   <MenuItem value={10}>1000건</MenuItem>
                 </Select>
               </FormControl>
+              <Button variant="outlined" onClick={openFilterDialog}>법령 필터</Button>
               <Button variant="contained" startIcon={<SyncIcon />}
                 disabled={syncMut.isPending} onClick={() => syncMut.mutate()}>
                 법제처 API 동기화
@@ -701,6 +723,31 @@ const LegalResponsePage: React.FC = () => {
 
       {/* TAB 4: 법규 대응 실시 */}
       {tab === 4 && <AuditExecutionTab variant="legal-compliance" />}
+
+      {/* 법령 필터 편집 Dialog */}
+      <Dialog open={filterDialogOpen} onClose={() => setFilterDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>법령 필터 설정</DialogTitle>
+        <DialogContent>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+            한 줄에 법령명 키워드 하나씩 입력하세요. 법령명에 키워드가 <b>포함</b>되면 매칭됩니다. (예: 산업안전보건법 → 산업안전보건법 시행령/시행규칙도 매칭)
+          </Typography>
+          <TextField
+            multiline
+            fullWidth
+            minRows={12}
+            maxRows={20}
+            value={filterDraft}
+            onChange={(e) => setFilterDraft(e.target.value)}
+            placeholder="산업안전보건법&#10;중대재해처벌법&#10;..."
+            sx={{ fontFamily: 'monospace' }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFilterDialogOpen(false)}>취소</Button>
+          <Button variant="contained" disabled={updateFilterMut.isPending}
+            onClick={() => updateFilterMut.mutate(filterDraft)}>저장</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

@@ -159,45 +159,82 @@ const PsmPtwTab: React.FC = () => {
     const items = data?.content || []
     return (
       <Box>
-        <Box sx={{ display: 'flex', mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="subtitle1" fontWeight="bold">{t('psmPtwTab.section1', '안전작업허가서 (PTW)')}</Typography>
+        {/* PC toolbar */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="subtitle1" fontWeight="bold">{t('psm.tabs.ptw', 'PTW 작업허가')}</Typography>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>{t('common.new', '신규 등록')}</Button>
+        </Box>
+        {/* Mobile toolbar */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+          <Typography variant="subtitle1" fontWeight="bold">{t('psm.tabs.ptw', 'PTW 작업허가')}</Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>{t('common.new', '신규 등록')}</Button>
+          </Box>
         </Box>
         {isLoading ? <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
           : items.length === 0 ? <Alert severity="info">{t('common.noData')}</Alert>
           : (
-            <Paper variant="outlined">
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: 'grey.100' }}>
-                      <TableCell sx={{ fontWeight: 'bold' }}>허가 번호</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">허가 유형</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>작업명</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>작업 장소</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">시작</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">종료</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">책임자</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {items.map(p => (
-                      <TableRow key={p.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(p)}>
-                        <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{p.ptwNo}</TableCell>
-                        <TableCell align="center">{PERMIT_TYPES.find(t => t.v === p.permitType)?.l || p.permitType}</TableCell>
-                        <TableCell>{p.workName}</TableCell>
-                        <TableCell sx={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.workLocation || '-'}</TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(p.startAt) || '-'}</TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(p.endAt) || '-'}</TableCell>
-                        <TableCell align="center">{p.supervisorName || '-'}</TableCell>
-                        <TableCell align="center"><Chip size="small" label={PTW_STATUS[p.status]?.l} color={PTW_STATUS[p.status]?.c} /></TableCell>
+            <>
+              {/* PC Table */}
+              <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ bgcolor: 'grey.100' }}>
+                        <TableCell sx={{ fontWeight: 'bold' }}>허가 번호</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">허가 유형</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>작업명</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>작업 장소</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">시작</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">종료</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">책임자</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
+                    </TableHead>
+                    <TableBody>
+                      {items.map(p => (
+                        <TableRow key={p.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(p)}>
+                          <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{p.ptwNo}</TableCell>
+                          <TableCell align="center">{PERMIT_TYPES.find(t => t.v === p.permitType)?.l || p.permitType}</TableCell>
+                          <TableCell>{p.workName}</TableCell>
+                          <TableCell sx={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.workLocation || '-'}</TableCell>
+                          <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(p.startAt) || '-'}</TableCell>
+                          <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{formatDateTime(p.endAt) || '-'}</TableCell>
+                          <TableCell align="center">{p.supervisorName || '-'}</TableCell>
+                          <TableCell align="center"><Chip size="small" label={PTW_STATUS[p.status]?.l} color={PTW_STATUS[p.status]?.c} /></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+              {/* Mobile Card List */}
+              <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                {items.map(p => (
+                  <Paper key={p.id} variant="outlined" sx={{ p: 1.5, mb: 1, cursor: 'pointer' }} onClick={() => handleRowClick(p)}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                      <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography variant="body2" fontWeight="bold" sx={{ wordBreak: 'break-all' }}>
+                          <span style={{ fontFamily: 'monospace' }}>{p.ptwNo}</span> · {p.workName}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                          {PERMIT_TYPES.find(t => t.v === p.permitType)?.l || p.permitType} · {p.workLocation || '-'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                          {formatDateTime(p.startAt) || '-'} ~ {formatDateTime(p.endAt) || '-'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                          책임자: {p.supervisorName || '-'}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ flexShrink: 0 }}>
+                        <Chip size="small" label={PTW_STATUS[p.status]?.l} color={PTW_STATUS[p.status]?.c} />
+                      </Box>
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
+            </>
           )}
       </Box>
     )
@@ -401,7 +438,9 @@ const PsmPtwTab: React.FC = () => {
 
       {/* 하단 버튼 */}
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
-        <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+          {isEdit ? t('common.cancel', '취소') : t('common.list', '목록')}
+        </Button>
         {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEdit ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>

@@ -82,7 +82,7 @@ const PsmMatrixTab: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>{t('psmMatrixTab.section1', '위험성 매트릭스 (5×5)')}</Typography>
+      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>{t('psm.tabs.matrix', '위험성 매트릭스')}</Typography>
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={7}>
@@ -122,7 +122,8 @@ const PsmMatrixTab: React.FC = () => {
         </Grid>
 
         <Grid item xs={12} md={5}>
-          <Paper variant="outlined">
+          {/* PC Table */}
+          <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
             <TableContainer>
               <Table size="small">
                 <TableHead>
@@ -151,6 +152,30 @@ const PsmMatrixTab: React.FC = () => {
               </Table>
             </TableContainer>
           </Paper>
+          {/* Mobile Card List */}
+          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+            {items.map((it, idx) => {
+              const r = it.l * it.s
+              return (
+                <Paper key={idx} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontFamily: 'monospace', wordBreak: 'break-all' }}>{it.source}</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        {it.label}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        L={it.l} · S={it.s}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ flexShrink: 0 }}>
+                      <Chip size="small" label={`${r} (${gradeLabel(r)})`} color={gradeColor(r)} />
+                    </Box>
+                  </Box>
+                </Paper>
+              )
+            })}
+          </Box>
         </Grid>
       </Grid>
     </Box>

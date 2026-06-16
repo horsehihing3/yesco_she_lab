@@ -1,5 +1,6 @@
 package com.smartehs.mapper;
 
+import com.smartehs.model.LegalFilter;
 import com.smartehs.model.LegalRegistry;
 import com.smartehs.model.LegalRevisionLog;
 import org.apache.ibatis.annotations.Mapper;
@@ -29,4 +30,8 @@ public interface LegalResponseMapper {
     Integer findRevisionByLawIdAndDate(@Param("lawId") String lawId, @Param("revisionDt") String revisionDt);
     // 등록 법령(law_id 셋) 기준 미완료 개정 카운트
     List<java.util.Map<String, Object>> countOpenRevisionsByLawIds(@Param("lawIds") List<String> lawIds);
+
+    // ===== Filter (법령 화이트리스트) =====
+    LegalFilter findFilter();
+    int updateFilter(LegalFilter f);
 }
