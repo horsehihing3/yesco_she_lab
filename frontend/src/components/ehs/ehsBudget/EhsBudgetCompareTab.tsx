@@ -121,19 +121,22 @@ const EhsBudgetCompareTab: React.FC = () => {
         </FormControl>
       </Box>
 
-      {/* KPI Cards */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
+      {/* KPI Cards — auto-fit + minmax 로 카드 최소 너비 보장 + 자동 줄바꿈 */}
+      <Box sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gap: 2,
+        mb: 3,
+      }}>
         {kpiCards.map((card, idx) => (
-          <Grid item xs={12} md={2.4} key={idx}>
-            <Paper sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
-              <Typography variant="body2" color="text.secondary">{card.label}</Typography>
-              <Typography fontWeight="bold" sx={{ mt: 0.75, fontSize: { xs: '1.75rem', md: '2.25rem' }, lineHeight: 1.2 }}>
-                {card.value}
-              </Typography>
-            </Paper>
-          </Grid>
+          <Paper key={idx} sx={(theme: any) => ({ p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', ...(theme.isYesco && { border: 1, borderColor: '#0F2147' }), '&::before': { content: '""', position: 'absolute', top: 0, bottom: 0, left: 0, width: 4, backgroundColor: theme.isYesco ? '#E60012' : '#2563eb', borderTopLeftRadius: 'inherit', borderBottomLeftRadius: 'inherit' } })}>
+            <Typography variant="body2" color="text.secondary">{card.label}</Typography>
+            <Typography fontWeight="bold" sx={{ mt: 0.75, fontSize: { xs: '1.5rem', md: '1.5rem', lg: '1.75rem' }, lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+              {card.value}
+            </Typography>
+          </Paper>
         ))}
-      </Grid>
+      </Box>
 
       {/* Single category bar chart (분기별 누적 차트는 분기 폐기로 제거) */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
