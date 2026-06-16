@@ -55,13 +55,18 @@ const LegalResponsePage: React.FC = () => {
   })
 
   // ===== Tab 0: 외부 검색 =====
+  const SEARCH_PAGE_SIZE = 30
   const [searchInput, setSearchInput] = useState('')
   const [searchKeyword, setSearchKeyword] = useState('')
+  const [searchPage, setSearchPage] = useState(1)
+  // 검색어 변경 시 1페이지로
+  useEffect(() => { setSearchPage(1) }, [searchKeyword])
   const { data: searchData, isFetching: searchFetching } = useQuery({
-    queryKey: ['legalExternalSearch', searchKeyword],
-    queryFn: () => legalResponseApi.searchExternal(searchKeyword, 1, 30),
+    queryKey: ['legalExternalSearch', searchKeyword, searchPage],
+    queryFn: () => legalResponseApi.searchExternal(searchKeyword, searchPage, SEARCH_PAGE_SIZE),
     enabled: !!searchKeyword,
   })
+  const searchTotalPages = searchData ? Math.max(1, Math.ceil(searchData.totalCount / SEARCH_PAGE_SIZE)) : 1
 
   // ===== Tab 1: 등록 법령 =====
   const [regCategory, setRegCategory] = useState('')
@@ -381,8 +386,13 @@ const LegalResponsePage: React.FC = () => {
 
           {searchData && (
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-              전체 {searchData.totalCount?.toLocaleString() ?? 0}건 중 {searchData.items?.length ?? 0}건 표시
+              전체 {searchData.totalCount?.toLocaleString() ?? 0}건 중 {((searchPage - 1) * SEARCH_PAGE_SIZE + 1).toLocaleString()}~{Math.min(searchPage * SEARCH_PAGE_SIZE, searchData.totalCount).toLocaleString()}건 표시
             </Typography>
+          )}
+          {searchTotalPages > 1 && (
+            <Box display="flex" justifyContent="center" mt={2}>
+              <Pagination count={searchTotalPages} page={searchPage} onChange={(_, v) => setSearchPage(v)} color="primary" />
+            </Box>
           )}
         </Box>
       )}
