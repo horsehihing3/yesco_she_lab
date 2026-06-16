@@ -107,9 +107,10 @@ const RadSourceTab: React.FC = () => {
         <strong>방사선원 허가 관리</strong> — 원자력안전위원회 허가 만료 30일 전 갱신 신청 필수 (원자력안전법 §53)
       </Alert>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      {/* PC toolbar */}
+      <Stack direction="row" spacing={1.5} sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="관리번호/명칭/핵종 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" sx={{ minWidth: 150 }} label={t('radSourceTab.label5', '구분')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
@@ -121,6 +122,25 @@ const RadSourceTab: React.FC = () => {
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+      </Stack>
+
+      {/* Mobile toolbar */}
+      <Stack direction="column" spacing={1} sx={{ display: { xs: 'flex', md: 'none' }, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="관리번호/명칭/핵종 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <TextField select size="small" sx={{ flex: 1 }} label={t('radSourceTab.label5', '구분')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+            <MenuItem value="">전체</MenuItem>
+            {TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+          </TextField>
+          <TextField select size="small" sx={{ flex: 1 }} label={t('radSourceTab.label6', '상태')} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+            <MenuItem value="">전체</MenuItem>
+            {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+          </TextField>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: 1 }}>초기화</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ flex: 1 }}>New</Button>
+        </Box>
       </Stack>
 
       <Paper variant="outlined">

@@ -107,9 +107,10 @@ const RadMeasurementTab: React.FC = () => {
         <strong>방사선 측정 기록</strong> — 공간선량률 정기 측정 후 기록 보존 5년 이상 · 기준 초과 시 원안위 즉시 보고 (원자력안전법 §103)
       </Alert>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      {/* PC toolbar */}
+      <Stack direction="row" spacing={1.5} sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="구역/지점/측정자 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" sx={{ minWidth: 130 }} label={t('radMeasurementTab.label5', '평가')} value={evalFilter} onChange={e => setEvalFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {EVALS.map(e => <MenuItem key={e} value={e}>{e}</MenuItem>)}
@@ -117,6 +118,19 @@ const RadMeasurementTab: React.FC = () => {
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+      </Stack>
+
+      {/* Mobile toolbar */}
+      <Stack direction="column" spacing={1} sx={{ display: { xs: 'flex', md: 'none' }, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="구역/지점/측정자 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <TextField select size="small" fullWidth label={t('radMeasurementTab.label5', '평가')} value={evalFilter} onChange={e => setEvalFilter(e.target.value)}>
+          <MenuItem value="">전체</MenuItem>
+          {EVALS.map(e => <MenuItem key={e} value={e}>{e}</MenuItem>)}
+        </TextField>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: 1 }}>초기화</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ flex: 1 }}>New</Button>
+        </Box>
       </Stack>
 
       <Paper variant="outlined">

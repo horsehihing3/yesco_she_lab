@@ -235,9 +235,10 @@ const DpRespiTab: React.FC = () => {
         <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.respiAbnormal ?? 0} label={t('dpRespiTab.label4', '이상소견')} sub="전문의 진료" /></Grid>
       </Grid>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      {/* PC Toolbar */}
+      <Stack direction="row" spacing={1.5} sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="근로자·물질 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" value={filterExp} onChange={(e) => setFilterExp(e.target.value)} sx={{ minWidth: 130 }}>
           <MenuItem value="all">전체</MenuItem>
           {EXPOSURE_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
@@ -248,6 +249,20 @@ const DpRespiTab: React.FC = () => {
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ whiteSpace: 'nowrap' }}>New</Button>
         )}
       </Stack>
+      {/* Mobile Toolbar */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="근로자·물질 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <TextField select size="small" sx={{ flex: 1 }} value={filterExp} onChange={(e) => setFilterExp(e.target.value)}>
+            <MenuItem value="all">전체</MenuItem>
+            {EXPOSURE_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+          </TextField>
+          <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        </Box>
+        {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
+        )}
+      </Box>
 
       <Paper variant="outlined" sx={{ mb: 2 }}>
         {isLoading ? <Box sx={{ p: 6, textAlign: 'center' }}><CircularProgress /></Box> : (

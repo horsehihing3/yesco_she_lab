@@ -5,7 +5,7 @@ import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
-  Typography,
+  Typography, FormControl, InputLabel, Select,
 } from '@mui/material'
 import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -146,18 +146,36 @@ const DisasterFacilityTab: React.FC = () => {
         </Alert>
       )}
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center">
+      {/* Toolbar - PC */}
+      <Stack direction="row" spacing={1.5} sx={{ mb: 2, display: { xs: 'none', md: 'flex' } }} alignItems="center">
         <ListSearchBar placeholder="시설명/위치/화학물질 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" sx={{ minWidth: 170 }} label={t('disasterFacilityTab.label7', '유형')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
         </TextField>
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setEditing(null); setForm({ ...emptyFac, installDate: todayStr(), lastCheck: todayStr(), nextCheck: todayStr() }); setOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0, ml: { sm: 'auto !important' } }}>New</Button>
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setEditing(null); setForm({ ...emptyFac, installDate: todayStr(), lastCheck: todayStr(), nextCheck: todayStr() }); setOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0, ml: 'auto !important' }}>New</Button>
       </Stack>
 
-      <Paper variant="outlined" sx={{ mb: 3 }}>
+      {/* Toolbar - Mobile */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="시설명/위치/화학물질 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <FormControl size="small" fullWidth>
+          <InputLabel>{t('disasterFacilityTab.label7', '유형')}</InputLabel>
+          <Select label={t('disasterFacilityTab.label7', '유형')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+            <MenuItem value="">전체</MenuItem>
+            {FAC_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+          </Select>
+        </FormControl>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: 1 }}>초기화</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setEditing(null); setForm({ ...emptyFac, installDate: todayStr(), lastCheck: todayStr(), nextCheck: todayStr() }); setOpen(true) }} sx={{ flex: 1 }}>New</Button>
+        </Box>
+      </Box>
+
+      {/* PC Table - 방제시설 */}
+      <Paper variant="outlined" sx={{ mb: 3, display: { xs: 'none', md: 'block' } }}>
         {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
           <TableContainer sx={{ overflowX: 'auto' }}>
             <Table size="small" sx={{ minWidth: 1500, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
@@ -204,12 +222,46 @@ const DisasterFacilityTab: React.FC = () => {
         )}
       </Paper>
 
+      {/* Mobile cards - 방제시설 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
+        {isLoading ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : filtered.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>등록된 방제시설이 없습니다</Paper>
+        ) : filtered.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>{v.mgmtNo}</Typography>
+                <Typography variant="body2" fontWeight="bold">{v.name}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => { setEditing(v); setForm({ ...v }); setOpen(true) }}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('disasterFacilityTab.msg1', '삭제하시겠습니까?'))) remove.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              <Chip size="small" label={v.facType || '-'} variant="outlined" />
+              <Chip size="small" label={v.status} color={statusColor(v.status)} />
+              {v.checkCycle && <Chip size="small" label={v.checkCycle} variant="outlined" />}
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              {v.location || '-'} · {v.chemical || '-'}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              담당자: {v.mgrName || '-'} · 다음점검: {v.nextCheck || '-'}
+            </Typography>
+          </Paper>
+        ))}
+      </Box>
+
       {/* ===== 방제시설 점검 이력 ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>{t('disasterFacilityTab.section1', '방제시설 점검 이력')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setIEditing(null); setIForm(emptyInsp); setIOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
-      <Paper variant="outlined">
+      {/* PC Table - 점검 이력 */}
+      <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
         {inspLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
           <TableContainer sx={{ overflowX: 'auto' }}>
             <Table size="small" sx={{ minWidth: 1300, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
@@ -251,6 +303,38 @@ const DisasterFacilityTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
+
+      {/* Mobile cards - 점검 이력 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {inspLoading ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : insps.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>점검 기록이 없습니다</Paper>
+        ) : insps.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body2" fontWeight="bold">{v.facilityName || '-'}</Typography>
+                <Typography variant="caption" color="text.secondary">{v.inspDate}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => { setIEditing(v); setIForm({ ...v }); setIOpen(true) }}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('disasterFacilityTab.msg2', '삭제하시겠습니까?'))) iDelete.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              {v.facType && <Chip size="small" label={v.facType} variant="outlined" />}
+              {v.anomaly && <Chip size="small" label={v.anomaly} color={anomalyColor(v.anomaly)} />}
+              {v.doneStatus && <Chip size="small" label={v.doneStatus} color={v.doneStatus === '완료' ? 'success' : 'warning'} />}
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              {v.location || '-'} · 점검자: {v.checker || '-'}
+            </Typography>
+            {v.content && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>내용: {v.content}</Typography>}
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>다음점검: {v.nextCheck || '-'}</Typography>
+          </Paper>
+        ))}
+      </Box>
 
       {/* ===== Facility dialog ===== */}
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>

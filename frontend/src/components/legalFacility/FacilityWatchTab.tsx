@@ -5,6 +5,7 @@ import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography, LinearProgress,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
+  FormControl, InputLabel, Select,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -121,7 +122,8 @@ const FacilityWatchTab: React.FC = () => {
         </Alert>
       )}
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2 }} alignItems="center" justifyContent="space-between">
+      {/* Toolbar - PC */}
+      <Stack direction="row" spacing={1.5} sx={{ mb: 2, display: { xs: 'none', md: 'flex' } }} alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={1.5}>
           <TextField select size="small" sx={{ minWidth: 150 }} label={t('facilityWatchTab.label6', '위험등급')} value={riskFilter} onChange={e => setRiskFilter(e.target.value)}>
             <MenuItem value="">전체</MenuItem>
@@ -134,6 +136,25 @@ const FacilityWatchTab: React.FC = () => {
         </Stack>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
       </Stack>
+
+      {/* Toolbar - Mobile */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+        <FormControl size="small" fullWidth>
+          <InputLabel>{t('facilityWatchTab.label6', '위험등급')}</InputLabel>
+          <Select label={t('facilityWatchTab.label6', '위험등급')} value={riskFilter} onChange={e => setRiskFilter(e.target.value)}>
+            <MenuItem value="">전체</MenuItem>
+            {RISK_GRADES.map(r => <MenuItem key={r.code} value={r.code}>{r.label}</MenuItem>)}
+          </Select>
+        </FormControl>
+        <FormControl size="small" fullWidth>
+          <InputLabel>{t('facilityWatchTab.label7', '시설 유형')}</InputLabel>
+          <Select label={t('facilityWatchTab.label7', '시설 유형')} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+            <MenuItem value="">전체</MenuItem>
+            {FACILITY_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+          </Select>
+        </FormControl>
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} fullWidth>New</Button>
+      </Box>
 
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}><CircularProgress /></Box>
@@ -185,11 +206,12 @@ const FacilityWatchTab: React.FC = () => {
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 2, mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>{t('facilityWatchTab.section1', '최근 점검 이력')}</Typography>
-        <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => { setCheckForm(emptyCheckForm); setCheckOpen(true) }}>New</Button>
+        <Button size="small" variant="contained" startIcon={<AddIcon />} onClick={() => { setCheckForm(emptyCheckForm); setCheckOpen(true) }}>New</Button>
       </Stack>
-      <Paper variant="outlined">
-        <TableContainer>
-          <Table size="small">
+      {/* PC Table - 점검 이력 */}
+      <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
             <TableHead>
               <TableRow>
                 <TableCell>점검일</TableCell><TableCell>시설명</TableCell><TableCell>유형</TableCell><TableCell>위험등급</TableCell>
@@ -215,6 +237,34 @@ const FacilityWatchTab: React.FC = () => {
           </Table>
         </TableContainer>
       </Paper>
+
+      {/* Mobile cards - 점검 이력 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {checks.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>점검 기록이 없습니다</Paper>
+        ) : checks.map(c => (
+          <Paper key={c.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body2" fontWeight="bold">{c.facilityName}</Typography>
+                <Typography variant="caption" color="text.secondary">{c.checkDate}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end', flexShrink: 0 }}>
+                {c.riskGrade && <Chip size="small" label={`등급 ${c.riskGrade}`} color={riskColor(c.riskGrade)} />}
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              {c.facilityType && <Chip size="small" label={c.facilityType} variant="outlined" />}
+              {c.anomaly && <Chip size="small" label={c.anomaly} color={anomalyColor(c.anomaly)} />}
+            </Box>
+            {c.content && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>내용: {c.content}</Typography>}
+            {c.action && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>조치: {c.action}</Typography>}
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              점검자: {c.checker || '-'} · 다음점검: <Box component="span" sx={{ color: 'warning.main' }}>{c.nextCheckDate || '-'}</Box>
+            </Typography>
+          </Paper>
+        ))}
+      </Box>
 
       {/* 관심시설 등록 모달 */}
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>

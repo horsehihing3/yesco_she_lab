@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useAlert } from '../../contexts/AlertContext'
 import {
-  Box, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Box, Stack, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Typography, Pagination, IconButton, FormControl, Select, MenuItem, SelectChangeEvent, Chip,
 } from '@mui/material'
 import NumberField from '../common/NumberField'
@@ -151,13 +151,22 @@ const EmissionFactorTab: React.FC = () => {
   // List View
   const renderListView = () => (
     <Box>
-      <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
         <ListSearchBar placeholder={t('carbon.factor.searchFactor')} value={searchText} onChange={setSearchText} onSearch={handleSearch}
           sx={{ width: { xs: '100%', md: 250 } }}  />
         <IconButton onClick={handleReset} sx={{ display: { xs: 'none', md: 'flex' } }}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>New</Button>
       </Box>
+      {/* 모바일 toolbar */}
+      <Stack direction="column" spacing={1} sx={{ display: { xs: 'flex', md: 'none' }, mb: 2 }}>
+        <ListSearchBar placeholder={t('carbon.factor.searchFactor')} value={searchText} onChange={setSearchText} onSearch={handleSearch}
+          sx={{ width: '100%' }} />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleReset} sx={{ flex: 1 }}>{t('common.reset', '초기화')}</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
+        </Box>
+      </Stack>
 
       {/* PC Table */}
       <TableContainer component={Paper} sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', overflowX: 'auto' }}>

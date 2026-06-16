@@ -120,9 +120,10 @@ const FacilityStatusTab: React.FC = () => {
       </Grid>
 
       <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, mt: 2 }}>{t('facilityStatusTab.section3', '전체 현황 리스트')}</Typography>
-      <Paper variant="outlined">
-        <TableContainer>
-          <Table size="small">
+      {/* PC Table */}
+      <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
             <TableHead>
               <TableRow>
                 <TableCell>관리번호</TableCell>
@@ -157,6 +158,38 @@ const FacilityStatusTab: React.FC = () => {
           </Table>
         </TableContainer>
       </Paper>
+
+      {/* Mobile cards */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {items.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>등록된 기구가 없습니다</Paper>
+        ) : items.map(e => {
+          const d = computeDday(e.nextInspectDate)
+          return (
+            <Paper key={e.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography variant="caption" color="info.main" sx={{ fontWeight: 700 }}>{e.mgmtNo}</Typography>
+                  <Typography variant="body2" fontWeight="bold">{e.name}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end', flexShrink: 0 }}>
+                  <Chip size="small" label={e.status} color={statusColor(e.status)} />
+                  {d !== null && <Chip size="small" label={d >= 0 ? `D-${d}` : `D+${Math.abs(d)}`} color={ddayColor(d) === 'default' ? undefined : ddayColor(d)} />}
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+                <Chip size="small" label={e.category} variant="outlined" />
+              </Box>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                위치: {e.location} · 주기 {e.inspectPeriod}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                최근: {e.lastInspectDate || '-'} · 다음: {e.nextInspectDate || '-'}
+              </Typography>
+            </Paper>
+          )
+        })}
+      </Box>
     </Box>
   )
 }

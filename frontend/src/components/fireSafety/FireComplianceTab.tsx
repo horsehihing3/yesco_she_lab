@@ -188,7 +188,8 @@ const FireComplianceTab: React.FC = () => {
         <Typography variant="subtitle1" fontWeight={700}>{t('fireComplianceTab.section3', '법정 보고·제출 일정')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setREditing(null); setRForm({ ...emptyReport, lastSubmit: todayStr(), nextSubmit: daysFromTodayStr(365) }); setROpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
-      <Paper variant="outlined">
+      {/* PC Table */}
+      <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
         {l2 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
           <TableContainer sx={{ overflowX: 'auto' }}>
             <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
@@ -226,6 +227,39 @@ const FireComplianceTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
+
+      {/* Mobile cards - 보고 일정 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {l2 ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : reports.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>등록된 보고가 없습니다</Paper>
+        ) : reports.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body2" fontWeight="bold">{v.reportType}</Typography>
+                <Typography variant="caption" color="text.secondary">{v.lawBasis || '-'}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => { setREditing(v); setRForm({ ...v }); setROpen(true) }}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireComplianceTab.msg2', '삭제하시겠습니까?'))) rDelete.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              {v.status && <Chip size="small" label={v.status} color={reportStatusColor(v.status)} />}
+              {v.deadlineText && <Chip size="small" label={v.deadlineText} variant="outlined" />}
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              제출 대상: {v.targetOrg || '-'}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              최근: {v.lastSubmit || '-'} · 다음: {v.nextSubmit || '-'}
+            </Typography>
+            {v.note && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.note}</Typography>}
+          </Paper>
+        ))}
+      </Box>
 
       {/* ===== Compliance dialog ===== */}
       <Dialog open={cOpen} onClose={() => setCOpen(false)} maxWidth="md" fullWidth>

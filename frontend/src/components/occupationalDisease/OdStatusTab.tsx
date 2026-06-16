@@ -257,9 +257,10 @@ const OdStatusTab: React.FC = () => {
         </Grid>
       </Box>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      {/* PC Toolbar */}
+      <Stack direction="row" spacing={1.5} sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="성명/사번/부서/유해인자" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" sx={{ minWidth: 130 }} value={judgeFilter} onChange={e => setJudgeFilter(e.target.value)}
           SelectProps={{ displayEmpty: true }}>
           <MenuItem value="">판정 전체</MenuItem>
@@ -276,6 +277,26 @@ const OdStatusTab: React.FC = () => {
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
         )}
       </Stack>
+      {/* Mobile Toolbar */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="성명/사번/부서/유해인자" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <TextField select size="small" sx={{ flex: 1 }} value={judgeFilter} onChange={e => setJudgeFilter(e.target.value)}
+            SelectProps={{ displayEmpty: true }}>
+            <MenuItem value="">판정 전체</MenuItem>
+            {JUDGES.map(j => <MenuItem key={j} value={j}>{j}</MenuItem>)}
+          </TextField>
+          <TextField select size="small" sx={{ flex: 1 }} value={divFilter} onChange={e => setDivFilter(e.target.value)}
+            SelectProps={{ displayEmpty: true }}>
+            <MenuItem value="">검진구분 전체</MenuItem>
+            {DIVISIONS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
+          </TextField>
+          <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
+        </Box>
+        {canSee(MENU, 'LIST', 'New', myRoles) && (
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
+        )}
+      </Box>
 
       <Paper variant="outlined">
         {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
