@@ -256,10 +256,23 @@ public class LegalResponseService {
     public Map<String, Object> getKpi() {
         Map<String, Object> kpi = new HashMap<>();
         kpi.put("totalLaws", mapper.countRegistry());
-        kpi.put("pending", mapper.countRevisionByStatus("PENDING"));
-        kpi.put("inReview", mapper.countRevisionByStatus("IN_REVIEW"));
-        kpi.put("done", mapper.countRevisionByStatus("DONE"));
-        kpi.put("needAction", mapper.countRevisionByStatus("NEED_ACTION"));
+
+        // 개정 모니터링 카운트는 필터 적용 후 산정
+        List<String> keywords = filterKeywords();
+        if (keywords.isEmpty()) {
+            kpi.put("pending", mapper.countRevisionByStatus("PENDING"));
+            kpi.put("inReview", mapper.countRevisionByStatus("IN_REVIEW"));
+            kpi.put("done", mapper.countRevisionByStatus("DONE"));
+            kpi.put("needAction", mapper.countRevisionByStatus("NEED_ACTION"));
+        } else {
+            List<LegalRevisionLog> all = mapper.findRevisionLogs(null, null).stream()
+                    .filter(r -> isLawAllowed(r.getLawName(), keywords))
+                    .collect(Collectors.toList());
+            kpi.put("pending",    all.stream().filter(r -> "PENDING".equals(r.getReviewStatus())).count());
+            kpi.put("inReview",   all.stream().filter(r -> "IN_REVIEW".equals(r.getReviewStatus())).count());
+            kpi.put("done",       all.stream().filter(r -> "DONE".equals(r.getReviewStatus())).count());
+            kpi.put("needAction", all.stream().filter(r -> "NEED_ACTION".equals(r.getReviewStatus())).count());
+        }
         return kpi;
     }
 }
