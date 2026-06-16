@@ -72,11 +72,18 @@ const LegalResponsePage: React.FC = () => {
   const [regCategory, setRegCategory] = useState('')
   const [regKeywordInput, setRegKeywordInput] = useState('')
   const [regKeyword, setRegKeyword] = useState('')
-  const applyRegSearch = () => setRegKeyword(regKeywordInput)
+  const applyRegSearch = () => { setRegKeyword(regKeywordInput); setRegPage(1) }
   const { data: registry = [], isFetching: regFetching } = useQuery({
     queryKey: ['legalRegistry', regCategory, regKeyword],
     queryFn: () => legalResponseApi.listRegistry(regCategory || undefined, regKeyword || undefined),
   })
+
+  // 등록 법령 클라이언트 사이드 페이징
+  const REG_PAGE_SIZE = 20
+  const [regPage, setRegPage] = useState(1)
+  useEffect(() => { setRegPage(1) }, [regCategory, regKeyword])
+  const regTotalPages = Math.max(1, Math.ceil(registry.length / REG_PAGE_SIZE))
+  const regPaged = registry.slice((regPage - 1) * REG_PAGE_SIZE, regPage * REG_PAGE_SIZE)
 
   const createMut = useMutation({
     mutationFn: (r: LegalRegistry) => legalResponseApi.createRegistry(r),
@@ -471,7 +478,7 @@ const LegalResponsePage: React.FC = () => {
                     <TableRow><TableCell colSpan={8} align="center" sx={{ py: 6, color: 'text.disabled' }}>
                       등록된 법령이 없습니다. [법령 검색] 탭에서 추가하세요.
                     </TableCell></TableRow>
-                  ) : registry.map(r => (
+                  ) : regPaged.map(r => (
                     <TableRow key={r.id} hover>
                       <TableCell>
                         {r.detailLink ? (
@@ -517,7 +524,7 @@ const LegalResponsePage: React.FC = () => {
               <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>
                 등록된 법령이 없습니다. [법령 검색] 탭에서 추가하세요.
               </Paper>
-            ) : registry.map(r => {
+            ) : regPaged.map(r => {
               const cnt = r.lawId ? (regRevCounts[r.lawId] || 0) : 0
               return (
                 <Paper key={r.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
@@ -555,6 +562,13 @@ const LegalResponsePage: React.FC = () => {
               )
             })}
           </Box>
+
+          {/* 페이지네이션 */}
+          {regTotalPages > 1 && (
+            <Box display="flex" justifyContent="center" mt={2}>
+              <Pagination count={regTotalPages} page={regPage} onChange={(_, v) => setRegPage(v)} color="primary" />
+            </Box>
+          )}
         </Box>
       )}
 
