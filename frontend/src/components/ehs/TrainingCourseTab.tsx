@@ -312,7 +312,7 @@ const TrainingCourseTab: React.FC = () => {
             </TableContainer>
             {totalPages > 1 && (
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Pagination count={totalPages} page={page + 1} onChange={(_, p) => setPage(p - 1)} />
+                <Pagination count={totalPages} page={page + 1} onChange={(_, p) => setPage(p - 1)} color="primary" />
               </Box>
             )}
           </>

@@ -335,8 +335,8 @@ const EmrDrillTab: React.FC = () => {
           <>
             {/* PC Table */}
             <Paper sx={{ display: { xs: 'none', md: 'block' } }}>
-              <TableContainer>
-                <Table size="small" stickyHeader sx={{ '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
+              <TableContainer sx={{ overflowX: 'auto' }}>
+                <Table size="small" stickyHeader sx={{ minWidth: 1600, '& .MuiTableCell-root': { borderRight: '1px solid', borderColor: 'divider', whiteSpace: 'nowrap' }, '& .MuiTableCell-root:last-child': { borderRight: 'none' } }}>
                   <TableHead>
                     <TableRow>
                       <TableCell sx={headerCellSx} align="center">{t('emr.drillId')}</TableCell>
