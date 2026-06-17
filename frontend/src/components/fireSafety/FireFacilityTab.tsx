@@ -5,6 +5,7 @@ import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress,
+  Typography, FormControl, InputLabel, Select,
 } from '@mui/material'
 import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -122,9 +123,10 @@ const FireFacilityTab: React.FC = () => {
         </Alert>
       )}
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      {/* Toolbar - PC */}
+      <Stack direction="row" spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start', display: { xs: 'none', md: 'flex' } }} alignItems="center">
         <ListSearchBar placeholder="시설명/관리번호/위치/법령 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" sx={{ minWidth: 150 }} label={t('fireFacilityTab.label7', '분류')} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
@@ -138,10 +140,36 @@ const FireFacilityTab: React.FC = () => {
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
-      <Paper variant="outlined">
+      {/* Toolbar - Mobile */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="시설명/관리번호/위치/법령 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <FormControl size="small" sx={{ flex: 1 }}>
+            <InputLabel>{t('fireFacilityTab.label7', '분류')}</InputLabel>
+            <Select label={t('fireFacilityTab.label7', '분류')} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+              <MenuItem value="">전체</MenuItem>
+              {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ flex: 1 }}>
+            <InputLabel>{t('fireFacilityTab.label8', '상태')}</InputLabel>
+            <Select label={t('fireFacilityTab.label8', '상태')} value={stFilter} onChange={e => setStFilter(e.target.value)}>
+              <MenuItem value="">전체</MenuItem>
+              {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+            </Select>
+          </FormControl>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: 1 }}>초기화</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ flex: 1 }}>New</Button>
+        </Box>
+      </Box>
+
+      {/* PC Table */}
+      <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
         {isLoading ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1500, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">관리번호</TableCell>
                 <TableCell>시설명</TableCell>
@@ -184,6 +212,39 @@ const FireFacilityTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
+
+      {/* Mobile cards */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {isLoading ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : filtered.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>등록된 소방시설이 없습니다</Paper>
+        ) : filtered.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>{v.mgmtNo}</Typography>
+                <Typography variant="body2" fontWeight="bold">{v.name}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => openEdit(v)}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireFacilityTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              <Chip size="small" label={v.category || '-'} variant="outlined" />
+              <Chip size="small" label={v.status} color={statusColor(v.status)} />
+              {v.checkCycle && <Chip size="small" label={v.checkCycle} variant="outlined" />}
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              {v.location || '-'} · {v.spec || '-'} {v.qty ? `· ${v.qty}` : ''}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              담당자: {v.mgrName || '-'} · 다음점검: {v.nextCheck || '-'}
+            </Typography>
+          </Paper>
+        ))}
+      </Box>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>{editing ? '소방시설 수정' : '소방시설 등록'}</DialogTitle>

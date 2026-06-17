@@ -107,9 +107,10 @@ const RadDoseTab: React.FC = () => {
         <strong>개인 피폭선량 한도</strong> — 연간 유효선량 20 mSv/y (5년 평균) · 손 등 등가선량 500 mSv/y · 수정체 20 mSv/y (원자력안전법 시행령)
       </Alert>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      {/* PC toolbar */}
+      <Stack direction="row" spacing={1.5} sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="종사자/부서 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" sx={{ minWidth: 140 }} label={t('radDoseTab.label5', '측정월')} value={monthFilter} onChange={e => setMonthFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {months.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
@@ -117,6 +118,19 @@ const RadDoseTab: React.FC = () => {
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
+      </Stack>
+
+      {/* Mobile toolbar */}
+      <Stack direction="column" spacing={1} sx={{ display: { xs: 'flex', md: 'none' }, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="종사자/부서 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <TextField select size="small" fullWidth label={t('radDoseTab.label5', '측정월')} value={monthFilter} onChange={e => setMonthFilter(e.target.value)}>
+          <MenuItem value="">전체</MenuItem>
+          {months.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
+        </TextField>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: 1 }}>초기화</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ flex: 1 }}>New</Button>
+        </Box>
       </Stack>
 
       <Paper variant="outlined">

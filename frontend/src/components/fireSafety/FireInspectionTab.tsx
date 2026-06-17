@@ -166,10 +166,11 @@ const FireInspectionTab: React.FC = () => {
         <Typography variant="subtitle1" fontWeight={700}>{t('fireInspectionTab.section1', '미결 지적사항 추적')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setSEditing(null); setSForm(emptyIssue); setSOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
-      <Paper variant="outlined" sx={{ mb: 3 }}>
+      {/* PC Table - 지적사항 */}
+      <Paper variant="outlined" sx={{ mb: 3, display: { xs: 'none', md: 'block' } }}>
         {l2 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1500, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">번호</TableCell>
                 <TableCell>시설</TableCell>
@@ -214,15 +215,51 @@ const FireInspectionTab: React.FC = () => {
         )}
       </Paper>
 
+      {/* Mobile cards - 지적사항 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
+        {l2 ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : issues.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>지적사항이 없습니다</Paper>
+        ) : issues.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>{v.issueNo}</Typography>
+                <Typography variant="body2" fontWeight="bold">{v.facility || '-'}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => { setSEditing(v); setSForm({ ...v }); setSOpen(true) }}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireInspectionTab.msg1', '삭제하시겠습니까?'))) sDelete.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              {v.issueType && <Chip size="small" label={v.issueType} color={v.issueType === '불합격' ? 'error' : 'warning'} />}
+              {v.status && <Chip size="small" label={v.status} color={issueStatusColor(v.status)} />}
+            </Box>
+            {v.issueContent && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>지적: {v.issueContent}</Typography>}
+            {v.actionContent && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>조치: {v.actionContent}</Typography>}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+              <LinearProgress variant="determinate" value={v.progressPct ?? 0} sx={{ flex: 1, height: 6, borderRadius: 1 }} />
+              <Typography variant="caption" sx={{ fontWeight: 700, minWidth: 32 }}>{v.progressPct ?? 0}%</Typography>
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              담당자: {v.ownerName || '-'} · 발견: {v.foundDate || '-'} · 목표: {v.dueDate || '-'}
+            </Typography>
+          </Paper>
+        ))}
+      </Box>
+
       {/* ===== Inspections ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>{t('fireInspectionTab.section2', '점검 이력')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setIEditing(null); setIForm(emptyInsp); setIOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
-      <Paper variant="outlined" sx={{ mb: 3 }}>
+      {/* PC Table - 점검 이력 */}
+      <Paper variant="outlined" sx={{ mb: 3, display: { xs: 'none', md: 'block' } }}>
         {l1 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">점검번호</TableCell>
                 <TableCell>점검명</TableCell>
@@ -260,15 +297,49 @@ const FireInspectionTab: React.FC = () => {
         )}
       </Paper>
 
+      {/* Mobile cards - 점검 이력 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
+        {l1 ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : insps.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>점검 이력이 없습니다</Paper>
+        ) : insps.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="caption" color="text.secondary">{v.inspNo || '-'}</Typography>
+                <Typography variant="body2" fontWeight="bold">{v.inspName || '-'}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => { setIEditing(v); setIForm({ ...v }); setIOpen(true) }}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireInspectionTab.msg2', '삭제하시겠습니까?'))) iDelete.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              {v.inspType && <Chip size="small" label={v.inspType} variant="outlined" />}
+              {v.result && <Chip size="small" label={v.result} color={resultColor(v.result)} />}
+              {v.submitStatus && <Chip size="small" label={v.submitStatus} variant="outlined" />}
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              기관: {v.org || '-'} · 점검일: {v.inspDate || '-'}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              비용: {v.cost?.toLocaleString() || '-'}원 · 제출일: {v.submitDate || '-'}
+            </Typography>
+          </Paper>
+        ))}
+      </Box>
+
       {/* ===== Plans ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>{t('fireInspectionTab.section3', '연간 법정 점검 계획')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setPEditing(null); setPForm(emptyPlan); setPOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
-      <Paper variant="outlined">
+      {/* PC Table - 연간 점검 계획 */}
+      <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
         {l3 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell>점검 종류</TableCell>
                 <TableCell align="center">법령 근거</TableCell>
@@ -303,6 +374,37 @@ const FireInspectionTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
+
+      {/* Mobile cards - 연간 점검 계획 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {l3 ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : plans.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>점검 계획이 없습니다</Paper>
+        ) : plans.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body2" fontWeight="bold">{v.planType || '-'}</Typography>
+                <Typography variant="caption" color="text.secondary">{v.lawBasis || '-'}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => { setPEditing(v); setPForm({ ...v }); setPOpen(true) }}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireInspectionTab.msg3', '삭제하시겠습니까?'))) pDelete.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              {v.status && <Chip size="small" label={v.status} color={planStatusColor(v.status)} />}
+              {v.cycle && <Chip size="small" label={v.cycle} variant="outlined" />}
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              기관: {v.org || '-'} · 계획일: {v.planDate || '-'}
+            </Typography>
+            {v.target && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>대상: {v.target}</Typography>}
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>예상 비용: {v.cost || '-'}</Typography>
+          </Paper>
+        ))}
+      </Box>
 
       {/* ===== Issue dialog ===== */}
       <Dialog open={sOpen} onClose={() => setSOpen(false)} maxWidth="md" fullWidth>

@@ -5,6 +5,7 @@ import {
   Box, Grid, Paper, Stack, TextField, MenuItem, Button, Chip, Alert, Typography,
   Table, TableHead, TableBody, TableRow, TableCell, TableContainer,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, CircularProgress, Tooltip,
+  FormControl, InputLabel, Select,
 } from '@mui/material'
 import ListSearchBar from '../common/ListSearchBar'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -169,10 +170,11 @@ const FacilityEquipmentTab: React.FC = () => {
         </Alert>
       )}
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      {/* Toolbar - PC */}
+      <Stack direction="row" spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start', display: { xs: 'none', md: 'flex' } }} alignItems="center">
         <ListSearchBar placeholder="기구명/관리번호/위치 검색"
           value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" sx={{ minWidth: 150 }} label={t('facilityEquipmentTab.label5', '분류')} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
           <MenuItem value="">전체</MenuItem>
           {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
@@ -190,12 +192,45 @@ const FacilityEquipmentTab: React.FC = () => {
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
 
-      <Paper variant="outlined">
+      {/* Toolbar - Mobile */}
+      <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="기구명/관리번호/위치 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <FormControl size="small" sx={{ flex: 1 }}>
+            <InputLabel>{t('facilityEquipmentTab.label5', '분류')}</InputLabel>
+            <Select label={t('facilityEquipmentTab.label5', '분류')} value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+              <MenuItem value="">전체</MenuItem>
+              {CATEGORIES.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ flex: 1 }}>
+            <InputLabel>{t('facilityEquipmentTab.label6', '상태')}</InputLabel>
+            <Select label={t('facilityEquipmentTab.label6', '상태')} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+              <MenuItem value="">전체</MenuItem>
+              {STATUSES.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+            </Select>
+          </FormControl>
+        </Box>
+        <FormControl size="small" fullWidth>
+          <InputLabel>{t('facilityEquipmentTab.label7', '위치')}</InputLabel>
+          <Select label={t('facilityEquipmentTab.label7', '위치')} value={locFilter} onChange={e => setLocFilter(e.target.value)}>
+            <MenuItem value="">전체</MenuItem>
+            {LOCATIONS.map(l => <MenuItem key={l} value={l}>{l}</MenuItem>)}
+          </Select>
+        </FormControl>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: 1 }}>초기화</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} sx={{ flex: 1 }}>New</Button>
+        </Box>
+      </Box>
+
+      {/* PC Table */}
+      <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
         {isLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}><CircularProgress /></Box>
         ) : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1500, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead>
                 <TableRow>
                   <TableCell>관리번호</TableCell>
@@ -245,6 +280,45 @@ const FacilityEquipmentTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
+
+      {/* Mobile cards */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {isLoading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}><CircularProgress /></Box>
+        ) : filtered.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>등록된 기구가 없습니다</Paper>
+        ) : filtered.map(e => {
+          const d = computeDday(e.nextInspectDate)
+          return (
+            <Paper key={e.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography variant="caption" color="info.main" sx={{ fontWeight: 700 }}>{e.mgmtNo}</Typography>
+                  <Typography variant="body2" fontWeight="bold">{e.name}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                  <IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="small" /></IconButton>
+                  <IconButton size="small" onClick={async () => { if (await showConfirm(t('facilityEquipmentTab.msg1', '삭제하시겠습니까?'))) deleteMut.mutate(e.id) }}><DeleteIcon fontSize="small" /></IconButton>
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+                <Chip size="small" label={e.category} color={catColor(e.category)} variant="outlined" />
+                <Chip size="small" label={e.status} color={statusColor(e.status)} />
+                {d !== null && <Chip size="small" label={d >= 0 ? `D-${d}` : `D+${Math.abs(d)}`} color={ddayColor(d) === 'default' ? undefined : ddayColor(d)} />}
+              </Box>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                {e.location} · {e.spec || '-'}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                {e.inspectType} · 주기 {e.inspectPeriod} · 다음검사 {e.nextInspectDate || '-'}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                담당: {e.ownerName || '-'} {e.ownerDept ? `(${e.ownerDept})` : ''}
+              </Typography>
+            </Paper>
+          )
+        })}
+      </Box>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle>{editing ? '법정기구 수정' : '법정기구 등록'}</DialogTitle>

@@ -133,47 +133,84 @@ const PsmWorkOrderTab: React.FC = () => {
     const items = data?.content || []
     return (
       <Box>
-        <Box sx={{ display: 'flex', mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="subtitle1" fontWeight="bold">Work Order (PM)</Typography>
+        {/* PC toolbar */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="subtitle1" fontWeight="bold">Work Order</Typography>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>{t('common.new', '신규 등록')}</Button>
+        </Box>
+        {/* Mobile toolbar */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+          <Typography variant="subtitle1" fontWeight="bold">Work Order</Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>{t('common.new', '신규 등록')}</Button>
+          </Box>
         </Box>
         {isLoading ? <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
           : items.length === 0 ? <Alert severity="info">{t('common.noData')}</Alert>
           : (
-            <Paper variant="outlined">
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: 'grey.100' }}>
-                      <TableCell sx={{ fontWeight: 'bold' }}>WO 번호</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">유형</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">우선순위</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>설비</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>작업내용</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">계획기간</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">담당자</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {items.map(w => (
-                      <TableRow key={w.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(w)}>
-                        <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{w.woNo}</TableCell>
-                        <TableCell align="center">{w.woType || '-'}</TableCell>
-                        <TableCell align="center">{w.priority || '-'}</TableCell>
-                        <TableCell>{w.equipmentName || '-'}</TableCell>
-                        <TableCell sx={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.description || '-'}</TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                          {w.planStartDate || '-'} ~ {w.planEndDate || '-'}
-                        </TableCell>
-                        <TableCell align="center">{w.managerName || '-'}</TableCell>
-                        <TableCell align="center"><Chip size="small" label={WO_STATUS[w.status]?.l || w.status} color={WO_STATUS[w.status]?.c || 'default'} /></TableCell>
+            <>
+              {/* PC Table */}
+              <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ bgcolor: 'grey.100' }}>
+                        <TableCell sx={{ fontWeight: 'bold' }}>WO 번호</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">유형</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">우선순위</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>설비</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>작업내용</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">계획기간</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">담당자</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
+                    </TableHead>
+                    <TableBody>
+                      {items.map(w => (
+                        <TableRow key={w.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(w)}>
+                          <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{w.woNo}</TableCell>
+                          <TableCell align="center">{w.woType || '-'}</TableCell>
+                          <TableCell align="center">{w.priority || '-'}</TableCell>
+                          <TableCell>{w.equipmentName || '-'}</TableCell>
+                          <TableCell sx={{ maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.description || '-'}</TableCell>
+                          <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                            {w.planStartDate || '-'} ~ {w.planEndDate || '-'}
+                          </TableCell>
+                          <TableCell align="center">{w.managerName || '-'}</TableCell>
+                          <TableCell align="center"><Chip size="small" label={WO_STATUS[w.status]?.l || w.status} color={WO_STATUS[w.status]?.c || 'default'} /></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+              {/* Mobile Card List */}
+              <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                {items.map(w => (
+                  <Paper key={w.id} variant="outlined" sx={{ p: 1.5, mb: 1, cursor: 'pointer' }} onClick={() => handleRowClick(w)}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                      <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography variant="body2" fontWeight="bold" sx={{ wordBreak: 'break-all' }}>
+                          <span style={{ fontFamily: 'monospace' }}>{w.woNo}</span> · {w.equipmentName || '-'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                          {w.woType || '-'} / 우선순위: {w.priority || '-'} · 담당: {w.managerName || '-'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {w.description || '-'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                          {w.planStartDate || '-'} ~ {w.planEndDate || '-'}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ flexShrink: 0 }}>
+                        <Chip size="small" label={WO_STATUS[w.status]?.l || w.status} color={WO_STATUS[w.status]?.c || 'default'} />
+                      </Box>
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
+            </>
           )}
       </Box>
     )
@@ -191,7 +228,7 @@ const PsmWorkOrderTab: React.FC = () => {
     <Box>
       <LoadingOverlay open={isProcessing} />
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>
-        Work Order {viewMode === 'create' ? '신규 등록' : viewMode === 'edit' ? '수정' : '상세'}
+        Work Order
       </Typography>
 
       <FormTable>
@@ -408,7 +445,9 @@ const PsmWorkOrderTab: React.FC = () => {
       </FormTable>
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
-        <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+          {isEdit ? t('common.cancel', '취소') : t('common.list', '목록')}
+        </Button>
         {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEdit ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>

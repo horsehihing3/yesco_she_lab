@@ -254,9 +254,10 @@ const PermitRegistryTab: React.FC = () => {
         <Grid item xs={6} sm={3}><StatCard color="red"    value={stats?.regExpired ?? 0} label={t('permitRegistryTab.label4', '만료')} sub="즉시 조치" /></Grid>
       </Grid>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 2, justifyContent: 'flex-start' }} alignItems="center">
+      {/* PC toolbar */}
+      <Stack direction="row" spacing={1.5} sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, justifyContent: 'flex-start' }} alignItems="center">
         <ListSearchBar placeholder="인허가명·시설·허가번호 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch}
-          sx={{ width: { xs: '100%', sm: 240 } }} />
+          sx={{ width: 240 }} />
         <TextField select size="small" value={filterCat} onChange={(e) => setFilterCat(e.target.value)} sx={{ minWidth: 120 }}>
           <MenuItem value="all">전체</MenuItem>
           {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
@@ -264,6 +265,19 @@ const PermitRegistryTab: React.FC = () => {
         <IconButton onClick={handleResetSearch} size="small"><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ whiteSpace: 'nowrap' }}>New</Button>
+      </Stack>
+
+      {/* Mobile toolbar */}
+      <Stack direction="column" spacing={1} sx={{ display: { xs: 'flex', md: 'none' }, mb: 2 }}>
+        <ListSearchBar fullWidth placeholder="인허가명·시설·허가번호 검색" value={searchInput} onChange={setSearchInput} onSearch={applySearch} />
+        <TextField select size="small" fullWidth value={filterCat} onChange={(e) => setFilterCat(e.target.value)}>
+          <MenuItem value="all">전체</MenuItem>
+          {CATEGORIES.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+        </TextField>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={handleResetSearch} sx={{ flex: 1 }}>초기화</Button>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>New</Button>
+        </Box>
       </Stack>
 
       <Paper variant="outlined" sx={{ mb: 2 }}>

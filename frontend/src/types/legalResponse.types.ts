@@ -62,3 +62,9 @@ export interface LegalKpi {
   done: number
   needAction: number
 }
+
+export interface LegalFilter {
+  id?: number
+  allowedLaws?: string  // 개행 구분 키워드
+  updatedAt?: string
+}

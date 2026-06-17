@@ -117,10 +117,11 @@ const FireEmergencyTab: React.FC = () => {
         <Typography variant="subtitle1" fontWeight={700}>{t('fireEmergencyTab.section1', '비상 연락망')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setCEditing(null); setCForm(emptyContact); setCOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
-      <Paper variant="outlined" sx={{ mb: 3 }}>
+      {/* PC Table - 연락망 */}
+      <Paper variant="outlined" sx={{ mb: 3, display: { xs: 'none', md: 'block' } }}>
         {l1 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">기관 유형</TableCell>
                 <TableCell>기관·업체명</TableCell>
@@ -156,15 +157,48 @@ const FireEmergencyTab: React.FC = () => {
         )}
       </Paper>
 
+      {/* Mobile cards - 연락망 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
+        {l1 ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : contacts.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>등록된 연락처가 없습니다</Paper>
+        ) : contacts.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body2" fontWeight="bold">{v.orgName}</Typography>
+                {v.coverage && <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{v.coverage}</Typography>}
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => { setCEditing(v); setCForm({ ...v }); setCOpen(true) }}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireEmergencyTab.msg1', '삭제하시겠습니까?'))) cDelete.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              {v.orgType && <Chip size="small" label={v.orgType} variant="outlined" />}
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              대표: <Box component="span" sx={{ fontFamily: 'monospace' }}>{v.mainTel || '-'}</Box> · 긴급: <Box component="span" sx={{ fontFamily: 'monospace', color: 'error.main', fontWeight: 700 }}>{v.emergencyTel || '-'}</Box>
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              담당자: {v.mgrName || '-'} <Box component="span" sx={{ fontFamily: 'monospace' }}>{v.mgrMobile || ''}</Box>
+            </Typography>
+            {v.contractPeriod && <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>계약: {v.contractPeriod}</Typography>}
+          </Paper>
+        ))}
+      </Box>
+
       {/* ===== Drills ===== */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>{t('fireEmergencyTab.section2', '소방·방제 훈련 이력')}</Typography>
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => { setDEditing(null); setDForm(emptyDrill); setDOpen(true) }} sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Stack>
-      <Paper variant="outlined">
+      {/* PC Table - 훈련 이력 */}
+      <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
         {l2 ? <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box> : (
-          <TableContainer>
-            <Table size="small">
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 1200, '& .MuiTableCell-root': { whiteSpace: 'nowrap' } }}>
               <TableHead><TableRow>
                 <TableCell align="center">훈련일</TableCell>
                 <TableCell align="center">종류</TableCell>
@@ -201,6 +235,37 @@ const FireEmergencyTab: React.FC = () => {
           </TableContainer>
         )}
       </Paper>
+
+      {/* Mobile cards - 훈련 이력 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {l2 ? (
+          <Box sx={{ p: 6, display: 'flex', justifyContent: 'center' }}><CircularProgress /></Box>
+        ) : drills.length === 0 ? (
+          <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', color: 'text.disabled' }}>훈련 기록이 없습니다</Paper>
+        ) : drills.map(v => (
+          <Paper key={v.id} variant="outlined" sx={{ p: 1.5, mb: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body2" fontWeight="bold">{v.drillType || '-'}</Typography>
+                <Typography variant="caption" color="text.secondary">{v.drillDate}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.25, flexShrink: 0 }}>
+                <IconButton size="small" onClick={() => { setDEditing(v); setDForm({ ...v }); setDOpen(true) }}><EditIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={async () => { if (await showConfirm(t('fireEmergencyTab.msg2', '삭제하시겠습니까?'))) dDelete.mutate(v.id) }}><DeleteIcon fontSize="small" /></IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+              {v.result && <Chip size="small" label={v.result} color={resultColor(v.result)} />}
+              {v.fireDeptObs && <Chip size="small" label={v.fireDeptObs} variant="outlined" />}
+            </Box>
+            {v.scenario && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.scenario}</Typography>}
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+              참가: {v.participants != null ? `${v.participants}명` : '-'} · 대피: {v.evacTime || '-'} · 담당: {v.mgrName || '-'}
+            </Typography>
+            {v.improvement && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>개선: {v.improvement}</Typography>}
+          </Paper>
+        ))}
+      </Box>
 
       {/* ===== Contact dialog ===== */}
       <Dialog open={cOpen} onClose={() => setCOpen(false)} maxWidth="md" fullWidth>

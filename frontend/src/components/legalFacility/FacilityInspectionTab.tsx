@@ -93,8 +93,14 @@ const FacilityInspectionTab: React.FC = () => {
         <Grid item xs={6} sm={2.4}><StatCard color="purple" value={`${stats?.passRate ?? 0}%`}    label={t('facilityInspectionTab.label5', '검사 합격률')} /></Grid>
       </Grid>
 
-      <Stack direction="row" sx={{ mb: 2 }} justifyContent="flex-end">
+      {/* Toolbar - PC */}
+      <Stack direction="row" sx={{ mb: 2, display: { xs: 'none', md: 'flex' } }} justifyContent="flex-end">
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}>New</Button>
+      </Stack>
+
+      {/* Toolbar - Mobile */}
+      <Stack direction="column" spacing={1} sx={{ display: { xs: 'flex', md: 'none' }, mb: 2 }}>
+        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate} fullWidth>New</Button>
       </Stack>
 
       {isLoading ? (

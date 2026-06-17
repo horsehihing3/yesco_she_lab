@@ -236,7 +236,8 @@ const TrainingCourseTab: React.FC = () => {
           ))}
         </Grid>
 
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2, alignItems: 'center' }}>
+        {/* PC Toolbar */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, flexWrap: 'wrap', gap: 1, mb: 2, alignItems: 'center' }}>
           <FormControl size="small" sx={{ minWidth: 130 }}>
             <Select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(0) }} displayEmpty>
               <MenuItem value="">{t('common.allCategory', '전체분류')}</MenuItem>
@@ -260,6 +261,35 @@ const TrainingCourseTab: React.FC = () => {
           <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small">
+            {t('common.new', '신규')}
+          </Button>
+        </Box>
+        {/* Mobile Toolbar */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+          <ListSearchBar
+            fullWidth
+            placeholder={t('trainingCourse.searchPh', '과정명/코드')}
+            value={searchText}
+            onChange={setSearchText}
+            onSearch={handleSearch}
+          />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <FormControl size="small" sx={{ flex: 1 }}>
+              <Select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(0) }} displayEmpty>
+                <MenuItem value="">{t('common.allCategory', '전체분류')}</MenuItem>
+                {categoryCodes.map(c => <MenuItem key={c.code} value={c.code}>{getCategoryLabel(c.code)}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ flex: 1 }}>
+              <Select value={activeFilter} onChange={(e) => { setActiveFilter(e.target.value); setPage(0) }} displayEmpty>
+                <MenuItem value="">{t('common.all', '전체')}</MenuItem>
+                <MenuItem value="true">{t('common.active', '활성')}</MenuItem>
+                <MenuItem value="false">{t('common.inactive', '비활성')}</MenuItem>
+              </Select>
+            </FormControl>
+            <IconButton onClick={handleReset} size="small"><RefreshIcon /></IconButton>
+          </Box>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} size="small" sx={{ flex: 1 }}>
             {t('common.new', '신규')}
           </Button>
         </Box>
@@ -312,7 +342,7 @@ const TrainingCourseTab: React.FC = () => {
             </TableContainer>
             {totalPages > 1 && (
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Pagination count={totalPages} page={page + 1} onChange={(_, p) => setPage(p - 1)} />
+                <Pagination count={totalPages} page={page + 1} onChange={(_, p) => setPage(p - 1)} color="primary" />
               </Box>
             )}
           </>

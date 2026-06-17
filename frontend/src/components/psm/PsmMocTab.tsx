@@ -99,49 +99,83 @@ const PsmMocTab: React.FC = () => {
     const items = data?.content || []
     return (
       <Box>
-        <Box sx={{ display: 'flex', mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="subtitle1" fontWeight="bold">{t('psmMocTab.section1', '변경관리 (MOC)')}</Typography>
+        {/* PC toolbar */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="subtitle1" fontWeight="bold">{t('psm.tabs.moc', '변경관리 MOC')}</Typography>
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>{t('common.new', '신규 등록')}</Button>
+        </Box>
+        {/* Mobile toolbar */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+          <Typography variant="subtitle1" fontWeight="bold">{t('psm.tabs.moc', '변경관리 MOC')}</Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>{t('common.new', '신규 등록')}</Button>
+          </Box>
         </Box>
         {isLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
         ) : items.length === 0 ? (
           <Alert severity="info">{t('common.noData')}</Alert>
         ) : (
-          <Paper variant="outlined">
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ bgcolor: 'grey.100' }}>
-                    <TableCell sx={{ fontWeight: 'bold' }}>MOC 번호</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>변경 유형</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>제목</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="center">요청자</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="center">요청일</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="center">목표일</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {items.map(m => (
-                    <TableRow key={m.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(m)}>
-                      <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{m.mocNo}</TableCell>
-                      <TableCell>{CHANGE_TYPES.find(c => c.v === m.changeType)?.l || m.changeType}</TableCell>
-                      <TableCell>{m.title}</TableCell>
-                      <TableCell align="center">{m.requesterName || '-'}</TableCell>
-                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{m.requestDate || '-'}</TableCell>
-                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{m.targetDate || '-'}</TableCell>
-                      <TableCell align="center"><Chip size="small" label={sl(m.status)} color={sc(m.status)} /></TableCell>
+          <>
+            {/* PC Table */}
+            <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: 'grey.100' }}>
+                      <TableCell sx={{ fontWeight: 'bold' }}>MOC 번호</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>변경 유형</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>제목</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }} align="center">요청자</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }} align="center">요청일</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }} align="center">목표일</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                  </TableHead>
+                  <TableBody>
+                    {items.map(m => (
+                      <TableRow key={m.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(m)}>
+                        <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{m.mocNo}</TableCell>
+                        <TableCell>{CHANGE_TYPES.find(c => c.v === m.changeType)?.l || m.changeType}</TableCell>
+                        <TableCell>{m.title}</TableCell>
+                        <TableCell align="center">{m.requesterName || '-'}</TableCell>
+                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{m.requestDate || '-'}</TableCell>
+                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{m.targetDate || '-'}</TableCell>
+                        <TableCell align="center"><Chip size="small" label={sl(m.status)} color={sc(m.status)} /></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+            {/* Mobile Card List */}
+            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+              {items.map(m => (
+                <Paper key={m.id} variant="outlined" sx={{ p: 1.5, mb: 1, cursor: 'pointer' }} onClick={() => handleRowClick(m)}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography variant="body2" fontWeight="bold" sx={{ wordBreak: 'break-all' }}>
+                        <span style={{ fontFamily: 'monospace' }}>{m.mocNo}</span> · {m.title}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        {CHANGE_TYPES.find(c => c.v === m.changeType)?.l || m.changeType} · 요청자: {m.requesterName || '-'}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        요청일: {m.requestDate || '-'} · 목표일: {m.targetDate || '-'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ flexShrink: 0 }}>
+                      <Chip size="small" label={sl(m.status)} color={sc(m.status)} />
+                    </Box>
+                  </Box>
+                </Paper>
+              ))}
+            </Box>
+          </>
         )}
         {data && data.totalPages > 1 && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <Pagination count={data.totalPages} page={page + 1} onChange={(_, v) => setPage(v - 1)} />
+            <Pagination count={data.totalPages} page={page + 1} onChange={(_, v) => setPage(v - 1)} size="small" />
           </Box>
         )}
       </Box>
@@ -174,7 +208,7 @@ const PsmMocTab: React.FC = () => {
     <Box>
       <LoadingOverlay open={isProcessing} />
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>
-        MOC {viewMode === 'create' ? '신규 등록' : viewMode === 'edit' ? '수정' : '상세'}
+        {t('psm.tabs.moc', '변경관리 MOC')}
       </Typography>
 
       <FormTable>
@@ -321,7 +355,9 @@ const PsmMocTab: React.FC = () => {
       </FormTable>
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
-        <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+          {isEdit ? t('common.cancel', '취소') : t('common.list', '목록')}
+        </Button>
         {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEdit ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>

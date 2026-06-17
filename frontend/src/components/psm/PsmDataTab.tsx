@@ -129,7 +129,8 @@ const PsmDataTab: React.FC = () => {
           ))}
         </Box>
 
-        <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+        {/* PC toolbar */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
           <FormControl size="small" sx={{ minWidth: 130 }}>
             <Select displayEmpty value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
               <MenuItem value="">{t('common.all', '전체 상태')}</MenuItem>
@@ -145,46 +146,89 @@ const PsmDataTab: React.FC = () => {
           <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick}>{t('common.new', '신규 등록')}</Button>
         </Box>
 
+        {/* Mobile toolbar */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2 }}>
+          <FormControl size="small" fullWidth>
+            <Select displayEmpty value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <MenuItem value="">{t('common.all', '전체 상태')}</MenuItem>
+              <MenuItem value="NORMAL">정상</MenuItem>
+              <MenuItem value="PLAN">점검예정</MenuItem>
+              <MenuItem value="ABNORMAL">이상</MenuItem>
+              <MenuItem value="EXPIRED">만료</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField size="small" fullWidth placeholder="번호/명칭/위치 검색" value={searchText} onChange={e => setSearchText(e.target.value)} />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="outlined" size="small" startIcon={<RefreshIcon />} onClick={() => { setSearchText(''); setStatusFilter('') }} sx={{ flex: 1 }}>초기화</Button>
+            <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleAddClick} sx={{ flex: 1 }}>{t('common.new', '신규 등록')}</Button>
+          </Box>
+        </Box>
+
         {isLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
         ) : items.length === 0 ? (
           <Alert severity="info">{t('common.noData', '데이터가 없습니다')}</Alert>
         ) : (
-          <Paper variant="outlined">
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ bgcolor: 'grey.100' }}>
-                    <TableCell sx={{ fontWeight: 'bold' }}>번호</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>명칭</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>형식</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>위치</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="center">담당자</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="center">다음 검사일</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {items.map(item => (
-                    <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
-                      <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{item.code}</TableCell>
-                      <TableCell>{item.nameKo}</TableCell>
-                      <TableCell>{item.typeLabel || '-'}</TableCell>
-                      <TableCell>{item.location || '-'}</TableCell>
-                      <TableCell align="center">{item.managerName || '-'}</TableCell>
-                      <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{item.nextInspectionDate || '-'}</TableCell>
-                      <TableCell align="center">{renderStatus(item.statusCode)}</TableCell>
+          <>
+            {/* PC Table */}
+            <Paper variant="outlined" sx={{ display: { xs: 'none', md: 'block' } }}>
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: 'grey.100' }}>
+                      <TableCell sx={{ fontWeight: 'bold' }}>번호</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>명칭</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>형식</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>위치</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }} align="center">담당자</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }} align="center">다음 검사일</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }} align="center">상태</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                  </TableHead>
+                  <TableBody>
+                    {items.map(item => (
+                      <TableRow key={item.id} hover sx={{ cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+                        <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{item.code}</TableCell>
+                        <TableCell>{item.nameKo}</TableCell>
+                        <TableCell>{item.typeLabel || '-'}</TableCell>
+                        <TableCell>{item.location || '-'}</TableCell>
+                        <TableCell align="center">{item.managerName || '-'}</TableCell>
+                        <TableCell align="center" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{item.nextInspectionDate || '-'}</TableCell>
+                        <TableCell align="center">{renderStatus(item.statusCode)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+
+            {/* Mobile Card List */}
+            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+              {items.map(item => (
+                <Paper key={item.id} variant="outlined" sx={{ p: 1.5, mb: 1, cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography variant="body2" fontWeight="bold" sx={{ wordBreak: 'break-all' }}>
+                        <span style={{ fontFamily: 'monospace' }}>{item.code}</span> · {item.nameKo}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        {item.typeLabel || '-'} / {item.location || '-'}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        담당: {item.managerName || '-'} · 다음 검사: {item.nextInspectionDate || '-'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ flexShrink: 0 }}>{renderStatus(item.statusCode)}</Box>
+                  </Box>
+                </Paper>
+              ))}
+            </Box>
+          </>
         )}
 
         {data && data.totalPages > 1 && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <Pagination count={data.totalPages} page={page + 1} onChange={(_, v) => setPage(v - 1)} />
+            <Pagination count={data.totalPages} page={page + 1} onChange={(_, v) => setPage(v - 1)} size="small" />
           </Box>
         )}
       </Box>
@@ -241,7 +285,7 @@ const PsmDataTab: React.FC = () => {
     <Box>
       <LoadingOverlay open={isProcessing} />
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5 }}>
-        {CATS.find(c => c.key === category)?.label} — {viewMode === 'create' ? '신규 등록' : viewMode === 'edit' ? '수정' : '상세'}
+        {t('psm.tabs.data', '공정안전자료')}
       </Typography>
 
       <FormTable>
@@ -420,7 +464,9 @@ const PsmDataTab: React.FC = () => {
       </FormTable>
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2 }}>
-        <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.list', '목록')}</Button>
+        <Button variant="outlined" onClick={handleBackToList} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>
+          {isEditMode ? t('common.cancel', '취소') : t('common.list', '목록')}
+        </Button>
         {viewMode === 'create' && <DevTestFillButton onFill={fillTestData} />}
         {isEditMode ? (
           <Button variant="contained" onClick={handleSave} sx={{ flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } }}>{t('common.save', '저장')}</Button>

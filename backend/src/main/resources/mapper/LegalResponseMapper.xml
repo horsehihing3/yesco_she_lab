@@ -168,6 +168,23 @@
         WHERE law_id = #{lawId} AND revision_dt = #{revisionDt}
     </select>
 
+    <!-- ============ Filter ============ -->
+    <resultMap id="FilterRM" type="com.smartehs.model.LegalFilter">
+        <id property="id" column="id"/>
+        <result property="allowedLaws" column="allowed_laws"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findFilter" resultMap="FilterRM">
+        SELECT TOP 1 * FROM tb_legal_filter ORDER BY id
+    </select>
+
+    <update id="updateFilter">
+        UPDATE tb_legal_filter
+        SET allowed_laws = #{allowedLaws}, updated_at = GETDATE()
+        WHERE id = #{id}
+    </update>
+
     <!-- 등록 법령들의 미완료(검토대기/검토중/조치필요) 개정 카운트 -->
     <select id="countOpenRevisionsByLawIds" resultType="java.util.HashMap">
         SELECT law_id AS lawId, COUNT(*) AS cnt
