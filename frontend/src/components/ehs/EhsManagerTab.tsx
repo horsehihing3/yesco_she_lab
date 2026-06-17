@@ -67,7 +67,7 @@ const EhsManagerTab: React.FC = () => {
   const [userPickerOpen, setUserPickerOpen] = useState(false)
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 직책자 명단'
+  const MENU = 'SHE 경영 › 커뮤니케이션 › SHE 직책자 명단'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const getRoles = (item: { createdByUserId?: number | null }): string[] => {
     const roles = [...myRoles]
@@ -192,7 +192,7 @@ const EhsManagerTab: React.FC = () => {
     setUserPickerOpen(false)
   }
 
-  // DEV ONLY — 비어있는 항목을 EHS 직책자 더미데이터로 채움 (입력값 보존)
+  // DEV ONLY — 비어있는 항목을 SHE 직책자 더미데이터로 채움 (입력값 보존)
   const fillTestData = () => {
     const v = getValues()
     if (!v.roleCategory) setValue('roleCategory', 'EHS')
@@ -203,8 +203,8 @@ const EhsManagerTab: React.FC = () => {
     if (!v.rolePlace) setValue('rolePlace', '본사')
     if (!v.userDept) setValue('userDept', '글로벌경영관리팀')
     if (!v.roleCaHd) setValue('roleCaHd', '안전보건본부')
-    if (!v.roleCaField) setValue('roleCaField', 'EHS부문')
-    if (!v.roleCaTeam) setValue('roleCaTeam', 'EHS팀')
+    if (!v.roleCaField) setValue('roleCaField', 'SHE부문')
+    if (!v.roleCaTeam) setValue('roleCaTeam', 'SHE팀')
   }
 
   const onSubmit = (data: EhsManagerRequest) => {
@@ -224,7 +224,7 @@ const EhsManagerTab: React.FC = () => {
   const getCategoryTitle = (category: string) => {
     switch (category) {
       case 'EHS':
-        return 'EHS 담당자'
+        return 'SHE 담당자'
       case '근로자위원':
         return '근로자 위원'
       case 'CA':

@@ -143,7 +143,7 @@ const Dashboard: React.FC = () => {
           />
         )}
 
-        {/* EHS Status Panel */}
+        {/* SHE Status Panel */}
         {activePanels.includes('ehs') && (
           <EHSStatusPanel
             factory={selectedFactory}
@@ -192,7 +192,7 @@ const Dashboard: React.FC = () => {
           />
         )}
 
-        {/* EHS Status Panel - Mobile */}
+        {/* SHE Status Panel - Mobile */}
         {activePanels.includes('ehs') && (
           <EHSStatusPanel
             factory={selectedFactory}

@@ -23,14 +23,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/ehs-managers")
 @RequiredArgsConstructor
-@Tag(name = "EHS Manager", description = "EHS Manager API")
+@Tag(name = "SHE Manager", description = "SHE Manager API")
 public class EhsManagerController {
 
     private final EhsManagerService ehsManagerService;
     private final IdmMapper idmMapper;
 
     @GetMapping
-    @Operation(summary = "List EHS managers", description = "Get all EHS managers with pagination")
+    @Operation(summary = "List SHE managers", description = "Get all SHE managers with pagination")
     public ResponseEntity<ApiResponse<Page<EhsManagerResponse>>> findAll(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<EhsManagerResponse> managers = ehsManagerService.findAll(pageable);
@@ -38,48 +38,48 @@ public class EhsManagerController {
     }
 
     @GetMapping("/list")
-    @Operation(summary = "List all EHS managers", description = "Get all EHS managers as list")
+    @Operation(summary = "List all SHE managers", description = "Get all SHE managers as list")
     public ResponseEntity<ApiResponse<List<EhsManagerResponse>>> findAllList() {
         List<EhsManagerResponse> managers = ehsManagerService.findAllList();
         return ResponseEntity.ok(ApiResponse.success(managers));
     }
 
     @GetMapping("/category/{category}")
-    @Operation(summary = "Find by category", description = "Get EHS managers by category")
+    @Operation(summary = "Find by category", description = "Get SHE managers by category")
     public ResponseEntity<ApiResponse<List<EhsManagerResponse>>> findByCategory(@PathVariable String category) {
         List<EhsManagerResponse> managers = ehsManagerService.findByCategory(category);
         return ResponseEntity.ok(ApiResponse.success(managers));
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get EHS manager by ID", description = "Get a specific EHS manager by ID")
+    @Operation(summary = "Get SHE manager by ID", description = "Get a specific SHE manager by ID")
     public ResponseEntity<ApiResponse<EhsManagerResponse>> findById(@PathVariable Long id) {
         EhsManagerResponse manager = ehsManagerService.findById(id);
         return ResponseEntity.ok(ApiResponse.success(manager));
     }
 
     @PostMapping
-    @Operation(summary = "Create EHS manager", description = "Create a new EHS manager")
+    @Operation(summary = "Create SHE manager", description = "Create a new SHE manager")
     public ResponseEntity<ApiResponse<EhsManagerResponse>> create(
             @Valid @RequestBody EhsManagerRequest request, Authentication authentication) {
         IdmUser u = authentication != null ? idmMapper.findByUid(authentication.getName()) : null;
         EhsManagerResponse manager = ehsManagerService.create(request, u);
-        return ResponseEntity.ok(ApiResponse.success("EHS manager created successfully", manager));
+        return ResponseEntity.ok(ApiResponse.success("SHE manager created successfully", manager));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update EHS manager", description = "Update an existing EHS manager")
+    @Operation(summary = "Update SHE manager", description = "Update an existing SHE manager")
     public ResponseEntity<ApiResponse<EhsManagerResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody EhsManagerRequest request) {
         EhsManagerResponse manager = ehsManagerService.update(id, request);
-        return ResponseEntity.ok(ApiResponse.success("EHS manager updated successfully", manager));
+        return ResponseEntity.ok(ApiResponse.success("SHE manager updated successfully", manager));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete EHS manager", description = "Soft delete an EHS manager")
+    @Operation(summary = "Delete SHE manager", description = "Soft delete an SHE manager")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         ehsManagerService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success("EHS manager deleted successfully", null));
+        return ResponseEntity.ok(ApiResponse.success("SHE manager deleted successfully", null));
     }
 }

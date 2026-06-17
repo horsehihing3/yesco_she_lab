@@ -41,7 +41,7 @@ const TrainingStatusTab: React.FC = () => {
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)'
+  const MENU = 'SHE 경영 › 교육·훈련 › 교육현황 (관리자)'
   const isAdmin = isSystemAdmin(user)
   const getRoles = (record?: { applicantName?: string | null }): string[] => {
     const roles: string[] = ['guest']

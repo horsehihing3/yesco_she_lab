@@ -50,7 +50,7 @@ public class EhsManagerService {
     public EhsManagerResponse findById(Long id) {
         EhsManager manager = ehsManagerMapper.findById(id);
         if (manager == null) {
-            throw new ResourceNotFoundException("EHS Manager not found with id: " + id);
+            throw new ResourceNotFoundException("SHE Manager not found with id: " + id);
         }
         return EhsManagerResponse.from(manager);
     }
@@ -87,7 +87,7 @@ public class EhsManagerService {
     public EhsManagerResponse update(Long id, EhsManagerRequest request) {
         EhsManager manager = ehsManagerMapper.findById(id);
         if (manager == null) {
-            throw new ResourceNotFoundException("EHS Manager not found with id: " + id);
+            throw new ResourceNotFoundException("SHE Manager not found with id: " + id);
         }
 
         manager.setRoleCategory(request.getRoleCategory());
@@ -116,7 +116,7 @@ public class EhsManagerService {
     public void delete(Long id) {
         EhsManager manager = ehsManagerMapper.findById(id);
         if (manager == null) {
-            throw new ResourceNotFoundException("EHS Manager not found with id: " + id);
+            throw new ResourceNotFoundException("SHE Manager not found with id: " + id);
         }
         manager.setActive(false);
         ehsManagerMapper.update(manager);

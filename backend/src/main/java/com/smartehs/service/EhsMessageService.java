@@ -139,7 +139,7 @@ public class EhsMessageService {
                 .build();
 
         messageMapper.insert(message);
-        log.info("Created EHS message: {}", message.getMessageId());
+        log.info("Created SHE message: {}", message.getMessageId());
         return EhsMessageResponse.from(message);
     }
 
@@ -208,7 +208,7 @@ public class EhsMessageService {
         }
 
         messageMapper.update(message);
-        log.info("Updated EHS message: {}", message.getMessageId());
+        log.info("Updated SHE message: {}", message.getMessageId());
         return EhsMessageResponse.from(message);
     }
 
@@ -219,7 +219,7 @@ public class EhsMessageService {
             throw new ResourceNotFoundException("EhsMessage", "id", id);
         }
         messageMapper.delete(id);
-        log.info("Deleted EHS message with id: {}", id);
+        log.info("Deleted SHE message with id: {}", id);
     }
 
     @Transactional

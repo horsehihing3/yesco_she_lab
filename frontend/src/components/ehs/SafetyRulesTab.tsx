@@ -270,7 +270,7 @@ const SafetyRulesTab: React.FC = () => {
   const [pendingFilePreview, setPendingFilePreview] = useState<string | null>(null)
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 문서'
+  const MENU = 'SHE 경영 › 커뮤니케이션 › SHE 문서'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const canNew = canSee(MENU, 'LIST', 'New (파일 업로드)', myRoles)
 

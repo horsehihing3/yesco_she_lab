@@ -62,7 +62,7 @@ const years = Array.from({ length: 5 }, (_, i) => currentYear - i)
 const quarterOptions = ['전체', '1분기', '2분기', '3분기', '4분기']
 
 const OshCommitteeTab: React.FC<{ menuPath?: string }> = ({
-  menuPath = 'EHS 경영 › 커뮤니케이션 › 산업안전보건 위원회',
+  menuPath = 'SHE 경영 › 커뮤니케이션 › 산업안전보건 위원회',
 }) => {
   const queryClient = useQueryClient()
   const { t } = useTranslation()

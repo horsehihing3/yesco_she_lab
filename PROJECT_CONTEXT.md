@@ -50,7 +50,7 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - **죽은 파일 27개 삭제**(오펀 컴포넌트 23 + 스텁페이지 4, `vite build` ✓). 완성 기능 페이지는 보존. `coord/DEAD_FILES_PENDING.md`.
 - **tsc 364→95**: vite-env(−12)·NumberField string허용(−39)·노트북 미사용(−156)·LEAD예약(−9)·죽은파일(−23)·알림콜백오버로드(−12, +깨진 삭제확인 버그fix)·Audit/NearMiss 타입(−18).
 - **`docs/PRE_YESCO_READINESS.md` 신규**: Yesco 전환 우선순위·seam맵·현황.
-- 서버: 백엔드 7501 / 프론트 7500 가동중(세션종료 시 정리 가능). 브랜치 `main`=`yesco-dev`=`8b804a3`, 원격 동기화.
+- 서버: 백엔드 7601 / 프론트 7600 가동중(세션종료 시 정리 가능). 브랜치 `main`=`yesco-dev`=`8b804a3`, 원격 동기화.
 
 
 ### 🟢 진행 중 — 승인 로직 표준화 (2026-06-13 세션 11, 예스코 투입 D-2)
@@ -420,8 +420,8 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 |------|------|
 | OS / IDE | Windows · VS Code + Claude Code |
 | 프로젝트 경로 | `C:\claude\smart_ehs_com4in-main` |
-| Backend 포트 | 7501 (context-path: /api) |
-| Frontend 포트 | 7500 |
+| Backend 포트 | 7601 (context-path: /api) |
+| Frontend 포트 | 7600 |
 | DB Host | 211.171.152.242:51084 |
 | DB Name | SmartEHS_com4in / User: com4in |
 | Flyway 다음 버전 | V192__ |

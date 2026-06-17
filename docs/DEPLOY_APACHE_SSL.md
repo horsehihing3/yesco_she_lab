@@ -1,13 +1,13 @@
 # 운영 서버 배포 가이드 — Apache + Wildcard SSL
 
 > 대상: `ehs.com4in.com` 운영 서버 (Windows + Apache HTTP Server)
-> 구조: **Apache가 정적 React build 서빙 + `/api`만 Spring Boot(7501)로 리버스 프록시**
+> 구조: **Apache가 정적 React build 서빙 + `/api`만 Spring Boot(7601)로 리버스 프록시**
 > ※ Apache+Tomcat AJP(mod_jk) 구조 아님 — Spring Boot 내장 Tomcat을 mod_proxy로 프록시한다.
 
 ```
 사용자 ─HTTPS(443)─▶ Apache
                       ├─ /          → 정적 React build (DocumentRoot)
-                      └─ /api/...   → reverse proxy → http://localhost:7501
+                      └─ /api/...   → reverse proxy → http://localhost:7601
 HTTP(80) → HTTPS 리다이렉트
 ```
 
@@ -18,7 +18,7 @@ HTTP(80) → HTTPS 리다이렉트
 - [ ] 와일드카드 인증서 `*.com4in.com` : `.pfx` 또는 (`server.crt` + `private.key` + `ca_bundle.crt`)
 - [ ] DNS A레코드: `ehs.com4in.com` → 운영 서버 공인 IP
 - [ ] 방화벽: 80 / 443 인바운드 오픈
-- [ ] 운영 서버에서 Spring Boot(7501) 실행 중
+- [ ] 운영 서버에서 Spring Boot(7601) 실행 중
 
 ---
 
@@ -118,8 +118,8 @@ Listen 443
 
     # /api → Spring Boot(내장 Tomcat)
     ProxyPreserveHost On
-    ProxyPass        /api  http://localhost:7501/api
-    ProxyPassReverse /api  http://localhost:7501/api
+    ProxyPass        /api  http://localhost:7601/api
+    ProxyPassReverse /api  http://localhost:7601/api
 
     # SPA 라우팅: 실제 파일/디렉터리 아니고 /api 도 아니면 index.html
     <Directory "D:/Apache24/htdocs/ehs">

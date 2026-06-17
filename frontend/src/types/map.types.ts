@@ -1,4 +1,4 @@
-// Map related types for Smart EHS Dashboard
+// Map related types for Smart SHE Dashboard
 
 export interface Factory {
   id: string

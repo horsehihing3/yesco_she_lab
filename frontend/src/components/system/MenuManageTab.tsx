@@ -19,8 +19,8 @@ import { fetchMenuRules, saveMenuRules, MenuRuleItem } from '../../api/menuRuleA
 // ── 역할 목록 ────────────────────────────────────────────────────────────────
 const ROLES = [
   { value: 'SYSTEM_ADMIN',         label: '시스템 관리자',              group: 'system' },
-  { value: 'EHS_ADMIN',            label: '회사 EHS 담당자',            group: 'system' },
-  { value: 'TEAM_ADMIN',           label: '팀 EHS 담당자',              group: 'system' },
+  { value: 'EHS_ADMIN',            label: '회사 SHE 담당자',            group: 'system' },
+  { value: 'TEAM_ADMIN',           label: '팀 SHE 담당자',              group: 'system' },
   { value: 'TEAM_MEMBER',          label: '팀 구성원',                  group: 'system' },
   { value: 'RISK_ASSESS_ADMIN',    label: '위험성 평가 관리자',          group: 'safety' },
   { value: 'NEAR_MISS_ADMIN',      label: '사고/아차사고 관리자',        group: 'safety' },
@@ -59,13 +59,13 @@ const MENU_TREE: MenuNode[] = [
     { key: 'nav.mapDashboard',      label: '지도형 대시보드' },
     { key: 'nav.generalDashboard',  label: '일반 대시보드' },
   ]},
-  { key: 'nav.ehs', label: 'EHS 경영', children: [
+  { key: 'nav.ehs', label: 'SHE 경영', children: [
     { key: 'nav.ehsCommunication', label: '커뮤니케이션', children: [
-      { key: 'nav.ehsDocument',     label: 'EHS 문서' },
-      { key: 'nav.ehsPlan',         label: 'EHS Plan' },
-      { key: 'nav.ehsOfficer',      label: 'EHS 직책자 명단' },
-      { key: 'nav.ehsMessage',      label: 'EHS 메시지' },
-      { key: 'nav.ehsAlert',        label: 'EHS 알림' },
+      { key: 'nav.ehsDocument',     label: 'SHE 문서' },
+      { key: 'nav.ehsPlan',         label: 'SHE Plan' },
+      { key: 'nav.ehsOfficer',      label: 'SHE 직책자 명단' },
+      { key: 'nav.ehsMessage',      label: 'SHE 메시지' },
+      { key: 'nav.ehsAlert',        label: 'SHE 알림' },
       { key: 'nav.ehsOshCommittee', label: '산업안전보건 위원회' },
       { key: 'nav.ehsEmergency',    label: '긴급 메일/문자 발송' },
       { key: 'nav.ehsQna',          label: 'Q&A' },
@@ -101,7 +101,7 @@ const MENU_TREE: MenuNode[] = [
       { key: 'lc.tabs.plan',      label: '법규 대응 계획' },
       { key: 'lc.tabs.execution', label: '법규 대응 실시' },
     ]},
-    { key: 'nav.ehsBudget', label: 'EHS 예산', children: [
+    { key: 'nav.ehsBudget', label: 'SHE 예산', children: [
       { key: 'budget.tab.dashboard', label: '대시보드' },
       { key: 'budget.tab.plan',      label: '예산수립' },
       { key: 'budget.tab.expense',   label: '실예산 사용입력' },
@@ -150,7 +150,7 @@ const MENU_TREE: MenuNode[] = [
     { key: 'nav.partnerRiskAssessment', label: '협력 업체 위험성 평가' },
     { key: 'nav.partnerPermit',         label: '협력 업체 작업 허가' },
     { key: 'nav.partnerEval',           label: '협력 업체 평가' },
-    { key: 'nav.partnerOshCommittee',   label: 'EHS 협의체' },
+    { key: 'nav.partnerOshCommittee',   label: 'SHE 협의체' },
     { key: 'nav.partnerRegistration',   label: '협력 업체 등록' },
   ]},
   { key: 'nav.healthManage', label: '보건 관리', children: [

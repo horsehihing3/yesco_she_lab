@@ -359,7 +359,7 @@ const VWorldMap: React.FC<VWorldMapProps> = ({ onFactorySelect, onFactoryDoubleC
               {factory.ehsStatus === 'alarm' && (
                 <Box sx={{ bgcolor: '#fff3e0', color: '#e65100', px: 1.5, py: 0.5, borderRadius: 1, fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <WarningAmberIcon sx={{ fontSize: '0.9rem' }} />
-                  EHS
+                  SHE
                 </Box>
               )}
               {!hasFactoryAlarm(factory) && (

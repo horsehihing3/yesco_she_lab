@@ -121,7 +121,7 @@ public class EhsAlertService {
                 .build();
 
         alertMapper.insert(alert);
-        log.info("Created EHS alert: {}", alert.getAlertId());
+        log.info("Created SHE alert: {}", alert.getAlertId());
         return EhsAlertResponse.from(alert);
     }
 
@@ -181,7 +181,7 @@ public class EhsAlertService {
         }
 
         alertMapper.update(alert);
-        log.info("Updated EHS alert: {}", alert.getAlertId());
+        log.info("Updated SHE alert: {}", alert.getAlertId());
         return EhsAlertResponse.from(alert);
     }
 
@@ -192,7 +192,7 @@ public class EhsAlertService {
             throw new ResourceNotFoundException("EhsAlert", "id", id);
         }
         alertMapper.delete(id);
-        log.info("Deleted EHS alert with id: {}", id);
+        log.info("Deleted SHE alert with id: {}", id);
     }
 
     @Transactional

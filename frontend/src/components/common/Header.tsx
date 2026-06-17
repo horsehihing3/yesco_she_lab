@@ -115,7 +115,7 @@ const Header: React.FC = () => {
             color="inherit"
             onClick={() => {
               const host = window.location.hostname
-              window.open(`https://${host}:7502`, '_blank')
+              window.open(`https://${host}:7602`, '_blank')
             }}
             size="small"
           >

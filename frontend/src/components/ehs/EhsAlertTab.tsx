@@ -114,7 +114,7 @@ const EhsAlertTab: React.FC = () => {
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
 
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 알림'
+  const MENU = 'SHE 경영 › 커뮤니케이션 › SHE 알림'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const canNew  = canSee(MENU, 'LIST', 'New', myRoles)
   const getDetailRoles = (item: { authorName?: string } | null | undefined): string[] =>
@@ -327,7 +327,7 @@ const EhsAlertTab: React.FC = () => {
     window.URL.revokeObjectURL(url)
   }
 
-  // DEV ONLY — 비어있는 항목을 EHS 알림 더미데이터로 채움 (입력값 보존)
+  // DEV ONLY — 비어있는 항목을 SHE 알림 더미데이터로 채움 (입력값 보존)
   const fillTestData = () => {
     setFormData(prev => ({
       ...prev,

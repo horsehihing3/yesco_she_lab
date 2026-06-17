@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/ehs-kpi-plan")
 @RequiredArgsConstructor
-@Tag(name = "EHS KPI Plan", description = "EHS KPI 계획 관리")
+@Tag(name = "SHE KPI Plan", description = "SHE KPI 계획 관리")
 public class EhsKpiPlanController {
 
     private final EhsKpiPlanService ehsKpiPlanService;

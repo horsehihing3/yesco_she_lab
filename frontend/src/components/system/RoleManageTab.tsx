@@ -88,7 +88,7 @@ const ROLES = [
   { value: 'AIR_WATER_ADMIN', labelKey: 'role.airWaterAdmin', group: 'env' },
   { value: 'CARBON_ADMIN', labelKey: 'role.carbonAdmin', group: 'env' },
   { value: 'COMPLIANCE_ADMIN', labelKey: 'role.complianceAdmin', group: 'env' },
-  // EHS 경영
+  // SHE 경영
   { value: 'QNA_ADMIN', labelKey: 'role.qnaAdmin', group: 'ehs' },
 ]
 

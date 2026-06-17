@@ -14,11 +14,11 @@
 |------|------|
 | 저장소 | `https://github.com/jiwon2ahn/smart_ehs_com4in` |
 | 로컬 경로 | `C:\claude\smart_ehs_main` |
-| Backend | Spring Boot 3.2.2 / Java 17 / MyBatis / `http://localhost:7501/api` |
-| Frontend | React 18 + Vite + TypeScript + MUI / `http://localhost:7500` |
+| Backend | Spring Boot 3.2.2 / Java 17 / MyBatis / `http://localhost:7601/api` |
+| Frontend | React 18 + Vite + TypeScript + MUI / `http://localhost:7600` |
 | DB | MS SQL Server `211.171.152.242:51084` / `SmartEHS_com4in` |
 | 역할 | `SYSTEM_ADMIN` / `EHS_ADMIN` / `TEAM_MEMBER` 외 26개 역할 |
-| Swagger | `http://localhost:7501/api/swagger-ui.html` |
+| Swagger | `http://localhost:7601/api/swagger-ui.html` |
 
 ---
 
@@ -40,7 +40,7 @@ npm run dev
 ## 아키텍처
 
 ```
-React (7500) → REST API → Spring Boot (7501) → MyBatis → MSSQL
+React (7600) → REST API → Spring Boot (7601) → MyBatis → MSSQL
 
 backend/src/main/java/com/smartehs/
 ├── controller/   # REST API (100개+)

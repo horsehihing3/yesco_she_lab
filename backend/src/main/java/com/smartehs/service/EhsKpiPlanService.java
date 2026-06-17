@@ -80,7 +80,7 @@ public class EhsKpiPlanService {
                 .build();
 
         ehsKpiPlanMapper.insert(entity);
-        log.info("Created EHS KPI Plan: {}", entity.getId());
+        log.info("Created SHE KPI Plan: {}", entity.getId());
 
         return findById(entity.getId());
     }
@@ -109,7 +109,7 @@ public class EhsKpiPlanService {
         entity.setNotes(request.getNotes());
 
         ehsKpiPlanMapper.update(entity);
-        log.info("Updated EHS KPI Plan: {}", id);
+        log.info("Updated SHE KPI Plan: {}", id);
 
         return findById(id);
     }
@@ -121,7 +121,7 @@ public class EhsKpiPlanService {
             throw new ResourceNotFoundException("EhsKpiPlan", "id", id);
         }
         ehsKpiPlanMapper.softDelete(id);
-        log.info("Soft deleted EHS KPI Plan with id: {}", id);
+        log.info("Soft deleted SHE KPI Plan with id: {}", id);
     }
 
     private LocalDate parseDate(String dateStr) {

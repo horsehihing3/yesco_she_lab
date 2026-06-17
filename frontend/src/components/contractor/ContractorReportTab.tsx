@@ -230,7 +230,7 @@ const ContractorReportTab: React.FC = () => {
 
       <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
         <Typography variant="body2" color="text.secondary">
-          {t('audit.report.footer', '본 보고서는 EHS 시스템에서 자동 생성되었습니다.')}
+          {t('audit.report.footer', '본 보고서는 SHE 시스템에서 자동 생성되었습니다.')}
         </Typography>
       </Box>
     </Paper>

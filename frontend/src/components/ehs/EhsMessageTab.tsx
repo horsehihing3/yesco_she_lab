@@ -1,4 +1,4 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatUserName } from '../../utils/userDisplay'
 import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm, Controller } from 'react-hook-form'
@@ -113,7 +113,7 @@ const EhsMessageTab: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [viewMessage, setViewMessage] = useState<EhsMessage | null>(null)
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 커뮤니케이션 › EHS 메시지'
+  const MENU = 'SHE 경영 › 커뮤니케이션 › SHE 메시지'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (user?.role ? [user.role] : []))]
   const canNew  = canSee(MENU, 'LIST', 'New', myRoles)
   const getDetailRoles = (item: { authorName?: string } | null): string[] =>
@@ -273,10 +273,10 @@ const EhsMessageTab: React.FC = () => {
     setViewMode('create')
   }
 
-  // DEV ONLY — 비어있는 항목을 EHS 메시지 더미데이터로 채움 (입력값 보존)
+  // DEV ONLY — 비어있는 항목을 SHE 메시지 더미데이터로 채움 (입력값 보존)
   const fillTestData = () => {
     const v = getValues()
-    if (!v.title) setValue('title', '[EHS 공지] 11월 안전보건 점검 결과 및 협조 요청')
+    if (!v.title) setValue('title', '[SHE 공지] 11월 안전보건 점검 결과 및 협조 요청')
     if (!v.subCategory && targets[0]) setValue('subCategory', targets[0])   // 대상
     if (!v.category && categories[0]) setValue('category', categories[0])   // 카테고리
     if (!v.authorRole && roles[0]) setValue('authorRole', roles[0])         // 직책
@@ -752,7 +752,7 @@ const EhsMessageTab: React.FC = () => {
           </Box>
         </Box>
 
-        {/* 댓글 — EHS 알림과 동일한 댓글/대댓글 구조 */}
+        {/* 댓글 — SHE 알림과 동일한 댓글/대댓글 구조 */}
         <EntityCommentsSection entityId={viewMessage.id} basePath="/messages" queryKey="ehsMessageComments" />
 
         <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, gap: 1 }}>

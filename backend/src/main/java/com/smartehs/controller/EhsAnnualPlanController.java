@@ -24,14 +24,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/ehs-plans")
 @RequiredArgsConstructor
-@Tag(name = "EHS Annual Plan", description = "EHS 연간 계획 관리 API")
+@Tag(name = "SHE Annual Plan", description = "SHE 연간 계획 관리 API")
 public class EhsAnnualPlanController {
 
     private final EhsAnnualPlanService ehsAnnualPlanService;
     private final IdmMapper idmMapper;
 
     @GetMapping
-    @Operation(summary = "List annual plans", description = "Get all EHS annual plans with optional year filter and pagination")
+    @Operation(summary = "List annual plans", description = "Get all SHE annual plans with optional year filter and pagination")
     public ResponseEntity<ApiResponse<Page<EhsAnnualPlanResponse>>> findAll(
             @RequestParam(required = false) Integer year,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -45,14 +45,14 @@ public class EhsAnnualPlanController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get plan by ID", description = "Get a specific EHS annual plan by ID")
+    @Operation(summary = "Get plan by ID", description = "Get a specific SHE annual plan by ID")
     public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> findById(@PathVariable Long id) {
         EhsAnnualPlanResponse plan = ehsAnnualPlanService.findById(id);
         return ResponseEntity.ok(ApiResponse.success(plan));
     }
 
     @PostMapping
-    @Operation(summary = "Create plan", description = "Create a new EHS annual plan")
+    @Operation(summary = "Create plan", description = "Create a new SHE annual plan")
     public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> create(
             @Valid @RequestBody EhsAnnualPlanRequest request,
             Authentication authentication) {
@@ -70,7 +70,7 @@ public class EhsAnnualPlanController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update plan", description = "Update an existing EHS annual plan")
+    @Operation(summary = "Update plan", description = "Update an existing SHE annual plan")
     public ResponseEntity<ApiResponse<EhsAnnualPlanResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody EhsAnnualPlanRequest request,
@@ -89,7 +89,7 @@ public class EhsAnnualPlanController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete plan", description = "Delete an EHS annual plan (작성자 또는 admin 만 가능)")
+    @Operation(summary = "Delete plan", description = "Delete an SHE annual plan (작성자 또는 admin 만 가능)")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id, Authentication authentication) {
         String username = authentication != null ? authentication.getName() : "system";
         ehsAnnualPlanService.delete(id, username);

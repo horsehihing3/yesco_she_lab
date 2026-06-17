@@ -341,7 +341,7 @@ const AnnualPlanTab: React.FC = () => {
   // 권한 헬퍼: 계획 승인자 본인 또는 admin 만 계획 승인/반려 가능
   const isAdmin = isSystemAdmin(authUser)
   const { canSee } = useButtonRules()
-  const MENU_ANNUAL = 'EHS 경영 › KPI목표 › 연간계획'
+  const MENU_ANNUAL = 'SHE 경영 › KPI목표 › 연간계획'
   const getRoles = (d: { createdByUserId?: number|null; createdByName?: string|null; planApproverUserId?: number|null; planApproverName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles: string[] = ['guest']
     if (isAdmin) roles.push('superAdmin')
@@ -368,7 +368,7 @@ const AnnualPlanTab: React.FC = () => {
   const fillTestData = () => {
     setFormData(f => ({
       ...f,
-      planName: f.planName || `${f.planYear}년 EHS 연간 안전보건계획`,
+      planName: f.planName || `${f.planYear}년 SHE 연간 안전보건계획`,
       description: f.description || '산업재해 예방 및 안전보건경영시스템 강화를 위한 연간 추진 계획',
       remarks: f.remarks || '정기 연간계획 (테스트 데이터)',
     }))

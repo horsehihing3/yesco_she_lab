@@ -133,7 +133,7 @@ public class EhsPlanService {
                 .build();
 
         planMapper.insert(plan);
-        log.info("Created EHS plan: {}", plan.getId());
+        log.info("Created SHE plan: {}", plan.getId());
         return EhsPlanResponse.fromLocalized(plan);
     }
 
@@ -193,7 +193,7 @@ public class EhsPlanService {
         plan.setRecipients(request.getRecipients());
 
         planMapper.update(plan);
-        log.info("Updated EHS plan: {}", plan.getId());
+        log.info("Updated SHE plan: {}", plan.getId());
         return EhsPlanResponse.fromLocalized(plan);
     }
 
@@ -204,6 +204,6 @@ public class EhsPlanService {
             throw new ResourceNotFoundException("EhsPlan", "id", id);
         }
         planMapper.delete(id);
-        log.info("Deleted EHS plan with id: {}", id);
+        log.info("Deleted SHE plan with id: {}", id);
     }
 }

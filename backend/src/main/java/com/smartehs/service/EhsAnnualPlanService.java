@@ -83,7 +83,7 @@ public class EhsAnnualPlanService {
 
         ehsAnnualPlanMapper.insert(plan);
         saveGoals(plan.getId(), request.getGoals());
-        log.info("Created EHS annual plan: {}", plan.getId());
+        log.info("Created SHE annual plan: {}", plan.getId());
         return findById(plan.getId());
     }
 
@@ -106,7 +106,7 @@ public class EhsAnnualPlanService {
 
         ehsAnnualPlanMapper.update(plan);
         saveGoals(id, request.getGoals());
-        log.info("Updated EHS annual plan: {}", id);
+        log.info("Updated SHE annual plan: {}", id);
         return findById(id);
     }
 
@@ -171,7 +171,7 @@ public class EhsAnnualPlanService {
         }
         ehsAnnualPlanGoalMapper.deleteByPlanId(id);
         ehsAnnualPlanMapper.delete(id);
-        log.info("Deleted EHS annual plan with id: {} by {}", id, username);
+        log.info("Deleted SHE annual plan with id: {} by {}", id, username);
     }
 
     @Transactional(readOnly = true)

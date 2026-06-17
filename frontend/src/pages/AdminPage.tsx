@@ -208,7 +208,7 @@ const AdminPage: React.FC = () => {
     ]
   }, [statistics?.riskAssessment, t])
 
-  // EHS Message는 별도 API가 필요하므로 임시로 총 건수 기반 생성
+  // SHE Message는 별도 API가 필요하므로 임시로 총 건수 기반 생성
   const ehsMessageData = useMemo(() => {
     // TODO: 실제 열람 통계 API 연동 시 교체
     const total = 100 // 기본값
@@ -425,7 +425,7 @@ const AdminPage: React.FC = () => {
           )}
         </TabPanel>
 
-        {/* EHS Status Tab - Charts */}
+        {/* SHE Status Tab - Charts */}
         <TabPanel value={tabValue} index={1}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Typography variant="h6">{t('admin.ehsStatistics')}</Typography>

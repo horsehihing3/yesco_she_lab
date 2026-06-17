@@ -15,7 +15,7 @@ import type { ApiResponse } from '../../types/common.types'
 import LoadingOverlay from './LoadingOverlay'
 import { formatDateTime } from '../../utils/dateDefaults'
 
-// EHS 알림 댓글 컴포넌트(EhsAlertCommentsSection) 를 다른 엔티티(EHS 메시지 / Q&A 등) 에 재사용하기 위해
+// SHE 알림 댓글 컴포넌트(EhsAlertCommentsSection) 를 다른 엔티티(SHE 메시지 / Q&A 등) 에 재사용하기 위해
 // 엔티티별 기본 URL 만 prop 으로 받아 동작하는 범용 컴포넌트.
 // 백엔드 컨벤션: {basePath}/{id}/comments, {basePath}/comments/{commentId}
 

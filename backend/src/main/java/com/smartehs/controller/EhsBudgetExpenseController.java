@@ -20,13 +20,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/ehs-budget-expenses")
 @RequiredArgsConstructor
-@Tag(name = "EHS Budget Expense", description = "EHS 예산 실지출 관리 API")
+@Tag(name = "SHE Budget Expense", description = "SHE 예산 실지출 관리 API")
 public class EhsBudgetExpenseController {
 
     private final EhsBudgetExpenseService ehsBudgetExpenseService;
 
     @GetMapping
-    @Operation(summary = "List budget expenses", description = "Get all EHS budget expenses with optional year and category filters and pagination")
+    @Operation(summary = "List budget expenses", description = "Get all SHE budget expenses with optional year and category filters and pagination")
     public ResponseEntity<ApiResponse<Page<EhsBudgetExpenseResponse>>> findAll(
             @RequestParam(required = false, defaultValue = "2026") Integer year,
             @RequestParam(required = false) String category,
@@ -36,21 +36,21 @@ public class EhsBudgetExpenseController {
     }
 
     @GetMapping("/by-year/{year}")
-    @Operation(summary = "List all expenses for year", description = "Get all EHS budget expenses for a specific year (no pagination, for compare view)")
+    @Operation(summary = "List all expenses for year", description = "Get all SHE budget expenses for a specific year (no pagination, for compare view)")
     public ResponseEntity<ApiResponse<List<EhsBudgetExpenseResponse>>> findByYear(@PathVariable Integer year) {
         List<EhsBudgetExpenseResponse> expenses = ehsBudgetExpenseService.findByYear(year);
         return ResponseEntity.ok(ApiResponse.success(expenses));
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get budget expense by ID", description = "Get a specific EHS budget expense by ID")
+    @Operation(summary = "Get budget expense by ID", description = "Get a specific SHE budget expense by ID")
     public ResponseEntity<ApiResponse<EhsBudgetExpenseResponse>> findById(@PathVariable Long id) {
         EhsBudgetExpenseResponse expense = ehsBudgetExpenseService.findById(id);
         return ResponseEntity.ok(ApiResponse.success(expense));
     }
 
     @PostMapping
-    @Operation(summary = "Create budget expense", description = "Create a new EHS budget expense")
+    @Operation(summary = "Create budget expense", description = "Create a new SHE budget expense")
     public ResponseEntity<ApiResponse<EhsBudgetExpenseResponse>> create(
             @Valid @RequestBody EhsBudgetExpenseRequest request) {
         EhsBudgetExpenseResponse expense = ehsBudgetExpenseService.create(request);
@@ -58,7 +58,7 @@ public class EhsBudgetExpenseController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update budget expense", description = "Update an existing EHS budget expense")
+    @Operation(summary = "Update budget expense", description = "Update an existing SHE budget expense")
     public ResponseEntity<ApiResponse<EhsBudgetExpenseResponse>> update(
             @PathVariable Long id,
             @Valid @RequestBody EhsBudgetExpenseRequest request) {
@@ -67,7 +67,7 @@ public class EhsBudgetExpenseController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete budget expense", description = "Delete an EHS budget expense")
+    @Operation(summary = "Delete budget expense", description = "Delete an SHE budget expense")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         ehsBudgetExpenseService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("Budget expense deleted successfully", null));

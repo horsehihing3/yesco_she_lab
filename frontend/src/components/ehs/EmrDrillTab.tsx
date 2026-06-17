@@ -52,7 +52,7 @@ const EmrDrillTab: React.FC = () => {
   const { user: authUser } = useAuth()
   const isAdmin = isSystemAdmin(authUser)
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 비상 훈련 › 비상 훈련'
+  const MENU = 'SHE 경영 › 비상 훈련 › 비상 훈련'
   const myRoles: string[] = ['guest', ...(authUser?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (authUser?.role ? [authUser.role] : []))]
   const getDrillRoles = (plan: { createdByUserId?: number|null; createdByName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null } | null | undefined): string[] => {
     const roles = [...myRoles]

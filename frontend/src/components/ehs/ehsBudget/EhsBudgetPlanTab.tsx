@@ -213,7 +213,7 @@ const EhsBudgetPlanTab: React.FC = () => {
     }
   }
 
-  // DEV ONLY — 비어있는 항목을 EHS 예산 계획 더미데이터로 채움 (입력값 보존)
+  // DEV ONLY — 비어있는 항목을 SHE 예산 계획 더미데이터로 채움 (입력값 보존)
   const fillTestData = () => setFormData(prev => ({
     ...prev,
     category: prev.category || (categoryCodes[0]?.code ?? prev.category),

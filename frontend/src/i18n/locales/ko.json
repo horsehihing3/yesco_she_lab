@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "no": "번호",
     "itemSuffix": "개",
@@ -169,7 +169,7 @@
     "dashboard": "Dashboard",
     "mapDashboard": "지도형 대시보드",
     "generalDashboard": "일반 대시보드",
-    "ehs": "EHS 경영",
+    "ehs": "SHE 경영",
     "ehsCommunication": "커뮤니케이션",
     "ehsKpi": "계획, KPI, 목표",
     "planKpiGoal": "KPI목표",
@@ -177,16 +177,16 @@
     "occupationalDisease": "직업병 관리",
     "occupationalDiseaseMgmt": "직업병 관리",
     "diseasePrevention": "질병 예방",
-    "ehsAlerts": "EHS 알림",
-    "ehsMessages": "EHS 메시지",
-    "ehsPlans": "EHS 계획",
+    "ehsAlerts": "SHE 알림",
+    "ehsMessages": "SHE 메시지",
+    "ehsPlans": "SHE 계획",
     "nearMiss": "사고/아차사고 관리",
     "safetyWork": "안전작업 관리",
     "processActivityWork": "공정/활동별 작업내용",
     "safetyHazardInfo": "안전보건상 위험정보",
     "safetyAccidentInfo": "보건안전 재해발생 정보",
     "riskAssessment": "위험성 평가",
-    "oshCommittee": "EHS 협의체",
+    "oshCommittee": "SHE 협의체",
     "healthCheckup": "보건/건강",
     "healthCheckupAdmin": "관리자",
     "healthCheckupMy": "사용자",
@@ -231,7 +231,7 @@
     "partnerRiskAssessment": "협력 업체 위험성 평가",
     "partnerPermit": "협력 업체 작업 허가",
     "partnerEval": "협력 업체 평가",
-    "partnerOshCommittee": "EHS 협의체",
+    "partnerOshCommittee": "SHE 협의체",
     "partnerRegistration": "협력 업체 등록",
     "incidentResponse": "사고 대응 관리",
     "permitLifecycle": "인허가 관리",
@@ -253,13 +253,13 @@
     "checklist": "체크리스트 관리",
     "checklistTemplate": "체크리스트 서식 관리",
     "checklistResult": "체크리스트 항목 관리",
-    "ehsDocument": "EHS 문서",
-    "ehsPlan": "EHS Plan",
-    "ehsOfficer": "EHS 직책자 명단",
-    "ehsMessage": "EHS 메시지",
-    "ehsAlert": "EHS 알림",
+    "ehsDocument": "SHE 문서",
+    "ehsPlan": "SHE Plan",
+    "ehsOfficer": "SHE 직책자 명단",
+    "ehsMessage": "SHE 메시지",
+    "ehsAlert": "SHE 알림",
     "ehsQna": "Q&A",
-    "ehsBudget": "EHS 예산",
+    "ehsBudget": "SHE 예산",
     "ehsOshCommittee": "산업안전보건 위원회",
     "ehsEmergency": "긴급 메일/문자 발송",
     "workplaceMeasurement": "작업환경측정",
@@ -288,7 +288,7 @@
     "riskAssessments": "위험성평가",
     "recentAlerts": "최근 알림",
     "recentNearMiss": "최근 사고/아차사고",
-    "ehsStatus": "EHS 상태",
+    "ehsStatus": "SHE 상태",
     "emergencyExit": "비상구 나침반",
     "warning": "경고",
     "noMessages": "메시지가 없습니다"
@@ -330,9 +330,9 @@
     "planScheduled": "예정",
     "shareByEmail": "이메일로 공유하기",
     "selectRecipient": "수신자를 지정하세요",
-    "ehsMessage": "EHS 메시지",
-    "ehsAlert": "EHS 알림",
-    "ehsPlan": "EHS Plan",
+    "ehsMessage": "SHE 메시지",
+    "ehsAlert": "SHE 알림",
+    "ehsPlan": "SHE Plan",
     "monthlyIndicators": "이번 달\n지표",
     "realtimeAccident": "실시간 사고 현황",
     "safetyInspectionRate": "안전점검 이행률",
@@ -400,7 +400,7 @@
     "yescoMode": "레드 모드"
   },
   "ehsAlert": {
-    "title": "EHS 알림",
+    "title": "SHE 알림",
     "createNew": "새 알림",
     "editAlert": "알림 수정",
     "alertId": "알림 ID",
@@ -415,7 +415,7 @@
     "company": "회사"
   },
   "ehsMessage": {
-    "title": "EHS 메시지",
+    "title": "SHE 메시지",
     "createNew": "새 메시지",
     "editMessage": "메시지 수정",
     "messageId": "메시지 ID",
@@ -442,8 +442,8 @@
     "senders": {
       "ceo": "CEO",
       "coo": "COO",
-      "ehsDirector": "EHS총괄",
-      "ehsManager": "EHS담당"
+      "ehsDirector": "SHE총괄",
+      "ehsManager": "SHE담당"
     },
     "targets": {
       "all": "전체",
@@ -940,9 +940,9 @@
   "ehsPlan": {
     "registered": "계획이 등록되었습니다.",
     "modified": "계획이 수정되었습니다.",
-    "title": "EHS 계획",
-    "addPlan": "EHS Plan 추가",
-    "editPlan": "EHS Plan 수정",
+    "title": "SHE 계획",
+    "addPlan": "SHE Plan 추가",
+    "editPlan": "SHE Plan 수정",
     "today": "오늘",
     "category": "분류",
     "categorySchedule": "일정",
@@ -1049,12 +1049,12 @@
   },
   "ehs": {
     "safetyRules": "안전관리",
-    "ehsOfficerList": "EHS 직책자 명단",
-    "ehsMessage": "EHS 메시지",
-    "ehsAlert": "EHS 알림",
-    "oshCommittee": "EHS 협의체",
-    "ehsPlan": "EHS Plan",
-    "ehsOfficer": "EHS 담당자",
+    "ehsOfficerList": "SHE 직책자 명단",
+    "ehsMessage": "SHE 메시지",
+    "ehsAlert": "SHE 알림",
+    "oshCommittee": "SHE 협의체",
+    "ehsPlan": "SHE Plan",
+    "ehsOfficer": "SHE 담당자",
     "workerRepresentative": "근로자 위원",
     "complianceAdvisor": "Compliance Advisor"
   },
@@ -1122,12 +1122,12 @@
     "title": "관리자",
     "allUsers": "전체 사용자",
     "userManagement": "사용자 관리",
-    "ehsStatus": "EHS 현황",
+    "ehsStatus": "SHE 현황",
     "systemInfo": "시스템 정보",
     "searchPlaceholder": "이름, 이메일, 부서 검색",
     "loadUsersFailed": "사용자 목록을 불러오는데 실패했습니다.",
     "noUsers": "등록된 사용자가 없습니다.",
-    "ehsStatistics": "EHS 현황 통계",
+    "ehsStatistics": "SHE 현황 통계",
     "monthlyStatus": "월별 현황",
     "viewStatus": "열람 현황",
     "viewRate": "열람률:",
@@ -1887,8 +1887,8 @@
   },
   "role": {
     "systemAdmin": "Super Admin",
-    "ehsAdmin": "회사 EHS 담당자",
-    "teamAdmin": "팀 EHS 담당자",
+    "ehsAdmin": "회사 SHE 담당자",
+    "teamAdmin": "팀 SHE 담당자",
     "teamMember": "일반사용자",
     "riskAssessAdmin": "위험성 평가 관리자",
     "nearMissAdmin": "사고/아차사고 관리자",
@@ -2070,8 +2070,8 @@
       "pollutant": "오염물질",
       "measuredValue": "측정값",
       "standardValue": "기준치",
-      "reportFooter": "이상과 같이 통합 EHS 대기 배출 모니터링 결과를 보고합니다.",
-      "systemName": "EHS 통합 환경 관리 시스템",
+      "reportFooter": "이상과 같이 통합 SHE 대기 배출 모니터링 결과를 보고합니다.",
+      "systemName": "SHE 통합 환경 관리 시스템",
       "noNonCompliant": "부적합 내역이 없습니다."
     }
   },
@@ -2131,8 +2131,8 @@
       "exceedItem": "초과 항목",
       "measuredValue": "측정값",
       "standardValue": "기준치",
-      "reportFooter": "이상과 같이 통합 EHS 수질 모니터링 결과를 보고합니다.",
-      "systemName": "EHS 통합 환경 관리 시스템",
+      "reportFooter": "이상과 같이 통합 SHE 수질 모니터링 결과를 보고합니다.",
+      "systemName": "SHE 통합 환경 관리 시스템",
       "noExceedances": "기준 초과 내역이 없습니다."
     }
   },
@@ -3217,7 +3217,7 @@
       "noData": "레포트로 출력 가능한 감사가 없습니다.",
       "count": "건",
       "printPdf": "브라우저 인쇄 / PDF 저장",
-      "footer": "본 보고서는 EHS 시스템에서 자동 생성되었습니다."
+      "footer": "본 보고서는 SHE 시스템에서 자동 생성되었습니다."
     }
   },
   "qna": {
@@ -3399,7 +3399,7 @@
     "tabs": {
       "eval": "평가관리",
       "visitor": "방문자관리",
-      "council": "EHS 협의체"
+      "council": "SHE 협의체"
     }
   },
   "rm": {
@@ -3633,7 +3633,7 @@
     "alignment": "정렬"
   },
   "budget": {
-    "title": "EHS 예산 관리",
+    "title": "SHE 예산 관리",
     "planTab": "예산수립",
     "expenseTab": "실예산 사용입력",
     "compareTab": "대시보드",

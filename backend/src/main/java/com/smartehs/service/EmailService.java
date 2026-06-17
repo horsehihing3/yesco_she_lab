@@ -29,7 +29,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setFrom(fromAddress);
             helper.setTo(toEmail);
-            helper.setSubject("[Smart EHS] 산업안전보건위원회 서명 요청");
+            helper.setSubject("[Smart SHE] 산업안전보건위원회 서명 요청");
 
             String html = buildHtml(toName, committeeTitle, signUrl);
             helper.setText(html, true);

@@ -322,7 +322,7 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         u(rows, PE, "재평가",   "수정",      R);
         u(rows, PE, "재평가",   "삭제",      R);
 
-        String OC = "협력 업체 관리 › EHS 협의체";
+        String OC = "협력 업체 관리 › SHE 협의체";
         u(rows, OC, "LIST",   "New",             R);
         u(rows, OC, "DETAIL", "수정",            R);
         u(rows, OC, "DETAIL", "삭제",            R);
@@ -411,12 +411,12 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         final String R = resolveRole("COMPLIANCE_ADMIN");
         List<Object[]> rows = new ArrayList<>();
 
-        String LC = "EHS 경영 › 법규 대응 › 법규검토시스템";
+        String LC = "SHE 경영 › 법규 대응 › 법규검토시스템";
         u(rows, LC, "LIST",   "신규 등록", R);
         u(rows, LC, "DETAIL", "수정",      R);
         u(rows, LC, "DETAIL", "삭제",      R);
 
-        String LP = "EHS 경영 › 법규 대응 › 법규 대응 계획";
+        String LP = "SHE 경영 › 법규 대응 › 법규 대응 계획";
         u(rows, LP, "LIST",               "신규 등록",    R);
         u(rows, LP, "PLAN",               "저장",         R);
         u(rows, LP, "PLAN",               "계획 결재 상신", R);
@@ -425,7 +425,7 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         u(rows, LP, "PENDING_APPROVAL",   "반려",         R);
         u(rows, LP, "PENDING_APPROVAL",   "계획 승인",    R);
 
-        String LE = "EHS 경영 › 법규 대응 › 법규 대응 실시";
+        String LE = "SHE 경영 › 법규 대응 › 법규 대응 실시";
         u(rows, LE, "PREPARING",     "저장 (감사 정보)",   R);
         u(rows, LE, "PREPARING",     "진행중 (상태 전환)", R);
         u(rows, LE, "IN_PROGRESS",   "저장 (감사 정보)",   R);
@@ -508,8 +508,8 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         for (String s : new String[]{"완료", "예정", "재평가"})
             wa(rows, PE, s, "수정", "삭제");
 
-        // ── EHS 협의체 ──────────────────────────────────────────────────────────
-        String OC = "협력 업체 관리 › EHS 협의체";
+        // ── SHE 협의체 ──────────────────────────────────────────────────────────
+        String OC = "협력 업체 관리 › SHE 협의체";
         wa(rows, OC, "LIST", "New");
         wa(rows, OC, "DETAIL", "수정", "삭제", "참석자 서명 알림");
 
@@ -605,13 +605,13 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         wa(rows, CHEM, "COLLECTING", "수정", "삭제");
 
         // ── 법규 대응 계획 ────────────────────────────────────────────────────────
-        String LP = "EHS 경영 › 법규 대응 › 법규 대응 계획";
+        String LP = "SHE 경영 › 법규 대응 › 법규 대응 계획";
         ao(rows, LP, "LIST", "신규 등록");
         wa(rows, LP, "PLAN", "저장", "계획 결재 상신", "수정", "삭제");
         ap(rows, LP, "PENDING_APPROVAL", "반려", "계획 승인");
 
         // ── 법규 대응 실시 ────────────────────────────────────────────────────────
-        String LE = "EHS 경영 › 법규 대응 › 법규 대응 실시";
+        String LE = "SHE 경영 › 법규 대응 › 법규 대응 실시";
         aa(rows, LE, "PREPARING", "저장 (감사 정보)", "진행중 (상태 전환)");
         aa(rows, LE, "IN_PROGRESS", "저장 (감사 정보)", "완료 결재 상신");
         aa(rows, LE, "PENDING_CLOSE", "저장 (감사 정보)");

@@ -1,4 +1,4 @@
-﻿// ─── 타입 ───────────────────────────────────────────────────────────────────
+// ─── 타입 ───────────────────────────────────────────────────────────────────
 export type Role = 'guest' | 'writer' | 'auditor' | 'superAdmin' | 'planApprover' | 'completionApprover'
 
 export const ABSTRACT_ROLE_KEYS: ReadonlySet<string> = new Set([
@@ -6,8 +6,8 @@ export const ABSTRACT_ROLE_KEYS: ReadonlySet<string> = new Set([
 ])
 
 export const GENERAL_ADMIN_ROLE_OPTIONS: { key: string; label: string }[] = [
-  { key: 'EHS_ADMIN',           label: '회사 EHS 담당자' },
-  { key: 'TEAM_ADMIN',          label: '팀 EHS 담당자' },
+  { key: 'EHS_ADMIN',           label: '회사 SHE 담당자' },
+  { key: 'TEAM_ADMIN',          label: '팀 SHE 담당자' },
   { key: 'RISK_ASSESS_ADMIN',   label: '위험성 평가 관리자' },
   { key: 'NEAR_MISS_ADMIN',     label: '사고/아차사고 관리자' },
   { key: 'AUDIT_ADMIN',         label: '감사 및 점검 관리자' },
@@ -91,18 +91,18 @@ export function buildInitialState(): Record<string, boolean> {
 
 // ─── 메뉴 데이터 (코드 분석 기반 — 버튼이 있는 상태만 표시) ─────────────────
 export const DEFAULT_MENU_DATA: MenuEntry[] = [
-  // ── EHS 경영 › 커뮤니케이션 › EHS 문서 ────────────────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › SHE 문서 ────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS 문서', menuKey: 'nav.ehsDocument',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › SHE 문서', menuKey: 'nav.ehsDocument',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New (파일 업로드)', roles: WRITER_ADMIN }] },
     ],
   },
 
-  // ── EHS 경영 › 커뮤니케이션 › EHS Plan ────────────────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › SHE Plan ────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS Plan', menuKey: 'nav.ehsPlan',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › SHE Plan', menuKey: 'nav.ehsPlan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -116,9 +116,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS 경영 › 커뮤니케이션 › EHS 직책자 명단 ────────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › SHE 직책자 명단 ────────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS 직책자 명단', menuKey: 'nav.ehsOfficer',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › SHE 직책자 명단', menuKey: 'nav.ehsOfficer',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -131,9 +131,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS 경영 › 커뮤니케이션 › EHS 메시지 ─────────────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › SHE 메시지 ─────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS 메시지', menuKey: 'nav.ehsMessage',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › SHE 메시지', menuKey: 'nav.ehsMessage',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -146,9 +146,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS 경영 › 커뮤니케이션 › EHS 알림 ───────────────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › SHE 알림 ───────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › EHS 알림', menuKey: 'nav.ehsAlert',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › SHE 알림', menuKey: 'nav.ehsAlert',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -167,9 +167,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS 경영 › 커뮤니케이션 › 산업안전보건 위원회 ─────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › 산업안전보건 위원회 ─────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › 산업안전보건 위원회', menuKey: 'nav.ehsOshCommittee',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › 산업안전보건 위원회', menuKey: 'nav.ehsOshCommittee',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -182,18 +182,18 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS 경영 › 커뮤니케이션 › 긴급 메일/문자 발송 ────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › 긴급 메일/문자 발송 ────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › 긴급 메일/문자 발송', menuKey: 'nav.ehsEmergency',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › 긴급 메일/문자 발송', menuKey: 'nav.ehsEmergency',
     statuses: [
       { status: 'FORM', statusLabel: '발송 폼', statusColor: 'default',
         buttons: [{ button: '긴급 발송', roles: WRITER_ADMIN }] },
     ],
   },
 
-  // ── EHS 경영 › 커뮤니케이션 › Q&A ─────────────────────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › Q&A ─────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › Q&A', menuKey: 'nav.ehsQna',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › Q&A', menuKey: 'nav.ehsQna',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -206,9 +206,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── EHS 경영 › 커뮤니케이션 › 비상 연락망 ────────────────────────────────
+  // ── SHE 경영 › 커뮤니케이션 › 비상 연락망 ────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 커뮤니케이션 › 비상 연락망', menuKey: 'emr.tabs.contacts',
+    menuPath: 'SHE 경영 › 커뮤니케이션 › 비상 연락망', menuKey: 'emr.tabs.contacts',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },
@@ -223,7 +223,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 연간계획 ── 일반관리자 = EHS_ADMIN ─────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › KPI목표 › 연간계획', menuKey: 'pkg.annualPlan',
+    menuPath: 'SHE 경영 › KPI목표 › 연간계획', menuKey: 'pkg.annualPlan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
@@ -243,7 +243,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── KPI 현황 ──────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › KPI목표 › KPI 현황', menuKey: 'pkg.kpiStatus',
+    menuPath: 'SHE 경영 › KPI목표 › KPI 현황', menuKey: 'pkg.kpiStatus',
     statuses: [
       { status: 'APPROVED', statusLabel: '작성중 (KPI 입력)', statusColor: 'default',
         statusNote: 'KPI현황 탭: 연간계획 APPROVED 상태를 "작성중"으로 표시',
@@ -261,7 +261,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 감사 계획 ── 일반관리자 = EHS_ADMIN (AUDIT_ADMIN 계정 없음) ────────────
   {
-    menuPath: 'EHS 경영 › 내부 감사 › 감사 계획', menuKey: 'audit.tabs.plan',
+    menuPath: 'SHE 경영 › 내부 감사 › 감사 계획', menuKey: 'audit.tabs.plan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
@@ -283,7 +283,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 감사 실시 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 내부 감사 › 감사 실시', menuKey: 'audit.tabs.execution',
+    menuPath: 'SHE 경영 › 내부 감사 › 감사 실시', menuKey: 'audit.tabs.execution',
     statuses: [
       { status: 'PREPARING', statusLabel: '준비중', statusColor: 'warning',
         buttons: [
@@ -307,7 +307,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
   // ── 교육현황 (관리자) ── 일반관리자 = TRAINING_ADMIN (DB 지정) ───────────────
   // 반려·승인·수료 = 일반관리자(+슈퍼) / 신청취소 = 작성자(신청자, 본인)(+슈퍼)
   {
-    menuPath: 'EHS 경영 › 교육·훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',
+    menuPath: 'SHE 경영 › 교육·훈련 › 교육현황 (관리자)', menuKey: 'training.tabs.statusAdmin',
     statuses: [
       { status: 'PENDING', statusLabel: '대기', statusColor: 'warning',
         buttons: [
@@ -326,7 +326,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
   // ── 비상 계획 ── 일반관리자 = EHS_ADMIN (EMERGENCY_ADMIN 계정 없어 회사EHS담당자로) ──
   // New=일반관리자+슈퍼 / 상신·수정·삭제=작성자+슈퍼 / 반려·계획승인=계획승인자+슈퍼
   {
-    menuPath: 'EHS 경영 › 비상 훈련 › 비상 계획', menuKey: 'emr.tabs.plans',
+    menuPath: 'SHE 경영 › 비상 훈련 › 비상 계획', menuKey: 'emr.tabs.plans',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
@@ -347,7 +347,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 비상 훈련 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 비상 훈련 › 비상 훈련', menuKey: 'emr.tabs.drills',
+    menuPath: 'SHE 경영 › 비상 훈련 › 비상 훈련', menuKey: 'emr.tabs.drills',
     statuses: [
       { status: 'SCHEDULED', statusLabel: '예정', statusColor: 'info',
         statusNote: '비상계획 승인 후 자동 생성 — 신규 등록 없음 / linkedPlan 상태에 따라 버튼 표시',
@@ -362,7 +362,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 자원·장비 ─────────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 비상 훈련 › 자원·장비', menuKey: 'nav.emergencyResource',
+    menuPath: 'SHE 경영 › 비상 훈련 › 자원·장비', menuKey: 'nav.emergencyResource',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: WRITER_ADMIN }] },
@@ -379,7 +379,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 법규검토시스템 ──────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 법규 대응 › 법규검토시스템', menuKey: 'lc.tabs.law',
+    menuPath: 'SHE 경영 › 법규 대응 › 법규검토시스템', menuKey: 'lc.tabs.law',
     statuses: [
       { status: 'LIST',   statusLabel: '목록',   statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: WRITER_ADMIN }] },
@@ -390,7 +390,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 법규 대응 계획 ───────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 법규 대응 › 법규 대응 계획', menuKey: 'lc.tabs.plan',
+    menuPath: 'SHE 경영 › 법규 대응 › 법규 대응 계획', menuKey: 'lc.tabs.plan',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
@@ -412,7 +412,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
 
   // ── 법규 대응 실시 ───────────────────────────────────────────────────────────
   {
-    menuPath: 'EHS 경영 › 법규 대응 › 법규 대응 실시', menuKey: 'lc.tabs.execution',
+    menuPath: 'SHE 경영 › 법규 대응 › 법규 대응 실시', menuKey: 'lc.tabs.execution',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: '신규 등록', roles: ALL_OFF }] },
@@ -749,9 +749,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 협력 업체 관리 › EHS 협의체 ──────────────────────────────────────────────
+  // ── 협력 업체 관리 › SHE 협의체 ──────────────────────────────────────────────
   {
-    menuPath: '협력 업체 관리 › EHS 협의체', menuKey: 'nav.partnerOshCommittee',
+    menuPath: '협력 업체 관리 › SHE 협의체', menuKey: 'nav.partnerOshCommittee',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: WRITER_ADMIN }] },

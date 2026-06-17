@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/alerts")
 @RequiredArgsConstructor
-@Tag(name = "EHS Alert", description = "EHS Alert API")
+@Tag(name = "SHE Alert", description = "SHE Alert API")
 public class EhsAlertController {
 
     private final EhsAlertService alertService;
@@ -61,7 +61,7 @@ public class EhsAlertController {
     }
 
     @PostMapping
-    @Operation(summary = "Create alert", description = "Create a new EHS alert")
+    @Operation(summary = "Create alert", description = "Create a new SHE alert")
     public ResponseEntity<ApiResponse<EhsAlertResponse>> create(
             @Valid @RequestBody EhsAlertRequest request) {
         EhsAlertResponse alert = alertService.create(request);

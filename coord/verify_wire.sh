@@ -17,7 +17,7 @@
 # 검증할 엔드포인트는 전환하는 도메인에 맞게 ENDPOINTS 에 추가한다(GET 목록/상세).
 set -euo pipefail
 
-BASE="${WIRE_BASE:-http://localhost:7501/api}"
+BASE="${WIRE_BASE:-http://localhost:7601/api}"
 USER="${WIRE_USER:-yujeong.jung}"
 PASS="${WIRE_PASS:-com4in!!}"
 

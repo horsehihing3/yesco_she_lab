@@ -36,7 +36,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
 
     // 허용 오리진은 application.yml(app.cors.allowed-origins) → 운영은 APP_CORS_ALLOWED_ORIGINS 환경변수로 교체.
-    @Value("${app.cors.allowed-origins:http://localhost:7500}")
+    @Value("${app.cors.allowed-origins:http://localhost:7600}")
     private String allowedOrigins;
 
     @Bean

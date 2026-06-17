@@ -1,4 +1,4 @@
-// VWorld 3D Map Service for Smart EHS Dashboard
+// VWorld 3D Map Service for Smart SHE Dashboard
 // Reference: ehs_dashboard VWorld integration
 
 interface LatLng {

@@ -245,7 +245,7 @@ const EhsBudgetExpenseTab: React.FC = () => {
     }
   }
 
-  // DEV ONLY — 비어있는 항목을 EHS 예산 집행 더미데이터로 채움 (입력값 보존)
+  // DEV ONLY — 비어있는 항목을 SHE 예산 집행 더미데이터로 채움 (입력값 보존)
   // 분류는 해당 연도 예산수립(plan)에 존재하는 값만 유효 → 첫 번째 plan 분류 사용(없으면 미설정)
   const fillTestData = () => setFormData(prev => ({
     ...prev,

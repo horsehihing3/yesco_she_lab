@@ -96,7 +96,7 @@ const EhsPlanTab: React.FC = () => {
   const { showConfirm, showSuccess } = useAlert()
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 커뮤니케이션 › EHS Plan'
+  const MENU = 'SHE 경영 › 커뮤니케이션 › SHE Plan'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const canNew = canSee(MENU, 'LIST', 'New', myRoles)
   const getDetailRoles = (plan: { authorEmail?: string | null }): string[] => [
@@ -198,7 +198,7 @@ const EhsPlanTab: React.FC = () => {
     setDialogOpen(true)
   }
 
-  // DEV ONLY — 비어있는 항목을 EHS Plan 더미데이터로 채움 (입력값·날짜·수신자 보존)
+  // DEV ONLY — 비어있는 항목을 SHE Plan 더미데이터로 채움 (입력값·날짜·수신자 보존)
   const fillTestData = () => {
     const v = getValues()
     if (!v.title) setValue('title', '월간 안전보건 합동점검')

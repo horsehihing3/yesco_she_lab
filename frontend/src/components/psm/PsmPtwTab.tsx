@@ -404,9 +404,9 @@ const PsmPtwTab: React.FC = () => {
           </FormCell>
         </FormRow>
         <FormRow>
-          <FormLabel>EHS 담당자<br/>승인</FormLabel>
+          <FormLabel>SHE 담당자<br/>승인</FormLabel>
           <FormCell borderRight>
-            {isEdit ? <TextField fullWidth size="small" value={v.ehsApproverName || ''} onChange={e => setV({ ehsApproverName: e.target.value })} placeholder="EHS 담당자 이름" />
+            {isEdit ? <TextField fullWidth size="small" value={v.ehsApproverName || ''} onChange={e => setV({ ehsApproverName: e.target.value })} placeholder="SHE 담당자 이름" />
               : <Typography variant="body2">{v.ehsApproverName || '-'}</Typography>}
           </FormCell>
           <FormLabel>승인 일시</FormLabel>

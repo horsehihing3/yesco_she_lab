@@ -578,7 +578,7 @@ const RegionSafetyCheckChart = () => {
   )
 }
 
-// EHS Message 컴포넌트
+// SHE Message 컴포넌트
 const EhsMessage = () => {
   const { isDarkMode } = useThemeMode()
   const { t, i18n } = useTranslation()
@@ -652,7 +652,7 @@ const EhsMessage = () => {
   )
 }
 
-// EHS Alert 컴포넌트
+// SHE Alert 컴포넌트
 const EhsAlert = () => {
   const { isDarkMode } = useThemeMode()
   const { t, i18n } = useTranslation()
@@ -696,7 +696,7 @@ const EhsAlert = () => {
   )
 }
 
-// EHS Plan 컴포넌트 (미니 캘린더 + 실제 API 연동)
+// SHE Plan 컴포넌트 (미니 캘린더 + 실제 API 연동)
 const EhsPlanDashboard = () => {
   const { t, i18n } = useTranslation()
   const { isDarkMode } = useThemeMode()
@@ -748,7 +748,7 @@ const EhsPlanDashboard = () => {
   const handleEmailSend = (users: UserInfo[]) => {
     const checkedPlans = selectedPlans.filter(p => checkedIds.has(p.id))
     const recipientEmails = users.map(u => u.email).join(',')
-    const subject = `[EHS Plan] ${format(currentMonth, 'yyyy.MM')}`
+    const subject = `[SHE Plan] ${format(currentMonth, 'yyyy.MM')}`
     const body = checkedPlans.length > 0
       ? checkedPlans.map(p => `- ${p.title}`).join('\n')
       : selectedPlans.map(p => `- ${p.title}`).join('\n')
@@ -980,7 +980,7 @@ const GeneralDashboard: React.FC = () => {
         )}
       </Box>
 
-      {/* EHS 예산 개요 - 분기별 집행 현황 */}
+      {/* SHE 예산 개요 - 분기별 집행 현황 */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
           {t('generalDashboard.budgetExecution', '예산 및 집행')}
@@ -1022,7 +1022,7 @@ const GeneralDashboard: React.FC = () => {
         <Box sx={{ flex: '1.5 1 0', minWidth: 300 }}><BarMixed /></Box>
       </Box>
 
-      {/* 세번째줄: EHS Message + EHS Alert + EHS Plan */}
+      {/* 세번째줄: SHE Message + SHE Alert + SHE Plan */}
       <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
         <Box sx={{ flex: '1 1 0', minWidth: 280 }}><EhsMessage /></Box>
         <Box sx={{ flex: '1 1 0', minWidth: 280 }}><EhsAlert /></Box>

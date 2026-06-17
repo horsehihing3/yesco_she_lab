@@ -1,4 +1,4 @@
-﻿import { formatUserName } from '../../utils/userDisplay'
+import { formatUserName } from '../../utils/userDisplay'
 import { isSystemAdmin } from '../../utils/auth'
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -66,7 +66,7 @@ const KpiStatusTab: React.FC = () => {
 
   const isAdmin = isSystemAdmin(authUser)
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › KPI목표 › KPI 현황'
+  const MENU = 'SHE 경영 › KPI목표 › KPI 현황'
   const myRoles: string[] = ['guest', ...(authUser?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : (authUser?.role ? [authUser.role] : []))]
   const getDetailRoles = (item: { createdByUserId?: number|null; createdByName?: string|null; completionApproverUserId?: number|null; completionApproverName?: string|null }): string[] => {
     const roles = [...myRoles]

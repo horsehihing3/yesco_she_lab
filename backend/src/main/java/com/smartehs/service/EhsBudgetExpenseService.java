@@ -64,7 +64,7 @@ public class EhsBudgetExpenseService {
                 .build();
 
         ehsBudgetExpenseMapper.insert(expense);
-        log.info("Created EHS budget expense: {}", expense.getId());
+        log.info("Created SHE budget expense: {}", expense.getId());
         return EhsBudgetExpenseResponse.from(expense);
     }
 
@@ -85,7 +85,7 @@ public class EhsBudgetExpenseService {
         expense.setWriter(request.getWriter());
 
         ehsBudgetExpenseMapper.update(expense);
-        log.info("Updated EHS budget expense: {}", id);
+        log.info("Updated SHE budget expense: {}", id);
         return EhsBudgetExpenseResponse.from(expense);
     }
 
@@ -96,6 +96,6 @@ public class EhsBudgetExpenseService {
             throw new ResourceNotFoundException("EhsBudgetExpense", "id", id);
         }
         ehsBudgetExpenseMapper.delete(id);
-        log.info("Deleted EHS budget expense with id: {}", id);
+        log.info("Deleted SHE budget expense with id: {}", id);
     }
 }

@@ -84,7 +84,7 @@ public class FileStorageService {
         }
 
         // Determine if this file should be translated
-        // EHS 문서 (entityType=SAFETY_RULES) 만 자동 번역. 다른 entityType 의 첨부는 원본 그대로.
+        // SHE 문서 (entityType=SAFETY_RULES) 만 자동 번역. 다른 entityType 의 첨부는 원본 그대로.
         String currentLang = LanguageContext.getLanguage();
         boolean shouldTranslate = "SAFETY_RULES".equals(entityType)
                 && documentTranslationService.isTranslatable(originalFilename);

@@ -60,7 +60,7 @@ const emptyForm: LegalLawRequest = {
   reviewStatus: '검토대기', applyYn: '검토중', urgent: false,
 }
 
-const MENU = 'EHS 경영 › 법규 대응 › 법규검토시스템'
+const MENU = 'SHE 경영 › 법규 대응 › 법규검토시스템'
 
 const LegalLawTab: React.FC = () => {
   const { t } = useTranslation()

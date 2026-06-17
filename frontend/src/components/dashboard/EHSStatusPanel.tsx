@@ -199,7 +199,7 @@ const EHSStatusPanel: React.FC<EHSStatusPanelProps> = ({
               gap: 1,
             }}
           >
-            {/* EHS */}
+            {/* SHE */}
             <Box
               sx={{
                 textAlign: 'center',
@@ -229,7 +229,7 @@ const EHSStatusPanel: React.FC<EHSStatusPanelProps> = ({
                   mt: 0.5,
                 }}
               >
-                EHS
+                SHE
               </Typography>
             </Box>
 
@@ -361,10 +361,10 @@ const EHSStatusPanel: React.FC<EHSStatusPanelProps> = ({
           </Box>
         </Box>
 
-        {/* EHS Message */}
+        {/* SHE Message */}
         <Box>
           <Typography variant="caption" fontWeight="bold" color="text.secondary" mb={0.5} display="block">
-            EHS Message
+            SHE Message
           </Typography>
           {messages.length === 0 ? (
             <Typography variant="caption" color="text.secondary" textAlign="center" py={1.5} display="block">

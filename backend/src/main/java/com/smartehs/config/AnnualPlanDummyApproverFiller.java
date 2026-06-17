@@ -35,7 +35,7 @@ public class AnnualPlanDummyApproverFiller implements CommandLineRunner {
 
             int d = jdbcTemplate.update(
                 "UPDATE tb_ehs_annual_plan " +
-                "   SET description = COALESCE(NULLIF(LTRIM(RTRIM(description)), N''), N'EHS 경영시스템 운영을 위한 연간 계획') " +
+                "   SET description = COALESCE(NULLIF(LTRIM(RTRIM(description)), N''), N'SHE 경영시스템 운영을 위한 연간 계획') " +
                 " WHERE description IS NULL OR LTRIM(RTRIM(description)) = N''");
             if (d > 0) log.info("연간 계획 description 백필: {}건", d);
 

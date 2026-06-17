@@ -102,7 +102,7 @@ const EmrContactTab: React.FC = () => {
 
   const { user } = useAuth()
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 커뮤니케이션 › 비상 연락망'
+  const MENU = 'SHE 경영 › 커뮤니케이션 › 비상 연락망'
   const myRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const getRoles = (item: { createdByUserId?: number | null }): string[] => {
     const roles = [...myRoles]

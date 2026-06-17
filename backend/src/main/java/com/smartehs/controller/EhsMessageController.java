@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/messages")
 @RequiredArgsConstructor
-@Tag(name = "EHS Message", description = "EHS Message API")
+@Tag(name = "SHE Message", description = "SHE Message API")
 public class EhsMessageController {
 
     private final EhsMessageService messageService;
@@ -70,7 +70,7 @@ public class EhsMessageController {
     }
 
     @PostMapping
-    @Operation(summary = "Create message", description = "Create a new EHS message")
+    @Operation(summary = "Create message", description = "Create a new SHE message")
     public ResponseEntity<ApiResponse<EhsMessageResponse>> create(
             @Valid @RequestBody EhsMessageRequest request) {
         EhsMessageResponse message = messageService.create(request);

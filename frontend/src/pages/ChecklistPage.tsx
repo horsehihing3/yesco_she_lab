@@ -10,11 +10,11 @@ const ChecklistPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
 
   // 사이드바 메뉴 순서를 따라 정렬:
-  //   [EHS 경영] 감사 → 비상 대응 → 법규 대응
+  //   [SHE 경영] 감사 → 비상 대응 → 법규 대응
   //   [안전 관리] 위험성 평가 → 위험성 평가2 → 협력사 관리(+모바일) → 작업 허가서
   //   그 외 메뉴와 직결되지 않는 일반 카테고리 / 유틸 탭은 뒤쪽으로
   const tabs = [
-    // ── EHS 경영 ──
+    // ── SHE 경영 ──
     { label: t('checklist.tabAudit', '감사'),                 component: <SafetyChecklistWrapper key="AUDIT" categoryType="AUDIT" /> },
     { label: t('checklist.tabEmergency', '비상 대응'),         component: <SafetyChecklistWrapper key="EMERGENCY" categoryType="EMERGENCY" /> },
     { label: t('checklist.tabCompliance', '법규 대응'),         component: <SafetyChecklistWrapper key="COMPLIANCE" categoryType="COMPLIANCE" /> },

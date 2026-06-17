@@ -34,7 +34,7 @@ export const YescoDashboard: React.FC<IconProps> = ({ size }) => wrapSvg(
   </>, size,
 )
 
-// ── EHS: 방패 + 붉은 체크 ──
+// ── SHE: 방패 + 붉은 체크 ──
 export const YescoEhs: React.FC<IconProps> = ({ size }) => wrapSvg(
   <>
     <path d="M16 3 L26 7 V16 C26 22 21 27 16 29 C11 27 6 22 6 16 V7 Z" fill={WHITE} />

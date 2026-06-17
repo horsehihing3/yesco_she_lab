@@ -34,7 +34,7 @@ public class OshSignController {
     private final EmailService emailService;
 
     // 프론트 앱 기본 URL — 환경변수로 override 가능
-    @org.springframework.beans.factory.annotation.Value("${app.frontend-url:http://localhost:7500}")
+    @org.springframework.beans.factory.annotation.Value("${app.frontend-url:http://localhost:7600}")
     private String frontendUrl;
 
     // ===== 공개 엔드포인트 (SecurityConfig permitAll) =====

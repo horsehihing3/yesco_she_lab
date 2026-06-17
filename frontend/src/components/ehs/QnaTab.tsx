@@ -135,7 +135,7 @@ const QnaTab: React.FC = () => {
   const isQnaAdmin = user?.role === 'SYSTEM_ADMIN' || user?.role === 'QNA_ADMIN'
   const isAuthor = (post: QnaPost | null) => post?.authorEmail === user?.email
   const { canSee } = useButtonRules()
-  const MENU = 'EHS 경영 › 커뮤니케이션 › Q&A'
+  const MENU = 'SHE 경영 › 커뮤니케이션 › Q&A'
   const listRoles: string[] = ['guest', ...(user?.role === 'SYSTEM_ADMIN' ? ['superAdmin'] : [user?.role ?? ''].filter(Boolean))]
   const getDetailRoles = (post: QnaPost | null): string[] => [
     'guest',
@@ -810,7 +810,7 @@ const QnaTab: React.FC = () => {
             )}
           </Box>
 
-          {/* 댓글 — EHS 알림과 동일한 댓글/대댓글 구조 */}
+          {/* 댓글 — SHE 알림과 동일한 댓글/대댓글 구조 */}
           <EntityCommentsSection entityId={postDetail.id} basePath="/qna" queryKey="qnaPostComments" />
         </>
       ) : null}

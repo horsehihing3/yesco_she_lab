@@ -41,16 +41,16 @@ public class ButtonRuleAdminRolesOpusInitializer implements CommandLineRunner {
 
             // 교육현황(관리자) — 일반관리자 = TRAINING_ADMIN(계정 있으면) / 없으면 EHS_ADMIN
             String edu = resolveRole("TRAINING_ADMIN");
-            String EDU = "EHS 경영 › 교육·훈련 › 교육현황 (관리자)";
+            String EDU = "SHE 경영 › 교육·훈련 › 교육현황 (관리자)";
             u(rows, EDU, "PENDING",  "반려", edu);
             u(rows, EDU, "PENDING",  "승인", edu);
             u(rows, EDU, "APPROVED", "수료", edu);
 
             // New = 일반관리자(EHS_ADMIN) — 도메인 전용 관리자 계정 부재로 회사 EHS 담당자
-            u(rows, "EHS 경영 › 비상 훈련 › 비상 계획", "LIST", "신규 등록", "EHS_ADMIN");
+            u(rows, "SHE 경영 › 비상 훈련 › 비상 계획", "LIST", "신규 등록", "EHS_ADMIN");
             u(rows, "안전 관리 › 작업 허가 › 허가 신청", "LIST", "신규 등록", "EHS_ADMIN");
-            u(rows, "EHS 경영 › 내부 감사 › 감사 계획", "LIST", "신규 등록", "EHS_ADMIN");
-            u(rows, "EHS 경영 › KPI목표 › 연간계획",    "LIST", "신규 등록", "EHS_ADMIN");
+            u(rows, "SHE 경영 › 내부 감사 › 감사 계획", "LIST", "신규 등록", "EHS_ADMIN");
+            u(rows, "SHE 경영 › KPI목표 › 연간계획",    "LIST", "신규 등록", "EHS_ADMIN");
 
             int n = flush(rows);
             log.info("ButtonRuleAdminRolesOpusInitializer: {}건 upsert 완료", n);

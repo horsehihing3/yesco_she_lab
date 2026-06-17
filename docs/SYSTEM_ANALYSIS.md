@@ -8,9 +8,9 @@ Smart EHS 시스템 구조 분석 (2026-05-28 파악 완료)
 ```
 [브라우저]
     ↓ HTTPS
-[Frontend: React 18 + Vite + TypeScript]  포트 7500
+[Frontend: React 18 + Vite + TypeScript]  포트 7600
     ↓ REST API (Axios)
-[Backend: Spring Boot 3.2.2 / Java 17]   포트 7501, /api
+[Backend: Spring Boot 3.2.2 / Java 17]   포트 7601, /api
     ↓ MyBatis XML Mapper
 [DB: MS SQL Server]  211.171.152.242:51084 / SmartEHS_com4in
 ```

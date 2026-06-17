@@ -90,7 +90,7 @@ const EhsBudgetReportTab: React.FC = () => {
       <Paper sx={{ p: 3, bgcolor: 'grey.50', '@media print': { pageBreakAfter: 'always', breakAfter: 'page' } }}>
         <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
-            {t('budget.report.title', 'EHS 예산 사용 레포트')}
+            {t('budget.report.title', 'SHE 예산 사용 레포트')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {t('audit.report.reportDate', '보고일')}: {reportDate}
@@ -161,7 +161,7 @@ const EhsBudgetReportTab: React.FC = () => {
 
         <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
-            {t('audit.report.footer', '본 보고서는 EHS 시스템에서 자동 생성되었습니다.')}
+            {t('audit.report.footer', '본 보고서는 SHE 시스템에서 자동 생성되었습니다.')}
           </Typography>
         </Box>
       </Paper>

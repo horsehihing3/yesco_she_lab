@@ -31,7 +31,7 @@ public class DashboardController {
     }
 
     @GetMapping("/plans/monthly")
-    @Operation(summary = "Get monthly plans", description = "Get EHS plans for a specific month")
+    @Operation(summary = "Get monthly plans", description = "Get SHE plans for a specific month")
     public ResponseEntity<ApiResponse<List<EhsPlanResponse>>> getMonthlyPlans(
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month) {
@@ -42,7 +42,7 @@ public class DashboardController {
     }
 
     @GetMapping("/alerts/recent")
-    @Operation(summary = "Get recent alerts", description = "Get recent EHS alerts for dashboard")
+    @Operation(summary = "Get recent alerts", description = "Get recent SHE alerts for dashboard")
     public ResponseEntity<ApiResponse<List<EhsAlertResponse>>> getRecentAlerts(
             @RequestParam(defaultValue = "5") int limit) {
         List<EhsAlertResponse> alerts = dashboardService.getRecentAlerts(limit);
@@ -50,7 +50,7 @@ public class DashboardController {
     }
 
     @GetMapping("/messages/recent")
-    @Operation(summary = "Get recent messages", description = "Get recent EHS messages for dashboard")
+    @Operation(summary = "Get recent messages", description = "Get recent SHE messages for dashboard")
     public ResponseEntity<ApiResponse<List<EhsMessageResponse>>> getRecentMessages(
             @RequestParam(defaultValue = "5") int limit) {
         List<EhsMessageResponse> messages = dashboardService.getRecentMessages(limit);
