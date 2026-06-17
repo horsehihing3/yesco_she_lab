@@ -73,9 +73,9 @@ const LoginPage: React.FC = () => {
         <CardContent sx={{ p: 4 }}>
           {/* Logo */}
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Box component="img" src="/assets/img_logo.png" alt="YESCO SHE" sx={{ display: 'block', mx: 'auto', mb: 2 }} />
+            <Box component="img" src="/assets/logo-com4in-b.png" alt="com4in EHS" sx={{ display: 'block', mx: 'auto', mb: 2, maxHeight: 60 }} />
             <Typography variant="h5" fontWeight="bold">
-              yesco SHE
+              com4in EHS
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Sign in to your account

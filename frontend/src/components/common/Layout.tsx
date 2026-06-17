@@ -71,11 +71,12 @@ const Layout: React.FC = () => {
           >
             <MenuIcon />
           </IconButton>
-          {/* Logo - 다크·예스코 → 흰색 로고 / 라이트 → 컬러 로고 */}
+          {/* Logo — AppBar 가 항상 어두운 배경이라 모드 무관 흰색 로고 사용 */}
           <Box onClick={() => navigate('/')} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }}>
             <Box component="img"
-              src={(isDarkMode || isYescoMode) ? '/assets/logo_yesco.png' : '/assets/logo_yesco_on.png'}
-              alt="YESCO SHE" />
+              src="/assets/logo-com4in-w.png"
+              alt="com4in EHS"
+              sx={{ height: 46, width: 'auto', display: 'block' }} />
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           {/* Desktop: show header buttons inline */}
