@@ -1,0 +1,24 @@
+name: Block yescoSHE → main
+
+# yescoSHE 브랜치(예스코 납품용 브랜드 분기)는 main 으로 머지 금지.
+# main 으로 들어가야 할 공통 변경은 main 에서 토픽 브랜치를 분기하거나,
+# yescoSHE 의 개별 커밋만 cherry-pick 으로 옮길 것.
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  block:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify source branch is not yescoSHE
+        run: |
+          HEAD_REF="${{ github.head_ref }}"
+          echo "PR head branch: $HEAD_REF"
+          if [[ "$HEAD_REF" == "yescoSHE" || "$HEAD_REF" == yescoSHE/* ]]; then
+            echo "::error::yescoSHE 브랜치는 main 으로 머지될 수 없습니다. 공통 변경은 main 에서 토픽 브랜치를 새로 분기하거나, 필요한 커밋만 cherry-pick 으로 옮기세요."
+            exit 1
+          fi
+          echo "Source branch OK"
