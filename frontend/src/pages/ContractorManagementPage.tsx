@@ -37,6 +37,7 @@ import ContractorReportTab from '../components/contractor/ContractorReportTab'
 import ContractorDashboardTab from '../components/contractor/ContractorDashboardTab'
 import RejectReasonDialog from '../components/common/RejectReasonDialog'
 import DevTestFillButton from '../components/common/DevTestFillButton'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -1286,6 +1287,11 @@ const ContractorManagementPage: React.FC = () => {
         <Tab label={t('contractor.tabs.adminView', '전체조회 (어드민)')} />
         <Tab label={t('contractor.tabs.report', '레포트')} />
       </Tabs>
+      {activeTab === 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <FlowChartButton flowKey="contractor" />
+        </Box>
+      )}
       {activeTab === 0 && <ContractorDashboardTab />}
       {activeTab === 1 && <ContractorPlanContent mode="plan" />}
       {activeTab === 2 && <ContractorPlanContent mode="approval" />}

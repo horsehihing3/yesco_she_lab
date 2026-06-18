@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import LegalLawTab from '../components/legalCompliance/LegalLawTab'
 import AuditPlanTab from '../components/ehs/AuditPlanTab'
 import AuditExecutionTab from '../components/ehs/AuditExecutionTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const LegalCompliancePage: React.FC = () => {
   const { t } = useTranslation()
@@ -49,9 +50,10 @@ const LegalCompliancePage: React.FC = () => {
           ))}
         </Tabs>
       </Box>
-      <Typography variant="h6" fontWeight="bold" className="no-print" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box className="no-print" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="legalCompliance" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

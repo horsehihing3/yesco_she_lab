@@ -24,6 +24,7 @@ import {
 import { fetchButtonRules, saveButtonRules, ButtonRuleItem } from '../api/buttonRuleApi'
 import { fetchMenuRules } from '../api/menuRuleApi'
 import { useAlert } from '../contexts/AlertContext'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 // 슈퍼관리자는 UI에서 숨김
 const VISIBLE_ROLES = ROLES.filter(r => r.key !== 'superAdmin')
@@ -356,6 +357,7 @@ const ButtonManagePage: React.FC = () => {
           <Chip label={`${changedCount}개 수정됨`} size="small"
             sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }} />
         )}
+        <FlowChartButton flowKey="buttonManage" />
         <Button size="small" startIcon={<SaveIcon />} onClick={() => saveMutation.mutate()}
           disabled={saveMutation.isPending}
           sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.7)', border: '1px solid',

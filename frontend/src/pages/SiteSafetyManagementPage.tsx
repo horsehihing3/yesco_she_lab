@@ -37,6 +37,7 @@ import type { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import SafetyChecklistTab from '../components/ehs/SafetyChecklistTab'
 import SiteSafetyReportTab from '../components/siteSafety/SiteSafetyReportTab'
 import SiteSafetyDashboardTab from '../components/siteSafety/SiteSafetyDashboardTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 type Mode = 'plan' | 'approval' | 'admin'
@@ -1188,6 +1189,11 @@ const SiteSafetyManagementPage: React.FC = () => {
         <Tab label={t('siteSafety.tabs.adminView', '전체조회 (어드민)')} />
         <Tab label={t('siteSafety.tabs.report', '레포트')} />
       </Tabs>
+      {activeTab === 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <FlowChartButton flowKey="siteSafety" />
+        </Box>
+      )}
       {activeTab === 0 && <SiteSafetyDashboardTab />}
       {activeTab === 1 && <SiteSafetyPlanContent mode="plan" />}
       {activeTab === 2 && <SiteSafetyPlanContent mode="approval" />}

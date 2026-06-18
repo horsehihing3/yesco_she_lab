@@ -8,6 +8,7 @@ import EmissionSourceTab from '../components/carbon/EmissionSourceTab'
 import ScopeAnalysisTab from '../components/carbon/ScopeAnalysisTab'
 import EmissionFactorTab from '../components/carbon/EmissionFactorTab'
 import CarbonReportTab from '../components/carbon/CarbonReportTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const CarbonManagePage: React.FC = () => {
   const { t } = useTranslation()
@@ -43,9 +44,10 @@ const CarbonManagePage: React.FC = () => {
           <Tab key={idx} label={tab.label} />
         ))}
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="carbon" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

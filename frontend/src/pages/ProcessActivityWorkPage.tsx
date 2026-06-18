@@ -25,6 +25,7 @@ import type { UserInfo, CompanyTreeNode } from '../components/common/UserSelectM
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import DevTestFillButton from '../components/common/DevTestFillButton'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -401,9 +402,9 @@ const ProcessActivityWorkPage: React.FC = () => {
       <Box>
         <LoadingOverlay open={listFetching || isUploading} message={isUploading ? t('riskAssessment.uploading', '엑셀 업로드 중...') : t('common.loading', '목록을 불러오는 중...')} />
         <input ref={fileInputRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleExcelUpload} />
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-          {t('nav.processActivityWork', '공정/활동별 작업내용')}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" fontWeight="bold">{t('nav.processActivityWork', '공정/활동별 작업내용')}</Typography>
+        </Box>
         {/* Search / Action bar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -411,6 +412,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             <IconButton onClick={() => setKeyword('')} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
+            <FlowChartButton flowKey="processActivity" />
             <Button variant="contained" size="small" onClick={() => fileInputRef.current?.click()}>
               {t('processActivity.excelUpload', '엑셀 업로드')}
             </Button>

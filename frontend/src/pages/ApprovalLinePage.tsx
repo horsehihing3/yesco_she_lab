@@ -38,6 +38,7 @@ import { fetchApprovalLines, saveAllApprovalLines } from '../api/approvalApi'
 import { userApi } from '../api/userApi'
 import { CompanyTreeNode } from '../components/common/UserSelectModal'
 import useCodeMap from '../hooks/useCodeMap'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const collectAllNodeIds = (nodes: CompanyTreeNode[]): string[] => {
   const ids: string[] = []
@@ -370,7 +371,8 @@ const ApprovalLinePage: React.FC = () => {
                 <Chip label={selectedDeptNode.label} color="primary" size="small" sx={{ ml: 1, fontWeight: 'bold' }} />
               )}
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+              <FlowChartButton flowKey="approvalLine" />
               {hasChanges && (
                 <>
                   <Button

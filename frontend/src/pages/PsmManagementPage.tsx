@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Box, Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import FlowChartButton from '../components/common/FlowChartButton'
 import PsmDashboardTab from '../components/psm/PsmDashboardTab'
 import PsmDataTab from '../components/psm/PsmDataTab'
 import PsmMocTab from '../components/psm/PsmMocTab'
@@ -47,6 +48,11 @@ const PsmManagementPage: React.FC = () => {
           {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
         </Tabs>
       </Box>
+      {safeTab === 0 && (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mb: 2 }}>
+          <FlowChartButton flowKey="psm" />
+        </Box>
+      )}
       {tabs[safeTab]?.component}
     </Box>
   )

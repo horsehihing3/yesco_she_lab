@@ -22,6 +22,7 @@ import { EnvMonitoring, EnvMonitoringRequest } from '../types/envMonitoring.type
 import useCodeMap from '../hooks/useCodeMap'
 import StatCard from '../components/legalCompliance/StatCard'
 import DevTestFillButton from '../components/common/DevTestFillButton'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -578,9 +579,9 @@ const EnvMonitoringPage: React.FC = () => {
   // ===================== LIST VIEW =====================
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, flexShrink: 0 }}>
-        {t('nav.envMonitoring')}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, flexShrink: 0 }}>
+        <Typography variant="h6" fontWeight="bold">{t('nav.envMonitoring')}</Typography>
+      </Box>
 
       {/* KPI Cards */}
       {kpi && (
@@ -612,7 +613,10 @@ const EnvMonitoringPage: React.FC = () => {
           </FormControl>
           <IconButton onClick={() => { setSearchText(''); setStatusFilter(''); setTypeFilter(''); setPage(0) }} size="small"><RefreshIcon /></IconButton>
         </Box>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <FlowChartButton flowKey="envMonitoring" />
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenCreate}>New</Button>
+        </Box>
       </Box>
       {/* 검색 - Mobile */}
       <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1, mb: 2, flexShrink: 0 }}>

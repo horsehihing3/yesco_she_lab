@@ -36,6 +36,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import { userApi } from '../api/userApi'
 import { dashboardApi } from '../api/dashboardApi'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -236,9 +237,10 @@ const AdminPage: React.FC = () => {
 
   return (
     <Box sx={{ overflow: 'hidden' }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        {t('admin.title')}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 1 }}>
+        <Typography variant="h4" fontWeight="bold">{t('admin.title')}</Typography>
+        {tabValue === 0 && <FlowChartButton flowKey="admin" />}
+      </Box>
 
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>

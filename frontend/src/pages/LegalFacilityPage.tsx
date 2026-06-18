@@ -7,6 +7,7 @@ import FacilityEquipmentTab from '../components/legalFacility/FacilityEquipmentT
 import FacilityStatusTab from '../components/legalFacility/FacilityStatusTab'
 import FacilityInspectionTab from '../components/legalFacility/FacilityInspectionTab'
 import FacilityWatchTab from '../components/legalFacility/FacilityWatchTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const LegalFacilityPage: React.FC = () => {
   const { t } = useTranslation()
@@ -43,7 +44,10 @@ const LegalFacilityPage: React.FC = () => {
           {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
         </Tabs>
       </Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{tabs[activeTab]?.label}</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="legalFacility" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

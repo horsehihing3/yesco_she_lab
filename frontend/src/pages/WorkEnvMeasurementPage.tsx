@@ -9,6 +9,7 @@ import WemPlanTab from '../components/workEnvMeasurement/WemPlanTab'
 import WemResultTab from '../components/workEnvMeasurement/WemResultTab'
 import WemImprovementTab from '../components/workEnvMeasurement/WemImprovementTab'
 import WemReportTab from '../components/workEnvMeasurement/WemReportTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const WorkEnvMeasurementPage: React.FC = () => {
   const { t } = useTranslation()
@@ -60,9 +61,10 @@ const WorkEnvMeasurementPage: React.FC = () => {
           ))}
         </Tabs>
       </Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="workEnvMeasure" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

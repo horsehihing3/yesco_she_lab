@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import FlowChartButton from '../components/common/FlowChartButton'
 import WarehouseTab from '../components/chemical/WarehouseTab'
 import IncomingUsageTab from '../components/chemical/IncomingUsageTab'
 import LotTrackingTab from '../components/chemical/LotTrackingTab'
@@ -30,9 +31,10 @@ const ChemicalLifecyclePage: React.FC = () => {
       >
         {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="chemicalLife" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

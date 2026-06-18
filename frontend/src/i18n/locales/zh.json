@@ -1,6 +1,7 @@
 {
   "common": {
     "no": "编号",
+    "flowChart": "流程图",
     "save": "保存",
     "cancel": "取消",
     "delete": "删除",
@@ -3340,6 +3341,8 @@
     "annualPlan": "年度计划",
     "kpiStatus": "KPI现况",
     "reportTab": "报告",
+    "flowChart": "流程图",
+    "flowChartTitle": "KPI 目标业务流程图",
     "reportTitle": "年度计划报告",
     "reportOverviewTitle": "计划概要",
     "reportGoalsTitle": "目标推进结果",

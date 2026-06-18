@@ -29,6 +29,7 @@ import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import { useButtonRules } from '../hooks/useButtonRules'
 
+import FlowChartButton from '../components/common/FlowChartButton'
 import { contractorRegistrationApi } from '../api/contractorRegistrationApi'
 import type {
   ContractorRegistration, ContractorRegistrationRequest, RegStatus,
@@ -366,6 +367,7 @@ const ContractorRegistrationPage: React.FC = () => {
           </TextField>
           <IconButton size="small" onClick={() => qc.invalidateQueries({ queryKey: ['contractorRegistrations'] })}><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
+          <FlowChartButton flowKey="contractorReg" />
           {canNew && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}
               sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>

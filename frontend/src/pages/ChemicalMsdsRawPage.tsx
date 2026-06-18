@@ -5,6 +5,7 @@ import { useMenuRule } from '../hooks/useMenuRule'
 import MsdsRawLatestTab from '../components/chemical/MsdsRawLatestTab'
 import MsdsRawOldTab from '../components/chemical/MsdsRawOldTab'
 import MsdsRawHistoryTab from '../components/chemical/MsdsRawHistoryTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const ChemicalMsdsRawPage: React.FC = () => {
   const { t } = useTranslation()
@@ -32,9 +33,10 @@ const ChemicalMsdsRawPage: React.FC = () => {
       >
         {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="chemicalMsdsRaw" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

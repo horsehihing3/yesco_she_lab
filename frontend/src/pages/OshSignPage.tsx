@@ -11,6 +11,7 @@ import {
 import SignaturePad from '../components/common/SignaturePad'
 import { oshSignApi, OshSignInfo } from '../api/oshSignApi'
 import { useAlert } from '../contexts/AlertContext'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 type PageState = 'loading' | 'ready' | 'error' | 'done'
 
@@ -86,7 +87,10 @@ const OshSignPage: React.FC = () => {
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" fontWeight="bold" gutterBottom>산업안전보건위원회 서명</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 1 }}>
+          <Typography variant="h6" fontWeight="bold">산업안전보건위원회 서명</Typography>
+          <FlowChartButton flowKey="oshSign" />
+        </Box>
 
         <Box sx={{ mb: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
           <Typography variant="body2" color="text.secondary" gutterBottom>회의</Typography>

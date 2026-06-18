@@ -35,6 +35,7 @@ import StatCard from '../components/legalCompliance/StatCard'
 import ListSearchBar from '../components/common/ListSearchBar'
 import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
 import DevTestFillButton from '../components/common/DevTestFillButton'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const STATUS_CHIP: Record<PpeEquipmentStatus, { color: 'success' | 'warning' | 'error' | 'info'; label: string }> = {
   NORMAL: { color: 'success', label: 'ppe.statusNormal' },
@@ -590,9 +591,12 @@ const PpeEquipmentPage: React.FC = () => {
         {!isMenuHidden('ppe.tabs.inventory') && <Tab label={t('ppe.tabs.inventory')} />}
         {!isMenuHidden('ppe.tabs.request')   && <Tab label={t('ppe.tabs.request')} />}
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, flexShrink: 0 }}>
-        {activeTab === 0 ? t('ppe.tabs.inventory') : t('ppe.tabs.request')}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2, flexShrink: 0 }}>
+        <Typography variant="h6" fontWeight="bold">
+          {activeTab === 0 ? t('ppe.tabs.inventory') : t('ppe.tabs.request')}
+        </Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="ppe" />}
+      </Box>
 
       {activeTab === 1 && !isMenuHidden('ppe.tabs.request') && <PpeRequestTab />}
 

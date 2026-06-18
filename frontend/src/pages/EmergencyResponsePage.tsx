@@ -8,6 +8,7 @@ import EmrPlanTab from '../components/ehs/EmrPlanTab'
 import EmrDrillTab from '../components/ehs/EmrDrillTab'
 import EmrResourceTab from '../components/ehs/EmrResourceTab'
 import EmrReportTab from '../components/ehs/EmrReportTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const EmergencyResponsePage: React.FC = () => {
   const { t } = useTranslation()
@@ -58,9 +59,10 @@ const EmergencyResponsePage: React.FC = () => {
           ))}
         </Tabs>
       </Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="emr" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

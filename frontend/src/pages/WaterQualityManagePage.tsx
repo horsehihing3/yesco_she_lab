@@ -6,6 +6,7 @@ import WaterQualityTab from '../components/environment/WaterQualityTab'
 import WaterWorkplaceTab from '../components/environment/WaterWorkplaceTab'
 import WaterStandardTab from '../components/environment/WaterStandardTab'
 import WaterReportTab from '../components/environment/WaterReportTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const WaterQualityManagePage: React.FC = () => {
   const { t } = useTranslation()
@@ -35,6 +36,11 @@ const WaterQualityManagePage: React.FC = () => {
           <Tab key={idx} label={tab.label} />
         ))}
       </Tabs>
+      {activeTab === 0 && (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, mb: 2 }}>
+          <FlowChartButton flowKey="waterQuality" />
+        </Box>
+      )}
       {tabs[activeTab]?.component}
     </Box>
   )

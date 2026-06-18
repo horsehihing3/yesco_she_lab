@@ -41,6 +41,7 @@ import { PermitToWork, PermitToWorkRequest } from '../types/permitToWork.types'
 import { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import useCodeMap from '../hooks/useCodeMap'
 import DevTestFillButton from '../components/common/DevTestFillButton'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -1525,6 +1526,11 @@ const PermitToWorkPage: React.FC = () => {
         <Tab label={t('permit.postWorkInspection', '작업 완료 후 점검')} />
         <Tab label={t('common.report', '레포트')} />
       </Tabs>
+      {activeTab === 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <FlowChartButton flowKey="ptw" />
+        </Box>
+      )}
       {activeTab === 0 && <PermitDashboardTab />}
       {activeTab === 1 && <PermitApplicationContent mode="my" />}
       {activeTab === 2 && <PostWorkInspectionContent />}

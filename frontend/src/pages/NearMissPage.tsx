@@ -69,6 +69,7 @@ import DevTestFillButton from '../components/common/DevTestFillButton'
 import { FileMetadata } from '../types/file.types'
 import AccidentReportTab from '../components/ehs/AccidentReportTab'
 import NearMissDashboardTab from '../components/ehs/NearMissDashboardTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 import { useAuth } from '../context/AuthContext'
 
 const statusColors: Record<NearMissStatus, 'default' | 'warning' | 'info' | 'success' | 'error'> = {
@@ -2130,6 +2131,11 @@ const NearMissPage: React.FC = () => {
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
               {activeTab === 'NEAR_MISS' ? t('nearMiss.incidentTypes.nearMiss') : t('nearMiss.incidentTypes.accident')}
             </Typography>
+          )}
+          {activeTab === 'DASHBOARD' && (
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              <FlowChartButton flowKey="nearMiss" />
+            </Box>
           )}
         </>
       )}
