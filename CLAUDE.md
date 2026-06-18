@@ -63,7 +63,10 @@ frontend/src/
 
 ## 절대 규칙
 
-- **T_IDM_USER 직접 INSERT/DELETE 금지** — 현재 UserRole UPDATE만 허용, 예스코 전환 후 tb_user 사용
+- **T_IDM_USER 직접 INSERT/DELETE — 환경별 분기** ([[ADR-001]] 으로 갱신, 2026-06-16)
+  - **컴포인 환경(IDM 소유)**: 직접 INSERT/DELETE 금지, UserRole UPDATE만 허용.
+  - **예스코 환경(IDM 부재 → SHE 소유)**: SAP HR 동기화가 `T_IDM_USER`에 **직접 upsert 허용**(단 `SyncSource='SAP'` 행만, 'SHE' 자체등록 행은 보호). 사용자=`T_IDM_USER`/부서=`T_IDM_GROUP`/코드=`T_IDM_HRCODE` **그대로 유지**.
+  - ~~예스코 전환 후 tb_user 사용~~ → **폐기됨** (tb_user/tb_dept 전환 안 함. 사유·근거: `docs/adr/ADR-001-user-table-and-hr-sync.md`)
 - **DB 스키마 변경 시 Flyway 마이그레이션 파일 추가** — 현재 V220까지 존재, 다음 신규는 `V221__`
 - **기존 API 응답 구조 무단 변경 금지** — 프론트 9개 파일이 `/api/users/company-tree` 응답 구조 의존
 - **컨트롤러는 Response DTO 반환을 표준으로 한다** — raw 엔티티(model) 반환은 **신규 금지**. 기존 raw 반환은 *손댈 때 같이 전환*(convert-on-touch), 민감도메인(건강검진·사고·산재·직업병·방사선건강·협력업체 개인정보)부터 우선 전환. DTO는 wire 필드를 raw와 **동일하게** 유지(프론트 무변경). PersonRef 브릿지 접근자가 DTO 필드 소스. 레퍼런스: `EhsAnnualPlan*`. ※ raw↔DTO는 *모델↔계약* 분리 문제로 PersonRef(*DB↔wire*)와 무관·공존.

@@ -16,7 +16,7 @@ public class IdmUser {
     private String userRole;
     // T_IDM_GROUP JOIN으로 조회되는 부서명 (DeptCode → GroupName)
     private String groupName;
-    // T_IDM_HRCODE JOIN으로 조회되는 직위명 (TitleCode → Name)
+    // 직위명: T_IDM_USER.TitleName 우선, 없으면 T_IDM_HRCODE(TitleCode→Name) 폴백 (IdmMapper COALESCE)
     private String titleName;
     private String mobile;
 }

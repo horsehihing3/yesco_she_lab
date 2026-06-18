@@ -53,6 +53,13 @@ mybatis:
     default-statement-timeout: 30
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
 
+# HR 인사정보 동기화 (SAP) — 스키마 추가는 항상 적용, 실제 적재는 enabled=true 일 때만(기본 off)
+hr-sync:
+  enabled: ${HR_SYNC_ENABLED:false}
+  cron: ${HR_SYNC_CRON:0 0 4 * * *}          # 매일 04:00 (Asia/Seoul). SAP 확정 시각 이후로 조정
+  company-code: ${HR_SYNC_COMPANY_CODE:0100004}
+  user-status: ${HR_SYNC_USER_STATUS:0}      # 조회 상태 필터 '0'=전체 (STATUS 매핑표 확정 후 최종)
+
 # JWT Configuration
 jwt:
   secret: ${JWT_SECRET:your-256-bit-secret-key-for-jwt-token-generation-minimum-32-characters}
