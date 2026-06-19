@@ -5,8 +5,6 @@ import {
   DisposalCompany, DisposalCompanyRequest,
   WasteCompliance, WasteComplianceRequest,
   WaterQuality, WaterQualityRequest,
-  AirEmission, AirEmissionRequest,
-  AirEmissionStandard, AirEmissionStandardRequest,
   WaterWorkplace, WaterWorkplaceRequest,
   WaterSamplingPoint, WaterSamplingPointRequest,
   WaterStandard, WaterStandardRequest,
@@ -233,63 +231,5 @@ export const waterStandardApi = {
   },
   delete: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/environment/water-standard/${id}`)
-  },
-}
-
-// 대기배출 관리
-export const airEmissionApi = {
-  findAll: async (page: number, size: number): Promise<PageResponse<AirEmission>> => {
-    const response = await axiosInstance.get<ApiResponse<PageResponse<AirEmission>>>(`/environment/air-emission?page=${page}&size=${size}`)
-    return response.data.data
-  },
-  search: async (keyword: string, page: number, size: number): Promise<PageResponse<AirEmission>> => {
-    const response = await axiosInstance.get<ApiResponse<PageResponse<AirEmission>>>(`/environment/air-emission/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${size}`)
-    return response.data.data
-  },
-  findAllList: async (): Promise<AirEmission[]> => {
-    const response = await axiosInstance.get<ApiResponse<AirEmission[]>>('/environment/air-emission/all')
-    return response.data.data
-  },
-  findById: async (id: number): Promise<AirEmission> => {
-    const response = await axiosInstance.get<ApiResponse<AirEmission>>(`/environment/air-emission/${id}`)
-    return response.data.data
-  },
-  create: async (data: AirEmissionRequest): Promise<AirEmission> => {
-    const response = await axiosInstance.post<ApiResponse<AirEmission>>('/environment/air-emission', data)
-    return response.data.data
-  },
-  update: async (id: number, data: AirEmissionRequest): Promise<AirEmission> => {
-    const response = await axiosInstance.put<ApiResponse<AirEmission>>(`/environment/air-emission/${id}`, data)
-    return response.data.data
-  },
-  delete: async (id: number): Promise<void> => {
-    await axiosInstance.delete(`/environment/air-emission/${id}`)
-  },
-}
-
-// 대기배출 기준치 관리
-export const airEmissionStandardApi = {
-  findAll: async (page: number, size: number): Promise<PageResponse<AirEmissionStandard>> => {
-    const response = await axiosInstance.get<ApiResponse<PageResponse<AirEmissionStandard>>>(`/environment/air-emission-standard?page=${page}&size=${size}`)
-    return response.data.data
-  },
-  findAllList: async (): Promise<AirEmissionStandard[]> => {
-    const response = await axiosInstance.get<ApiResponse<AirEmissionStandard[]>>('/environment/air-emission-standard/all')
-    return response.data.data
-  },
-  findById: async (id: number): Promise<AirEmissionStandard> => {
-    const response = await axiosInstance.get<ApiResponse<AirEmissionStandard>>(`/environment/air-emission-standard/${id}`)
-    return response.data.data
-  },
-  create: async (data: AirEmissionStandardRequest): Promise<AirEmissionStandard> => {
-    const response = await axiosInstance.post<ApiResponse<AirEmissionStandard>>('/environment/air-emission-standard', data)
-    return response.data.data
-  },
-  update: async (id: number, data: AirEmissionStandardRequest): Promise<AirEmissionStandard> => {
-    const response = await axiosInstance.put<ApiResponse<AirEmissionStandard>>(`/environment/air-emission-standard/${id}`, data)
-    return response.data.data
-  },
-  delete: async (id: number): Promise<void> => {
-    await axiosInstance.delete(`/environment/air-emission-standard/${id}`)
   },
 }

@@ -244,7 +244,6 @@
     "envManage": "Environment Management",
     "envWaste": "Waste",
     "envWaterQuality": "Water Quality",
-    "envAirEmission": "Air Emission",
     "envCarbon": "Carbon Emission",
     "safetyManage": "Safety Management",
     "auditInspection": "Internal Audit",
@@ -1701,7 +1700,6 @@
   "environment": {
     "searchWaste": "Search waste name",
     "searchWaterQuality": "Search measurement point",
-    "searchAirEmission": "Search facility",
     "wasteCode": "Waste Code",
     "wasteType": "Waste Type",
     "wasteName": "Waste Name",
@@ -2118,58 +2116,6 @@
     "selectDeptFirst": "좌측에서 부서를 선택하세요",
     "people": "명",
     "noMembers": "소속 직원이 없습니다"
-  },
-  "airEmission": {
-    "tabs": {
-      "dashboard": "Dashboard",
-      "measurement": "Measurements",
-      "standard": "Emission Standards",
-      "report": "Report"
-    },
-    "dashboard": {
-      "totalMeasurements": "Total Measurements",
-      "compliantCount": "Compliant",
-      "nonCompliantCount": "Non-Compliant",
-      "complianceRate": "Compliance Rate",
-      "byPollutant": "By Pollutant",
-      "nonCompliantByFacility": "Non-Compliant by Facility",
-      "monthlyTrend": "Monthly Trend",
-      "recentNonCompliant": "Recent Non-Compliant",
-      "nonCompliant": "Non-Compliant"
-    },
-    "standard": {
-      "itemName": "Item Name",
-      "unit": "Unit",
-      "minValue": "Min Allowed",
-      "maxValue": "Max Allowed",
-      "remark": "Remark"
-    },
-    "report": {
-      "title": "Air Emission Management Report",
-      "totalMeasurements": "Total Measurements",
-      "totalFacilities": "Facilities",
-      "compliantCount": "Compliant",
-      "nonCompliantCount": "Non-Compliant",
-      "complianceRate": "Compliance Rate",
-      "printPdf": "Print / Save as PDF",
-      "reportDate": "Report Date",
-      "summaryTitle": "Summary Overview",
-      "nonCompliantDetailTitle": "Recent Non-Compliant Details",
-      "date": "Date",
-      "facility": "Facility",
-      "pollutant": "Pollutant",
-      "measuredValue": "Measured",
-      "standardValue": "Standard",
-      "reportFooter": "This concludes the integrated EHS air emission monitoring report.",
-      "systemName": "EHS Integrated Environmental Management System",
-      "noNonCompliant": "No non-compliant records found.",
-      "measurementInfo": "측정 정보",
-      "noData": "레포트로 출력 가능한 측정 결과가 없습니다."
-    },
-    "unit": "단위",
-    "compliance": "준수 여부",
-    "nonCompliant": "부적합",
-    "compliant": "적합"
   },
   "water": {
     "tabs": {

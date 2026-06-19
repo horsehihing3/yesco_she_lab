@@ -138,35 +138,6 @@ export interface WaterQualityRequest {
   remark?: string
 }
 
-// 대기배출 관리
-export interface AirEmission {
-  id: number
-  measurementDate?: string
-  facility?: string
-  pollutant?: string
-  emissionConcentration?: number
-  unit?: string
-  emissionStandard?: number
-  compliance?: string
-  manager?: string
-  remark?: string
-  regUser?: string
-  createdAt: string
-  modifiedAt: string
-}
-
-export interface AirEmissionRequest {
-  measurementDate?: string
-  facility?: string
-  pollutant?: string
-  emissionConcentration?: number
-  unit?: string
-  emissionStandard?: number
-  compliance?: string
-  manager?: string
-  remark?: string
-}
-
 // Water Workplace
 export interface WaterWorkplace {
   id: number
@@ -224,22 +195,3 @@ export interface WaterStandardRequest {
   remark: string
 }
 
-// Air Emission Standard
-export interface AirEmissionStandard {
-  id: number
-  itemName: string
-  unit: string
-  minValue: number
-  maxValue: number
-  remark: string
-  regUser: string
-  createdAt: string
-  modifiedAt: string
-}
-export interface AirEmissionStandardRequest {
-  itemName: string
-  unit: string
-  minValue: number
-  maxValue: number
-  remark: string
-}
