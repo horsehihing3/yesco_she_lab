@@ -6,3 +6,5 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [제거] Coming Soon 메뉴 /contractor-safety, /outsourcing-mgmt → 미구현 placeholder, 라우트(App.tsx)·i18n(ko/en/zh) 제거, 빌드 영향 없음. (사이드바 미등록·menu_rule 0행·button_rule 0건이라 메뉴/권한키 흔적 없음, 깨진 링크 없음)
 - 2026-06-20 [제거·풀스택] air-emission(대기배출) → 프론트+백엔드+DB(tb_air_emission*) 제거. 근거: 환경 저우선순위+메뉴미연결+EnvMonitoring 중복. 되살리려면 git revert(코드)+테이블 재생성. 본 레포 반영은 예스코 환경범위 확정 후. (가드: EnvMonitoring·수질 무손상 확인. 공유 화면 SafetyRulesTab이 쓰던 safetyRules.airEmissionManagement i18n 키는 오삭제 후 복구. tsc 9→9 신규0, compileJava OK, 원본 SmartEHS_com4in 미변경)
 - 2026-06-20 [제거] 고아 라우트 /workplace-drawings(편집, 메뉴미연결) → 제거. system-manage/drawings(편집)·view(조회)는 역할 분리로 보존. 컴포넌트 공유라 파일은 유지. (tsc 9→9 신규0, import·두 라우트 정상)
+- 2026-06-20 [제거] 고아 OshCommitteePage.tsx + 미사용 nav.oshCommittee 키 → 참조 0건 확정. (ehs.oshCommittee 키는 OshCommitteeTab가 사용 중이라 보존 — 동명 혼동 주의. tsc 9→9 신규0, JSON 유효)
+- 2026-06-20 [보류] /partner-osh-committee ↔ EHS협의체 탭: 같은 컴포넌트(OshCommitteeTab)·테이블(tb_osh_committee_list, 구분컬럼 없음)로 동일 데이터 이중 노출. 산안법상 산업안전보건위원회(내부) vs 안전보건협의체(도급)는 별개 제도. 예스코가 둘을 구분 관리하는지 확인 후 통합 or committee_type 신설 결정. 현 상태(라벨만 분리)는 오류.
