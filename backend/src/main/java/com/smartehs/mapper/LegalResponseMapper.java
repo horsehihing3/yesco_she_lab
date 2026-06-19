@@ -21,7 +21,7 @@ public interface LegalResponseMapper {
     int countRegistryByCategory(@Param("category") String category);
 
     // ===== Revision Log (개정 추적) =====
-    List<LegalRevisionLog> findRevisionLogs(@Param("status") String status, @Param("keyword") String keyword);
+    List<LegalRevisionLog> findRevisionLogs(@Param("status") String status, @Param("keyword") String keyword, @Param("lawId") String lawId);
     LegalRevisionLog findRevisionLogById(Long id);
     int insertRevisionLog(LegalRevisionLog r);
     int updateRevisionLog(LegalRevisionLog r);

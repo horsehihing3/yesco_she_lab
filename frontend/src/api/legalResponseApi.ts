@@ -51,9 +51,9 @@ export const legalResponseApi = {
     return res.data.data
   },
   // Revisions
-  listRevisions: async (status?: string, keyword?: string): Promise<LegalRevisionLog[]> => {
+  listRevisions: async (status?: string, keyword?: string, lawId?: string): Promise<LegalRevisionLog[]> => {
     const res = await axiosInstance.get<ApiResponse<LegalRevisionLog[]>>(`${BASE}/revisions`, {
-      params: { status, keyword },
+      params: { status, keyword, lawId },
     })
     return res.data.data || []
   },
