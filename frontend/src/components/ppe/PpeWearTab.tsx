@@ -121,6 +121,7 @@ const PpeWearTab: React.FC = () => {
   const isProcessing = createMut.isPending || updateMut.isPending || deleteMut.isPending
 
   const handleBack = () => { setViewMode('list'); setSelected(null); setForm({ ...emptyForm }) }
+  const handleCancel = () => { if (viewMode === 'edit') { setViewMode('detail'); setForm({ ...emptyForm }) } else handleBack() }
   const handleRowClick = (item: PpeWear) => { setSelected(item); setViewMode('detail') }
   const handleAdd = () => { setSelected(null); setForm({ ...emptyForm, checkDatetime: todayDate() }); setViewMode('create') }
   const handleEdit = () => {
@@ -517,7 +518,7 @@ const PpeWearTab: React.FC = () => {
       )}
 
       <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', md: 'flex-end' }, gap: 1, mt: 2, flexWrap: 'wrap', '& > .MuiButton-root': { flex: { xs: '1 1 calc(50% - 4px)', md: 'none' } } }}>
-        <Button variant="outlined" onClick={handleBack}>{t('common.cancel', '취소')}</Button>
+        <Button variant="outlined" onClick={handleCancel}>{viewMode === 'detail' ? t('common.list', '목록') : t('common.cancel', '취소')}</Button>
         {viewMode === 'detail' && isAdmin && (
           <>
             <Button variant="contained" onClick={handleEdit}>{t('common.edit', '수정')}</Button>
