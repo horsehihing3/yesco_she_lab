@@ -1,11 +1,14 @@
 import { Backdrop, CircularProgress, Typography, Box } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
 interface LoadingOverlayProps {
   open: boolean
   message?: string
 }
 
-const LoadingOverlay = ({ open, message = '처리 중...' }: LoadingOverlayProps) => {
+const LoadingOverlay = ({ open, message }: LoadingOverlayProps) => {
+  const { t } = useTranslation()
+  const text = message ?? t('common.loading', '로딩 중...')
   return (
     <Backdrop
       sx={{
@@ -26,7 +29,7 @@ const LoadingOverlay = ({ open, message = '처리 중...' }: LoadingOverlayProps
         }}
       >
         <Typography variant="body1" fontWeight="medium">
-          {message}
+          {text}
         </Typography>
       </Box>
     </Backdrop>

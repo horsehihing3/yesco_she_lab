@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PpeInspectionMapper">
+
+    <resultMap id="PpeInspectionResult" type="com.smartehs.model.PpeInspection">
+        <id property="id" column="id"/>
+        <result property="inspectionDate" column="inspection_date"/>
+        <result property="itemId" column="item_id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="inspectionType" column="inspection_type"/>
+        <result property="inspector" column="inspector"/>
+        <result property="result" column="result"/>
+        <result property="nextDate" column="next_date"/>
+        <result property="note" column="note"/>
+        <result property="createdBy" column="created_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="PpeInspectionResult">
+        SELECT t.* FROM tb_ppe_inspection t WHERE t.is_deleted = 0
+        ORDER BY t.inspection_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inspection WHERE is_deleted = 0
+    </select>
+
+    <select id="findByType" resultMap="PpeInspectionResult">
+        SELECT t.* FROM tb_ppe_inspection t
+        WHERE t.is_deleted = 0 AND t.inspection_type = #{type}
+        ORDER BY t.inspection_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByType" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inspection WHERE is_deleted = 0 AND inspection_type = #{type}
+    </select>
+
+    <select id="findByResult" resultMap="PpeInspectionResult">
+        SELECT t.* FROM tb_ppe_inspection t
+        WHERE t.is_deleted = 0 AND t.result = #{result}
+        ORDER BY t.inspection_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByResult" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inspection WHERE is_deleted = 0 AND result = #{result}
+    </select>
+
+    <select id="search" resultMap="PpeInspectionResult">
+        SELECT t.* FROM tb_ppe_inspection t
+        WHERE t.is_deleted = 0
+          AND (t.item_name LIKE '%' + #{keyword} + '%'
+            OR t.inspector LIKE '%' + #{keyword} + '%'
+            OR t.item_code LIKE '%' + #{keyword} + '%')
+        ORDER BY t.inspection_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearch" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inspection
+        WHERE is_deleted = 0
+          AND (item_name LIKE '%' + #{keyword} + '%'
+            OR inspector LIKE '%' + #{keyword} + '%'
+            OR item_code LIKE '%' + #{keyword} + '%')
+    </select>
+
+    <select id="findById" resultMap="PpeInspectionResult">
+        SELECT t.* FROM tb_ppe_inspection t WHERE t.id = #{id} AND t.is_deleted = 0
+    </select>
+
+    <select id="findUpcoming" resultMap="PpeInspectionResult">
+        SELECT t.* FROM tb_ppe_inspection t
+        WHERE t.is_deleted = 0
+          AND t.next_date IS NOT NULL
+          AND t.next_date BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, #{days}, CAST(GETDATE() AS DATE))
+        ORDER BY t.next_date ASC
+    </select>
+
+    <select id="findFails" resultMap="PpeInspectionResult">
+        SELECT t.* FROM tb_ppe_inspection t
+        WHERE t.is_deleted = 0 AND t.result IN ('FAIL', 'DISPOSE')
+        ORDER BY t.inspection_date DESC, t.id DESC
+    </select>
+
+    <insert id="insert" parameterType="com.smartehs.model.PpeInspection"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_inspection (
+            inspection_date, item_id, item_name, item_code, inspection_type, inspector,
+            result, next_date, note,
+            created_by, modified_by, created_at, modified_at, is_deleted
+        ) VALUES (
+            #{inspectionDate}, #{itemId}, #{itemName}, #{itemCode}, #{inspectionType}, #{inspector},
+            #{result}, #{nextDate}, #{note},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            SYSDATETIME(), SYSDATETIME(), 0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smartehs.model.PpeInspection">
+        UPDATE tb_ppe_inspection SET
+            inspection_date = #{inspectionDate}, item_id = #{itemId}, item_name = #{itemName},
+            item_code = #{itemCode}, inspection_type = #{inspectionType}, inspector = #{inspector},
+            result = #{result}, next_date = #{nextDate}, note = #{note},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_at = SYSDATETIME()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_inspection SET is_deleted = 1, modified_at = SYSDATETIME() WHERE id = #{id}
+    </update>
+
+    <select id="countPass" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inspection
+        WHERE is_deleted = 0 AND result IN ('PASS', 'CONDITIONAL')
+    </select>
+
+    <select id="countFailOrDispose" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inspection
+        WHERE is_deleted = 0 AND result IN ('FAIL', 'DISPOSE')
+    </select>
+
+    <select id="countUpcoming" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inspection
+        WHERE is_deleted = 0 AND next_date IS NOT NULL
+          AND next_date BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, #{days}, CAST(GETDATE() AS DATE))
+    </select>
+
+</mapper>

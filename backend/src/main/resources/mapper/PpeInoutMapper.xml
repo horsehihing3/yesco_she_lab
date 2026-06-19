@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PpeInoutMapper">
+
+    <resultMap id="PpeInoutResult" type="com.smartehs.model.PpeInout">
+        <id property="id" column="id"/>
+        <result property="inoutDate" column="inout_date"/>
+        <result property="itemId" column="item_id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="inoutType" column="inout_type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="location" column="location"/>
+        <result property="expiryDate" column="expiry_date"/>
+        <result property="manager" column="manager"/>
+        <result property="note" column="note"/>
+        <result property="createdBy" column="created_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="PpeInoutResult">
+        SELECT t.* FROM tb_ppe_inout t WHERE t.is_deleted = 0
+        ORDER BY t.inout_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inout WHERE is_deleted = 0
+    </select>
+
+    <select id="findByType" resultMap="PpeInoutResult">
+        SELECT t.* FROM tb_ppe_inout t
+        WHERE t.is_deleted = 0 AND t.inout_type = #{inoutType}
+        ORDER BY t.inout_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByType" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inout WHERE is_deleted = 0 AND inout_type = #{inoutType}
+    </select>
+
+    <select id="search" resultMap="PpeInoutResult">
+        SELECT t.* FROM tb_ppe_inout t
+        WHERE t.is_deleted = 0
+          AND (t.item_name LIKE '%' + #{keyword} + '%'
+            OR t.manager LIKE '%' + #{keyword} + '%'
+            OR t.location LIKE '%' + #{keyword} + '%')
+        ORDER BY t.inout_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearch" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_inout
+        WHERE is_deleted = 0
+          AND (item_name LIKE '%' + #{keyword} + '%'
+            OR manager LIKE '%' + #{keyword} + '%'
+            OR location LIKE '%' + #{keyword} + '%')
+    </select>
+
+    <select id="findById" resultMap="PpeInoutResult">
+        SELECT t.* FROM tb_ppe_inout t WHERE t.id = #{id} AND t.is_deleted = 0
+    </select>
+
+    <select id="findRecent" resultMap="PpeInoutResult">
+        SELECT TOP (#{limit}) t.* FROM tb_ppe_inout t
+        WHERE t.is_deleted = 0
+        ORDER BY t.inout_date DESC, t.id DESC
+    </select>
+
+    <insert id="insert" parameterType="com.smartehs.model.PpeInout"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_inout (
+            inout_date, item_id, item_name, inout_type, quantity, location,
+            expiry_date, manager, note,
+            created_by, modified_by, created_at, modified_at, is_deleted
+        ) VALUES (
+            #{inoutDate}, #{itemId}, #{itemName}, #{inoutType}, #{quantity}, #{location},
+            #{expiryDate}, #{manager}, #{note},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            SYSDATETIME(), SYSDATETIME(), 0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smartehs.model.PpeInout">
+        UPDATE tb_ppe_inout SET
+            inout_date = #{inoutDate}, item_id = #{itemId}, item_name = #{itemName},
+            inout_type = #{inoutType}, quantity = #{quantity}, location = #{location},
+            expiry_date = #{expiryDate}, manager = #{manager}, note = #{note},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_at = SYSDATETIME()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_inout SET is_deleted = 1, modified_at = SYSDATETIME() WHERE id = #{id}
+    </update>
+
+    <select id="sumQuantityThisMonth" resultType="int">
+        SELECT ISNULL(SUM(quantity), 0) FROM tb_ppe_inout
+        WHERE is_deleted = 0 AND inout_type = #{inoutType}
+          AND YEAR(inout_date) = YEAR(GETDATE())
+          AND MONTH(inout_date) = MONTH(GETDATE())
+    </select>
+
+</mapper>

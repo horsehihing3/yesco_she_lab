@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PpeStockMapper">
+
+    <resultMap id="PpeStockResult" type="com.smartehs.model.PpeStock">
+        <id property="id" column="id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="location" column="location"/>
+        <result property="quantity" column="quantity"/>
+        <result property="minQty" column="min_qty"/>
+        <result property="optQty" column="opt_qty"/>
+        <result property="expiryDate" column="expiry_date"/>
+        <result property="note" column="note"/>
+        <result property="createdBy" column="created_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="PpeStockResult">
+        SELECT t.* FROM tb_ppe_stock t WHERE t.is_deleted = 0
+        ORDER BY t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_stock WHERE is_deleted = 0
+    </select>
+
+    <select id="findByLocation" resultMap="PpeStockResult">
+        SELECT t.* FROM tb_ppe_stock t
+        WHERE t.is_deleted = 0 AND t.location = #{location}
+        ORDER BY t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByLocation" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_stock WHERE is_deleted = 0 AND location = #{location}
+    </select>
+
+    <select id="search" resultMap="PpeStockResult">
+        SELECT t.* FROM tb_ppe_stock t
+        WHERE t.is_deleted = 0
+          AND (t.item_name LIKE '%' + #{keyword} + '%'
+            OR t.location LIKE '%' + #{keyword} + '%')
+        ORDER BY t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearch" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_stock
+        WHERE is_deleted = 0
+          AND (item_name LIKE '%' + #{keyword} + '%' OR location LIKE '%' + #{keyword} + '%')
+    </select>
+
+    <select id="findById" resultMap="PpeStockResult">
+        SELECT t.* FROM tb_ppe_stock t WHERE t.id = #{id} AND t.is_deleted = 0
+    </select>
+
+    <select id="findLowStock" resultMap="PpeStockResult">
+        SELECT t.* FROM tb_ppe_stock t
+        WHERE t.is_deleted = 0 AND t.quantity &lt; t.min_qty
+        ORDER BY t.quantity ASC
+    </select>
+
+    <select id="findExpiringSoon" resultMap="PpeStockResult">
+        SELECT t.* FROM tb_ppe_stock t
+        WHERE t.is_deleted = 0
+          AND t.expiry_date IS NOT NULL
+          AND t.expiry_date BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, #{days}, CAST(GETDATE() AS DATE))
+        ORDER BY t.expiry_date ASC
+    </select>
+
+    <insert id="insert" parameterType="com.smartehs.model.PpeStock"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_stock (
+            item_id, item_name, location, quantity, min_qty, opt_qty, expiry_date, note,
+            created_by, modified_by, created_at, modified_at, is_deleted
+        ) VALUES (
+            #{itemId}, #{itemName}, #{location}, #{quantity}, #{minQty}, #{optQty}, #{expiryDate}, #{note},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            SYSDATETIME(), SYSDATETIME(), 0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smartehs.model.PpeStock">
+        UPDATE tb_ppe_stock SET
+            item_id = #{itemId}, item_name = #{itemName}, location = #{location},
+            quantity = #{quantity}, min_qty = #{minQty}, opt_qty = #{optQty},
+            expiry_date = #{expiryDate}, note = #{note},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_at = SYSDATETIME()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_stock SET is_deleted = 1, modified_at = SYSDATETIME() WHERE id = #{id}
+    </update>
+
+    <select id="sumQuantity" resultType="int">
+        SELECT ISNULL(SUM(quantity), 0) FROM tb_ppe_stock WHERE is_deleted = 0
+    </select>
+
+    <select id="countLowStock" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_stock WHERE is_deleted = 0 AND quantity &lt; min_qty
+    </select>
+
+    <select id="countExpiringSoon" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_stock
+        WHERE is_deleted = 0 AND expiry_date IS NOT NULL
+          AND expiry_date BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, #{days}, CAST(GETDATE() AS DATE))
+    </select>
+
+</mapper>

@@ -436,9 +436,9 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 위험성평가 ─── 일반관리자 = RISK_ASSESS_ADMIN (DB 지정) ─────────────────
+  // ── 위험성평가 › 계획 ─── 일반관리자 = RISK_ASSESS_ADMIN (DB 지정) ────────────
   {
-    menuPath: '안전 관리 › 위험성 평가', menuKey: 'nav.riskAssessment',
+    menuPath: '안전 관리 › 위험성 평가 › 계획', menuKey: 'nav.riskAssessment',
     statuses: [
       { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
         buttons: [{ button: 'New', roles: ADMIN_ONLY }] },
@@ -466,8 +466,31 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
           { button: '수정', roles: WRITER_ADMIN },
           { button: '삭제', roles: WRITER_ADMIN },
         ] },
+    ],
+  },
+  // ── 위험성평가 › 관리 ─── 실시·완료 결재 흐름 ───────────────────────────────
+  {
+    menuPath: '안전 관리 › 위험성 평가 › 관리', menuKey: 'nav.riskAssessment',
+    statuses: [
       { status: 'APPROVED', statusLabel: '실시중', statusColor: 'default',
         statusNote: '관리 모드에서는 APPROVED 상태를 "실시중"으로 표시 (완료 결재 흐름)',
+        buttons: [
+          { button: '저장 (실시 내용)', roles: WRITER_ADMIN },
+          { button: '완료 결재 상신',   roles: WRITER_ADMIN },
+        ] },
+      { status: 'COMPLETION_SUBMITTED', statusLabel: '완료 결재 대기', statusColor: 'warning',
+        buttons: [
+          { button: '반려 (완료)',    roles: ADMIN_COMP },
+          { button: '완료 결재 승인', roles: ADMIN_COMP },
+        ] },
+    ],
+  },
+  // ── 위험성평가 › 관리(관리자) ─── 전체 조회(어드민) + 완료 결재 오버사이트 ─────
+  {
+    menuPath: '안전 관리 › 위험성 평가 › 관리(관리자)', menuKey: 'nav.riskAssessment',
+    statuses: [
+      { status: 'APPROVED', statusLabel: '실시중', statusColor: 'default',
+        statusNote: '전체 조회(어드민) — 모든 사업장의 승인된 항목',
         buttons: [
           { button: '저장 (실시 내용)', roles: WRITER_ADMIN },
           { button: '완료 결재 상신',   roles: WRITER_ADMIN },
@@ -535,48 +558,7 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 안전 관리 › 보호구 장비 ─── 일반관리자 = PPE_ADMIN (DB 지정) ──────────────
-  {
-    menuPath: '안전 관리 › 보호구 장비 › 재고', menuKey: 'nav.ppeEquipment',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [
-          { button: '신규 등록', roles: ADMIN_ONLY },
-        ] },
-      { status: 'DETAIL', statusLabel: '상세', statusColor: 'default',
-        buttons: [
-          { button: '수정', roles: ADMIN_ONLY },
-          { button: '삭제', roles: ADMIN_ONLY },
-        ] },
-    ],
-  },
-  {
-    menuPath: '안전 관리 › 보호구 장비 › 지급 신청', menuKey: 'nav.ppeEquipment',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [
-          // 신청 = 일반사용자(셀프서비스)
-          { button: '신청 등록', roles: { guest: true, writer: false, auditor: false, superAdmin: true, planApprover: false, completionApprover: false } },
-        ] },
-      { status: 'REQUESTED', statusLabel: '신청', statusColor: 'info',
-        buttons: [
-          // 수정/취소/삭제 = 작성자(신청자)+슈퍼 / 승인·반려 = 일반관리자+슈퍼
-          { button: '수정',   roles: WRITER_ADMIN },
-          { button: '취소',   roles: WRITER_ADMIN },
-          { button: '승인',   roles: ADMIN_ONLY },
-          { button: '반려',   roles: ADMIN_ONLY },
-          { button: '삭제',   roles: WRITER_ADMIN },
-        ] },
-      { status: 'APPROVED', statusLabel: '승인', statusColor: 'success',
-        buttons: [
-          { button: '지급완료', roles: ADMIN_ONLY },
-        ] },
-      { status: 'ISSUED', statusLabel: '지급완료', statusColor: 'success',
-        buttons: [
-          { button: '반납', roles: ADMIN_ONLY },
-        ] },
-    ],
-  },
+  // 보호구·장비 권한은 재구성 후 신규 8개 도메인(품목/재고/지급반납/검사점검/착용이행/성능/예산/통계) 권한으로 재등록 예정
 
   // ── 협력 업체 관리 › 협력 업체 안전 관리 › 관리 탭 ──────────────────────────
   {

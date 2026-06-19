@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PpeWearMapper">
+
+    <resultMap id="PpeWearResult" type="com.smartehs.model.PpeWear">
+        <id property="id" column="id"/>
+        <result property="checkDatetime" column="check_datetime"/>
+        <result property="workerName" column="worker_name"/>
+        <result property="department" column="department"/>
+        <result property="workZone" column="work_zone"/>
+        <result property="requiredPpe" column="required_ppe"/>
+        <result property="wearStatus" column="wear_status"/>
+        <result property="checker" column="checker"/>
+        <result property="actionTaken" column="action_taken"/>
+        <result property="note" column="note"/>
+        <result property="createdBy" column="created_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="PpeWearResult">
+        SELECT t.* FROM tb_ppe_wear t WHERE t.is_deleted = 0
+        ORDER BY t.check_datetime DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_wear WHERE is_deleted = 0
+    </select>
+
+    <select id="findByDepartment" resultMap="PpeWearResult">
+        SELECT t.* FROM tb_ppe_wear t
+        WHERE t.is_deleted = 0 AND t.department = #{department}
+        ORDER BY t.check_datetime DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByDepartment" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_wear WHERE is_deleted = 0 AND department = #{department}
+    </select>
+
+    <select id="findByStatus" resultMap="PpeWearResult">
+        SELECT t.* FROM tb_ppe_wear t
+        WHERE t.is_deleted = 0 AND t.wear_status = #{status}
+        ORDER BY t.check_datetime DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_wear WHERE is_deleted = 0 AND wear_status = #{status}
+    </select>
+
+    <select id="search" resultMap="PpeWearResult">
+        SELECT t.* FROM tb_ppe_wear t
+        WHERE t.is_deleted = 0
+          AND (t.worker_name LIKE '%' + #{keyword} + '%'
+            OR t.work_zone LIKE '%' + #{keyword} + '%'
+            OR t.checker LIKE '%' + #{keyword} + '%')
+        ORDER BY t.check_datetime DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearch" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_wear
+        WHERE is_deleted = 0
+          AND (worker_name LIKE '%' + #{keyword} + '%'
+            OR work_zone LIKE '%' + #{keyword} + '%'
+            OR checker LIKE '%' + #{keyword} + '%')
+    </select>
+
+    <select id="findById" resultMap="PpeWearResult">
+        SELECT t.* FROM tb_ppe_wear t WHERE t.id = #{id} AND t.is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.smartehs.model.PpeWear"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_wear (
+            check_datetime, worker_name, department, work_zone, required_ppe,
+            wear_status, checker, action_taken, note,
+            created_by, modified_by, created_at, modified_at, is_deleted
+        ) VALUES (
+            #{checkDatetime}, #{workerName}, #{department}, #{workZone}, #{requiredPpe},
+            #{wearStatus}, #{checker}, #{actionTaken}, #{note},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            SYSDATETIME(), SYSDATETIME(), 0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smartehs.model.PpeWear">
+        UPDATE tb_ppe_wear SET
+            check_datetime = #{checkDatetime}, worker_name = #{workerName}, department = #{department},
+            work_zone = #{workZone}, required_ppe = #{requiredPpe}, wear_status = #{wearStatus},
+            checker = #{checker}, action_taken = #{actionTaken}, note = #{note},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_at = SYSDATETIME()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_wear SET is_deleted = 1, modified_at = SYSDATETIME() WHERE id = #{id}
+    </update>
+
+    <select id="countOk" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_wear WHERE is_deleted = 0 AND wear_status = 'OK'
+    </select>
+
+    <select id="countViolation" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_wear WHERE is_deleted = 0 AND wear_status = 'VIOLATION'
+    </select>
+
+    <select id="countNonCompliant" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_wear WHERE is_deleted = 0 AND wear_status IN ('VIOLATION', 'IMPROPER')
+    </select>
+
+    <select id="rateByDepartment" resultType="map">
+        SELECT
+            department,
+            COUNT(*) AS total_count,
+            SUM(CASE WHEN wear_status = 'OK' THEN 1 ELSE 0 END) AS ok_count
+        FROM tb_ppe_wear
+        WHERE is_deleted = 0
+        GROUP BY department
+        ORDER BY department
+    </select>
+
+</mapper>

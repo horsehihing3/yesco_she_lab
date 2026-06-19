@@ -13,6 +13,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import { useAuth } from '../context/AuthContext'
 import { devToolsEnabled } from '../utils/devMode'
 
@@ -25,6 +26,8 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate()
+  const theme = useTheme()
+  const logoSrc = theme.palette.mode === 'dark' ? '/assets/logo-com4in-w.png' : '/assets/logo-com4in-b.png'
   const { login, isAuthenticated } = useAuth()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -73,9 +76,9 @@ const LoginPage: React.FC = () => {
         <CardContent sx={{ p: 4 }}>
           {/* Logo */}
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Box component="img" src="/assets/img_logo.png" alt="YESCO SHE" sx={{ display: 'block', mx: 'auto', mb: 2 }} />
+            <Box component="img" src={logoSrc} alt="com4in EHS" sx={{ display: 'block', mx: 'auto', mb: 2, maxHeight: 60 }} />
             <Typography variant="h5" fontWeight="bold">
-              yesco SHE
+              com4in EHS
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Sign in to your account

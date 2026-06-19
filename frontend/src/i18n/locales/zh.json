@@ -2243,6 +2243,18 @@
     "normal": "정상"
   },
   "ppe": {
+    "title": "防护用品·设备管理",
+    "tabs": {
+      "dashboard": "仪表盘",
+      "item": "品项管理",
+      "stock": "库存管理",
+      "issue": "发放·归还",
+      "inspection": "检查·点检",
+      "wear": "佩戴履行",
+      "performance": "性能管理",
+      "budget": "费用·预算",
+      "inout": "出入库历史"
+    },
     "nextInspectDate": "下次检查日",
     "lastInspectDate": "最近检查日",
     "totalItems": "防护用品总数",
@@ -2291,10 +2303,6 @@
     "actionReturn": "归还",
     "actionDispose": "废弃",
     "handler": "处理人",
-    "tabs": {
-      "inventory": "防护用品库存",
-      "request": "领用申请"
-    },
     "selectDepartment": "담당부서 선택"
   },
   "ppeReq": {

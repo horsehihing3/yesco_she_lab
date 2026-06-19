@@ -204,6 +204,10 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
       await showSuccess(t('common.saved', '저장되었습니다'))
       handleBackToList()
     },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || t('common.error', '오류가 발생했습니다.')
+      showError(msg)
+    },
   })
   const updateMutation = useMutation({
     mutationFn: updatePlan,
@@ -212,6 +216,10 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
       queryClient.invalidateQueries({ queryKey: ['healthCheckupPlanDetail'] })
       await showSuccess(t('common.saved', '저장되었습니다'))
       handleBackToList()
+    },
+    onError: (err: unknown) => {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || t('common.error', '오류가 발생했습니다.')
+      showError(msg)
     },
   })
   const deleteMutation = useMutation({
@@ -840,7 +848,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           <Box sx={valBorderSx}>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', width: '100%' }}>
               <TextField fullWidth size="small" InputProps={{ readOnly: true }}
-                value={formData.planApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                value={formatUserName(formData.planApproverTeam, formData.planApproverName, formData.planApproverPosition) || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('plan')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>
@@ -850,7 +858,7 @@ const HealthCheckupPlanTab: React.FC<HealthCheckupPlanTabProps> = ({ allowedType
           <Box sx={valSx}>
             <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', width: '100%' }}>
               <TextField size="small" sx={{ flex: 1, minWidth: 0 }} InputProps={{ readOnly: true }}
-                value={formData.completionApproverName || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
+                value={formatUserName(formData.completionApproverTeam, formData.completionApproverName, formData.completionApproverPosition) || ''} placeholder={t('common.selectFromOrg', '조직도에서 선택')} />
               <Button variant="outlined" size="small" sx={{ minWidth: 40 }} onClick={() => setApproverPickTarget('completion')}>
                 <PersonSearchIcon fontSize="small" />
               </Button>

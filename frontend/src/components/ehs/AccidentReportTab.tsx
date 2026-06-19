@@ -212,7 +212,7 @@ const AccidentReportTab: React.FC = () => {
                         onChange={(e) => handleFieldChange(idx, 'disasterType', e.target.value)}
                         displayEmpty
                       >
-                        <MenuItem value=""><em>{t('common.none', '선택')}</em></MenuItem>
+                        <MenuItem value="" sx={{ fontStyle: 'normal' }}>{t('common.none', '선택')}</MenuItem>
                         {disasterCodes.map((c) => (
                           <MenuItem key={c.code} value={c.code}>{getLocalizedName(c)}</MenuItem>
                         ))}
@@ -293,7 +293,7 @@ const AccidentReportTab: React.FC = () => {
               <Typography sx={{ fontSize: '0.72rem', color: 'text.secondary', mb: 0.5, fontWeight: 600 }}>{t('accidentReport.disasterType', '재해형태')}</Typography>
               <FormControl size="small" fullWidth>
                 <Select value={row.disasterType || ''} onChange={(e) => handleFieldChange(idx, 'disasterType', e.target.value)} displayEmpty>
-                  <MenuItem value=""><em>{t('common.none', '선택')}</em></MenuItem>
+                  <MenuItem value="" sx={{ fontStyle: 'normal' }}>{t('common.none', '선택')}</MenuItem>
                   {disasterCodes.map((c) => (
                     <MenuItem key={c.code} value={c.code}>{getLocalizedName(c)}</MenuItem>
                   ))}

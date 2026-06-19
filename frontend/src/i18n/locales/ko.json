@@ -2137,6 +2137,18 @@
     }
   },
   "ppe": {
+    "title": "보호구·장비 관리",
+    "tabs": {
+      "dashboard": "대시보드",
+      "item": "품목 관리",
+      "stock": "재고 관리",
+      "issue": "지급·반납",
+      "inspection": "검사·점검",
+      "wear": "착용 이행",
+      "performance": "성능 관리",
+      "budget": "비용·예산",
+      "inout": "입출고 이력"
+    },
     "nextInspectDate": "차기 점검일",
     "lastInspectDate": "최근 점검일",
     "totalItems": "총 보호구 항목 수",
@@ -2184,11 +2196,7 @@
     "actionIssue": "지급",
     "actionReturn": "반납",
     "actionDispose": "폐기",
-    "handler": "처리 담당자",
-    "tabs": {
-      "inventory": "보호구 재고",
-      "request": "지급 신청"
-    }
+    "handler": "처리 담당자"
   },
   "ppeReq": {
     "allStatus": "전체 상태",

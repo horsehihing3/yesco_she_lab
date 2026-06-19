@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PpeBudgetMapper">
+
+    <resultMap id="PpeBudgetResult" type="com.smartehs.model.PpeBudget">
+        <id property="id" column="id"/>
+        <result property="budgetYear" column="budget_year"/>
+        <result property="department" column="department"/>
+        <result property="budgetAmount" column="budget_amount"/>
+        <result property="spentAmount" column="spent_amount"/>
+        <result property="note" column="note"/>
+        <result property="createdBy" column="created_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="PpeBudgetResult">
+        SELECT t.* FROM tb_ppe_budget t WHERE t.is_deleted = 0
+        ORDER BY t.budget_year DESC, t.department, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_budget WHERE is_deleted = 0
+    </select>
+
+    <select id="findByYear" resultMap="PpeBudgetResult">
+        SELECT t.* FROM tb_ppe_budget t WHERE t.is_deleted = 0 AND t.budget_year = #{year}
+        ORDER BY t.department, t.id DESC
+    </select>
+
+    <select id="findByDepartment" resultMap="PpeBudgetResult">
+        SELECT t.* FROM tb_ppe_budget t WHERE t.is_deleted = 0 AND t.department = #{department}
+        ORDER BY t.budget_year DESC, t.id DESC
+    </select>
+
+    <select id="findById" resultMap="PpeBudgetResult">
+        SELECT t.* FROM tb_ppe_budget t WHERE t.id = #{id} AND t.is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.smartehs.model.PpeBudget"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_budget (
+            budget_year, department, budget_amount, spent_amount, note,
+            created_by, modified_by, created_at, modified_at, is_deleted
+        ) VALUES (
+            #{budgetYear}, #{department}, #{budgetAmount}, #{spentAmount}, #{note},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            SYSDATETIME(), SYSDATETIME(), 0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smartehs.model.PpeBudget">
+        UPDATE tb_ppe_budget SET
+            budget_year = #{budgetYear}, department = #{department},
+            budget_amount = #{budgetAmount}, spent_amount = #{spentAmount}, note = #{note},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_at = SYSDATETIME()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_budget SET is_deleted = 1, modified_at = SYSDATETIME() WHERE id = #{id}
+    </update>
+
+    <select id="sumBudget" resultType="long">
+        SELECT ISNULL(SUM(budget_amount), 0) FROM tb_ppe_budget
+        WHERE is_deleted = 0
+        <if test="year != null">AND budget_year = #{year}</if>
+    </select>
+
+    <select id="sumSpent" resultType="long">
+        SELECT ISNULL(SUM(spent_amount), 0) FROM tb_ppe_budget
+        WHERE is_deleted = 0
+        <if test="year != null">AND budget_year = #{year}</if>
+    </select>
+
+</mapper>

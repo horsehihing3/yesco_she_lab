@@ -2243,6 +2243,18 @@
     "normal": "정상"
   },
   "ppe": {
+    "title": "PPE & Equipment",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "item": "Items",
+      "stock": "Stock",
+      "issue": "Issue & Return",
+      "inspection": "Inspection",
+      "wear": "Wear Compliance",
+      "performance": "Performance",
+      "budget": "Cost & Budget",
+      "inout": "In/Out History"
+    },
     "nextInspectDate": "Next Inspection",
     "lastInspectDate": "Last Inspection",
     "totalItems": "Total PPE Items",
@@ -2291,10 +2303,6 @@
     "actionReturn": "Return",
     "actionDispose": "Dispose",
     "handler": "Handler",
-    "tabs": {
-      "inventory": "PPE Inventory",
-      "request": "Request"
-    },
     "selectDepartment": "담당부서 선택"
   },
   "ppeReq": {

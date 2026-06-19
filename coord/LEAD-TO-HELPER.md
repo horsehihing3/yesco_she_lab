@@ -121,3 +121,38 @@
 
 ### 현재 할 일 (HELPER)
 `git pull --rebase origin yesco-dev` 후 **§7 TASK-3 진행**. 착수 시 `coord/HELPER-TO-LEAD.md` 에 `[진행] TASK-3 시작` 부터 보고. (LEAD는 동시에 api 함수 39개 정리 중 — api 파일은 건드리지 말 것)
+
+---
+
+## 8. TASK-4 — 안전관리 도메인 표준화 E2E 테스트 (HELPER 담당 · 세션14)
+
+**배경**: PersonRef/DTO/예외 표준화 후 기능 검증 중. LEAD가 내부감사(audit)를 **3중 검증(정적→API E2E→프론트 payload 대조)** 으로 통과시킴. 같은 방법을 전 도메인으로 확장. **분담: EHS경영=LEAD / 안전관리=HELPER.**
+
+**⚠️ 이번 라운드 한정 규칙 해제 (LEAD 승인)**:
+- 기존 §1-4 "DB 변형 테스트 금지 / 백엔드 재시작 금지" 는 **이 TASK-4 에 한해 해제**한다.
+- HELPER 는 **자기 노트북에서 백엔드(`gradlew.bat bootRun`, 7501)를 직접 띄워** 같은 원격 DB(211.171…)에 붙여 테스트한다. (두 PC가 각자 백엔드 구동 OK — 공유 자원은 DB뿐)
+- 테스트는 **자기정리(self-cleaning)**: 등록 레코드는 `ZZ_E2E_*` 마커로만 만들고 **끝에 반드시 삭제**(soft-delete 포함). 종료 시 목록에 `ZZ_E2E` 0건 확인 필수.
+- LEAD도 동시에 EHS경영을 같은 DB에서 테스트 중 — 마커가 다르고 테이블도 안 겹치니 충돌 없음. 단 **안전관리 외 테이블은 건드리지 말 것.**
+
+**대상**: `coord/E2E_TEST_RESULTS.md` 의 "안전관리" 표 8개 메뉴 전부.
+1. 위험요인정보(tb_safety_hazard_form) 2. 사고정보(tb_safety_accident_form) 3. 공정활동작업(tb_process_activity_form)
+4. 위험성평가(tb_risk_assessment·결재有) 5. 현장안전관리(tb_site_safety_plan·혼합·결재有)
+6. 아차사고(near-miss) 7. 작업허가/PTW(tb_permit_to_work·2단계결재) 8. 보호구(ppe)
+
+**방법 (메뉴마다)**:
+1. **착수 시 해당 Controller 를 직접 읽어** 엔드포인트·요청바디 확정 (추정 금지 — 경로가 예상과 다름. 예: 감사는 `/audit-plan`).
+2. 레퍼런스 스크립트 `coord/e2e_audit_plan_test.py` / `e2e_audit_exec_test.py` 복제·수정해 Python(stdlib urllib)로 E2E 작성. 로그인 계정 `yujeong.jung / com4in!!`. 스크립트는 `coord/e2e_<도메인>_test.py` 로 저장.
+3. 단계별 assert: 등록(작성자 flat·중첩누출0) → 수정(수정자 갱신·작성자 보존) → [결재有면] 상신→반려(사유저장)→재상신→승인/완료(승인자기록·작성자보존·completion_approver null 안됨) → cleanup. 결재 없는 도메인은 등록→수정→재조회→삭제 왕복 + PersonRef flat 검증.
+4. **③ 프론트 payload 대조**: 해당 화면 컴포넌트/`api/*.ts` 가 보내는 요청 필드가 flat·중첩없음·E2E와 일치하는지 확인.
+5. `coord/E2E_TEST_RESULTS.md` 안전관리 표의 ①②③·결과·비고 갱신. 파일업로드/템플릿 의존 등 자동화 곤란하면 가능한 범위까지 + 비고에 "수동확인 필요" 명시(무리한 자동화 금지).
+
+**철칙**:
+- 등록한 테스트 레코드 **반드시 삭제**. 종료 시 `ZZ_E2E` 0건 확인.
+- 백엔드/프론트 **코드 수정 금지** (이번엔 테스트만 — 결함 발견 시 고치지 말고 `[질문]`/표 비고로 보고).
+- 안전관리 외 테이블·EHS경영 도메인은 건드리지 말 것.
+- 공유표/스크립트 push 전후 `git pull --rebase`. 충돌 시 멈추고 `[블로커]`.
+
+**보고**: 착수 시 `[진행] TASK-4 시작 — 안전관리 OO부터`. 메뉴별 완료마다 표 갱신 + `coord/HELPER-TO-LEAD.md` 에 한 줄. 전체 끝나면 `[완료] TASK-4` + 통과/이슈 요약.
+
+### 현재 할 일 (HELPER) — 갱신
+TASK-3 는 완료됨. **이제 §8 TASK-4(안전관리 E2E) 진행.** `git pull --rebase origin yesco-dev` 로 `coord/E2E_TEST_RESULTS.md` + 레퍼런스 스크립트 받고 착수.

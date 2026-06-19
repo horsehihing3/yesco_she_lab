@@ -916,7 +916,7 @@ const RiskAssessmentOfficeWorkTab: React.FC = () => {
               }
               displayEmpty
             >
-              <MenuItem value=""><em>{t('common.none', '선택 안함')}</em></MenuItem>
+              <MenuItem value="" sx={{ fontStyle: 'normal' }}>{t('common.none', '선택 안함')}</MenuItem>
               {candidates.map(tpl => (
                 <MenuItem key={tpl.id} value={tpl.id}>{tpl.templateName}</MenuItem>
               ))}

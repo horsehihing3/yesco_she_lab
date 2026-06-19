@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PpePerformanceMapper">
+
+    <resultMap id="PpePerformanceResult" type="com.smartehs.model.PpePerformance">
+        <id property="id" column="id"/>
+        <result property="evaluationDate" column="evaluation_date"/>
+        <result property="itemId" column="item_id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="performanceStandard" column="performance_standard"/>
+        <result property="standardValue" column="standard_value"/>
+        <result property="measuredValue" column="measured_value"/>
+        <result property="result" column="result"/>
+        <result property="evaluator" column="evaluator"/>
+        <result property="note" column="note"/>
+        <result property="createdBy" column="created_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="PpePerformanceResult">
+        SELECT t.* FROM tb_ppe_performance t WHERE t.is_deleted = 0
+        ORDER BY t.evaluation_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_performance WHERE is_deleted = 0
+    </select>
+
+    <select id="findByResult" resultMap="PpePerformanceResult">
+        SELECT t.* FROM tb_ppe_performance t
+        WHERE t.is_deleted = 0 AND t.result = #{result}
+        ORDER BY t.evaluation_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByResult" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_performance WHERE is_deleted = 0 AND result = #{result}
+    </select>
+
+    <select id="search" resultMap="PpePerformanceResult">
+        SELECT t.* FROM tb_ppe_performance t
+        WHERE t.is_deleted = 0
+          AND (t.item_name LIKE '%' + #{keyword} + '%'
+            OR t.performance_standard LIKE '%' + #{keyword} + '%'
+            OR t.evaluator LIKE '%' + #{keyword} + '%')
+        ORDER BY t.evaluation_date DESC, t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearch" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_performance
+        WHERE is_deleted = 0
+          AND (item_name LIKE '%' + #{keyword} + '%'
+            OR performance_standard LIKE '%' + #{keyword} + '%'
+            OR evaluator LIKE '%' + #{keyword} + '%')
+    </select>
+
+    <select id="findById" resultMap="PpePerformanceResult">
+        SELECT t.* FROM tb_ppe_performance t WHERE t.id = #{id} AND t.is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.smartehs.model.PpePerformance"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_performance (
+            evaluation_date, item_id, item_name, performance_standard, standard_value,
+            measured_value, result, evaluator, note,
+            created_by, modified_by, created_at, modified_at, is_deleted
+        ) VALUES (
+            #{evaluationDate}, #{itemId}, #{itemName}, #{performanceStandard}, #{standardValue},
+            #{measuredValue}, #{result}, #{evaluator}, #{note},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            SYSDATETIME(), SYSDATETIME(), 0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smartehs.model.PpePerformance">
+        UPDATE tb_ppe_performance SET
+            evaluation_date = #{evaluationDate}, item_id = #{itemId}, item_name = #{itemName},
+            performance_standard = #{performanceStandard}, standard_value = #{standardValue},
+            measured_value = #{measuredValue}, result = #{result}, evaluator = #{evaluator},
+            note = #{note},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_at = SYSDATETIME()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_performance SET is_deleted = 1, modified_at = SYSDATETIME() WHERE id = #{id}
+    </update>
+
+    <select id="countOk" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_performance WHERE is_deleted = 0 AND result = 'MEET'
+    </select>
+
+    <select id="countFail" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_performance WHERE is_deleted = 0 AND result = 'BELOW'
+    </select>
+
+    <select id="countPending" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_performance WHERE is_deleted = 0 AND result = 'PENDING'
+    </select>
+
+</mapper>
