@@ -1,6 +1,7 @@
 {
   "common": {
     "no": "번호",
+    "flowChart": "흐름도",
     "itemSuffix": "개",
     "cntSuffix": "건",
     "persons": "명",
@@ -3299,6 +3300,8 @@
     "annualPlan": "연간 계획",
     "kpiStatus": "KPI 현황",
     "reportTab": "레포트",
+    "flowChart": "흐름도",
+    "flowChartTitle": "KPI 목표 업무 흐름도",
     "reportTitle": "연간 계획 레포트",
     "reportOverviewTitle": "계획 개요",
     "reportGoalsTitle": "목표 추진 결과",

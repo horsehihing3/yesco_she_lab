@@ -54,6 +54,7 @@ import {
   deleteCodeDetail,
 } from '../api/codeManageApi'
 import { CodeGroup, CodeGroupRequest, CodeDetail, CodeDetailRequest } from '../types/codeManage.types'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const CodeManagePage: React.FC = () => {
   const { t, i18n } = useTranslation()
@@ -413,6 +414,7 @@ const CodeManagePage: React.FC = () => {
                 }}
               />
               <IconButton size="small" onClick={handleGroupReset}><RefreshIcon /></IconButton>
+              <FlowChartButton flowKey="codeManage" />
               <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenGroupAdd}>New</Button>
             </Box>
           </Box>

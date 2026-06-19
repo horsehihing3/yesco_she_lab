@@ -37,6 +37,7 @@ import HospitalSearchModal from '../components/common/HospitalSearchModal'
 import AiReportModal from '../components/common/AiReportModal'
 import { myHealthCheckupApi } from '../api/myHealthCheckupApi'
 import DevTestFillButton from '../components/common/DevTestFillButton'
+import FlowChartButton from '../components/common/FlowChartButton'
 import {
   HealthCheckup,
   HealthCheckupRequest,
@@ -329,9 +330,10 @@ const MyHealthCheckupPage: React.FC = () => {
   // ======================================================
   const renderListView = () => (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, mb: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, mb: 2 }}>
+        <FlowChartButton flowKey="myHealthCheckup" />
         {canSee(MENU, 'LIST', '신규 등록', myRoles) && (
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleCreate} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleCreate} sx={{ width: { xs: 'auto', sm: 'auto' } }}>
             {t('common.new')}
           </Button>
         )}

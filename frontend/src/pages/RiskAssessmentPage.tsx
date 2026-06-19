@@ -5,6 +5,7 @@ import RiskAssessmentDashboardTab from '../components/ehs/RiskAssessmentDashboar
 import RiskAssessmentTab from '../components/ehs/RiskAssessmentTab'
 // import RiskAssessmentOfficeWorkTab from '../components/ehs/RiskAssessmentOfficeWorkTab'
 import RiskAssessmentReportTab from '../components/ehs/RiskAssessmentReportTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const RiskAssessmentPage: React.FC = () => {
   const { t } = useTranslation()
@@ -33,9 +34,10 @@ const RiskAssessmentPage: React.FC = () => {
         {/* <Tab label={t('riskAssessment.officeWork', '사무업무')} /> */}
         <Tab label={t('common.report', '레포트')} />
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabTitles[activeTab]}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabTitles[activeTab]}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="riskAssessment" />}
+      </Box>
       {activeTab === 0 && <RiskAssessmentDashboardTab />}
       {activeTab === 1 && <RiskAssessmentTab mode="plan" />}
       {activeTab === 2 && <RiskAssessmentTab mode="management" />}

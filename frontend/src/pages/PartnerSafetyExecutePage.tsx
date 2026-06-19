@@ -10,6 +10,7 @@ import { partnerSafetyExecutionApi } from '../api/partnerSafetyExecutionApi'
 import SafetyChecklistTab, { SafetyChecklistTabRef } from '../components/ehs/SafetyChecklistTab'
 import SignaturePad from '../components/common/SignaturePad'
 import { useAlert } from '../contexts/AlertContext'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const randomId = () => Math.random().toString(36).slice(2, 10).toUpperCase()
 const randomPhone = () => `010-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`
@@ -147,6 +148,9 @@ const PartnerSafetyExecutePage: React.FC = () => {
         // 점검 항목 컬럼 (simpleMode: No / 점검항목 / 적합 / 부적합 → 2번째) — 한글 단어 단위 줄바꿈
         '& tbody tr > td:nth-of-type(2)': { wordBreak: 'keep-all !important' },
       }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+          <FlowChartButton flowKey="partnerSafety" />
+        </Box>
         <Typography variant="h6" fontWeight={700} sx={{ mb: 2, textAlign: 'center' }}>
           {plan.title}
         </Typography>

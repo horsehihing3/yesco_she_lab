@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import SafetyChecklistWrapper from '../components/checklist/SafetyChecklistWrapper'
 import RiskAssessmentFormWrapper from '../components/checklist/RiskAssessmentFormWrapper'
 import EvalSheetTab from '../components/checklist/EvalSheetTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const ChecklistPage: React.FC = () => {
   const { t } = useTranslation()
@@ -41,6 +42,11 @@ const ChecklistPage: React.FC = () => {
       >
         {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
       </Tabs>
+      {activeTab === 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <FlowChartButton flowKey="checklist" />
+        </Box>
+      )}
       {tabs[activeTab]?.component}
     </Box>
   )

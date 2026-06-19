@@ -4,6 +4,7 @@ import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { useMenuRule } from '../hooks/useMenuRule'
+import FlowChartButton from '../components/common/FlowChartButton'
 import TrainingDashboardTab from '../components/ehs/TrainingDashboardTab'
 import TrainingApplyTab from '../components/ehs/TrainingApplyTab'
 import TrainingStatusTab from '../components/ehs/TrainingStatusTab'
@@ -37,7 +38,10 @@ const TrainingPage: React.FC = () => {
         sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
         {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{tabs[activeTab]?.label}</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="training" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

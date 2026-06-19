@@ -54,6 +54,7 @@ import { FileMetadata } from '../types/common.types'
 import { workplaceSiteApi } from '../api/workplaceSiteApi'
 import type { WorkplaceSite } from '../types/workplaceSite.types'
 import WorkplaceSiteFormDialog from '../components/workplaceSite/WorkplaceSiteFormDialog'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 // 컴포넌트 내부용 디바이스 인터페이스 (x, y 좌표 사용)
 interface DisplayDevice {
@@ -1362,6 +1363,9 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
 
   return (
     <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+        <FlowChartButton flowKey="workplaceDrawings" />
+      </Box>
       {/* 사업장만 있고 도면 미등록 — 트리 표시하되 우측 안내 */}
       {!selectedFloor && workplaceSites.length > 0 && (
         <>

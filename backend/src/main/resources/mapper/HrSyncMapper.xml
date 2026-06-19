@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartehs.mapper.HrSyncMapper">
+
+    <!--
+      부서 upsert — 타깃 T_IDM_GROUP, 키 = CompanyCode + GroupCode(=DEPT_ID).
+      · WHEN MATCHED 는 SyncSource='SAP' 행만 갱신(자체등록 'SHE'/기존 NULL 보호).
+      · NOT MATCHED 면 신규 INSERT(SyncSource='SAP').
+      · MSSQL MERGE 패턴(ButtonRuleMapper.upsert 준용). 문장 끝 세미콜론 필수.
+      · GroupStatus: 부서 IF에 상태값 없음 → 신규는 '10'(활성) 가정. TODO(예스코 회신): 부서 상태 제공 시 매핑.
+      · GroupLevel: SAP 미제공 → 미설정(NULL). 트리 계층은 UpperGroupCode 로 구성되므로 무영향.
+    -->
+    <update id="upsertSapDept">
+        MERGE T_IDM_GROUP AS t
+        USING (SELECT #{d.deptId} AS GroupCode, #{companyCode} AS CompanyCode) AS s
+          ON (t.GroupCode = s.GroupCode AND t.CompanyCode = s.CompanyCode)
+        WHEN MATCHED AND t.SyncSource = 'SAP' THEN
+            UPDATE SET
+                GroupName      = #{d.deptName},
+                UpperGroupCode = #{d.parentCode},
+                UpdatedTime    = GETDATE()
+        WHEN NOT MATCHED THEN
+            INSERT (ObjectGUID, CompanyCode, GroupCode, GroupName, UpperGroupCode,
+                    GroupStatus, SyncSource, CreatedTime, UpdatedTime)
+            VALUES (NEWID(), #{companyCode}, #{d.deptId}, #{d.deptName}, #{d.parentCode},
+                    '10', 'SAP', GETDATE(), GETDATE());
+    </update>
+
+    <!--
+      사용자 upsert — 타깃 T_IDM_USER, 키 = EmpNo(=EMP_ID).
+      · WHEN MATCHED 는 SyncSource='SAP' 행만 갱신(자체등록 'SHE'/기존 NULL 보호).
+      · UID(로그인ID)는 사번으로 채우되 기존 값은 보존(COALESCE).
+      · 신규 INSERT: ObjectGUID=NEWID()(DevAccountInitializer 패턴),
+        UIDNumber=대리키 발번 = NEXT VALUE FOR seq_idm_user_uid (시작값 MAX+1, HrSyncSchemaInitializer 생성).
+      · UserStatus = 변환된 상태값(#{mappedStatus}). 변환 미확정 시 원시값 패스스루(TODO) — 잘못된 활성화 방지.
+      · UserRole: SAP 미제공 → 신규는 SHE 기본값 'TEAM_MEMBER'(UserInfoResponse 기본값과 동일). 역할 부여는 SHE 관리.
+      · ObjectCategory = USER_TYPE 적재(INSERT/UPDATE 양쪽). 활용(역할초기화 등)은 추후 — 지금은 적재만.
+      · TitleName(직위명)·DutyCode/DutyName(직책) 적재(방안A). 직위명은 조회 매퍼가 TitleName 우선·HRCODE 폴백으로 읽음.
+        직책은 적재만(화면/조인 없음).
+    -->
+    <update id="upsertSapUser">
+        MERGE T_IDM_USER AS t
+        USING (SELECT #{u.empId} AS EmpNo) AS s
+          ON (t.EmpNo = s.EmpNo)
+        WHEN MATCHED AND t.SyncSource = 'SAP' THEN
+            UPDATE SET
+                UID            = COALESCE(t.UID, #{u.empId}),
+                UserName       = #{u.empName},
+                DeptCode       = #{u.deptId},
+                TitleCode      = #{u.titleCode},
+                TitleName      = #{u.titleName},
+                DutyCode       = #{u.dutyCode},
+                DutyName       = #{u.dutyName},
+                Mobile         = #{u.cellNo},
+                Email          = #{u.email},
+                UserStatus     = #{mappedStatus},
+                ObjectCategory = #{u.userType},
+                UpdatedTime    = GETDATE()
+        WHEN NOT MATCHED THEN
+            INSERT (ObjectGUID, UIDNumber, UID, EmpNo, UserName, DeptCode, TitleCode, TitleName,
+                    DutyCode, DutyName, Mobile, Email, UserStatus, ObjectCategory, CompanyCode,
+                    UserRole, SyncSource, CreatedTime, UpdatedTime)
+            VALUES (NEWID(),
+                    NEXT VALUE FOR seq_idm_user_uid,
+                    #{u.empId}, #{u.empId}, #{u.empName}, #{u.deptId}, #{u.titleCode}, #{u.titleName},
+                    #{u.dutyCode}, #{u.dutyName}, #{u.cellNo}, #{u.email}, #{mappedStatus}, #{u.userType}, #{companyCode},
+                    'TEAM_MEMBER', 'SAP', GETDATE(), GETDATE());
+    </update>
+
+    <insert id="insertSyncLog" parameterType="com.smartehs.model.HrSyncLog">
+        INSERT INTO tb_hr_sync_log (executed_at, target, received_count, success, message)
+        VALUES (GETDATE(), #{target}, #{receivedCount}, #{success}, #{message})
+    </insert>
+
+</mapper>

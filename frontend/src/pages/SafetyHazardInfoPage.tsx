@@ -22,6 +22,7 @@ import type { UserInfo } from '../components/common/UserSelectModal'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import DevTestFillButton from '../components/common/DevTestFillButton'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -294,7 +295,9 @@ const SafetyHazardInfoPage: React.FC = () => {
       <Box>
         <LoadingOverlay open={listFetching || isUploading} message={isUploading ? '엑셀 업로드 중...' : '로딩 중...'} />
         <input ref={fileInputRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleExcelUpload} />
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>안전보건상 위험정보</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" fontWeight="bold">안전보건상 위험정보</Typography>
+        </Box>
         {/* PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -302,6 +305,7 @@ const SafetyHazardInfoPage: React.FC = () => {
             <IconButton onClick={() => setKeyword('')} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
+            <FlowChartButton flowKey="safetyHazardInfo" />
             <Button variant="contained" size="small" onClick={() => fileInputRef.current?.click()}>엑셀 업로드</Button>
             <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd} size="small">New</Button>
           </Box>

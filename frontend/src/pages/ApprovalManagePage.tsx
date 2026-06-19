@@ -15,6 +15,7 @@ import { fetchApprovals, updateApproval } from '../api/approvalApi'
 import useCodeMap from '../hooks/useCodeMap'
 import { useAuth } from '../context/AuthContext'
 import { useAlert } from '../contexts/AlertContext'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 type ViewMode = 'list' | 'detail'
 
@@ -271,6 +272,9 @@ const ApprovalManagePage: React.FC = () => {
   // ── LIST VIEW ──
   return (
     <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+        <FlowChartButton flowKey="approvalManage" />
+      </Box>
       {/* PC Search */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>

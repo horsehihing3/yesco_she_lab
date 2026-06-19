@@ -1,6 +1,7 @@
 {
   "common": {
     "no": "No.",
+    "flowChart": "Flow Chart",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -3352,6 +3353,8 @@
     "annualPlan": "Annual Plan",
     "kpiStatus": "KPI Status",
     "reportTab": "Report",
+    "flowChart": "Flow Chart",
+    "flowChartTitle": "KPI Goal Workflow",
     "reportTitle": "Annual Plan Report",
     "reportOverviewTitle": "Plan Overview",
     "reportGoalsTitle": "Goal Achievement Results",

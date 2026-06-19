@@ -21,6 +21,7 @@ import LoadingOverlay from '../components/common/LoadingOverlay'
 import ListSearchBar from '../components/common/ListSearchBar'
 import AuditPlanTab from '../components/ehs/AuditPlanTab'
 import AuditExecutionTab from '../components/ehs/AuditExecutionTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const CATEGORIES = ['안전', '보건', '환경', '화학물질', '소방']
 
@@ -274,6 +275,9 @@ const LegalResponsePage: React.FC = () => {
       {/* TAB 0: 법령 검색 */}
       {tab === 0 && (
         <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, mb: 2 }}>
+            <FlowChartButton flowKey="legalResponse" />
+          </Box>
           {/* PC 검색 */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mb: 2, flexWrap: 'wrap', alignItems: 'center' }}>
             <ListSearchBar

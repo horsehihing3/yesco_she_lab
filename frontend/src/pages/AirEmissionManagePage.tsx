@@ -5,6 +5,7 @@ import AirEmissionDashboardTab from '../components/environment/AirEmissionDashbo
 import AirEmissionTab from '../components/environment/AirEmissionTab'
 import AirEmissionStandardTab from '../components/environment/AirEmissionStandardTab'
 import AirEmissionReportTab from '../components/environment/AirEmissionReportTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const AirEmissionManagePage: React.FC = () => {
   const { t } = useTranslation()
@@ -33,9 +34,10 @@ const AirEmissionManagePage: React.FC = () => {
           <Tab key={idx} label={tab.label} />
         ))}
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="airEmission" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

@@ -8,6 +8,7 @@ import FireInspectionTab from '../components/fireSafety/FireInspectionTab'
 import DisasterFacilityTab from '../components/fireSafety/DisasterFacilityTab'
 import FireEmergencyTab from '../components/fireSafety/FireEmergencyTab'
 import FireComplianceTab from '../components/fireSafety/FireComplianceTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const FireSafetyPage: React.FC = () => {
   const { t } = useTranslation()
@@ -43,7 +44,10 @@ const FireSafetyPage: React.FC = () => {
           {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
         </Tabs>
       </Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{tabs[activeTab]?.label}</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="fireSafety" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

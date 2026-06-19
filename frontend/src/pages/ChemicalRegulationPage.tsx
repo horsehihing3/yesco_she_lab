@@ -4,6 +4,7 @@ import GhsTab from '../components/chemical/GhsTab'
 import ReachTab from '../components/chemical/ReachTab'
 import ClpTab from '../components/chemical/ClpTab'
 import TscaTab from '../components/chemical/TscaTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const ChemicalRegulationPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
@@ -26,9 +27,10 @@ const ChemicalRegulationPage: React.FC = () => {
       >
         {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="chemicalReg" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

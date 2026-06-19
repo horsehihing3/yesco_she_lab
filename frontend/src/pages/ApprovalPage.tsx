@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../hooks/useMenuRule'
+import FlowChartButton from '../components/common/FlowChartButton'
 import MyApprovalTab from '../components/approval/MyApprovalTab'
 import ApprovalLinePage from './ApprovalLinePage'
 import ApprovalManagePage from './ApprovalManagePage'
@@ -54,9 +55,10 @@ const ApprovalPage: React.FC = () => {
           ))}
         </Tabs>
       </Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="approval" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

@@ -12,6 +12,7 @@ import OshCommitteeTab from '../components/ehs/OshCommitteeTab'
 import EmergencyNotificationTab from '../components/ehs/EmergencyNotificationTab'
 import QnaTab from '../components/ehs/QnaTab'
 import EmrContactTab from '../components/ehs/EmrContactTab'
+import FlowChartButton from '../components/common/FlowChartButton'
 
 const EhsPage: React.FC = () => {
   const { t } = useTranslation()
@@ -72,9 +73,10 @@ const EhsPage: React.FC = () => {
           ))}
         </Tabs>
       </Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
+        {activeTab === 0 && <FlowChartButton flowKey="ehs" />}
+      </Box>
       {tabs[activeTab]?.component}
     </Box>
   )

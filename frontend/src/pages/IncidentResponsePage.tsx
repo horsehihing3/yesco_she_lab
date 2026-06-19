@@ -16,6 +16,7 @@ import type { IncidentResponse } from '../types/incidentResponse.types'
 import StatCard from '../components/legalCompliance/StatCard'
 import { FormTable, FormRow, FormLabel, FormCell } from '../components/common/FormTable'
 import DevTestFillButton from '../components/common/DevTestFillButton'
+import FlowChartButton from '../components/common/FlowChartButton'
 import { useAlert } from '../contexts/AlertContext'
 
 const TYPE_OPTIONS: Array<[string, string]> = [
@@ -431,6 +432,7 @@ const IncidentResponsePage: React.FC = () => {
         </TextField>
         <IconButton size="small" onClick={invalidate}><RefreshIcon /></IconButton>
         <Box sx={{ flex: 1 }} />
+        <FlowChartButton flowKey="incident" />
         <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}
           sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
       </Box>
