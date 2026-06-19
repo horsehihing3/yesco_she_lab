@@ -438,10 +438,10 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
             }),
           }}
         >
-          {/* com4in 로고 — 사이드바 브랜드 영역이 항상 어두운 배경이라 모드 무관 흰색 로고 사용 */}
+          {/* 모드별 YESCO 로고: 다크·예스코 → logo_yesco.png(흰색 로고) / 라이트 → logo_yesco_on.png */}
           <Box component="img"
-            src="/assets/logo-com4in-w.png"
-            alt="com4in EHS"
+            src={(isDarkMode || isYescoMode) ? '/assets/logo_yesco.png' : '/assets/logo_yesco_on.png'}
+            alt="YESCO SHE"
             sx={{ height: 36, width: 'auto', display: 'block' }} />
         </Box>
       )}
