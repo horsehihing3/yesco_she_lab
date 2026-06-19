@@ -13,7 +13,8 @@ spring:
 
   datasource:
     # 납품/Yesco 전환: 운영에선 MSSQL_URL/USERNAME/PASSWORD 환경변수로 주입. 미설정 시 현재 개발 DB 기본값.
-    url: ${MSSQL_URL:jdbc:sqlserver://211.171.152.242:51084;databaseName=SmartEHS_com4in;encrypt=true;trustServerCertificate=true}
+    # ⚠ lab 전용: 원본 SmartEHS_com4in 과 분리. 복제본 yescoSHE_lab 만 바라본다(원본 쓰기 금지).
+    url: ${MSSQL_URL:jdbc:sqlserver://211.171.152.242:51084;databaseName=yescoSHE_lab;encrypt=true;trustServerCertificate=true}
     username: ${MSSQL_USERNAME:com4in}
     password: ${MSSQL_PASSWORD:com4in201!!}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
