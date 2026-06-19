@@ -64,7 +64,12 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
         // tb_health_checkup_record: created_by 가 레거시 문자열 컬럼이고 유일 역할이라 JSON 전환 제외(전체 flat 유지)
         new Object[]{"tb_legal_law", C},
         new Object[]{"tb_od_aftercare", C}, new Object[]{"tb_od_exposure", C}, new Object[]{"tb_od_org", C},
-        new Object[]{"tb_od_plan", C}, new Object[]{"tb_od_worker", C}
+        new Object[]{"tb_od_plan", C}, new Object[]{"tb_od_worker", C},
+        // 보호구·장비 8개 도메인 — PpeSchemaInitializer 가 created_by/modified_by 컬럼을 미리 생성하므로 ALTER 는 skip(멱등).
+        new Object[]{"tb_ppe_item", CM}, new Object[]{"tb_ppe_stock", CM},
+        new Object[]{"tb_ppe_inout", CM}, new Object[]{"tb_ppe_issue", CM},
+        new Object[]{"tb_ppe_inspection", CM}, new Object[]{"tb_ppe_wear", CM},
+        new Object[]{"tb_ppe_performance", CM}, new Object[]{"tb_ppe_budget", CM}
     );
 
     @Override

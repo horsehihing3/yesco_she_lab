@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartehs.mapper.PpeItemMapper">
+
+    <resultMap id="PpeItemResult" type="com.smartehs.model.PpeItem">
+        <id property="id" column="id"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="name" column="name"/>
+        <result property="category" column="category"/>
+        <result property="modelNo" column="model_no"/>
+        <result property="kcCertNo" column="kc_cert_no"/>
+        <result property="grade" column="grade"/>
+        <result property="supplier" column="supplier"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="replaceCycle" column="replace_cycle"/>
+        <result property="certExpiry" column="cert_expiry"/>
+        <result property="minStock" column="min_stock"/>
+        <result property="note" column="note"/>
+        <result property="createdBy" column="created_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="modifiedBy" column="modified_by"
+                typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="modifiedAt" column="modified_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="PpeItemResult">
+        SELECT t.* FROM tb_ppe_item t WHERE t.is_deleted = 0
+        ORDER BY t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_item WHERE is_deleted = 0
+    </select>
+
+    <select id="findByCategory" resultMap="PpeItemResult">
+        SELECT t.* FROM tb_ppe_item t
+        WHERE t.is_deleted = 0 AND t.category = #{category}
+        ORDER BY t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countByCategory" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_item
+        WHERE is_deleted = 0 AND category = #{category}
+    </select>
+
+    <select id="search" resultMap="PpeItemResult">
+        SELECT t.* FROM tb_ppe_item t
+        WHERE t.is_deleted = 0
+          AND (t.name LIKE '%' + #{keyword} + '%'
+            OR t.model_no LIKE '%' + #{keyword} + '%'
+            OR t.supplier LIKE '%' + #{keyword} + '%'
+            OR t.item_code LIKE '%' + #{keyword} + '%')
+        ORDER BY t.id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="countBySearch" resultType="int">
+        SELECT COUNT(*) FROM tb_ppe_item
+        WHERE is_deleted = 0
+          AND (name LIKE '%' + #{keyword} + '%'
+            OR model_no LIKE '%' + #{keyword} + '%'
+            OR supplier LIKE '%' + #{keyword} + '%'
+            OR item_code LIKE '%' + #{keyword} + '%')
+    </select>
+
+    <select id="findById" resultMap="PpeItemResult">
+        SELECT t.* FROM tb_ppe_item t WHERE t.id = #{id} AND t.is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.smartehs.model.PpeItem"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tb_ppe_item (
+            item_code, name, category, model_no, kc_cert_no, grade, supplier,
+            unit_price, replace_cycle, cert_expiry, min_stock, note,
+            created_by, modified_by, created_at, modified_at, is_deleted
+        ) VALUES (
+            #{itemCode}, #{name}, #{category}, #{modelNo}, #{kcCertNo}, #{grade}, #{supplier},
+            #{unitPrice}, #{replaceCycle}, #{certExpiry}, #{minStock}, #{note},
+            #{createdBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            SYSDATETIME(), SYSDATETIME(), 0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.smartehs.model.PpeItem">
+        UPDATE tb_ppe_item SET
+            item_code = #{itemCode}, name = #{name}, category = #{category},
+            model_no = #{modelNo}, kc_cert_no = #{kcCertNo}, grade = #{grade},
+            supplier = #{supplier}, unit_price = #{unitPrice}, replace_cycle = #{replaceCycle},
+            cert_expiry = #{certExpiry}, min_stock = #{minStock}, note = #{note},
+            modified_by = #{modifiedBy,typeHandler=com.smartehs.config.typehandler.PersonRefTypeHandler},
+            modified_at = SYSDATETIME()
+        WHERE id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE tb_ppe_item SET is_deleted = 1, modified_at = SYSDATETIME() WHERE id = #{id}
+    </update>
+
+    <select id="countDistinctCategory" resultType="int">
+        SELECT COUNT(DISTINCT category) FROM tb_ppe_item WHERE is_deleted = 0
+    </select>
+
+    <select id="countDistinctSupplier" resultType="int">
+        SELECT COUNT(DISTINCT supplier) FROM tb_ppe_item WHERE is_deleted = 0 AND supplier IS NOT NULL
+    </select>
+
+</mapper>

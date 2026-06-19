@@ -1326,7 +1326,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   <Box sx={{ ...val, flex: 3 }}>
                     <FormControl fullWidth size="small">
                       <Select value={step21FormId} onChange={(e: SelectChangeEvent<number | ''>) => handleStep21FormChange(e.target.value as number | '')} displayEmpty>
-                        <MenuItem value=""><em>{t('common.none', '선택 안함')}</em></MenuItem>
+                        <MenuItem value="" sx={{ fontStyle: 'normal' }}>{t('common.none', '선택 안함')}</MenuItem>
                         {(formTemplates || []).map((form) => (
                           <MenuItem key={form.id} value={form.id}>{form.title}</MenuItem>
                         ))}
@@ -1455,7 +1455,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
                   </Typography>
                   <FormControl fullWidth size="small">
                     <Select value={step21FormId} onChange={(e: SelectChangeEvent<number | ''>) => handleStep21FormChange(e.target.value as number | '')} displayEmpty>
-                      <MenuItem value=""><em>{t('common.none', '선택 안함')}</em></MenuItem>
+                      <MenuItem value="" sx={{ fontStyle: 'normal' }}>{t('common.none', '선택 안함')}</MenuItem>
                       {(formTemplates || []).map((form) => (
                         <MenuItem key={form.id} value={form.id}>{form.title}</MenuItem>
                       ))}
@@ -1575,7 +1575,7 @@ const RiskAssessmentTab: React.FC<RiskAssessmentTabProps> = ({ mode = 'plan' }) 
               onChange={(e: SelectChangeEvent<number | ''>) => onFormChange(e.target.value as number | '')}
               displayEmpty
             >
-              <MenuItem value=""><em>{t('common.none', '선택 안함')}</em></MenuItem>
+              <MenuItem value="" sx={{ fontStyle: 'normal' }}>{t('common.none', '선택 안함')}</MenuItem>
               {(formTemplates || []).map((form) => (
                 <MenuItem key={form.id} value={form.id}>{form.title}</MenuItem>
               ))}

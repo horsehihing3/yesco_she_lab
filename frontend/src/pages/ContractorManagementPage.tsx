@@ -25,8 +25,8 @@ import { useButtonRules } from '../hooks/useButtonRules'
 import { fetchTeamLeader } from '../api/approvalApi'
 import { contractorPlanApi } from '../api/contractorApi'
 import { ContractorPlan, ContractorPlanRequest, ContractorWorker } from '../types/contractor.types'
-import { ppeEquipmentApi } from '../api/ppeEquipmentApi'
-import { PpeEquipment } from '../types/ppeEquipment.types'
+// PPE 재구성 중 — 신규 API 연결 전 임시 placeholder
+type PpeEquipment = { id: number; name: string }
 import { fetchSafetyTemplates } from '../api/safetyChecklistApi'
 import type { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
@@ -122,9 +122,8 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
     fetchSafetyTemplates().then(all => {
       setTemplates(all)
     }).catch(() => {})
-    ppeEquipmentApi.getAll(0, 200).then(res => {
-      setPpeList(res.content || [])
-    }).catch(() => {})
+    // PPE 재구성 중 — 신규 API 연결 전 임시 빈 배열
+    setPpeList([])
   }, [])
 
   // Release edit lock on browser close / tab close while in approval-mode detail

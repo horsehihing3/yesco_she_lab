@@ -5,11 +5,11 @@ import com.smartehs.dto.response.ApprovalResponse;
 import com.smartehs.exception.ResourceNotFoundException;
 import com.smartehs.mapper.ApprovalMapper;
 import com.smartehs.mapper.PermitToWorkMapper;
-import com.smartehs.mapper.PpeRequestMapper;
+// PpeRequest 연동은 보호구·장비 재구성 후 신규 도메인(tb_ppe_issue)으로 다시 연결 예정
 import com.smartehs.mapper.SafetyEducationMapper;
 import com.smartehs.mapper.ChemicalMapper;
 import com.smartehs.model.Approval;
-import com.smartehs.model.PpeRequest;
+// import com.smartehs.model.PpeRequest;  // 보호구·장비 재구성 후 신규 도메인으로 재연결 예정
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class ApprovalService {
 
     private final ApprovalMapper approvalMapper;
-    private final PpeRequestMapper ppeRequestMapper;
+    // private final PpeRequestMapper ppeRequestMapper;  // 보호구·장비 재구성 후 신규 도메인으로 재연결 예정
     private final PermitToWorkMapper permitToWorkMapper;
     private final SafetyEducationMapper safetyEducationMapper;
     private final ChemicalMapper chemicalMapper;
@@ -123,11 +123,7 @@ public class ApprovalService {
         approvalMapper.update(approval);
         log.info("Updated approval: {}", approval.getApprovalId());
 
-        // PPE_REQUEST 타입이면 PPE 신청 상태도 연동
-        if ("PPE_REQUEST".equals(approval.getType()) && approval.getContent() != null && request.getStatus() != null) {
-            String ppeRequestId = approval.getContent().split("\\|")[0].trim();
-            syncPpeRequestStatus(ppeRequestId, request.getStatus(), request.getApproverName(), request.getApplicantDept(), request.getRejectReason());
-        }
+        // PPE_REQUEST 연동은 보호구·장비 재구성 후 신규 tb_ppe_issue 도메인으로 다시 연결 예정
 
         // PERMIT_TO_WORK 타입이면 작업허가 상태도 연동
         if ("PERMIT_TO_WORK".equals(approval.getType()) && approval.getContent() != null && request.getStatus() != null) {
@@ -165,28 +161,7 @@ public class ApprovalService {
         return String.format("%s-%03d", prefix, count);
     }
 
-    private void syncPpeRequestStatus(String ppeRequestId, String approvalStatus, String approverName, String approverDept, String rejectReason) {
-        try {
-            // PPE 신청 ID로 찾기
-            List<PpeRequest> requests = ppeRequestMapper.findByDeletedFalse(0, 1000);
-            PpeRequest target = requests.stream()
-                    .filter(r -> r.getRequestId().equals(ppeRequestId))
-                    .findFirst().orElse(null);
-            if (target == null) return;
-
-            String ppeStatus;
-            switch (approvalStatus) {
-                case "APPROVED": ppeStatus = "APPROVED"; break;
-                case "REJECTED": ppeStatus = "REJECTED"; break;
-                case "COMPLETED": ppeStatus = "ISSUED"; break;
-                default: return;
-            }
-            ppeRequestMapper.updateStatus(target.getId(), ppeStatus, approverName, approverDept, rejectReason);
-            log.info("Synced PPE request {} status to {}", ppeRequestId, ppeStatus);
-        } catch (Exception e) {
-            log.warn("Failed to sync PPE request status: {}", e.getMessage());
-        }
-    }
+    // syncPpeRequestStatus 메서드는 보호구·장비 재구성 후 신규 tb_ppe_issue 도메인으로 다시 구현 예정
 
     private void syncTrainingStatus(String educationId, String approvalStatus) {
         try {

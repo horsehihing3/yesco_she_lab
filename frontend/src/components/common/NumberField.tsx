@@ -62,6 +62,28 @@ const NumberField = ({
   const value = toNum(valueProp)
   const precision = step.toString().includes('.') ? step.toString().split('.')[1].length : 0
 
+  // Hook 규칙: readOnly toggle 시 hook 순서 일관성 보장 — 항상 호출
+  const formatForDisplay = (n: number): string => {
+    if (!thousandSeparator) return String(n)
+    if (precision === 0) return formatWithComma(n)
+    const sign = n < 0 ? '-' : ''
+    const abs = Math.abs(n)
+    const intPart = Math.floor(abs).toLocaleString('en-US')
+    const decFixed = (abs % 1).toFixed(precision).slice(2)
+    const trimmed = decFixed.replace(/0+$/, '')
+    return sign + intPart + (trimmed ? `.${trimmed}` : '')
+  }
+  const [displayValue, setDisplayValue] = useState<string>(() =>
+    value == null ? '' : formatForDisplay(value)
+  )
+  useEffect(() => {
+    if (value == null) { setDisplayValue(''); return }
+    const currentParsed = displayValue === '' || displayValue === '-' ? null : parseFloat(displayValue.replace(/,/g, ''))
+    if (currentParsed === value) return
+    setDisplayValue(formatForDisplay(value))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, thousandSeparator, precision])
+
   // ===== readOnly: Typography 렌더 (상세 모드) =====
   if (readOnly) {
     const display = value == null
@@ -96,32 +118,7 @@ const NumberField = ({
 
   // ===== thousand separator path =====
   // 표시값과 raw value 분리: 사용자 타이핑 중 콤마가 들어와도 숫자만 추출해서 onChange 호출
-  const formatForDisplay = (n: number): string => {
-    if (!thousandSeparator) return String(n)
-    if (precision === 0) return formatWithComma(n)
-    const sign = n < 0 ? '-' : ''
-    const abs = Math.abs(n)
-    const intPart = Math.floor(abs).toLocaleString('en-US')
-    const decFixed = (abs % 1).toFixed(precision).slice(2)
-    const trimmed = decFixed.replace(/0+$/, '')
-    return sign + intPart + (trimmed ? `.${trimmed}` : '')
-  }
-
-  const [displayValue, setDisplayValue] = useState<string>(() =>
-    value == null ? '' : formatForDisplay(value)
-  )
-
-  useEffect(() => {
-    if (value == null) {
-      setDisplayValue('')
-    } else {
-      // 사용자 타이핑 중 "12.", "12.50" 같이 현재 표시값이 같은 숫자를 의미하면 덮어쓰지 않음
-      const currentParsed = displayValue === '' || displayValue === '-' ? null : parseFloat(displayValue.replace(/,/g, ''))
-      if (currentParsed === value) return
-      setDisplayValue(formatForDisplay(value))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, thousandSeparator, precision])
+  // (displayValue/formatForDisplay 는 위에서 hook 규칙 보장 위해 분기 전에 선언됨)
 
   if (thousandSeparator) {
     const handleChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {

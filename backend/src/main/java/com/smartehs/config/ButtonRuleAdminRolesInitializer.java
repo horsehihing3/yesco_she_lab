@@ -44,7 +44,7 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         try {
             int count = 0;
             count += initRiskAssessAdmin();
-            count += initPpeAdmin();
+            // initPpeAdmin: 보호구·장비 재구성 후 신규 8개 도메인 권한으로 재등록 예정
             count += initHealthAdmin();
             count += initWorkEnvAdmin();
             count += initEhsAdmin();
@@ -150,22 +150,7 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         return flush(rows);
     }
 
-    // ── 보호구 ─── PPE_ADMIN (없으면 EHS_ADMIN) ──────────────────────────────
-    private int initPpeAdmin() {
-        final String R = resolveRole("PPE_ADMIN");
-        List<Object[]> rows = new ArrayList<>();
-        String M1 = "안전 관리 › 보호구 장비 › 재고";
-        u(rows, M1, "LIST",      "신규 등록", R);
-        u(rows, M1, "DETAIL",    "수정",      R);
-        u(rows, M1, "DETAIL",    "삭제",      R);
-        String M2 = "안전 관리 › 보호구 장비 › 지급 신청";
-        // 수정/취소/삭제 = 작성자만 (일반관리자 grant 없음) — 사용자 스펙
-        u(rows, M2, "REQUESTED", "승인",     R);
-        u(rows, M2, "REQUESTED", "반려",     R);
-        u(rows, M2, "APPROVED",  "지급완료", R);
-        u(rows, M2, "ISSUED",    "반납",     R);
-        return flush(rows);
-    }
+    // initPpeAdmin 메서드는 보호구·장비 재구성 후 신규 8개 도메인(품목/재고/지급반납/검사점검/착용이행/성능/예산/통계) 권한으로 재구현 예정
 
     // ── 보건 ─── HEALTH_ADMIN (없으면 EHS_ADMIN) ─────────────────────────────
     private int initHealthAdmin() {
@@ -453,15 +438,7 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         ac(rows, RA, "completion_submitted", "반려 (완료)", "완료 결재 승인");
         wa(rows, RA, "DETAIL", "수정", "삭제");
 
-        // ── 보호구 ────────────────────────────────────────────────────────────────
-        ao(rows, "안전 관리 › 보호구 장비 › 재고", "LIST", "신규 등록");
-        ao(rows, "안전 관리 › 보호구 장비 › 재고", "DETAIL", "수정", "삭제");
-        String PPE2 = "안전 관리 › 보호구 장비 › 지급 신청";
-        // 수정/취소/삭제 = 작성자(신청자 본인)+슈퍼 (신청 등록=일반사용자는 DEFAULT_MENU_DATA)
-        wa(rows, PPE2, "REQUESTED", "수정", "취소", "삭제");
-        ao(rows, PPE2, "REQUESTED", "승인", "반려");
-        ao(rows, PPE2, "APPROVED", "지급완료");
-        ao(rows, PPE2, "ISSUED", "반납");
+        // 보호구·장비 권한은 재구성 후 신규 8개 도메인 권한으로 재등록 예정
 
         // ── 협력 업체 안전 관리 관리탭 ──────────────────────────────────────────
         String PSM = "협력 업체 관리 › 협력 업체 안전 관리 › 관리";

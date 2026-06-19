@@ -76,7 +76,7 @@ const Layout: React.FC = () => {
             <Box component="img"
               src="/assets/logo-com4in-w.png"
               alt="com4in EHS"
-              sx={{ height: 46, width: 'auto', display: 'block' }} />
+              sx={{ height: 42, width: 'auto', display: 'block' }} />
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           {/* Desktop: show header buttons inline */}
