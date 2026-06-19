@@ -89,8 +89,9 @@ public class LegalResponseController {
     @GetMapping("/revisions")
     public ResponseEntity<ApiResponse<List<LegalRevisionLog>>> listRevisions(
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String keyword) {
-        return ResponseEntity.ok(ApiResponse.success(service.listRevisions(status, keyword)));
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String lawId) {
+        return ResponseEntity.ok(ApiResponse.success(service.listRevisions(status, keyword, lawId)));
     }
 
     @GetMapping("/revisions/{id}")

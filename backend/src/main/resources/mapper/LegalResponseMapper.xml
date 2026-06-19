@@ -124,6 +124,9 @@
             <if test="keyword != null and keyword != ''">
                 AND (law_name LIKE '%' + #{keyword} + '%' OR summary LIKE '%' + #{keyword} + '%')
             </if>
+            <if test="lawId != null and lawId != ''">
+                AND law_id = #{lawId}
+            </if>
         </where>
         ORDER BY revision_dt DESC, id DESC
     </select>

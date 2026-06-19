@@ -151,8 +151,10 @@ public class LegalResponseService {
     }
 
     // ===== Revision Log =====
-    public List<LegalRevisionLog> listRevisions(String status, String keyword) {
-        List<LegalRevisionLog> all = mapper.findRevisionLogs(status, keyword);
+    public List<LegalRevisionLog> listRevisions(String status, String keyword, String lawId) {
+        List<LegalRevisionLog> all = mapper.findRevisionLogs(status, keyword, lawId);
+        // lawId 명시적 지정 시 화이트리스트 우회 (사용자 직접 조회)
+        if (lawId != null && !lawId.isEmpty()) return all;
         List<String> keywords = filterKeywords();
         if (keywords.isEmpty()) return all;
         return all.stream()
@@ -265,7 +267,7 @@ public class LegalResponseService {
             kpi.put("done", mapper.countRevisionByStatus("DONE"));
             kpi.put("needAction", mapper.countRevisionByStatus("NEED_ACTION"));
         } else {
-            List<LegalRevisionLog> all = mapper.findRevisionLogs(null, null).stream()
+            List<LegalRevisionLog> all = mapper.findRevisionLogs(null, null, null).stream()
                     .filter(r -> isLawAllowed(r.getLawName(), keywords))
                     .collect(Collectors.toList());
             kpi.put("pending",    all.stream().filter(r -> "PENDING".equals(r.getReviewStatus())).count());

@@ -173,18 +173,19 @@ const LegalResponsePage: React.FC = () => {
   const [revStatus, setRevStatus] = useState('')
   const [revKeywordInput, setRevKeywordInput] = useState('')
   const [revKeyword, setRevKeyword] = useState('')
-  const applyRevSearch = () => { setRevKeyword(revKeywordInput); setRevPage(1) }
+  const [revLawId, setRevLawId] = useState('')
+  const applyRevSearch = () => { setRevKeyword(revKeywordInput); setRevLawId(''); setRevPage(1) }
   const { data: revisions = [], isFetching: revFetching } = useQuery({
-    queryKey: ['legalRevisions', revStatus, revKeyword],
-    queryFn: () => legalResponseApi.listRevisions(revStatus || undefined, revKeyword || undefined),
+    queryKey: ['legalRevisions', revStatus, revKeyword, revLawId],
+    queryFn: () => legalResponseApi.listRevisions(revStatus || undefined, revKeyword || undefined, revLawId || undefined),
   })
 
   // 클라이언트 사이드 페이징
   const REV_PAGE_SIZE = 20
   const [revPage, setRevPage] = useState(1)
   const revTotalPages = Math.max(1, Math.ceil(revisions.length / REV_PAGE_SIZE))
-  // status/keyword 변경 시 1페이지로
-  useEffect(() => { setRevPage(1) }, [revStatus, revKeyword])
+  // status/keyword/lawId 변경 시 1페이지로
+  useEffect(() => { setRevPage(1) }, [revStatus, revKeyword, revLawId])
   const revPaged = revisions.slice((revPage - 1) * REV_PAGE_SIZE, revPage * REV_PAGE_SIZE)
 
   // 필터 (개정 모니터링 화이트리스트)
@@ -503,7 +504,7 @@ const LegalResponsePage: React.FC = () => {
                           const cnt = r.lawId ? (regRevCounts[r.lawId] || 0) : 0
                           if (cnt > 0) return (
                             <Chip label={`개정 ${cnt}건`} size="small" color="error"
-                                  onClick={() => { setRevKeyword(''); setRevKeywordInput(r.lawName); setRevStatus(''); setTab(2); setRevKeyword(r.lawName) }}
+                                  onClick={() => { setRevKeyword(''); setRevKeywordInput(''); setRevStatus(''); setRevLawId(r.lawId || ''); setTab(2) }}
                                   sx={{ cursor: 'pointer' }} />
                           )
                           return <Chip label="최신" size="small" color="success" variant="outlined" />
@@ -548,7 +549,7 @@ const LegalResponsePage: React.FC = () => {
                     {r.lawType && <Chip label={r.lawType} size="small" variant="outlined" />}
                     {cnt > 0 ? (
                       <Chip label={`개정 ${cnt}건`} size="small" color="error"
-                            onClick={() => { setRevKeywordInput(r.lawName); setRevStatus(''); setTab(2); setRevKeyword(r.lawName) }}
+                            onClick={() => { setRevKeyword(''); setRevKeywordInput(''); setRevStatus(''); setRevLawId(r.lawId || ''); setTab(2) }}
                             sx={{ cursor: 'pointer' }} />
                     ) : (
                       <Chip label="최신" size="small" color="success" variant="outlined" />
