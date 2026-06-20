@@ -171,8 +171,6 @@ function App() {
         <Route path="permit-lifecycle" element={<PermitLifecyclePage />} />
         <Route path="disease-prevention-mgmt" element={<DiseasePreventionMgmtPage />} />
         <Route path="plan-kpi-goal" element={<PlanKpiGoalPage />} />
-        <Route path="contractor-safety" element={<PageWithTitle titleKey="nav.contractorSafety"><Box><Typography color="text.secondary" sx={{ py: 8, textAlign: 'center' }}>Coming Soon</Typography></Box></PageWithTitle>} />
-        <Route path="outsourcing-mgmt" element={<PageWithTitle titleKey="nav.outsourcingMgmt"><Box><Typography color="text.secondary" sx={{ py: 8, textAlign: 'center' }}>Coming Soon</Typography></Box></PageWithTitle>} />
         <Route path="emergency-response" element={<EmergencyResponsePage />} />
         <Route path="admin" element={<AdminPage />} />
         <Route path="system-manage" element={<Navigate to="/system-manage/code" replace />} />
