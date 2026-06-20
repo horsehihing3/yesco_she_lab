@@ -11,11 +11,11 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 7600,
+    port: 7700,
     allowedHosts: ['ehs.com4in.com', 'she.com4in.com', 'localhost'],
     proxy: {
       '/api': {
-        target: 'http://localhost:7601',
+        target: 'http://localhost:7701',
         changeOrigin: true,
       },
     },
