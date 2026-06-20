@@ -457,8 +457,7 @@
     "incidentType": "발생유형",
     "incidentTypes": {
       "accident": "사고",
-      "nearMiss": "아차사고",
-      "report": "레포트"
+      "nearMiss": "아차사고"
     },
     "occDate": "발생일",
     "occSite": "발생장소",

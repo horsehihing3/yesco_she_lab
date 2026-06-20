@@ -67,7 +67,6 @@ import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
 import DevTestFillButton from '../components/common/DevTestFillButton'
 import { FileMetadata } from '../types/file.types'
-import AccidentReportTab from '../components/ehs/AccidentReportTab'
 import NearMissDashboardTab from '../components/ehs/NearMissDashboardTab'
 import { useAuth } from '../context/AuthContext'
 
@@ -132,7 +131,7 @@ const NearMissPage: React.FC = () => {
   const { codeList: incRespStatusList, codeMap: incRespStatusMap } = useCodeMap('INCIDENT_RESP_STATUS')
   const { codeList: incRespSeverityList, codeMap: incRespSeverityMap } = useCodeMap('INCIDENT_RESP_SEVERITY')
   const [searchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT' | 'REPORT'>((searchParams.get('incidentType') as 'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT' | 'REPORT') || 'NEAR_MISS')
+  const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT'>((searchParams.get('incidentType') as 'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT') || 'NEAR_MISS')
   const [page, setPage] = useState(1)
   const [rowsPerPage] = useState(10)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
@@ -229,7 +228,7 @@ const NearMissPage: React.FC = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['nearMisses', page - 1, rowsPerPage, activeTab],
     queryFn: () => nearMissApi.listByType(activeTab, page - 1, rowsPerPage),
-    enabled: activeTab !== 'REPORT' && activeTab !== 'DASHBOARD',
+    enabled: activeTab !== 'DASHBOARD',
   })
 
   const { register, handleSubmit, reset, control, setValue, getValues } = useForm<NearMissRequest>()
@@ -2123,10 +2122,9 @@ const NearMissPage: React.FC = () => {
               <Tab label={t('common.dashboard', '대시보드')} value="DASHBOARD" />
               <Tab label={t('nearMiss.incidentTypes.nearMiss')} value="NEAR_MISS" />
               <Tab label={t('nearMiss.incidentTypes.accident')} value="ACCIDENT" />
-              <Tab label={t('nearMiss.incidentTypes.report', '레포트')} value="REPORT" />
             </Tabs>
           </Box>
-          {activeTab !== 'REPORT' && activeTab !== 'DASHBOARD' && (
+          {activeTab !== 'DASHBOARD' && (
             <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
               {activeTab === 'NEAR_MISS' ? t('nearMiss.incidentTypes.nearMiss') : t('nearMiss.incidentTypes.accident')}
             </Typography>
@@ -2134,8 +2132,7 @@ const NearMissPage: React.FC = () => {
         </>
       )}
       {viewMode === 'list' && activeTab === 'DASHBOARD' && <NearMissDashboardTab />}
-      {viewMode === 'list' && activeTab === 'REPORT' && <AccidentReportTab />}
-      {viewMode === 'list' && activeTab !== 'REPORT' && activeTab !== 'DASHBOARD' && renderListView()}
+      {viewMode === 'list' && activeTab !== 'DASHBOARD' && renderListView()}
       {viewMode === 'detail' && renderDetailView()}
       {(viewMode === 'create' || viewMode === 'edit') && renderFormView()}
 
