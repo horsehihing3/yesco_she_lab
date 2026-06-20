@@ -90,3 +90,30 @@ lab 환경 실험/정리 기록.
 ■ 다음 세션 시작점
 - 7700 둘러보며 "더 정리 vs 재편/비교 vs 보고자료" 중 방향 결정
 - LAB_LOG의 [재적용]/[제거]/[정리] 태그가 전체 작업 점검표
+
+=== 세션 마무리 (2026-06-21 기준) ===
+
+■ 이번 세션 완료 (전부 커밋·push, origin/lab2 IN SYNC, HEAD=e182c24)
+1. 죽은 역할옵션 9개 + 고아 PSM 아이콘 정리 (daab65e) — DB 실측(T_IDM_USER·tb_button_rule) 결합0 확인, COMPLIANCE/ERGONOMICS 보존
+2. PageHeader 표준화 — 공통 컴포넌트 신설 + 16페이지 적용
+   · 표준 4규칙: 제목-위 / 제목=메뉴명 고정(nav키 재사용) / 흐름도 우상단(탭조건 호출부) / space-between
+   · 저난도: EhsPage(파일럿)·Health·DiseasePrevention·Training·Approval·Ppe·PlanKpi·RiskAssessment·Audit·Emergency·WorkEnv·Checklist
+   · 중난도 순수이관 3 (App.tsx PageWithTitle 래퍼 제거 + PageHeader, fill prop 추가): PartnerSafetyMgmt·WorkplaceDrawingsView·LegalResponse
+   · 흐름도 위치정정: KPI(자식 toolbar→제목줄), 보호구(flowKey 추가)
+   · 고난도 list-only 파일럿: NearMiss ((가)구조 템플릿 확정)
+3. 버그 수정: near-miss 첫 탭 fallback 'NEAR_MISS'→'DASHBOARD' (c0f01d0)
+4. PageHeader 컴포넌트: fill prop 추가 외 전 배치 무변경(표준 안정성 입증)
+5. tsc 베이스라인 9→8 (LegalResponse에서 미사용 t 해소). 이후 회귀 기준 "8→8 신규0"
+
+■ 남은 작업 (다음 세션)
+- 고난도 잔여 10개, 메커닉 2갈래:
+  · (가) 단일root+형제블록 (NearMiss 템플릿 복제 가능) — 페이지별 구조 재확인
+  · (나) early-return 다중 (SafetyAccident·ProcessActivity·ContractorRegistration·IncidentResponse·SiteSafetyMgmt·PermitToWork·ContractorManagement) — if(viewMode==='list')return<PageHeader> 메커닉, 별도 파일럿 검증 필요
+  · 모드토글 자식 (PartnerOshCommittee·PartnerPermit·PartnerMgmt) — 폼 자체제목 충돌 재확인(배치4 트랩)
+- 설정 6개: 표준화 제외 확정(슈퍼관리자)
+- 보류 콘텐츠 트랙: NearMiss detail 이중제목, i18n 고아 네임스페이스, ppe 흐름 spec 정교화, WorkplaceDrawingsView 흐름도 위치, YescoSidebarIcons 고아아이콘 6개
+- ★협의체 이중노출(OshCommitteeTab 공유) — 예스코 도메인 확인 대기(산안위 §24 vs 협의체 §75 구분 여부)
+
+■ 다음 세션 시작점
+- 고난도 (나)구조 파일럿(SafetyAccident or ProcessActivity)부터 → early-return 메커닉 확정 후 페이지별 복제
+- 또는 보류 콘텐츠 트랙 청소
