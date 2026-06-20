@@ -48,9 +48,6 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
             count += initHealthAdmin();
             count += initWorkEnvAdmin();
             count += initEhsAdmin();
-            count += initWasteAdmin();
-            count += initAirWaterAdmin();
-            count += initChemAdmin();
             count += initComplianceAdmin();
             count += initAbstractRoleRows();
             log.info("ButtonRuleAdminRolesInitializer: {}건 upsert 완료", count);
@@ -322,75 +319,6 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
         return flush(rows);
     }
 
-    // ── 환경(폐기물) ─── WASTE_ADMIN (없으면 EHS_ADMIN) ─────────────────────
-    private int initWasteAdmin() {
-        final String R = resolveRole("WASTE_ADMIN");
-        List<Object[]> rows = new ArrayList<>();
-        String M = "환경 관리 › 폐기물";
-        u(rows, M, "LIST",              "신규 등록", R);
-        u(rows, M, "STORING",           "수정",      R);
-        u(rows, M, "STORING",           "삭제",      R);
-        u(rows, M, "DISPOSAL_REQUEST",  "수정",      R);
-        u(rows, M, "DISPOSAL_REQUEST",  "삭제",      R);
-        u(rows, M, "PROCESSING",        "수정",      R);
-        u(rows, M, "PROCESSING",        "삭제",      R);
-        return flush(rows);
-    }
-
-    // ── 환경(방사선/인허가) ─── AIR_WATER_ADMIN (없으면 EHS_ADMIN) ─────────
-    private int initAirWaterAdmin() {
-        final String R = resolveRole("AIR_WATER_ADMIN");
-        List<Object[]> rows = new ArrayList<>();
-
-        String RD = "환경 관리 › 방사선관리 › 사고·사건";
-        u(rows, RD, "LIST",       "신규 등록", R);
-        u(rows, RD, "조사중",     "수정",      R);
-        u(rows, RD, "조사중",     "삭제",      R);
-        u(rows, RD, "재발방지중", "수정",      R);
-        u(rows, RD, "재발방지중", "삭제",      R);
-
-        String PI = "환경 관리 › 인허가 관리 › 인허가 식별";
-        u(rows, PI, "LIST",   "신규 등록", R);
-        u(rows, PI, "검토중", "수정",      R);
-        u(rows, PI, "검토중", "삭제",      R);
-        u(rows, PI, "미식별", "수정",      R);
-        u(rows, PI, "미식별", "삭제",      R);
-
-        String PL = "환경 관리 › 인허가 관리 › 인허가 대장";
-        u(rows, PL, "LIST",   "신규 등록", R);
-        u(rows, PL, "만료임박", "수정",    R);
-        u(rows, PL, "만료임박", "삭제",    R);
-        u(rows, PL, "만료",    "수정",     R);
-        u(rows, PL, "만료",    "삭제",     R);
-
-        String PC = "환경 관리 › 인허가 관리 › 변경 관리";
-        u(rows, PC, "LIST",                          "신규 등록", R);
-        u(rows, PC, "검토중/안전영향평가/허가신청/심사중", "수정", R);
-        u(rows, PC, "검토중/안전영향평가/허가신청/심사중", "삭제", R);
-
-        String PR = "환경 관리 › 인허가 관리 › 법정 보고서";
-        u(rows, PR, "LIST", "신규 등록", R);
-        u(rows, PR, "준비중", "수정",    R);
-        u(rows, PR, "준비중", "삭제",    R);
-        u(rows, PR, "임박",   "수정",    R);
-        u(rows, PR, "임박",   "삭제",    R);
-        u(rows, PR, "지연",   "수정",    R);
-        u(rows, PR, "지연",   "삭제",    R);
-
-        return flush(rows);
-    }
-
-    // ── 화학물질 ─── CHEM_ADMIN (없으면 EHS_ADMIN) ───────────────────────────
-    private int initChemAdmin() {
-        final String R = resolveRole("CHEM_ADMIN");
-        List<Object[]> rows = new ArrayList<>();
-        String M = "화학물질 관리 › 위해성 보고";
-        u(rows, M, "LIST",       "신규 등록", R);
-        u(rows, M, "COLLECTING", "수정",      R);
-        u(rows, M, "COLLECTING", "삭제",      R);
-        return flush(rows);
-    }
-
     // ── 법규준수 ─── COMPLIANCE_ADMIN (없으면 EHS_ADMIN) ────────────────────
     private int initComplianceAdmin() {
         final String R = resolveRole("COMPLIANCE_ADMIN");
@@ -546,40 +474,6 @@ public class ButtonRuleAdminRolesInitializer implements CommandLineRunner {
             ao(rows, DP, "LIST", "신규 등록");
             wa(rows, DP, "DETAIL", "수정", "삭제", "저장");
         }
-
-        // ── 환경 폐기물 ───────────────────────────────────────────────────────────
-        String WM = "환경 관리 › 폐기물";
-        ao(rows, WM, "LIST", "신규 등록");
-        for (String s : new String[]{"STORING","DISPOSAL_REQUEST","PROCESSING"})
-            wa(rows, WM, s, "수정", "삭제");
-
-        // ── 방사선 사고·사건 ──────────────────────────────────────────────────────
-        String RD = "환경 관리 › 방사선관리 › 사고·사건";
-        ao(rows, RD, "LIST", "신규 등록");
-        for (String s : new String[]{"조사중","재발방지중"})
-            wa(rows, RD, s, "수정", "삭제");
-
-        // ── 인허가 관리 ───────────────────────────────────────────────────────────
-        String PI = "환경 관리 › 인허가 관리 › 인허가 식별";
-        ao(rows, PI, "LIST", "신규 등록");
-        for (String s : new String[]{"검토중","미식별"}) wa(rows, PI, s, "수정", "삭제");
-
-        String PL = "환경 관리 › 인허가 관리 › 인허가 대장";
-        ao(rows, PL, "LIST", "신규 등록");
-        for (String s : new String[]{"만료임박","만료"}) wa(rows, PL, s, "수정", "삭제");
-
-        String PC = "환경 관리 › 인허가 관리 › 변경 관리";
-        ao(rows, PC, "LIST", "신규 등록");
-        wa(rows, PC, "검토중/안전영향평가/허가신청/심사중", "수정", "삭제");
-
-        String PR2 = "환경 관리 › 인허가 관리 › 법정 보고서";
-        ao(rows, PR2, "LIST", "신규 등록");
-        for (String s : new String[]{"준비중","임박","지연"}) wa(rows, PR2, s, "수정", "삭제");
-
-        // ── 화학물질 위해성 보고 ──────────────────────────────────────────────────
-        String CHEM = "화학물질 관리 › 위해성 보고";
-        ao(rows, CHEM, "LIST", "신규 등록");
-        wa(rows, CHEM, "COLLECTING", "수정", "삭제");
 
         // ── 법규 대응 계획 ────────────────────────────────────────────────────────
         String LP = "SHE 경영 › 법규 대응 › 법규 대응 계획";

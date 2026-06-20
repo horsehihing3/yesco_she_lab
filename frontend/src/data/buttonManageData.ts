@@ -1086,15 +1086,4 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
         ] },
     ],
   },
-
-  // ── 화학물질 › 위해성 보고 ─── 일반관리자 = CHEM_ADMIN (DB 지정) ─────────────
-  {
-    menuPath: '화학물질 관리 › 위해성 보고',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
-      { status: 'COLLECTING', statusLabel: '수집중', statusColor: 'primary',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
-    ],
-  },
 ]
