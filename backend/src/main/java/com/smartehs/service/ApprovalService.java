@@ -7,7 +7,6 @@ import com.smartehs.mapper.ApprovalMapper;
 import com.smartehs.mapper.PermitToWorkMapper;
 // PpeRequest 연동은 보호구·장비 재구성 후 신규 도메인(tb_ppe_issue)으로 다시 연결 예정
 import com.smartehs.mapper.SafetyEducationMapper;
-import com.smartehs.mapper.ChemicalMapper;
 import com.smartehs.model.Approval;
 // import com.smartehs.model.PpeRequest;  // 보호구·장비 재구성 후 신규 도메인으로 재연결 예정
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,6 @@ public class ApprovalService {
     // private final PpeRequestMapper ppeRequestMapper;  // 보호구·장비 재구성 후 신규 도메인으로 재연결 예정
     private final PermitToWorkMapper permitToWorkMapper;
     private final SafetyEducationMapper safetyEducationMapper;
-    private final ChemicalMapper chemicalMapper;
 
     @Transactional(readOnly = true)
     public Page<ApprovalResponse> findAll(String status, String keyword, Pageable pageable) {
@@ -137,11 +135,6 @@ public class ApprovalService {
             syncTrainingStatus(educationId, request.getStatus());
         }
 
-        // CHEMICAL 타입이면 화학물질 상태 연동
-        if ("CHEMICAL".equals(approval.getType()) && approval.getContent() != null && request.getStatus() != null) {
-            syncChemicalStatus(approval.getContent(), request.getStatus());
-        }
-
         return ApprovalResponse.from(approval);
     }
 
@@ -178,34 +171,6 @@ public class ApprovalService {
             log.info("Synced education {} status to {}", educationId, educationStatus);
         } catch (Exception e) {
             log.warn("Failed to sync education status: {}", e.getMessage());
-        }
-    }
-
-    private void syncChemicalStatus(String content, String approvalStatus) {
-        try {
-            String chemicalIdStr = content.split("\\|")[0].trim();
-            var chemicals = chemicalMapper.findByDeletedFalse(0, 1000);
-            var target = chemicals.stream()
-                    .filter(c -> c.getChemicalId().equals(chemicalIdStr))
-                    .findFirst().orElse(null);
-            if (target == null) return;
-
-            switch (approvalStatus) {
-                case "APPROVED":
-                    target.setStatus("IN_USE");
-                    chemicalMapper.update(target);
-                    log.info("Synced chemical {} status to IN_USE (approved)", chemicalIdStr);
-                    break;
-                case "REJECTED":
-                    target.setStatus("PENDING_DISPOSAL");
-                    chemicalMapper.update(target);
-                    log.info("Synced chemical {} status to PENDING_DISPOSAL (rejected)", chemicalIdStr);
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            log.warn("Failed to sync chemical status: {}", e.getMessage());
         }
     }
 

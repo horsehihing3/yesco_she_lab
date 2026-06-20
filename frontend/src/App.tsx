@@ -43,11 +43,6 @@ import ContractorManagementPage from './pages/ContractorManagementPage'
 import SiteSafetyManagementPage from './pages/SiteSafetyManagementPage'
 import AuditInspectionPage from './pages/AuditInspectionPage'
 import PpeEquipmentPage from './pages/PpeEquipmentPage'
-import ChemicalMasterPage from './pages/ChemicalMasterPage'
-import ChemicalMsdsRawPage from './pages/ChemicalMsdsRawPage'
-import ChemicalMsdsProductPage from './pages/ChemicalMsdsProductPage'
-import ChemicalLifecyclePage from './pages/ChemicalLifecyclePage'
-import ChemicalRegulationPage from './pages/ChemicalRegulationPage'
 import EhsBudgetPage from './pages/EhsBudgetPage'
 import PlanKpiGoalPage from './pages/PlanKpiGoalPage'
 import TrainingPage from './pages/TrainingPage'
@@ -125,11 +120,6 @@ function App() {
         <Route path="workplace-drawings/view" element={<PageWithTitle titleKey="nav.workplaceDrawingsView"><WorkplaceDrawingsViewPage /></PageWithTitle>} />
         <Route path="approval" element={<ApprovalPage />} />
         <Route path="checklist" element={<ChecklistPage />} />
-        <Route path="chemical/master" element={<ChemicalMasterPage />} />
-        <Route path="chemical/msds-raw" element={<ChemicalMsdsRawPage />} />
-        <Route path="chemical/msds-product" element={<ChemicalMsdsProductPage />} />
-        <Route path="chemical/regulation" element={<ChemicalRegulationPage />} />
-        <Route path="chemical/lifecycle" element={<ChemicalLifecyclePage />} />
         {/* Coming Soon pages */}
         <Route path="audit-inspection" element={<AuditInspectionPage />} />
         <Route path="ppe-equipment" element={<PpeEquipmentPage />} />

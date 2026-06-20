@@ -190,27 +190,6 @@ const MENU_TREE: MenuNode[] = [
       { key: 'disease-prev.tab.infect',    label: '감염병' },
     ]},
   ]},
-  { key: 'nav.chemicalMgmt', label: '화학물질 관리', children: [
-    { key: 'nav.chemMaster', label: '마스터 · 규제', children: [
-      { key: 'chem.nav.chemList',  label: '화학물질 목록' },
-      { key: 'chem.nav.erpItem',   label: 'ERP 자재 관리' },
-      { key: 'chem.nav.vendor',    label: '협력사(Vendor) 목록' },
-      { key: 'chem.nav.regRule',   label: '관리 규제' },
-      { key: 'chem.nav.regCheck',  label: '점검 목록' },
-    ]},
-    { key: 'nav.chemMsdsRaw', label: '원료 MSDS', children: [
-      { key: 'chem.nav.rawMsdsLatest', label: '원료 MSDS → 최신본' },
-      { key: 'chem.nav.rawMsdsOld',   label: '원료 MSDS → 구 버전' },
-      { key: 'chem.nav.rawMsdsHist',  label: '원료 MSDS → 이력관리' },
-    ]},
-    { key: 'nav.chemMsdsProduct', label: '제품 MSDS', children: [
-      { key: 'chem.nav.prodMsdsLatest', label: '제품 MSDS → 최신본' },
-      { key: 'chem.nav.prodMsdsOld',    label: '제품 MSDS → 구 버전' },
-      { key: 'chem.nav.prodMsdsHist',   label: '제품 MSDS → 이력관리' },
-    ]},
-    { key: 'nav.chemRegulation', label: '해외 법규' },
-    { key: 'nav.chemLifecycle',  label: 'Life-Cycle' },
-  ]},
   { key: 'nav.approval', label: '승인', children: [
     { key: 'approval.myApproval',    label: '내 결재' },
     { key: 'approval.approvalLine',  label: '승인 라인' },

@@ -71,7 +71,6 @@ export const FLOW_SPECS: Record<string, FlowSpec> = {
   ppe:              { title: 'PPE 지급 업무 흐름도',      steps: singleApproval('PPE 지급 신청', '지급 완료') },
   ptw:              { title: '작업허가(PTW) 흐름도',      steps: singleApproval('작업허가 신청', '작업 허가') },
   training:         { title: '교육 업무 흐름도',          steps: singleApproval('교육 신청', '수료 처리') },
-  chemicalLife:     { title: '화학물질 도입 흐름도',      steps: singleApproval('화학물질 도입 신청', '도입 승인') },
   partnerPermit:    { title: '협력업체 출입·작업 흐름도', steps: singleApproval('출입·작업 신청', '작업 승인') },
   approvalManage:   { title: '결재 관리 흐름도',          steps: singleApproval('결재 상신 접수', '결재 처리') },
   approval:         { title: '내 결재 흐름도',            steps: singleApproval('결재 상신 접수', '승인/반려') },
@@ -93,10 +92,6 @@ export const FLOW_SPECS: Record<string, FlowSpec> = {
 
   // 기준정보·마스터·시스템 (CRUD)
   contractorReg:    { title: '협력업체 등록 흐름도',      steps: crud('협력업체') },
-  chemicalMaster:   { title: '화학물질 마스터 흐름도',    steps: crud('화학물질') },
-  chemicalMsdsProd: { title: '완제품 MSDS 흐름도',        steps: crud('완제품 MSDS') },
-  chemicalMsdsRaw:  { title: '원료 MSDS 흐름도',          steps: crud('원료 MSDS') },
-  chemicalReg:      { title: '화학물질 규제정보 흐름도',  steps: crud('규제정보') },
   codeManage:       { title: '공통코드 관리 흐름도',      steps: crud('공통코드') },
   buttonManage:     { title: '버튼 권한 관리 흐름도',     steps: crud('버튼 권한') },
   checklist:        { title: '체크리스트 관리 흐름도',    steps: crud('체크리스트') },

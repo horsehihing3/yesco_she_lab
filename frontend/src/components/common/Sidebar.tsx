@@ -112,17 +112,6 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    textKey: 'nav.chemicalMgmt',
-    icon: <ScienceIcon />,
-    children: [
-      { textKey: 'nav.chemMaster', icon: <ScienceIcon />, path: '/chemical/master' },
-      { textKey: 'nav.chemMsdsRaw', icon: <ScienceIcon />, path: '/chemical/msds-raw' },
-      { textKey: 'nav.chemMsdsProduct', icon: <ScienceIcon />, path: '/chemical/msds-product' },
-      { textKey: 'nav.chemRegulation', icon: <GavelIcon />, path: '/chemical/regulation' },
-      { textKey: 'nav.chemLifecycle', icon: <ScienceIcon />, path: '/chemical/lifecycle' },
-    ],
-  },
-  {
     textKey: 'nav.approval',
     icon: <ApprovalIcon />,
     path: '/approval',
