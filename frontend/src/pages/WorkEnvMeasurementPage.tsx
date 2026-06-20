@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../hooks/useMenuRule'
 import WemDashboardTab from '../components/workEnvMeasurement/WemDashboardTab'
@@ -9,7 +9,7 @@ import WemPlanTab from '../components/workEnvMeasurement/WemPlanTab'
 import WemResultTab from '../components/workEnvMeasurement/WemResultTab'
 import WemImprovementTab from '../components/workEnvMeasurement/WemImprovementTab'
 import WemReportTab from '../components/workEnvMeasurement/WemReportTab'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 const WorkEnvMeasurementPage: React.FC = () => {
   const { t } = useTranslation()
@@ -41,8 +41,10 @@ const WorkEnvMeasurementPage: React.FC = () => {
   }, [tabs.length, activeTab])
 
   return (
-    <Box>
-      <Box sx={{ mb: 2 }}>
+    <PageHeader
+      title={t('nav.workEnvMeasurement')}
+      flowKey={activeTab === 0 ? 'workEnvMeasure' : undefined}
+      tabs={
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
@@ -60,13 +62,10 @@ const WorkEnvMeasurementPage: React.FC = () => {
             <Tab key={idx} label={tab.label} />
           ))}
         </Tabs>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
-        {activeTab === 0 && <FlowChartButton flowKey="workEnvMeasure" />}
-      </Box>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 

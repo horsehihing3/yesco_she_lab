@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Box, Tabs, Tab } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import SafetyChecklistWrapper from '../components/checklist/SafetyChecklistWrapper'
 import RiskAssessmentFormWrapper from '../components/checklist/RiskAssessmentFormWrapper'
 import EvalSheetTab from '../components/checklist/EvalSheetTab'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 const ChecklistPage: React.FC = () => {
   const { t } = useTranslation()
@@ -32,23 +32,23 @@ const ChecklistPage: React.FC = () => {
   ]
 
   return (
-    <Box>
-      <Tabs
-        value={activeTab}
-        onChange={(_, v) => setActiveTab(v)}
-        variant="scrollable"
-        scrollButtons="auto"
-        sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}
-      >
-        {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
-      </Tabs>
-      {activeTab === 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <FlowChartButton flowKey="checklist" />
-        </Box>
-      )}
+    <PageHeader
+      title={t('nav.checklist')}
+      flowKey={activeTab === 0 ? 'checklist' : undefined}
+      tabs={
+        <Tabs
+          value={activeTab}
+          onChange={(_, v) => setActiveTab(v)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}
+        >
+          {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
+        </Tabs>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 
