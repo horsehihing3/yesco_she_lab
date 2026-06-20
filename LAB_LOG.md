@@ -22,3 +22,4 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [메모] 예스코가 '점수형(가능성×중대성) 협력사 위험성평가'를 원하면 contractor-eval이 그 휴면 구현체였음. 단 점수 매트릭스는 내부 위험성평가(KOSHA식, tb_risk_assessment)에 이미 존재. 협의 시 참고.
 - 2026-06-20 [제거·풀스택] tb_emergency_response 사장 백엔드(Controller/Service/Mapper/Model/DTO 7파일+테이블8행) → #8 사고대응(tb_incident_response)으로 대체된 옛 비상 사후기록. 호출처0·시드더미·프론트무변경. V5 마이그레이션·EMERGENCY_TYPE/STATUS 코드그룹(공유테이블)은 미사용이나 보존. #5(plan/drill/resource)·#8 무손상. (DROP yescoSHE_lab만 FK0, 재기동 미부활 확인. compileJava exit0, tsc 9→9. 가드 emergency_plan17/drill17/resource6/contact16·incident_response16·코드그룹2 무손상.)
 - 2026-06-20 [발견-CAPA 보강] 사장된 emergency_response엔 lessons_learned(교훈) 컬럼 존재. 활성 #8 사고대응엔 CAPA 추적 없음 → 단순화하며 재발방지 기능이 누락된 정황. 개선 시 lessons_learned가 복원 설계 힌트.
+- 2026-06-20 [재적용·lab2] LegalCompliancePage 제거 — yescoSHE 정본에서도 참조0 재확인, FlowChart 무관.
