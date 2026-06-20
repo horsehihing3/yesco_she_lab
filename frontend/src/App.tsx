@@ -116,7 +116,7 @@ function App() {
         <Route path="site-safety-mgmt" element={<SiteSafetyManagementPage />} />
         <Route path="health-checkup/admin" element={<HealthCheckupPage />} />
         <Route path="occupational-exposure" element={<OccupationalExposurePage />} />
-        <Route path="workplace-drawings/view" element={<PageWithTitle titleKey="nav.workplaceDrawingsView"><WorkplaceDrawingsViewPage /></PageWithTitle>} />
+        <Route path="workplace-drawings/view" element={<WorkplaceDrawingsViewPage />} />
         <Route path="approval" element={<ApprovalPage />} />
         <Route path="checklist" element={<ChecklistPage />} />
         {/* Coming Soon pages */}

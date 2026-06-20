@@ -50,6 +50,8 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [재편·lab2] PageHeader 적용 배치3 — 위험성평가(안전관리 저난도 단건). title=nav.riskAssessment 고정·미사용 tabTitles 동반제거·조건부블록5 children 주입·PageHeader 무변경. 누적 8페이지. 안전관리 잔여 저난도 0(SafetyAccident·ProcessActivity·NearMiss는 viewMode 다중return 고난도로 분리). 협력업체 저난도 후보=PartnerMgmt 1건(배치4, 제목없음→신규추가 변형). 중난도=PartnerSafetyMgmt·PartnerPermit·ContractorRegistration(App.tsx PageWithTitle 래핑, 이관 동반 필요). tsc 9→9 신규0.
 - 2026-06-20 [조사/보류·lab2] PartnerMgmt PageHeader 적용 시도 → 폐기. 사유: 자식 PartnerEvalTab이 mode 토글(list↔폼) 구조로 폼 뷰에서 자체 제목("협력업체 평가 상세/등록/수정") 렌더 → PageHeader 메뉴명 제목과 2줄 군더더기. "제목 없는 저난도"가 아니라 "모드토글 보유" → 고난도 트랙으로 재분류. 적용 되돌림(7b79c35 유지).
 - 2026-06-20 [재편·lab2] PageHeader 중난도 이관 파일럿 — PartnerSafetyMgmt. 신메커니즘(App.tsx PageWithTitle 래퍼 제거 + PageHeader 적용) 검증 성공. PageHeader에 fill prop 추가(default false, 기존 8페이지 무영향=출력 동일). fill 판정=미전달(SiteSafetyPlanContent가 site-safety-mgmt에서 이미 fill없이 정상). App.tsx 최초 수정(래퍼 1줄, 나머지 12라우트·PageWithTitle 정의 무변경). 제목 단일표시. 누적 적용 9페이지. 중난도 잔여 순수이관 2(LegalResponse·WorkplaceDrawingsView), 설정6 제외 확정, 고난도 이송4(IncidentResponse·ContractorRegistration·PartnerOshCommittee·PartnerPermit). tsc 9→9 신규0.
+- 2026-06-20 [재편·lab2] PageHeader 중난도 이관 — WorkplaceDrawingsView(사업장 도면 조회). 제목 일원화 완료, fill 미전달(루트 auto-Box로 PageWithTitle fill이 원래 inert). 누적 적용 10페이지, 중난도 순수이관 잔여 1(LegalResponse).
+- 2026-06-20 [보류·lab2] WorkplaceDrawingsView 흐름도가 자식 공유컴포넌트(WorkplaceDrawingsPage, 설정 /system-manage/drawings와 공유) 내부에 위치 → 제목줄 우측 표준과 미세 불일치하나 화면상 근접·설정 영향 위험으로 현행 유지. 흐름도 키/위치 정리 별도 트랙 후보.
 
 === 세션 마무리 (2026-06-20 18:42 기준) ===
 
