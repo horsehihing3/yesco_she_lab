@@ -44,6 +44,7 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [정리·lab2] 죽은 역할옵션 9개(CHEM5+ENV4) 3파일 동기 제거 + GROUP_COLORS chemical 색상키 + 고아 YescoPsm 아이콘. 조사: T_IDM_USER.UserRole·tb_button_rule.role_key 양쪽 0건 부여 확인(DB 실측). 3파일=buttonManageData.ts(GENERAL_ADMIN_ROLE_OPTIONS)·RoleManageTab.tsx(+// 화학물질관리 주석 동반, env그룹은 COMPLIANCE 잔존이라 // 환경관리 주석 보존)·MenuManageTab.tsx. ★보존: COMPLIANCE_ADMIN(백엔드 initComplianceAdmin이 활성 legal-response 버튼권한 시드, resolveRole 결합)·ERGONOMICS_ADMIN(활성 보건도메인 미배선 슬롯) — 둘 다 활성 도메인이라 제외. i18n role.* 라벨키는 격리 유지(무해 고아). tsc 9→9 신규0.
 - 2026-06-20 [보류·lab2] YescoSidebarIcons 나머지 고아 아이콘 6개(YescoEnv/Radiation/Fire/Facility/Permit/Chem) — PSM과 동일 성격(ICON_MAP 미등록·import0, 제거된 환경/화학용). 다음 묶음으로 일괄 정리 후보.
 - 2026-06-20 [발견-구조] 7700 UI 상단 골격 비일관 — 제목·탭·액션버튼 위치가 화면별로 상이. PageHeader 표준화 필요. 별도 트랙으로 진행 예정.
+- 2026-06-20 [재편·lab2] PageHeader 공통 컴포넌트 신설(common/PageHeader.tsx) + EhsPage 파일럿 적용. 표준 확정: 제목-위(제목→탭) / 제목=메뉴명 고정(nav 키 재사용, 탭 전환에도 불변) / 흐름도 우상단(탭0 조건은 호출부 flowKey 조건부 전달) / 우측정렬 space-between 단일화. props=title(필수)·flowKey?·actions?·tabs?·children. FlowChartButton(기존 공통) 흡수, 신규 디자인토큰 0. EhsPage title=t('nav.ehsCommunication')(사이드바와 동일 소스). 시나리오B(공통셸 신설), 잔여 대상 ~33페이지(저20/중10/고4, 중난도는 App.tsx PageWithTitle 13라우트 이관 동반). 다음: 저난도 그룹부터 도메인 단위 복제. tsc 9→9 신규0.
 
 === 세션 마무리 (2026-06-20 18:42 기준) ===
 
