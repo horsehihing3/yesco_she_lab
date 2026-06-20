@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from 'react'
 import { isEhsManager } from '../utils/auth'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { useMenuRule } from '../hooks/useMenuRule'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 import TrainingDashboardTab from '../components/ehs/TrainingDashboardTab'
 import TrainingApplyTab from '../components/ehs/TrainingApplyTab'
 import TrainingStatusTab from '../components/ehs/TrainingStatusTab'
@@ -33,17 +33,18 @@ const TrainingPage: React.FC = () => {
   }, [tabs.length, activeTab])
 
   return (
-    <Box>
-      <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
-        sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
-        {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
-      </Tabs>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
-        {activeTab === 0 && <FlowChartButton flowKey="training" />}
-      </Box>
+    <PageHeader
+      title={t('nav.trainingMgmt')}
+      flowKey={activeTab === 0 ? 'training' : undefined}
+      tabs={
+        <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
+          sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+          {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
+        </Tabs>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 

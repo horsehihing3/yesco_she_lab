@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../hooks/useMenuRule'
+import PageHeader from '../components/common/PageHeader'
 import PlanOverviewTab from '../components/planKpiGoal/PlanOverviewTab'
 import AnnualPlanTab from '../components/planKpiGoal/AnnualPlanTab'
 import KpiStatusTab from '../components/planKpiGoal/KpiStatusTab'
@@ -36,8 +37,9 @@ const PlanKpiGoalPage: React.FC = () => {
   }
 
   return (
-    <Box>
-      <Box sx={{ mb: 2 }}>
+    <PageHeader
+      title={t('nav.planKpiGoal')}
+      tabs={
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
@@ -55,12 +57,10 @@ const PlanKpiGoalPage: React.FC = () => {
             <Tab key={idx} label={tab.label} />
           ))}
         </Tabs>
-      </Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 

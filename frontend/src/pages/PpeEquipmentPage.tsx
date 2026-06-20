@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../hooks/useMenuRule'
+import PageHeader from '../components/common/PageHeader'
 import PpeDashboardTab from '../components/ppe/PpeDashboardTab'
 import PpeItemTab from '../components/ppe/PpeItemTab'
 import PpeStockTab from '../components/ppe/PpeStockTab'
@@ -30,8 +31,9 @@ const PpeEquipmentPage: React.FC = () => {
   ].filter(tab => !isMenuHidden(tab.menuKey)), [t, isMenuHidden])
 
   return (
-    <Box>
-      <Box sx={{ mb: 2 }}>
+    <PageHeader
+      title={t('nav.ppeEquipment')}
+      tabs={
         <Tabs
           value={activeTab}
           onChange={(_, v) => setActiveTab(v)}
@@ -43,12 +45,10 @@ const PpeEquipmentPage: React.FC = () => {
             <Tab key={idx} label={tab.label} />
           ))}
         </Tabs>
-      </Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {tabs[activeTab]?.label}
-      </Typography>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 

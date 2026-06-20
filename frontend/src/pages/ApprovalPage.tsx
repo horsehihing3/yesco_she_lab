@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../hooks/useMenuRule'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 import MyApprovalTab from '../components/approval/MyApprovalTab'
 import ApprovalLinePage from './ApprovalLinePage'
 import ApprovalManagePage from './ApprovalManagePage'
@@ -35,8 +35,10 @@ const ApprovalPage: React.FC = () => {
   }
 
   return (
-    <Box>
-      <Box sx={{ mb: 2 }}>
+    <PageHeader
+      title={t('nav.approval')}
+      flowKey={activeTab === 0 ? 'approval' : undefined}
+      tabs={
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
@@ -54,13 +56,10 @@ const ApprovalPage: React.FC = () => {
             <Tab key={idx} label={tab.label} />
           ))}
         </Tabs>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
-        {activeTab === 0 && <FlowChartButton flowKey="approval" />}
-      </Box>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 
