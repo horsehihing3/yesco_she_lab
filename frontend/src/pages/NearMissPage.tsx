@@ -132,7 +132,7 @@ const NearMissPage: React.FC = () => {
   const { codeList: incRespStatusList, codeMap: incRespStatusMap } = useCodeMap('INCIDENT_RESP_STATUS')
   const { codeList: incRespSeverityList, codeMap: incRespSeverityMap } = useCodeMap('INCIDENT_RESP_SEVERITY')
   const [searchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT'>((searchParams.get('incidentType') as 'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT') || 'NEAR_MISS')
+  const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT'>((searchParams.get('incidentType') as 'DASHBOARD' | 'NEAR_MISS' | 'ACCIDENT') || 'DASHBOARD')
   const [page, setPage] = useState(1)
   const [rowsPerPage] = useState(10)
   const [viewMode, setViewMode] = useState<ViewMode>('list')
