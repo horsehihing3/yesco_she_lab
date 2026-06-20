@@ -33,6 +33,7 @@ const PpeEquipmentPage: React.FC = () => {
   return (
     <PageHeader
       title={t('nav.ppeEquipment')}
+      flowKey={activeTab === 0 ? 'ppe' : undefined}
       tabs={
         <Tabs
           value={activeTab}
