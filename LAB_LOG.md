@@ -27,3 +27,4 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [재적용·lab2] 고아 도면 라우트 /workplace-drawings 제거 — 정본 재확인, view·편집 진입점 보존, FlowChart 무관(페이지 유지·라우트만 제거).
 - 2026-06-20 [재적용·lab2] 고아 OshCommitteePage + 미사용 nav.oshCommittee 제거 — 정본 재확인, ehs.oshCommittee(실사용) 보존, FlowChart 무관. /partner-osh-committee 통합은 보류 유지.
 - 2026-06-20 [재적용·lab2] ④재해레포트 풀스택 제거(+SchemaInitializer+V86+사장i18n) — 정본 재확인, NearMiss 레포트탭만 제거 나머지3탭·⑤ 보존, 재기동 미부활 확인, FlowChart 무관(NearMiss 생존).
+- 2026-06-20 [재적용·lab2] tb_emergency_response 사장 백엔드 풀스택 제거(7파일+DROP) — 정본 재확인(#8 tb_incident_response로 대체된 옛 비상 사후기록, 호출처 0·FK없음·시드더미 8행 정본일치). V5 마이그레이션·EMERGENCY_TYPE/STATUS 코드그룹(공유테이블) 보존, #5 plan/drill/resource/contact·#8 무손상·EmergencyResponsePage 정상, 재기동 미부활 확인, FlowChart 무관(백엔드 참조 6자기파일뿐).
