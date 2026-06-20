@@ -10,7 +10,6 @@ import { EhsPlan, KpiQuarterStatus } from '../../types/planKpiGoal.types'
 import { ApiResponse } from '../../types/common.types'
 import { KPI_STATUS_COLOR, KPI_STATUS_LABEL } from './GoalsTable'
 import SafetyGoalProgressTable from './SafetyGoalProgressTable'
-import FlowChartButton from '../common/FlowChartButton'
 import StatCard from '../legalCompliance/StatCard'
 
 const currentYear = new Date().getFullYear()
@@ -81,9 +80,8 @@ const PlanOverviewTab: React.FC = () => {
 
   return (
     <Box>
-      {/* Toolbar: 흐름도 버튼 + 연도 선택 */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-        <FlowChartButton flowKey="kpiGoal" />
+      {/* Toolbar: 연도 선택 */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1, mb: 2, flexWrap: 'wrap' }}>
         <FormControl size="small" sx={{ width: { xs: '100%', sm: 'auto' }, minWidth: { sm: 100 } }}>
           <Select value={year} onChange={(e) => setYear(Number(e.target.value))} displayEmpty>
             <MenuItem value="" disabled>선택하세요</MenuItem>

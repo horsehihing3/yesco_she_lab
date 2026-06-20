@@ -39,6 +39,7 @@ const PlanKpiGoalPage: React.FC = () => {
   return (
     <PageHeader
       title={t('nav.planKpiGoal')}
+      flowKey={activeTab === 0 ? 'kpiGoal' : undefined}
       tabs={
         <Tabs
           value={activeTab}
