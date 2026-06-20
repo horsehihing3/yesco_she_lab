@@ -212,7 +212,6 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "mapDashboard": "Map Dashboard",
     "generalDashboard": "General Dashboard",
     "ehs": "SHE Management",
     "ehsCommunication": "Communication",

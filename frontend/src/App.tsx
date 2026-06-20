@@ -7,7 +7,6 @@ import Layout from './components/common/Layout'
 
 // Pages
 import LoginPage from './pages/LoginPage'
-import Dashboard from './pages/Dashboard'
 import GeneralDashboard from './pages/GeneralDashboard'
 import EhsPage from './pages/EhsPage'
 import RiskAssessmentPage from './pages/RiskAssessmentPage'
@@ -103,7 +102,7 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Dashboard />} />
+        <Route index element={<Navigate to="/dashboard/general" replace />} />
         <Route path="dashboard/general" element={<GeneralDashboard />} />
         <Route path="ehs" element={<Navigate to="/ehs/communication" replace />} />
         <Route path="ehs/communication" element={<EhsPage />} />

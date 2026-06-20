@@ -56,7 +56,6 @@ const menuItems: MenuItem[] = [
     textKey: 'nav.dashboard',
     icon: <DashboardIcon />,
     children: [
-      { textKey: 'nav.mapDashboard', icon: <PublicIcon />, path: '/' },
       { textKey: 'nav.generalDashboard', icon: <BarChartIcon />, path: '/dashboard/general' },
     ],
   },
@@ -162,6 +161,12 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
       return { ...item, children: visibleChildren }
     })
     .filter((item) => !item.children || item.children.length > 0)
+
+  // 로고/홈 진입 경로: 숨김 처리되지 않은 첫 번째 메뉴(단일 메뉴 또는 그룹의 첫 노출 하위).
+  // 지도형 대시보드 등 첫 메뉴가 메뉴관리에서 숨김이면 자동으로 다음 노출 메뉴로 이동.
+  const firstVisiblePath =
+    visibleMenuItems.map((item) => item.path ?? item.children?.[0]?.path).find(Boolean) ?? '/'
+
   const { isDarkMode, isYescoMode } = useThemeMode()
   const [expandedMenus, setExpandedMenus] = useState<string[]>(() => {
     const isPathActiveStrict = (path: string) => {
@@ -386,7 +391,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showLogo = false, onMenuClick, collap
       {/* Logo - Brand Area */}
       {showLogo && (
         <Box
-          onClick={() => navigate('/')}
+          onClick={() => navigate(firstVisiblePath)}
           sx={{
             p: '14px',
             display: 'flex',

@@ -56,7 +56,6 @@ interface MenuNode {
 
 const MENU_TREE: MenuNode[] = [
   { key: 'nav.dashboard', label: 'Dashboard', children: [
-    { key: 'nav.mapDashboard',      label: '지도형 대시보드' },
     { key: 'nav.generalDashboard',  label: '일반 대시보드' },
   ]},
   { key: 'nav.ehs', label: 'SHE 경영', children: [
