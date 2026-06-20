@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance'
 import { ApiResponse, PageResponse } from '../types/common.types'
-import { ContractorPlan, ContractorPlanRequest, ContractorWorker, ContractorEvalTemplate, ContractorEvalItem } from '../types/contractor.types'
+import { ContractorPlan, ContractorPlanRequest, ContractorWorker } from '../types/contractor.types'
 
 export const contractorPlanApi = {
   getAll: async (page = 0, size = 10) => {
@@ -50,28 +50,5 @@ export const contractorPlanApi = {
   },
   releaseEditLock: async (id: number) => {
     await axiosInstance.delete(`/contractor-plans/${id}/edit-lock`)
-  },
-}
-
-export const contractorEvalApi = {
-  getTemplates: async () => {
-    const res = await axiosInstance.get<ApiResponse<ContractorEvalTemplate[]>>('/contractor-eval/templates')
-    return res.data.data
-  },
-  getTemplate: async (id: number) => {
-    const res = await axiosInstance.get<ApiResponse<ContractorEvalTemplate>>(`/contractor-eval/templates/${id}`)
-    return res.data.data
-  },
-  getItems: async (templateId: number) => {
-    const res = await axiosInstance.get<ApiResponse<ContractorEvalItem[]>>(`/contractor-eval/templates/${templateId}/items`)
-    return res.data.data
-  },
-  saveItems: async (templateId: number, items: ContractorEvalItem[]) => {
-    const res = await axiosInstance.put<ApiResponse<void>>(`/contractor-eval/templates/${templateId}/items`, items)
-    return res.data.data
-  },
-  updateTemplateMeta: async (templateId: number, template: Partial<ContractorEvalTemplate>) => {
-    const res = await axiosInstance.put<ApiResponse<ContractorEvalTemplate>>(`/contractor-eval/templates/${templateId}`, template)
-    return res.data.data
   },
 }
