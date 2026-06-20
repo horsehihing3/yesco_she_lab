@@ -247,7 +247,6 @@
     "envManage": "环境管理",
     "envWaste": "废弃物",
     "envWaterQuality": "水质",
-    "envAirEmission": "大气排放",
     "envCarbon": "碳排放管理",
     "safetyManage": "安全管理",
     "auditInspection": "内部审计",
@@ -1700,7 +1699,6 @@
   "environment": {
     "searchWaste": "搜索废弃物名称",
     "searchWaterQuality": "搜索测量点",
-    "searchAirEmission": "搜索排放设施",
     "wasteCode": "废弃物代码",
     "wasteType": "废弃物种类",
     "wasteName": "废弃物名称",
@@ -2117,58 +2115,6 @@
     "selectDeptFirst": "좌측에서 부서를 선택하세요",
     "people": "명",
     "noMembers": "소속 직원이 없습니다"
-  },
-  "airEmission": {
-    "tabs": {
-      "dashboard": "仪表盘",
-      "measurement": "测量数据",
-      "standard": "排放标准管理",
-      "report": "报告"
-    },
-    "dashboard": {
-      "totalMeasurements": "总测量次数",
-      "compliantCount": "合规次数",
-      "nonCompliantCount": "不合规次数",
-      "complianceRate": "合规率",
-      "byPollutant": "按污染物分类",
-      "nonCompliantByFacility": "按设施不合规次数",
-      "monthlyTrend": "月度趋势",
-      "recentNonCompliant": "最近不合规记录",
-      "nonCompliant": "不合规"
-    },
-    "standard": {
-      "itemName": "项目名称",
-      "unit": "单位",
-      "minValue": "最小允许值",
-      "maxValue": "最大允许值",
-      "remark": "备注"
-    },
-    "report": {
-      "title": "大气排放管理报告",
-      "totalMeasurements": "总测量次数",
-      "totalFacilities": "设施数量",
-      "compliantCount": "合规次数",
-      "nonCompliantCount": "不合规次数",
-      "complianceRate": "合规率",
-      "printPdf": "打印 / 保存为PDF",
-      "reportDate": "报告日期",
-      "summaryTitle": "综合现状摘要",
-      "nonCompliantDetailTitle": "最近不合规详细记录",
-      "date": "日期",
-      "facility": "设施",
-      "pollutant": "污染物",
-      "measuredValue": "测量值",
-      "standardValue": "标准值",
-      "reportFooter": "以上为综合SHE大气排放监测结果报告。",
-      "systemName": "SHE综合环境管理系统",
-      "noNonCompliant": "无不合规记录。",
-      "measurementInfo": "측정 정보",
-      "noData": "레포트로 출력 가능한 측정 결과가 없습니다."
-    },
-    "unit": "단위",
-    "compliance": "준수 여부",
-    "nonCompliant": "부적합",
-    "compliant": "적합"
   },
   "water": {
     "tabs": {

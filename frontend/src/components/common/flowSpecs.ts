@@ -85,7 +85,6 @@ export const FLOW_SPECS: Record<string, FlowSpec> = {
   oshCommittee:     { title: '산업안전보건위원회 흐름도', steps: simpleStatus('위원회 개최 등록', '안건 심의·의결', '회의록 등록') },
   legalResponse:    { title: '법적 대응 흐름도',          steps: simpleStatus('대응 건 등록', '대응·조치 진행', '종결 처리') },
   envMonitoring:    { title: '환경 모니터링 흐름도',      steps: simpleStatus('측정 계획 등록', '측정 시행·기록', '결과 보고') },
-  airEmission:      { title: '대기배출 관리 흐름도',      steps: simpleStatus('배출원 등록', '측정·기록', '결과 보고') },
   waterQuality:     { title: '수질 관리 흐름도',          steps: simpleStatus('측정지점 등록', '측정·기록', '결과 보고') },
   carbon:           { title: '탄소 관리 흐름도',          steps: simpleStatus('배출활동 등록', '배출량 산정', '실적 보고') },
   fireSafety:       { title: '소방안전 업무 흐름도',      steps: simpleStatus('소방 점검 계획', '점검 실시', '결과·조치') },

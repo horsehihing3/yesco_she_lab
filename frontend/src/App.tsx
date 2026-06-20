@@ -25,7 +25,6 @@ import ChecklistPage from './pages/ChecklistPage'
 import WasteManagePage from './pages/WasteManagePage'
 import CarbonManagePage from './pages/CarbonManagePage'
 import WaterQualityManagePage from './pages/WaterQualityManagePage'
-import AirEmissionManagePage from './pages/AirEmissionManagePage'
 import NotFoundPage from './pages/NotFoundPage'
 import CodeManagePage from './pages/CodeManagePage'
 import RoleManageTab from './components/system/RoleManageTab'
@@ -138,7 +137,6 @@ function App() {
         <Route path="environment" element={<Navigate to="/environment/waste" replace />} />
         <Route path="environment/waste" element={<WasteManagePage />} />
         <Route path="environment/carbon" element={<CarbonManagePage />} />
-        <Route path="environment/air-emission" element={<AirEmissionManagePage />} />
         <Route path="environment/air-water" element={<WaterQualityManagePage />} />
         <Route path="environment/monitoring" element={<EnvMonitoringPage />} />
         <Route path="chemical/master" element={<ChemicalMasterPage />} />

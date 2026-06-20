@@ -199,7 +199,6 @@
     "envManage": "환경 관리",
     "envWaste": "폐기물",
     "envWaterQuality": "수질",
-    "envAirEmission": "대기배출",
     "envCarbon": "탄소 관리",
     "safetyManage": "안전 관리",
     "auditInspection": "내부 감사",
@@ -1607,7 +1606,6 @@
   "environment": {
     "searchWaste": "폐기물명 검색",
     "searchWaterQuality": "측정지점 검색",
-    "searchAirEmission": "배출시설 검색",
     "wasteCode": "폐기물 코드",
     "wasteType": "폐기물 종류",
     "wasteName": "폐기물명",
@@ -2025,52 +2023,6 @@
     "preview": "미리 보기",
     "noPending": "처리 대기 결재가 없습니다.",
     "selectToPreview": "결재를 선택하면 미리보기가 표시됩니다."
-  },
-  "airEmission": {
-    "tabs": {
-      "dashboard": "대시보드",
-      "measurement": "측정 데이터",
-      "standard": "배출 기준치 관리",
-      "report": "보고서"
-    },
-    "dashboard": {
-      "totalMeasurements": "총 측정 건수",
-      "compliantCount": "적합 건수",
-      "nonCompliantCount": "부적합 건수",
-      "complianceRate": "적합률",
-      "byPollutant": "오염물질별 측정 건수",
-      "nonCompliantByFacility": "시설별 부적합 건수",
-      "monthlyTrend": "월별 측정 추이",
-      "recentNonCompliant": "최근 부적합 기록",
-      "nonCompliant": "부적합"
-    },
-    "standard": {
-      "itemName": "항목명",
-      "unit": "단위",
-      "minValue": "최소 허용치",
-      "maxValue": "최대 허용치",
-      "remark": "비고"
-    },
-    "report": {
-      "title": "대기 배출 관리 보고서",
-      "totalMeasurements": "총 측정 건수",
-      "totalFacilities": "등록 시설",
-      "compliantCount": "적합 건수",
-      "nonCompliantCount": "부적합 건수",
-      "complianceRate": "적합률",
-      "printPdf": "브라우저 인쇄 / PDF 저장",
-      "reportDate": "보고 일자",
-      "summaryTitle": "종합 현황 요약",
-      "nonCompliantDetailTitle": "최근 부적합 상세 내역",
-      "date": "일자",
-      "facility": "시설",
-      "pollutant": "오염물질",
-      "measuredValue": "측정값",
-      "standardValue": "기준치",
-      "reportFooter": "이상과 같이 통합 SHE 대기 배출 모니터링 결과를 보고합니다.",
-      "systemName": "SHE 통합 환경 관리 시스템",
-      "noNonCompliant": "부적합 내역이 없습니다."
-    }
   },
   "water": {
     "tabs": {
