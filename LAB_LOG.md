@@ -52,6 +52,8 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [재편·lab2] PageHeader 중난도 이관 파일럿 — PartnerSafetyMgmt. 신메커니즘(App.tsx PageWithTitle 래퍼 제거 + PageHeader 적용) 검증 성공. PageHeader에 fill prop 추가(default false, 기존 8페이지 무영향=출력 동일). fill 판정=미전달(SiteSafetyPlanContent가 site-safety-mgmt에서 이미 fill없이 정상). App.tsx 최초 수정(래퍼 1줄, 나머지 12라우트·PageWithTitle 정의 무변경). 제목 단일표시. 누적 적용 9페이지. 중난도 잔여 순수이관 2(LegalResponse·WorkplaceDrawingsView), 설정6 제외 확정, 고난도 이송4(IncidentResponse·ContractorRegistration·PartnerOshCommittee·PartnerPermit). tsc 9→9 신규0.
 - 2026-06-20 [재편·lab2] PageHeader 중난도 이관 — WorkplaceDrawingsView(사업장 도면 조회). 제목 일원화 완료, fill 미전달(루트 auto-Box로 PageWithTitle fill이 원래 inert). 누적 적용 10페이지, 중난도 순수이관 잔여 1(LegalResponse).
 - 2026-06-20 [보류·lab2] WorkplaceDrawingsView 흐름도가 자식 공유컴포넌트(WorkplaceDrawingsPage, 설정 /system-manage/drawings와 공유) 내부에 위치 → 제목줄 우측 표준과 미세 불일치하나 화면상 근접·설정 영향 위험으로 현행 유지. 흐름도 키/위치 정리 별도 트랙 후보.
+- 2026-06-20 [재편·lab2] PageHeader 중난도 이관 — LegalResponse(법규대응). 흐름도를 탭0 콘텐츠 내부→제목줄 우측 이관(KPI 위치 보존), 콘텐츠 잔재 0. tsc 9→8 개선(미사용 t 해소, ★새 베이스라인=8). 누적 적용 11페이지. ★중난도 순수이관 트랙 완료(PartnerSafetyMgmt·WorkplaceDrawingsView·LegalResponse 3건).
+- 2026-06-20 [메모·lab2] tsc 베이스라인 9→8로 갱신. 이후 작업 회귀 기준은 "8→8 신규0".
 
 === 세션 마무리 (2026-06-20 18:42 기준) ===
 

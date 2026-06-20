@@ -21,7 +21,7 @@ import LoadingOverlay from '../components/common/LoadingOverlay'
 import ListSearchBar from '../components/common/ListSearchBar'
 import AuditPlanTab from '../components/ehs/AuditPlanTab'
 import AuditExecutionTab from '../components/ehs/AuditExecutionTab'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 const CATEGORIES = ['안전', '보건', '환경', '화학물질', '소방']
 
@@ -248,11 +248,10 @@ const LegalResponsePage: React.FC = () => {
     || ((tab === 3 || tab === 4) && auditFetching > 0)
 
   return (
-    <Box sx={{ pb: 4 }}>
-      <LoadingOverlay open={isLoading} message="로딩 중..." />
-
-      {/* Tabs */}
-      <Box sx={{ mb: 2 }}>
+    <PageHeader
+      title={t('nav.legalResponse')}
+      flowKey={tab === 0 ? 'legalResponse' : undefined}
+      tabs={
         <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto"
           allowScrollButtonsMobile
           sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: { xs: '0.78rem', md: '0.875rem' } } }}>
@@ -262,7 +261,10 @@ const LegalResponsePage: React.FC = () => {
           <Tab label="법규 대응 계획" />
           <Tab label="법규 대응 실시" />
         </Tabs>
-      </Box>
+      }
+    >
+      <Box sx={{ pb: 4 }}>
+        <LoadingOverlay open={isLoading} message="로딩 중..." />
 
       {/* KPI */}
       <Grid container spacing={{ xs: 1, md: 2 }} sx={{ mb: { xs: 2, md: 3 } }}>
@@ -276,9 +278,6 @@ const LegalResponsePage: React.FC = () => {
       {/* TAB 0: 법령 검색 */}
       {tab === 0 && (
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, mb: 2 }}>
-            <FlowChartButton flowKey="legalResponse" />
-          </Box>
           {/* PC 검색 */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, mb: 2, flexWrap: 'wrap', alignItems: 'center' }}>
             <ListSearchBar
@@ -777,7 +776,8 @@ const LegalResponsePage: React.FC = () => {
             onClick={() => updateFilterMut.mutate(filterDraft)}>저장</Button>
         </DialogActions>
       </Dialog>
-    </Box>
+      </Box>
+    </PageHeader>
   )
 }
 

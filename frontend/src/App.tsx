@@ -135,7 +135,7 @@ function App() {
         <Route path="partner-safety-mgmt" element={<PartnerSafetyMgmtPage />} />
         <Route path="contractor-registration" element={<PageWithTitle titleKey="nav.partnerRegistration"><ContractorRegistrationPage /></PageWithTitle>} />
         <Route path="incident-response" element={<PageWithTitle titleKey="nav.incidentResponse"><IncidentResponsePage /></PageWithTitle>} />
-        <Route path="legal-response" element={<PageWithTitle titleKey="nav.legalResponse"><LegalResponsePage /></PageWithTitle>} />
+        <Route path="legal-response" element={<LegalResponsePage />} />
         <Route path="disease-prevention-mgmt" element={<DiseasePreventionMgmtPage />} />
         <Route path="plan-kpi-goal" element={<PlanKpiGoalPage />} />
         <Route path="emergency-response" element={<EmergencyResponsePage />} />
