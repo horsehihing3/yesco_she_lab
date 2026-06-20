@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { isEhsManager } from '../utils/auth'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../hooks/useMenuRule'
 import MyHealthCheckupPage from './MyHealthCheckupPage'
@@ -10,7 +10,7 @@ import HealthCheckupPlanTab from '../components/ehs/HealthCheckupPlanTab'
 import HealthCheckupStatusTab from '../components/ehs/HealthCheckupStatusTab'
 import HealthCheckupReportTab from '../components/ehs/HealthCheckupReportTab'
 import { useAuth } from '../context/AuthContext'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 const HealthCheckupPage: React.FC = () => {
   const { t } = useTranslation()
@@ -38,17 +38,18 @@ const HealthCheckupPage: React.FC = () => {
   }, [tabs.length, activeTab])
 
   return (
-    <Box>
-      <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
-        sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
-        {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
-      </Tabs>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
-        {activeTab === 0 && <FlowChartButton flowKey="healthCheckup" />}
-      </Box>
+    <PageHeader
+      title={t('nav.healthScreening')}
+      flowKey={activeTab === 0 ? 'healthCheckup' : undefined}
+      tabs={
+        <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
+          sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+          {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
+        </Tabs>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 

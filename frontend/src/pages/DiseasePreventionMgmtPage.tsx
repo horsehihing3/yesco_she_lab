@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useMenuRule } from '../hooks/useMenuRule'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 import DpDashboardTab from '../components/diseasePreventionMgmt/DpDashboardTab'
 import DpMsdTab from '../components/diseasePreventionMgmt/DpMsdTab'
 import DpCvdTab from '../components/diseasePreventionMgmt/DpCvdTab'
@@ -43,19 +43,18 @@ const DiseasePreventionMgmtPage: React.FC = () => {
   }, [tabs.length, activeTab])
 
   return (
-    <Box>
-      <Box sx={{ mb: 2 }}>
+    <PageHeader
+      title={t('nav.diseasePreventionMgmt')}
+      flowKey={activeTab === 0 ? 'diseasePrevent' : undefined}
+      tabs={
         <Tabs value={activeTab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto"
           sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
           {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
         </Tabs>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold">{tabs[activeTab]?.label}</Typography>
-        {activeTab === 0 && <FlowChartButton flowKey="diseasePrevent" />}
-      </Box>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 
