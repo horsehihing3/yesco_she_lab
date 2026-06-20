@@ -41,3 +41,30 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [완료] ★숨김 3그룹(환경관리·공정안전PSM·MSDS화학물질) 풀스택 제거 완료 — lab2. 전부 예스코 미사용·정본 jiwon2ahn 보존 복구가능.
 - 2026-06-20 [정리·lab2] 버튼 관리 유령 잔재 철저 정리(나 방식) — 제거된 3그룹의 3레이어 동반 제거: ① buttonManageData.ts 화학 위해성보고 엔트리1(트리원천) ② ButtonRuleAdminRolesInitializer.java 7시드(initWasteAdmin/initAirWaterAdmin/initChemAdmin 메서드+run()호출 + initAbstractRoleRows 일괄섹션 폐기물/방사선/인허가4/화학 블록) ③ tb_button_rule(lab2) 245행 DELETE(폐기물49·방사선35·인허가식별35·대장35·변경21·법정49·화학21). ★Initializer 먼저 고쳐 재시드 차단(SchemaInitializer 패턴) → 재기동 후 2144행 유지·245행 미재시드 확인. ★보존: 협력업체 PSM변수(별도메인)·안전/보건/협력업체/승인 역할시드·나머지2144행(riskAssess336·permitToWork182·partner392·health125)·superAdmin 로직 무손상. 권한결합0·dead 데이터. (buttonManageData GENERAL_ADMIN_ROLE_OPTIONS 죽은역할옵션은 보류)
 - 2026-06-20 [제거·lab2] 지도형 대시보드 풀스택 제거(8파일)+착지점 재배선 — 예스코 미사용(실험적, 정본 복구가능). 삭제: pages/Dashboard.tsx + components/dashboard 6개(VWorldMap/FactoryListOverlay/EHSStatusPanel/CCTVAnalysisPanel/MenuBar/FloorPlanOverlay) + types/map.types.ts. ★착지점: App.tsx 인덱스라우트 → <Navigate to='/dashboard/general' replace/>(루프방지: /→/dashboard/general 다른경로). Login/Layout로고/NotFound navigate('/')는 인덱스 경유 자동 종합착지(무변경). Sidebar 로고 firstVisiblePath는 mapDashboard 메뉴 제거 후 자동 /dashboard/general. 메뉴/i18n 외과: Sidebar nav.mapDashboard 자식·MenuManageTab·i18n3 제거(PublicIcon 보존-workplaceDrawingsView 공유). ★보존: WeatherWidget(종합 공유)·dashboardApi(AdminPage+종합 공유)·dashboard.types·백엔드 Dashboard 전체·DB무관. tsc 신규0.
+
+=== 세션 마무리 (2026-06-20 18:42 기준) ===
+
+■ lab2 환경
+- 위치: C:\claude\yesco_she_lab2, 브랜치 lab2
+- remote: upstream=jiwon2ahn(fetch, push 차단) / origin=horsehihing3/yesco_she_lab(push)
+- DB: yescoSHE_lab2 (정본 yescoSHE 복제, 211.171.152.242:51084)
+- 포트: 프론트 7700 / 백엔드 7701
+- 정본 대비: yescoSHE 정본 기반 + 청소/제거 적용본. 정본 jiwon2ahn에 원본 보존(복구 가능)
+
+■ 이번 세션 완료 작업 (전부 커밋·push, origin/lab2 IN SYNC, HEAD=396333d)
+1. lab을 yescoSHE 정본 기반으로 재구축 (이전 lab은 main/com4in 라인이라 폐기)
+2. 청소 재적용 8건: LegalCompliance, ComingSoon, 도면 고아라우트, 협의체, ④재해레포트, emergency_response, contractor-eval, air-emission
+3. 숨김 3그룹 풀스택 제거: 환경관리(8기능), PSM(공정안전), MSDS/화학물질 — 예스코 미사용, ~44k줄
+4. 버튼 관리 유령 잔재 정리 (buttonManageData + Initializer + tb_button_rule 245행, 재시드 차단)
+5. 지도형 대시보드 제거 + 착지점 재배선 (인덱스→/dashboard/general)
+
+■ 보류/다음 단계 (TODO)
+- i18n 콘텐츠 고아키 정리: 환경/PSM/화학 제거 시 nav키만 지우고 콘텐츠 네임스페이스는 고아로 잔존(무해). 안전키 인접 위험으로 보류 → 추후 일괄 정리 가능
+- buttonManageData GENERAL_ADMIN_ROLE_OPTIONS의 죽은 역할옵션(CHEM_*/ENV_* 등) 보류
+- (미착수) 재편: 사이드바 메뉴 그룹 정리 + 7700 vs 7600 비교 — 사용자가 원래 가려던 목표
+- (미착수) 더 솎기: SHE경영 등 보이는 메뉴 중 예스코 미사용 추가 정리 검토
+- (장기) lab 결론을 정본 yescoSHE에 선별 재적용 + 정본에서 필요기능 복구 + 전체 기능테스트 + 예스코/대표 보고(특히 [발견-CAPA])
+
+■ 다음 세션 시작점
+- 7700 둘러보며 "더 정리 vs 재편/비교 vs 보고자료" 중 방향 결정
+- LAB_LOG의 [재적용]/[제거]/[정리] 태그가 전체 작업 점검표
