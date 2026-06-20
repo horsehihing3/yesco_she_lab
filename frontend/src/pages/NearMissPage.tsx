@@ -68,7 +68,7 @@ import DepartmentSelectModal from '../components/common/DepartmentSelectModal'
 import DevTestFillButton from '../components/common/DevTestFillButton'
 import { FileMetadata } from '../types/file.types'
 import NearMissDashboardTab from '../components/ehs/NearMissDashboardTab'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 import { useAuth } from '../context/AuthContext'
 
 const statusColors: Record<NearMissStatus, 'default' | 'warning' | 'info' | 'success' | 'error'> = {
@@ -2112,10 +2112,12 @@ const NearMissPage: React.FC = () => {
 
   return (
     <Box>
-      {/* 탭 메뉴: 아차사고 / 사고 / 레포트 */}
+      {/* 탭 메뉴: 대시보드 / 아차사고 / 사고 — list 뷰만 PageHeader, detail/form은 자체 제목 보유로 밖에 둠 */}
       {viewMode === 'list' && (
-        <>
-          <Box sx={{ mb: 2 }}>
+        <PageHeader
+          title={t('nav.nearMiss')}
+          flowKey={activeTab === 'DASHBOARD' ? 'nearMiss' : undefined}
+          tabs={
             <Tabs
               value={activeTab}
               onChange={(_, newValue) => { setActiveTab(newValue); setPage(1) }}
@@ -2124,21 +2126,11 @@ const NearMissPage: React.FC = () => {
               <Tab label={t('nearMiss.incidentTypes.nearMiss')} value="NEAR_MISS" />
               <Tab label={t('nearMiss.incidentTypes.accident')} value="ACCIDENT" />
             </Tabs>
-          </Box>
-          {activeTab !== 'DASHBOARD' && (
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-              {activeTab === 'NEAR_MISS' ? t('nearMiss.incidentTypes.nearMiss') : t('nearMiss.incidentTypes.accident')}
-            </Typography>
-          )}
-          {activeTab === 'DASHBOARD' && (
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-              <FlowChartButton flowKey="nearMiss" />
-            </Box>
-          )}
-        </>
+          }
+        >
+          {activeTab === 'DASHBOARD' ? <NearMissDashboardTab /> : renderListView()}
+        </PageHeader>
       )}
-      {viewMode === 'list' && activeTab === 'DASHBOARD' && <NearMissDashboardTab />}
-      {viewMode === 'list' && activeTab !== 'DASHBOARD' && renderListView()}
       {viewMode === 'detail' && renderDetailView()}
       {(viewMode === 'create' || viewMode === 'edit') && renderFormView()}
 

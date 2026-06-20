@@ -60,6 +60,8 @@ lab 환경 실험/정리 기록.
 - 2026-06-21 [수정·lab2] near-miss 탭 fallback 'NEAR_MISS'→'DASHBOARD' — 사이드바 진입 시 대시보드 첫 탭으로 정정. 딥링크(?incidentType=) 무손상(searchParams 우선). 위 [발견-버그] 해소. tsc 8→8.
 - 2026-06-21 [재편·lab2] 보호구 흐름도 추가 — flowKey='ppe'(기존 spec) tab0. 흐름도=제목줄 우측 표준 충족. tsc 8→8.
 - 2026-06-21 [보류·lab2] ppe 흐름 내용이 '지급' 한정이라 보호구 9탭 전체 대표 못함 → spec 정교화는 별도 도메인 콘텐츠 트랙 후보.
+- 2026-06-21 [재편·lab2] PageHeader 고난도 list-only 파일럿 — NearMiss. (가)구조(단일root+형제&&블록) 템플릿 확정: viewMode==='list' 블록만 PageHeader, detail/form은 형제로 무손상. 흐름도 L2133→flowKey(DASHBOARD 전용) 이관·서브헤딩(L2128 중복) 제거. git diff로 renderDetailView/renderFormView 무변경 확인(회귀0). 누적 16페이지. 고난도 메커닉 (가)검증 완료, (나)early-return 구조는 별도 검증 필요. tsc 8→8.
+- 2026-06-21 [발견·lab2] NearMiss detail 뷰(renderDetailView) 자체 이중제목 — L878 h6+상태칩 / L883 subtitle1, 같은 키(nearMissInfoByType) 2회 출력(원개발자 구조). 파일럿과 무관, detail 정리 트랙 후보(L883 섹션헤딩 제거 등).
 - 2026-06-21 [재편·lab2] PageHeader 적용 미적용 저난도 배치 — 내부감사·비상훈련·작업환경측정·체크리스트. 흐름도 전부 부모직접(자식 무수정, KPI 패턴 아님), EhsPage 표준 치환. Checklist 이중제목 점검 통과(자식 SafetyChecklistWrapper 자체 제목 없음). PageHeader 무변경. ★저난도 트랙 진짜 완료, 누적 적용 15페이지. 남은 트랙: 고난도(viewMode 11 + near-miss 탭버그), 설정6 제외.
 
 === 세션 마무리 (2026-06-20 18:42 기준) ===
