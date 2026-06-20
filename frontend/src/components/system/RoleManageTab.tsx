@@ -76,17 +76,7 @@ const ROLES = [
   { value: 'OCCUPATIONAL_ADMIN', labelKey: 'role.occupationalAdmin', group: 'health' },
   { value: 'WORK_ENV_ADMIN', labelKey: 'role.workEnvAdmin', group: 'health' },
   { value: 'ERGONOMICS_ADMIN', labelKey: 'role.ergonomicsAdmin', group: 'health' },
-  // 화학물질관리
-  { value: 'CHEM_MASTER_ADMIN', labelKey: 'role.chemMasterAdmin', group: 'chemical' },
-  { value: 'CHEM_MSDS_RAW_ADMIN', labelKey: 'role.chemMsdsRawAdmin', group: 'chemical' },
-  { value: 'CHEM_MSDS_PROD_ADMIN', labelKey: 'role.chemMsdsProdAdmin', group: 'chemical' },
-  { value: 'CHEM_REG_ADMIN', labelKey: 'role.chemRegAdmin', group: 'chemical' },
-  { value: 'CHEM_LIFECYCLE_ADMIN', labelKey: 'role.chemLifecycleAdmin', group: 'chemical' },
   // 환경관리
-  { value: 'ENV_MONITORING_ADMIN', labelKey: 'role.envMonitoringAdmin', group: 'env' },
-  { value: 'WASTE_ADMIN', labelKey: 'role.wasteAdmin', group: 'env' },
-  { value: 'AIR_WATER_ADMIN', labelKey: 'role.airWaterAdmin', group: 'env' },
-  { value: 'CARBON_ADMIN', labelKey: 'role.carbonAdmin', group: 'env' },
   { value: 'COMPLIANCE_ADMIN', labelKey: 'role.complianceAdmin', group: 'env' },
   // SHE 경영
   { value: 'QNA_ADMIN', labelKey: 'role.qnaAdmin', group: 'ehs' },

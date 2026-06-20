@@ -33,15 +33,6 @@ const ROLES = [
   { value: 'OCCUPATIONAL_ADMIN',   label: '직업건강 관리자',             group: 'health' },
   { value: 'WORK_ENV_ADMIN',       label: '작업환경측정 관리자',         group: 'health' },
   { value: 'ERGONOMICS_ADMIN',     label: '인체공학 관리자',             group: 'health' },
-  { value: 'CHEM_MASTER_ADMIN',    label: '화학물질 마스터 관리자',      group: 'chemical' },
-  { value: 'CHEM_MSDS_RAW_ADMIN',  label: '원료 MSDS 관리자',           group: 'chemical' },
-  { value: 'CHEM_MSDS_PROD_ADMIN', label: '제품 MSDS 관리자',           group: 'chemical' },
-  { value: 'CHEM_REG_ADMIN',       label: '해외 법규 관리자',            group: 'chemical' },
-  { value: 'CHEM_LIFECYCLE_ADMIN', label: '화학물질 Life-Cycle 관리자', group: 'chemical' },
-  { value: 'ENV_MONITORING_ADMIN', label: '환경 모니터링 관리자',        group: 'env' },
-  { value: 'WASTE_ADMIN',          label: '폐기물 관리자',               group: 'env' },
-  { value: 'AIR_WATER_ADMIN',      label: '대기·수질 관리자',            group: 'env' },
-  { value: 'CARBON_ADMIN',         label: '탄소 관리자',                 group: 'env' },
   { value: 'COMPLIANCE_ADMIN',     label: '법규 준수 관리자',            group: 'env' },
   { value: 'QNA_ADMIN',            label: 'Q&A 관리자',                  group: 'ehs' },
 ]
@@ -230,7 +221,7 @@ function buildRulesToSave(hiddenSet: Set<string>): MenuRuleItem[] {
 
 const GROUP_COLORS: Record<string, string> = {
   system: '#1976d2', safety: '#e65100', health: '#2e7d32',
-  chemical: '#6a1b9a', env: '#00695c', ehs: '#c62828',
+  env: '#00695c', ehs: '#c62828',
 }
 
 // depth별 스타일

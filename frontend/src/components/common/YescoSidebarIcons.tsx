@@ -135,15 +135,6 @@ export const YescoChem: React.FC<IconProps> = ({ size }) => wrapSvg(
   </>, size,
 )
 
-// ── 공정안전 (PSM): 톱니바퀴 + 붉은 중심 ──
-export const YescoPsm: React.FC<IconProps> = ({ size }) => wrapSvg(
-  <>
-    <path d="M16 4 L18 7 L21 6 L22 9.5 L25 10 L24 13.5 L26 16 L24 18.5 L25 22 L22 22.5 L21 26 L18 25 L16 28 L14 25 L11 26 L10 22.5 L7 22 L8 18.5 L6 16 L8 13.5 L7 10 L10 9.5 L11 6 L14 7 Z" fill={WHITE} />
-    <circle cx="16" cy="16" r="5" fill={RED} />
-    <circle cx="16" cy="16" r="2" fill={WHITE} />
-  </>, size,
-)
-
 // ── 결재 (승인): 클립보드 + 붉은 체크 ──
 export const YescoApproval: React.FC<IconProps> = ({ size }) => wrapSvg(
   <>
