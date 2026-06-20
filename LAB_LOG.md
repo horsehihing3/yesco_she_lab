@@ -47,6 +47,7 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [재편·lab2] PageHeader 공통 컴포넌트 신설(common/PageHeader.tsx) + EhsPage 파일럿 적용. 표준 확정: 제목-위(제목→탭) / 제목=메뉴명 고정(nav 키 재사용, 탭 전환에도 불변) / 흐름도 우상단(탭0 조건은 호출부 flowKey 조건부 전달) / 우측정렬 space-between 단일화. props=title(필수)·flowKey?·actions?·tabs?·children. FlowChartButton(기존 공통) 흡수, 신규 디자인토큰 0. EhsPage title=t('nav.ehsCommunication')(사이드바와 동일 소스). 시나리오B(공통셸 신설), 잔여 대상 ~33페이지(저20/중10/고4, 중난도는 App.tsx PageWithTitle 13라우트 이관 동반). 다음: 저난도 그룹부터 도메인 단위 복제. tsc 9→9 신규0.
 - 2026-06-20 [재편·lab2] PageHeader 적용 배치1 — 보건관리(HealthCheckup·DiseasePrevention). nav 키 재사용(nav.healthScreening·nav.diseasePreventionMgmt)·flowKey 탭0 보존·PageHeader 무변경(표준 재사용 검증). Tabs mb 중복 마진은 PageHeader 래퍼가 흡수. 저난도 잔여 ~18. tsc 9→9 신규0.
 - 2026-06-20 [재편·lab2] PageHeader 적용 배치2 — SHE경영 저난도+변형(Training·Approval·PpeEquipment·PlanKpiGoal). 변형 흡수 검증: 흐름도無→우측영역 미렌더(가드 actions||flowKey), 9탭 scrollable 무손상. nav 키 재사용(trainingMgmt/approval/ppeEquipment/planKpiGoal)·신규키0. PageHeader 무변경. 누적 적용 7페이지, 저난도 잔여 ~14. tsc 9→9 신규0.
+- 2026-06-20 [재편·lab2] PageHeader 적용 배치3 — 위험성평가(안전관리 저난도 단건). title=nav.riskAssessment 고정·미사용 tabTitles 동반제거·조건부블록5 children 주입·PageHeader 무변경. 누적 8페이지. 안전관리 잔여 저난도 0(SafetyAccident·ProcessActivity·NearMiss는 viewMode 다중return 고난도로 분리). 협력업체 저난도 후보=PartnerMgmt 1건(배치4, 제목없음→신규추가 변형). 중난도=PartnerSafetyMgmt·PartnerPermit·ContractorRegistration(App.tsx PageWithTitle 래핑, 이관 동반 필요). tsc 9→9 신규0.
 
 === 세션 마무리 (2026-06-20 18:42 기준) ===
 
