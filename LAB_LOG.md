@@ -25,3 +25,4 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [재적용·lab2] LegalCompliancePage 제거 — yescoSHE 정본에서도 참조0 재확인, FlowChart 무관.
 - 2026-06-20 [재적용·lab2] Coming Soon(/contractor-safety,/outsourcing-mgmt) 제거 — 정본 재확인, FlowChart 무관.
 - 2026-06-20 [재적용·lab2] 고아 도면 라우트 /workplace-drawings 제거 — 정본 재확인, view·편집 진입점 보존, FlowChart 무관(페이지 유지·라우트만 제거).
+- 2026-06-20 [재적용·lab2] 고아 OshCommitteePage + 미사용 nav.oshCommittee 제거 — 정본 재확인, ehs.oshCommittee(실사용) 보존, FlowChart 무관. /partner-osh-committee 통합은 보류 유지.
