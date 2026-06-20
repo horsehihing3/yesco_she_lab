@@ -191,7 +191,6 @@ const MENU_TREE: MenuNode[] = [
     ]},
   ]},
   { key: 'nav.envManage', label: '환경 관리', children: [
-    { key: 'nav.envMonitoring', label: '환경 모니터링' },
     { key: 'nav.envWaste', label: '폐기물', children: [
       { key: 'waste.tabs.dashboard',   label: '대시보드' },
       { key: 'waste.tabs.inventory',   label: '폐기물 현황' },
@@ -200,36 +199,11 @@ const MENU_TREE: MenuNode[] = [
       { key: 'waste.tabs.compliance',  label: '법규 준수 관리' },
     ]},
     { key: 'nav.envAirWater', label: '대기·수질 관리' },
-    { key: 'nav.envCarbon', label: '탄소 관리', children: [
-      { key: 'carbon.tabs.dashboard',    label: '대시보드' },
-      { key: 'carbon.tabs.emission',     label: '배출량 입력' },
-      { key: 'carbon.tabs.source',       label: '배출원 관리' },
-      { key: 'carbon.tabs.scopeAnalysis',label: 'Scope 분석' },
-      { key: 'carbon.tabs.factor',       label: '배출계수 관리' },
-      { key: 'carbon.tabs.report',       label: '환경 보고서' },
-    ]},
-    { key: 'nav.radiationMgmt', label: '방사선관리' },
-    { key: 'nav.fireMgmt', label: '소방/방제 시설 관리', children: [
-      { key: 'fs.tabs.facility',    label: '시설 대장' },
-      { key: 'fs.tabs.inspection',  label: '점검 관리' },
-      { key: 'fs.tabs.disaster',    label: '방제시설' },
-      { key: 'fs.tabs.emergency',   label: '비상 연계' },
-      { key: 'fs.tabs.compliance',  label: '법령 준수' },
-    ]},
     { key: 'nav.legalFacility', label: '법정시설관리', children: [
       { key: 'lf.tabs.equipment',  label: '법정기구 관리' },
       { key: 'lf.tabs.status',     label: '법정기구 현황' },
       { key: 'lf.tabs.inspection', label: '법정기구 검사' },
       { key: 'lf.tabs.watch',      label: '관심시설 현황' },
-    ]},
-    { key: 'nav.permitLifecycle', label: '인허가 관리', children: [
-      { key: 'permit-lc.tab.register',  label: '식별·등록' },
-      { key: 'permit-lc.tab.ledger',    label: '대장 관리' },
-      { key: 'permit-lc.tab.renew',     label: '갱신·만료' },
-      { key: 'permit-lc.tab.change',    label: '변경관리' },
-      { key: 'permit-lc.tab.selfcheck', label: '자체점검' },
-      { key: 'permit-lc.tab.report',    label: '보고·신고' },
-      { key: 'permit-lc.tab.evidence',  label: '증빙·기록' },
     ]},
   ]},
   { key: 'nav.chemicalMgmt', label: '화학물질 관리', children: [

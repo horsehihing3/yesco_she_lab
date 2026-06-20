@@ -32,17 +32,13 @@ import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
 import ScienceIcon from '@mui/icons-material/Science'
 import DeleteIcon from '@mui/icons-material/Delete'
 import WaterDropIcon from '@mui/icons-material/WaterDrop'
-import Co2Icon from '@mui/icons-material/Co2'
 import GavelIcon from '@mui/icons-material/Gavel'
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation'
-import SensorsIcon from '@mui/icons-material/Sensors'
 import TrackChangesIcon from '@mui/icons-material/TrackChanges'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import SchoolIcon from '@mui/icons-material/School'
 import HandshakeIcon from '@mui/icons-material/Handshake'
-import RadioactiveIcon from '@mui/icons-material/Bolt'
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 import AddBusinessIcon from '@mui/icons-material/AddBusiness'
 import TuneIcon from '@mui/icons-material/Tune'
 import { useThemeMode } from '../../context/ThemeContext'
@@ -122,14 +118,9 @@ const menuItems: MenuItem[] = [
     textKey: 'nav.envManage',
     icon: <NatureIcon />,
     children: [
-      { textKey: 'nav.envMonitoring', icon: <SensorsIcon />, path: '/environment/monitoring' },
       { textKey: 'nav.envWaste', icon: <DeleteIcon />, path: '/environment/waste' },
       { textKey: 'nav.envAirWater', icon: <WaterDropIcon />, path: '/environment/air-water' },
-      { textKey: 'nav.envCarbon', icon: <Co2Icon />, path: '/environment/carbon' },
-      { textKey: 'nav.radiationMgmt', icon: <RadioactiveIcon />, path: '/radiation-mgmt' },
-      { textKey: 'nav.fireMgmt', icon: <LocalFireDepartmentIcon />, path: '/fire-safety' },
       { textKey: 'nav.legalFacility', icon: <GavelIcon />, path: '/legal-facility' },
-      { textKey: 'nav.permitLifecycle', icon: <GavelIcon />, path: '/permit-lifecycle' },
     ],
   },
   {

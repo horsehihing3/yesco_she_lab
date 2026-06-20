@@ -23,7 +23,6 @@ import AdminPage from './pages/AdminPage'
 import ApprovalPage from './pages/ApprovalPage'
 import ChecklistPage from './pages/ChecklistPage'
 import WasteManagePage from './pages/WasteManagePage'
-import CarbonManagePage from './pages/CarbonManagePage'
 import WaterQualityManagePage from './pages/WaterQualityManagePage'
 import NotFoundPage from './pages/NotFoundPage'
 import CodeManagePage from './pages/CodeManagePage'
@@ -46,7 +45,6 @@ import ContractorManagementPage from './pages/ContractorManagementPage'
 import SiteSafetyManagementPage from './pages/SiteSafetyManagementPage'
 import AuditInspectionPage from './pages/AuditInspectionPage'
 import PpeEquipmentPage from './pages/PpeEquipmentPage'
-import EnvMonitoringPage from './pages/EnvMonitoringPage'
 import ChemicalMasterPage from './pages/ChemicalMasterPage'
 import ChemicalMsdsRawPage from './pages/ChemicalMsdsRawPage'
 import ChemicalMsdsProductPage from './pages/ChemicalMsdsProductPage'
@@ -64,11 +62,8 @@ import PartnerOshCommitteePage from './pages/PartnerOshCommitteePage'
 import PartnerPermitPage from './pages/PartnerPermitPage'
 import PartnerSafetyMgmtPage from './pages/PartnerSafetyMgmtPage'
 import PartnerSafetyExecutePage from './pages/PartnerSafetyExecutePage'
-import RadiationMgmtPage from './pages/RadiationMgmtPage'
-import FireSafetyPage from './pages/FireSafetyPage'
 import IncidentResponsePage from './pages/IncidentResponsePage'
 import LegalResponsePage from './pages/LegalResponsePage'
-import PermitLifecyclePage from './pages/PermitLifecyclePage'
 import DiseasePreventionMgmtPage from './pages/DiseasePreventionMgmtPage'
 import ContractorRegistrationPage from './pages/ContractorRegistrationPage'
 import ButtonManagePage from './pages/ButtonManagePage'
@@ -136,9 +131,7 @@ function App() {
         <Route path="checklist" element={<ChecklistPage />} />
         <Route path="environment" element={<Navigate to="/environment/waste" replace />} />
         <Route path="environment/waste" element={<WasteManagePage />} />
-        <Route path="environment/carbon" element={<CarbonManagePage />} />
         <Route path="environment/air-water" element={<WaterQualityManagePage />} />
-        <Route path="environment/monitoring" element={<EnvMonitoringPage />} />
         <Route path="chemical/master" element={<ChemicalMasterPage />} />
         <Route path="chemical/msds-raw" element={<ChemicalMsdsRawPage />} />
         <Route path="chemical/msds-product" element={<ChemicalMsdsProductPage />} />
@@ -161,11 +154,8 @@ function App() {
         <Route path="partner-permit" element={<PageWithTitle titleKey="nav.partnerPermit"><PartnerPermitPage /></PageWithTitle>} />
         <Route path="partner-safety-mgmt" element={<PageWithTitle titleKey="nav.partnerSafetyMgmt"><PartnerSafetyMgmtPage /></PageWithTitle>} />
         <Route path="contractor-registration" element={<PageWithTitle titleKey="nav.partnerRegistration"><ContractorRegistrationPage /></PageWithTitle>} />
-        <Route path="radiation-mgmt" element={<RadiationMgmtPage />} />
-        <Route path="fire-safety" element={<FireSafetyPage />} />
         <Route path="incident-response" element={<PageWithTitle titleKey="nav.incidentResponse"><IncidentResponsePage /></PageWithTitle>} />
         <Route path="legal-response" element={<PageWithTitle titleKey="nav.legalResponse"><LegalResponsePage /></PageWithTitle>} />
-        <Route path="permit-lifecycle" element={<PermitLifecyclePage />} />
         <Route path="disease-prevention-mgmt" element={<DiseasePreventionMgmtPage />} />
         <Route path="plan-kpi-goal" element={<PlanKpiGoalPage />} />
         <Route path="emergency-response" element={<EmergencyResponsePage />} />
