@@ -501,8 +501,7 @@
     "incidentType": "发生类型",
     "incidentTypes": {
       "accident": "事故",
-      "nearMiss": "险肇事故",
-      "report": "报告"
+      "nearMiss": "险肇事故"
     },
     "occDate": "发生日期",
     "occSite": "发生地点",
@@ -3925,21 +3924,6 @@
     "msg5": "삭제되었습니다",
     "msg6": "이 기록을 삭제하시겠습니까?",
     "msg7": "유형·발생일 필수"
-  },
-  "accidentReport": {
-    "title": "보건안전 재해발생 정보 조사서",
-    "caseDescription": "발생사례",
-    "disasterTypeGroup": "재해형태/사고형태",
-    "fatalGroup": "사망 재해",
-    "leaveGroup": "휴업재해",
-    "frequencyGroup": "발생빈도",
-    "relatedProcess": "해당 공정/활동 및 작업",
-    "disasterType": "재해형태",
-    "nearMiss": "险情",
-    "fatal": "사망자 발생",
-    "none": "없음",
-    "occurrenceCycle": "발생주기",
-    "empty": "등록된 사례가 없습니다."
   },
   "healthCheckupPlan": {
     "completionApproved": "완료 승인 처리되었습니다.",
