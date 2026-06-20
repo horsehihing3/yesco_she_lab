@@ -190,22 +190,6 @@ const MENU_TREE: MenuNode[] = [
       { key: 'disease-prev.tab.infect',    label: '감염병' },
     ]},
   ]},
-  { key: 'nav.envManage', label: '환경 관리', children: [
-    { key: 'nav.envWaste', label: '폐기물', children: [
-      { key: 'waste.tabs.dashboard',   label: '대시보드' },
-      { key: 'waste.tabs.inventory',   label: '폐기물 현황' },
-      { key: 'waste.tabs.disposal',    label: '처리 관리' },
-      { key: 'waste.tabs.company',     label: '처리업체 관리' },
-      { key: 'waste.tabs.compliance',  label: '법규 준수 관리' },
-    ]},
-    { key: 'nav.envAirWater', label: '대기·수질 관리' },
-    { key: 'nav.legalFacility', label: '법정시설관리', children: [
-      { key: 'lf.tabs.equipment',  label: '법정기구 관리' },
-      { key: 'lf.tabs.status',     label: '법정기구 현황' },
-      { key: 'lf.tabs.inspection', label: '법정기구 검사' },
-      { key: 'lf.tabs.watch',      label: '관심시설 현황' },
-    ]},
-  ]},
   { key: 'nav.chemicalMgmt', label: '화학물질 관리', children: [
     { key: 'nav.chemMaster', label: '마스터 · 규제', children: [
       { key: 'chem.nav.chemList',  label: '화학물질 목록' },

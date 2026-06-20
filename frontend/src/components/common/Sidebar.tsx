@@ -20,7 +20,6 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
 import ApprovalIcon from '@mui/icons-material/FactCheck'
 import FactCheckIcon from '@mui/icons-material/FactCheck'
-import NatureIcon from '@mui/icons-material/Nature'
 import SettingsIcon from '@mui/icons-material/Settings'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
@@ -30,8 +29,6 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
 import ScienceIcon from '@mui/icons-material/Science'
-import DeleteIcon from '@mui/icons-material/Delete'
-import WaterDropIcon from '@mui/icons-material/WaterDrop'
 import GavelIcon from '@mui/icons-material/Gavel'
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation'
@@ -112,15 +109,6 @@ const menuItems: MenuItem[] = [
       { textKey: 'nav.workEnvMeasurement', icon: <ScienceIcon />, path: '/work-env-measurement' },
       { textKey: 'nav.occupationalDiseaseMgmt', icon: <MedicalInformationIcon />, path: '/occupational-disease' },
       { textKey: 'nav.diseasePreventionMgmt', icon: <MedicalServicesIcon />, path: '/disease-prevention-mgmt' },
-    ],
-  },
-  {
-    textKey: 'nav.envManage',
-    icon: <NatureIcon />,
-    children: [
-      { textKey: 'nav.envWaste', icon: <DeleteIcon />, path: '/environment/waste' },
-      { textKey: 'nav.envAirWater', icon: <WaterDropIcon />, path: '/environment/air-water' },
-      { textKey: 'nav.legalFacility', icon: <GavelIcon />, path: '/legal-facility' },
     ],
   },
   {

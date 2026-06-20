@@ -22,8 +22,6 @@ import WorkplaceDrawingsViewPage from './pages/WorkplaceDrawingsViewPage'
 import AdminPage from './pages/AdminPage'
 import ApprovalPage from './pages/ApprovalPage'
 import ChecklistPage from './pages/ChecklistPage'
-import WasteManagePage from './pages/WasteManagePage'
-import WaterQualityManagePage from './pages/WaterQualityManagePage'
 import NotFoundPage from './pages/NotFoundPage'
 import CodeManagePage from './pages/CodeManagePage'
 import RoleManageTab from './components/system/RoleManageTab'
@@ -56,7 +54,6 @@ import PlanKpiGoalPage from './pages/PlanKpiGoalPage'
 import TrainingPage from './pages/TrainingPage'
 import WorkEnvMeasurementPage from './pages/WorkEnvMeasurementPage'
 import OccupationalDiseasePage from './pages/OccupationalDiseasePage'
-import LegalFacilityPage from './pages/LegalFacilityPage'
 import PartnerMgmtPage from './pages/PartnerMgmtPage'
 import PartnerOshCommitteePage from './pages/PartnerOshCommitteePage'
 import PartnerPermitPage from './pages/PartnerPermitPage'
@@ -129,9 +126,6 @@ function App() {
         <Route path="workplace-drawings/view" element={<PageWithTitle titleKey="nav.workplaceDrawingsView"><WorkplaceDrawingsViewPage /></PageWithTitle>} />
         <Route path="approval" element={<ApprovalPage />} />
         <Route path="checklist" element={<ChecklistPage />} />
-        <Route path="environment" element={<Navigate to="/environment/waste" replace />} />
-        <Route path="environment/waste" element={<WasteManagePage />} />
-        <Route path="environment/air-water" element={<WaterQualityManagePage />} />
         <Route path="chemical/master" element={<ChemicalMasterPage />} />
         <Route path="chemical/msds-raw" element={<ChemicalMsdsRawPage />} />
         <Route path="chemical/msds-product" element={<ChemicalMsdsProductPage />} />
@@ -148,7 +142,6 @@ function App() {
         <Route path="work-env-measurement" element={<WorkEnvMeasurementPage />} />
         <Route path="ergonomics" element={<Navigate to="/disease-prevention-mgmt" replace />} />
         <Route path="occupational-disease" element={<OccupationalDiseasePage />} />
-        <Route path="legal-facility" element={<LegalFacilityPage />} />
         <Route path="partner-mgmt" element={<PartnerMgmtPage />} />
         <Route path="partner-osh-committee" element={<PageWithTitle titleKey="nav.partnerOshCommittee"><PartnerOshCommitteePage /></PageWithTitle>} />
         <Route path="partner-permit" element={<PageWithTitle titleKey="nav.partnerPermit"><PartnerPermitPage /></PageWithTitle>} />

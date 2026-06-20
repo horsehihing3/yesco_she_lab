@@ -1087,21 +1087,6 @@ export const DEFAULT_MENU_DATA: MenuEntry[] = [
     ],
   },
 
-  // ── 환경 › 폐기물 관리 ─── 일반관리자 = WASTE_ADMIN (DB 지정) ────────────────
-  {
-    menuPath: '환경 관리 › 폐기물', menuKey: 'nav.envWaste',
-    statuses: [
-      { status: 'LIST', statusLabel: '목록', statusColor: 'primary',
-        buttons: [{ button: '신규 등록', roles: ADMIN_ONLY }] },
-      { status: 'STORING',          statusLabel: '보관중',  statusColor: 'primary',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
-      { status: 'DISPOSAL_REQUEST', statusLabel: '처리요청', statusColor: 'warning',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
-      { status: 'PROCESSING',       statusLabel: '처리중',  statusColor: 'info',
-        buttons: [{ button: '수정', roles: WRITER_ADMIN }, { button: '삭제', roles: WRITER_ADMIN }] },
-    ],
-  },
-
   // ── 화학물질 › 위해성 보고 ─── 일반관리자 = CHEM_ADMIN (DB 지정) ─────────────
   {
     menuPath: '화학물질 관리 › 위해성 보고',

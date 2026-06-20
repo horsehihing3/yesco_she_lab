@@ -174,8 +174,6 @@ const ICON_MAP: Record<string, React.FC<IconProps>> = {
   'nav.safetyManage':        YescoSafety,
   'nav.partnerGroupMgmt':    YescoPartner,
   'nav.healthManage':        YescoHealth,
-  'nav.envManage':           YescoEnv,
-  'nav.legalFacility':       YescoFacility,
   'nav.chemicalMgmt':        YescoChem,
   'nav.processSafetyMgmt':   YescoPsm,
   'nav.approval':            YescoApproval,

@@ -80,11 +80,8 @@ export const FLOW_SPECS: Record<string, FlowSpec> = {
   // 단순 처리(status)
   incident:         { title: '사고 대응 흐름도',          steps: simpleStatus('사고 접수·등록', '원인조사·조치', '종결 보고') },
   nearMiss:         { title: '아차사고 흐름도',           steps: simpleStatus('아차사고 등록', '원인분석·개선', '완료 처리') },
-  waste:            { title: '폐기물 관리 흐름도',        steps: simpleStatus('폐기물 등록', '보관·처리 위탁', '처리 완료') },
   oshCommittee:     { title: '산업안전보건위원회 흐름도', steps: simpleStatus('위원회 개최 등록', '안건 심의·의결', '회의록 등록') },
   legalResponse:    { title: '법적 대응 흐름도',          steps: simpleStatus('대응 건 등록', '대응·조치 진행', '종결 처리') },
-  waterQuality:     { title: '수질 관리 흐름도',          steps: simpleStatus('측정지점 등록', '측정·기록', '결과 보고') },
-  legalFacility:    { title: '법정설비 관리 흐름도',      steps: simpleStatus('법정설비 등록', '점검·검사', '결과 기록') },
   occDisease:       { title: '직업병 관리 흐름도',        steps: simpleStatus('직업병 사례 등록', '조사·관리', '결과 보고') },
   occExposure:      { title: '직업적 노출 관리 흐름도',   steps: simpleStatus('노출 평가 등록', '측정·관리', '결과 보고') },
   diseasePrevent:   { title: '질병예방 관리 흐름도',      steps: simpleStatus('대상자 등록', '예방·관리 시행', '결과 기록') },
