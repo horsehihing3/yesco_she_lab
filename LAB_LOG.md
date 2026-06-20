@@ -24,3 +24,4 @@ lab 환경 실험/정리 기록.
 - 2026-06-20 [발견-CAPA 보강] 사장된 emergency_response엔 lessons_learned(교훈) 컬럼 존재. 활성 #8 사고대응엔 CAPA 추적 없음 → 단순화하며 재발방지 기능이 누락된 정황. 개선 시 lessons_learned가 복원 설계 힌트.
 - 2026-06-20 [재적용·lab2] LegalCompliancePage 제거 — yescoSHE 정본에서도 참조0 재확인, FlowChart 무관.
 - 2026-06-20 [재적용·lab2] Coming Soon(/contractor-safety,/outsourcing-mgmt) 제거 — 정본 재확인, FlowChart 무관.
+- 2026-06-20 [재적용·lab2] 고아 도면 라우트 /workplace-drawings 제거 — 정본 재확인, view·편집 진입점 보존, FlowChart 무관(페이지 유지·라우트만 제거).
