@@ -72,7 +72,6 @@ export const FLOW_SPECS: Record<string, FlowSpec> = {
   ptw:              { title: '작업허가(PTW) 흐름도',      steps: singleApproval('작업허가 신청', '작업 허가') },
   training:         { title: '교육 업무 흐름도',          steps: singleApproval('교육 신청', '수료 처리') },
   chemicalLife:     { title: '화학물질 도입 흐름도',      steps: singleApproval('화학물질 도입 신청', '도입 승인') },
-  psm:              { title: '공정안전(PSM/MOC) 흐름도',  steps: singleApproval('변경관리(MOC) 신청', '변경 승인') },
   partnerPermit:    { title: '협력업체 출입·작업 흐름도', steps: singleApproval('출입·작업 신청', '작업 승인') },
   approvalManage:   { title: '결재 관리 흐름도',          steps: singleApproval('결재 상신 접수', '결재 처리') },
   approval:         { title: '내 결재 흐름도',            steps: singleApproval('결재 상신 접수', '승인/반려') },

@@ -37,7 +37,7 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
         // tb_audit: modified_by 는 레거시 username 문자열 컬럼(nvarchar 100)이라 JSON 역할에서 제외 — 수정자는 flat 유지
         new Object[]{"tb_audit", new String[]{"created_by", "plan_approver", "completion_approver"}},
         new Object[]{"tb_audit_plan", ALL4}, new Object[]{"tb_contractor_plan", ALL4},
-        new Object[]{"tb_emergency_plan", ALL4}, new Object[]{"tb_psm_moc", ALL4},
+        new Object[]{"tb_emergency_plan", ALL4},
         // 특수 조합
         new Object[]{"tb_permit_to_work", new String[]{"created_by", "plan_approver", "completion_approver"}},
         new Object[]{"tb_risk_assessment", new String[]{"plan_approver", "completion_approver"}},
@@ -51,9 +51,7 @@ public class PersonRefColumnsInitializer implements CommandLineRunner {
         // tb_legal_compliance_exec: modified_by 는 레거시 username 문자열이라 제외(수정자 flat). 작성/승인자는 JSON.
         new Object[]{"tb_legal_compliance_exec", new String[]{"created_by", "plan_approver", "completion_approver"}},
         new Object[]{"tb_legal_compliance_plan", ALL4},
-        new Object[]{"tb_process_activity_form", CM}, new Object[]{"tb_psm_data", CM},
-        new Object[]{"tb_psm_hazop", CM}, new Object[]{"tb_psm_incident", CM},
-        new Object[]{"tb_psm_ptw", CM}, new Object[]{"tb_psm_wo", CM},
+        new Object[]{"tb_process_activity_form", CM},
         new Object[]{"tb_safety_accident_form", CM}, new Object[]{"tb_safety_hazard_form", CM},
         new Object[]{"tb_wem_factor", CM}, new Object[]{"tb_wem_improvement", CM},
         new Object[]{"tb_wem_plan", CM}, new Object[]{"tb_wem_result", CM},

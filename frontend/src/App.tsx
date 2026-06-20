@@ -48,7 +48,6 @@ import ChemicalMsdsRawPage from './pages/ChemicalMsdsRawPage'
 import ChemicalMsdsProductPage from './pages/ChemicalMsdsProductPage'
 import ChemicalLifecyclePage from './pages/ChemicalLifecyclePage'
 import ChemicalRegulationPage from './pages/ChemicalRegulationPage'
-import PsmManagementPage from './pages/PsmManagementPage'
 import EhsBudgetPage from './pages/EhsBudgetPage'
 import PlanKpiGoalPage from './pages/PlanKpiGoalPage'
 import TrainingPage from './pages/TrainingPage'
@@ -131,7 +130,6 @@ function App() {
         <Route path="chemical/msds-product" element={<ChemicalMsdsProductPage />} />
         <Route path="chemical/regulation" element={<ChemicalRegulationPage />} />
         <Route path="chemical/lifecycle" element={<ChemicalLifecyclePage />} />
-        <Route path="psm" element={<PsmManagementPage />} />
         {/* Coming Soon pages */}
         <Route path="audit-inspection" element={<AuditInspectionPage />} />
         <Route path="ppe-equipment" element={<PpeEquipmentPage />} />

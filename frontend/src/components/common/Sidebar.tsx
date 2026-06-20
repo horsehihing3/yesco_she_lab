@@ -123,11 +123,6 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    textKey: 'nav.processSafetyMgmt',
-    icon: <SettingsIcon />,
-    path: '/psm',
-  },
-  {
     textKey: 'nav.approval',
     icon: <ApprovalIcon />,
     path: '/approval',

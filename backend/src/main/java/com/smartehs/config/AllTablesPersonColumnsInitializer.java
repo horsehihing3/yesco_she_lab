@@ -37,8 +37,6 @@ public class AllTablesPersonColumnsInitializer implements CommandLineRunner {
         "tb_health_checkup_plan",
         "tb_legal_compliance_exec", "tb_legal_compliance_plan",
         "tb_process_activity_form",
-        "tb_psm_data", "tb_psm_hazop", "tb_psm_incident",
-        "tb_psm_moc", "tb_psm_ptw", "tb_psm_wo",
         "tb_safety_accident_form", "tb_safety_hazard_form",
         "tb_site_safety_plan",
         "tb_wem_factor", "tb_wem_improvement",

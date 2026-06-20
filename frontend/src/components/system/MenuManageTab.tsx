@@ -211,7 +211,6 @@ const MENU_TREE: MenuNode[] = [
     { key: 'nav.chemRegulation', label: '해외 법규' },
     { key: 'nav.chemLifecycle',  label: 'Life-Cycle' },
   ]},
-  { key: 'nav.processSafetyMgmt', label: '공정안전 관리' },
   { key: 'nav.approval', label: '승인', children: [
     { key: 'approval.myApproval',    label: '내 결재' },
     { key: 'approval.approvalLine',  label: '승인 라인' },
