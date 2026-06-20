@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Box, Tabs, Tab } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { SiteSafetyPlanContent } from './SiteSafetyManagementPage'
 import PartnerSafetyExecuteTab from '../components/partner/PartnerSafetyExecuteTab'
 import PartnerSafetyHistoryTab from '../components/partner/PartnerSafetyHistoryTab'
 import { useMenuRule } from '../hooks/useMenuRule'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 // 협력 업체 안전 관리 — 현장 안전 관리 구조 재사용 (대시보드/레포트 제외)
 const PartnerSafetyMgmtPage: React.FC = () => {
@@ -24,16 +24,18 @@ const PartnerSafetyMgmtPage: React.FC = () => {
   }, [tabs.length, activeTab])
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
+    <PageHeader
+      title={t('nav.partnerSafetyMgmt')}
+      flowKey={activeTab === 0 ? 'partnerSafety' : undefined}
+      tabs={
         <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} variant="scrollable" scrollButtons="auto"
           sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
           {tabs.map((tab, idx) => <Tab key={idx} label={tab.label} />)}
         </Tabs>
-        {activeTab === 0 && <FlowChartButton flowKey="partnerSafety" />}
-      </Box>
+      }
+    >
       {tabs[activeTab]?.component}
-    </Box>
+    </PageHeader>
   )
 }
 
