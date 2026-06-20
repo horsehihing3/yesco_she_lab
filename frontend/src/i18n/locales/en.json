@@ -3816,11 +3816,6 @@
       "report": "Report"
     }
   },
-  "contractorEval": {
-    "signatures": "평가자 / 승인자 서명",
-    "evaluator": "평가자",
-    "approver": "승인자"
-  },
   "hazardFactorTab": {
     "section1": "예방조치 현황",
     "section2": "위험도 분포"

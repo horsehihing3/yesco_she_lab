@@ -81,42 +81,6 @@ export interface ContractorPlanRequest {
   status?: string
 }
 
-export interface ContractorEvalTemplate {
-  id: number
-  templateName: string
-  description?: string
-  sortOrder: number
-  isActive: boolean
-  itemCount?: number
-  // 시그니처 (슬라이드 3)
-  evaluatorName?: string
-  evaluatorSign?: string
-  approverName?: string
-  approverSign?: string
-  signDate?: string
-}
-
-export interface ContractorEvalItem {
-  id?: number
-  templateId: number
-  sortOrder: number
-  workContent?: string
-  evalCategory?: string
-  riskFactor?: string
-  disasterType?: string
-  isNa?: boolean
-  currentMeasures?: string
-  currentFrequency?: number
-  currentSeverity?: number
-  currentRisk?: number
-  riskGrade?: string
-  improvement?: string
-  eduFrequency?: string
-  postFrequency?: number
-  postSeverity?: number
-  postRisk?: number
-}
-
 export interface ContractorWorker {
   id: number
   planId: number
