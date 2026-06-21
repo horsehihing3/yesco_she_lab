@@ -252,3 +252,32 @@ lab 환경 실험/정리 기록.
 ■ 핵심 발견 (보고자료 소재 — 잊지 말 것)
 - [발견-CAPA] 사고대응(비상상황·화재·폭발)에 구조화 원인분석/재발방지 부재 → 중대재해처벌법 대응 핵심 공백, 예스코 개선안 1순위
 - [발견-구조] 사고/재해 6개 테이블 FK 0개 = 개별사건→집계 자동반영 없는 '끊긴 분산'
+
+=== 세션 마무리 (2026-06-22, HEAD=ab64e23) ===
+※ 새 세션은 이 블록만 읽으면 됨. 위 시간순 로그는 작업 점검표(보존). 그 아래 옛 세션마무리 블록들은 stale.
+
+■ 환경 (고정)
+- 위치 C:\claude\yesco_she_lab2 / 브랜치 lab2 / 작업트리 clean / local=origin/lab2=ab64e23
+- remote: upstream=jiwon2ahn(정본·push차단) / origin=horsehihing3(push)
+- DB yescoSHE_lab2(211.171.152.242:51084) / 프론트 7700 · 백엔드 7701
+- ★tsc 회귀 기준 = **0→0 신규0** (기존 "8→8"·"9→8" 무효, baseline 정리 완료)
+
+■ 이번 세션 완료 — 9커밋, 전부 origin/lab2 동기화·clean (d129d63 이전 별개)
+1. ★PageHeader 전역 표준화 트랙 — 잔여 0 종료. ②2단계 9p(A 단일탭7/B EhsBudget/C OccupationalDisease) + (나) 단일탭 일관성 3p(SafetyHazard·SafetyAccident·ProcessActivity) + ③ ContractorRegistration + 흐름도 위치(WorkplaceDrawingsView). 비대상 확정: 설정6 + /admin + 특수5 + IncidentResponse(제거됨) + OccupationalExposure(orphan).
+2. baseline tsc 게이트 해소 — 8건(unused 4 + PpeEquipment stub→PpeItem 통일). npm run build 정상 통과. ★회귀 기준 0→0으로 갱신.
+3. SafetyHazard edit 성능 — 4~6초 프리즈→1초 미만. 주범=insertBefore 3.8s(DOM 노드 과다), TextField→네이티브 GridInput 해결. 가상화 기각(rowSpan 충돌+45행 실익부족). 동일패턴 후보 5건 전수검수→타 화면 비병목, 전수수정 불필요 결론.
+4. PPE '필요 보호구' 드롭다운 재연결 — ppeItemApi.getAll(0,100)+PPE_CATEGORY 라벨화, 라벨 "보호구"→"필요 보호구" 통일. 빈목록 parked 종결.
+5. IncidentResponse 화면 제거(9f89c47) — 프론트 전용(NearMiss 상위집합·기능중복 확정). 백엔드/tb_incident_response(12행 테스트)·DB menu_rule = orphan 존치.
+6. NearMiss (나)형 일관성(ab64e23) — 상세/등록 탭 유지(PageHeader 호이스팅)+탭중복 제목제거+첫섹션 "발생 정보" 재라벨, 상태 Chip 보존.
+
+■ 다음 세션 후속 트랙 (우선순위순)
+A. orphan 백엔드 정리: IncidentResponse Controller/Service/Mapper/Model + tb_incident_response. ★선행: 비상대응 NearMiss 통합이 예스코와 확정돼야 함(확정 전 테이블 DROP 금지). DB 스키마 영역 별도 트랙.
+B. 예스코/대표 확인 대기(코드 아님, 협의 질문):
+   - 협의체 이중노출 산안위 §24(내부) vs 도급 협의체 §75 구분 여부
+   - 협력업체 등록 위저드에 '필요 보호구' 필드 부재가 의도인지 누락인지
+   - IncidentResponse 12건 비상데이터 처리(현 테스트데이터라 보류 가능)
+C. ④ edit-lock NPE 근본 백필(T_IDM_USER.UIDNumber NULL 257행). ★선행: 예스코 운영본 재측정(현 수치는 lab2 클론 실측). 배포 게이트.
+D. 저우선: PartnerMgmt 모드토글 · i18n 고아 ns 일괄정리(incidentResponsePage en/zh·registerInfoByType·nearMissInfoByType·환경/PSM/화학) · parked 자식 서브타이틀 · EvalSheet 평가표 상세 1.5~2초(행 대폭증가 시 재검토).
+
+■ 다음 시작 권장
+- D의 가벼운 것(i18n 고아정리/PartnerMgmt) 워밍업, 또는 B 예스코 협의 먼저. A·C는 선행조건(예스코 확정/운영본 측정) 충족 후.
