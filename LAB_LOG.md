@@ -72,6 +72,7 @@ lab 환경 실험/정리 기록.
   → 다음: "(나) 복제" 불가. 중난도 2 / 탭셸 3 별개 트랙으로 진행.
 - 2026-06-21 [발견·lab2] IncidentResponse(사고대응관리) PageHeader 작업 제외 — 현재 사이드바 숨김 상태이며 제거 대상으로 확인됨(사용자 확인, 2026-06-21). 중난도 이관+(나)3-return 하이브리드로 조사까지 완료했으나 적용 보류. 제거 트랙에서 통째 처리 예정. ★App.tsx 래퍼(L137)·페이지 미변경 — 적용 안 함.
   · PageHeader 잔여 대상 재확정: 중난도 래퍼형 1 (ContractorRegistration, 위저드) + 탭셸 3 (SiteSafetyManagement·PermitToWork·ContractorManagement). IncidentResponse 제외로 잔여 4.
+- 2026-06-21 [재편·lab2] 탭셸형(다) 패턴 확정 — SiteSafetyManagement 파일럿 적용. 성립조건=페이지가 탭셸(자식이 viewMode 소유, 셸은 activeTab만). 적용법=셸 return을 PageHeader로 래핑(title=nav키 고정)·기존 Tabs를 tabs prop으로 이관·flowKey=activeTab0 조건부(기존 tab0 우측 FlowChartButton Box 제거). ★자식(SiteSafetyPlanContent) viewMode·mode분기 무수정 — 셸만 손댐. 자식 처리 규칙: list 제목 없으면 무손상 / 있으면 이중제목 조정 필요 / 자식 공유 시 회귀 검증. SiteSafety=list 제목 부재 → 이중제목 충돌 0(무손상 케이스). detail/form 자식 제목은 (가)와 동일 레코드 제목으로 허용. FlowChartButton import→PageHeader import 교체(미사용화 방지). 회귀0(tsc 8→8, 이 파일 신규0). 탭셸 잔여 2(PermitToWork·ContractorManagement, 둘 다 자식 list 제목 보유+TS2339 2건 보유, Permit은 자식 PartnerPermitPage 공유 주의).
 
 === 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
 
