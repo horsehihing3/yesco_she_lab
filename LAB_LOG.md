@@ -70,6 +70,8 @@ lab 환경 실험/정리 기록.
   · 래퍼형 2 (ContractorRegistration·IncidentResponse): App.tsx PageWithTitle 래퍼 보유 → 제목 페이지 밖 렌더. 중난도 이관(래퍼제거+PageHeader) 트랙, PartnerSafetyMgmt 선례. ContractorReg는 위저드(Stepper), IncidentResponse는 분리뷰 곁들임.
   · 탭셸 3 (SiteSafetyManagement·PermitToWork·ContractorManagement): 페이지 셸이 Tabs, flowchart가 tab0. (나)보다 NearMiss (가) 탭셸 패턴에 근접하나 외부모드·mode동적 등 추가분기 보유.
   → 다음: "(나) 복제" 불가. 중난도 2 / 탭셸 3 별개 트랙으로 진행.
+- 2026-06-21 [발견·lab2] IncidentResponse(사고대응관리) PageHeader 작업 제외 — 현재 사이드바 숨김 상태이며 제거 대상으로 확인됨(사용자 확인, 2026-06-21). 중난도 이관+(나)3-return 하이브리드로 조사까지 완료했으나 적용 보류. 제거 트랙에서 통째 처리 예정. ★App.tsx 래퍼(L137)·페이지 미변경 — 적용 안 함.
+  · PageHeader 잔여 대상 재확정: 중난도 래퍼형 1 (ContractorRegistration, 위저드) + 탭셸 3 (SiteSafetyManagement·PermitToWork·ContractorManagement). IncidentResponse 제외로 잔여 4.
 
 === 세션 마무리 (2026-06-20 18:42 기준) ===
 
