@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Box, Tabs, Tab, Typography } from '@mui/material'
+import { Box, Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useMenuRule } from '../../hooks/useMenuRule'
 import EhsBudgetPlanTab from './ehsBudget/EhsBudgetPlanTab'
@@ -43,9 +43,6 @@ const EhsBudgetTab: React.FC = () => {
           <Tab key={idx} label={tab.label} />
         ))}
       </Tabs>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {subTabs[safeTab]?.label}
-      </Typography>
       {subTabs[safeTab]?.component}
     </Box>
   )

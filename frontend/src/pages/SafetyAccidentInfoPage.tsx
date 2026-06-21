@@ -3,7 +3,7 @@ import React, { useState, useRef, useTransition } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Box, Paper, Typography, Button, TextField, IconButton, CircularProgress,
+  Box, Paper, Typography, Button, TextField, IconButton, CircularProgress, Tabs, Tab,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from '@mui/material'
 import ListSearchBar from '../components/common/ListSearchBar'
@@ -244,7 +244,15 @@ const SafetyAccidentInfoPage: React.FC = () => {
       ? raw.filter(f => (f.title || '').toLowerCase().includes(keyword.toLowerCase()))
       : raw
     return (
-      <PageHeader title={t('nav.safetyAccidentInfo')} flowKey="safetyAccidentInfo">
+      <PageHeader
+        title={t('nav.safetyAccidentInfo')}
+        flowKey="safetyAccidentInfo"
+        tabs={
+          <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+            <Tab label={t('nav.safetyAccidentInfoTab')} />
+          </Tabs>
+        }
+      >
         <LoadingOverlay open={listFetching || isUploading} message={isUploading ? '엑셀 업로드 중...' : '로딩 중...'} />
         <input ref={fileInputRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleExcelUpload} />
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
@@ -325,14 +333,30 @@ const SafetyAccidentInfoPage: React.FC = () => {
 
   if ((viewMode === 'detail' || viewMode === 'edit') && detailLoading) {
     return (
-      <PageHeader title={t('nav.safetyAccidentInfo')}>
+      <PageHeader
+        title={t('nav.safetyAccidentInfo')}
+        flowKey="safetyAccidentInfo"
+        tabs={
+          <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+            <Tab label={t('nav.safetyAccidentInfoTab')} />
+          </Tabs>
+        }
+      >
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
       </PageHeader>
     )
   }
 
   return (
-    <PageHeader title={t('nav.safetyAccidentInfo')}>
+    <PageHeader
+      title={t('nav.safetyAccidentInfo')}
+      flowKey="safetyAccidentInfo"
+      tabs={
+        <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+          <Tab label={t('nav.safetyAccidentInfoTab')} />
+        </Tabs>
+      }
+    >
       <LoadingOverlay open={isProcessing || isEditPending} message={isEditPending ? '로딩 중...' : undefined} />
 
       <Paper variant="outlined" sx={{ mb: 2, overflow: 'hidden', display: { xs: 'none', md: 'block' } }}>

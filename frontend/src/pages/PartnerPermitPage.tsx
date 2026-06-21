@@ -1,15 +1,23 @@
-import { Box } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 import { PermitApplicationContent } from './PermitToWorkPage'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 const PartnerPermitPage: React.FC = () => {
+  const { t } = useTranslation()
+
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-        <FlowChartButton flowKey="partnerPermit" />
-      </Box>
+    <PageHeader
+      title={t('nav.partnerPermit')}
+      flowKey="partnerPermit"
+      tabs={
+        <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+          <Tab label={t('nav.partnerPermitTab')} />
+        </Tabs>
+      }
+    >
       <PermitApplicationContent mode="external" />
-    </Box>
+    </PageHeader>
   )
 }
 

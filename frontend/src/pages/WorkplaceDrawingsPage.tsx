@@ -1363,9 +1363,11 @@ const WorkplaceDrawingsPage: React.FC<WorkplaceDrawingsPageProps> = ({ readOnly 
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-        <FlowChartButton flowKey="workplaceDrawings" />
-      </Box>
+      {!readOnly && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <FlowChartButton flowKey="workplaceDrawings" />
+        </Box>
+      )}
       {/* 사업장만 있고 도면 미등록 — 트리 표시하되 우측 안내 */}
       {!selectedFloor && workplaceSites.length > 0 && (
         <>

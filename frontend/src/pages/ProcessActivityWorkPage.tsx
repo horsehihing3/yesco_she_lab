@@ -4,7 +4,7 @@ import { formatUserName } from '../utils/userDisplay'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
-  Box, Paper, Typography, Button, TextField, IconButton, CircularProgress, Alert,
+  Box, Paper, Typography, Button, TextField, IconButton, CircularProgress, Alert, Tabs, Tab,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from '@mui/material'
 import ListSearchBar from '../components/common/ListSearchBar'
@@ -399,7 +399,15 @@ const ProcessActivityWorkPage: React.FC = () => {
       ? raw.filter(f => (f.title || '').toLowerCase().includes(keyword.toLowerCase()))
       : raw
     return (
-      <PageHeader title={t('nav.processActivityWork', '공정/활동별 작업내용')} flowKey="processActivity">
+      <PageHeader
+        title={t('nav.processActivityWork', '공정/활동별 작업내용')}
+        flowKey="processActivity"
+        tabs={
+          <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+            <Tab label={t('nav.processActivityWorkTab')} />
+          </Tabs>
+        }
+      >
         <LoadingOverlay open={listFetching || isUploading} message={isUploading ? t('riskAssessment.uploading', '엑셀 업로드 중...') : t('common.loading', '목록을 불러오는 중...')} />
         <input ref={fileInputRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleExcelUpload} />
         {/* Search / Action bar - PC */}
@@ -501,14 +509,30 @@ const ProcessActivityWorkPage: React.FC = () => {
 
   if (viewMode !== 'create' && detailLoading) {
     return (
-      <PageHeader title={t('nav.processActivityWork', '공정/활동별 작업내용')}>
+      <PageHeader
+        title={t('nav.processActivityWork', '공정/활동별 작업내용')}
+        flowKey="processActivity"
+        tabs={
+          <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+            <Tab label={t('nav.processActivityWorkTab')} />
+          </Tabs>
+        }
+      >
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
       </PageHeader>
     )
   }
 
   return (
-    <PageHeader title={t('nav.processActivityWork', '공정/활동별 작업내용')}>
+    <PageHeader
+      title={t('nav.processActivityWork', '공정/활동별 작업내용')}
+      flowKey="processActivity"
+      tabs={
+        <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+          <Tab label={t('nav.processActivityWorkTab')} />
+        </Tabs>
+      }
+    >
       <LoadingOverlay open={isProcessing || isEditPending} message={isEditPending ? '로딩 중...' : undefined} />
 
       {/* 상단 정보 - PC */}

@@ -1,19 +1,23 @@
-import { Box, Typography } from '@mui/material'
+import { Tabs, Tab } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import PrePlacementExamTab from '../components/occupationalExposure/PrePlacementExamTab'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 const OccupationalExposurePage: React.FC = () => {
   const { t } = useTranslation()
 
   return (
-    <>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold">{t('nav.occupationalHealth')}</Typography>
-        <FlowChartButton flowKey="occExposure" />
-      </Box>
+    <PageHeader
+      title={t('nav.occupationalHealth')}
+      flowKey="occExposure"
+      tabs={
+        <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+          <Tab label={t('nav.prePlacementExam', '배치전 건강진단')} />
+        </Tabs>
+      }
+    >
       <PrePlacementExamTab />
-    </>
+    </PageHeader>
   )
 }
 

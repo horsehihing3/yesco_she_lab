@@ -130,8 +130,8 @@ function App() {
         <Route path="ergonomics" element={<Navigate to="/disease-prevention-mgmt" replace />} />
         <Route path="occupational-disease" element={<OccupationalDiseasePage />} />
         <Route path="partner-mgmt" element={<PartnerMgmtPage />} />
-        <Route path="partner-osh-committee" element={<PageWithTitle titleKey="nav.partnerOshCommittee"><PartnerOshCommitteePage /></PageWithTitle>} />
-        <Route path="partner-permit" element={<PageWithTitle titleKey="nav.partnerPermit"><PartnerPermitPage /></PageWithTitle>} />
+        <Route path="partner-osh-committee" element={<PartnerOshCommitteePage />} />
+        <Route path="partner-permit" element={<PartnerPermitPage />} />
         <Route path="partner-safety-mgmt" element={<PartnerSafetyMgmtPage />} />
         <Route path="contractor-registration" element={<PageWithTitle titleKey="nav.partnerRegistration"><ContractorRegistrationPage /></PageWithTitle>} />
         <Route path="incident-response" element={<PageWithTitle titleKey="nav.incidentResponse"><IncidentResponsePage /></PageWithTitle>} />

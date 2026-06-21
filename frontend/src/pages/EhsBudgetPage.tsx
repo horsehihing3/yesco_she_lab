@@ -1,15 +1,13 @@
-import { Box } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 import EhsBudgetTab from '../components/ehs/EhsBudgetTab'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 const EhsBudgetPage: React.FC = () => {
+  const { t } = useTranslation()
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
-        <FlowChartButton flowKey="ehsBudget" />
-      </Box>
+    <PageHeader title={t('nav.ehsBudget')} flowKey="ehsBudget">
       <EhsBudgetTab />
-    </Box>
+    </PageHeader>
   )
 }
 
