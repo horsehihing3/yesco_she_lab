@@ -73,6 +73,27 @@ lab 환경 실험/정리 기록.
 - 2026-06-21 [발견·lab2] IncidentResponse(사고대응관리) PageHeader 작업 제외 — 현재 사이드바 숨김 상태이며 제거 대상으로 확인됨(사용자 확인, 2026-06-21). 중난도 이관+(나)3-return 하이브리드로 조사까지 완료했으나 적용 보류. 제거 트랙에서 통째 처리 예정. ★App.tsx 래퍼(L137)·페이지 미변경 — 적용 안 함.
   · PageHeader 잔여 대상 재확정: 중난도 래퍼형 1 (ContractorRegistration, 위저드) + 탭셸 3 (SiteSafetyManagement·PermitToWork·ContractorManagement). IncidentResponse 제외로 잔여 4.
 
+=== 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
+
+■ 이번 세션 완료 (전부 커밋·push, IN SYNC)
+- (나)early-return 파일럿 SafetyAccidentInfoPage (c70ecb7) — 3-return 독립 PageHeader 주입, 템플릿 확정본
+- (나) 복제 ProcessActivityWorkPage (2f14932) — 7700 눈검수 OK
+- (나) 트랙 실측 정정 (a3d0284) — 핸드오프가 "(나) 5개"로 묶은 것 중 진짜 (나) 0개. 래퍼형2·탭셸3로 재분류
+- IncidentResponse 제외 (57f148b) — 숨김·제거대상, 적용 보류(조사만, 트리 미변경)
+
+■ PageHeader 잔여 4개 (다음 세션)
+- 중난도 래퍼형 1: ContractorRegistration — App.tsx 래퍼제거 + 위저드(Stepper 5단계). 선례 PartnerSafetyMgmt/LegalResponse(단일root 1-wrap, fill 미전달)
+- 탭셸 3: SiteSafetyManagement·PermitToWork·ContractorManagement — 페이지셸 Tabs, flowchart=tab0. NearMiss (가) 패턴 근접하나 외부모드·mode동적 추가분기. 새 파일럿 필요
+- ★PermitToWork·ContractorManagement는 tsc 베이스라인 에러 보유(각 2건) → 작업 전 기존에러 확인 후 진입
+
+■ 메커닉 메모
+- (나) = bare route + 3-return(list/로딩가드/공용), 각 return마다 PageHeader. flowKey는 list만
+- 중난도 이관 = App.tsx PageWithTitle 제거 + PageHeader, fill 미전달(풀하이트 비의존)
+- detail 이중제목(페이지제목+레코드제목)은 기지 패턴, 화면검수로 판정
+
+■ parked 도메인 큐
+- ★협의체 이중노출 — 예스코에 산안위 §24 vs 도급 협의체 §75 구분 여부 확인. 답 오면 OshCommitteeTab 공유구조 방향 결정
+
 === 세션 마무리 (2026-06-20 18:42 기준) ===
 
 ■ lab2 환경
