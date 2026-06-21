@@ -91,29 +91,47 @@ lab 환경 실험/정리 기록.
 - 7700 둘러보며 "더 정리 vs 재편/비교 vs 보고자료" 중 방향 결정
 - LAB_LOG의 [재적용]/[제거]/[정리] 태그가 전체 작업 점검표
 
-=== 세션 마무리 (2026-06-21 기준) ===
+=== 세션 핸드오프 (2026-06-21 갱신, HEAD=c8c7c09) ===
+※ 새 세션은 이 블록만 읽으면 됨. 위 시간순 로그는 작업 점검표(보존).
 
-■ 이번 세션 완료 (전부 커밋·push, origin/lab2 IN SYNC, HEAD=e182c24)
-1. 죽은 역할옵션 9개 + 고아 PSM 아이콘 정리 (daab65e) — DB 실측(T_IDM_USER·tb_button_rule) 결합0 확인, COMPLIANCE/ERGONOMICS 보존
-2. PageHeader 표준화 — 공통 컴포넌트 신설 + 16페이지 적용
-   · 표준 4규칙: 제목-위 / 제목=메뉴명 고정(nav키 재사용) / 흐름도 우상단(탭조건 호출부) / space-between
-   · 저난도: EhsPage(파일럿)·Health·DiseasePrevention·Training·Approval·Ppe·PlanKpi·RiskAssessment·Audit·Emergency·WorkEnv·Checklist
-   · 중난도 순수이관 3 (App.tsx PageWithTitle 래퍼 제거 + PageHeader, fill prop 추가): PartnerSafetyMgmt·WorkplaceDrawingsView·LegalResponse
-   · 흐름도 위치정정: KPI(자식 toolbar→제목줄), 보호구(flowKey 추가)
-   · 고난도 list-only 파일럿: NearMiss ((가)구조 템플릿 확정)
-3. 버그 수정: near-miss 첫 탭 fallback 'NEAR_MISS'→'DASHBOARD' (c0f01d0)
-4. PageHeader 컴포넌트: fill prop 추가 외 전 배치 무변경(표준 안정성 입증)
-5. tsc 베이스라인 9→8 (LegalResponse에서 미사용 t 해소). 이후 회귀 기준 "8→8 신규0"
+■ 환경 (변경 없음, 매 세션 고정)
+- 위치: C:\claude\yesco_she_lab2 / 브랜치 lab2 / 작업트리 clean
+- remote: upstream=jiwon2ahn(정본, push 차단) / origin=horsehihing3/yesco_she_lab(push)
+- DB: yescoSHE_lab2 (정본 yescoSHE 복제, 211.171.152.242:51084)
+- 포트: 프론트 7700 / 백엔드 7701
+- 정본 대비: yescoSHE 정본 기반 + 청소/제거 적용본. 정본 jiwon2ahn에 원본 보존(복구 가능)
+- tsc 회귀 기준: "8→8 신규0" (베이스라인 8)
 
-■ 남은 작업 (다음 세션)
-- 고난도 잔여 10개, 메커닉 2갈래:
-  · (가) 단일root+형제블록 (NearMiss 템플릿 복제 가능) — 페이지별 구조 재확인
-  · (나) early-return 다중 (SafetyAccident·ProcessActivity·ContractorRegistration·IncidentResponse·SiteSafetyMgmt·PermitToWork·ContractorManagement) — if(viewMode==='list')return<PageHeader> 메커닉, 별도 파일럿 검증 필요
-  · 모드토글 자식 (PartnerOshCommittee·PartnerPermit·PartnerMgmt) — 폼 자체제목 충돌 재확인(배치4 트랩)
-- 설정 6개: 표준화 제외 확정(슈퍼관리자)
-- 보류 콘텐츠 트랙: NearMiss detail 이중제목, i18n 고아 네임스페이스, ppe 흐름 spec 정교화, WorkplaceDrawingsView 흐름도 위치, YescoSidebarIcons 고아아이콘 6개
-- ★협의체 이중노출(OshCommitteeTab 공유) — 예스코 도메인 확인 대기(산안위 §24 vs 협의체 §75 구분 여부)
+■ 현재 상태 = 두 트랙 진행 중
+[A] 솎기/청소 트랙 — 1차 완료
+  · 청소 재적용 8건 + 숨김 3그룹 풀스택 제거(환경관리8·PSM·MSDS화학, ~44k줄) + 버튼 유령잔재 + 지도 대시보드 제거
+  · 전부 정본 보존·복구가능. 상세는 위 [재적용]/[제거]/[정리] 태그
+[B] PageHeader 표준화 트랙 — 진행 중 (16페이지 적용)
+  · 표준 4규칙: 제목-위(제목→탭) / 제목=메뉴명 고정(nav키 재사용) / 흐름도 우상단(탭0 조건 호출부) / space-between
+  · 공통: common/PageHeader.tsx (props=title·flowKey?·actions?·tabs?·fill?·children). 컴포넌트는 fill prop 추가 외 무변경(안정)
+  · 저난도(12): EhsPage·Health·DiseasePrevention·Training·Approval·Ppe·PlanKpi·RiskAssessment·Audit·Emergency·WorkEnv·Checklist
+  · 중난도 순수이관 3 (App.tsx PageWithTitle 래퍼 제거): PartnerSafetyMgmt·WorkplaceDrawingsView·LegalResponse
+  · 흐름도 위치정정: KPI(자식 toolbar→제목줄)·보호구(flowKey 추가)
+  · 고난도 파일럿 1: NearMiss ((가)구조 = 단일root+형제블록 템플릿 확정)
+  · 버그 수정: near-miss 첫 탭 fallback 'NEAR_MISS'→'DASHBOARD'
 
-■ 다음 세션 시작점
-- 고난도 (나)구조 파일럿(SafetyAccident or ProcessActivity)부터 → early-return 메커닉 확정 후 페이지별 복제
-- 또는 보류 콘텐츠 트랙 청소
+■ 남은 작업 (우선순위순)
+1. PageHeader 고난도 잔여 10개 — 메커닉 3갈래:
+   · (가) 단일root+형제블록 → NearMiss 템플릿 복제 (페이지별 구조 재확인)
+   · (나) early-return 다중 → SafetyAccident·ProcessActivity·ContractorRegistration·IncidentResponse·SiteSafetyMgmt·PermitToWork·ContractorManagement
+        메커닉=if(viewMode==='list')return<PageHeader>, 별도 파일럿 검증 필요(미착수)
+   · 모드토글 자식 → PartnerOshCommittee·PartnerPermit·PartnerMgmt (폼 자체제목 충돌 재확인, 배치4 트랩 주의)
+   · 설정 6개는 표준화 제외 확정(슈퍼관리자)
+2. (미착수) 재편: 사이드바 메뉴 그룹 정리 + 7700 vs 7600(원본 com4in) 비교 — 사용자 원래 목표
+3. (미착수) 더 솎기: SHE경영 등 보이는 메뉴 중 예스코 미사용 추가 정리
+4. 보류 콘텐츠 트랙(저우선): NearMiss detail 이중제목·i18n 고아 네임스페이스·ppe 흐름 spec·WorkplaceDrawingsView 흐름도 위치·YescoSidebarIcons 고아아이콘6
+5. ★협의체 이중노출(OshCommitteeTab 공유) — 예스코 도메인 확인 대기(산안위 §24 vs 협의체 §75 구분 여부)
+6. (장기) lab 결론을 정본 yescoSHE에 선별 재적용 + 필요기능 복구 + 전체 기능테스트 + 보고(특히 [발견-CAPA])
+
+■ 다음 세션 시작점 (택1)
+- (가장 자연스러움) PageHeader 고난도 (나)구조 파일럿: SafetyAccident or ProcessActivity 하나로 early-return 메커닉 확정 → 나머지 (나) 페이지 복제
+- 또는 보류 콘텐츠 트랙 청소 / 또는 사용자와 "더 정리 vs 재편·비교 vs 보고자료" 방향 합의
+
+■ 핵심 발견 (보고자료 소재 — 잊지 말 것)
+- [발견-CAPA] 사고대응(비상상황·화재·폭발)에 구조화 원인분석/재발방지 부재 → 중대재해처벌법 대응 핵심 공백, 예스코 개선안 1순위
+- [발견-구조] 사고/재해 6개 테이블 FK 0개 = 개별사건→집계 자동반영 없는 '끊긴 분산'
