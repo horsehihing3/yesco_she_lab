@@ -25,7 +25,7 @@ import type { UserInfo, CompanyTreeNode } from '../components/common/UserSelectM
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import DevTestFillButton from '../components/common/DevTestFillButton'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -399,12 +399,9 @@ const ProcessActivityWorkPage: React.FC = () => {
       ? raw.filter(f => (f.title || '').toLowerCase().includes(keyword.toLowerCase()))
       : raw
     return (
-      <Box>
+      <PageHeader title={t('nav.processActivityWork', '공정/활동별 작업내용')} flowKey="processActivity">
         <LoadingOverlay open={listFetching || isUploading} message={isUploading ? t('riskAssessment.uploading', '엑셀 업로드 중...') : t('common.loading', '목록을 불러오는 중...')} />
         <input ref={fileInputRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleExcelUpload} />
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" fontWeight="bold">{t('nav.processActivityWork', '공정/활동별 작업내용')}</Typography>
-        </Box>
         {/* Search / Action bar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -412,7 +409,6 @@ const ProcessActivityWorkPage: React.FC = () => {
             <IconButton onClick={() => setKeyword('')} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <FlowChartButton flowKey="processActivity" />
             <Button variant="contained" size="small" onClick={() => fileInputRef.current?.click()}>
               {t('processActivity.excelUpload', '엑셀 업로드')}
             </Button>
@@ -494,7 +490,7 @@ const ProcessActivityWorkPage: React.FC = () => {
             </Box>
           </>
         )}
-      </Box>
+      </PageHeader>
     )
   }
 
@@ -504,15 +500,16 @@ const ProcessActivityWorkPage: React.FC = () => {
   const processList: ProcessActivityProcess[] = isEditing ? form.processes : (detailData?.processes || [])
 
   if (viewMode !== 'create' && detailLoading) {
-    return <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
+    return (
+      <PageHeader title={t('nav.processActivityWork', '공정/활동별 작업내용')}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
+      </PageHeader>
+    )
   }
 
   return (
-    <Box>
+    <PageHeader title={t('nav.processActivityWork', '공정/활동별 작업내용')}>
       <LoadingOverlay open={isProcessing || isEditPending} message={isEditPending ? '로딩 중...' : undefined} />
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {t('nav.processActivityWork', '공정/활동별 작업내용')}
-      </Typography>
 
       {/* 상단 정보 - PC */}
       <Paper variant="outlined" sx={{ mb: 2, overflow: 'hidden', display: { xs: 'none', md: 'block' } }}>
@@ -908,7 +905,7 @@ const ProcessActivityWorkPage: React.FC = () => {
           }
         }}
       />
-    </Box>
+    </PageHeader>
   )
 }
 
