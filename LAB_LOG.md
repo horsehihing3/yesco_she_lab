@@ -136,6 +136,13 @@ lab 환경 실험/정리 기록.
   · ※부수발견(별건): ppeList는 두 파일 모두 항상 빈배열("PPE 재구성 중 — 신규 API 연결 전 임시") → 보호구 선택 드롭다운 비활성 상태. 신규 PPE API 연결이 미완 과제(타입 통일로 재연결 시 forward-compatible).
 - 2026-06-21 [parked·lab2] ★신규 PPE API 연결 미완 → 협력업체 등록(ContractorManagement)·작업허가(PermitToWork) 등록 폼의 '필요 보호구' 드롭다운이 빈 목록(비활성). ppeList가 항상 []이라 선택 불가. ★예스코 런칭 전 해소 필요. 타입은 PpeItem으로 통일돼 API 재연결 시 추가수정 0(forward-compatible) — fetch만 붙이면 됨.
 
+- 2026-06-21 [성능-종결·lab2] ★SafetyHazardInfo edit 진입 4~6초 → **1초 미만 해소**(운영 preview 실측, 기능 회귀 0: 입력·수량·저장·재진입 정상). 2단계(청크 렌더) 불필요로 종결.
+  · 주범 확정 = **insertBefore 자체시간 3.8s(운영 프로파일, 전체 51%)** = 행당 MUI TextField 5 DOM노드×7×45행의 DOM 삽입 과다. emotion serializeStyles 0.4ms·MUI processStyleArg 0.1ms·스타일계산 141ms·레이아웃 25ms·페인트 190ms 전부 작음 → 스타일/JS/가상화 아님, **순수 DOM 노드 수**가 병목.
+  · 1차 시도(fd1f82b: 행 React.memo + 체크박스 네이티브 + procSpan useMemo) **효과 미미** — JS/스타일/리렌더를 줄인 것이라 DOM-삽입 병목과 빗나감. 교훈: 프로파일 없이 "memo가 답"이라 단정한 게 오진. 운영 프로파일로 insertBefore 지목 후 정조준.
+  · 2차 해소 = edit 격자 8개 MUI TextField → 네이티브 `GridInput`(`<input>`+최소 인라인 CSS). 격자 본문 DOM 노드 ~55%↓(행당 ~47→~19). 기능 동치(value/onChange/Number변환/저장 페이로드 동일, 상세 readonly 평문 무변경). 상단 폼 TextField(행당 아님)는 유지.
+  · 가상화(A/B) 기각: A=rowSpan 그룹병합 ↔ 행 언마운트 근본 충돌(react-window/virtuoso 둘 다 cross-row rowSpan 미지원) + 바운드 뷰포트 부재. B=rowSpan 제거(병합 비주얼 상실·스크롤 UX 변경·2행 헤더 재구현, 회귀 중) 가능하나 45행 규모라 절감 ~2.5s뿐=실익 부족. → C(경량화)가 직격.
+  · ※preview 검증 환경 메모: `vite preview`는 server.proxy 적용되나 백엔드 CORS 허용 origin에 4173 없음(5173 있음) → preview는 **5173 포트**로 띄워야 로그인 통과(재빌드·백엔드 변경 불요).
+
 === 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
 
 ■ 이번 세션 완료 (전부 커밋·push, IN SYNC)

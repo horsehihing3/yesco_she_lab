@@ -71,6 +71,22 @@ const NativeCheck: React.FC<{ checked: boolean; disabled: boolean; onToggle: (v:
   />
 )
 
+// 네이티브 텍스트 입력 — edit 격자용 경량 입력(MUI TextField 대체). DOM 노드 1개로 insertBefore 총량 절감.
+const gridInputStyle: React.CSSProperties = {
+  width: '100%', boxSizing: 'border-box', padding: '4px 8px',
+  fontFamily: 'inherit', fontSize: '0.8125rem', lineHeight: 1.4,
+  border: '1px solid rgba(128,128,128,0.4)', borderRadius: 4,
+  background: 'transparent', color: 'inherit', outline: 'none',
+}
+const GridInput: React.FC<{ value: string | number; onChange: (v: string) => void; type?: string; width?: number }> = ({ value, onChange, type, width }) => (
+  <input
+    type={type || 'text'}
+    value={value ?? ''}
+    onChange={e => onChange(e.target.value)}
+    style={width != null ? { ...gridInputStyle, width } : gridInputStyle}
+  />
+)
+
 interface HazardItemRowProps {
   item: SafetyHazardItem
   index: number
@@ -88,7 +104,7 @@ const HazardItemRow = React.memo<HazardItemRowProps>(({ item: it, index: i, span
       <TableCell rowSpan={ps.span} sx={{ verticalAlign: 'top' }}>
         {isEditing ? (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            <TextField size="small" fullWidth value={it.processActivity || ''} onChange={e => onUpdate(i, { processActivity: e.target.value })} />
+            <GridInput value={it.processActivity || ''} onChange={v => onUpdate(i, { processActivity: v })} />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => onAddInGroup(i)} sx={{ fontSize: '0.7rem', minWidth: 'auto', px: 1, whiteSpace: 'nowrap' }}>행 추가</Button>
             </Box>
@@ -96,11 +112,11 @@ const HazardItemRow = React.memo<HazardItemRowProps>(({ item: it, index: i, span
         ) : it.processActivity}
       </TableCell>
     )}
-    <TableCell>{isEditing ? <TextField size="small" fullWidth value={it.machineName || ''} onChange={e => onUpdate(i, { machineName: e.target.value })} /> : it.machineName}</TableCell>
-    <TableCell align="center">{isEditing ? <TextField size="small" type="number" value={it.machineQty ?? ''} onChange={e => onUpdate(i, { machineQty: e.target.value ? Number(e.target.value) : undefined })} sx={{ width: 60 }} /> : it.machineQty}</TableCell>
-    <TableCell>{isEditing ? <TextField size="small" fullWidth value={it.chemicalName || ''} onChange={e => onUpdate(i, { chemicalName: e.target.value })} /> : it.chemicalName}</TableCell>
-    <TableCell align="center">{isEditing ? <TextField size="small" value={it.chemicalQty || ''} onChange={e => onUpdate(i, { chemicalQty: e.target.value })} sx={{ width: 80 }} /> : it.chemicalQty}</TableCell>
-    <TableCell align="center">{isEditing ? <TextField size="small" value={it.exposureTime || ''} onChange={e => onUpdate(i, { exposureTime: e.target.value })} sx={{ width: 80 }} /> : it.exposureTime}</TableCell>
+    <TableCell>{isEditing ? <GridInput value={it.machineName || ''} onChange={v => onUpdate(i, { machineName: v })} /> : it.machineName}</TableCell>
+    <TableCell align="center">{isEditing ? <GridInput type="number" width={60} value={it.machineQty ?? ''} onChange={v => onUpdate(i, { machineQty: v ? Number(v) : undefined })} /> : it.machineQty}</TableCell>
+    <TableCell>{isEditing ? <GridInput value={it.chemicalName || ''} onChange={v => onUpdate(i, { chemicalName: v })} /> : it.chemicalName}</TableCell>
+    <TableCell align="center">{isEditing ? <GridInput width={80} value={it.chemicalQty || ''} onChange={v => onUpdate(i, { chemicalQty: v })} /> : it.chemicalQty}</TableCell>
+    <TableCell align="center">{isEditing ? <GridInput width={80} value={it.exposureTime || ''} onChange={v => onUpdate(i, { exposureTime: v })} /> : it.exposureTime}</TableCell>
     {WORKER_COMP_KEYS.map((key, n) => (
       <TableCell key={`wc${n}`} align="center" sx={cbCellSx}><NativeCheck checked={!!it[key]} disabled={!isEditing} onToggle={v => onUpdate(i, { [key]: v } as any)} /></TableCell>
     ))}
@@ -110,8 +126,8 @@ const HazardItemRow = React.memo<HazardItemRowProps>(({ item: it, index: i, span
     {HEAVY_LOAD_KEYS.map((key, n) => (
       <TableCell key={`hl${n}`} align="center" sx={cbCellSx}><NativeCheck checked={!!it[key]} disabled={!isEditing} onToggle={v => onUpdate(i, { [key]: v } as any)} /></TableCell>
     ))}
-    <TableCell align="center">{isEditing ? <TextField size="small" value={it.permitWork || ''} onChange={e => onUpdate(i, { permitWork: e.target.value })} sx={{ width: 60 }} /> : it.permitWork}</TableCell>
-    <TableCell align="center">{isEditing ? <TextField size="small" value={it.specialTraining || ''} onChange={e => onUpdate(i, { specialTraining: e.target.value })} sx={{ width: 60 }} /> : it.specialTraining}</TableCell>
+    <TableCell align="center">{isEditing ? <GridInput width={60} value={it.permitWork || ''} onChange={v => onUpdate(i, { permitWork: v })} /> : it.permitWork}</TableCell>
+    <TableCell align="center">{isEditing ? <GridInput width={60} value={it.specialTraining || ''} onChange={v => onUpdate(i, { specialTraining: v })} /> : it.specialTraining}</TableCell>
     {isEditing && <TableCell align="center" sx={{ width: 64, px: 0.5 }}><IconButton size="small" color="error" onClick={() => onRemove(i)}><DeleteIcon fontSize="small" /></IconButton></TableCell>}
   </TableRow>
 ))
