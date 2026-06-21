@@ -70,7 +70,6 @@ const menuItems: MenuItem[] = [
       { textKey: 'nav.emergencyResponse', icon: <WarningAmberIcon />, path: '/emergency-response' },
       { textKey: 'nav.legalResponse', icon: <GavelIcon />, path: '/legal-response' },
       { textKey: 'nav.ehsBudget', icon: <AccountBalanceIcon />, path: '/ehs-budget' },
-      { textKey: 'nav.incidentResponse', icon: <WarningAmberIcon />, path: '/incident-response' },
       { textKey: 'nav.workplaceDrawingsView', icon: <PublicIcon />, path: '/workplace-drawings/view' },
     ],
   },

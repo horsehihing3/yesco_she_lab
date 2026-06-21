@@ -97,7 +97,6 @@ const MENU_TREE: MenuNode[] = [
       { key: 'budget.tab.expense',   label: '실예산 사용입력' },
       { key: 'budget.tab.report',    label: '레포트' },
     ]},
-    { key: 'nav.incidentResponse',      label: '사고 대응 관리' },
     { key: 'nav.workplaceDrawingsView', label: '사업장 도면' },
   ]},
   { key: 'nav.safetyManage', label: '안전 관리', children: [

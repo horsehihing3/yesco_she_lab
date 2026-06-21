@@ -156,6 +156,8 @@ lab 환경 실험/정리 기록.
   · ★검수 중 혼동 규명: PPE 드롭다운은 **ContractorManagementPage(협력 업체 위험성 평가, /contractor)** 작업계획 신규/수정 폼에 있음. 사용자가 본 **ContractorRegistrationPage(협력 업체 등록, /contractor-registration, 5단계 위저드)에는 PPE 필드 부재**(별개 페이지). dead 아님.
 - 2026-06-21 [예스코확인대기·lab2] ★협력업체 등록 위저드(ContractorRegistration)에 '필요 보호구' 필드 부재 — 의도된 설계(업체등록 ≠ 작업계획)인지 누락인지 도메인 확인 필요. 업체 마스터 등록과 작업계획(위험성평가)은 별개라 부재가 자연스러울 수 있으나 예스코 확정 요망.
 
+- 2026-06-22 [제거·lab2] ★IncidentResponse(사고대응관리) 화면 제거 — 프론트 전용. 중복 검증 완료: NearMiss(사고/아차)가 emergencyType/responseStatus/severity/isDrill(INCIDENT_RESP_* 동일 코드그룹) + 구조화 CAPA(actions/재발방지)까지 보유한 상위집합, IncidentResponse 고유기능 0(CAPA도 없이 actionTaken 단일텍스트). 대표의 "기능 중복" 판단 정확. ※[발견-CAPA]의 진의=IncidentResponse에 CAPA '부재'(공백)였지 핵심 아님. 삭제: 전용3(IncidentResponsePage·incidentResponseApi·incidentResponse.types) + 참조정리(App import/route·Sidebar·MenuManageTab·flowSpecs incident·i18n nav.incidentResponse 3키). ★백엔드/tb_incident_response(12행=테스트)·DB menu_rule = 존치(orphan), incidentResponsePage i18n 콘텐츠ns(en/zh) 고아 보류 — orphan 백엔드/i18n 정리는 별도 트랙. 백엔드 의존성 전수확인: tb_incident_response 참조=자기매퍼+V168뿐, 자바심볼 전용4파일 외 0, 사고/재해 집계·FK 0(완전 전용). tsc 0→0, npm run build 통과.
+
 === 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
 
 ■ 이번 세션 완료 (전부 커밋·push, IN SYNC)

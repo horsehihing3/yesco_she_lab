@@ -52,7 +52,6 @@ import PartnerOshCommitteePage from './pages/PartnerOshCommitteePage'
 import PartnerPermitPage from './pages/PartnerPermitPage'
 import PartnerSafetyMgmtPage from './pages/PartnerSafetyMgmtPage'
 import PartnerSafetyExecutePage from './pages/PartnerSafetyExecutePage'
-import IncidentResponsePage from './pages/IncidentResponsePage'
 import LegalResponsePage from './pages/LegalResponsePage'
 import DiseasePreventionMgmtPage from './pages/DiseasePreventionMgmtPage'
 import ContractorRegistrationPage from './pages/ContractorRegistrationPage'
@@ -134,7 +133,6 @@ function App() {
         <Route path="partner-permit" element={<PartnerPermitPage />} />
         <Route path="partner-safety-mgmt" element={<PartnerSafetyMgmtPage />} />
         <Route path="contractor-registration" element={<ContractorRegistrationPage />} />
-        <Route path="incident-response" element={<PageWithTitle titleKey="nav.incidentResponse"><IncidentResponsePage /></PageWithTitle>} />
         <Route path="legal-response" element={<LegalResponsePage />} />
         <Route path="disease-prevention-mgmt" element={<DiseasePreventionMgmtPage />} />
         <Route path="plan-kpi-goal" element={<PlanKpiGoalPage />} />

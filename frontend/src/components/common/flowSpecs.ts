@@ -76,7 +76,6 @@ export const FLOW_SPECS: Record<string, FlowSpec> = {
   approval:         { title: '내 결재 흐름도',            steps: singleApproval('결재 상신 접수', '승인/반려') },
 
   // 단순 처리(status)
-  incident:         { title: '사고 대응 흐름도',          steps: simpleStatus('사고 접수·등록', '원인조사·조치', '종결 보고') },
   nearMiss:         { title: '아차사고 흐름도',           steps: simpleStatus('아차사고 등록', '원인분석·개선', '완료 처리') },
   oshCommittee:     { title: '산업안전보건위원회 흐름도', steps: simpleStatus('위원회 개최 등록', '안건 심의·의결', '회의록 등록') },
   legalResponse:    { title: '법적 대응 흐름도',          steps: simpleStatus('대응 건 등록', '대응·조치 진행', '종결 처리') },
