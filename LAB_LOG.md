@@ -158,6 +158,8 @@ lab 환경 실험/정리 기록.
 
 - 2026-06-22 [제거·lab2] ★IncidentResponse(사고대응관리) 화면 제거 — 프론트 전용. 중복 검증 완료: NearMiss(사고/아차)가 emergencyType/responseStatus/severity/isDrill(INCIDENT_RESP_* 동일 코드그룹) + 구조화 CAPA(actions/재발방지)까지 보유한 상위집합, IncidentResponse 고유기능 0(CAPA도 없이 actionTaken 단일텍스트). 대표의 "기능 중복" 판단 정확. ※[발견-CAPA]의 진의=IncidentResponse에 CAPA '부재'(공백)였지 핵심 아님. 삭제: 전용3(IncidentResponsePage·incidentResponseApi·incidentResponse.types) + 참조정리(App import/route·Sidebar·MenuManageTab·flowSpecs incident·i18n nav.incidentResponse 3키). ★백엔드/tb_incident_response(12행=테스트)·DB menu_rule = 존치(orphan), incidentResponsePage i18n 콘텐츠ns(en/zh) 고아 보류 — orphan 백엔드/i18n 정리는 별도 트랙. 백엔드 의존성 전수확인: tb_incident_response 참조=자기매퍼+V168뿐, 자바심볼 전용4파일 외 0, 사고/재해 집계·FK 0(완전 전용). tsc 0→0, npm run build 통과.
 
+- 2026-06-22 [재편·lab2] NearMiss(사고/아차) (나)형 일관성 — 상세/등록에서 탭 사라지던 문제 해소. ①PageHeader를 메인 return 최상위로 호이스팅(viewMode list/detail/create/edit 전부 공통 래핑, 'list' 게이트 제거) → 3탭(대시보드/아차사고/사고) 상세·등록 내내 유지, 진입탭 활성 유지. 탭 onChange에 setViewMode('list') 추가(상세/등록 중 다른탭 클릭→그 탭 목록 복귀). flowKey=DASHBOARD&&list 한정. 모달은 PageHeader 밖 형제로. ②탭중복 무정보 상단제목 제거: 상세 h6(nearMissInfoByType=탭명, 상태 Chip 보존)·등록 h6(registerInfoByType) 삭제. ③첫 섹션헤더 재라벨: "아차사고"/"사고"(탭명) → 신규 nav키 nearMiss.sectionOccInfo("발생 정보"/Occurrence Info/发生信息, 타입무관 고정) → 5섹션(발생정보/사고대응분류/위험성파악/재발방지대책/이미지) 균일. renderDetail/renderForm 본문·데이터표 무수정. nearMissInfoByType·registerInfoByType i18n키는 무해 고아 잔존. tsc 0→0.
+
 === 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
 
 ■ 이번 세션 완료 (전부 커밋·push, IN SYNC)

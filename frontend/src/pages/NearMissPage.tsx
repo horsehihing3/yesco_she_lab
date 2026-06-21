@@ -875,13 +875,12 @@ const NearMissPage: React.FC = () => {
       <Box>
         {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-          <Typography variant="h6" fontWeight="bold">{t(`nearMiss.nearMissInfoByType.${viewNearMiss.incidentType || activeTab}`)}</Typography>
           <Chip label={statusKeys[viewNearMiss.status] || viewNearMiss.status} color={statusColors[viewNearMiss.status]} />
         </Box>
 
         {/* 아차사고/사고 정보 */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
-          {t(`nearMiss.nearMissInfoByType.${viewNearMiss.incidentType || activeTab}`)}
+          {t('nearMiss.sectionOccInfo')}
         </Typography>
         <Box sx={{ mb: 3 }}>
           {/* PC용 테이블 레이아웃 */}
@@ -1267,13 +1266,10 @@ const NearMissPage: React.FC = () => {
   // 등록/수정 화면
   const renderFormView = () => (
     <Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-        {t(`nearMiss.registerInfoByType.${activeTab}`)}
-      </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* 아차사고/사고 정보 섹션 */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
-          {t(`nearMiss.nearMissInfoByType.${activeTab}`)}
+          {t('nearMiss.sectionOccInfo')}
         </Typography>
         <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: 'grey.50', border: 1, borderColor: 'divider' }}>
           {/* PC용 테이블 레이아웃 */}
@@ -2112,27 +2108,25 @@ const NearMissPage: React.FC = () => {
 
   return (
     <Box>
-      {/* 탭 메뉴: 대시보드 / 아차사고 / 사고 — list 뷰만 PageHeader, detail/form은 자체 제목 보유로 밖에 둠 */}
-      {viewMode === 'list' && (
-        <PageHeader
-          title={t('nav.nearMiss')}
-          flowKey={activeTab === 'DASHBOARD' ? 'nearMiss' : undefined}
-          tabs={
-            <Tabs
-              value={activeTab}
-              onChange={(_, newValue) => { setActiveTab(newValue); setPage(1) }}
-            >
-              <Tab label={t('common.dashboard', '대시보드')} value="DASHBOARD" />
-              <Tab label={t('nearMiss.incidentTypes.nearMiss')} value="NEAR_MISS" />
-              <Tab label={t('nearMiss.incidentTypes.accident')} value="ACCIDENT" />
-            </Tabs>
-          }
-        >
-          {activeTab === 'DASHBOARD' ? <NearMissDashboardTab /> : renderListView()}
-        </PageHeader>
-      )}
-      {viewMode === 'detail' && renderDetailView()}
-      {(viewMode === 'create' || viewMode === 'edit') && renderFormView()}
+      {/* 탭 메뉴: 대시보드 / 아차사고 / 사고 — list/detail/create/edit 전 viewMode 공통 PageHeader(탭 항상 유지) */}
+      <PageHeader
+        title={t('nav.nearMiss')}
+        flowKey={activeTab === 'DASHBOARD' && viewMode === 'list' ? 'nearMiss' : undefined}
+        tabs={
+          <Tabs
+            value={activeTab}
+            onChange={(_, newValue) => { setActiveTab(newValue); setPage(1); setViewMode('list') }}
+          >
+            <Tab label={t('common.dashboard', '대시보드')} value="DASHBOARD" />
+            <Tab label={t('nearMiss.incidentTypes.nearMiss')} value="NEAR_MISS" />
+            <Tab label={t('nearMiss.incidentTypes.accident')} value="ACCIDENT" />
+          </Tabs>
+        }
+      >
+        {viewMode === 'list' && (activeTab === 'DASHBOARD' ? <NearMissDashboardTab /> : renderListView())}
+        {viewMode === 'detail' && renderDetailView()}
+        {(viewMode === 'create' || viewMode === 'edit') && renderFormView()}
+      </PageHeader>
 
       {/* 도면 선택 모달 */}
       <Dialog open={drawingSelectModalOpen} onClose={() => setDrawingSelectModalOpen(false)} maxWidth="md" fullWidth sx={{ '& .MuiDialog-paper': { mx: { xs: 1, sm: 2 } } }}>
