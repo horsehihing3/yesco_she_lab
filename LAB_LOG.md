@@ -130,6 +130,12 @@ lab 환경 실험/정리 기록.
 - 2026-06-21 [재편·lab2] ③ ContractorRegistration PageHeader 이관 — ★PageHeader 표준화 트랙 마지막 잔여 해소(잔여 0). 구조=(나)형 2-return(list L356 인라인FlowChart·제목없음 + 위저드 L511 Stepper·제목없음), 도메인탭0·중복서브타이틀 없음. 적용: App.tsx PageWithTitle 래퍼 제거 + 두 return 모두 PageHeader(title=nav.partnerRegistration "협력 업체 등록"·flowKey="contractorReg"·단일탭 value=0) 통일 + list 인라인 FlowChartButton 제거(import도 PageHeader로 교체). 신규키 nav.partnerRegistrationTab("등록 현황"/Registration Status/登记现况) 3locale. 사이드바=협력 업체 관리>협력 업체 등록. 선례 PartnerSafetyMgmt/LegalResponse는 단일return 1-wrap이었고 이건 2-return이라 SafetyAccident식 (나) 적용. tsc 8→8 신규0. ※위저드 fill 미전달(선례 동일). 화면검수 대기(list·위저드 detail/create/edit 진입).
   · ★PageHeader 전역 표준화 누계: 그룹1(기적용)18 + 2단계 적용(A단일탭7·B EhsBudget·C OccDisease) + (나)3p 일관성 + ContractorRegistration = 트랙 종료. 제외 확정: 설정6+/admin+특수5+IncidentResponse(제거대상)+PartnerMgmt(모드토글 보류)+orphan(OccupationalExposure).
 
+- 2026-06-21 [정리·lab2] ★baseline 8 tsc 에러 완전 해소 — `npm run build` 게이트 정상화(tsc 통과→vite build ✓ 25s). ★새 회귀 기준=**0→0 신규0**(기존 "8→8"·"9→8" 무효). 처리:
+  · unused import 4 제거: PpeDashboardTab(t+useTranslation, t() 호출0)·PpeItemTab/PpeStockTab(CircularProgress)·LegalResponse(EditIcon). 전부 import 라인에만 등장=진짜 미사용 확인 후 제거.
+  · TS2339 PpeEquipment.category 4(ContractorManagement 846/1081·PermitToWork 779/983) → 근본 해소(A안). 두 페이지가 로컬 stub `type PpeEquipment={id;name}` 중복선언(category 누락)인데 코드는 ppe.category 참조(드롭다운 secondary). 접근 필드=id/name/category 3개뿐이고 정식 PpeItem(ppe.types.ts)이 셋 다 포함·형호환·setter는 setPpeList([])뿐(빈배열 할당 안전)이라 → 로컬 stub 제거하고 `import { PpeItem }`로 통일, useState<PpeItem[]>. 코드 참조는 정상이었음(stub만 불완전).
+  · ※부수발견(별건): ppeList는 두 파일 모두 항상 빈배열("PPE 재구성 중 — 신규 API 연결 전 임시") → 보호구 선택 드롭다운 비활성 상태. 신규 PPE API 연결이 미완 과제(타입 통일로 재연결 시 forward-compatible).
+- 2026-06-21 [parked·lab2] ★신규 PPE API 연결 미완 → 협력업체 등록(ContractorManagement)·작업허가(PermitToWork) 등록 폼의 '필요 보호구' 드롭다운이 빈 목록(비활성). ppeList가 항상 []이라 선택 불가. ★예스코 런칭 전 해소 필요. 타입은 PpeItem으로 통일돼 API 재연결 시 추가수정 0(forward-compatible) — fetch만 붙이면 됨.
+
 === 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
 
 ■ 이번 세션 완료 (전부 커밋·push, IN SYNC)

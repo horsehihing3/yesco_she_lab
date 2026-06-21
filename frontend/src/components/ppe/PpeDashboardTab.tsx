@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { useTranslation } from 'react-i18next'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Grid, LinearProgress, Chip, Alert,
@@ -23,8 +22,6 @@ const KpiPaper = ({ label, value, color }: { label: string; value: number | stri
 )
 
 const PpeDashboardTab: React.FC = () => {
-  const { t } = useTranslation()
-
   const { data: itemKpi, isLoading: l1 } = useQuery({ queryKey: ['ppeItemKpi'], queryFn: ppeItemApi.getKpi })
   const { data: stockKpi, isLoading: l2 } = useQuery({ queryKey: ['ppeStockKpi'], queryFn: ppeStockApi.getKpi })
   const { data: issueKpi, isLoading: l3 } = useQuery({ queryKey: ['ppeIssueKpi'], queryFn: ppeIssueApi.getKpi })

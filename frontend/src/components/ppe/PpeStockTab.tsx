@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, Select, MenuItem, TextField,
-  FormControl, Chip, Pagination, CircularProgress, Alert, IconButton, Grid, LinearProgress,
+  FormControl, Chip, Pagination, Alert, IconButton, Grid, LinearProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'

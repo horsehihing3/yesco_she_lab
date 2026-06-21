@@ -9,7 +9,6 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import DeleteIcon from '@mui/icons-material/Delete'
-import EditIcon from '@mui/icons-material/Edit'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import SyncIcon from '@mui/icons-material/Sync'
 import { useTranslation } from 'react-i18next'

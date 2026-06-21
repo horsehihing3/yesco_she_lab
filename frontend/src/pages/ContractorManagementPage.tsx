@@ -25,8 +25,7 @@ import { useButtonRules } from '../hooks/useButtonRules'
 import { fetchTeamLeader } from '../api/approvalApi'
 import { contractorPlanApi } from '../api/contractorApi'
 import { ContractorPlan, ContractorPlanRequest, ContractorWorker } from '../types/contractor.types'
-// PPE 재구성 중 — 신규 API 연결 전 임시 placeholder
-type PpeEquipment = { id: number; name: string }
+import { PpeItem } from '../types/ppe.types'
 import { fetchSafetyTemplates } from '../api/safetyChecklistApi'
 import type { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
@@ -110,7 +109,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   const [approverPickTarget, setApproverPickTarget] = useState<'plan' | 'completion' | null>(null)
 
   // PPE inventory list for multi-select
-  const [ppeList, setPpeList] = useState<PpeEquipment[]>([])
+  const [ppeList, setPpeList] = useState<PpeItem[]>([])
 
   // Workers
   const [workers, setWorkers] = useState<Array<{ workerName: string; companyName: string; workerPhone: string }>>([])

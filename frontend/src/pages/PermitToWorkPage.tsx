@@ -26,8 +26,7 @@ import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import { permitToWorkApi } from '../api/permitToWorkApi'
 import { fetchTeamLeader } from '../api/approvalApi'
-// PPE 재구성 중 — 신규 API 연결 전 임시 placeholder
-type PpeEquipment = { id: number; name: string }
+import { PpeItem } from '../types/ppe.types'
 import { fetchSafetyTemplates, fetchSafetyTemplateDetail } from '../api/safetyChecklistApi'
 import SafetyChecklistTab, { SafetyChecklistTabRef } from '../components/ehs/SafetyChecklistTab'
 import PermitReportTab from '../components/ehs/PermitReportTab'
@@ -126,7 +125,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   const [rejectDialogStage, setRejectDialogStage] = useState<'plan' | 'completion' | null>(null)
 
   // PPE inventory list for multi-select
-  const [ppeList, setPpeList] = useState<PpeEquipment[]>([])
+  const [ppeList, setPpeList] = useState<PpeItem[]>([])
 
   // External worker fields
   const [workers, setWorkers] = useState<Array<{ workerName: string; workerCompany: string; workerPhone: string }>>([])
