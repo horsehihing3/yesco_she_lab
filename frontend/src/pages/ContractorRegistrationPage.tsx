@@ -8,7 +8,7 @@ import {
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Button, TextField, MenuItem, Chip, Stack, IconButton,
   Pagination, CircularProgress, Step, Stepper, StepLabel, StepButton,
-  Checkbox, FormControlLabel,
+  Checkbox, FormControlLabel, Tabs, Tab,
 } from '@mui/material'
 import ListSearchBar from '../components/common/ListSearchBar'
 import AddIcon from '@mui/icons-material/Add'
@@ -29,7 +29,7 @@ import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import { useButtonRules } from '../hooks/useButtonRules'
 
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 import { contractorRegistrationApi } from '../api/contractorRegistrationApi'
 import type {
   ContractorRegistration, ContractorRegistrationRequest, RegStatus,
@@ -354,7 +354,15 @@ const ContractorRegistrationPage: React.FC = () => {
   if (viewMode === 'list') {
     const items = data?.content || []
     return (
-      <Box>
+      <PageHeader
+        title={t('nav.partnerRegistration')}
+        flowKey="contractorReg"
+        tabs={
+          <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+            <Tab label={t('nav.partnerRegistrationTab')} />
+          </Tabs>
+        }
+      >
         {/* ─── 데스크탑(md+) : 한 줄 ─── */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, mb: 2, alignItems: 'center' }}>
           <ListSearchBar sx={{ width: 380 }} placeholder="업체명 / 사업자번호 / 등록번호 / 대표자 검색" value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
@@ -367,7 +375,6 @@ const ContractorRegistrationPage: React.FC = () => {
           </TextField>
           <IconButton size="small" onClick={() => qc.invalidateQueries({ queryKey: ['contractorRegistrations'] })}><RefreshIcon /></IconButton>
           <Box sx={{ flex: 1 }} />
-          <FlowChartButton flowKey="contractorReg" />
           {canNew && (
             <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={openCreate}
               sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}>New</Button>
@@ -500,7 +507,7 @@ const ContractorRegistrationPage: React.FC = () => {
             <Pagination count={data.totalPages} page={page + 1} onChange={(_, v) => setPage(v - 1)} size="small" />
           </Stack>
         )}
-      </Box>
+      </PageHeader>
     )
   }
 
@@ -509,6 +516,15 @@ const ContractorRegistrationPage: React.FC = () => {
   const isEditing = viewMode === 'edit'
 
   return (
+    <PageHeader
+      title={t('nav.partnerRegistration')}
+      flowKey="contractorReg"
+      tabs={
+        <Tabs value={0} sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}>
+          <Tab label={t('nav.partnerRegistrationTab')} />
+        </Tabs>
+      }
+    >
     <Box sx={{ pb: { xs: 4, md: 0 } }}>
       {isReadonly && selected && (
         <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ mb: 1 }}>
@@ -630,6 +646,7 @@ const ContractorRegistrationPage: React.FC = () => {
         </Box>
       )}
     </Box>
+    </PageHeader>
   )
 }
 

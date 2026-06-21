@@ -127,6 +127,9 @@ lab 환경 실험/정리 기록.
 - 2026-06-21 [재편·lab2] WorkplaceDrawingsView(사업장 도면 조회) 흐름도 위치 표준화 — parked 항목 해소. 흐름도가 설정(/system-manage/drawings)과 공유하는 자식 WorkplaceDrawingsPage 본문 상단에 인라인으로 떠 있던 것을 `readOnly` 분기로 처리: 자식의 인라인 FlowChartButton Box를 `{!readOnly && (...)}` 게이트 → 조회뷰(readOnly=true)는 숨기고 부모 PageHeader에 flowKey="workplaceDrawings" 연결해 제목行 인라인 표시(KPI·①3단계 기준). 설정 도면관리(readOnly=false)는 본문 인라인 유지=회귀0. tsc 8→8 신규0. (FlowChartButton import 유지=게이트만)
 - 2026-06-21 [성능-미완결·lab2] ★SafetyHazardInfo edit 4초 — 행 React.memo 분리 + 체크박스 네이티브 교체(540개) + procSpan useMemo 적용했으나 **운영 preview 실측상 체감 개선 미미**. → 주범 재의심 필요(행수(45)·체크박스 개수보다 다른 병목 가능성: 상단 폼/모달/공유 컨텍스트·전체 리렌더·MUI TextField 315개 mount 등 미규명). 가상화(react-window)는 **보류 카드=다음 후보**로 남김(1~3 적용 후에도 부족 확인됨). ※`npm run build`는 기존 baseline 8 tsc 에러가 게이트 막음(이번 변경 무관, 별건 정리과제) — `npx vite build`(esbuild)는 정상. 적용분(memo·네이티브·useMemo)은 기능 동치·회귀0이라 유지(롤백 안 함), 추가 진단은 별도 트랙.
 
+- 2026-06-21 [재편·lab2] ③ ContractorRegistration PageHeader 이관 — ★PageHeader 표준화 트랙 마지막 잔여 해소(잔여 0). 구조=(나)형 2-return(list L356 인라인FlowChart·제목없음 + 위저드 L511 Stepper·제목없음), 도메인탭0·중복서브타이틀 없음. 적용: App.tsx PageWithTitle 래퍼 제거 + 두 return 모두 PageHeader(title=nav.partnerRegistration "협력 업체 등록"·flowKey="contractorReg"·단일탭 value=0) 통일 + list 인라인 FlowChartButton 제거(import도 PageHeader로 교체). 신규키 nav.partnerRegistrationTab("등록 현황"/Registration Status/登记现况) 3locale. 사이드바=협력 업체 관리>협력 업체 등록. 선례 PartnerSafetyMgmt/LegalResponse는 단일return 1-wrap이었고 이건 2-return이라 SafetyAccident식 (나) 적용. tsc 8→8 신규0. ※위저드 fill 미전달(선례 동일). 화면검수 대기(list·위저드 detail/create/edit 진입).
+  · ★PageHeader 전역 표준화 누계: 그룹1(기적용)18 + 2단계 적용(A단일탭7·B EhsBudget·C OccDisease) + (나)3p 일관성 + ContractorRegistration = 트랙 종료. 제외 확정: 설정6+/admin+특수5+IncidentResponse(제거대상)+PartnerMgmt(모드토글 보류)+orphan(OccupationalExposure).
+
 === 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
 
 ■ 이번 세션 완료 (전부 커밋·push, IN SYNC)
