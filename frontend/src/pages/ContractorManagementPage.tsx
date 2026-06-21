@@ -37,7 +37,7 @@ import ContractorReportTab from '../components/contractor/ContractorReportTab'
 import ContractorDashboardTab from '../components/contractor/ContractorDashboardTab'
 import RejectReasonDialog from '../components/common/RejectReasonDialog'
 import DevTestFillButton from '../components/common/DevTestFillButton'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -412,8 +412,6 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   if (viewMode === 'list') {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{tabTitle}</Typography>
-
         {/* Search / Filter bar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -1272,31 +1270,31 @@ const ContractorManagementPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
 
   return (
-    <Box>
-      <Tabs
-        value={activeTab}
-        onChange={(_, v) => setActiveTab(v)}
-        variant="scrollable"
-        scrollButtons="auto"
-        sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}
-      >
-        <Tab label={t('contractor.tabs.dashboard', '대시보드')} />
-        <Tab label={t('contractor.tabs.plan', '계획')} />
-        <Tab label={t('contractor.tabs.approval', '평가서조회 담당승인자')} />
-        <Tab label={t('contractor.tabs.adminView', '전체조회 (어드민)')} />
-        <Tab label={t('contractor.tabs.report', '레포트')} />
-      </Tabs>
-      {activeTab === 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <FlowChartButton flowKey="contractor" />
-        </Box>
-      )}
+    <PageHeader
+      title={t('nav.partnerRiskAssessment')}
+      flowKey={activeTab === 0 ? 'contractor' : undefined}
+      tabs={
+        <Tabs
+          value={activeTab}
+          onChange={(_, v) => setActiveTab(v)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}
+        >
+          <Tab label={t('contractor.tabs.dashboard', '대시보드')} />
+          <Tab label={t('contractor.tabs.plan', '계획')} />
+          <Tab label={t('contractor.tabs.approval', '평가서조회 담당승인자')} />
+          <Tab label={t('contractor.tabs.adminView', '전체조회 (어드민)')} />
+          <Tab label={t('contractor.tabs.report', '레포트')} />
+        </Tabs>
+      }
+    >
       {activeTab === 0 && <ContractorDashboardTab />}
       {activeTab === 1 && <ContractorPlanContent mode="plan" />}
       {activeTab === 2 && <ContractorPlanContent mode="approval" />}
       {activeTab === 3 && <ContractorPlanContent mode="admin" />}
       {activeTab === 4 && <ContractorReportTab />}
-    </Box>
+    </PageHeader>
   )
 }
 
