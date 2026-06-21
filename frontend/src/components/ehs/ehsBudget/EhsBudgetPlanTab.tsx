@@ -98,7 +98,7 @@ const formatDateTime = (dateString?: string | null) => {
 const EhsBudgetPlanTab: React.FC = () => {
   const queryClient = useQueryClient()
   const { t } = useTranslation()
-  const { showWarning, showSuccess, showConfirm } = useAlert()
+  const { showWarning, showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
   const { codeList: categoryCodes, getLabel: getCategoryLabel } = useCodeMap('EHS_BUDGET_CATEGORY')
   const currentWriter = user?.name || user?.username || ''
@@ -146,6 +146,7 @@ const EhsBudgetPlanTab: React.FC = () => {
       await showSuccess(t('common.saved', '저장되었습니다'))
       handleBackToList()
     },
+    onError: (e: any) => showError(e?.response?.data?.message || t('common.error', '오류가 발생했습니다')),
   })
 
   const updateMutation = useMutation({
@@ -157,6 +158,7 @@ const EhsBudgetPlanTab: React.FC = () => {
       await showSuccess(t('common.saved', '저장되었습니다'))
       handleBackToList()
     },
+    onError: (e: any) => showError(e?.response?.data?.message || t('common.error', '오류가 발생했습니다')),
   })
 
   const deleteMutation = useMutation({
@@ -167,6 +169,7 @@ const EhsBudgetPlanTab: React.FC = () => {
       await showSuccess(t('common.deleted', '삭제되었습니다'))
       handleBackToList()
     },
+    onError: (e: any) => showError(e?.response?.data?.message || t('common.error', '오류가 발생했습니다')),
   })
 
   const isProcessing = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
