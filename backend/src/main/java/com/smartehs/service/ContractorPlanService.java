@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -231,7 +232,9 @@ public class ContractorPlanService {
         Long lockUserId = plan.getEditingUserId();
         LocalDateTime startedAt = plan.getEditingStartedAt();
         boolean isStale = startedAt == null || startedAt.isBefore(LocalDateTime.now().minusMinutes(LOCK_STALE_MINUTES));
-        boolean isCurrentUser = user.getUidNumber().equals(lockUserId);
+        // 스톱갭: 레거시 시드 일부 계정의 UIDNumber=NULL → NPE/500 방지(Objects.equals null-safe).
+        // TODO(근본): UIDNumber 백필 후 재검토 — 현재 null-uid 계정은 락이 null키로 저장돼 동시편집 방지가 무효화됨. [원인규명 LAB_LOG 2026-06-21]
+        boolean isCurrentUser = Objects.equals(user.getUidNumber(), lockUserId);
 
         Map<String, Object> result = new HashMap<>();
         if (lockUserId == null || isStale || isCurrentUser) {
