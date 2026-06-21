@@ -1,5 +1,6 @@
 import { formatDate } from '../utils/dateDefaults'
 import React, { useState, useRef, useTransition } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Box, Paper, Typography, Button, TextField, IconButton, CircularProgress,
@@ -22,7 +23,7 @@ import type { UserInfo } from '../components/common/UserSelectModal'
 import { useAlert } from '../contexts/AlertContext'
 import { useAuth } from '../context/AuthContext'
 import DevTestFillButton from '../components/common/DevTestFillButton'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -49,6 +50,7 @@ const emptyForm = (): SafetyAccidentFormRequest => ({
 })
 
 const SafetyAccidentInfoPage: React.FC = () => {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const { showSuccess, showError, showConfirm } = useAlert()
   const { user } = useAuth()
@@ -242,19 +244,15 @@ const SafetyAccidentInfoPage: React.FC = () => {
       ? raw.filter(f => (f.title || '').toLowerCase().includes(keyword.toLowerCase()))
       : raw
     return (
-      <Box>
+      <PageHeader title={t('nav.safetyAccidentInfo')} flowKey="safetyAccidentInfo">
         <LoadingOverlay open={listFetching || isUploading} message={isUploading ? '엑셀 업로드 중...' : '로딩 중...'} />
         <input ref={fileInputRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleExcelUpload} />
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" fontWeight="bold">보건안전 재해발생 정보</Typography>
-        </Box>
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             <ListSearchBar placeholder="제목으로 검색" value={keywordInput} onChange={setKeywordInput} onSearch={applySearch} />
             <IconButton onClick={() => setKeyword('')} size="small"><RefreshIcon /></IconButton>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <FlowChartButton flowKey="safetyAccidentInfo" />
             <Button variant="contained" size="small" onClick={() => fileInputRef.current?.click()}>엑셀 업로드</Button>
             <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd} size="small">New</Button>
           </Box>
@@ -321,18 +319,21 @@ const SafetyAccidentInfoPage: React.FC = () => {
             </Paper>
           ))}
         </Box>
-      </Box>
+      </PageHeader>
     )
   }
 
   if ((viewMode === 'detail' || viewMode === 'edit') && detailLoading) {
-    return <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
+    return (
+      <PageHeader title={t('nav.safetyAccidentInfo')}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
+      </PageHeader>
+    )
   }
 
   return (
-    <Box>
+    <PageHeader title={t('nav.safetyAccidentInfo')}>
       <LoadingOverlay open={isProcessing || isEditPending} message={isEditPending ? '로딩 중...' : undefined} />
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>보건안전 재해발생 정보</Typography>
 
       <Paper variant="outlined" sx={{ mb: 2, overflow: 'hidden', display: { xs: 'none', md: 'block' } }}>
         <Box sx={{ display: 'flex', borderBottom: 1, borderColor: dividerColor }}>
@@ -573,7 +574,7 @@ const SafetyAccidentInfoPage: React.FC = () => {
           setForm(f => ({ ...f, departmentName: dept }))
         }}
       />
-    </Box>
+    </PageHeader>
   )
 }
 

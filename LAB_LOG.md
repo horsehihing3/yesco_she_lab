@@ -63,6 +63,8 @@ lab 환경 실험/정리 기록.
 - 2026-06-21 [재편·lab2] PageHeader 고난도 list-only 파일럿 — NearMiss. (가)구조(단일root+형제&&블록) 템플릿 확정: viewMode==='list' 블록만 PageHeader, detail/form은 형제로 무손상. 흐름도 L2133→flowKey(DASHBOARD 전용) 이관·서브헤딩(L2128 중복) 제거. git diff로 renderDetailView/renderFormView 무변경 확인(회귀0). 누적 16페이지. 고난도 메커닉 (가)검증 완료, (나)early-return 구조는 별도 검증 필요. tsc 8→8.
 - 2026-06-21 [발견·lab2] NearMiss detail 뷰(renderDetailView) 자체 이중제목 — L878 h6+상태칩 / L883 subtitle1, 같은 키(nearMissInfoByType) 2회 출력(원개발자 구조). 파일럿과 무관, detail 정리 트랙 후보(L883 섹션헤딩 제거 등).
 - 2026-06-21 [재편·lab2] PageHeader 적용 미적용 저난도 배치 — 내부감사·비상훈련·작업환경측정·체크리스트. 흐름도 전부 부모직접(자식 무수정, KPI 패턴 아님), EhsPage 표준 치환. Checklist 이중제목 점검 통과(자식 SafetyChecklistWrapper 자체 제목 없음). PageHeader 무변경. ★저난도 트랙 진짜 완료, 누적 적용 15페이지. 남은 트랙: 고난도(viewMode 11 + near-miss 탭버그), 설정6 제외.
+- 2026-06-21 [재편·lab2] 고난도 (나)early-return 파일럿 — SafetyAccidentInfoPage. 3-return 각각 PageHeader 독립주입(단일root 주입 불가 확정). flowKey는 list만, 로딩가드·detail은 title만. 결정a=로딩가드도 PageHeader wrap(제목 깜빡임 차단), 결정b=하드코딩 제목→t(nav키) 치환. 중복제목 2곳 중앙화. 회귀0(tsc 8→8). ★(나) 템플릿 확정본 — 나머지 6개 복제 기준.
+- 2026-06-21 [발견·lab2] (나)구조 = list/로딩가드/공용 3-return 동형. ProcessActivity 복제 시 델타는 L502-504 중간 const(return 사이 statement, JSX 밖 → wrap 무관)·제목 이미 t() 뿐.
 
 === 세션 마무리 (2026-06-20 18:42 기준) ===
 
