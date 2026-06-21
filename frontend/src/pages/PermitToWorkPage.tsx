@@ -41,7 +41,7 @@ import { PermitToWork, PermitToWorkRequest } from '../types/permitToWork.types'
 import { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import useCodeMap from '../hooks/useCodeMap'
 import DevTestFillButton from '../components/common/DevTestFillButton'
-import FlowChartButton from '../components/common/FlowChartButton'
+import PageHeader from '../components/common/PageHeader'
 
 type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
@@ -407,12 +407,6 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   if (viewMode === 'list') {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        {!isExternalMode && (
-          <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-            {t('permit.myApplication', '작업 허가 신청')}
-          </Typography>
-        )}
-
         {/* Search / Filter bar - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -542,12 +536,6 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        {!isExternalMode && (
-          <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-            {t('permit.myApplication', '작업 허가 신청')}
-          </Typography>
-        )}
-
           {/* PC 2열 */}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.permitId')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.permitId}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.status')}</Typography><Box sx={dValSx}><Chip label={getStatusLabel(selectedItem.status)} color={STATUS_COLORS[selectedItem.status] || 'default'} variant="outlined" size="small" /></Box></Box>
@@ -706,12 +694,6 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   if (viewMode === 'create' || viewMode === 'edit') {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        {!isExternalMode && (
-          <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-            {t('permit.myApplication', '작업 허가 신청')}
-          </Typography>
-        )}
-
         {/* Desktop form - table-style layout */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {/* Row: title */}
@@ -1512,29 +1494,29 @@ const PermitToWorkPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0)
 
   return (
-    <Box>
-      <Tabs
-        value={activeTab}
-        onChange={(_, v) => setActiveTab(v)}
-        variant="scrollable"
-        scrollButtons="auto"
-        sx={{ mb: 2, '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}
-      >
-        <Tab label={t('common.dashboard', '대시보드')} />
-        <Tab label={t('permit.myApplication', '작업 허가 신청')} />
-        <Tab label={t('permit.postWorkInspection', '작업 완료 후 점검')} />
-        <Tab label={t('common.report', '레포트')} />
-      </Tabs>
-      {activeTab === 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <FlowChartButton flowKey="ptw" />
-        </Box>
-      )}
+    <PageHeader
+      title={t('nav.permitToWork')}
+      flowKey={activeTab === 0 ? 'ptw' : undefined}
+      tabs={
+        <Tabs
+          value={activeTab}
+          onChange={(_, v) => setActiveTab(v)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ '& .MuiTab-root': { minWidth: 'auto', px: 2, fontSize: '0.85rem' } }}
+        >
+          <Tab label={t('common.dashboard', '대시보드')} />
+          <Tab label={t('permit.myApplication', '작업 허가 신청')} />
+          <Tab label={t('permit.postWorkInspection', '작업 완료 후 점검')} />
+          <Tab label={t('common.report', '레포트')} />
+        </Tabs>
+      }
+    >
       {activeTab === 0 && <PermitDashboardTab />}
       {activeTab === 1 && <PermitApplicationContent mode="my" />}
       {activeTab === 2 && <PostWorkInspectionContent />}
       {activeTab === 3 && <PermitReportTab />}
-    </Box>
+    </PageHeader>
   )
 }
 
