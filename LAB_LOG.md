@@ -73,6 +73,7 @@ lab 환경 실험/정리 기록.
 - 2026-06-21 [발견·lab2] IncidentResponse(사고대응관리) PageHeader 작업 제외 — 현재 사이드바 숨김 상태이며 제거 대상으로 확인됨(사용자 확인, 2026-06-21). 중난도 이관+(나)3-return 하이브리드로 조사까지 완료했으나 적용 보류. 제거 트랙에서 통째 처리 예정. ★App.tsx 래퍼(L137)·페이지 미변경 — 적용 안 함.
   · PageHeader 잔여 대상 재확정: 중난도 래퍼형 1 (ContractorRegistration, 위저드) + 탭셸 3 (SiteSafetyManagement·PermitToWork·ContractorManagement). IncidentResponse 제외로 잔여 4.
 - 2026-06-21 [재편·lab2] 탭셸형(다) 패턴 확정 — SiteSafetyManagement 파일럿 적용. 성립조건=페이지가 탭셸(자식이 viewMode 소유, 셸은 activeTab만). 적용법=셸 return을 PageHeader로 래핑(title=nav키 고정)·기존 Tabs를 tabs prop으로 이관·flowKey=activeTab0 조건부(기존 tab0 우측 FlowChartButton Box 제거). ★자식(SiteSafetyPlanContent) viewMode·mode분기 무수정 — 셸만 손댐. 자식 처리 규칙: list 제목 없으면 무손상 / 있으면 이중제목 조정 필요 / 자식 공유 시 회귀 검증. SiteSafety=list 제목 부재 → 이중제목 충돌 0(무손상 케이스). detail/form 자식 제목은 (가)와 동일 레코드 제목으로 허용. FlowChartButton import→PageHeader import 교체(미사용화 방지). 회귀0(tsc 8→8, 이 파일 신규0). 탭셸 잔여 2(PermitToWork·ContractorManagement, 둘 다 자식 list 제목 보유+TS2339 2건 보유, Permit은 자식 PartnerPermitPage 공유 주의).
+- 2026-06-21 [parked-제목·lab2] SiteSafety 자식 제목 정리 2건 — PageHeader 탭셸(다) 작업과 별개, 자식 SiteSafetyPlanContent 내부 이슈. ① 상세(detail) 서브제목이 탭 불문 "현장 안전 계획 상세"로 동일 출력 → 레코드 제목(예: 항목명)이 아니라 화면 종류 라벨이라 정보량 0, 레코드명 교체 검토 대상. ② 목록(list) 서브제목이 레포트 탭만 존재("레포트"), 나머지 탭은 없음 → 탭 간 불일치. ★둘 다 회귀 아님(셸 무관, 자식 내부), (다) 패턴 검증 영향 없음. SiteSafety 탭셸 PageHeader 파일럿(b8fdce1) 화면 검수 중 발견.
 
 === 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
 
