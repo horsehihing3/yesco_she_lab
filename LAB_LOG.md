@@ -143,6 +143,19 @@ lab 환경 실험/정리 기록.
   · 가상화(A/B) 기각: A=rowSpan 그룹병합 ↔ 행 언마운트 근본 충돌(react-window/virtuoso 둘 다 cross-row rowSpan 미지원) + 바운드 뷰포트 부재. B=rowSpan 제거(병합 비주얼 상실·스크롤 UX 변경·2행 헤더 재구현, 회귀 중) 가능하나 45행 규모라 절감 ~2.5s뿐=실익 부족. → C(경량화)가 직격.
   · ※preview 검증 환경 메모: `vite preview`는 server.proxy 적용되나 백엔드 CORS 허용 origin에 4173 없음(5173 있음) → preview는 **5173 포트**로 띄워야 로그인 통과(재빌드·백엔드 변경 불요).
 
+- 2026-06-21 [성능-전수종결·lab2] ★입력 격자(행 반복×MUI 입력 다량→insertBefore) 동일 패턴 후보 5건 전수 검수 → **대부분 비병목, 전수 적용 불필요로 결론**. 코드 수정 없음(기록만).
+  · 후보(코드상 추정 위험도): RiskAssessmentTab(관리/관리자 격자, Select4+TextField1/행·rowSpan, HIGH) · SafetyChecklistTab(체크리스트 편집, TextField4+DatePicker1/행, HIGH) · RiskAssessmentFormTab(위험성평가폼, TextField3+Select2/행·rowSpan, HIGH중상) · EvalSheetTab(평가표, TextField3+NumberField1/행, MID-HIGH) · ProcessActivityWorkPage(작업내용, TextField2/행·rowSpan3단, MID).
+  · **운영 데이터 실검수 결과**: 위험성평가·안전점검체크리스트·위험성평가폼·공정활동작업내용 4건 = 편집 진입 지연 거의 없음(실데이터 행 수·입력 밀도가 체감 임계 미만 → 코드상 HIGH 추정이 실제론 비병목). 수정 불필요.
+  · 평가표(EvalSheetTab)만 상세 진입 1.5~2초. 단 단일 거대 병목 없음(insertBefore 류 아님 — 데이터매핑+rowSpan계산+스타일144ms+페인트 분산). 고쳐도 실익 적어 보류. ★행 대폭 증가 시 재검토.
+  · 결론: SafetyHazard(945입력·insertBefore 3.8s)는 유독 큰 특수케이스였고 2차(TextField 네이티브화)로 이미 해소. 동일 패턴 전수 적용 불필요.
+  · 공통 GridInput 승격(components/common화)도 현재 재사용처 없어 보류 — 위 후보 중 실제 수정 필요해지면 그때 승격.
+
+- 2026-06-21 [재연결·lab2] ★PPE '필요 보호구' 드롭다운 빈 목록 해소 — parked 항목 종결. 백엔드·프론트 모두 이미 완비(미구현 아님): `GET /ppe-items`(PpeItemController)·`ppeItemApi.getAll`·PpeItemResponse(id·name·category) 존재, 실데이터 8건 시드. 두 파일(ContractorManagement·PermitToWork) `setPpeList([])` → `ppeItemApi.getAll(0,100).then(res=>setPpeList(res.content||[])).catch(()=>{})` 교체 + `import { ppeItemApi }`. category 라벨화: PPE_CATEGORY 코드맵 등록 확인(8건 HEAD/EYE/RESPIRATORY/HEARING/HAND/FOOT/FALL/BODY→한글, /code-manage/details/by-group/PPE_CATEGORY) → 드롭다운 secondary `getPpeCategoryLabel(ppe.category)` 적용(useCodeMap('PPE_CATEGORY'), 양 파일 기존 useCodeMap 패턴 재사용). 회귀 0: 저장구조 requiredPpe(이름 CSV)·detail 표시(selectedItem.requiredPpe 직접) 무변경, 선택지만 채움. id 저장 안 함. tsc 0→0 신규0. ※코드맵 API 경로 메모: 코드그룹 상세=`/code-manage/details/by-group/{groupCode}`(useCodeMap→fetchCodesByGroupCode).
+
+- 2026-06-21 [종결+검수·lab2] PPE 드롭다운 빈목록 parked **종결** — 재연결 검수 통과(작업허가·협력업체 위험성평가 양쪽 8건 + PPE_CATEGORY 한글분류 표시). 라벨 통일: ContractorManagement "보호구" 3곳(상세/PC폼/모바일폼) → `t('ptw.requiredPpe')`("필요 보호구")로 작업허가와 일치(전역 네임스페이스 접근 확인). tsc 0→0.
+  · ★검수 중 혼동 규명: PPE 드롭다운은 **ContractorManagementPage(협력 업체 위험성 평가, /contractor)** 작업계획 신규/수정 폼에 있음. 사용자가 본 **ContractorRegistrationPage(협력 업체 등록, /contractor-registration, 5단계 위저드)에는 PPE 필드 부재**(별개 페이지). dead 아님.
+- 2026-06-21 [예스코확인대기·lab2] ★협력업체 등록 위저드(ContractorRegistration)에 '필요 보호구' 필드 부재 — 의도된 설계(업체등록 ≠ 작업계획)인지 누락인지 도메인 확인 필요. 업체 마스터 등록과 작업계획(위험성평가)은 별개라 부재가 자연스러울 수 있으나 예스코 확정 요망.
+
 === 세션 마무리 (2026-06-21 저녁 기준, HEAD=57f148b) ===
 
 ■ 이번 세션 완료 (전부 커밋·push, IN SYNC)

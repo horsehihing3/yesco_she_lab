@@ -39,6 +39,7 @@ import { FileMetadata } from '../types/common.types'
 import { PermitToWork, PermitToWorkRequest } from '../types/permitToWork.types'
 import { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import useCodeMap from '../hooks/useCodeMap'
+import { ppeItemApi } from '../api/ppeApi'
 import DevTestFillButton from '../components/common/DevTestFillButton'
 import PageHeader from '../components/common/PageHeader'
 
@@ -80,6 +81,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
   const { codeList: permitTypes, getLabel: getPermitTypeLabel } = useCodeMap('PERMIT_TYPE')
   const { codeList: permitStatuses, getLabel: getStatusLabel } = useCodeMap('PERMIT_STATUS')
   const { codeList: riskLevels, getLabel: getRiskLabel } = useCodeMap('RISK_LEVEL')
+  const { getLabel: getPpeCategoryLabel } = useCodeMap('PPE_CATEGORY')
 
   const myId = user?.username || user?.email || ''
   const isExternalMode = mode === 'external'
@@ -137,8 +139,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
     fetchSafetyTemplates().then(all => {
       setTemplates(all)
     }).catch(() => {})
-    // PPE 재구성 중 — 신규 API 연결 전 임시 빈 배열
-    setPpeList([])
+    ppeItemApi.getAll(0, 100).then(res => setPpeList(res.content || [])).catch(() => {})
   }, [])
 
   const loadExistingFiles = async (permitId: string) => {
@@ -775,7 +776,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
                 {ppeList.map(ppe => (
                   <MenuItem key={ppe.id} value={ppe.name}>
                     <Checkbox checked={(form.requiredPpe || '').split(', ').includes(ppe.name)} size="small" />
-                    <ListItemText primary={ppe.name} secondary={ppe.category} />
+                    <ListItemText primary={ppe.name} secondary={ppe.category ? getPpeCategoryLabel(ppe.category) : ''} />
                   </MenuItem>
                 ))}
               </Select>
@@ -979,7 +980,7 @@ export const PermitApplicationContent: React.FC<{ mode: 'my' | 'all' | 'external
               {ppeList.map(ppe => (
                 <MenuItem key={ppe.id} value={ppe.name}>
                   <Checkbox checked={(form.requiredPpe || '').split(', ').includes(ppe.name)} size="small" />
-                  <ListItemText primary={ppe.name} secondary={ppe.category} />
+                  <ListItemText primary={ppe.name} secondary={ppe.category ? getPpeCategoryLabel(ppe.category) : ''} />
                 </MenuItem>
               ))}
             </Select>

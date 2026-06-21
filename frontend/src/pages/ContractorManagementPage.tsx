@@ -31,6 +31,7 @@ import type { SafetyChecklistTemplate } from '../types/safetyChecklist.types'
 import UserSelectModal, { UserInfo } from '../components/common/UserSelectModal'
 import DeptUserMultiSelectModal from '../components/common/DeptUserMultiSelectModal'
 import useCodeMap from '../hooks/useCodeMap'
+import { ppeItemApi } from '../api/ppeApi'
 import SafetyChecklistTab, { SafetyChecklistTabRef } from '../components/ehs/SafetyChecklistTab'
 import ContractorReportTab from '../components/contractor/ContractorReportTab'
 import ContractorDashboardTab from '../components/contractor/ContractorDashboardTab'
@@ -73,6 +74,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   const { codeList: permitTypes, getLabel: getPermitTypeLabel } = useCodeMap('PERMIT_TYPE')
   const { codeList: permitStatuses, getLabel: getStatusLabel } = useCodeMap('PERMIT_STATUS')
   const { codeList: riskLevels, getLabel: getRiskLabel } = useCodeMap('RISK_LEVEL')
+  const { getLabel: getPpeCategoryLabel } = useCodeMap('PPE_CATEGORY')
 
   const { canSee } = useButtonRules()
   const checklistRef = useRef<SafetyChecklistTabRef>(null)
@@ -122,8 +124,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
     fetchSafetyTemplates().then(all => {
       setTemplates(all)
     }).catch(() => {})
-    // PPE 재구성 중 — 신규 API 연결 전 임시 빈 배열
-    setPpeList([])
+    ppeItemApi.getAll(0, 100).then(res => setPpeList(res.content || [])).catch(() => {})
   }, [])
 
   // Release edit lock on browser close / tab close while in approval-mode detail
@@ -543,7 +544,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           <Box sx={dRowSx}><Typography sx={dLabelSx}>시작일</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatDateTime(selectedItem.workStartDate) || ''}</Typography></Box><Typography sx={dLabelSx}>종료일</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{formatDateTime(selectedItem.workEndDate) || ''}</Typography></Box></Box>
           {selectedItem.workDescription && <Box sx={dRowSx}><Typography sx={dLabelSx}>작업내용</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.workDescription}</Typography></Box></Box>}
           {selectedItem.safetyMeasures && <Box sx={dRowSx}><Typography sx={dLabelSx}>안전조치</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.safetyMeasures}</Typography></Box></Box>}
-          <Box sx={dRowSx}><Typography sx={dLabelSx}>보호구</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requiredPpe || ''}</Typography></Box><Typography sx={dLabelSx}>위험요인</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.hazardFactors || ''}</Typography></Box></Box>
+          <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.requiredPpe')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.requiredPpe || ''}</Typography></Box><Typography sx={dLabelSx}>위험요인</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.hazardFactors || ''}</Typography></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>비상연락처</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.emergencyContact || ''}</Typography></Box><Typography sx={dLabelSx}>비고</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5, whiteSpace: 'pre-wrap' }}>{selectedItem.notes || ''}</Typography></Box></Box>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>일정 반복</Typography><Box sx={dValSx}><Typography variant="body2" sx={{ py: 0.5 }}>{!selectedItem.repeatType || selectedItem.repeatType === 'NONE' ? '반복 안 함' : selectedItem.repeatType === 'WEEKDAYS' ? (selectedItem.repeatDays || '').split(',').map((d: string) => ({MON:'월',TUE:'화',WED:'수',THU:'목',FRI:'금',SAT:'토',SUN:'일'}[d] || d)).join(', ') : `${selectedItem.repeatInterval || 1} ${selectedItem.repeatType === 'DAILY' ? '일' : selectedItem.repeatType === 'WEEKLY' ? '주' : '개월'}마다`}</Typography></Box></Box>
           {/* 작성자 / 작성일자 — 계획 승인자 위 */}
@@ -830,7 +831,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
           </Box>
           {/* Row: requiredPpe + hazardFactors */}
           <Box sx={{ display: 'flex', borderBottom: 1, borderColor: (theme: any) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.25)' : 'divider' }}>
-            <Typography sx={labelSx}>보호구</Typography>
+            <Typography sx={labelSx}>{t('ptw.requiredPpe')}</Typography>
             <Box sx={valSxBorder}>
               <Select fullWidth size="small" multiple displayEmpty
                 value={form.requiredPpe ? form.requiredPpe.split(', ').filter(Boolean) : []}
@@ -842,7 +843,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
                 {ppeList.map(ppe => (
                   <MenuItem key={ppe.id} value={ppe.name}>
                     <Checkbox checked={(form.requiredPpe || '').split(', ').includes(ppe.name)} size="small" />
-                    <ListItemText primary={ppe.name} secondary={ppe.category} />
+                    <ListItemText primary={ppe.name} secondary={ppe.category ? getPpeCategoryLabel(ppe.category) : ''} />
                   </MenuItem>
                 ))}
               </Select>
@@ -1066,7 +1067,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
             <TextField size="small" fullWidth multiline rows={2} value={form.safetyMeasures || ''} onChange={(e) => setForm({ ...form, safetyMeasures: e.target.value })} />
           </Box>
           <Box>
-            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>보호구</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ mb: 0.5, bgcolor: 'grey.200', px: 1.5, py: 0.75, borderRadius: 0.5 }}>{t('ptw.requiredPpe')}</Typography>
             <Select fullWidth size="small" multiple displayEmpty
               value={form.requiredPpe ? form.requiredPpe.split(', ').filter(Boolean) : []}
               onChange={(e) => setForm({ ...form, requiredPpe: (e.target.value as string[]).join(', ') })}
@@ -1077,7 +1078,7 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
               {ppeList.map(ppe => (
                 <MenuItem key={ppe.id} value={ppe.name}>
                   <Checkbox checked={(form.requiredPpe || '').split(', ').includes(ppe.name)} size="small" />
-                  <ListItemText primary={ppe.name} secondary={ppe.category} />
+                  <ListItemText primary={ppe.name} secondary={ppe.category ? getPpeCategoryLabel(ppe.category) : ''} />
                 </MenuItem>
               ))}
             </Select>
