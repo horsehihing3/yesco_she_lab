@@ -26,17 +26,14 @@ import ThemeSelector from './ThemeSelector'
 const IMP_ACTIVE_KEY = 'imp_active'
 
 // DEV ONLY — 납품 전 삭제
+// 6역할 대표 1명씩 (권한 현실화). 시드 18명(역할당 3) 중 대표만 DEV 전환에 노출.
 const DEV_ACCOUNTS = [
-  { id: 'jiwan.nam',     name: '남지완',   label: '글로벌경영관리팀 팀장' },
-  { id: 'yeseo.moon',    name: '문예서',   label: '글로벌경영관리팀 팀원' },
-  { id: 'jungho.yoo',    name: '유정호',   label: '글로벌경영관리팀 팀원' },
-  { id: 'horsehihing3',  name: '정경석',   label: '글로벌경영관리팀 팀원' },
-  { id: 'yujeong.jung',  name: '정유정',   label: '글로벌경영관리팀 팀원' },
-  { id: 'gs5655',        name: '홍길동',   label: '글로벌경영관리팀 팀원' },
-  { id: 'junseok.kwak',  name: '곽준석',   label: 'T/S팀 팀장' },
-  { id: 'yuhyun.ha',     name: '하유현',   label: 'T/S팀 팀원' },
-  { id: 'jihyun.nam',    name: '남지현',   label: '교육훈련관리자' },
-  { id: 'com4in',        name: 'com4in',  label: '관리자' },
+  { id: 'jiwan.nam',     name: '남지완',   role: 'SYSTEM_ADMIN',  roleKey: 'role.systemAdmin' },
+  { id: 'yeseo.moon',    name: '문예서',   role: 'EHS_ADMIN',     roleKey: 'role.ehsAdmin' },
+  { id: 'junseok.kwak',  name: '곽준석',   role: 'SAFETY_ADMIN',  roleKey: 'role.safetyAdmin' },
+  { id: 'jihyun.nam',    name: '남지현',   role: 'HEALTH_ADMIN',  roleKey: 'role.healthAdmin' },
+  { id: 'jungho.yoo',    name: '유정호',   role: 'PARTNER_ADMIN', roleKey: 'role.partnerAdmin' },
+  { id: 'yujeong.jung',  name: '정유정',   role: 'TEAM_MEMBER',   roleKey: 'role.teamMember' },
 ]
 
 const Header: React.FC = () => {
@@ -173,7 +170,7 @@ const Header: React.FC = () => {
             <Typography variant="caption" color="text.disabled">DEV 계정 전환</Typography>
           </Box>
           <Divider />
-          {DEV_ACCOUNTS.map(({ id, name, label }) => (
+          {DEV_ACCOUNTS.map(({ id, name, roleKey }) => (
             <MenuItem
               key={id}
               onClick={() => handleDevLogin(id)}
@@ -189,7 +186,7 @@ const Header: React.FC = () => {
               }
               <Typography variant="body2">{name}</Typography>
               <Typography variant="caption" color="text.disabled" sx={{ ml: 0.75 }}>
-                {label}
+                · {t(roleKey)}
               </Typography>
             </MenuItem>
           ))}

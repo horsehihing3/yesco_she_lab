@@ -1501,6 +1501,8 @@
   "role": {
     "systemAdmin": "超级管理员",
     "ehsAdmin": "公司SHE负责人",
+    "safetyAdmin": "安全管理员",
+    "partnerAdmin": "承包商管理员",
     "teamAdmin": "团队SHE负责人",
     "teamMember": "普通用户",
     "riskAssessAdmin": "风险评估管理员",

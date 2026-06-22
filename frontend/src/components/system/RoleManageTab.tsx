@@ -57,35 +57,23 @@ interface CompanyTreeNode {
   children: CompanyTreeNode[]
 }
 
+// 권한 현실화: 17개 세부역할 → 6개 통합역할 (2026-06-22)
+//   기존 안전7→SAFETY_ADMIN / 보건4→HEALTH_ADMIN / 협력업체 신설 PARTNER_ADMIN / 환경·QNA·TEAM_ADMIN 흡수.
 const ROLES = [
-  // 시스템 기본
   { value: 'SYSTEM_ADMIN', labelKey: 'role.systemAdmin', group: 'system' },
   { value: 'EHS_ADMIN', labelKey: 'role.ehsAdmin', group: 'system' },
-  { value: 'TEAM_ADMIN', labelKey: 'role.teamAdmin', group: 'system' },
-  { value: 'TEAM_MEMBER', labelKey: 'role.teamMember', group: 'system' },
-  // 안전관리
-  { value: 'RISK_ASSESS_ADMIN', labelKey: 'role.riskAssessAdmin', group: 'safety' },
-  { value: 'NEAR_MISS_ADMIN', labelKey: 'role.nearMissAdmin', group: 'safety' },
-  { value: 'AUDIT_ADMIN', labelKey: 'role.auditAdmin', group: 'safety' },
-  { value: 'PERMIT_ADMIN', labelKey: 'role.permitAdmin', group: 'safety' },
-  { value: 'PPE_ADMIN', labelKey: 'role.ppeAdmin', group: 'safety' },
-  { value: 'TRAINING_ADMIN', labelKey: 'role.trainingAdmin', group: 'safety' },
-  { value: 'EMERGENCY_ADMIN', labelKey: 'role.emergencyAdmin', group: 'safety' },
-  // 보건관리
+  { value: 'SAFETY_ADMIN', labelKey: 'role.safetyAdmin', group: 'safety' },
   { value: 'HEALTH_ADMIN', labelKey: 'role.healthAdmin', group: 'health' },
-  { value: 'OCCUPATIONAL_ADMIN', labelKey: 'role.occupationalAdmin', group: 'health' },
-  { value: 'WORK_ENV_ADMIN', labelKey: 'role.workEnvAdmin', group: 'health' },
-  { value: 'ERGONOMICS_ADMIN', labelKey: 'role.ergonomicsAdmin', group: 'health' },
-  // 환경관리
-  { value: 'COMPLIANCE_ADMIN', labelKey: 'role.complianceAdmin', group: 'env' },
-  // SHE 경영
-  { value: 'QNA_ADMIN', labelKey: 'role.qnaAdmin', group: 'ehs' },
+  { value: 'PARTNER_ADMIN', labelKey: 'role.partnerAdmin', group: 'partner' },
+  { value: 'TEAM_MEMBER', labelKey: 'role.teamMember', group: 'system' },
 ]
 
 const ROLE_COLORS: Record<string, 'error' | 'warning' | 'info' | 'success' | 'default' | 'primary' | 'secondary'> = {
   SYSTEM_ADMIN: 'error',
   EHS_ADMIN: 'warning',
-  TEAM_ADMIN: 'info',
+  SAFETY_ADMIN: 'primary',
+  HEALTH_ADMIN: 'info',
+  PARTNER_ADMIN: 'secondary',
   TEAM_MEMBER: 'success',
 }
 

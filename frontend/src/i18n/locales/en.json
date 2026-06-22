@@ -1501,6 +1501,8 @@
   "role": {
     "systemAdmin": "Super Admin",
     "ehsAdmin": "Company SHE Manager",
+    "safetyAdmin": "Safety Manager",
+    "partnerAdmin": "Partner Manager",
     "teamAdmin": "Team SHE Manager",
     "teamMember": "General User",
     "riskAssessAdmin": "Risk Assessment Admin",

@@ -1408,6 +1408,8 @@
   "role": {
     "systemAdmin": "Super Admin",
     "ehsAdmin": "회사 SHE 담당자",
+    "safetyAdmin": "안전 관리자",
+    "partnerAdmin": "협력업체 관리자",
     "teamAdmin": "팀 SHE 담당자",
     "teamMember": "일반사용자",
     "riskAssessAdmin": "위험성 평가 관리자",
