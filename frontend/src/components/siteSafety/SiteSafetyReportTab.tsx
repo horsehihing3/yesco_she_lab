@@ -145,6 +145,17 @@ const SiteSafetyReportTab: React.FC = () => {
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>계획 승인자</TableCell>
               <TableCell colSpan={3}>{formatUserName(item.planApproverTeam, item.planApproverName, item.planApproverPosition) || ''}</TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>완료 승인자</TableCell>
+              <TableCell colSpan={3}>
+                {formatUserName(item.completionApproverTeam, item.completionApproverName, item.completionApproverPosition) || ''}
+                {item.completionApprovedAt && (
+                  <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                    ({item.completionApprovedBy || ''} | {formatDate(item.completionApprovedAt)})
+                  </Typography>
+                )}
+              </TableCell>
+            </TableRow>
             {item.workDescription && (
               <TableRow>
                 <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>작업 내용</TableCell>
@@ -219,7 +230,7 @@ const SiteSafetyReportTab: React.FC = () => {
               <TableCell sx={{ color: (item.findingCount || 0) > 0 ? 'error.main' : 'inherit', fontWeight: 'bold' }}>{item.findingCount || 0}</TableCell>
               <TableCell sx={{ ...headerCellSx, bgcolor: 'grey.100' }}>완료일</TableCell>
               <TableCell sx={{ fontFamily: 'monospace' }}>
-                {item.status === 'DONE' && item.modifiedAt ? formatDate(item.modifiedAt) : ''}
+                {item.completionApprovedAt ? formatDate(item.completionApprovedAt) : (item.status === 'DONE' && item.modifiedAt ? formatDate(item.modifiedAt) : '')}
               </TableCell>
             </TableRow>
           </TableBody>
