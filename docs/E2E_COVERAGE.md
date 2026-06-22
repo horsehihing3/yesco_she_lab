@@ -1,7 +1,7 @@
 # E2E 커버리지 & 버그 로그
 
 > 메뉴별 E2E(3중 검증)로 표준화(PersonRef/DTO/예외)를 검증한 결과·이력.
-> 실행 스크립트: `coord/e2e_*.py` (도메인별, Python stdlib urllib·자기정리).
+> E2E 스크립트(도메인별·Python stdlib urllib·자기정리)는 coord/ 경량화 시 제거됨 — git history 보존: `git show ef32b6f^:coord/e2e_<domain>_test.py`.
 > 테스트 레코드는 `ZZ_E2E_*` / `TEST_<TAG>_*` 마커로 등록 후 **반드시 자기삭제**(soft-delete 포함). 종료 시 마커 0건 확인.
 
 ## 검증 방법 (3중)

@@ -5,10 +5,11 @@
 
 ---
 
-## 0. 현재 협업 체제 (2-PC 병렬)
+## 0. 협업 체제 (2-PC 병렬, 종료)
 - **LEAD**(메인 PC · Opus): 설계·결정, 백엔드, 죽은 파일 삭제, 구조적 수정.
 - **HELPER**(노트북 · Sonnet): 지시 수행 + 검증. git(`coord/*.md`)로만 소통.
 - 채널: `coord/LEAD-TO-HELPER.md`(지시) · `coord/HELPER-TO-LEAD.md`(보고). 규칙: pull --rebase, 공유브랜치 force-push 금지, DB 변형/백엔드 재시작은 LEAD만.
+- **(종료) 2-PC 협업 끝나 `coord/` 제거됨(커밋 ef32b6f), 현재 단독개발 — 위 0번 블록은 옛 협업 체제 기록.**
 
 ---
 
