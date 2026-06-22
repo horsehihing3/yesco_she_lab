@@ -1,6 +1,7 @@
 package com.smartehs.config;
 
 import com.smartehs.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 미인증/만료 토큰 → 403(Spring 기본) 대신 401 직접 반환.
+                // 프론트(axiosInstance)가 401에서만 refresh-token 갱신 후 실패 시 로그인 이동을 수행하므로 401이어야 동작.
+                // sendError는 /error로 재포워딩되어 다시 403이 나므로 setStatus로 직접 응답.
+                .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"success\":false,\"message\":\"Unauthorized\"}");
+                }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**",
