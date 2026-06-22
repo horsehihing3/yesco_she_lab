@@ -15,7 +15,6 @@ import SafetyHazardInfoPage from './pages/SafetyHazardInfoPage'
 import SafetyAccidentInfoPage from './pages/SafetyAccidentInfoPage'
 import NearMissPage from './pages/NearMissPage'
 import HealthCheckupPage from './pages/HealthCheckupPage'
-import OccupationalExposurePage from './pages/OccupationalExposurePage'
 import WorkplaceDrawingsPage from './pages/WorkplaceDrawingsPage'
 import WorkplaceDrawingsViewPage from './pages/WorkplaceDrawingsViewPage'
 import AdminPage from './pages/AdminPage'
@@ -114,7 +113,6 @@ function App() {
         <Route path="contractor" element={<ContractorManagementPage />} />
         <Route path="site-safety-mgmt" element={<SiteSafetyManagementPage />} />
         <Route path="health-checkup/admin" element={<HealthCheckupPage />} />
-        <Route path="occupational-exposure" element={<OccupationalExposurePage />} />
         <Route path="workplace-drawings/view" element={<WorkplaceDrawingsViewPage />} />
         <Route path="approval" element={<ApprovalPage />} />
         <Route path="checklist" element={<ChecklistPage />} />
