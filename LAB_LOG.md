@@ -418,3 +418,22 @@ D. 저우선: PartnerMgmt 모드토글 · i18n 고아 ns 일괄정리(incidentRe
 ■ 🟡 백엔드 orphan 트랙 — 전 과정 종료
 재검증 → 코드제거(2097f1b·592cfdd) → 런타임검증 → 백업(e4c65fe) →
 클론 DROP+검증 → V232(54aaa35). 남은 건 운영본 적용(인프라 후)뿐.
+
+■ 📄 md 문서 현행화/경량화 — 1단계 완료, 2~4단계 대기
+- [완료] 1단계: ADR-001 작성 — 8504c05
+  · docs/adr/ADR-001-user-table-and-hr-sync.md (tb_user 폐기 / T_IDM_USER 유지)
+  · CLAUDE.md L69 dangling 링크 해소. 이후 문서 현행화의 기준점.
+- 전체 md 스캔 완료(15개 분류). 다음 세션이 이어받을 2~4단계:
+  · 2단계 [버그 건지기] coord/ 미해결 버그 4종이 lab2에서 살아있는지 확인 후
+    LAB_LOG/PROJECT_CONTEXT로 이관 — ① modified_by varbinary→date(3테이블, PersonRef WARN과 연관)
+    ② risk_assessment.author_user_id 미존재 CREATE 500 ③ site_safety completionApprovedAt 미기록
+    ④ 건강검진 created_by_dept. ⚠️ 이관 전 coord/ 삭제 금지(정보 유실 방지)
+  · 3단계 [현행화] SYSTEM_ANALYSIS.md·PROJECT_CONTEXT.md의 tb_user 역방향 기술,
+    제거된 화학/환경/PSM 모듈, 옛 환경값(경로/DB/포트/Flyway) 정정. ADR-001 기준.
+  · 4단계 [경량화] coord/ 6개(OPUS↔SONNET 2개는 즉시폐기 가능) + E2E_COVERAGE 통합.
+- 핵심 사실(현행화 기준, 코드 확정):
+  · 인증 정본 = T_IDM_USER (tb_user/tb_dept는 잔재, 단 tb_user_access_list는 활성 별개)
+  · Flyway off(의도 아닌 현상태) + 수동 db/ 스크립트 최신 V232. ※ 곧 예스코 운영DB(VPN)로
+    개발환경 전환 예정 — 그 환경이 향후 기준.
+  · 제거 확정: 화학/MSDS/PSM/환경전체/ContractorEval/AccidentReport/ChecklistResult +
+    V232 DROP orphan. ⚠️ 활성이라 보존: ChecklistTemplate / EmergencyResponsePage / PrePlacementExam.
