@@ -5,22 +5,14 @@ export const ABSTRACT_ROLE_KEYS: ReadonlySet<string> = new Set([
   'guest', 'writer', 'auditor', 'superAdmin', 'planApprover', 'completionApprover',
 ])
 
+// 권한 현실화: 일반관리자 역할 = 6역할 중 admin 4종(업무영역별).
+//   SYSTEM_ADMIN=superAdmin(항상 ON·abstract) / TEAM_MEMBER=일반사용자(관리역할 아님)이라 제외.
+//   메뉴 최상위(SHE경영/안전/보건/협력)와 1:1 매핑.
 export const GENERAL_ADMIN_ROLE_OPTIONS: { key: string; label: string }[] = [
-  { key: 'EHS_ADMIN',           label: '회사 SHE 담당자' },
-  { key: 'TEAM_ADMIN',          label: '팀 SHE 담당자' },
-  { key: 'RISK_ASSESS_ADMIN',   label: '위험성 평가 관리자' },
-  { key: 'NEAR_MISS_ADMIN',     label: '사고/아차사고 관리자' },
-  { key: 'AUDIT_ADMIN',         label: '감사 및 점검 관리자' },
-  { key: 'PERMIT_ADMIN',        label: '작업 허가 관리자' },
-  { key: 'PPE_ADMIN',           label: '보호구 장비 관리자' },
-  { key: 'TRAINING_ADMIN',      label: '교육·훈련 관리자' },
-  { key: 'EMERGENCY_ADMIN',     label: '비상대응 관리자' },
-  { key: 'HEALTH_ADMIN',        label: '검진 관리자' },
-  { key: 'OCCUPATIONAL_ADMIN',  label: '직업건강 관리자' },
-  { key: 'WORK_ENV_ADMIN',      label: '작업환경측정 관리자' },
-  { key: 'ERGONOMICS_ADMIN',    label: '인체공학 관리자' },
-  { key: 'COMPLIANCE_ADMIN',    label: '법규 준수 관리자' },
-  { key: 'QNA_ADMIN',           label: 'Q&A 관리자' },
+  { key: 'EHS_ADMIN',     label: '회사 SHE 담당자' },
+  { key: 'SAFETY_ADMIN',  label: '안전 관리자' },
+  { key: 'HEALTH_ADMIN',  label: '보건 관리자' },
+  { key: 'PARTNER_ADMIN', label: '협력업체 관리자' },
 ]
 
 export interface ButtonRule {
