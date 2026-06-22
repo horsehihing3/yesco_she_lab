@@ -321,3 +321,36 @@ D. 저우선: PartnerMgmt 모드토글 · i18n 고아 ns 일괄정리(incidentRe
 ■ 기술 기준선
 - tsc 회귀 기준: 0→0 신규0 (기존 "8→8" baseline 무효).
 - 제거 작업은 항목별 커밋 분리(orphan 백엔드 / i18n / 죽은 프론트) → 부분 롤백 용이.
+
+=== 코드정리 실행 결과 (2026-06-22, HEAD=486f241) ===
+
+■ 🟢 즉시제거 트랙 — 전부 완료
+- [완료] i18n 고아 ns 17개 제거 — b123c5f (-2448 lines, ko/en/zh)
+  · SKIP: lc (lc.tabs.* = 라이브 menuKey via t(), MenuManageTab/buttonManageData에서 정의)
+- [완료] parked 무정보 서브타이틀 4건 — 73844bf (-24 lines)
+  · SiteSafety / Contractor(tabTitle, noUnusedLocals로 const도 제거) / Permit postWorkInspection
+  · + PermitReportTab.tsx:259 "레포트"(탭라벨 중복) — 화면확인 중 발견해 동반 제거
+  · 유지: PermitReportTab h5 "작업 허가 레포트"(레포트 고유 헤더, 인쇄 포함)
+- [완료] OccupationalExposure orphan 페이지 일괄 제거 — 486f241 (-2048 lines)
+  · 삭제: OccupationalExposurePage + PrePlacementExamTab + types + App 라우트/import
+  · 전용 i18n 동반 제거: occupationalExposure ns + nav.prePlacementExam (ko/en/zh)
+  · 4단계 확인(라우트/메뉴/프로그래매틱 navigate/공유) 전부 0건 후 제거
+
+■ 보류로 넘어간 항목 (다음 판단 대상)
+- nav.occupationalHealth — 코드 참조 0(이제 고아)이나 제거 보류.
+  사유: nav.occupationalDiseaseMgmt와 동일 라벨("직업병 관리") 충돌 후보.
+  → 🔴 ODM 트랙에서 두 키 함께 판단할 것. (단독 제거 금지)
+- /pre-placement-exam 백엔드 컨트롤러 — 프론트 제거로 orphan 추가됨.
+  → 🟡 DB게이트 백엔드 orphan 트랙에 합류(인프라 설치 후 처리).
+
+■ 다음 단계 (남은 트랙)
+- 🟡 DB DROP 동반 백엔드 orphan 5묶음(ChecklistTemplate/ChecklistResult/EhsKpiPlan/
+  HazardFactor/WorkplaceMeasurement) + pre-placement-exam → 인프라 설치 후 별도 처리
+- 🔴 보류(예스코 확인 전 동결): IncidentResponse, ODM 4묶음+odm/cm i18n,
+  PartnerEvalTab 표준화, §24/§75 분리, nav.occupationalHealth 라벨충돌
+
+■ 세션 메모
+- 작업 방식: Claude Code 명령은 한 번에 하나씩, 응답 받고 다음 명령. 제거는 항목별 커밋 분리.
+- 화면 확인이 orphan 판정 보강에 유효했음(PermitReportTab:259는 화면 확인 중 발견).
+- 토큰 만료 조회 문제 별도 수정·커밋(008e211 fix(auth) 401/403) — 숭이 직접 처리, 제거 트랙과 무관.
+- 미push 로컬 커밋 다수 존재. push 여부 미결정.
