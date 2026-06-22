@@ -278,6 +278,7 @@ B. 예스코/대표 확인 대기(코드 아님, 협의 질문):
    - IncidentResponse 12건 비상데이터 처리(현 테스트데이터라 보류 가능)
 C. ④ edit-lock NPE 근본 백필(T_IDM_USER.UIDNumber NULL 257행). ★선행: 예스코 운영본 재측정(현 수치는 lab2 클론 실측). 배포 게이트.
 D. 저우선: PartnerMgmt 모드토글 · i18n 고아 ns 일괄정리(incidentResponsePage en/zh·registerInfoByType·nearMissInfoByType·환경/PSM/화학) · parked 자식 서브타이틀 · EvalSheet 평가표 상세 1.5~2초(행 대폭증가 시 재검토).
+E. site-safety completionApprovedAt 이중결함(SQL CASE+컬럼) — 컬럼추가+transition SQL 양쪽 수정 필요
 
 ■ 다음 시작 권장
 - D의 가벼운 것(i18n 고아정리/PartnerMgmt) 워밍업, 또는 B 예스코 협의 먼저. A·C는 선행조건(예스코 확정/운영본 측정) 충족 후.
@@ -437,3 +438,5 @@ D. 저우선: PartnerMgmt 모드토글 · i18n 고아 ns 일괄정리(incidentRe
     개발환경 전환 예정 — 그 환경이 향후 기준.
   · 제거 확정: 화학/MSDS/PSM/환경전체/ContractorEval/AccidentReport/ChecklistResult +
     V232 DROP orphan. ⚠️ 활성이라 보존: ChecklistTemplate / EmergencyResponsePage / PrePlacementExam.
+
+- 2026-06-22 [발견-버그·lab2] site-safety completionApprovedAt 항상 null — 이중결함: SiteSafetyPlanMapper.xml:128-139 transition SQL에 completion 단계 CASE 부재 + tb_site_safety_plan.completion_approved_at 컬럼 자체 미존재(DB 실측 0). 완료승인해도 시각 기록 0. coord/ 이관건. 해소엔 컬럼추가(Initializer 패턴)+SQL CASE 양쪽 필요.

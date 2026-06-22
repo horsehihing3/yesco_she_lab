@@ -311,6 +311,7 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 | 🟡 중간 | 계획승인·완료승인 버튼 권한 체크 누락 (2개 탭) — PENDING 상태면 누구나 승인 가능 | HealthCheckupPlanTab.tsx (프론트), SiteSafetyPlanService.java (백엔드) — 둘 다 승인자 확인 없음 | 지정 승인자 or Admin 체크 추가 필요 (다른 탭과 동일 패턴 적용) |
 | 🔵 낮음 | 감사 실시에서 체크리스트 직접 연결 불가 — 계획 단계에서 미연결 시 실시에서 추가 방법 없음 | AuditExecutionTab.tsx — checklistTemplateId를 연결된 감사계획에서만 가져옴, 실시 수정화면에 선택 UI 없음 | 감사 실시 수정 화면에 체크리스트 선택 드롭다운 추가 필요 |
 | 🟡 중간 | 감사 실시 상세 화면 UX 2건 — ① 수정 버튼 없어 감사원·감사일·등급 편집 불가 (handleOpenEdit 함수는 있으나 버튼 미연결) ② 체크리스트 없을 때 저장 버튼이 재조회만 하고 "저장됐습니다" 표시 (오해 유발, 체크리스트 있을 때는 정상) | AuditExecutionTab.tsx 상세 뷰 버튼 영역 | ① 상세 뷰에 수정 버튼 추가 ② 체크리스트 없을 때 저장 버튼 숨김 처리 |
+| 🟡 중간 | modified_by 타입 자가복구 경로 부재 — lab2 DB는 3컬럼 모두 nvarchar(MAX)로 수동 교정돼 현재 통과하나, PersonRefColumnsInitializer.addColumn은 컬럼 존재만 보고 skip할 뿐 ALTER COLUMN 타입교정 없음. 신규/타 DB(예스코 운영본)에서 옛 타입으로 생성되면 UPDATE 500 재발 | PersonRefColumnsInitializer.java:90-95 / tb_safety_hazard_form·tb_safety_accident_form·tb_process_activity_form.modified_by | 운영본 설치 시 3컬럼 nvarchar(MAX) 확인, 또는 Initializer에 ALTER COLUMN 타입교정 추가 |
 
 ---
 
