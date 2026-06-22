@@ -354,3 +354,35 @@ D. 저우선: PartnerMgmt 모드토글 · i18n 고아 ns 일괄정리(incidentRe
 - 화면 확인이 orphan 판정 보강에 유효했음(PermitReportTab:259는 화면 확인 중 발견).
 - 토큰 만료 조회 문제 별도 수정·커밋(008e211 fix(auth) 401/403) — 숭이 직접 처리, 제거 트랙과 무관.
 - 미push 로컬 커밋 다수 존재. push 여부 미결정.
+
+=== 백엔드 orphan 코드 제거 (2026-06-22, HEAD=592cfdd) ===
+
+■ 🟡 백엔드 orphan 코드 제거 — 완료 (테이블 DROP은 미실행)
+- [완료] clean 3묶음 — 2097f1b (-1720 lines, 26 files)
+  · EhsKpiPlan / HazardFactor / WorkplaceMeasurement(+Detail)
+  · controller/service/mapper(+xml)/model/dto 전체. 프론트0·라이브0·외부FK0.
+- [완료] Checklist 2묶음 + 공유 ExcelService — 592cfdd (-1619 lines, 21 files)
+  · ChecklistTemplate(Master/Item) + ChecklistResult(Master/Item) + ChecklistExcelService
+  · 🔴 보존(이름 유사 라이브): ChecklistTemplate(단수 model) /
+    ChecklistTemplateResponse / ChecklistTemplateBatchSaveRequest — ChecklistController가 사용
+  · 화이트리스트 삭제로 라이브 클래스 분리, compileJava 통과
+
+■ 런타임 검증 — 통과
+- 백엔드 재기동: Started 정상(6s), 삭제 클래스 관련 에러 0건.
+- 라이브 /checklist/templates → 200, orphan 5경로(/checklist-templates·/checklist-results·
+  /ehs-kpi-plan·/hazard-factors·/workplace-measurement) → 404(의도된 결과).
+- 프론트 라이브 화면(체크리스트 등) 정상 동작 확인.
+- ※ 검증 중 로그인 500 발생 → 원인은 백엔드 미기동(서버 종료 상태)일 뿐, 삭제와 무관 확정.
+
+■ 다음 단계 — 테이블 DROP (인프라 설치 후, 미착수)
+- DROP 대상 테이블(코드는 제거됐으나 테이블 존치):
+  tb_ehs_kpi_plan, tb_hazard_factor, tb_workplace_measurement(_detail),
+  tb_checklist_template_master/_item, tb_checklist_result_master/_item
+- ⚠️ 선행확인 필수: SchemaInitializer류 자동 테이블 재생성 여부.
+  초기화기가 재기동 시 테이블을 부활시키면 DROP SQL만으론 부족 → 초기화기도 함께 비활성화 필요.
+- Checklist 테이블 DROP은 item → master 순(또는 ON DELETE CASCADE 의존, V17).
+- 운영본 실데이터 없음 확인 후 DROP(되돌릴 수 없음).
+
+■ 참고 — 기존부터 있던 startup WARN (이번 작업 무관, 추후 점검 후보)
+- PersonRefColumnsInitializer WARN 2건:
+  tb_legal_compliance_plan.modified_by, tb_od_plan.created_by 컬럼명 mismatch.
