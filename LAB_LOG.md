@@ -281,3 +281,43 @@ D. 저우선: PartnerMgmt 모드토글 · i18n 고아 ns 일괄정리(incidentRe
 
 ■ 다음 시작 권장
 - D의 가벼운 것(i18n 고아정리/PartnerMgmt) 워밍업, 또는 B 예스코 협의 먼저. A·C는 선행조건(예스코 확정/운영본 측정) 충족 후.
+
+=== 코드정리 스캔 (2026-06-22, HEAD=45f803b) ===
+※ 인프라 설치 전 '제거 후보 전수 스캔'. READ-ONLY, 프론트 endpoint grep + 백엔드 내부 호출처 grep 교차검증 완료. 제거·수정 미실행.
+
+■ 프로젝트 맥락 (다음 세션용 고정 메모)
+- 예스코 납품용 Smart EHS. 인프라(예스코 AP·DB) 설치 전 코드 정리 단계.
+- 개발 히스토리: 컴포인 대표가 그때그때 아이디어 주면 안지원 매니저가 5개월 산발 개발 → 체계 없이 기능 누적 → orphan·중복·미배선 기능 다수.
+- 숭이: 6월 초 투입, 권한관리·메뉴관리 담당.
+- 레포: 정본 yescoSHE(안매니저와 git 공유) → 별도 레포 lab2 → 숭이 단독 수정. 복구처 = upstream(jiwon2ahn/smart_ehs_com4in) 또는 git history.
+
+■ 의사결정 원칙
+- 중복 제거 결정권 = 우리 셋(숭이·Claude.ai·Claude Code). 예스코 협의 대상 아님.
+- 판단 기준 = 코드상 중복/orphan (업무요구 아님).
+- 전략: 먼저 제거 → 필요 시 재개발 or 컴포인 원본에서 이식 (원본 보존 → 공격적 제거 OK).
+- 예스코 담당자는 비개발자: 화면 단위 "쓴다/안쓴다/추가"만 결정. 그것도 김이사님 업무별 질문지→담당자 질의응답 취합 후 가능. → "업무결정 필요" 항목은 답 나올 때까지 동결.
+
+■ 스캔 결과 (READ-ONLY, 교차검증 완료)
+🟢 즉시 제거 가능 (업무결정 불필요)
+- 프론트: OccupationalExposurePage (메뉴 0참조 orphan 라우트)
+- parked 서브타이틀 3건: SiteSafety / Contractor tabTitle / Permit (cosmetic)
+- i18n 도메인 잔재 ns: carbon, chem, comp, compAction, compEval, envMon, waste, water, psm, rm, fs, lf + 소형 무해(kpi/lc/pm/messageCategories/status/spreadsheet)
+  ※ permit/ptw 등 인접 라이브 키 블록제거 금지, ns 단위로만
+🟡 즉시 제거 가능하나 DB DROP 동반 (스키마 게이트 — 인프라 설치 후 별도 처리)
+- 백엔드 orphan 5묶음: ChecklistTemplate, ChecklistResult, EhsKpiPlan, HazardFactor, WorkplaceMeasurement (~40 java + 9 xml + tb_* DROP)
+- 라이브와 별개 엔드포인트 확인됨 (/checklist-templates ≠ 라이브 /checklist 등)
+🔴 보류 (예스코 확인 전 동결)
+- IncidentResponse 백엔드 4파일 + tb_incident_response 12행(시드 더미). NearMiss 상위집합, 화면 이미 제거. casualty_info를 NearMiss로 옮길지 보류.
+- ODM 4묶음(OdmConfirmed/Exposure/Followup/Suspect) + i18n odm(58키)·cm(53키). i18n 완비 = "빌드됐으나 미배선" 미완성 기능 가능성. DROP 금지.
+- PartnerEvalTab 모드토글 표준화 방식 (제거 아님, PageHeader 표준화 방법 결정).
+- §24 산안위 / §75 도급협의체 데이터 미분리 (OshCommitteeTab 의도적 공유).
+
+■ 검증으로 정정된 과잉판정 (다음 세션 주의)
+- ❌ LegalCompliance "완전중복 orphan" → 오류. legalComplianceApi.ts 라이브 호출 중(V192 의도분리).
+- ❌ Checklist/WEM/KPI/SafetyHazard "orphan" → 오류. 다른 컨트롤러 쓰는 라이브 페이지.
+- ❌ ApprovalLine/ApprovalManage/MyHealthCheckup "dead" → 정상 탭(부모가 import).
+- 교훈: orphan 판정은 프론트 endpoint grep + 백엔드 내부 호출처 grep 교차검증 필수.
+
+■ 기술 기준선
+- tsc 회귀 기준: 0→0 신규0 (기존 "8→8" baseline 무효).
+- 제거 작업은 항목별 커밋 분리(orphan 백엔드 / i18n / 죽은 프론트) → 부분 롤백 용이.
