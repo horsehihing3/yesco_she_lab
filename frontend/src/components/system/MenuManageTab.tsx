@@ -17,24 +17,14 @@ import { useAlert } from '../../contexts/AlertContext'
 import { fetchMenuRules, saveMenuRules, MenuRuleItem } from '../../api/menuRuleApi'
 
 // ── 역할 목록 ────────────────────────────────────────────────────────────────
+// 권한 현실화: 17역할 → 6역할 (RoleManageTab·buttonManageData와 동기화).
 const ROLES = [
-  { value: 'SYSTEM_ADMIN',         label: '시스템 관리자',              group: 'system' },
-  { value: 'EHS_ADMIN',            label: '회사 SHE 담당자',            group: 'system' },
-  { value: 'TEAM_ADMIN',           label: '팀 SHE 담당자',              group: 'system' },
-  { value: 'TEAM_MEMBER',          label: '팀 구성원',                  group: 'system' },
-  { value: 'RISK_ASSESS_ADMIN',    label: '위험성 평가 관리자',          group: 'safety' },
-  { value: 'NEAR_MISS_ADMIN',      label: '사고/아차사고 관리자',        group: 'safety' },
-  { value: 'AUDIT_ADMIN',          label: '감사 및 점검 관리자',         group: 'safety' },
-  { value: 'PERMIT_ADMIN',         label: '작업 허가 관리자',            group: 'safety' },
-  { value: 'PPE_ADMIN',            label: '보호구 장비 관리자',          group: 'safety' },
-  { value: 'TRAINING_ADMIN',       label: '교육·훈련 관리자',            group: 'safety' },
-  { value: 'EMERGENCY_ADMIN',      label: '비상대응 관리자',             group: 'safety' },
-  { value: 'HEALTH_ADMIN',         label: '검진 관리자',                 group: 'health' },
-  { value: 'OCCUPATIONAL_ADMIN',   label: '직업건강 관리자',             group: 'health' },
-  { value: 'WORK_ENV_ADMIN',       label: '작업환경측정 관리자',         group: 'health' },
-  { value: 'ERGONOMICS_ADMIN',     label: '인체공학 관리자',             group: 'health' },
-  { value: 'COMPLIANCE_ADMIN',     label: '법규 준수 관리자',            group: 'env' },
-  { value: 'QNA_ADMIN',            label: 'Q&A 관리자',                  group: 'ehs' },
+  { value: 'SYSTEM_ADMIN',  label: '시스템 관리자',     group: 'system' },
+  { value: 'EHS_ADMIN',     label: '회사 SHE 담당자',   group: 'system' },
+  { value: 'SAFETY_ADMIN',  label: '안전 관리자',       group: 'safety' },
+  { value: 'HEALTH_ADMIN',  label: '보건 관리자',       group: 'health' },
+  { value: 'PARTNER_ADMIN', label: '협력업체 관리자',   group: 'partner' },
+  { value: 'TEAM_MEMBER',   label: '일반사용자',        group: 'system' },
 ]
 
 // ── 3단계 메뉴 트리 ───────────────────────────────────────────────────────────
