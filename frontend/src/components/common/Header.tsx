@@ -18,6 +18,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../context/AuthContext'
 import { isSystemAdmin } from '../../utils/auth'
 import { DEV_SESSION_KEY, devToolsEnabled } from '../../utils/devMode'
+import { userApi } from '../../api/userApi'
 import LanguageSelector from './LanguageSelector'
 import ThemeSelector from './ThemeSelector'
 
@@ -26,15 +27,28 @@ import ThemeSelector from './ThemeSelector'
 const IMP_ACTIVE_KEY = 'imp_active'
 
 // DEV ONLY — 납품 전 삭제
-// 6역할 대표 1명씩 (권한 현실화). 시드 18명(역할당 3) 중 대표만 DEV 전환에 노출.
+// 6역할 × (팀장·팀원) 12명. id만 보유 — 역할·직급·부서는 드롭다운 open 시 API 실값으로 표시.
+// 순서: 역할별 팀장→팀원 인접(검증 시 쌍이 붙어 보이게).
 const DEV_ACCOUNTS = [
-  { id: 'jiwan.nam',     name: '남지완',   role: 'SYSTEM_ADMIN',  roleKey: 'role.systemAdmin' },
-  { id: 'yeseo.moon',    name: '문예서',   role: 'EHS_ADMIN',     roleKey: 'role.ehsAdmin' },
-  { id: 'junseok.kwak',  name: '곽준석',   role: 'SAFETY_ADMIN',  roleKey: 'role.safetyAdmin' },
-  { id: 'jihyun.nam',    name: '남지현',   role: 'HEALTH_ADMIN',  roleKey: 'role.healthAdmin' },
-  { id: 'jungho.yoo',    name: '유정호',   role: 'PARTNER_ADMIN', roleKey: 'role.partnerAdmin' },
-  { id: 'yujeong.jung',  name: '정유정',   role: 'TEAM_MEMBER',   roleKey: 'role.teamMember' },
+  { id: 'jiwan.nam' },    { id: 'gs5655' },        // SYSTEM
+  { id: 'yeseo.moon' },   { id: 'aram.min' },      // EHS
+  { id: 'junseok.kwak' }, { id: 'yuhyun.ha' },     // SAFETY
+  { id: 'jihyun.nam' },   { id: 'aram.ryu' },      // HEALTH
+  { id: 'jungho.yoo' },   { id: 'arin.kim' },      // PARTNER
+  { id: 'yujeong.jung' }, { id: 'horsehihing3' },  // TEAM_MEMBER
 ]
+
+// UserRole 값 → i18n 라벨키 (6역할).
+const ROLE_LABEL_KEYS: Record<string, string> = {
+  SYSTEM_ADMIN: 'role.systemAdmin',
+  EHS_ADMIN: 'role.ehsAdmin',
+  SAFETY_ADMIN: 'role.safetyAdmin',
+  HEALTH_ADMIN: 'role.healthAdmin',
+  PARTNER_ADMIN: 'role.partnerAdmin',
+  TEAM_MEMBER: 'role.teamMember',
+}
+
+type DevInfo = { name?: string; role?: string; position?: string; department?: string }
 
 const Header: React.FC = () => {
   const { t } = useTranslation()
@@ -43,6 +57,7 @@ const Header: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [switchingTo, setSwitchingTo] = useState<string | null>(null)
   const [loginError, setLoginError] = useState<string | null>(null)
+  const [devInfo, setDevInfo] = useState<Record<string, DevInfo>>({})
 
   // com4in_dev 로 로그인하면 dev 세션 플래그를 남겨, 이후 다른 계정으로 전환해도 계정전환 메뉴를 유지.
   useEffect(() => {
@@ -59,6 +74,21 @@ const Header: React.FC = () => {
     (window.location.hostname === 'localhost' ||
       isSystemAdmin(user) ||
       sessionStorage.getItem(IMP_ACTIVE_KEY) === '1')
+
+  // DEV 드롭다운 open 시 12명 실값(역할·직급·부서) 지연조회 — 1회만.
+  useEffect(() => {
+    if (!anchorEl || !showDevSwitch || Object.keys(devInfo).length > 0) return
+    let cancelled = false
+    Promise.all(
+      DEV_ACCOUNTS.map(({ id }) =>
+        userApi.getByUsername(id).then((d) => [id, d] as const).catch(() => [id, {} as DevInfo] as const)
+      )
+    ).then((entries) => {
+      if (!cancelled) setDevInfo(Object.fromEntries(entries))
+    })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [anchorEl, showDevSwitch])
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -170,7 +200,13 @@ const Header: React.FC = () => {
             <Typography variant="caption" color="text.disabled">DEV 계정 전환</Typography>
           </Box>
           <Divider />
-          {DEV_ACCOUNTS.map(({ id, name, roleKey }) => (
+          {DEV_ACCOUNTS.map(({ id }) => {
+            const info = devInfo[id]
+            const dispName = info?.name ?? id
+            const roleLabel = info?.role ? t(ROLE_LABEL_KEYS[info.role] ?? info.role) : ''
+            const deptTitle = [info?.department, info?.position].filter(Boolean).join(' ')
+            const meta = info ? [roleLabel, deptTitle].filter(Boolean).join(' · ') : '…'
+            return (
             <MenuItem
               key={id}
               onClick={() => handleDevLogin(id)}
@@ -181,15 +217,16 @@ const Header: React.FC = () => {
               {switchingTo === id
                 ? <CircularProgress size={14} sx={{ mr: 1 }} />
                 : <Avatar sx={{ width: 18, height: 18, fontSize: '0.6rem', mr: 1, bgcolor: user?.username === id ? 'primary.main' : 'grey.400' }}>
-                    {name.charAt(0)}
+                    {dispName.charAt(0)}
                   </Avatar>
               }
-              <Typography variant="body2">{name}</Typography>
+              <Typography variant="body2">{dispName}</Typography>
               <Typography variant="caption" color="text.disabled" sx={{ ml: 0.75 }}>
-                · {t(roleKey)}
+                · {meta}
               </Typography>
             </MenuItem>
-          ))}
+            )
+          })}
           </>
           )}
         </Menu>
