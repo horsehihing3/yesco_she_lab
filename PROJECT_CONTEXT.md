@@ -50,7 +50,7 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - **죽은 파일 27개 삭제**(오펀 컴포넌트 23 + 스텁페이지 4, `vite build` ✓). 완성 기능 페이지는 보존. `coord/DEAD_FILES_PENDING.md`.
 - **tsc 364→95**: vite-env(−12)·NumberField string허용(−39)·노트북 미사용(−156)·LEAD예약(−9)·죽은파일(−23)·알림콜백오버로드(−12, +깨진 삭제확인 버그fix)·Audit/NearMiss 타입(−18).
 - **`docs/PRE_YESCO_READINESS.md` 신규**: Yesco 전환 우선순위·seam맵·현황.
-- 서버: 백엔드 7601 / 프론트 7600 가동중(세션종료 시 정리 가능). 브랜치 `main`=`yesco-dev`=`8b804a3`, 원격 동기화.
+- 서버: 백엔드 7701 / 프론트 7700 가동중(세션종료 시 정리 가능). 브랜치 `lab2`, origin 동기화.
 
 
 ### 🟢 진행 중 — 승인 로직 표준화 (2026-06-13 세션 11, 예스코 투입 D-2)
@@ -159,7 +159,7 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 
 ### 🔴 1단계 — 예스코 투입 전 준비 (~ 6/9)
 - [ ] **예스코 미팅 준비** — 아래 "예스코 확인 필요 사항" 체크리스트 기반 질문 목록 정리
-- [ ] **tb_user 전환 범위 최종 확인** — T_IDM_USER 참조 7개 파일 전환 시 영향도 재검토
+- [ ] ~~**tb_user 전환 범위 최종 확인** — T_IDM_USER 참조 7개 파일 전환 시 영향도 재검토~~ → **폐기**: tb_user 전환 안 함, T_IDM_USER 정본 유지 (ADR-001)
 - [ ] **백엔드 보안 이슈 파악** — API 권한 제어 추가 방안 설계 (`@PreAuthorize` 적용 범위)
 - [ ] **isAdmin 하드코딩 4개 화면 수정 계획** — RiskAssessmentTab 등
 - [ ] **isAdmin 패턴 통일 (43개 파일 분류 확정)** — 3-티어 기준으로 분류 완료. 아래 표 참조
@@ -203,10 +203,10 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 - [ ] **Q&A 직책·부서 추가** — Q&A 등록·상세 화면에 작성자 직책·부서 필드 추가
 
 ### 🟡 2단계 — 예스코 투입 후 (6/10~)
-- [ ] **tb_user 전환** — 인증 코드 T_IDM_USER → tb_user 교체 (수정 파일 4개)
-- [ ] **tb_user 컬럼 보강** — dept_code, title_code, duty_code, mobile, emp_no 등 추가 (V192__)
+- [ ] ~~**tb_user 전환** — 인증 코드 T_IDM_USER → tb_user 교체 (수정 파일 4개)~~ → **폐기**: T_IDM_USER 정본 단일화 유지 (ADR-001)
+- [ ] ~~**tb_user 컬럼 보강** — dept_code, title_code, duty_code, mobile, emp_no 등 추가 (V192__)~~ → **폐기** (ADR-001)
 - [ ] **사용자 CRUD API 개발** — POST/PUT/DELETE /api/users (현재 역할변경만 존재)
-- [ ] **부서 관리 API/화면 개발** — tb_dept 신규 테이블 + CRUD (T_IDM_GROUP 대체)
+- [ ] ~~**부서 관리 API/화면 개발** — tb_dept 신규 테이블 + CRUD (T_IDM_GROUP 대체)~~ → **폐기**: T_IDM_GROUP 유지 (ADR-001)
 - [ ] **사용자 관리 화면 개발** — 시스템 관리 탭에 사용자 등록/수정/삭제/비밀번호초기화 추가
 - [ ] **백엔드 API 권한 제어 추가** — SecurityConfig + @PreAuthorize 적용
 - [x] **isAdmin 나머지 화면 전면 스윕** — 37개 화면 완료 (2026-06-11, commit 949e141)
@@ -300,7 +300,6 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 | 🔴 높음 | DB 비밀번호 하드코딩 | application.yml | 환경변수 ${DB_PASSWORD}로 전환 |
 | 🔴 높음 | JWT_SECRET 기본값 고정 | application.yml | 운영 환경변수 필수 설정 |
 | 🟡 중간 | isAdmin 패턴 불일치 (43개 파일) | 화면 전반 | **분류 확정 완료** (🔴 1단계 참조 — T1=1/T2=41/보류=1). 1단계: Day-1 핵심 화면 + 헬퍼 도입 / 2단계: 나머지 전면 스윕 / ApprovalManagePage는 3단계 보류 |
-| 🟡 중간 | 인증(T_IDM_USER) ↔ 업무(tb_user) 테이블 불일치 | AuthService vs 각 Service | tb_user 단일화 전환 |
 | 🟡 중간 | 도면 이미지 로컬 미존재 | FileStorageService | 운영서버 uploads 폴더 동기화 필요 |
 | 🔵 낮음 | preferred_language 컬럼 미사용 | tb_user | User.java 모델에 추가 또는 제거 |
 | 🔵 낮음 | SSO UI만 존재, 백엔드 미구현 | AuthManageTab.tsx | 예스코 요구 시 구현 |
@@ -420,10 +419,10 @@ Smart EHS → 예스코 커스터마이징 — 세션 컨텍스트
 | 항목 | 내용 |
 |------|------|
 | OS / IDE | Windows · VS Code + Claude Code |
-| 프로젝트 경로 | `C:\claude\smart_ehs_com4in-main` |
-| Backend 포트 | 7601 (context-path: /api) |
-| Frontend 포트 | 7600 |
+| 프로젝트 경로 | `C:\claude\yesco_she_lab2` |
+| Backend 포트 | 7701 (context-path: /api) |
+| Frontend 포트 | 7700 |
 | DB Host | 211.171.152.242:51084 |
-| DB Name | SmartEHS_com4in / User: com4in |
-| Flyway 다음 버전 | V192__ |
+| DB Name | yescoSHE_lab2 / User: com4in  (VPN 전환 시 예스코 운영DB로 재갱신) |
+| Flyway | off (inert) · 수동 db/ 스크립트 최신 V232 |
 | 파일 업로드 경로 | `./uploads/` (백엔드 실행 경로 기준) |

@@ -10,9 +10,9 @@
 
 | 메커니즘 | 도메인 | 승인 UI 위치 |
 |---|---|---|
-| **중앙 `tb_approval`** | PpeRequest · PermitToWork · Training · Chemical | 승인 메뉴(`ApprovalManagePage`) + 도메인 동기화 |
+| **중앙 `tb_approval`** | PpeRequest · PermitToWork · Training | 승인 메뉴(`ApprovalManagePage`) + 도메인 동기화 |
 | **인라인 2단계** (planApprover/completionApprover) | AuditPlan · AuditExecution · EmrPlan · ContractorPlan · LegalCompliancePlan/Exec · EhsAnnualPlan · HealthCheckupPlan · SiteSafetyPlan · RiskAssessment | **자체 탭에서만** (승인 메뉴 미노출) |
-| **단순 status 변경** (승인개념 약함) | WasteManage · EmergencyResponse · AccidentClaim 등 | 자체 탭 |
+| **단순 status 변경** (승인개념 약함) | EmergencyResponse · AccidentClaim 등 | 자체 탭 |
 
 **핵심 불일치**: 같은 "승인"인데 어떤 건 중앙 메뉴에서, 어떤 건 자체 탭에서 처리된다. + 권한체크/ API/ 승인자 검증 방식이 도메인마다 다르다.
 
