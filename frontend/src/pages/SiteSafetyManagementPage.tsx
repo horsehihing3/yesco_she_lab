@@ -534,13 +534,6 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
   const isReadonly = viewMode === 'detail'
   const isCreating = viewMode === 'create'
   const view = isReadonly ? selected || {} : form
-  const titleLabel = isPartner
-    ? (isCreating ? '협력 업체 안전 점검 등록'
-        : viewMode === 'edit' ? '협력 업체 안전 점검 수정'
-        : '협력 업체 안전 점검 상세')
-    : (isCreating ? '현장 안전 계획 등록'
-        : viewMode === 'edit' ? '현장 안전 계획 수정'
-        : '현장 안전 계획 상세')
 
   // ====== PARTNER 전용 간소화 폼 ======
   if (isPartner) {
@@ -558,8 +551,6 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
     const showModifiedRow = viewMode === 'edit' || (isReadonly && hasModified)
     return (
       <Box>
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{titleLabel}</Typography>
-
         <FormTable>
           {/* Row 1: 제목 */}
           <FormRow>
@@ -818,8 +809,6 @@ export const SiteSafetyPlanContent: React.FC<{ mode: Mode; planType?: PlanType }
 
   return (
     <Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{titleLabel}</Typography>
-
       <FormTable>
         <FormRow>
           <FormLabel required>제목</FormLabel>

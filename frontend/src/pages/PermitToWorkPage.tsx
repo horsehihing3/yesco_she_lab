@@ -1301,8 +1301,6 @@ const PostWorkInspectionContent: React.FC = () => {
   if (viewMode === 'list') {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{t('permit.postWorkInspection', '작업 완료 후 점검')}</Typography>
-
         {/* 검색 - PC */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center', mb: 2 }}>
           <ListSearchBar
@@ -1391,8 +1389,6 @@ const PostWorkInspectionContent: React.FC = () => {
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{t('permit.postWorkInspection', '작업 완료 후 점검')}</Typography>
-
         {/* Summary info */}
           <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
             <Box sx={dRowSx}><Typography sx={dLabelSx}>{t('ptw.permitId')}</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.permitId}</Typography></Box><Typography sx={dLabelSx}>{t('ptw.status')}</Typography><Box sx={dValSx}><Chip label={getStatusLabel(selectedItem.status)} color={STATUS_COLORS[selectedItem.status] || 'default'} variant="outlined" size="small" /></Box></Box>

@@ -256,7 +256,6 @@ const PermitReportTab: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }} className="no-print">{t('common.report', '레포트')}</Typography>
     <ReportListWrapper<PermitToWork>
       items={reports}
       columns={columns}

@@ -404,10 +404,6 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   }
   const totalPages = data?.totalPages || 0
 
-  const tabTitle = isApprovalMode ? '평가서조회 담당승인자'
-    : isAdminMode ? '전체조회 (어드민)'
-    : '계획'
-
   // ==================== LIST VIEW ====================
   if (viewMode === 'list') {
     return (
@@ -533,8 +529,6 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{tabTitle}</Typography>
-
         {/* PC 2-column */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 3 }}>
           <Box sx={dRowSx}><Typography sx={dLabelSx}>ID</Typography><Box sx={dValBorderSx}><Typography variant="body2" sx={{ py: 0.5 }}>{selectedItem.planId}</Typography></Box><Typography sx={dLabelSx}>상태</Typography><Box sx={dValSx}><Chip label={getStatusLabel(selectedItem.status)} color={STATUS_COLORS[selectedItem.status] || 'default'} variant="outlined" size="small" /></Box></Box>
@@ -771,8 +765,6 @@ const ContractorPlanContent: React.FC<{ mode: 'plan' | 'approval' | 'admin' }> =
   if (viewMode === 'create' || viewMode === 'edit') {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>{tabTitle}</Typography>
-
         {/* Desktop form - table-style layout */}
         <Paper sx={{ display: { xs: 'none', md: 'block' }, border: 1, borderColor: 'divider', borderRadius: 1, overflow: 'hidden', mb: 2 }}>
           {/* Row: title */}
