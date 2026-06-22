@@ -386,3 +386,35 @@ D. 저우선: PartnerMgmt 모드토글 · i18n 고아 ns 일괄정리(incidentRe
 ■ 참고 — 기존부터 있던 startup WARN (이번 작업 무관, 추후 점검 후보)
 - PersonRefColumnsInitializer WARN 2건:
   tb_legal_compliance_plan.modified_by, tb_od_plan.created_by 컬럼명 mismatch.
+
+=== orphan 테이블 DROP (2026-06-22, HEAD=54aaa35) ===
+
+■ 🟡 orphan 테이블 DROP — 클론 완료 (운영본은 여전히 별개)
+- [완료] 6개 테이블 DROP — 클론(yescoSHE_lab2)에서 실행, V232 마이그레이션 — 54aaa35
+  · tb_ehs_kpi_plan, tb_hazard_factor, tb_workplace_measurement(_detail),
+    tb_checklist_template_master/_item (+result 2개는 클론에 없어 IF EXISTS no-op)
+  · DROP 순서: item → master (FK 고려), IF OBJECT_ID 안전처리
+- 선행조건 충족 확인: Flyway off + 초기화기 47개 전수 0참조 + schema.sql 없음 + ddl-auto 없음
+  → 자동 재생성 경로 없음. (LAB_LOG에 적었던 SchemaInitializer 우려 = 해당없음으로 해소)
+- 외부 FK 0, 클론 확인, 행수 소량(시드/더미 수준).
+
+■ 백업 (복원 안전망) — e4c65fe
+- db/backup/2026-06-22-orphan-tables/ 에 6테이블 스키마DDL+데이터+FK/IDENTITY 덤프.
+- 복원순서 master(01)→item(02). 문제 시 이 커밋에서 재생성+재적재 가능.
+- ★ tb_workplace_measurement(_detail)은 CREATE 마이그레이션이 repo에 없던 테이블 →
+  이번에 라이브 스키마에서 DDL 캡처해 복원공백 메움.
+
+■ DROP 후 재기동 검증 — 통과
+- 부팅 정상(5s), 삭제 테이블 관련 startup 에러 0.
+- 핵심: DROP한 6테이블 재기동 후 부활 0건 → 자동생성 경로 없음 실증.
+- 라이브 /checklist/templates 200, orphan 5경로 404 유지, 라이브 테이블(tb_checklist_template 단수 등) 무손상.
+- 프론트 라이브 화면 정상 동작 확인.
+
+■ ⚠️ 운영본 DROP — 미착수 (다음 단계, 별도 승인)
+- 이번 DROP은 클론 정리. V232는 운영본 재사용 자산으로 작성·검증된 상태.
+- 운영본 적용 전 필수: ① 운영본 실데이터 없음 확인 ② 인프라 설치 ③ 승인.
+- Flyway off라 V232는 inert — 운영본엔 수동 실행 또는 Flyway 활성화 시점에 적용.
+
+■ 🟡 백엔드 orphan 트랙 — 전 과정 종료
+재검증 → 코드제거(2097f1b·592cfdd) → 런타임검증 → 백업(e4c65fe) →
+클론 DROP+검증 → V232(54aaa35). 남은 건 운영본 적용(인프라 후)뿐.
