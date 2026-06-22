@@ -26,6 +26,8 @@
         <result property="planApprovedAt" column="plan_approved_at"/>
         <result property="planApprovedBy" column="plan_approved_by"/>
         <result property="completionApprover" column="completion_approver" typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
+        <result property="completionApprovedAt" column="completion_approved_at"/>
+        <result property="completionApprovedBy" column="completion_approved_by"/>
         <result property="createdBy"          column="created_by"          typeHandler="com.smartehs.config.typehandler.PersonRefTypeHandler"/>
         <result property="repeatType" column="repeat_type"/>
         <result property="repeatInterval" column="repeat_interval"/>
@@ -132,6 +134,8 @@
             plan_approved_by = CASE WHEN #{stage} = 'PLAN' AND #{approved} = 1 THEN #{approvedBy} ELSE plan_approved_by END,
             approved_by  = CASE WHEN #{stage} = 'PLAN' AND #{approved} = 1 THEN #{approvedBy} ELSE approved_by END,
             approved_at  = CASE WHEN #{stage} = 'PLAN' AND #{approved} = 1 THEN GETDATE()    ELSE approved_at END,
+            completion_approved_at = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN GETDATE()    ELSE completion_approved_at END,
+            completion_approved_by = CASE WHEN #{stage} = 'COMPLETION' AND #{approved} = 1 THEN #{approvedBy} ELSE completion_approved_by END,
             <!-- 반려 시 사유 저장, 재상신·승인 등 다음 전이에서 제거 -->
             reject_reason = #{rejectReason},
             modified_at = GETDATE()
